@@ -1,0 +1,164 @@
+[
+  {
+    "id": 1,
+    "country_id": 1,
+    "name": "Baden-Württemberg",
+    "short_name": "BW",
+    "place_short_name": "",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 2,
+    "country_id": 1,
+    "name": "Bayern",
+    "short_name": "BY",
+    "place_short_name": "",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 3,
+    "country_id": 1,
+    "name": "Berlin",
+    "short_name": "BE",
+    "place_short_name": "",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 4,
+    "country_id": 1,
+    "name": "Bremen",
+    "short_name": "HB",
+    "place_short_name": "",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 5,
+    "country_id": 1,
+    "name": "Brandenburg",
+    "short_name": "BB",
+    "place_short_name": "",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 6,
+    "country_id": 1,
+    "name": "Hamburg",
+    "short_name": "HH",
+    "place_short_name": "",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 7,
+    "country_id": 1,
+    "name": "Hessen",
+    "short_name": "HE",
+    "place_short_name": "",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 8,
+    "country_id": 1,
+    "name": "Mecklenburg-Vorpommern",
+    "short_name": "MV",
+    "place_short_name": "",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 9,
+    "country_id": 1,
+    "name": "Niedersachsen",
+    "short_name": "NI",
+    "place_short_name": "",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 10,
+    "country_id": 1,
+    "name": "Nordrhein-Westfalen",
+    "short_name": "NW",
+    "place_short_name": "NRW",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 11,
+    "country_id": 1,
+    "name": "Rheinland-Pfalz",
+    "short_name": "RP",
+    "place_short_name": "",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 12,
+    "country_id": 1,
+    "name": "Saarland",
+    "short_name": "SL",
+    "place_short_name": "",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 13,
+    "country_id": 1,
+    "name": "Sachsen",
+    "short_name": "SN",
+    "place_short_name": "",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 14,
+    "country_id": 1,
+    "name": "Sachsen-Anhalt",
+    "short_name": "ST",
+    "place_short_name": "",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 15,
+    "country_id": 1,
+    "name": "Schleswig-Holstein",
+    "short_name": "SH",
+    "place_short_name": "",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 16,
+    "country_id": 1,
+    "name": "Thüringen",
+    "short_name": "TH",
+    "place_short_name": "",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 17,
+    "country_id": 2,
+    "name": "Burgen­land",
+    "short_name": "1",
+    "place_short_name": "Burgen­land",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  },
+  {
+    "id": 18,
+    "country_id": 2,
+    "name": "Kärnten",
+    "short_name": "2",
+    "place_short_name": "Burgen­land",
+    "created_at": "2024-09-18 07:00:38",
+    "updated_at": "2024-09-18 07:00:38"
+  }
+]

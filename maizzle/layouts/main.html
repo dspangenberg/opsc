@@ -1,0 +1,92 @@
+
+
+<!--
+  ~ ecting.core is licensed under the terms of the EUPL-1.2 license
+  ~ Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
+  -->
+
+<!DOCTYPE {{{ page.doctype || 'html' }}}>
+<html class="bg-stone-100 font-facit" lang="{{ page.language || 'en' }}" xmlns:v="urn:schemas-microsoft-com:vml">
+<head>
+  <meta charset="{{ page.charset || 'utf-8' }}">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <meta content="telephone=no, date=no, address=no, email=no, url=no" name="format-detection">
+  <meta content="light dark" name="color-scheme">
+  <meta content="light dark" name="supported-color-schemes">
+
+<style>
+    @font-face {
+        font-family: 'Clear Sans';
+        font-style: normal;
+        font-display: swap;
+        font-weight: 300;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-300-normal.woff2) format('woff2'), url(https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-300-normal.woff) format('woff');
+    }
+
+    /* clear-sans-latin-400-normal */
+    @font-face {
+        font-family: 'Clear Sans';
+        font-style: normal;
+        font-display: swap;
+        font-weight: 400;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-400-normal.woff2) format('woff2'), url(https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-400-normal.woff) format('woff');
+    }
+
+    /* clear-sans-latin-500-normal */
+    @font-face {
+        font-family: 'Clear Sans';
+        font-style: normal;
+        font-display: swap;
+        font-weight: 500;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-500-normal.woff2) format('woff2'), url(https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-500-normal.woff) format('woff');
+    }
+
+    /* clear-sans-latin-700-normal */
+    @font-face {
+        font-family: 'Clear Sans';
+        font-style: normal;
+        font-display: swap;
+        font-weight: 700;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-700-normal.woff2) format('woff2'), url(https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-700-normal.woff) format('woff');
+    }
+</style>
+
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings xmlns:o="urn:schemas-microsoft-com:office:office">
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <style>
+    td,th,div,p,a,h1,h2,h3,h4,h5,h6 {font-family: "Segoe UI", sans-serif; mso-line-height-rule: exactly;}
+    .mso-break-all {word-break: break-all;}
+  </style>
+  <![endif]-->
+  <if condition="page.title">
+    <title>{{{ page.title }}}</title>
+  </if>
+    <style>
+    @tailwind components;
+    @tailwind utilities;
+
+    img {
+      @apply max-w-full align-middle;
+    }
+  </style>
+  <stack name="head" />
+</head>
+<body class=" m-0 p-0 w-full font-sans bg-stone-200 [word-break:break-word] [-webkit-font-smoothing:antialiased] {{ page.bodyClass || '' }}">
+  <if condition="page.preheader">
+    <div class="hidden">
+      {{{ page.preheader }}}
+      <each loop="item in Array.from(Array(150))">&#8199;&#65279;&#847; </each>
+    </div>
+  </if>
+  <div aria-label="{{{ page.title || '' }}}" aria-roledescription="email" lang="{{ page.language || 'en' }}" role="article">
+    <yield />
+  </div>
+</body>
+</html>

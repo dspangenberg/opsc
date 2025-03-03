@@ -1,0 +1,10 @@
+@@ -44,7 +44,7 @@
+     const newPeriod: App.Data.SeasonPeriodData = {
+       id: null,
+-      season_id: season.id as number,
++      season_id: typeof season.id === 'number' ? season.id : null,
+       begin_on: '',
+       end_on: ''
+     }
+\ No newline at end of line
+ 

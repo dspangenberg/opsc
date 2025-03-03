@@ -1,0 +1,139 @@
+diff --git a/.idea/.gitignore b/.idea/.gitignore
+new file mode 100644
+index 0000000000000000000000000000000000000000..13566b81b018ad684f3a35fee301741b2734c8f4
+--- /dev/null
++++ b/.idea/.gitignore
+@@ -0,0 +1,8 @@
++# Default ignored files
++/shelf/
++/workspace.xml
++# Editor-based HTTP Client requests
++/httpRequests/
++# Datasource local storage ignored files
++/dataSources/
++/dataSources.local.xml
+diff --git a/.idea/modules.xml b/.idea/modules.xml
+new file mode 100644
+index 0000000000000000000000000000000000000000..d2d801e8d801cc448d073f2440e594d16936ecc9
+--- /dev/null
++++ b/.idea/modules.xml
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ProjectModuleManager">
++    <modules>
++      <module fileurl="file://$PROJECT_DIR$/.idea/react-select@2.1.2.iml" filepath="$PROJECT_DIR$/.idea/react-select@2.1.2.iml" />
++    </modules>
++  </component>
++</project>
+\ No newline at end of file
+diff --git a/.idea/react-select@2.1.2.iml b/.idea/react-select@2.1.2.iml
+new file mode 100644
+index 0000000000000000000000000000000000000000..c956989b29ad0767edc6cf3a202545927c3d1e76
+--- /dev/null
++++ b/.idea/react-select@2.1.2.iml
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module type="WEB_MODULE" version="4">
++  <component name="NewModuleRootManager">
++    <content url="file://$MODULE_DIR$" />
++    <orderEntry type="inheritedJdk" />
++    <orderEntry type="sourceFolder" forTests="false" />
++  </component>
++</module>
+\ No newline at end of file
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+new file mode 100644
+index 0000000000000000000000000000000000000000..449f24d2a11e54084f9326338bbff60160ae8141
+--- /dev/null
++++ b/.idea/workspace.xml
+@@ -0,0 +1,51 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ChangeListManager">
++    <list default="true" id="67843cc9-095f-46a6-9b09-f1917e540a1f" name="Changes" comment="" />
++    <option name="SHOW_DIALOG" value="false" />
++    <option name="HIGHLIGHT_CONFLICTS" value="true" />
++    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
++    <option name="LAST_RESOLUTION" value="IGNORE" />
++  </component>
++  <component name="ComposerSettings">
++    <execution />
++  </component>
++  <component name="ProjectColorInfo"><![CDATA[{
++  "associatedIndex": 4
++}]]></component>
++  <component name="ProjectId" id="2pU3uBC8xKWVovd1z5eJQVNpfkK" />
++  <component name="ProjectViewState">
++    <option name="autoscrollFromSource" value="true" />
++    <option name="autoscrollToSource" value="true" />
++    <option name="hideEmptyMiddlePackages" value="true" />
++    <option name="openDirectoriesWithSingleClick" value="true" />
++    <option name="showLibraryContents" value="true" />
++  </component>
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "RunOnceActivity.ShowReadmeOnStart": "true",
++    "RunOnceActivity.laravel-idea.search-composer-json": "true",
++    "nodejs_package_manager_path": "npm"
++  }
++}]]></component>
++  <component name="SharedIndexes">
++    <attachedChunks>
++      <set>
++        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-PS-243.21565.202" />
++        <option value="bundled-php-predefined-a98d8de5180a-5fbe0c30323e-com.jetbrains.php.sharedIndexes-PS-243.21565.202" />
++      </set>
++    </attachedChunks>
++  </component>
++  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
++  <component name="TaskManager">
++    <task active="true" id="Default" summary="Default task">
++      <changelist id="67843cc9-095f-46a6-9b09-f1917e540a1f" name="Changes" comment="" />
++      <created>1732807047655</created>
++      <option name="number" value="Default" />
++      <option name="presentableId" value="Default" />
++      <updated>1732807047655</updated>
++      <workItem from="1732807048481" duration="15000" />
++    </task>
++    <servers />
++  </component>
++</project>
+\ No newline at end of file
+diff --git a/dist/index.d.mts b/dist/index.d.mts
+index b2f7873d3f27e9c3a981103ce91453280dd38e20..a7da208362633d7d655c24b03d3b6a9f09d61bcd 100644
+--- a/dist/index.d.mts
++++ b/dist/index.d.mts
+@@ -18,11 +18,11 @@ interface CreateScope {
+ 
+ type Direction = 'ltr' | 'rtl';
+ declare const createSelectScope: CreateScope;
+-interface SelectProps {
++interface SelectProps<T> {
+     children?: React.ReactNode;
+-    value?: string;
+-    defaultValue?: string;
+-    onValueChange?(value: string): void;
++    value?: T;
++    defaultValue?: T;
++    onValueChange?(value: T): void;
+     open?: boolean;
+     defaultOpen?: boolean;
+     onOpenChange?(open: boolean): void;
+@@ -31,7 +31,6 @@ interface SelectProps {
+     autoComplete?: string;
+     disabled?: boolean;
+     required?: boolean;
+-    form?: string;
+ }
+ declare const Select: React.FC<SelectProps>;
+ type PrimitiveButtonProps = React.ComponentPropsWithoutRef<typeof Primitive.button>;
+@@ -98,7 +97,7 @@ interface SelectLabelProps extends PrimitiveDivProps {
+ }
+ declare const SelectLabel: React.ForwardRefExoticComponent<SelectLabelProps & React.RefAttributes<HTMLDivElement>>;
+ interface SelectItemProps extends PrimitiveDivProps {
+-    value: string;
++    value: T;
+     disabled?: boolean;
+     textValue?: string;
+ }

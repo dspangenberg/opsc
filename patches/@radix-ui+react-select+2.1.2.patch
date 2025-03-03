@@ -1,0 +1,41 @@
+diff --git a/node_modules/@radix-ui/react-select/dist/index.d.mts b/node_modules/@radix-ui/react-select/dist/index.d.mts
+index b2f7873..db08eab 100644
+--- a/node_modules/@radix-ui/react-select/dist/index.d.mts
++++ b/node_modules/@radix-ui/react-select/dist/index.d.mts
+@@ -18,11 +18,11 @@ interface CreateScope {
+ 
+ type Direction = 'ltr' | 'rtl';
+ declare const createSelectScope: CreateScope;
+-interface SelectProps {
++interface SelectProps<T> {
+     children?: React.ReactNode;
+-    value?: string;
+-    defaultValue?: string;
+-    onValueChange?(value: string): void;
++    value?: T;
++    defaultValue?: T;
++    onValueChange?(value: T): void;
+     open?: boolean;
+     defaultOpen?: boolean;
+     onOpenChange?(open: boolean): void;
+@@ -31,7 +31,6 @@ interface SelectProps {
+     autoComplete?: string;
+     disabled?: boolean;
+     required?: boolean;
+-    form?: string;
+ }
+ declare const Select: React.FC<SelectProps>;
+ type PrimitiveButtonProps = React.ComponentPropsWithoutRef<typeof Primitive.button>;
+@@ -98,10 +97,11 @@ interface SelectLabelProps extends PrimitiveDivProps {
+ }
+ declare const SelectLabel: React.ForwardRefExoticComponent<SelectLabelProps & React.RefAttributes<HTMLDivElement>>;
+ interface SelectItemProps extends PrimitiveDivProps {
+-    value: string;
++    value: T;
+     disabled?: boolean;
+     textValue?: string;
+ }
++
+ declare const SelectItem: React.ForwardRefExoticComponent<SelectItemProps & React.RefAttributes<HTMLDivElement>>;
+ interface SelectItemTextProps extends PrimitiveSpanProps {
+ }

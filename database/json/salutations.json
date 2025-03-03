@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Herr",
+    "gender": "m",
+    "created_at": "2022-01-12 00:43:41",
+    "updated_at": "2022-01-12 00:43:41",
+    "is_org": 0,
+    "is_hidden": 0
+  },
+  {
+    "id": 2,
+    "name": "Frau",
+    "gender": "f",
+    "created_at": "2022-01-12 00:43:41",
+    "updated_at": "2022-01-12 00:43:41",
+    "is_org": 0,
+    "is_hidden": 0
+  },
+  {
+    "id": 3,
+    "name": "Divers",
+    "gender": "x",
+    "created_at": "2022-01-12 00:43:41",
+    "updated_at": "2022-01-12 00:43:41",
+    "is_org": 0,
+    "is_hidden": 1
+  },
+  {
+    "id": 4,
+    "name": "Firma",
+    "gender": "",
+    "created_at": "2022-01-12 00:43:41",
+    "updated_at": "2022-01-12 00:43:41",
+    "is_org": 1,
+    "is_hidden": 1
+  }
+]

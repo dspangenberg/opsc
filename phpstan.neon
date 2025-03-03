@@ -1,0 +1,24 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/nesbot/carbon/extension.neon
+
+parameters:
+
+    paths:
+        - app/
+        - bootstrap/
+        - routes/
+
+
+    checkModelProperties: true
+    checkModelAppends: true
+    noEnvCallsOutsideOfConfig: true
+    inferPrivatePropertyTypeFromConstructor: true
+
+    # Level 10 is the highest level
+    level: 4
+
+    scanFiles:
+        - _ide_helper.php
+        - _ide_helper_models.php
+        - .phpstorm.meta.php
