@@ -1,5 +1,5 @@
 /*
- * ecting.core is licensed under the terms of the EUPL-1.2 license
+ * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
@@ -24,16 +24,16 @@ import {
   DropdownMenuTrigger
 } from '@/Components/ui/dropdown-menu'
 import {
-  CreditCardChangeIcon,
-  CustomerSupportIcon,
-  HelpCircleIcon,
   Logout01Icon,
+  NotificationSquareIcon,
+  Settings05Icon,
   UserIcon
 } from '@hugeicons-pro/core-stroke-rounded'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { ChevronsUpDown } from 'lucide-react'
 import type React from 'react'
 import packageJson from '../../../package.json'
-import { Button } from './ui/button'
+import { SidebarMenuButton, useSidebar } from './ui/sidebar'
 
 export function NavUser({
   user,
@@ -44,6 +44,7 @@ export function NavUser({
     router.post(route("app.logout", {}, false))
   }
 
+  const { isMobile } = useSidebar()
   const tenant: App.Data.TenantData = usePage().props.auth.tenant
   const [major, minor, build] = packageJson.version.split('.')
   const appName = `${import.meta.env.VITE_APP_NAME.replace('.cloud', '')} ${major}.${minor}.${build}`
@@ -51,10 +52,9 @@ export function NavUser({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground size-10 rounded-full"
+        <SidebarMenuButton
+          size="lg"
+          className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
         >
           <Avatar className="h-9 w-9 rounded-full">
             <AvatarImage src={user.avatar_url as unknown as string} alt={user.full_name} />
@@ -64,11 +64,16 @@ export function NavUser({
               className="rounded-full"
             />
           </Avatar>
-        </Button>
+          <div className="grid flex-1 text-left text-sm leading-tight">
+            <span className="truncate font-semibold">{user.full_name}</span>
+            <span className="truncate text-xs">{user.email}</span>
+          </div>
+          <ChevronsUpDown className="ml-auto size-4" />
+        </SidebarMenuButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-        side="bottom"
+        side={isMobile ? "bottom" : "right"}
         align="end"
         sideOffset={4}
       >
@@ -95,41 +100,23 @@ export function NavUser({
 
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+
+          <DropdownMenuItem>
+            <HugeiconsIcon icon={NotificationSquareIcon} />
+            Benachrichtigungen
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+
+      <DropdownMenuSeparator />
+        <DropdownMenuGroup>
           <DropdownMenuItem>
             <HugeiconsIcon icon={UserIcon} />
             Profil + Sicherheit
           </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <HugeiconsIcon icon={CreditCardChangeIcon} />
-          Abo + Abrechnung
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-
-        <DropdownMenuGroup>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
-              <span className="w-4" />
-              Hilfe + Support
-            </DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem>
-                  <HugeiconsIcon icon={HelpCircleIcon} />
-                  Hilfe
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <HugeiconsIcon icon={CustomerSupportIcon} />Support
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuLabel className="py-1 font-normal text-xs text-muted-foreground flex items-center gap-1">
-                  Support-ID: <span className="font-medium">{tenant.formated_prefix}</span>
-                </DropdownMenuLabel>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
+          <DropdownMenuItem>
+            <HugeiconsIcon icon={Settings05Icon} />
+            Einstellungen
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>

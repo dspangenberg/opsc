@@ -37,15 +37,12 @@ class HandleInertiaRequests extends Middleware
         $user = $request->user();
         $user['agent'] = $request->userAgent();
 
-        $calendars = Calendar::orderBy('name')->get();
-
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user() ? UserData::from($request->user()) : null,
                 'tenant' => $request->user() ? tenant('id') ? TenantData::from($tenant) : [] : null,
-            ],
-            'calendars' => CalendarData::collect($calendars)
+            ]
         ];
     }
 }

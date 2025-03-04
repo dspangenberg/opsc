@@ -6,23 +6,25 @@
 import logo from '@/Assets/Images/tw.svg' // Make sure to adjust the import path
 import { NavMain } from '@/Components/nav-main'
 import { NavSecondary } from '@/Components/nav-secondary'
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, useSidebar } from '@/Components/ui/sidebar'
 import { settings } from '@/Pages/App/Settings/SettingsLayout'
 import {
-  Calendar02Icon,
-  DashboardCircleEditIcon,
+  ContactBookIcon,
+  ContractsIcon,
   DashboardSpeed02Icon,
-  Image03Icon,
+  FileEuroIcon,
+  FolderFileStorageIcon,
+  KanbanIcon,
   Settings02Icon,
-  Ticket01Icon
-  } from '@hugeicons-pro/core-stroke-rounded'
+  TimeScheduleIcon
+} from '@hugeicons-pro/core-stroke-rounded'
+import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
-
-import { CalendarSwitcher } from '@/Components/CalendardSwitcher'
-import { NavGlobalTop } from '@/Components/NavGlobalTop'
-import { Sidebar, SidebarContent, SidebarHeader } from '@/Components/ui/sidebar'
+import { NavUser } from './nav-user'
 
 const data = {
-  navGlobalTop: [
+  navGlobalTop: [],
+  navMain: [
     {
       title: 'Dashboard',
       url: route('app.dashboard', {}, false),
@@ -30,79 +32,66 @@ const data = {
       activePath: '/app',
       exact: true,
       hasSep: true
-    }
-  ],
-  navMain: [
+    },
     {
-      title: 'Veranstaltungen',
-      hasSep: false,
-      url: '#',
-      icon: Calendar02Icon
+      title: 'Kontakte',
+      url: route('app.dashboard', {}, false),
+      icon: ContactBookIcon,
+      activePath: '/appsi'
+    },
+    {
+      title: 'Dokumente',
+      url: route('app.dashboard', {}, false),
+      icon: FolderFileStorageIcon,
+      activePath: '/appsi'
+    },
+    {
+      title: 'Verträge',
+      url: route('app.dashboard', {}, false),
+      icon: ContractsIcon,
+      activePath: '/appsi'
+    },
+    {
+      title: 'Projekte',
+      url: route('app.dashboard', {}, false),
+      icon: KanbanIcon,
+      activePath: '/appsi',
+      hasSep: true
+    },
+    {
+      title: 'Zeiterfassung',
+      url: route('app.dashboard', {}, false),
+      icon: TimeScheduleIcon,
+      activePath: '/appsi',
+      hasSep: false
+    },
+    {
+      title: 'Fakturierung',
+      url: route('app.dashboard', {}, false),
+      icon: FileEuroIcon,
+      activePath: '/appsi',
+      hasSep: true
     }
   ],
   navSecondary: [
-    {
-      title: 'Medien',
-      hasSep: false,
-      url: '#',
-      icon: Image03Icon
-    },
-    {
-      title: 'Ticketshop',
-      url: '#',
-      icon: Ticket01Icon,
-      items: [
-        {
-          title: 'General',
-          url: '#'
-        },
-        {
-          title: 'Team',
-          url: '#'
-        },
-        {
-          title: 'Billing',
-          url: '#'
-        },
-        {
-          title: 'Limits',
-          url: '#'
-        }
-      ]
-    },
-    {
-      title: 'Einbindung + Widgets',
-      hasSep: false,
-      url: '#',
-      icon: DashboardCircleEditIcon
-    },
-    {
-      title: 'Einstellungen',
-      icon: Settings02Icon,
-      hasSep: true,
-      activePath: '/app/settings',
-      url: route('app.settings.booking.seasons'),
-      items: settings
-    }
   ]
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const user: App.Data.UserData = usePage().props.auth.user
+
   return (
-    <Sidebar variant="sidebar" collapsible="icon" {...props}>
+    <Sidebar variant="inset" collapsible="icon" {...props}>
       <SidebarHeader className="flex-none h-auto">
         <img src={logo} className="rounded-md w-10 mx-auto mt-6 mb-6 object-cover" alt="Logo" />
-      </SidebarHeader>
-      <SidebarContent>
-        <NavGlobalTop items={data.navGlobalTop} />
-      </SidebarContent>
-      <SidebarHeader className="flex-none h-auto">
-        <CalendarSwitcher />
       </SidebarHeader>
       <SidebarContent className="flex-1 -mt-3">
         <NavMain items={data.navMain} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={user} />
+      </SidebarFooter>
     </Sidebar>
   )
 }

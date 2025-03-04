@@ -310,29 +310,21 @@ SidebarRail.displayName = 'SidebarRail'
 
 const SidebarInset = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<'div'> & {
-    header?: React.ReactNode
-  }
->(({ className, header, children, ...props }, ref) => {
+  React.ComponentProps<"main">
+>(({ className, ...props }, ref) => {
   return (
-    <div className="flex flex-col h-full w-full mr-2">
-      {header && <>{header}</>}
-      <div
-        ref={ref}
-        className={cn(
-          'relative flex min-h-svh flex-1 flex-col bg-background rounded-lg shadow-none md:shadow overflow-y-scroll',
-          'min-h-[calc(100svh-theme(spacing.4)-62px)] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow',
-          className
-        )}
-        {...props}
-      >
-        <main className="flex-1 overflow-auto">{children}</main>
-      </div>
-    </div>
+    <main
+      ref={ref}
+      className={cn(
+        "relative flex w-full flex-1 flex-col bg-background",
+        "md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow",
+        className
+      )}
+      {...props}
+    />
   )
 })
-SidebarInset.displayName = 'SidebarInset'
-SidebarInset.displayName = 'SidebarInset'
+SidebarInset.displayName = "SidebarInset"
 const SidebarInput = React.forwardRef<
   React.ElementRef<typeof Input>,
   React.ComponentProps<typeof Input>
