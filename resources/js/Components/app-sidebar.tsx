@@ -1,5 +1,5 @@
 /*
- * ecting.core is licensed under the terms of the EUPL-1.2 license
+ * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
@@ -35,9 +35,9 @@ const data = {
     },
     {
       title: 'Kontakte',
-      url: route('app.dashboard', {}, false),
+      url: route('app.contact.index', {}, false),
       icon: ContactBookIcon,
-      activePath: '/appsi'
+      activePath: '/app/contacts'
     },
     {
       title: 'Dokumente',
@@ -81,7 +81,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user: App.Data.UserData = usePage().props.auth.user
 
   return (
-    <Sidebar variant="inset" collapsible="icon" {...props}>
+    <Sidebar variant="sidebar" collapsible="icon" {...props}>
       <SidebarHeader className="flex-none h-auto">
         <img src={logo} className="rounded-md w-10 mx-auto mt-6 mb-6 object-cover" alt="Logo" />
       </SidebarHeader>

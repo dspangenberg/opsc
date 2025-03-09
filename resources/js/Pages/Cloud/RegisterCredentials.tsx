@@ -63,7 +63,7 @@ const RegisterCredentials: React.FC<RegisterCredentialsProps> = ({ registrationD
         <FormGroup>
           <div className="col-span-24">
             <FormLabel htmlFor="company-website" required>Deine Subdomain:</FormLabel>
-            <div className={`mt-2 flex rounded  ${focusInput}`}>
+            <div className={`mt-2 flex rounded-sm  ${focusInput}`}>
               <input
                 id="company-website"
                 name="company-website"

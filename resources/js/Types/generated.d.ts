@@ -51,6 +51,23 @@ color: string;
 calendar_id: number;
 accommodation_id: number | null;
 };
+export type ContactData = {
+id: number | null;
+name: string;
+first_name: string | null;
+company_name: string | null;
+company_id: number | null;
+full_name: string;
+reverse_full_name: string;
+initials: string;
+title_id: number | null;
+salutation_id: number | null;
+creditor_number: string | null;
+debtor_number: string | null;
+company: App.Data.ContactData | null;
+title: App.Data.TitleData | null;
+salutation: App.Data.SalutationData | null;
+};
 export type CountryData = {
 id: number;
 name: string;
@@ -70,6 +87,12 @@ country_id: number;
 name: string;
 short_name: string;
 place_short_name: string;
+};
+export type SalutationData = {
+id: number | null;
+name: string;
+is_hidden: boolean;
+gender: string;
 };
 export type SeasonData = {
 id: number | null;
@@ -95,6 +118,14 @@ website: string;
 subdomain: string;
 prefix: string;
 formated_prefix: string;
+};
+export type TitleData = {
+id: number | null;
+name: string;
+is_default: boolean;
+correspondence_salutation_male: string;
+correspondence_salutation_female: string;
+correspondence_salutation_other: string;
 };
 export type UserData = {
 id: number | null;

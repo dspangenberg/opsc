@@ -1,6 +1,6 @@
 /*
- * ooboo.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
+ * opsc.core is licensed under the terms of the EUPL-1.2 license
+ * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
 import * as AvatarPrimitive from '@radix-ui/react-avatar'
@@ -43,32 +43,41 @@ interface AvatarProps extends React.ComponentPropsWithoutRef<typeof AvatarPrimit
   initials?: string
 }
 
-const Avatar = React.forwardRef<React.ElementRef<typeof AvatarPrimitive.Root>, AvatarProps>(
-  ({ className, fullname, initials, ...props }, ref) => (
-    <div className="border rounded-full border-stone-200">
-      <AvatarPrimitive.Root
-        ref={ref}
-        className={cn(
-          'relative flex h-10 w-10 shrink-0 border-transparent border-2 overflow-hidden rounded-full',
-          className
-        )}
-        {...props}
-      />
-    </div>
-  )
-)
-Avatar.displayName = AvatarPrimitive.Root.displayName
-
-const AvatarImage = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Image>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
->(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Image
+const Avatar = (
+  {
+    ref,
+    className,
+    fullname,
+    initials,
+    ...props
+  }: AvatarProps & {
+    ref?: React.RefObject<React.ElementRef<typeof AvatarPrimitive.Root>>;
+  }
+) => (<div className="border rounded-full border-stone-200">
+  <AvatarPrimitive.Root
     ref={ref}
-    className={cn('aspect-square h-full w-full', className)}
+    className={cn(
+      'relative flex h-10 w-10 shrink-0 border-transparent border-2 overflow-hidden rounded-full',
+      className
+    )}
     {...props}
   />
-))
+</div>)
+Avatar.displayName = AvatarPrimitive.Root.displayName
+
+const AvatarImage = (
+  {
+    ref,
+    className,
+    ...props
+  }: React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image> & {
+    ref: React.RefObject<React.ElementRef<typeof AvatarPrimitive.Image>>;
+  }
+) => (<AvatarPrimitive.Image
+  ref={ref}
+  className={cn('aspect-square h-full w-full', className)}
+  {...props}
+/>)
 AvatarImage.displayName = AvatarPrimitive.Image.displayName
 
 interface AvatarFallbackProps
@@ -77,10 +86,17 @@ interface AvatarFallbackProps
   initials: string
 }
 
-const AvatarFallback = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Fallback>,
-  AvatarFallbackProps
->(({ className, fullname, initials, ...props }, ref) => {
+const AvatarFallback = (
+  {
+    ref,
+    className,
+    fullname,
+    initials,
+    ...props
+  }: AvatarFallbackProps & {
+    ref?: React.RefObject<React.ElementRef<typeof AvatarPrimitive.Fallback>>;
+  }
+) => {
   const [backgroundColor, setBackgroundColor] = React.useState<string>('')
   const [textColor, setTextColor] = React.useState<string>('')
 
@@ -111,7 +127,7 @@ const AvatarFallback = React.forwardRef<
       {initials}
     </AvatarPrimitive.Fallback>
   )
-})
+}
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName
 
 export { Avatar, AvatarImage, AvatarFallback }

@@ -1,5 +1,5 @@
 /*
- * ecting.core is licensed under the terms of the EUPL-1.2 license
+ * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
@@ -18,7 +18,7 @@ const TwicewareSolution: React.FC<Props> = ({ hideCopyright = false }) => {
       <div className="w-[320px] mx-auto flex items-center justify-center">
         <a
           href={appWebsite}
-          className="font-medium hover:underline flex items-center"
+          className="font-medium hover:underline flex items-center mx-1.5"
           target="_blank"
           rel="noreferrer"
         >

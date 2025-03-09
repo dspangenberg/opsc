@@ -11,19 +11,19 @@ export function cx(...args: ClassValue[]) {
 
 export const focusInput = [
   // base
-  'focus:ring focus:ring-opacity-50 focus:border-blue-400 focus:ring-blue-200 focus-visible:outline-0'
+  'focus:ring-3 focus:ring-opacity-50 focus:border-blue-400 focus:ring-blue-200 focus-visible:outline-0'
 ]
 
 export const focusWithinInput = [
   // base
-  'focus-within:ring focus:ring-offset-2 focus-within:ring-opacity-50 focus-within:border-blue-400 focus-within:ring-blue-200 focus-within-visible:outline-0'
+  'focus-within:ring-3 focus:ring-offset-2 focus-within:ring-opacity-50 focus-within:border-blue-400 focus-within:ring-blue-200 focus-within-visible:outline-0'
 ]
 
 export const hasErrorInput = [
   // base
-  'focus:ring focus:ring-opacity-50 focus:border-red-400 focus:ring-red-200',
+  'focus:ring-3 focus:ring-opacity-50 focus:border-red-400 focus:ring-red-200',
   // border color
-  '!border-red-300 dark:border-red-700 bg-red-50'
+  'border-red-300! dark:border-red-700 bg-red-50'
   // ring color
 ]
 

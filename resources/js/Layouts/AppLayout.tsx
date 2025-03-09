@@ -5,8 +5,9 @@
 
 import { AppProvider } from '@/Components/AppProvider'
 import { LayoutContainer } from '@/Components/LayoutContainer'
+import { PageBreadcrumbs } from '@/Components/PageBreadcrumbs'
 import { AppSidebar } from '@/Components/app-sidebar'
-import { SidebarInset, SidebarProvider } from '@/Components/ui/sidebar'
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/Components/ui/sidebar'
 import type { PropsWithChildren, ReactNode } from 'react'
 import type React from 'react'
 
@@ -15,11 +16,17 @@ export default function AppLayout({ children }: PropsWithChildren<{ header?: Rea
     <AppProvider>
       <SidebarProvider>
         <AppSidebar />
-        <SidebarInset>
-          <LayoutContainer className="w-full flex flex-1 flex-col py-4">
-            <div className="flex-1 rounded-xl">{children}</div>
+        <div className="bg- w-full">
+          <LayoutContainer className="w-full flex flex-1 flex-col py-3 border-b border-border/50">
+            <div className="flex-none flex gap-0 md:gap-2 items-center px-4">
+              <SidebarTrigger className="-ml-2" />
+              <PageBreadcrumbs className="hidden md:flex" />
+            </div>
           </LayoutContainer>
-        </SidebarInset>
+            <LayoutContainer className="w-full flex flex-1 flex-col py-4">
+            <div className="flex-1 rounded-xl overflow-y-auto">{children}</div>
+          </LayoutContainer>
+        </div>
       </SidebarProvider>
     </AppProvider>
   )

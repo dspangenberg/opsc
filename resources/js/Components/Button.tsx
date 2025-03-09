@@ -35,7 +35,7 @@ interface ButtonProps {
 }
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:text-opacity-25 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:text-opacity-25 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
@@ -95,8 +95,8 @@ export const Button: React.FC<ButtonProps> = ({
 
   const classes = {
     primary:
-      '!font-bold px-2.5 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 focus:ring-blue-500 text-white disabled:bg-blue-600/50 disabled:cursor-not-allowed',
-    dark: 'flex justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500',
+      'font-bold! px-2.5 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 focus:ring-blue-500 text-white disabled:bg-blue-600/50 disabled:cursor-not-allowed',
+    dark: 'flex justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-xs hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500',
     default:
       'active:bg-neutral-200 disabled:opacity-50 font-medium px-2 py-2 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 disabled:bg-neutral-100 disabled:cursor-not-allowed',
     danger:
@@ -119,7 +119,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   const commonProps = {
     className: cn(
-      'items-center text-base text-center rounded focus:outline-none focus:ring-2 inline-flex leading-none focus:ring-offset-2 content-end select-none',
+      'items-center text-base text-center rounded-sm focus:outline-hidden focus:ring-2 inline-flex leading-none focus:ring-offset-2 content-end select-none',
       full ? 'w-full justify-center' : 'w-full md:w-auto',
       classes,
       className
@@ -159,7 +159,7 @@ export const Button: React.FC<ButtonProps> = ({
             {icon && <span className={iconProps.className}>{icon}</span>}
             {(hasLabel || label) && (
               <span
-                className={hasLabel || label ? 'px-2 w-full block text-center !font-bold' : ''}
+                className={hasLabel || label ? 'px-2 w-full block text-center font-bold!' : ''}
               >
                 {children || label}
               </span>
@@ -199,7 +199,7 @@ export const Button: React.FC<ButtonProps> = ({
             {icon && <span className={iconProps.className}>{icon}</span>}
             {(hasLabel || label) && (
               <span
-                className={hasLabel || label ? 'px-2 w-full block text-center !font-bold' : ''}
+                className={hasLabel || label ? 'px-2 w-full block text-center font-bold!' : ''}
               >
                 {children || label}
               </span>

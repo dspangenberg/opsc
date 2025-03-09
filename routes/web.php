@@ -1,6 +1,6 @@
 <?php
 /*
- * ecting.core is licensed under the terms of the EUPL-1.2 license
+ * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
@@ -14,6 +14,7 @@ use App\Http\Controllers\App\Calendar\CalendarCreateController;
 use App\Http\Controllers\App\Calendar\CalendarEditController;
 use App\Http\Controllers\App\Calendar\CalendarIndexController;
 use App\Http\Controllers\App\Calendar\CalendarStoreController;
+use App\Http\Controllers\App\Contact\ContactIndexController;
 use App\Http\Controllers\App\Setting\Booking\Policy\BookingPolicyCreateController;
 use App\Http\Controllers\App\Setting\Booking\Policy\BookingPolicyEditController;
 use App\Http\Controllers\App\Setting\Booking\Policy\BookingPolicyIndexController;
@@ -95,6 +96,10 @@ Route::middleware([
 
     Route::get('app/accommodations',
         AccommodationIndexController::class)->name('app.accommodation.index');
+
+    Route::get('contacts',
+        ContactIndexController::class)->name('app.contact.index');
+
 
     Route::get('app/accommodations/{accommodation}',
         AccommodationDetailsController::class)->name('app.accommodation.details');

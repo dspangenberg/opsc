@@ -38,7 +38,7 @@ export function SettingsLayoutMainMenu({
                   <SidebarMenuButton asChild tooltip={item.title} isActive={isPathActive(item)}>
                     <CollapsibleTrigger asChild>
                       <Link href={item.url} className="items-center">
-                        <HugeiconsIcon icon={item.icon} className="!size-5 text-sidebar-foreground" />
+                        <HugeiconsIcon icon={item.icon} className="size-5! text-sidebar-foreground" />
                         <span className="text-base">{item.title}</span>
                       </Link>
                     </CollapsibleTrigger>

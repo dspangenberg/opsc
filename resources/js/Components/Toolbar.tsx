@@ -47,16 +47,16 @@ export const Toolbar: React.FC<ToolbarProps> = ({ children, title, className, ta
       <div
         className={cn(
           'toolbar',
-          'flex items-center py-2 space-y-4 my-3 flex-1 border-border !rounded-none !shadow-none',
+          'flex items-center py-2 space-y-4 my-3 flex-1',
           className,
           tabs && 'border-0'
         )}
       >
         <div className="flex items-center flex-1">
           <div className="flex-1 items-center flex">
-            <h2 className="text-xl font-bold text-foreground">{title}</h2>
+            <h2 className="text-xl font-medium text-foreground">{title}</h2>
           </div>
-          <div className="flex-shrink-0 ml-4 space-x-2">{children}</div>
+          <div className="shrink-0 ml-4 space-x-2">{children}</div>
         </div>
       </div>
       {tabs && (
@@ -132,7 +132,7 @@ export const ToolbarButton: React.FC<ToolbarButtonProps> = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+        className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
         side="bottom"
         align="end"
         sideOffset={4}

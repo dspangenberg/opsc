@@ -11,12 +11,14 @@ import { useSeasonStore } from '@/Pages/App/Settings/Booking/Season/SeasonEdit'
 import { Add01Icon, Delete03Icon } from '@hugeicons-pro/core-stroke-rounded'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useModal } from '@inertiaui/modal-react'
-import React, { forwardRef, useState, useImperativeHandle, useEffect } from 'react'
+import React, { useState, useImperativeHandle, useEffect } from 'react';
 
-const SeasonEditPeriods = forwardRef<
-  { validatePage: () => Promise<boolean> },
-  React.PropsWithChildren
->((_props, ref) => {
+const SeasonEditPeriods = (
+  {
+    ref,
+    ..._props
+  }
+) => {
   const season = useModal().props.season as App.Data.SeasonData
   const { newSeason, mergeSeason } = useSeasonStore()
 
@@ -103,6 +105,6 @@ const SeasonEditPeriods = forwardRef<
       </FormGroup>
     </form>
   )
-})
+}
 
 export default SeasonEditPeriods

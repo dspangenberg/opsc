@@ -153,7 +153,7 @@ export const ColorPickerSelection = ({ className, ...props }: ColorPickerSelecti
   return (
     <div
       ref={containerRef}
-      className={cn('relative aspect-[4/3] w-full cursor-crosshair rounded', className)}
+      className={cn('relative aspect-4/3 w-full cursor-crosshair rounded-sm', className)}
       style={{
         background: `linear-gradient(0deg,rgb(0,0,0),transparent),linear-gradient(90deg,rgb(255,255,255),hsl(${hue},100%,50%))`
       }}
@@ -193,7 +193,7 @@ export const ColorPickerHue = ({ className, ...props }: ColorPickerHueProps) => 
       <Track className="relative my-0.5 h-3 w-full grow rounded-full bg-[linear-gradient(90deg,#FF0000,#FFFF00,#00FF00,#00FFFF,#0000FF,#FF00FF,#FF0000)]">
         <Range className="absolute h-full" />
       </Track>
-      <Thumb className="block h-4 w-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" />
+      <Thumb className="block h-4 w-4 rounded-full border border-primary/50 bg-background shadow-sm transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" />
     </Root>
   )
 }
@@ -219,10 +219,10 @@ export const ColorPickerAlpha = ({ className, ...props }: ColorPickerAlphaProps)
             'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==") left center'
         }}
       >
-        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent to-primary/50" />
+        <div className="absolute inset-0 rounded-full bg-linear-to-r from-transparent to-primary/50" />
         <Range className="absolute h-full rounded-full bg-transparent" />
       </Track>
-      <Thumb className="block h-4 w-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" />
+      <Thumb className="block h-4 w-4 rounded-full border border-primary/50 bg-background shadow-sm transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" />
     </Root>
   )
 }
@@ -329,7 +329,7 @@ export const ColorPickerFormat = ({ className, ...props }: ColorPickerFormatProp
     }
 
     return (
-      <div className={cn('-space-x-px relative flex items-center shadow-sm', className)} {...props}>
+      <div className={cn('-space-x-px relative flex items-center shadow-xs', className)} {...props}>
         <span className="-translate-y-1/2 absolute top-1/2 left-2 text-xs">#</span>
         <Input
           type="text"
@@ -348,7 +348,7 @@ export const ColorPickerFormat = ({ className, ...props }: ColorPickerFormatProp
       .map(value => Math.round(value))
 
     return (
-      <div className={cn('-space-x-px flex items-center shadow-sm', className)} {...props}>
+      <div className={cn('-space-x-px flex items-center shadow-xs', className)} {...props}>
         {rgb.map((value, index) => (
           <Input
             key={index}
@@ -374,7 +374,7 @@ export const ColorPickerFormat = ({ className, ...props }: ColorPickerFormatProp
       .map(value => Math.round(value))
 
     return (
-      <div className={cn('w-full shadow-sm', className)} {...props}>
+      <div className={cn('w-full shadow-xs', className)} {...props}>
         <Input
           type="text"
           className="h-8 w-full bg-secondary px-2 text-xs shadow-none"
@@ -393,7 +393,7 @@ export const ColorPickerFormat = ({ className, ...props }: ColorPickerFormatProp
       .map(value => Math.round(value))
 
     return (
-      <div className={cn('-space-x-px flex items-center shadow-sm', className)} {...props}>
+      <div className={cn('-space-x-px flex items-center shadow-xs', className)} {...props}>
         {hsl.map((value, index) => (
           <Input
             key={index}

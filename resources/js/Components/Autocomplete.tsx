@@ -75,7 +75,7 @@ export function AutoComplete<T extends string>({
   return (
     <div className="flex items-center">
       <Popover open={open} onOpenChange={setOpen}>
-        <Command shouldFilter={false} className={cn(focusWithinInput, 'rounded')}>
+        <Command shouldFilter={false} className={cn(focusWithinInput, 'rounded-sm')}>
           <PopoverAnchor asChild>
             <CommandPrimitive.Input
               asChild
@@ -97,7 +97,7 @@ export function AutoComplete<T extends string>({
                 e.preventDefault()
               }
             }}
-            className="w-[--radix-popover-trigger-width] p-0"
+            className="w-(--radix-popover-trigger-width) p-0"
           >
             <CommandList>
               {isLoading && (

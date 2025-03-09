@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * 
@@ -11,20 +14,24 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $name
  * @property string $gender
  * @property int $is_hidden
- * @property \Carbon\CarbonImmutable|null $created_at
- * @property \Carbon\CarbonImmutable|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|Salutation newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Salutation newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Salutation query()
- * @method static \Illuminate\Database\Eloquent\Builder|Salutation whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Salutation whereGender($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Salutation whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Salutation whereIsHidden($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Salutation whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Salutation whereUpdatedAt($value)
- * @mixin IdeHelperSalutation
- * @mixin \Eloquent
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @method static Builder|Salutation newModelQuery()
+ * @method static Builder|Salutation newQuery()
+ * @method static Builder|Salutation query()
+ * @method static Builder|Salutation whereCreatedAt($value)
+ * @method static Builder|Salutation whereGender($value)
+ * @method static Builder|Salutation whereId($value)
+ * @method static Builder|Salutation whereIsHidden($value)
+ * @method static Builder|Salutation whereName($value)
+ * @method static Builder|Salutation whereUpdatedAt($value)
+ * @mixin Eloquent
  */
 class Salutation extends Model
 {
+    protected $fillable = [
+        'name',
+        'gender',
+        'is_hidden',
+    ];
 }

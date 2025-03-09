@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Carbon\CarbonImmutable;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * 
@@ -15,8 +15,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $correspondence_salutation_male
  * @property string $correspondence_salutation_female
  * @property string $correspondence_salutation_other
- * @property CarbonImmutable|null $created_at
- * @property CarbonImmutable|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @method static Builder|Title newModelQuery()
  * @method static Builder|Title newQuery()
  * @method static Builder|Title query()
@@ -27,9 +27,14 @@ use Illuminate\Database\Eloquent\Model;
  * @method static Builder|Title whereId($value)
  * @method static Builder|Title whereName($value)
  * @method static Builder|Title whereUpdatedAt($value)
- * @mixin IdeHelperTitle
  * @mixin Eloquent
  */
 class Title extends Model
 {
+    protected $fillable = [
+        'name',
+        'correspondence_salutation_male',
+        'correspondence_salutation_female',
+        'correspondence_salutation_other',
+    ];
 }

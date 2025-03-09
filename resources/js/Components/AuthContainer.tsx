@@ -1,5 +1,5 @@
 /*
- * ospitality.core is licensed under the terms of the EUPL-1.2 license
+ * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
@@ -29,7 +29,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({ title, maxWidth = 'lg', c
 
   return (
     <div
-      className={`container w-full mx-auto h-screen overflow-y-auto items-start mb-12 lg:py-0 flex justify-center lg:items-center auth-container ${containerClasses}`}
+      className={`container w-full mx-auto h-screen bg-background overflow-y-auto items-start mb-12 lg:py-0 flex justify-center lg:items-center auth-container ${containerClasses}`}
     >
       <Head title={title} />
       <div className="text-stone-700 text-base font-medium flex-1">

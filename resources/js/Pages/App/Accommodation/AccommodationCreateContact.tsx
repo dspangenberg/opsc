@@ -4,7 +4,7 @@ import { FormInput } from '@/Components/FormInput'
 import { useForm } from '@/Hooks/use-form'
 import type { GooglePlace } from '@/Hooks/use-google-places-place-details'
 import { useAccommodationStore } from '@/Pages/App/Accommodation/AccommodationCreate'
-import { createRef, forwardRef, useEffect, useImperativeHandle, useState } from 'react'
+import { createRef, useEffect, useImperativeHandle, useState } from 'react';
 import type * as React from 'react'
 import { AccommodationCreateEmail } from './AccommodationCreateEmail'
 
@@ -15,10 +15,14 @@ interface Props {
   onPlaceSelected: (place: GooglePlace) => void
 }
 
-export const AccommodationCreateBase = forwardRef<
-  { validateStep: (step: string) => Promise<boolean> },
-  Props
->(({ accommodation_types, countries, regions }, ref) => {
+export const AccommodationCreateBase = (
+  {
+    ref,
+    accommodation_types,
+    countries,
+    regions
+  }
+) => {
   const { newAccommodation, mergeData } = useAccommodationStore()
 
   const editNameRef = createRef<HTMLInputElement>()
@@ -95,6 +99,6 @@ export const AccommodationCreateBase = forwardRef<
       </FormGroup>
     </form>
   )
-})
+}
 
 export default AccommodationCreateBase

@@ -1,18 +1,11 @@
 /*
- * ooboo.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
+ * opsc.core is licensed under the terms of the EUPL-1.2 license
+ * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
 'use client'
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/Components/ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Components/ui/table'
 import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
 interface DataTableProps<TData, TValue> {
@@ -28,20 +21,19 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   })
 
   return (
-    <div className="rounded-md border">
-      <Table className="table-fixed">
-        <TableHeader>
+    <div className="overflow-y-auto border rounded-md">
+      <Table
+        className="[&_td]:border-border [&_th]:border-border table-fixed border-separate border-spacing-0 [&_tfoot_td]:border-t [&_th]:border-b [&_tr]:border-none [&_tr:not(:last-child)_td]:border-b"
+      >
+        <TableHeader className="bg-background">
           {table.getHeaderGroups().map(headerGroup => (
-            <TableRow key={headerGroup.id}>
+            <TableRow key={headerGroup.id} className="hover:bg-background">
               {headerGroup.headers.map(header => {
                 return (
                   <TableHead
                     key={header.id}
-                    style={{
-                      maxWidth: header.getSize(),
-                      minWidth: header.getSize(),
-                      width: header.getSize()
-                    }}
+                    className="text-foreground"
+                    style={{ width: `${header.getSize()}px` }}
                   >
                     {header.isPlaceholder
                       ? null
@@ -49,6 +41,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                   </TableHead>
                 )
               })}
+              <TableHead />
             </TableRow>
           ))}
         </TableHeader>
@@ -57,10 +50,11 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             table.getRowModel().rows.map(row => (
               <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                 {row.getVisibleCells().map(cell => (
-                  <TableCell key={cell.id}>
+                  <TableCell key={cell.id} className="text-foreground truncate">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
+                <TableCell />
               </TableRow>
             ))
           ) : (

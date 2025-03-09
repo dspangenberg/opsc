@@ -96,17 +96,24 @@ const CredenzaClose = ({ className, children, ...props }: CredenzaProps) => {
   )
 }
 
-const CredenzaContent = React.forwardRef<HTMLDivElement, CredenzaProps>(
-  ({ className, children, ...props }, ref) => {
-    const isDesktop = useMediaQuery(desktop)
-    const CredenzaContentComponent = isDesktop ? DialogContent : DrawerContent
-    return (
-      <CredenzaContentComponent ref={ref} className={cn('overflow-hidden', className)} {...props}>
-        {children}
-      </CredenzaContentComponent>
-    )
+const CredenzaContent = (
+  {
+    ref,
+    className,
+    children,
+    ...props
+  }: CredenzaProps & {
+    ref: React.RefObject<HTMLDivElement>;
   }
-)
+) => {
+  const isDesktop = useMediaQuery(desktop)
+  const CredenzaContentComponent = isDesktop ? DialogContent : DrawerContent
+  return (
+    <CredenzaContentComponent ref={ref} className={cn('overflow-hidden', className)} {...props}>
+      {children}
+    </CredenzaContentComponent>
+  )
+}
 
 const CredenzaDescription = ({ className, children, ...props }: CredenzaProps) => {
   const isDesktop = useMediaQuery(desktop)

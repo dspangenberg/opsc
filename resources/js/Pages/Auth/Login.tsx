@@ -1,14 +1,14 @@
 /*
- * ospitality.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
+ * opsc.core is licensed under the terms of the EUPL-1.2 license
+ * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
 import AuthContainer from '@/Components/AuthContainer'
-import { Button } from '@/Components/Button'
 import { FormCheckbox } from '@/Components/FormCheckbox'
 import { FormErrors } from '@/Components/FormErrors'
 import { FormGroup } from '@/Components/FormGroup'
 import { FormInput } from '@/Components/FormInput'
+import { Button } from '@/Components/ui/button'
 import { useForm } from '@/Hooks/use-form'
 import GuestLayout from '@/Layouts/GuestLayout'
 import { Head, Link } from '@inertiajs/react'
@@ -79,7 +79,7 @@ const Login: React.FC<LoginProps> = ({ status, canResetPassword }) => {
             {canResetPassword && (
               <Link
                 href={route('password.request')}
-                className="rounded-sm text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                className="rounded-xs text-sm text-gray-600 underline hover:text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
                 Kennwort vergessen?
               </Link>
@@ -89,9 +89,9 @@ const Login: React.FC<LoginProps> = ({ status, canResetPassword }) => {
             <Button
               disabled={processing}
               form="form"
-              loading={processing}
-              full
-              variant="primary"
+              variant="default"
+              className="w-full"
+              size="lg"
               type="submit"
             >
               Anmelden

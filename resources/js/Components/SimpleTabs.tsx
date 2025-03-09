@@ -40,7 +40,7 @@ export const SimpleTabsTab: React.FC<SimpleTabsTriggerProps> = ({
     <TabsTrigger
       {...props}
       className={cn(
-        'flex  first:ml-2 border-0 bg-transparent items-center font-normal shadow-none rounded-none px-4 py-0  select-none  !text-base h-9 flex-none data-[state=active]:rounded-t-md text-foreground hover:text-blue-500 cursor-pointer',
+        'flex  first:ml-2 border-0 bg-transparent items-center font-normal shadow-none rounded-none px-4 py-0  select-none  text-base! h-9 flex-none data-[state=active]:rounded-t-md text-foreground hover:text-blue-500 cursor-pointer',
         'data-[state=active]:border data-[state=active]:border-b-0  data-[state=active]:text-foreground data-[state=active]:font-medium data-[state=active]:shadow-none data-[state=active]:border-b-border data-[state=active]:bg-background border-b-transparent   data-[state=active]:z-10 ',
         'disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:text-muted-foreground'
       )}

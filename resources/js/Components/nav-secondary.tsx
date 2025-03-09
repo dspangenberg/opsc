@@ -59,7 +59,7 @@ export function NavSecondary({
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton asChild tooltip={item.title} isActive={isPathActive(item)}>
                     <Link href={item.url}>
-                      <HugeiconsIcon icon={item.icon} size={24} color="currentColor" className="!size-5 !text-sidebar-foreground" />
+                      <HugeiconsIcon icon={item.icon} size={24} color="currentColor" className="size-5! text-sidebar-foreground!" />
                       <span className="text-base">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>

@@ -15,7 +15,7 @@ interface Props<T> {
 
 export const AccommodationTypeItem = <T,>({ value, title, description }: Props<T>) => {
   return (
-    <div className="relative flex w-full items-start rounded-lg border border-input px-4 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring">
+    <div className="relative flex w-full items-start rounded-lg border border-input px-4 shadow-xs shadow-black/5 has-data-[state=checked]:border-ring">
       <RadioGroupItem
         value={value as number}
         id="radio-08-r1"
