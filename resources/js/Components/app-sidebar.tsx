@@ -6,8 +6,13 @@
 import logo from '@/Assets/Images/tw.svg' // Make sure to adjust the import path
 import { NavMain } from '@/Components/nav-main'
 import { NavSecondary } from '@/Components/nav-secondary'
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, useSidebar } from '@/Components/ui/sidebar'
-import { settings } from '@/Pages/App/Settings/SettingsLayout'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader
+} from '@/Components/ui/sidebar'
+
 import {
   ContactBookIcon,
   ContractsIcon,
@@ -15,9 +20,8 @@ import {
   FileEuroIcon,
   FolderFileStorageIcon,
   KanbanIcon,
-  Settings02Icon,
   TimeScheduleIcon
-} from '@hugeicons-pro/core-stroke-rounded'
+} from '@hugeicons/core-free-icons'
 import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { NavUser } from './nav-user'
@@ -73,17 +77,20 @@ const data = {
       hasSep: true
     }
   ],
-  navSecondary: [
-  ]
+  navSecondary: []
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user: App.Data.UserData = usePage().props.auth.user
 
   return (
-    <Sidebar variant="sidebar" collapsible="icon" {...props}>
+    <Sidebar variant="inset" collapsible="icon" {...props}>
       <SidebarHeader className="flex-none h-auto">
-        <img src={logo} className="rounded-md w-10 mx-auto mt-6 mb-6 object-cover" alt="Logo" />
+        <img
+          src={logo}
+          className="rounded-md w-10 mx-auto mt-6 mb-6 object-cover"
+          alt="Logo"
+        />
       </SidebarHeader>
       <SidebarContent className="flex-1 -mt-3">
         <NavMain items={data.navMain} />

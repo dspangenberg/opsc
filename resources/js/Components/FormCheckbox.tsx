@@ -5,40 +5,41 @@
 
 import { Checkbox } from '@/Components/ui/checkbox'
 import { Label } from '@/Components/ui/label'
-import type React from 'react'
+import type { CheckboxProps } from '@radix-ui/react-checkbox'
+import React, { forwardRef } from 'react'
 
-type FormInputProps = Omit<React.ComponentPropsWithoutRef<typeof Checkbox>, 'ref'> & {
+interface FormCheckboxProps extends Omit<CheckboxProps, 'ref'> {
   label?: string
   id: string
   className?: string
 }
 
-export const FormCheckbox = (
-  {
-    ref,
-    label,
-    value,
-    ...props
-  }: FormInputProps & {
-    ref: React.RefObject<HTMLButtonElement>;
+export const FormCheckbox = forwardRef<HTMLButtonElement, FormCheckboxProps>(
+  (
+    {
+      label,
+      id,
+      className,
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <div className="flex items-center gap-2 ">
+        <Checkbox
+          id={id}
+          name={id}
+          {...props}
+          className={`text-base font-normal ${className}`}
+        />
+        {label && (
+          <Label htmlFor={id} className="text-base font-normal text-black" ref={undefined}>
+            {label}
+          </Label>
+        )}
+      </div>
+    )
   }
-) => {
-  return (
-    <div className="flex items-center gap-2 ">
-      <Checkbox
-        ref={ref}
-        name={props.id}
-        value={value}
-        {...props}
-        className={`text-base font-normal ${props.className}`}
-      />
-      {label && (
-        <Label className="text-base font-normal text-black" htmlFor={props.id}>
-          {label}
-        </Label>
-      )}
-    </div>
-  )
-}
+)
 
 FormCheckbox.displayName = 'FormCheckbox'

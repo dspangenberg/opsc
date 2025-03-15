@@ -6,7 +6,7 @@
 import { SidebarContent } from '@/Components/ui/sidebar'
 
 import { useBreadcrumbProvider } from '@/Components/breadcrumb-provider'
-import { useThemeContainer } from '@/Components/theme-container-provider'
+import { useThemeContainer } from '@/Components/ApplicationProvider'
 import {
   Calendar01Icon,
   ComputerCloudIcon,

@@ -39,6 +39,7 @@ export const FormGroup: React.FC<FormGroupProps> = ({
           ${grid ? 'px-0 grid gap-x-3 gap-y-3 m-0 p-0' : ''}
           ${margin ? 'mt-3' : 'not-first:mt-2'}
           ${grid ? gridCols : ''}
+          ${fullWidth ? 'w-full' : ''}
           ${className}
         `}
       >

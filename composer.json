@@ -14,10 +14,15 @@
     "laravel/sanctum": "^4.0",
     "laravel/tinker": "^2.9",
     "matanyadaev/laravel-eloquent-spatial": "^4.4",
+    "mpdf/mpdf": "^8.2",
+    "mpdf/qrcode": "^1.2",
     "plank/laravel-mediable": "^6.2",
     "ploi/ploi-php-sdk": "^1.9",
+    "rikudou/euqrpayment": "^1.4",
     "spatie/laravel-data": "^4.11",
+    "spatie/laravel-settings": "^3.4",
     "spatie/laravel-typescript-transformer": "^2.5",
+    "spatie/temporary-directory": "^2.3",
     "stancl/tenancy": "dev-master",
     "tightenco/ziggy": "^2.0",
     "torann/hashids": "^3.0",
@@ -52,6 +57,9 @@
     }
   ],
   "autoload": {
+      "files":[
+          "app/Helpers/Opsc.php"
+  ],
     "psr-4": {
       "App\\": "app/",
       "Database\\Factories\\": "database/factories/",

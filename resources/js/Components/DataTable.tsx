@@ -5,15 +5,30 @@
 
 'use client'
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Components/ui/table'
-import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/Components/ui/table'
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable
+} from '@tanstack/react-table'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+  columns,
+  data
+}: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
@@ -21,10 +36,8 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   })
 
   return (
-    <div className="overflow-y-auto border rounded-md">
-      <Table
-        className="[&_td]:border-border [&_th]:border-border table-fixed border-separate border-spacing-0 [&_tfoot_td]:border-t [&_th]:border-b [&_tr]:border-none [&_tr:not(:last-child)_td]:border-b"
-      >
+    <div className="border rounded-md">
+      <Table className="[&_td]:border-border [&_th]:border-border table-fixed border-separate border-spacing-0 [&_tfoot_td]:border-t [&_th]:border-b [&_tr]:border-none [&_tr:not(:last-child)_td]:border-b">
         <TableHeader className="bg-background">
           {table.getHeaderGroups().map(headerGroup => (
             <TableRow key={headerGroup.id} className="hover:bg-background">
@@ -37,7 +50,10 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                   >
                     {header.isPlaceholder
                       ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 )
               })}
@@ -48,7 +64,10 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map(row => (
-              <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && 'selected'}
+              >
                 {row.getVisibleCells().map(cell => (
                   <TableCell key={cell.id} className="text-foreground truncate">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

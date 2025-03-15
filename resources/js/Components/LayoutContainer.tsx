@@ -21,12 +21,11 @@ export const LayoutContainer = <T extends ElementType = 'div'>({
   ...rest
 }: Props<T> & Omit<ComponentPropsWithoutRef<T>, keyof Props<T>>) => {
   const Component = as || 'div'
-  const containerClassNames = Array.isArray(containerClassName) ? containerClassName.join(" ") : containerClassName
 
   const { classNames } = useThemeContainer()
-    
+
   return (
-    <Component className={cn(classNames || containerClassNames, className)} {...rest}>
+    <Component className={cn(classNames, className)} {...rest}>
       {children}
     </Component>
   )

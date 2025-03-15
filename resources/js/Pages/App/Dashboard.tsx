@@ -3,10 +3,8 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { useCalendar } from '@/Components/CalendarProvider'
-import { useThemeContainer } from '@/Components/theme-container-provider'
+import { useThemeContainer } from '@/Components/theme-container-provider.tsx'
 import type { PageProps } from '@/Types'
-import { useModalStack } from '@inertiaui/modal-react'
 import type * as React from 'react'
 import { useEffect } from 'react'
 

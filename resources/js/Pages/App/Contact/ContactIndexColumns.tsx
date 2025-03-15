@@ -5,9 +5,8 @@
 
 'use client'
 
-import { Avatar, AvatarFallback } from '@/Components/ui/avatar'
+import { Avatar } from '@dspangenberg/twcui'
 import { Checkbox } from '@/Components/ui/checkbox'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/Components/ui/tooltip'
 import { Link } from '@inertiajs/react'
 import type { ColumnDef } from '@tanstack/react-table'
 import type React from 'react'
@@ -41,24 +40,11 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
     accessorKey: 'initials',
     header: '',
     size: 50,
-    cell: ({ row, getValue }) => {
+    cell: ({ row }) => {
       const fullName: string = row.original.full_name
       const initials: string = row.original.initials.toUpperCase()
       return (
-        <div className="flex items-center">
-          <div className="inline-block">
-            <Tooltip>
-              <TooltipTrigger>
-            <Avatar className="size-8 rounded-full">
-              <AvatarFallback fullname={fullName} initials={initials} className="rounded-full" />
-            </Avatar>
-              </TooltipTrigger>
-              <TooltipContent>
-                <span>{fullName}</span>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-        </div>
+          <Avatar initials={initials} fullname={fullName} className="size-8"/>
       )
     }
   },

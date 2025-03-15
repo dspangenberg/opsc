@@ -3,7 +3,7 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Alert02Icon } from '@hugeicons-pro/core-stroke-rounded'
+import { Alert02Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import type * as React from 'react'
 import { useMemo } from 'react'
@@ -37,7 +37,7 @@ export const FormErrors: React.FC<Props> = ({
                 size={24}
                 color="currentColor"
                 className="mt-0.5 shrink-0 opacity-60 motion-rotate-loop-[6deg] motion-loop-once motion-ease-spring-bounciest"
-                strokeWidth={1.5}
+                strokeWidth={3}
               />
             </div>
             <div className="text-base font-medium flex-1">{title}</div>

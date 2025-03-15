@@ -3,7 +3,7 @@
  * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Logo } from '@/Components/Logo'
+import { LogoSpinner } from '@/Components/Logo'
 import type React from 'react'
 
 interface LogoSpinnerProps {

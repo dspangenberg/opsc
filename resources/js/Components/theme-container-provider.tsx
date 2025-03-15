@@ -6,7 +6,7 @@
 import type React from 'react'
 import { createContext, useContext, useEffect, useState } from 'react'
 
-type Container = "6xl" | "7xl" | "full"
+export type Container = '6xl' | '7xl' | 'full'
 
 type ThemeContainerProviderProps = {
   children: React.ReactNode
@@ -22,10 +22,11 @@ type ContainerProviderState = {
 const initialState: ContainerProviderState = {
   classNames: '',
   width: '7xl',
-  setWidth: () => null,
+  setWidth: () => null
 }
 
-const ThemeContainerProviderContext = createContext<ContainerProviderState>(initialState)
+const ThemeContainerProviderContext =
+  createContext<ContainerProviderState>(initialState)
 
 export function ThemeContainerProvider({
   children,
@@ -36,9 +37,8 @@ export function ThemeContainerProvider({
   const [classNames, setClassNames] = useState<string>('')
 
   const getClassNames = (width: Container): string => {
-
     return {
-      'full': 'max-w-full mx-4',
+      full: 'max-w-full mx-4',
       '6xl': 'max-w-sm md:max-w-6xl lg:mx-w-6xl mx-auto',
       '7xl': 'max-w-sm md:max-w-7xl lg:mx-w-7xl mx-auto'
     }[width]
@@ -53,7 +53,7 @@ export function ThemeContainerProvider({
     classNames,
     setWidth: (newWidth: Container) => {
       setWidth(newWidth)
-    },
+    }
   }
 
   return (
@@ -65,6 +65,9 @@ export function ThemeContainerProvider({
 
 export const useThemeContainer = () => {
   const context = useContext(ThemeContainerProviderContext)
-  if (context === undefined) throw new Error("useThemeContainer must be used within a ThemeContainerProvider")
+  if (context === undefined)
+    throw new Error(
+      'useThemeContainer must be used within a ThemeContainerProvider'
+    )
   return context
 }

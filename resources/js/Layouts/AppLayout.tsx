@@ -7,26 +7,36 @@ import { AppProvider } from '@/Components/AppProvider'
 import { LayoutContainer } from '@/Components/LayoutContainer'
 import { PageBreadcrumbs } from '@/Components/PageBreadcrumbs'
 import { AppSidebar } from '@/Components/app-sidebar'
-import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/Components/ui/sidebar'
+import {
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarInset
+} from '@/Components/ui/sidebar'
 import type { PropsWithChildren, ReactNode } from 'react'
 import type React from 'react'
+import { useAppInitializer } from '@/Hooks/useAppInitializer'
 
-export default function AppLayout({ children }: PropsWithChildren<{ header?: ReactNode }>) {
+export default function AppLayout({
+  children
+}: PropsWithChildren<{ header?: ReactNode }>) {
+  // Call the hook directly in the component body
+  useAppInitializer()
+
   return (
     <AppProvider>
       <SidebarProvider>
         <AppSidebar />
-        <div className="bg- w-full">
-          <LayoutContainer className="w-full flex flex-1 flex-col py-3 border-b border-border/50">
-            <div className="flex-none flex gap-0 md:gap-2 items-center px-4">
-              <SidebarTrigger className="-ml-2" />
-              <PageBreadcrumbs className="hidden md:flex" />
-            </div>
-          </LayoutContainer>
-            <LayoutContainer className="w-full flex flex-1 flex-col py-4">
-            <div className="flex-1 rounded-xl overflow-y-auto">{children}</div>
-          </LayoutContainer>
-        </div>
+        <SidebarInset className="relative">
+          <div className="flex items-center h-12">
+            <SidebarTrigger className="p-6" />
+            <LayoutContainer className="w-full flex flex-col py-1">
+              <PageBreadcrumbs className="hidden md:flex mx-0 px-0" />
+            </LayoutContainer>
+          </div>
+          <div className="absolute top-12 left-0 bottom-0 right-0 bg-sidebar-background overflow-hidden">
+            <div className="mt-12">{children}</div>
+          </div>
+        </SidebarInset>
       </SidebarProvider>
     </AppProvider>
   )

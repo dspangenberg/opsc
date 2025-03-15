@@ -4,6 +4,10 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  twcui: link:../../../Library/pnpm/global/5/node_modules/twcui
+  '@dspangenberg/twcui': link:../../../Library/pnpm/global/5/node_modules/@dspangenberg/twcui
+
 importers:
 
   .:
@@ -14,12 +18,18 @@ importers:
       '@dnd-kit/modifiers':
         specifier: ^9.0.0
         version: 9.0.0(@dnd-kit/core@6.3.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)
+      '@dspangenberg/twcui':
+        specifier: link:../../../Library/pnpm/global/5/node_modules/@dspangenberg/twcui
+        version: link:../../../Library/pnpm/global/5/node_modules/@dspangenberg/twcui
       '@fontsource/clear-sans':
         specifier: ^5.2.5
         version: 5.2.5
       '@hugeicons-pro/core-stroke-rounded':
         specifier: ^1.0.11
         version: 1.0.11
+      '@hugeicons/core-free-icons':
+        specifier: ^1.0.13
+        version: 1.0.13
       '@hugeicons/react':
         specifier: ^1.0.4
         version: 1.0.4(react@19.0.0)
@@ -209,6 +219,9 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@4.0.9)
+      twcui:
+        specifier: link:../../../Library/pnpm/global/5/node_modules/twcui
+        version: link:../../../Library/pnpm/global/5/node_modules/twcui
       vaul:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.0.4(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -742,6 +755,9 @@ packages:
 
   '@hugeicons-pro/core-stroke-rounded@1.0.11':
     resolution: {integrity: sha512-zAbkYBXm454daZ9kNAAf56zCVMXobuiO6G/onW3h8nbtIkOJ1cd1EratKiLKaf+33vpTCE6i0yML/ySw+JbIGw==}
+
+  '@hugeicons/core-free-icons@1.0.13':
+    resolution: {integrity: sha512-H0TwkJmvYXdAeUYvNXdQ4b94Xv6vIxZu2aQK+8fnm6Gho74yDrLH9pNqLk931OY8pVvLxPgEOZEDtBO2aZacng==}
 
   '@hugeicons/react@1.0.4':
     resolution: {integrity: sha512-dLkGZRW3K724ePvrmb67BpMY8tT4JywYdJipF8ALtkvsyMC4qAF75R0tOvUI6X3TIshyj3/OQ7vRcAwb0J8haw==}
@@ -4391,6 +4407,8 @@ snapshots:
       react-dom: 19.0.0(react@19.0.0)
 
   '@hugeicons-pro/core-stroke-rounded@1.0.11': {}
+
+  '@hugeicons/core-free-icons@1.0.13': {}
 
   '@hugeicons/react@1.0.4(react@19.0.0)':
     dependencies:
