@@ -5,11 +5,10 @@
 
 'use client'
 
-import { router, usePage } from '@inertiajs/react'
+import { router } from '@inertiajs/react'
 
-import { Logo } from '@dspangenberg/twcui'
 import { ThemeSwitch } from '@/Components/theme-switch'
-import { Avatar } from '@dspangenberg/twcui'
+import { Avatar, Button } from '@dspangenberg/twcui'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,17 +18,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/Components/ui/dropdown-menu'
-import {
-  Logout01Icon,
-  NotificationSquareIcon,
-  Settings05Icon,
-  UserIcon
-} from '@hugeicons/core-free-icons'
+import { Logout01Icon, Settings05Icon, UserIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { ChevronsUpDown } from 'lucide-react'
 import type React from 'react'
-import { SidebarMenuButton, useSidebar } from './ui/sidebar'
-import { useApplicationProvider } from '@/Components/ApplicationProvider'
 
 export function NavUser({
   user
@@ -39,33 +30,20 @@ export function NavUser({
   const handleLogout = () => {
     router.post(route('app.logout', {}, false))
   }
-
-  const { isMobile } = useSidebar()
-
-  const { appWithVersion } = useApplicationProvider()
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <SidebarMenuButton
-          size="lg"
-          className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-        >
+        <Button size="icon" variant="ghost" className="rounded-full">
           <Avatar
             src={user.avatar_url as unknown as string}
             initials={user.initials}
             fullname={user.full_name}
           />
-          <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">{user.full_name}</span>
-            <span className="truncate text-xs">{user.email}</span>
-          </div>
-          <ChevronsUpDown className="ml-auto size-4" />
-        </SidebarMenuButton>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-        side={isMobile ? 'bottom' : 'right'}
+        side="bottom"
         align="end"
         sideOffset={4}
       >
@@ -86,14 +64,6 @@ export function NavUser({
         <DropdownMenuLabel className="py-1 font-normal">
           <ThemeSwitch />
         </DropdownMenuLabel>
-
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <HugeiconsIcon icon={NotificationSquareIcon} />
-            Benachrichtigungen
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
 
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

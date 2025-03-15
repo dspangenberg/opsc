@@ -16,14 +16,15 @@ const editUrl = (id: number) => route('app.accommodation.details', { id })
 export const columns: ColumnDef<App.Data.ContactData>[] = [
   {
     id: 'select',
-    size: 32,
+    size: 40,
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-        className="align-middle"
+        className="align-middle mx-3 bg-background"
         aria-label="Select all"
       />
     ),
@@ -31,7 +32,7 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={value => row.toggleSelected(!!value)}
-        className="align-middle bg-background"
+        className="align-middle bg-background mx-3"
         aria-label="Select row"
       />
     )
@@ -44,7 +45,7 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
       const fullName: string = row.original.full_name
       const initials: string = row.original.initials.toUpperCase()
       return (
-          <Avatar initials={initials} fullname={fullName} className="size-8"/>
+        <Avatar initials={initials} fullname={fullName} className="size-8" />
       )
     }
   },
@@ -53,15 +54,12 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
     header: 'Name',
     size: 300,
     cell: ({ row, getValue }) => (
-
-
       <Link
         href={editUrl(row.original.id as number)}
         className="font-medium hover:underline hover:text-primary align-middle truncate"
       >
         {getValue<string>()}
       </Link>
-
     )
   },
   {

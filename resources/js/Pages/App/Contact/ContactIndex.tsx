@@ -1,64 +1,75 @@
-/*
- * opsc.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
- */
-
-import { EmptyState } from '@/Components/EmptyState'
-import { Toolbar, ToolbarButton } from '@/Components/Toolbar'
-import { useBreadcrumbProvider } from '@/Components/breadcrumb-provider'
-
-import { Add01Icon, InboxIcon } from '@hugeicons-pro/core-stroke-rounded'
+import { useCallback, useMemo } from 'react'
+import type * as React from 'react'
 import { usePage } from '@inertiajs/react'
-
-import { DataTable } from '@/Components/DataTable'
 import { useModalStack } from '@inertiaui/modal-react'
-import type React from 'react'
-import { useEffect } from 'react'
-import { columns } from './ContactIndexColumns'
+import { NoteEditIcon, PrinterIcon, Add01Icon, InboxIcon } from '@hugeicons/core-free-icons'
+import { NavTabs, NavTabsTab } from '@/Components/NavTabs'
+import { DataTable } from '@/Components/DataTable'
+import { EmptyState } from '@/Components/EmptyState'
 import { PageContainer } from '@/Components/PageContainer'
+import { Toolbar, ToolbarButton } from '@dspangenberg/twcui'
+import { columns } from './ContactIndexColumns'
+import type { PageProps } from '@/Types'
+
+interface ContactIndexProps extends PageProps {
+  contacts: App.Data.ContactData[]
+}
 
 const ContactIndex: React.FC = () => {
-  const contacts = usePage().props.contacts as App.Data.ContactData[]
-
+  const { contacts } = usePage<ContactIndexProps>().props
   const { visitModal } = useModalStack()
-  const { setBreadcrumbs } = useBreadcrumbProvider()
-  const handleAdd = () => {
-    visitModal(route('app.accommodation.create'))
-  }
 
-  useEffect(() => {
-    setBreadcrumbs([{ title: 'Kontakte', route: route('app.contact.index') }])
-  }, [])
+  const handleAdd = useCallback(() => {
+    visitModal(route('app.accommodation.create'))
+  }, [visitModal])
+
+  const breadcrumbs = useMemo(() => [{ title: 'Kontakte', route: route('app.contact.index') }], [])
+
+  const toolbar = useMemo(
+    () => (
+      <Toolbar className="border-0 shadow-none">
+        <ToolbarButton variant="default" icon={NoteEditIcon} title="Bearbeiten" />
+        <ToolbarButton icon={PrinterIcon} title="Drucken" />
+      </Toolbar>
+    ),
+    []
+  )
+
+  const tabs = useMemo(
+    () => (
+      <NavTabs>
+        <NavTabsTab href={route('app.contact.index')} activeRoute="/app/contacts">
+          Alle Kontakte
+        </NavTabsTab>
+        <NavTabsTab href={route('app.contact.index')} activeRoute="/app/contacts/favorites">
+          Favoriten
+        </NavTabsTab>
+      </NavTabs>
+    ),
+    []
+  )
 
   return (
     <PageContainer
       title="Kontakte"
       width="7xl"
-      header={
-        <Toolbar title="Kontakte" className="flex-none">
-          <ToolbarButton
-            variant="primary"
-            label="Kontakt hinzufügen"
-            icon={Add01Icon}
-            onClick={handleAdd}
-          />
-        </Toolbar>
-      }
+      breadcrumbs={breadcrumbs}
+      className="overflow-hidden flex"
+      toolbar={toolbar}
+      tabs={tabs}
     >
-      <div className="flex-1 rounded-lg border-stone-100 px-4 flex flex-col">
-        {contacts.length > 0 ? (
-          <DataTable columns={columns} data={contacts} />
-        ) : (
-          <EmptyState
-            buttonLabel="Ersten Kontakt hinzufügen"
-            buttonIcon={Add01Icon}
-            onClick={handleAdd}
-            icon={InboxIcon}
-          >
-            Ups, Du hast noch keine Kontakte.
-          </EmptyState>
-        )}
-      </div>
+      {contacts.length > 0 ? (
+        <DataTable columns={columns} data={contacts} />
+      ) : (
+        <EmptyState
+          buttonLabel="Ersten Kontakt hinzufügen"
+          buttonIcon={Add01Icon}
+          onClick={handleAdd}
+          icon={InboxIcon}
+        >
+          Ups, Du hast noch keine Kontakte.
+        </EmptyState>
+      )}
     </PageContainer>
   )
 }

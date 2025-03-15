@@ -3,31 +3,35 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import type * as React from 'react'
+import * as React from 'react'
 
 import { cn } from '@/Lib/utils'
 
-function Table({ className, ...props }: React.ComponentProps<'table'>) {
-  return (
-    <div className="relative w-full overflow-auto">
-      <table
-        data-slot="table"
-        className={cn('w-full caption-bottom text-base', className)}
-        {...props}
-      />
-    </div>
+const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
+  ({ className, ...props }, ref) => (
+    <table ref={ref} className={cn('w-full caption-bottom text-sm', className)} {...props} />
   )
-}
+)
+Table.displayName = 'Table'
 
-function TableHeader({ className, ...props }: React.ComponentProps<'thead'>) {
-  return <thead data-slot="table-header" className={cn(className)} {...props} />
-}
+const TableHeader = React.forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <thead
+    ref={ref}
+    // Manually added sticky top-0 to fix header not sticking to top of table
+    className={cn('sticky top-0 z-20 bg-background rounded-t-md', className)}
+    {...props}
+  />
+))
+TableHeader.displayName = 'TableHeader'
 
 function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
   return (
     <tbody
       data-slot="table-body"
-      className={cn('[&_tr:last-child]:border-0', className)}
+      className={cn('[&_tr:last-child]:border-b mt-20', className)}
       {...props}
     />
   )

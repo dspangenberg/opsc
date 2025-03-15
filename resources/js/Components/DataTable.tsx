@@ -8,27 +8,23 @@
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow
 } from '@/Components/ui/table'
-import {
-  type ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable
-} from '@tanstack/react-table'
+import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { ScrollArea } from '@/Components/ui/scroll-area'
+import type React from 'react'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data
-}: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
@@ -36,11 +32,11 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="border rounded-md">
+    <ScrollArea className="flex-1 border rounded-md">
       <Table className="[&_td]:border-border [&_th]:border-border table-fixed border-separate border-spacing-0 [&_tfoot_td]:border-t [&_th]:border-b [&_tr]:border-none [&_tr:not(:last-child)_td]:border-b">
-        <TableHeader className="bg-background">
+        <TableHeader className="rounded-t-md bg-sidebar">
           {table.getHeaderGroups().map(headerGroup => (
-            <TableRow key={headerGroup.id} className="hover:bg-background">
+            <TableRow key={headerGroup.id} className="hover:bg-sidebar">
               {headerGroup.headers.map(header => {
                 return (
                   <TableHead
@@ -50,10 +46,7 @@ export function DataTable<TData, TValue>({
                   >
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 )
               })}
@@ -61,13 +54,10 @@ export function DataTable<TData, TValue>({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
+        <TableBody className="mt-12 mb-12">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map(row => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
-              >
+              <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                 {row.getVisibleCells().map(cell => (
                   <TableCell key={cell.id} className="text-foreground truncate">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -85,6 +75,6 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
-    </div>
+    </ScrollArea>
   )
 }

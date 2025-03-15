@@ -3,22 +3,40 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { useThemeContainer } from '@/Components/theme-container-provider.tsx'
 import type { PageProps } from '@/Types'
 import type * as React from 'react'
-import { useEffect } from 'react'
+import { PageContainer } from '@/Components/PageContainer'
 
 const Dashboard: React.FC<PageProps> = ({ auth }) => {
-  const { setWidth } = useThemeContainer()
-
-  useEffect(() => {
-    setWidth('7xl')
-  }, [setWidth])
+  const headerTitle: string = `Willkommen zurück, ${auth.user.first_name}!`
 
   return (
-    <div className="mx-auto h-full rounded-xl p-8">
-      Hi, {auth.user.first_name}
-    </div>
+    <PageContainer
+      title="Dashboard"
+      width="7xl"
+      header={<div className="font-medium">{headerTitle}</div>}
+      breadcrumbs={[]}
+      headerClassname="py-6"
+    >
+      <div className="flex flex-1 flex-col gap-4 pt-0">
+        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+          <div className="aspect-video rounded-xl bg-muted/50" />
+          <div className="aspect-video rounded-xl bg-muted/50" />
+          <div className="aspect-video rounded-xl bg-muted/50" />
+        </div>
+
+        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+          <div className="aspect-video rounded-xl bg-muted/50" />
+          <div className="aspect-video rounded-xl bg-muted/50" />
+          <div className="aspect-video rounded-xl bg-muted/50" />
+        </div>
+        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+          <div className="aspect-video rounded-xl bg-muted/50" />
+          <div className="aspect-video rounded-xl bg-muted/50" />
+          <div className="aspect-video rounded-xl bg-muted/50" />
+        </div>
+      </div>
+    </PageContainer>
   )
 }
 

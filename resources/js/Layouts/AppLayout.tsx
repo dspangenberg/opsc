@@ -6,35 +6,43 @@
 import { AppProvider } from '@/Components/AppProvider'
 import { LayoutContainer } from '@/Components/LayoutContainer'
 import { PageBreadcrumbs } from '@/Components/PageBreadcrumbs'
-import { AppSidebar } from '@/Components/app-sidebar'
-import {
-  SidebarProvider,
-  SidebarTrigger,
-  SidebarInset
-} from '@/Components/ui/sidebar'
+import { AppSidebar } from '@/Components/AppSidebar'
+import { SidebarProvider, SidebarTrigger, SidebarInset } from '@/Components/ui/sidebar'
 import type { PropsWithChildren, ReactNode } from 'react'
 import type React from 'react'
 import { useAppInitializer } from '@/Hooks/useAppInitializer'
-
-export default function AppLayout({
-  children
-}: PropsWithChildren<{ header?: ReactNode }>) {
+import { NavUser } from '@/Components/NavUser'
+import { usePage } from '@inertiajs/react'
+import { SidebarLeftIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+export default function AppLayout({ children }: PropsWithChildren<{ header?: ReactNode }>) {
   // Call the hook directly in the component body
   useAppInitializer()
+  const user: App.Data.UserData = usePage().props.auth.user
 
   return (
     <AppProvider>
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset className="relative">
-          <div className="flex items-center h-12">
-            <SidebarTrigger className="p-6" />
-            <LayoutContainer className="w-full flex flex-col py-1">
-              <PageBreadcrumbs className="hidden md:flex mx-0 px-0" />
+          <div className="absolute top-0 bottom-14 left-0 right-12 p-3 pointer-event">
+            <SidebarTrigger className="size-8 active:border pointer-event">
+              <HugeiconsIcon icon={SidebarLeftIcon} className="size-5" />
+              <span className="sr-only">Toggle Sidebar</span>
+            </SidebarTrigger>
+          </div>
+          <div className="flex items-center h-12 z-20">
+            <LayoutContainer className="w-full flex py-1 flex-1 items-center">
+              <div className="flex-1">
+                <PageBreadcrumbs className="hidden md:flex" />
+              </div>
+              <div className="flex-none">
+                <NavUser user={user} />
+              </div>
             </LayoutContainer>
           </div>
-          <div className="absolute top-12 left-0 bottom-0 right-0 bg-sidebar-background overflow-hidden">
-            <div className="mt-12">{children}</div>
+          <div className="absolute top-12 left-0 bottom-0 right-0 overflow-hidden">
+            <div className="mt-6">{children}</div>
           </div>
         </SidebarInset>
       </SidebarProvider>

@@ -15,7 +15,7 @@ import { Link } from '@inertiajs/react'
 import * as React from 'react'
 import { useEffect } from 'react'
 
-type BreadcrumbTypes = "link" | "text" | "menu"
+type BreadcrumbTypes = 'link' | 'text' | 'menu'
 export interface BreadcrumbProp {
   title: string
   route?: string
@@ -38,10 +38,15 @@ export const PageBreadcrumbs: React.FC<Props> = ({ className = '', items }: Prop
     <Breadcrumb className={className}>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <Link className="transition-colors hover:text-foreground" href={route('app.dashboard')}>Dashboard</Link>
+          <Link
+            className="transition-colors text-foreground hover:text-foreground font-medium hover:underline"
+            href={route('app.dashboard')}
+          >
+            Dashboard
+          </Link>
         </BreadcrumbItem>
 
-        { breadcrumbs.length > 0 && <BreadcrumbSeparator />}
+        {breadcrumbs.length > 0 && <BreadcrumbSeparator />}
 
         {breadcrumbs.map((item, index) => (
           <React.Fragment key={item.route}>
@@ -49,9 +54,12 @@ export const PageBreadcrumbs: React.FC<Props> = ({ className = '', items }: Prop
               {index === breadcrumbs.length - 1 ? (
                 <BreadcrumbPage>{item.title}</BreadcrumbPage>
               ) : (
-
-                  <Link className="transition-colors hover:text-foreground" href={item.route as string}>{item.title}</Link>
-
+                <Link
+                  className="transition-colors hover:text-foreground"
+                  href={item.route as string}
+                >
+                  {item.title}
+                </Link>
               )}
             </BreadcrumbItem>
             {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
