@@ -13,6 +13,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
+use Maize\Markable\Markable;
+use Maize\Markable\Models\Favorite;
+
 
 /**
  * @property int $id
@@ -126,13 +129,21 @@ use Illuminate\Support\Carbon;
  */
 class Contact extends Model
 {
+
+    use Markable;
+
+    protected static array $marks = [
+        Favorite::class,
+    ];
+
     protected $appends = [
         'full_name',
         'reverse_full_name',
+        'is_favorite',
         'initials',
+        'primary_mail',
         'company_name',
     ];
-
     protected $attributes = [
         'name' => '',
         'first_name' => '',
@@ -158,7 +169,6 @@ class Contact extends Model
         'archived_reason' => '',
         'deleted_at' => null,
     ];
-
     protected $fillable = [
         'company_id',
         'is_org',
@@ -195,7 +205,6 @@ class Contact extends Model
         'dob',
     ];
 
-
     public function getFullNameAttribute(): string
     {
         if ($this->first_name) {
@@ -216,10 +225,24 @@ class Contact extends Model
         return '';
     }
 
+    public function getIsFavoriteAttribute(): bool
+    {
+        return Favorite::has($this, auth()->user());
+    }
+
+    public function getPrimaryMailAttribute(): string
+    {
+        if (count($this->mails)) {
+            return $this->mails[0]['email'];
+        }
+        return '';
+    }
+
+
     public function getInitialsAttribute(): string
     {
         if ($this->first_name) {
-            return substr($this->first_name, 0, 1).substr($this->name, 0, 1);
+            return substr($this->first_name, 0, 1) . substr($this->name, 0, 1);
         }
 
         return substr($this->name, 0, 1);

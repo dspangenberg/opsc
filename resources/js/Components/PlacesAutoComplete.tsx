@@ -4,7 +4,7 @@ import { usePlacesPlaceDetails } from '@/Hooks/use-google-places-place-details'
 import type { GooglePlace } from '@/Hooks/use-google-places-place-details'
 import { useDebounce } from '@react-hooks-library/core'
 import { useEffect, useState } from 'react'
-import { LogoSpinner } from './LogoSpinner'
+import { LogoSpinner } from '@dspangenberg/twcui'
 
 export interface PlacesAutoCompleteProps {
   onPlaceSelected: (place: GooglePlace | null) => void

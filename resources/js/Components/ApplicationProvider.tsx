@@ -1,11 +1,5 @@
 import type React from 'react'
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useMemo
-} from 'react'
+import { createContext, useContext, useState, useCallback, useMemo } from 'react'
 import { Logo } from '@dspangenberg/twcui'
 
 interface ApplicationProviderState {
@@ -23,6 +17,7 @@ interface ApplicationProviderState {
   setAppVersion: (appVersion: string) => void
   setAppWebsite: (appWebsite: string) => void
   setAppBuild: (appBuild: string) => void
+  setAppCopyrightYear: (appCopyrightYear: number) => void
 }
 
 const initialState: ApplicationProviderState = {
@@ -39,6 +34,7 @@ const initialState: ApplicationProviderState = {
   setAppName: () => {},
   setAppVersion: () => {},
   setAppWebsite: () => {},
+  setAppCopyrightYear: () => {},
   setAppBuild: () => {}
 }
 
@@ -53,6 +49,10 @@ export function ApplicationProvider({ children }: React.PropsWithChildren) {
 
   const setLogo = useCallback((logo: React.ReactElement) => {
     setState(prev => ({ ...prev, logo }))
+  }, [])
+
+  const setAppCopyrightYear = useCallback((year: number) => {
+    setState(prev => ({ ...prev, appCopyrightYear: year }))
   }, [])
 
   const setAppName = useCallback((appName: string) => {
@@ -90,6 +90,7 @@ export function ApplicationProvider({ children }: React.PropsWithChildren) {
     setLogo,
     setAppName,
     setAppVersion,
+    setAppCopyrightYear,
     setAppWebsite,
     setAppBuild
   }
@@ -104,9 +105,7 @@ export function ApplicationProvider({ children }: React.PropsWithChildren) {
 export const useApplicationProvider = () => {
   const context = useContext(ApplicationContext)
   if (context === undefined) {
-    throw new Error(
-      'useApplicationProvider must be used within an ApplicationProvider'
-    )
+    throw new Error('useApplicationProvider must be used within an ApplicationProvider')
   }
   return context
 }

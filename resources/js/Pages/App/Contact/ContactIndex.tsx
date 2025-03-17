@@ -10,13 +10,15 @@ import { PageContainer } from '@/Components/PageContainer'
 import { Toolbar, ToolbarButton } from '@dspangenberg/twcui'
 import { columns } from './ContactIndexColumns'
 import type { PageProps } from '@/Types'
+import { Pagination } from '@/Components/Pagination'
 
 interface ContactIndexProps extends PageProps {
-  contacts: App.Data.ContactData[]
+  contacts: App.Data.Paginated.Contact & App.Data.Paginated.PaginationMeta<App.Data.ContactData[]>
 }
 
 const ContactIndex: React.FC = () => {
   const { contacts } = usePage<ContactIndexProps>().props
+
   const { visitModal } = useModalStack()
 
   const handleAdd = useCallback(() => {
@@ -27,7 +29,7 @@ const ContactIndex: React.FC = () => {
 
   const toolbar = useMemo(
     () => (
-      <Toolbar className="border-0 shadow-none">
+      <Toolbar className="bg-background border-0 shadow-none">
         <ToolbarButton variant="default" icon={NoteEditIcon} title="Bearbeiten" />
         <ToolbarButton icon={PrinterIcon} title="Drucken" />
       </Toolbar>
@@ -49,6 +51,8 @@ const ContactIndex: React.FC = () => {
     []
   )
 
+  const footer = useMemo(() => <Pagination data={contacts} />, [contacts])
+
   return (
     <PageContainer
       title="Kontakte"
@@ -58,8 +62,8 @@ const ContactIndex: React.FC = () => {
       toolbar={toolbar}
       tabs={tabs}
     >
-      {contacts.length > 0 ? (
-        <DataTable columns={columns} data={contacts} />
+      {contacts.data.length > 0 ? (
+        <DataTable columns={columns} data={contacts.data} footer={footer} />
       ) : (
         <EmptyState
           buttonLabel="Ersten Kontakt hinzufügen"

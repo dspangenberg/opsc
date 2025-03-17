@@ -22,18 +22,17 @@
   --font-weight-thin: 100;
   --font-weight-light: 300;
   --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 500;
+  --font-weight-medium: 600;
+  --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
   --text-xxs: 0.67rem;
   --text-xs: 0.74rem;
   --text-sm: 0.85rem;
   --text-base: 0.9rem;
-  --text-lg: 1.2rem;
-  --text-xl: 1.4rem;
-  --text-2xl: 2.369rem;
-  --text-2xl--line-height: 1.25;
+  --text-lg: 1.0rem;
+  --text-xl: 1.2rem;
+  --text-2xl: 1.3rem;
   --text-3xl: 3.157rem;
   --text-3xl--line-height: 1.25;
   --text-4xl: 4.209rem;

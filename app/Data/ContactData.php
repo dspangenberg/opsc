@@ -13,24 +13,39 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 class ContactData extends Data
 {
     public function __construct(
-        public readonly ?int $id,
-        public readonly string $name,
+        public readonly ?int    $id,
+        public readonly string  $name,
         public readonly ?string $first_name,
         public readonly ?string $company_name,
-        public readonly ?int $company_id,
-        public readonly string $full_name,
-        public readonly string $reverse_full_name,
-        public readonly string $initials,
-        public readonly ?int $title_id,
-        public readonly ?int $salutation_id,
+        public readonly ?int    $company_id,
+        public readonly string  $full_name,
+        public readonly string  $reverse_full_name,
+        public readonly string  $initials,
+        public readonly ?int    $title_id,
+        public readonly ?int    $salutation_id,
         public readonly ?string $creditor_number,
+        public readonly ?bool   $is_favorite,
         public readonly ?string $debtor_number,
+        public readonly ?string $primary_mail,
+        public readonly ?string $vat_id,
+        public readonly ?string $register_court,
+        public readonly ?string $register_number,
+        public readonly ?string $tax_number,
+
         /** @var ContactData */
         public readonly ?object $company,
         /** @var TitleData */
         public readonly ?object $title,
         /** @var SalutationData */
         public readonly ?object $salutation,
-    ) {
+        /** @var ContactMailData[] */
+        public readonly ?array  $emails,
+    )
+    {
+    }
+
+    public function defaultWrap(): string
+    {
+        return 'data';
     }
 }

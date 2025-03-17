@@ -5,7 +5,7 @@
 
 import { EmptyState } from '@/Components/EmptyState'
 import { Toolbar, ToolbarButton } from '@/Components/Toolbar'
-import { Add01Icon, FilterIcon} from '@hugeicons-pro/core-stroke-rounded'
+import { Add01Icon, FilterIcon } from '@hugeicons/core-free-icons'
 import type React from 'react'
 
 const handleAdd = () => {
@@ -13,30 +13,25 @@ const handleAdd = () => {
 }
 
 const ProfileAndSecurityIndex: React.FC = () => {
-
   return (
-
-      <div className="h-full rounded-lg border-stone-100 px-4 flex flex-col">
-        <Toolbar
-          title="Personengruppen"
-          className="flex-none"
-        >
-          <ToolbarButton
-            variant="primary"
-            label="Saison hinzufügen"
-            icon={Add01Icon}
-            onClick={handleAdd}
-          />
-          <ToolbarButton disabled variant="default" label="Filtern" icon={FilterIcon} />
-        </Toolbar>
-        <div className="flex-none flex">
-          <div className="py-6 w-full justify-center space-y-6 items-center text-center rounded-lg text-sm text-muted-foreground">
-            <EmptyState buttonLabel="Erste Saisons hinzufügen" onClick={handleAdd}>
-              Ups, Du hast noch keine Personengruppen
-            </EmptyState>
-          </div>
+    <div className="h-full rounded-lg border-stone-100 px-4 flex flex-col">
+      <Toolbar title="Personengruppen" className="flex-none">
+        <ToolbarButton
+          variant="primary"
+          label="Saison hinzufügen"
+          icon={Add01Icon}
+          onClick={handleAdd}
+        />
+        <ToolbarButton disabled variant="default" label="Filtern" icon={FilterIcon} />
+      </Toolbar>
+      <div className="flex-none flex">
+        <div className="py-6 w-full justify-center space-y-6 items-center text-center rounded-lg text-sm text-muted-foreground">
+          <EmptyState buttonLabel="Erste Saisons hinzufügen" onClick={handleAdd}>
+            Ups, Du hast noch keine Personengruppen
+          </EmptyState>
         </div>
       </div>
+    </div>
   )
 }
 

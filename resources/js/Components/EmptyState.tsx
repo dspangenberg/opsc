@@ -5,11 +5,10 @@
 
 import { ToolbarButton } from '@/Components/Toolbar'
 import { cn } from '@/Lib/utils'
-import { Add01Icon, GeometricShapes01Icon } from '@hugeicons-pro/core-stroke-rounded'
-import { HugeiconsIcon} from '@hugeicons/react'
+import { Add01Icon, GeometricShapes01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import type React from 'react'
 import type { ReactNode } from 'react'
-
 
 interface Props {
   children: ReactNode

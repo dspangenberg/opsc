@@ -4,14 +4,23 @@
  */
 
 'use client'
-
+import { FavouriteIcon } from '@hugeicons/core-free-icons'
 import { Avatar } from '@dspangenberg/twcui'
 import { Checkbox } from '@/Components/ui/checkbox'
 import { Link } from '@inertiajs/react'
 import type { ColumnDef } from '@tanstack/react-table'
 import type React from 'react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { router } from '@inertiajs/react'
 
-const editUrl = (id: number) => route('app.accommodation.details', { id })
+const editUrl = (id: number | null) => (id ? route('app.contact.details', { id }) : '#')
+const onFavoriteToggle = (id: number | null) => {
+  if (id) {
+    router.put(route('app.contact.toggle-favorite', { id }))
+  }
+}
+
+const mailLink = (mail: string) => `mailto:${mail}`
 
 export const columns: ColumnDef<App.Data.ContactData>[] = [
   {
@@ -20,8 +29,7 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
         className="align-middle mx-3 bg-background"
@@ -38,16 +46,29 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
     )
   },
   {
+    id: 'is_favorite',
+    accessorKey: 'is_favorite',
+    size: 40,
+    header: '',
+    cell: ({ row }) => (
+      <HugeiconsIcon
+        icon={FavouriteIcon}
+        className={`size-5 mx-auto ${row.original.is_favorite ? 'text-red-500 hover:text-foreground fill-red-500' : 'hover:text-foreground/50  text-border/90'}`}
+        onClick={() => onFavoriteToggle(row.original.id)}
+      />
+    )
+  },
+  {
     accessorKey: 'initials',
     header: '',
     size: 50,
-    cell: ({ row }) => {
-      const fullName: string = row.original.full_name
-      const initials: string = row.original.initials.toUpperCase()
-      return (
-        <Avatar initials={initials} fullname={fullName} className="size-8" />
-      )
-    }
+    cell: ({ row }) => (
+      <Avatar
+        initials={row.original.initials.toUpperCase()}
+        fullname={row.original.full_name}
+        className="size-8"
+      />
+    )
   },
   {
     accessorKey: 'reverse_full_name',
@@ -55,11 +76,21 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
     size: 300,
     cell: ({ row, getValue }) => (
       <Link
-        href={editUrl(row.original.id as number)}
+        href={editUrl(row.original.id)}
         className="font-medium hover:underline hover:text-primary align-middle truncate"
       >
-        {getValue<string>()}
+        {getValue() as string}
       </Link>
+    )
+  },
+  {
+    accessorKey: 'primary_mail',
+    header: 'E-Mail',
+    size: 300,
+    cell: ({ getValue }) => (
+      <a href={mailLink(getValue() as string)} className="hover:underline">
+        {getValue() as string}
+      </a>
     )
   },
   {
@@ -68,10 +99,10 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
     size: 300,
     cell: ({ row, getValue }) => (
       <Link
-        href={editUrl(row.original.id as number)}
+        href={editUrl(row.original.company_id)}
         className="hover:underline hover:text-primary truncate w-64"
       >
-        <span>{getValue<string>() || ''}</span>
+        <span>{(getValue() as string) || ''}</span>
       </Link>
     )
   }

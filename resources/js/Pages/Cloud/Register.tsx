@@ -4,7 +4,7 @@
  */
 
 import AuthContainer from '@/Components/AuthContainer'
-import { Button } from '@/Components/Button'
+import { Button } from '@dspangenberg'
 import { FormErrors } from '@/Components/FormErrors'
 import { FormGroup } from '@/Components/FormGroup'
 import { FormInput } from '@/Components/FormInput'

@@ -63,10 +63,24 @@ initials: string;
 title_id: number | null;
 salutation_id: number | null;
 creditor_number: string | null;
+is_favorite: boolean | null;
 debtor_number: string | null;
+primary_mail: string | null;
+vat_id: string | null;
+register_court: string | null;
+register_number: string | null;
+tax_number: string | null;
 company: App.Data.ContactData | null;
 title: App.Data.TitleData | null;
 salutation: App.Data.SalutationData | null;
+emails: Array<App.Data.ContactMailData> | null;
+};
+export type ContactMailData = {
+id: number | null;
+contact_id: number;
+email: string;
+pos: number;
+category: App.Data.EmailCategoryData | null;
 };
 export type CountryData = {
 id: number;
@@ -74,6 +88,11 @@ name: string;
 iso_code: string;
 vehicle_code: string;
 country_code: string;
+};
+export type EmailCategoryData = {
+id: number | null;
+name: string;
+type: number | null;
 };
 export type InboxData = {
 id: number | null;

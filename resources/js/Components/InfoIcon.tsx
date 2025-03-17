@@ -1,10 +1,10 @@
 /*
- * ecting.core is licensed under the terms of the EUPL-1.2 license
+ * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/Components/ui/tooltip'
-import { InformationCircleIcon } from '@hugeicons-pro/core-stroke-rounded'
+import { InformationCircleIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import type { FC, ReactNode } from 'react'
 
@@ -18,7 +18,11 @@ export const InfoIcon: FC<InfoIconProps> = ({ children, title }: InfoIconProps) 
     <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <HugeiconsIcon icon={InformationCircleIcon} stroke="1" className="size-[16px] text-primary cursor-help" />
+          <HugeiconsIcon
+            icon={InformationCircleIcon}
+            stroke="1"
+            className="size-[16px] text-primary cursor-help"
+          />
         </TooltipTrigger>
         <TooltipContent className="py-3">
           <div className="space-y-0">

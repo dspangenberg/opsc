@@ -8,7 +8,16 @@ import { useApplicationProvider } from '@/Components/ApplicationProvider'
 import packageJson from '../../../package.json'
 
 export const useAppInitializer = () => {
-  const { setAppName, setAppVersion, setAppBuild } = useApplicationProvider()
+  const {
+    setAppName,
+    setAppVersion,
+    setAppBuild,
+    setAppCopyrightYear,
+    appName,
+    appVersion,
+    appBuild,
+    appCopyrightYear
+  } = useApplicationProvider()
 
   useEffect(() => {
     const newAppName = `${import.meta.env.VITE_APP_NAME.replace('.de', '')}`
@@ -17,11 +26,8 @@ export const useAppInitializer = () => {
     setAppVersion(`${major}.${minor}`)
     setAppName(newAppName)
     setAppBuild(build)
-  }, [setAppName, setAppVersion])
+    setAppCopyrightYear(2024)
+  }, [setAppName, setAppVersion, setAppCopyrightYear])
 
-  return {
-    appName: import.meta.env.VITE_APP_NAME.replace('.de', ''),
-    appVersion: packageJson.version,
-    appBuild: packageJson.version.split('.').pop()
-  }
+  return { appName, appVersion, appBuild, appCopyrightYear }
 }

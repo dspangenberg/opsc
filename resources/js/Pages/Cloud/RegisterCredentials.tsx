@@ -4,7 +4,7 @@
  */
 
 import AuthContainer from '@/Components/AuthContainer'
-import { Button } from '@/Components/Button'
+import { Button } from '@dspangenberg/twcui'
 import { FormErrors } from '@/Components/FormErrors'
 import { FormGroup } from '@/Components/FormGroup'
 import { FormInput } from '@/Components/FormInput'
@@ -62,7 +62,9 @@ const RegisterCredentials: React.FC<RegisterCredentialsProps> = ({ registrationD
         <FormErrors errors={errors} />
         <FormGroup>
           <div className="col-span-24">
-            <FormLabel htmlFor="company-website" required>Deine Subdomain:</FormLabel>
+            <FormLabel htmlFor="company-website" required>
+              Deine Subdomain:
+            </FormLabel>
             <div className={`mt-2 flex rounded-sm  ${focusInput}`}>
               <input
                 id="company-website"

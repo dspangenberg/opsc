@@ -13,6 +13,7 @@
     "laravel/framework": "^11.9",
     "laravel/sanctum": "^4.0",
     "laravel/tinker": "^2.9",
+    "maize-tech/laravel-markable": "^2.3",
     "matanyadaev/laravel-eloquent-spatial": "^4.4",
     "mpdf/mpdf": "^8.2",
     "mpdf/qrcode": "^1.2",

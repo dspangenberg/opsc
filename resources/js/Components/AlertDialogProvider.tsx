@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/Components/Button'
+import { Button } from '@dspangenberg'
 import {
   AlertDialog,
   AlertDialogContent,
@@ -14,9 +14,9 @@ import * as React from 'react'
 
 type AlertDialogContextType = (
   params: AlertAction
-) => Promise<AlertAction['type'] extends 'alert' | 'confirm' ? boolean : null | string>;
+) => Promise<AlertAction['type'] extends 'alert' | 'confirm' ? boolean : null | string>
 
-export const AlertDialogContext = React.createContext<AlertDialogContextType | undefined>(undefined);
+export const AlertDialogContext = React.createContext<AlertDialogContextType | undefined>(undefined)
 
 type ButtonVariant = 'link' | 'primary' | 'danger' | 'default' | 'dark' | 'danger-ghost' | undefined
 
@@ -130,11 +130,13 @@ export function AlertDialogProvider({
   const dialog: AlertDialogContextType = React.useCallback(async (params: AlertAction) => {
     dispatch(params)
 
-    return new Promise<AlertAction['type'] extends 'alert' | 'confirm' ? boolean : null | string>((resolve) => {
-      resolveRef.current = (value: boolean | string | null) => {
-        resolve(value as any);
-      };
-    })
+    return new Promise<AlertAction['type'] extends 'alert' | 'confirm' ? boolean : null | string>(
+      resolve => {
+        resolveRef.current = (value: boolean | string | null) => {
+          resolve(value as any)
+        }
+      }
+    )
   }, [])
 
   return (
@@ -184,15 +186,15 @@ type Params<T extends 'alert' | 'confirm' | 'prompt'> =
   | string
 
 function useAlertDialogContext() {
-  const context = React.useContext(AlertDialogContext);
+  const context = React.useContext(AlertDialogContext)
   if (context === undefined) {
-    throw new Error('useAlertDialogContext must be used within an AlertDialogProvider');
+    throw new Error('useAlertDialogContext must be used within an AlertDialogProvider')
   }
-  return context;
+  return context
 }
 
 export function useConfirm() {
-  const dialog = useAlertDialogContext();
+  const dialog = useAlertDialogContext()
   return React.useCallback(
     (params: Params<'confirm'>) => {
       return dialog({
@@ -205,7 +207,7 @@ export function useConfirm() {
 }
 
 export function usePrompt() {
-  const dialog = useAlertDialogContext();
+  const dialog = useAlertDialogContext()
   return React.useCallback(
     (params: Params<'prompt'>) =>
       dialog({
@@ -217,7 +219,7 @@ export function usePrompt() {
 }
 
 export function useAlert() {
-  const dialog = useAlertDialogContext();
+  const dialog = useAlertDialogContext()
   return React.useCallback(
     (params: Params<'alert'>) =>
       dialog({

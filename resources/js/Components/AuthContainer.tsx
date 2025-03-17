@@ -5,17 +5,11 @@
 
 import { Head } from '@inertiajs/react'
 import type React from 'react'
-
-import { TwicewareSolution } from '@/Components/TwicewareSolution'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/Components/ui/card'
 import { cn } from '@/Lib/utils'
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card'
 import { useApplicationProvider } from '@/Components/ApplicationProvider'
+import { TwicewareSolution } from '@dspangenberg/twcui'
 
 interface AuthContainerProps {
   title: string
@@ -26,52 +20,48 @@ interface AuthContainerProps {
   appName?: string
   logo: React.ReactElement
   appVersion?: string
-  className?: string
 }
 
-const AuthContainer: React.FC<AuthContainerProps> = ({
+export const AuthContainer: React.FC<AuthContainerProps> = ({
   title,
   logo,
   cardDescription = '',
   cardTitle = title,
-  className = '',
-  maxWidth = 'lg',
-  children,
-  ...props
+  maxWidth = 'sm',
+  children
 }) => {
-  const containerClasses = {
+  const containerSize = {
     sm: 'max-w-sm',
     md: 'max-w-md',
     lg: 'max-w-lg px-6'
   }[maxWidth]
 
-  const { appWithVersion } = useApplicationProvider()
+  const { appWithVersion, appName, appWebsite, appCopyrightYear } = useApplicationProvider()
 
   return (
     <>
       <Head title={title} />
       <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
-        <div className="flex w-full max-w-sm flex-col gap-6">
-          <a
-            href="#"
-            className="flex items-center gap-3 self-center font-medium flex-col"
-          >
-            <div className="flex items-center justify-center    ">{logo}</div>
+        <div className={cn('flex w-full max-w-sm flex-col gap-6', containerSize)}>
+          <a href="#" className="flex items-center gap-3 self-center font-medium flex-col">
+            <div className="flex items-center justify-center">{logo}</div>
             {appWithVersion}
           </a>
 
           <Card>
             <CardHeader className="text-center">
               <CardTitle className="text-xl">{cardTitle}</CardTitle>
-              <CardDescription className="text-base">
-                Melde Dich mit Deinen Zugangsdaten an
-              </CardDescription>
+              <CardDescription className="text-base">{cardDescription}</CardDescription>
             </CardHeader>
             <CardContent>{children}</CardContent>
           </Card>
 
           <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
-            <TwicewareSolution />
+            <TwicewareSolution
+              appName={appName}
+              appWebsite={appWebsite}
+              copyrightYear={appCopyrightYear}
+            />
           </div>
         </div>
       </div>

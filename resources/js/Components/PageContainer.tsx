@@ -10,8 +10,9 @@ import { LayoutContainer } from '@/Components/LayoutContainer'
 import type { BreadcrumbProp } from '@/Components/PageBreadcrumbs'
 import { type Container, useThemeContainer } from '@/Components/theme-container-provider'
 import { cn } from '@/Lib/utils'
-import { useBreadcrumbProvider } from '@/Components/breadcrumb-provider'
+import { useBreadcrumbProvider } from '@/Components/BreadcrumbProvider'
 import { NavTabs } from '@/Components/NavTabs'
+
 interface PageContainerProps {
   title: string
   header?: string | React.ReactNode
@@ -50,27 +51,27 @@ export const PageContainer: React.FC<PageContainerProps> = ({
   const headerContent = useMemo(() => {
     if (header) {
       return typeof header === 'string' ? (
-        <span className="text-lg font-bold">{header}</span>
+        <span className="text-2xl font-bold">{header}</span>
       ) : (
         header
       )
     }
-    return <span className="text-lg font-bold">{title}</span>
+    return <span className="text-2xl font-bold">{title}</span>
   }, [header, title])
 
   return (
     <div className="flex flex-col overflow-hidden absolute inset-0">
       <Head title={title} />
 
-      <div className="flex-none bg-sidebar/60 border-y border-border/50">
-        <LayoutContainer
-          className={cn('w-full flex pt-3 flex-col', !tabs ? 'py-3' : 'pt-4', headerClassname)}
-        >
-          <div className="flex flex-1 flex-center">
+      <div className="flex-none  border-y border-border/50 bg-background rounded-t-xl">
+        <LayoutContainer className={cn('w-full flex', !tabs ? 'py-3' : '', headerClassname)}>
+          <div className="flex flex-1 flex-col flex-center pt-3">
             <div className="flex-1 flex items-center">{headerContent}</div>
-            {toolbar && <div className="flex-none">{toolbar}</div>}
+            <div>{tabs && <NavTabs className="pt-3 -mx-1 text-base">{tabs}</NavTabs>}</div>
           </div>
-          <div>{tabs && <NavTabs className="pt-3">{tabs}</NavTabs>}</div>
+          <div className="flex flex-none items-center">
+            <div>{toolbar && <div className="flex-none">{toolbar}</div>}</div>
+          </div>
         </LayoutContainer>
       </div>
       <div className="relative flex-1 my-6">

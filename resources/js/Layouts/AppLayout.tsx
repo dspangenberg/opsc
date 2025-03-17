@@ -16,7 +16,6 @@ import { usePage } from '@inertiajs/react'
 import { SidebarLeftIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 export default function AppLayout({ children }: PropsWithChildren<{ header?: ReactNode }>) {
-  // Call the hook directly in the component body
   useAppInitializer()
   const user: App.Data.UserData = usePage().props.auth.user
 
@@ -24,8 +23,8 @@ export default function AppLayout({ children }: PropsWithChildren<{ header?: Rea
     <AppProvider>
       <SidebarProvider>
         <AppSidebar />
-        <SidebarInset className="relative">
-          <div className="absolute top-0 bottom-14 left-0 right-12 p-3 pointer-event">
+        <SidebarInset className="relative border-0">
+          <div className="absolute top-0 bottom-12 left-0 right-12 p-2 pointer-event">
             <SidebarTrigger className="size-8 active:border pointer-event">
               <HugeiconsIcon icon={SidebarLeftIcon} className="size-5" />
               <span className="sr-only">Toggle Sidebar</span>
@@ -41,7 +40,7 @@ export default function AppLayout({ children }: PropsWithChildren<{ header?: Rea
               </div>
             </LayoutContainer>
           </div>
-          <div className="absolute top-12 left-0 bottom-0 right-0 overflow-hidden">
+          <div className="absolute top-12 left-0 bottom-0 right-0 overflow-hidden  bg-background/10 dark:bg-stone-900 shadow-sm rounded-lg ">
             <div className="mt-6">{children}</div>
           </div>
         </SidebarInset>

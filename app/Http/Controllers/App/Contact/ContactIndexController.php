@@ -24,10 +24,19 @@ class ContactIndexController extends Controller
             ->with('company')
             ->with('salutation')
             ->with('title')
-            ->limit(15)
+            ->with('favorites')
+            ->with('mails', function ($query) {
+                $query->orderBy('pos');
+            })
+            ->whereNot('is_archived', 1)
+            /*
+            ->whereHasFavorite(
+                auth()->user()
+            )
+            */
             ->orderBy('name')
             ->orderBy('first_name')
-            ->get();
+            ->paginate(15);
 
 
         return Inertia::render('App/Contact/ContactIndex', [

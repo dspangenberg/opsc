@@ -3,7 +3,7 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { useBreadcrumbProvider } from '@/Components/breadcrumb-provider'
+import { useBreadcrumbProvider } from '@/Components/BreadcrumbProvider'
 import {
   Breadcrumb,
   BreadcrumbItem,
