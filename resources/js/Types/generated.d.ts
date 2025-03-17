@@ -69,11 +69,14 @@ primary_mail: string | null;
 vat_id: string | null;
 register_court: string | null;
 register_number: string | null;
+department: string | null;
+position: string | null;
 tax_number: string | null;
 company: App.Data.ContactData | null;
 title: App.Data.TitleData | null;
 salutation: App.Data.SalutationData | null;
-emails: Array<App.Data.ContactMailData> | null;
+payment_deadline: App.Data.PaymentDeadlineData | null;
+mails: Array<App.Data.ContactMailData> | null;
 };
 export type ContactMailData = {
 id: number | null;
@@ -99,6 +102,13 @@ id: number | null;
 name: string;
 is_default: boolean;
 email_address: string;
+};
+export type PaymentDeadlineData = {
+id: number | null;
+name: string;
+days: number | null;
+is_immediately: boolean | null;
+is_default: boolean | null;
 };
 export type RegionData = {
 id: number;

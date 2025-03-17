@@ -5,12 +5,13 @@ namespace App\Models;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use DateTimeInterface;
 
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $contact_id
@@ -41,6 +42,21 @@ class ContactMail extends Model
         'created_at',
         'updated_at',
     ];
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+    protected $attributes = [
+        'contact_id' => 0,
+        'pos' => 0,
+        'email_category_id' => 0,
+        'email' => '',
+    ];
+
+    public function category(): HasOne
+    {
+        return $this->hasOne(EmailCategory::class, 'id', 'email_category_id');
+    }
 
     protected function serializeDate(DateTimeInterface $date): string
     {
@@ -54,18 +70,4 @@ class ContactMail extends Model
             'updated_at' => 'datetime',
         ];
     }
-
-    protected $hidden = [
-        'created_at',
-        'updated_at',
-    ];
-
-    protected $attributes = [
-        'contact_id' => 0,
-        'pos' => 0,
-        'email_category_id' => 0,
-        'email' => '',
-    ];
-
-
 }

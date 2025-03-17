@@ -28,12 +28,9 @@ class ContactIndexController extends Controller
             ->with('mails', function ($query) {
                 $query->orderBy('pos');
             })
-            ->whereNot('is_archived', 1)
-            /*
             ->whereHasFavorite(
                 auth()->user()
             )
-            */
             ->orderBy('name')
             ->orderBy('first_name')
             ->paginate(15);

@@ -31,7 +31,7 @@ const ContactIndex: React.FC = () => {
     () => (
       <Toolbar className="bg-background border-0 shadow-none">
         <ToolbarButton variant="default" icon={NoteEditIcon} title="Bearbeiten" />
-        <ToolbarButton icon={PrinterIcon} title="Drucken" />
+        <ToolbarButton icon={PrinterIcon} />
       </Toolbar>
     ),
     []

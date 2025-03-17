@@ -4,15 +4,10 @@
  */
 
 import { HugeiconsIcon } from '@hugeicons/react'
-import {
-  Children,
-  type FC,
-  type ReactElement,
-  type ReactNode,
-  type JSXElementConstructor
-} from 'react'
+import { Children, type FC, type ReactElement, type ReactNode } from 'react'
 import { cn } from '@/Lib/utils'
 import React from 'react'
+import { Button } from '@dspangenberg/twcui'
 
 export interface DataCardProps {
   title?: string
@@ -29,7 +24,7 @@ export const DataCard: FC<DataCardProps> = ({
   return (
     <div
       className={cn(
-        'flex-none w-full shadow-sm border-border/50 bg-background border rounded-md',
+        'flex-none w-full shadow-sm border-border/50 bg-background border-t rounded-md',
         className
       )}
     >
@@ -62,14 +57,47 @@ export const DataCardHeader: FC<DataCardHeaderProps> = ({
 
 export interface DataCardContentProps {
   children: ReactNode
+  showSecondary?: boolean
 }
 
-export const DataCardContent: FC<DataCardContentProps> = ({ children }) => {
+export const DataCardContent: FC<DataCardContentProps> = ({ children, showSecondary = true }) => {
+  const [showSecondarySections, setShowSecondarySections] = React.useState<boolean>(showSecondary)
+
+  const allChildren = Children.toArray(children)
+  const filteredChildren = allChildren.filter(
+    (child): child is ReactElement<DataCardSectionProps> => {
+      if (React.isValidElement<DataCardSectionProps>(child) && typeof child.type !== 'string') {
+        return showSecondarySections || child.props.secondary !== true
+      }
+      return false
+    }
+  )
+
+  const onShowSecondaryClicked = () => {
+    setShowSecondarySections(true)
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      onShowSecondaryClicked()
+    }
+  }
+
   return (
-    <div className="space-y-2 divide-y my-1.5">
-      {Children.map(children, (child, index) => {
-        return child
-      })}
+    <div>
+      <div className="space-y-2 divide-y my-1.5">
+        {showSecondarySections ? allChildren : filteredChildren}
+      </div>
+      {!showSecondarySections && allChildren.length > filteredChildren.length && (
+        <div
+          className="flex items-center bg-accent/50 justify-center text-xs py-2 bg- text-foreground cursor-pointer hover:underline text-center"
+          onClick={onShowSecondaryClicked}
+          onKeyDown={handleKeyDown}
+        >
+          <a onClick={onShowSecondaryClicked}>Details anzeigen</a>
+        </div>
+      )}
     </div>
   )
 }
@@ -78,12 +106,25 @@ export interface DataCardSectionProps {
   children: ReactNode
   minChildren?: number
   title?: string
+  buttonVariant?: 'ghost' | 'outline'
+  addonText?: string
+  forceChildren?: boolean
+  icon?: globalThis.IconSvgElement | string
+  secondary?: boolean
+  emptyText?: string
+  onClick?: () => void
 }
 
 export const DataCardSection: FC<DataCardSectionProps> = ({
   children,
   className = '',
-  title = ''
+  icon = '',
+  buttonVariant = 'outline',
+  emptyText = 'Keine Daten vorhanden',
+  addonText = '',
+  forceChildren = false,
+  title = '',
+  onClick
 }: DataCardSectionProps) => {
   const getValidChildren = (children: ReactNode) => {
     return Children.toArray(children).filter(
@@ -103,28 +144,69 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
   const validChildren = getValidChildren(children)
   const hasValidChildren = validChildren.length > 0
 
-  if (hasValidChildren) {
-    return (
-      <div className={cn('flex-none text-base px-4 py-1.5 rounded-t-md')}>
-        {title && <DataCardSectionHeader title={title} />}
-        <div className={cn('space-y-2', className)}>{validChildren}</div>
+  return (
+    <div className={cn('text-base px-4 py-1.5 w-full flex flex-col group')}>
+      {title && (
+        <DataCardSectionHeader
+          title={title}
+          icon={icon}
+          addonText={addonText}
+          buttonVariant={buttonVariant}
+          onClick={onClick}
+        />
+      )}
+      <div className={cn('space-y-2 flex flex-1 flex-col', className)}>
+        {hasValidChildren || forceChildren ? (
+          children
+        ) : (
+          <div className="text-foreground/40">{emptyText}</div>
+        )}
       </div>
-    )
-  }
-  return null
+    </div>
+  )
 }
+
 interface DataCardSectionHeaderProps {
   title?: string
   children?: ReactNode
   className?: string
+  addonText?: string
+  icon?: globalThis.IconSvgElement | string
+  buttonVariant?: 'ghost' | 'outline'
+  onClick?: () => void
 }
 
 export const DataCardSectionHeader: FC<DataCardSectionHeaderProps> = ({
   children = '',
   title = '',
-  className = ''
+  icon = '',
+  className = '',
+  addonText = '',
+  buttonVariant = 'outline',
+  onClick
 }: DataCardSectionHeaderProps) => {
-  return <div className={cn('font-medium pb-1', className)}>{children || title}</div>
+  return (
+    <div className="flex items-center">
+      <div className={cn('font-medium pb-1 flex-1', className)}>
+        {children || title}
+        {addonText && (
+          <span className="ml-2 text-foreground/40 text-sm font-normal">{addonText}</span>
+        )}
+      </div>
+      {icon && (
+        <div>
+          <Button
+            variant={buttonVariant}
+            size="icon-xs"
+            iconClassName="text-primary"
+            className="opacity-0 group-hover:opacity-100"
+            icon={icon}
+            onClick={onClick}
+          />
+        </div>
+      )}
+    </div>
+  )
 }
 
 export interface DataCardFieldProps {
@@ -169,7 +251,7 @@ export const DataCardFieldLabel: FC<DataCardFieldLabelProps> = ({
   label,
   className = ''
 }: DataCardFieldLabelProps) => {
-  return <div className={cn('text-foreground/50 text-sm truncate', className)}>{label}</div>
+  return <div className={cn('text-foreground/50 text-sm truncate', className)}>{label}:</div>
 }
 
 export interface DataCardFieldCommonProps {
@@ -214,9 +296,9 @@ export const DataCardFieldVertical: FC<DataCardFieldCommonProps> = ({
   className = ''
 }: DataCardFieldCommonProps) => {
   return (
-    <div className={cn('flex flex-col', className)}>
-      <DataCardFieldLabel label={label} />
-      <div className="text-foreground">{children || value}</div>
+    <div className={cn('block flex-1 w-full', className)}>
+      <DataCardFieldLabel className="block" label={label} />
+      <div className="text-foreground block">{children || value}</div>
     </div>
   )
 }
