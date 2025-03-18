@@ -77,7 +77,7 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
     cell: ({ row, getValue }) => (
       <Link
         href={editUrl(row.original.id)}
-        className="font-medium hover:underline hover:text-primary align-middle truncate"
+        className="font-medium hover:underline align-middle truncate"
       >
         {getValue() as string}
       </Link>
@@ -98,10 +98,7 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
     header: 'Organisation',
     size: 300,
     cell: ({ row, getValue }) => (
-      <Link
-        href={editUrl(row.original.company_id)}
-        className="hover:underline hover:text-primary truncate w-64"
-      >
+      <Link href={editUrl(row.original.company_id)} className="hover:underline truncate w-64">
         <span>{(getValue() as string) || ''}</span>
       </Link>
     )

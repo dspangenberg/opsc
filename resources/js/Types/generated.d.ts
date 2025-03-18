@@ -21,6 +21,11 @@ id: number;
 description: string;
 title: string;
 };
+export type AddressCategoryData = {
+id: number | null;
+name: string;
+is_invoice_address: boolean | null;
+};
 export type BookingPolicyData = {
 id: number | null;
 name: string;
@@ -51,6 +56,17 @@ color: string;
 calendar_id: number;
 accommodation_id: number | null;
 };
+export type ContactAddressData = {
+id: number | null;
+contact_id: number;
+address: string;
+zip: string;
+city: string;
+country_id: number;
+full_address: Array<any>;
+category: App.Data.AddressCategoryData | null;
+country: App.Data.CountryData | null;
+};
 export type ContactData = {
 id: number | null;
 name: string;
@@ -64,6 +80,7 @@ title_id: number | null;
 salutation_id: number | null;
 creditor_number: string | null;
 is_favorite: boolean | null;
+is_org: boolean | null;
 debtor_number: string | null;
 primary_mail: string | null;
 vat_id: string | null;
@@ -77,6 +94,7 @@ title: App.Data.TitleData | null;
 salutation: App.Data.SalutationData | null;
 payment_deadline: App.Data.PaymentDeadlineData | null;
 mails: Array<App.Data.ContactMailData> | null;
+addresses: Array<App.Data.ContactAddressData> | null;
 };
 export type ContactMailData = {
 id: number | null;
@@ -103,12 +121,65 @@ name: string;
 is_default: boolean;
 email_address: string;
 };
+export type InvoiceData = {
+id: number | null;
+contact_id: number;
+project_id: number;
+invoice_contact_id: number;
+type_id: number;
+invoice_number: number;
+payment_deadline_id: number;
+issued_on: string;
+due_on: string | null;
+service_period_begin: string | null;
+service_period_end: string | null;
+dunning_block: boolean;
+is_draft: boolean;
+service_provision: string | null;
+vat_id: string | null;
+address: string | null;
+invoice_address: string;
+formated_invoice_number: string;
+amount_net: number;
+amount_tax: number;
+amount_gross: number;
+type: App.Data.InvoiceTypeData | null;
+contact: App.Data.ContactData | null;
+invoice_contact: App.Data.ContactData | null;
+project: App.Data.ProjectData | null;
+payment_deadline: App.Data.PaymentDeadlineData | null;
+lines: Array<App.Data.InvoiceLineData> | null;
+sent_at: string | null;
+};
+export type InvoiceLineData = {
+id: number | null;
+invoice_id: number;
+type_id: number;
+pos: number;
+quantity: number | null;
+unit: string | null;
+text: string;
+price: number | null;
+amount: number | null;
+tax: number | null;
+tax_rate: number;
+};
+export type InvoiceTypeData = {
+id: number | null;
+print_name: string;
+display_name: string;
+key: string;
+};
 export type PaymentDeadlineData = {
 id: number | null;
 name: string;
 days: number | null;
 is_immediately: boolean | null;
 is_default: boolean | null;
+};
+export type ProjectData = {
+id: number | null;
+name: string;
 };
 export type RegionData = {
 id: number;

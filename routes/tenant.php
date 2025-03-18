@@ -9,6 +9,8 @@ declare(strict_types=1);
 use App\Http\Controllers\App\Contact\ContactDetailsController;
 use App\Http\Controllers\App\Contact\ContactIndexController;
 use App\Http\Controllers\App\Contact\ContactToggleFavoriteController;
+use App\Http\Controllers\App\Invoice\InvoiceDetailsController;
+use App\Http\Controllers\App\Invoice\InvoiceIndexController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
@@ -57,6 +59,12 @@ Route::middleware([
 
     Route::put('contacts/{contact}/toggle-favorite',
         ContactToggleFavoriteController::class)->name('app.contact.toggle-favorite');
+
+    Route::get('invoices',
+        InvoiceIndexController::class)->name('app.invoice.index');
+
+    Route::get('invoices/{invoice}',
+        InvoiceDetailsController::class)->name('app.invoice.details');
 
 
     Route::get('/soon', function () {

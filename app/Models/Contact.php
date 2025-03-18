@@ -18,6 +18,8 @@ use Maize\Markable\Models\Favorite;
 
 
 /**
+ *
+ *
  * @property int $id
  * @property int|null $company_id
  * @property int $is_org
@@ -54,7 +56,6 @@ use Maize\Markable\Models\Favorite;
  * @property-read string $initials
  * @property-read string $reverse_full_name
  * @property-read Title|null $title
- *
  * @method static Builder|Contact newModelQuery()
  * @method static Builder|Contact newQuery()
  * @method static Builder|Contact query()
@@ -98,33 +99,30 @@ use Maize\Markable\Models\Favorite;
  * @property-read int|null $addresses_count
  * @property-read Collection<int, Contact> $contacts
  * @property-read int|null $contacts_count
- *
  * @method static Builder|Contact whereTaxNumber($value)
- *
  * @property-read Collection<int, ContactMail> $mails
  * @property-read int|null $mails_count
  * @property-read Collection<int, ContactPhone> $phones
  * @property-read int|null $phones_count
  * @property string|null $receipts_ref
  * @property string|null $iban
- *
  * @method static Builder|Contact whereIban($value)
  * @method static Builder|Contact whereReceiptsRef($value)
- *
  * @property int $outturn_account_id
  * @property bool $is_primary
  * @property string|null $paypal_email
  * @property string|null $cc_name
- *
  * @method static Builder|Contact view($view)
  * @method static Builder|Contact whereCcName($value)
  * @method static Builder|Contact whereIsPrimary($value)
  * @method static Builder|Contact whereOutturnAccountId($value)
  * @method static Builder|Contact wherePaypalEmail($value)
- *
  * @property-read Collection<int, Project> $projects
  * @property-read int|null $projects_count
- *
+ * @property-read string $company_name
+ * @property-read bool $is_favorite
+ * @property-read string $primary_mail
+ * @method static Builder<static>|Contact whereHasMark(\Maize\Markable\Mark $mark, \Illuminate\Database\Eloquent\Model $user, ?string $value = null)
  * @mixin Eloquent
  */
 class Contact extends Model
@@ -242,10 +240,10 @@ class Contact extends Model
     public function getInitialsAttribute(): string
     {
         if ($this->first_name) {
-            return substr($this->first_name, 0, 1) . substr($this->name, 0, 1);
+            return strtoupper(substr($this->first_name, 0, 1) . substr($this->name, 0, 1));
         }
 
-        return substr($this->name, 0, 1);
+        return strtoupper(substr($this->name, 0, 1));
     }
 
     public function getReverseFullNameAttribute(): string

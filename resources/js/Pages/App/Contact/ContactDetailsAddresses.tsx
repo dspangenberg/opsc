@@ -4,53 +4,28 @@
  */
 
 import type * as React from 'react'
-import { type FC, useState } from 'react'
-import { DataCardField, DataCardSection, DataCardSectionHeader } from '@/Components/DataCard'
-import { UnfoldMoreIcon, Add01Icon } from '@hugeicons/core-free-icons'
-import { Button } from '@dspangenberg/twcui'
+import { type FC, Fragment } from 'react'
+import { DataCardField, DataCardFieldGroup } from '@/Components/DataCard'
 
 interface Props {
-  mails: App.Data.ContactMailData[]
+  addresses: App.Data.ContactAddressData[]
 }
 
-export const ContactDetailsMail: FC<Props> = ({ mails }: Props) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false)
-
-  const handleToggle = () => {
-    setIsOpen(prevState => !prevState)
-  }
-
-  const handleAddButtonClick = () => {}
-
-  const firstMail = mails[0]
-  const remainingMails = mails.slice(1)
-  const addOnText: string =
-    remainingMails.length > 0 ? `(+${remainingMails.length.toString()})` : ''
+export const ContactDetailsAddresses: FC<Props> = ({ addresses }: Props) => {
+  const firstAddress = addresses.length ? addresses[0] : null
 
   return (
-    <DataCardSection>
-      <DataCardSectionHeader icon={Add01Icon} onClick={handleAddButtonClick}>
-        <div className="flex items-center">
-          E-Mails <span className="font-normal text-foreground/60 px-1">{addOnText}</span>
-          <Button variant="ghost" size="icon-sm" icon={UnfoldMoreIcon} onClick={handleToggle} />
-        </div>
-      </DataCardSectionHeader>
-
-      <DataCardField
-        variant="vertical"
-        label={firstMail.category?.name || 'E-Mail'}
-        value={firstMail.email}
-      />
-
-      {isOpen &&
-        remainingMails.map((mail, index) => (
-          <DataCardField
-            key={mail.id || index}
-            variant="vertical"
-            label={mail.category?.name || 'E-Mail'}
-            value={mail.email}
-          />
-        ))}
-    </DataCardSection>
+    <DataCardFieldGroup>
+      {firstAddress && (
+        <DataCardField variant="vertical" label={firstAddress.category?.name || 'Adresse'}>
+          {firstAddress.full_address.map((line, index) => (
+            <Fragment key={index}>
+              {line}
+              {index < firstAddress.full_address.length - 1 && <br />}
+            </Fragment>
+          ))}
+        </DataCardField>
+      )}
+    </DataCardFieldGroup>
   )
 }

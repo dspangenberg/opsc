@@ -11,7 +11,7 @@ use DateTimeInterface;
 
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $contact_id
@@ -30,6 +30,7 @@ use DateTimeInterface;
  * @method static Builder|ContactMail whereId($value)
  * @method static Builder|ContactMail wherePos($value)
  * @method static Builder|ContactMail whereUpdatedAt($value)
+ * @property-read \App\Models\EmailCategory|null $category
  * @mixin Eloquent
  */
 class ContactMail extends Model

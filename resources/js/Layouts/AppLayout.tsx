@@ -40,7 +40,7 @@ export default function AppLayout({ children }: PropsWithChildren<{ header?: Rea
               </div>
             </LayoutContainer>
           </div>
-          <div className="absolute top-12 left-0 bottom-0 right-0 overflow-hidden  bg-background/10 dark:bg-stone-900 shadow-sm rounded-lg ">
+          <div className="absolute top-12 left-0 bottom-0 right-0 overflow-hidden  bg-background dark:bg-stone-900 shadow-sm rounded-lg ">
             <div className="mt-6">{children}</div>
           </div>
         </SidebarInset>

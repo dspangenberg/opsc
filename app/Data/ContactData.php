@@ -25,6 +25,7 @@ class ContactData extends Data
         public readonly ?int    $salutation_id,
         public readonly ?string $creditor_number,
         public readonly ?bool   $is_favorite,
+        public readonly ?bool   $is_org,
         public readonly ?string $debtor_number,
         public readonly ?string $primary_mail,
         public readonly ?string $vat_id,
@@ -49,6 +50,9 @@ class ContactData extends Data
 
         /** @var ContactMailData[] */
         public readonly ?array  $mails,
+
+        /** @var ContactAddressData[] */
+        public readonly ?array  $addresses,
     )
     {
     }

@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
+ *
+ *
  * @property int $id
  * @property int $contact_id
  * @property string|null $address
@@ -19,7 +21,6 @@ use Illuminate\Support\Carbon;
  * @property int $country_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @method static Builder|ContactAddress newModelQuery()
  * @method static Builder|ContactAddress newQuery()
  * @method static Builder|ContactAddress query()
@@ -32,12 +33,10 @@ use Illuminate\Support\Carbon;
  * @method static Builder|ContactAddress whereId($value)
  * @method static Builder|ContactAddress whereUpdatedAt($value)
  * @method static Builder|ContactAddress whereZip($value)
- *
  * @property-read AddressCategory|null $category
  * @property-read Contact|null $contact
  * @property-read Country|null $country
  * @property-read string $full_address
- *
  * @mixin Eloquent
  */
 class ContactAddress extends Model
@@ -77,20 +76,23 @@ class ContactAddress extends Model
         return $this->hasOne(Country::class, 'id', 'country_id');
     }
 
-    public function getFullAddressAttribute(): string
+    public function getFullAddressAttribute(): array
     {
         $lines = [];
         $lines[] = $this->contact->full_name;
-        $lines[] = $this->address;
 
-        if ($this->country_id === 1) {
-            $lines[] = $this->zip.' '.$this->city;
-        } else {
-            $lines[] = strtoupper($this->zip.' '.$this->city);
-            $lines[] = strtoupper($this->country->name);
+        $address = explode("\n", $this->address);
+        foreach ($address as $line) {
+            $lines[] = $line;
         }
 
-        return implode("\n", $lines);
+        if ($this->country_id === 1) {
+            $lines[] = $this->zip . ' ' . $this->city;
+        } else {
+            $lines[] = strtoupper($this->zip . ' ' . $this->city);
+            $lines[] = strtoupper($this->country->name);
+        }
+        return $lines;
     }
 
     protected function serializeDate(DateTimeInterface $date): string

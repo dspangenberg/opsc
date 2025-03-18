@@ -3,7 +3,6 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { HugeiconsIcon } from '@hugeicons/react'
 import { Children, type FC, type ReactElement, type ReactNode } from 'react'
 import { cn } from '@/Lib/utils'
 import React from 'react'
@@ -24,7 +23,7 @@ export const DataCard: FC<DataCardProps> = ({
   return (
     <div
       className={cn(
-        'flex-none w-full shadow-sm border-border/50 bg-background border-t rounded-md',
+        'flex-none w-full shadow border-border/50 bg-background border-t rounded-md',
         className
       )}
     >
@@ -35,22 +34,24 @@ export const DataCard: FC<DataCardProps> = ({
 }
 
 export interface DataCardHeaderProps {
-  title: string
+  title?: string
   className?: string
+  children?: ReactNode
 }
 
 export const DataCardHeader: FC<DataCardHeaderProps> = ({
-  title,
+  title = '',
+  children = null,
   className = ''
 }: DataCardHeaderProps) => {
   return (
     <div
       className={cn(
-        'flex-none bg-accent text-lg font-medium text-foreground px-4 py-2.5 border-border/50 border-b rounded-t-md',
+        'flex-none text-lg bg-sidebar font-medium text-foreground px-4 py-2.5 border-border/50 border-b rounded-t-md',
         className
       )}
     >
-      {title}
+      {children || title}
     </div>
   )
 }
@@ -145,7 +146,7 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
   const hasValidChildren = validChildren.length > 0
 
   return (
-    <div className={cn('text-base px-4 py-1.5 w-full flex flex-col group')}>
+    <div className={cn('text-base px-4 py-1 w-full flex flex-col group')}>
       {title && (
         <DataCardSectionHeader
           title={title}
@@ -164,6 +165,18 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
       </div>
     </div>
   )
+}
+
+interface DataFieldGroupProps {
+  children: ReactNode
+  className?: string
+}
+
+export const DataCardFieldGroup: FC<DataFieldGroupProps> = ({
+  children,
+  className = ''
+}: DataFieldGroupProps) => {
+  return <div className={cn('text-foreground/50 text-sm truncate', className)}>{children}</div>
 }
 
 interface DataCardSectionHeaderProps {

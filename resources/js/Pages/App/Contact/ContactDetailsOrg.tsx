@@ -6,8 +6,9 @@
 import type * as React from 'react'
 import type { FC } from 'react'
 import { DataCard, DataCardContent, DataCardField, DataCardSection } from '@/Components/DataCard'
-import { Edit02Icon } from '@hugeicons/core-free-icons'
+import { Add01Icon, Edit02Icon } from '@hugeicons/core-free-icons'
 import { ContactDetailsMail } from '@/Pages/App/Contact/ContactDetailsMails'
+import { ContactDetailsAddresses } from '@/Pages/App/Contact/ContactDetailsAddresses'
 
 interface ContactDetailsOrgInfoBoxProps {
   contact: App.Data.ContactData
@@ -25,12 +26,7 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
   return (
     <DataCard title={contact.full_name}>
       <DataCardContent showSecondary={showSecondary}>
-        <DataCardSection
-          title="Debitorinfos"
-          icon={Edit02Icon}
-          onClick={onDebtorDataClicked}
-          secondary
-        >
+        <DataCardSection title="Debitorinfos" icon={Edit02Icon} onClick={onDebtorDataClicked}>
           <DataCardField
             variant="vertical"
             label="Kunden- und Debitornr."
@@ -52,6 +48,15 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
           <DataCardField variant="vertical" label="Kreditornr." value={contact.creditor_number} />
         </DataCardSection>
         <ContactDetailsMail mails={contact.mails || []} />
+        <DataCardSection
+          secondary
+          title="Anschriften"
+          icon={Add01Icon}
+          forceChildren={false}
+          emptyText="Keine Anschriften vorhanden"
+        >
+          <ContactDetailsAddresses addresses={contact.addresses || []} />
+        </DataCardSection>
         <DataCardSection title="Register- und Steuerdaten" icon={Edit02Icon} secondary>
           <DataCardField variant="vertical" label="Register" value={contact.register_number}>
             {contact.register_court} ({contact.register_number})

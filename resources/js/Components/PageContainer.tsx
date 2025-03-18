@@ -64,13 +64,19 @@ export const PageContainer: React.FC<PageContainerProps> = ({
       <Head title={title} />
 
       <div className="flex-none  border-y border-border/50 bg-background rounded-t-xl">
-        <LayoutContainer className={cn('w-full flex', !tabs ? 'py-3' : '', headerClassname)}>
-          <div className="flex flex-1 flex-col flex-center pt-3">
+        <LayoutContainer
+          className={cn(
+            'w-full flex items-center flex-1',
+            !tabs ? 'py-6' : 'pt-3',
+            headerClassname
+          )}
+        >
+          <div className="flex flex-1 flex-col pt-0">
             <div className="flex-1 flex items-center">{headerContent}</div>
             <div>{tabs && <NavTabs className="pt-3 -mx-1 text-base">{tabs}</NavTabs>}</div>
           </div>
-          <div className="flex flex-none items-center">
-            <div>{toolbar && <div className="flex-none">{toolbar}</div>}</div>
+          <div className="flex flex-none items-center justify-stretch self-stretch">
+            {toolbar && <div className="flex-none">{toolbar}</div>}
           </div>
         </LayoutContainer>
       </div>

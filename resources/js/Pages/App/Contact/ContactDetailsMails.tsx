@@ -23,6 +23,7 @@ export const ContactDetailsMail: FC<Props> = ({ mails }: Props) => {
   const handleAddButtonClick = () => {}
 
   const icon = mails.length ? Edit02Icon : Add02Icon
+  if (!mails.length) return null
 
   return (
     <DataCardSection

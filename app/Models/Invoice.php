@@ -20,6 +20,8 @@ use rikudou\EuQrPayment\QrPayment;
 use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
 
 /**
+ *
+ *
  * @property int $id
  * @property int $contact_id
  * @property int $project_id
@@ -55,7 +57,6 @@ use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
  * @property-read PaymentDeadline|null $payment_deadline
  * @property-read Project|null $project
  * @property-read NumberRangeDocumentNumber|null $range_document_number
- *
  * @method static MediableCollection<int, static> all($columns = ['*'])
  * @method static MediableCollection<int, static> get($columns = ['*'])
  * @method static Builder|Invoice newModelQuery()
@@ -88,7 +89,6 @@ use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
  * @method static Builder|Invoice withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static Builder|Invoice withMediaAndVariantsMatchAll($tags = [])
  * @method static Builder|Invoice withMediaMatchAll(bool $tags = [], bool $withVariants = false)
- *
  * @property-read float $lines_sum_gross
  * @property-read InvoiceType|null $type
  * @property-read float $amount_gross
@@ -96,7 +96,9 @@ use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
  * @property-read float $amount_tax
  * @property-read float $amount_paid
  * @property-read float $amount_open
- *
+ * @property-read array $invoice_address
+ * @property-read Contact|null $invoice_contact
+ * @method static Builder<static>|Invoice byYear(int $year)
  * @mixin Eloquent
  */
 class Invoice extends Model implements MediableInterface
@@ -131,15 +133,22 @@ class Invoice extends Model implements MediableInterface
 
     protected $appends = [
         'formated_invoice_number',
-        'document_number',
-        'qr_code',
-        'filename',
+        'invoice_address',
         'amount_net',
         'amount_tax',
         'amount_gross',
         'amount_open',
         'amount_paid',
     ];
+
+    public function scopeByYear(Builder $query, int|string $year): Builder
+    {
+        if ($year !== 'all') {
+            return $query->whereYear('issued_on', $year);
+        }
+        return $query;
+    }
+
 
     public function setDueDate(): void
     {
@@ -286,6 +295,16 @@ class Invoice extends Model implements MediableInterface
         return 'Entwurf ' . $this->id;
     }
 
+    public function getInvoiceAddressAttribute(): array
+    {
+        if (empty($this->address)) {
+            return [];
+        }
+
+        $address = explode("\n", $this->address);
+        return array_filter($address, 'trim');
+    }
+
     public function getFilenameAttribute(): string
     {
         return 'RG-' . str_replace('.', '_', basename($this->formated_invoice_number, '.pdf'));
@@ -294,7 +313,7 @@ class Invoice extends Model implements MediableInterface
     public function getAmountNetAttribute(): float
     {
 
-        return $this->lines_sum_amount ?: 0;
+        return round($this->lines_sum_amount ?: 0, 2);
 
     }
 
@@ -367,6 +386,11 @@ class Invoice extends Model implements MediableInterface
     public function contact(): HasOne
     {
         return $this->hasOne(Contact::class, 'id', 'contact_id');
+    }
+
+    public function invoice_contact(): HasOne
+    {
+        return $this->hasOne(Contact::class, 'id', 'invoice_contact_id');
     }
 
     public function type(): HasOne

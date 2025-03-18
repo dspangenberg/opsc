@@ -65,9 +65,9 @@ const data = {
     },
     {
       title: 'Fakturierung',
-      url: route('app.dashboard', {}, false),
+      url: route('app.invoice.index', {}, false),
       icon: FileEuroIcon,
-      activePath: '/appsi',
+      activePath: '/app/invoices',
       hasSep: true
     }
   ],

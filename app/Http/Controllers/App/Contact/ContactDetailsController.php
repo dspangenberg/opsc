@@ -15,15 +15,28 @@ class ContactDetailsController extends Controller
 {
     public function __invoke(Contact $contact)
     {
-        $contact
-            ->load(['salutation', 'title', 'favorites', 'payment_deadline'])
-            ->load(['company' => function ($query) {
-                $query->with(['mails' => function ($query) {
-                    $query->orderBy('pos')->with('category');
-                }]);
-            }])->load(['mails' => function ($query) {
+        $contact->load([
+            'salutation',
+            'title',
+            'favorites',
+            'payment_deadline',
+            'company' => function ($query) {
+                $query->with([
+                    'mails' => function ($query) {
+                        $query->orderBy('pos')->with('category');
+                    },
+                    'addresses' => function ($query) {
+                        $query->with(['category', 'country']);
+                    }
+                ]);
+            },
+            'mails' => function ($query) {
                 $query->orderBy('pos')->with('category');
-            }]);
+            },
+            'addresses' => function ($query) {
+                $query->with(['category', 'country']);
+            }
+        ]);
 
         return Inertia::render('App/Contact/ContactDetails', [
             'contact' => ContactData::from($contact),

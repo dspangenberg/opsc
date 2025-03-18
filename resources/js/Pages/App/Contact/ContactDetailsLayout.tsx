@@ -39,9 +39,11 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
         <NavTabsTab href={route('app.contact.index')} activeRoute="/app/contacts">
           Übersicht
         </NavTabsTab>
-        <NavTabsTab href={route('app.contact.index')} activeRoute="/app/contacts/favorites">
-          Kontakte
-        </NavTabsTab>
+        {contact.is_org === true && (
+          <NavTabsTab href={route('app.contact.index')} activeRoute="/app/contacts/favorites">
+            Kontakte
+          </NavTabsTab>
+        )}
       </NavTabs>
     ),
     []
@@ -60,7 +62,7 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
         </div>
         <div className="flex-1">
           <div className="flex-1 text-2xl font-bold">{contact.full_name}</div>
-          {contact.company_id && (
+          {!!contact.company_id && (
             <div className="text-base text-foreground">
               <Link href={companyRoute} className="hover:underline">
                 {contact.company?.name}
