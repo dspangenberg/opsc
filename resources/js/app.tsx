@@ -12,16 +12,21 @@ import '@fontsource/clear-sans/500.css'
 import '@fontsource/clear-sans/700.css'
 
 import 'mapbox-gl/dist/mapbox-gl.css'
+import * as Sentry from '@sentry/react'
 
 import AppLayout from '@/Layouts/AppLayout'
 import { createInertiaApp } from '@inertiajs/react'
 import { renderApp } from '@inertiaui/modal-react'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { createRoot } from 'react-dom/client'
-import { ApplicationProvider } from "@/Components/ApplicationProvider";
+import { ApplicationProvider } from '@/Components/ApplicationProvider'
 import React from 'react'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel'
+
+Sentry.init({
+  dsn: 'https://bf946bb1582a0572bc21a0d36dd97088@o446798.ingest.us.sentry.io/4509008632086528'
+})
 
 createInertiaApp({
   title: title => `${title} - ${appName}`,
@@ -38,11 +43,7 @@ createInertiaApp({
   },
   setup({ el, App, props }) {
     const root = createRoot(el)
-    root.render(
-      <ApplicationProvider>
-        {renderApp(App, props)}
-      </ApplicationProvider>
-    )
+    root.render(<ApplicationProvider>{renderApp(App, props)}</ApplicationProvider>)
   },
   progress: {
     color: '#4B5563'

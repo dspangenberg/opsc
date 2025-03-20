@@ -1,11 +1,12 @@
-/*
- * opsc.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
- */
-
 import type * as React from 'react'
-import { type FC, Fragment } from 'react'
+import type { FC } from 'react'
 import { DataCardField, DataCardFieldGroup } from '@/Components/DataCard'
+import { Button } from '@dspangenberg/twcui'
+import Markdown from 'react-markdown'
+import remarkBreaks from 'remark-breaks'
+import { PencilEdit02Icon, Copy01Icon } from '@hugeicons/core-free-icons'
+import { useModalStack } from '@inertiaui/modal-react'
+import { router } from '@inertiajs/react'
 
 interface Props {
   addresses: App.Data.ContactAddressData[]
@@ -13,18 +14,53 @@ interface Props {
 
 export const ContactDetailsAddresses: FC<Props> = ({ addresses }: Props) => {
   const firstAddress = addresses.length ? addresses[0] : null
+  const { visitModal } = useModalStack()
+
+  const handleEditButtonClick = () => {
+    visitModal(
+      route('app.contact.edit.address', {
+        contact: firstAddress?.contact_id,
+        address: firstAddress?.id
+      })
+    )
+  }
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(firstAddress?.full_address)
+  }
 
   return (
     <DataCardFieldGroup>
-      {firstAddress && (
+      {firstAddress ? (
         <DataCardField variant="vertical" label={firstAddress.category?.name || 'Adresse'}>
-          {firstAddress.full_address.map((line, index) => (
-            <Fragment key={index}>
-              {line}
-              {index < firstAddress.full_address.length - 1 && <br />}
-            </Fragment>
-          ))}
+          <div className="flex items-center gap-0.5 group/address">
+            <div className="flex-1">
+              <Markdown remarkPlugins={[remarkBreaks]}>{firstAddress.full_address}</Markdown>
+            </div>
+            <div className="flex-none self-start space-x-1">
+              <Button
+                variant="outline"
+                size="icon-xs"
+                iconClassName="text-primary"
+                className="opacity-0 group-hover/address:opacity-100"
+                tooltip="Anschrift in Zwischenablage kopieren"
+                icon={Copy01Icon}
+                onClick={handleCopy}
+              />
+              <Button
+                variant="outline"
+                size="icon-xs"
+                iconClassName="text-primary"
+                className="opacity-0 group-hover/address:opacity-100"
+                tooltip="Anschrift bearbeiten"
+                onClick={handleEditButtonClick}
+                icon={PencilEdit02Icon}
+              />
+            </div>
+          </div>
         </DataCardField>
+      ) : (
+        <div className="text-foreground/40">Keine Anschriften gefunden</div>
       )}
     </DataCardFieldGroup>
   )

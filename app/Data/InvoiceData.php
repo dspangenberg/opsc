@@ -46,7 +46,6 @@ class InvoiceData extends Data
         public readonly ?string   $vat_id,
         public readonly ?string   $address,
 
-        /** @var string */
         public readonly array     $invoice_address,
         public readonly string    $formated_invoice_number,
 

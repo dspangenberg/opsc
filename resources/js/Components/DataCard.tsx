@@ -23,7 +23,7 @@ export const DataCard: FC<DataCardProps> = ({
   return (
     <div
       className={cn(
-        'flex-none w-full shadow border-border/50 bg-background border-t rounded-md',
+        'flex-none w-full shadow border-border/50 bg-background border-t rounded-md m-0.5',
         className
       )}
     >
@@ -111,8 +111,10 @@ export interface DataCardSectionProps {
   addonText?: string
   forceChildren?: boolean
   icon?: globalThis.IconSvgElement | string
+  buttonTooltip?: string
   secondary?: boolean
   emptyText?: string
+  suppressEmptyText?: boolean
   onClick?: () => void
 }
 
@@ -124,6 +126,8 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
   emptyText = 'Keine Daten vorhanden',
   addonText = '',
   forceChildren = false,
+  suppressEmptyText = false,
+  buttonTooltip,
   title = '',
   onClick
 }: DataCardSectionProps) => {
@@ -132,7 +136,6 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
       (child): child is ReactElement<DataCardFieldProps> =>
         React.isValidElement(child) &&
         typeof child.type === 'function' &&
-        child.type.name === 'DataCardField' &&
         'props' in child &&
         typeof child.props === 'object' &&
         child.props !== null &&
@@ -153,15 +156,14 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
           icon={icon}
           addonText={addonText}
           buttonVariant={buttonVariant}
+          buttonTooltip={buttonTooltip}
           onClick={onClick}
         />
       )}
       <div className={cn('space-y-2 flex flex-1 flex-col', className)}>
-        {hasValidChildren || forceChildren ? (
-          children
-        ) : (
-          <div className="text-foreground/40">{emptyText}</div>
-        )}
+        {hasValidChildren || forceChildren
+          ? children
+          : !suppressEmptyText && <div className="text-foreground/40">{emptyText}</div>}
       </div>
     </div>
   )
@@ -187,6 +189,7 @@ interface DataCardSectionHeaderProps {
   icon?: globalThis.IconSvgElement | string
   buttonVariant?: 'ghost' | 'outline'
   onClick?: () => void
+  buttonTooltip?: string
 }
 
 export const DataCardSectionHeader: FC<DataCardSectionHeaderProps> = ({
@@ -196,6 +199,7 @@ export const DataCardSectionHeader: FC<DataCardSectionHeaderProps> = ({
   className = '',
   addonText = '',
   buttonVariant = 'outline',
+  buttonTooltip = '',
   onClick
 }: DataCardSectionHeaderProps) => {
   return (
@@ -213,6 +217,7 @@ export const DataCardSectionHeader: FC<DataCardSectionHeaderProps> = ({
             size="icon-xs"
             iconClassName="text-primary"
             className="opacity-0 group-hover:opacity-100"
+            tooltip={buttonTooltip}
             icon={icon}
             onClick={onClick}
           />
@@ -227,7 +232,7 @@ export interface DataCardFieldProps {
   children?: ReactNode
   variant?: 'horizontal' | 'vertical' | 'horizontal-right'
   label: string
-  value?: string | number | null
+  value?: string | number | null | string[]
   empty?: boolean
 }
 
@@ -270,7 +275,7 @@ export const DataCardFieldLabel: FC<DataCardFieldLabelProps> = ({
 export interface DataCardFieldCommonProps {
   className?: string
   label: string
-  value?: string | number | null
+  value?: string | number | null | string[]
   children?: ReactNode
 }
 

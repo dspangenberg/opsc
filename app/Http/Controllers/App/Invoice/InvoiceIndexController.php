@@ -19,7 +19,7 @@ class InvoiceIndexController extends Controller
         $years = Invoice::query()->selectRaw('DISTINCT YEAR(issued_on) as year')->orderByRaw('YEAR(issued_on) DESC')->get()->pluck('year');
         $currentYear = date('Y');
 
-        $year = $request->query('year', null);
+        $year = $request->query('year');
         if ($year === null) {
             $year = $currentYear;
         }
@@ -28,6 +28,32 @@ class InvoiceIndexController extends Controller
         if (!$years->contains($currentYear)) {
             $years->push($currentYear);
         }
+
+        $stats = Invoice::query()
+            ->selectRaw('YEAR(issued_on) as year')
+            ->selectRaw('SUM(lines.amount) as total_net')
+            ->selectRaw('SUM(lines.tax) as total_tax')
+            ->selectRaw('SUM(lines.amount + lines.tax) as total_gross')
+            ->join('invoice_lines as lines', 'invoices.id', '=', 'lines.invoice_id')
+            ->where('is_draft', false)
+            ->groupBy('year')
+            ->orderBy('year', 'desc')
+            ->get();
+
+        $overallTotals = [
+            'year' => 'Total',
+            'total_net' => $stats->sum('total_net'),
+            'total_tax' => $stats->sum('total_tax'),
+            'total_gross' => $stats->sum('total_gross')
+        ];
+
+        if ($year === 'all') {
+            $stats->push($overallTotals);
+        }
+
+        $yearStats = $stats->toArray();
+        dump($yearStats);
+
 
         $invoices = Invoice::query()
             ->with('invoice_contact')
@@ -48,6 +74,7 @@ class InvoiceIndexController extends Controller
         return Inertia::render('App/Invoice/InvoiceIndex', [
             'invoices' => InvoiceData::collect($invoices),
             'years' => $years,
+            'stats' => $yearStats[0]
         ]);
     }
 }

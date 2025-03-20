@@ -55,7 +55,7 @@ export const ResponsiveDialog = forwardRef<HTMLDivElement, ResponsiveDialogProps
                 )}
               </CredenzaDescription>
             )}
-            {props.tabs && <CredenzaTabs>{props.tabs}</CredenzaTabs> || <div />}
+            {props.tabs && <CredenzaTabs>{props.tabs}</CredenzaTabs>}
           </CredenzaHeader>
           <CredenzaBody>{props.children}</CredenzaBody>
           <CredenzaFooter>{props.footer}</CredenzaFooter>

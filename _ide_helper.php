@@ -24745,12 +24745,36 @@ namespace Inertia {
             return \Inertia\ResponseFactory::modal($component, $props);
         }
 
+        /**
+         * 
+         *
+         * @see \Momentum\Modal\ModalServiceProvider::registerCompatibilityMacros()
+         * @param string $component
+         * @param \Illuminate\Contracts\Support\Arrayable|array $props
+         * @static 
+         */
+        public static function dialog($component, $props = [])
+        {
+            return \Inertia\ResponseFactory::dialog($component, $props);
+        }
+
             }
     /**
      * 
      *
      */
     class Response {
+        /**
+         * 
+         *
+         * @see \Momentum\Modal\ModalServiceProvider::registerCompatibilityMacros()
+         * @static 
+         */
+        public static function stackable()
+        {
+            return \Inertia\Response::stackable();
+        }
+
         /**
          * 
          *

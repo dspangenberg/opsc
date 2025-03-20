@@ -15,6 +15,7 @@ import { NavUser } from '@/Components/NavUser'
 import { usePage } from '@inertiajs/react'
 import { SidebarLeftIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
+
 export default function AppLayout({ children }: PropsWithChildren<{ header?: ReactNode }>) {
   useAppInitializer()
   const user: App.Data.UserData = usePage().props.auth.user

@@ -12,7 +12,6 @@ import {
   DataCardHeader,
   DataCardSection
 } from '@/Components/DataCard'
-import { Edit02Icon } from '@hugeicons/core-free-icons'
 import { ArrayTextField } from '@/Components/ArrayTextField'
 import { StatsField } from '@/Components/StatsField'
 import { Link } from '@inertiajs/react'
@@ -26,10 +25,6 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
   invoice,
   showSecondary
 }: ContactDetailsOrgInfoBoxProps) => {
-  const onDebtorDataClicked = () => {
-    console.log('Debtor data clicked')
-  }
-
   const currencyFormatter = new Intl.NumberFormat('de-DE', {
     style: 'decimal',
     minimumFractionDigits: 2
@@ -72,15 +67,11 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
           />
         </DataCardSection>
 
-        <DataCardSection className="grid grid-cols-2">
+        <DataCardSection suppressEmptyText={true}>
           <DataCardField
             variant="vertical"
             label="Leistungsdatum"
-            className="col-span-2"
-            value={
-              invoice.service_provision ||
-              `${invoice.service_period_begin} — ${invoice.service_period_end}`
-            }
+            value={invoice.service_provision || invoice.service_period_begin}
           >
             {invoice.service_provision ? (
               invoice.service_provision
@@ -90,6 +81,9 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
               </>
             )}
           </DataCardField>
+        </DataCardSection>
+        <DataCardSection>
+          <DataCardField variant="vertical" label="Projekt:" value={invoice.project?.name} />
         </DataCardSection>
         <DataCardSection className="grid grid-cols-2">
           <DataCardField
@@ -113,7 +107,7 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
           <DataCardField
             variant="vertical"
             label="Rechnungsanschrift"
-            value={invoice.invoice_address}
+            value={invoice.invoice_address as unknown as string[]}
           >
             <ArrayTextField lines={invoice.invoice_address} />
           </DataCardField>

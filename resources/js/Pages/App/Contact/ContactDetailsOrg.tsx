@@ -9,6 +9,7 @@ import { DataCard, DataCardContent, DataCardField, DataCardSection } from '@/Com
 import { Add01Icon, Edit02Icon } from '@hugeicons/core-free-icons'
 import { ContactDetailsMail } from '@/Pages/App/Contact/ContactDetailsMails'
 import { ContactDetailsAddresses } from '@/Pages/App/Contact/ContactDetailsAddresses'
+import {useModalStack} from "@inertiaui/modal-react";
 
 interface ContactDetailsOrgInfoBoxProps {
   contact: App.Data.ContactData
@@ -22,11 +23,26 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
   const onDebtorDataClicked = () => {
     console.log('Debtor data clicked')
   }
+  const { visitModal } = useModalStack()
+
+  const handleAddButtonClick = () => {
+    visitModal(
+      route('app.contact.create.address', {
+        contact: contact.id
+      })
+    )
+  }
 
   return (
+    <div className="">
     <DataCard title={contact.full_name}>
       <DataCardContent showSecondary={showSecondary}>
-        <DataCardSection title="Debitorinfos" icon={Edit02Icon} onClick={onDebtorDataClicked}>
+        <DataCardSection
+          title="Debitorinfos"
+          icon={Edit02Icon}
+          onClick={onDebtorDataClicked}
+          buttonTooltip="Debitorinfos bearbeiten"
+        >
           <DataCardField
             variant="vertical"
             label="Kunden- und Debitornr."
@@ -52,7 +68,8 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
           secondary
           title="Anschriften"
           icon={Add01Icon}
-          forceChildren={false}
+          forceChildren={true}
+          onClick={() => {handleAddButtonClick() }}
           emptyText="Keine Anschriften vorhanden"
         >
           <ContactDetailsAddresses addresses={contact.addresses || []} />
@@ -68,5 +85,6 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
         </DataCardSection>
       </DataCardContent>
     </DataCard>
+    </div>
   )
 }

@@ -11,17 +11,28 @@ import { Toolbar, ToolbarButton } from '@dspangenberg/twcui'
 import { columns } from './InvoiceIndexColumns'
 import type { PageProps } from '@/Types'
 import { Pagination } from '@/Components/Pagination'
+import { StatsField } from '@/Components/StatsField'
 
 interface ContactIndexProps extends PageProps {
   invoices: App.Data.Paginated.PaginationMeta<App.Data.InvoiceData[]>
   years: number[]
+  stats: {
+    year: number
+    total_gross: number
+    total_tax: number
+    total_net: number
+  }
 }
 
 const InvoiceIndex: React.FC = () => {
   const invoices = usePage<ContactIndexProps>().props.invoices
   const years = usePage<ContactIndexProps>().props.years
+  const stats = usePage<ContactIndexProps>().props.stats
 
-  console.log(years)
+  const currencyFormatter = new Intl.NumberFormat('de-DE', {
+    style: 'decimal',
+    minimumFractionDigits: 2
+  })
 
   const testROute = `${route('app.invoice.index', {})}?year=2023`
   console.log(testROute)
@@ -77,6 +88,14 @@ const InvoiceIndex: React.FC = () => {
       className="overflow-hidden flex"
       toolbar={toolbar}
       tabs={tabs}
+      header={
+        <div className="flex gap-4">
+          <StatsField label="netto" value={currencyFormatter.format(stats.total_net)} />
+          <StatsField label="USt." value={currencyFormatter.format(stats.total_tax)} />
+          <StatsField label="brutto" value={currencyFormatter.format(stats.total_gross)} />
+          <StatsField label="offen" value={currencyFormatter.format(0)} />
+        </div>
+      }
     >
       {invoices.data.length > 0 ? (
         <DataTable columns={columns} data={invoices.data} footer={footer} />

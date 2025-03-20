@@ -6,7 +6,11 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\App\Contact\ContactAddressCreateController;
+use App\Http\Controllers\App\Contact\ContactAddressStoreController;
+use App\Http\Controllers\App\Contact\ContactAddressUpdateController;
 use App\Http\Controllers\App\Contact\ContactDetailsController;
+use App\Http\Controllers\App\Contact\ContactEditAddressController;
 use App\Http\Controllers\App\Contact\ContactIndexController;
 use App\Http\Controllers\App\Contact\ContactToggleFavoriteController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsController;
@@ -56,6 +60,22 @@ Route::middleware([
     Route::get('contacts/{contact}',
         ContactDetailsController::class)->name('app.contact.details');
 
+    Route::get('contacts/{contact}/{address}/edit',
+        ContactEditAddressController::class)->name('app.contact.edit.address');
+
+    Route::get('contacts/{contact}/create',
+        ContactAddressCreateController::class)->name('app.contact.create.address');
+
+
+    Route::put('contacts/{contact}/{contact_address}',
+        ContactAddressUpdateController::class)
+        ->middleware([HandlePrecognitiveRequests::class])
+        ->name('app.contact.address.update');
+
+    Route::post('contacts/{contact}/address',
+        ContactAddressStoreController::class)
+        ->middleware([HandlePrecognitiveRequests::class])
+        ->name('app.contact.address.store');
 
     Route::put('contacts/{contact}/toggle-favorite',
         ContactToggleFavoriteController::class)->name('app.contact.toggle-favorite');

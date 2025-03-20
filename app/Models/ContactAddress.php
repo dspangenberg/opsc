@@ -60,6 +60,13 @@ class ContactAddress extends Model
         'created_at',
         'updated_at',
     ];
+    protected $attributes = [
+        'address' => '',
+        'zip' => '',
+        'city' => '',
+        'country_id' => 1,
+        'address_category_id' => 0,
+    ];
 
     public function contact(): HasOne
     {
@@ -76,15 +83,11 @@ class ContactAddress extends Model
         return $this->hasOne(Country::class, 'id', 'country_id');
     }
 
-    public function getFullAddressAttribute(): array
+    public function getFullAddressAttribute(): string
     {
         $lines = [];
         $lines[] = $this->contact->full_name;
-
-        $address = explode("\n", $this->address);
-        foreach ($address as $line) {
-            $lines[] = $line;
-        }
+        $lines[] = $this->address;
 
         if ($this->country_id === 1) {
             $lines[] = $this->zip . ' ' . $this->city;
@@ -92,7 +95,8 @@ class ContactAddress extends Model
             $lines[] = strtoupper($this->zip . ' ' . $this->city);
             $lines[] = strtoupper($this->country->name);
         }
-        return $lines;
+
+        return implode("\n", $lines);
     }
 
     protected function serializeDate(DateTimeInterface $date): string
