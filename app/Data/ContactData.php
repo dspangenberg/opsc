@@ -34,6 +34,9 @@ class ContactData extends Data
         public readonly ?string $department,
         public readonly ?string $position,
         public readonly ?string $tax_number,
+        public readonly ?string $formated_debtor_number,
+        public readonly ?string $formated_creditor_number,
+
 
         /** @var ContactData */
         public readonly ?object $company,

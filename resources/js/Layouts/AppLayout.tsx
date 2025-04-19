@@ -24,14 +24,14 @@ export default function AppLayout({ children }: PropsWithChildren<{ header?: Rea
     <AppProvider>
       <SidebarProvider>
         <AppSidebar />
-        <SidebarInset className="relative border-0">
-          <div className="absolute top-0 bottom-12 left-0 right-12 p-2 pointer-event">
-            <SidebarTrigger className="size-8 active:border pointer-event">
+        <SidebarInset className="relative border-0  ">
+          <div className="absolute top-0 bottom-10 left-0 right-12 px-2 py-0 pointer-event">
+            <SidebarTrigger className="size-8 active:border pointer-event flex flex-1 h-10 items-center">
               <HugeiconsIcon icon={SidebarLeftIcon} className="size-5" />
               <span className="sr-only">Toggle Sidebar</span>
             </SidebarTrigger>
           </div>
-          <div className="flex items-center h-12 z-20">
+          <div className="flex items-center h-10 z-20">
             <LayoutContainer className="w-full flex py-1 flex-1 items-center">
               <div className="flex-1">
                 <PageBreadcrumbs className="hidden md:flex" />
@@ -41,7 +41,7 @@ export default function AppLayout({ children }: PropsWithChildren<{ header?: Rea
               </div>
             </LayoutContainer>
           </div>
-          <div className="absolute top-12 left-0 bottom-0 right-0 overflow-hidden  bg-background dark:bg-stone-900 shadow-sm rounded-lg ">
+          <div className="absolute top-12 left-0 bottom-0 right-0 bg-background/50 overflow-hidden shadow-sm rounded-lg ">
             <div className="mt-6">{children}</div>
           </div>
         </SidebarInset>

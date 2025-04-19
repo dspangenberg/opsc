@@ -19,7 +19,7 @@ import {
 import { usePathActive } from '@/Hooks/usePathActive'
 import { HugeiconsIcon, type HugeiconsProps } from '@hugeicons/react'
 import { Link, usePage } from '@inertiajs/react'
-import { ChevronRight, type LucideIcon } from 'lucide-react'
+import { ChevronRight, type LucideIcon, Plus } from 'lucide-react'
 import type * as React from 'react'
 export type CombinedIcon = LucideIcon | React.FC<HugeiconsProps>
 
@@ -60,7 +60,12 @@ export function NavMain({
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton asChild tooltip={item.title} isActive={isPathActive(item)}>
                     <Link href={item.url}>
-                      <HugeiconsIcon icon={item.icon} size={24} color="currentColor" className="size-5! text-sidebar-foreground!" />
+                      <HugeiconsIcon
+                        icon={item.icon}
+                        size={24}
+                        color="currentColor"
+                        className="size-5! text-sidebar-foreground!"
+                      />
                       <span className="text-base">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>

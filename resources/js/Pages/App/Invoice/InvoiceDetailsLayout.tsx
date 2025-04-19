@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import type * as React from 'react'
 import { useModalStack } from '@inertiaui/modal-react'
 import {
@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger
 } from '@/Components/ui/dropdown-menu'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { ClassicNavTabsTab } from '@/Components/ClassicNavTabs'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -43,6 +44,21 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
   )
 
   const title = `RG-${invoice.formated_invoice_number}`
+
+  const tabs = useMemo(
+    () => (
+      <>
+        <ClassicNavTabsTab href={route('app.invoice.index')} activeRoute="/app/invoices">
+          Rechnungsdaten
+        </ClassicNavTabsTab>
+
+        <ClassicNavTabsTab href={route('app.contact.index')} activeRoute="/app/contacts/favorites">
+          Buchungen
+        </ClassicNavTabsTab>
+      </>
+    ),
+    []
+  )
 
   const toolbar = useMemo(
     () => (
@@ -81,6 +97,7 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
     <PageContainer
       title={title}
       width="7xl"
+      tabs={tabs}
       breadcrumbs={breadcrumbs}
       className="overflow-hidden flex gap-4"
       toolbar={toolbar}

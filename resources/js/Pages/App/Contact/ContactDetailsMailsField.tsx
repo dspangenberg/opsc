@@ -6,11 +6,11 @@
 import type * as React from 'react'
 import { type FC, useState } from 'react'
 import { DataCardField } from '@/Components/DataCard'
-import { Copy01Icon } from '@hugeicons/core-free-icons'
+import { Copy02Icon } from '@hugeicons/core-free-icons'
 import { Button } from '@dspangenberg/twcui'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/Components/ui/tooltip'
 import { cn } from '@/Lib/utils'
-import { Check, Copy } from 'lucide-react'
+import { Check } from 'lucide-react'
 interface Props {
   mail: App.Data.ContactMailData
 }
@@ -46,7 +46,7 @@ export const ContactDetailsMailField: FC<Props> = ({ mail }: Props) => {
                   aria-label={copied ? 'Copied' : 'Copy to clipboard'}
                   className="opacity-0 group-hover/mail:opacity-100"
                   size="icon-xs"
-                  icon={Copy01Icon}
+                  icon={Copy02Icon}
                   disabled={copied}
                 />
                 <div

@@ -12,6 +12,7 @@ import { type Container, useThemeContainer } from '@/Components/theme-container-
 import { cn } from '@/Lib/utils'
 import { useBreadcrumbProvider } from '@/Components/BreadcrumbProvider'
 import { NavTabs } from '@/Components/NavTabs'
+import { ClassicNavTabs } from '@/Components/ClassicNavTabs'
 
 interface PageContainerProps {
   title: string
@@ -60,27 +61,27 @@ export const PageContainer: React.FC<PageContainerProps> = ({
   }, [header, title])
 
   return (
-    <div className="flex flex-col overflow-hidden absolute inset-0">
+    <div className="flex flex-col overflow-hidden absolute inset-0 bg-page-content">
       <Head title={title} />
 
-      <div className="flex-none  border-y border-border/50 bg-background rounded-t-xl">
+      <div className="flex-none  border-y z-10 border-border/50 bg-background rounded-t-xl">
         <LayoutContainer
           className={cn(
-            'w-full flex items-center flex-1',
-            !tabs ? 'py-6' : 'pt-3',
+            'w-full flex items-center flex-1 z-10',
+            tabs ? 'py-0' : '',
             headerClassname
           )}
         >
-          <div className="flex flex-1 flex-col pt-0">
-            <div className="flex-1 flex items-center">{headerContent}</div>
-            <div>{tabs && <NavTabs className="pt-3 -mx-1 text-base">{tabs}</NavTabs>}</div>
+          <div className={cn('flex flex-1 flex-col justify-center ', tabs ? 'pb-0' : 'py-3')}>
+            <div className="flex-1 flex items-center py-3 h-fit">{headerContent}</div>
+            <div>{tabs && <ClassicNavTabs>{tabs}</ClassicNavTabs>}</div>
           </div>
           <div className="flex flex-none items-center justify-stretch self-stretch">
             {toolbar && <div className="flex-none">{toolbar}</div>}
           </div>
         </LayoutContainer>
       </div>
-      <div className="relative flex-1 my-6">
+      <div className="relative flex-1 my-6 bg-page-content">
         <LayoutContainer className={cn('absolute inset-0 min-h-0 overflow-y-auto my-4', className)}>
           {children}
         </LayoutContainer>

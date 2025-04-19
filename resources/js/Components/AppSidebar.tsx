@@ -64,7 +64,7 @@ const data = {
       hasSep: false
     },
     {
-      title: 'Fakturierung',
+      title: 'Rechnungen',
       url: route('app.invoice.index', {}, false),
       icon: FileEuroIcon,
       activePath: '/app/invoices',

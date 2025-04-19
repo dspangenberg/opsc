@@ -9,7 +9,7 @@ import { DataCard, DataCardContent, DataCardField, DataCardSection } from '@/Com
 import { Add01Icon, Edit02Icon } from '@hugeicons/core-free-icons'
 import { ContactDetailsMail } from '@/Pages/App/Contact/ContactDetailsMails'
 import { ContactDetailsAddresses } from '@/Pages/App/Contact/ContactDetailsAddresses'
-import {useModalStack} from "@inertiaui/modal-react";
+import { useModalStack } from '@inertiaui/modal-react'
 
 interface ContactDetailsOrgInfoBoxProps {
   contact: App.Data.ContactData
@@ -34,7 +34,6 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
   }
 
   return (
-    <div className="">
     <DataCard title={contact.full_name}>
       <DataCardContent showSecondary={showSecondary}>
         <DataCardSection
@@ -46,7 +45,7 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
           <DataCardField
             variant="vertical"
             label="Kunden- und Debitornr."
-            value={contact.debtor_number}
+            value={contact.formated_debtor_number}
           />
           <DataCardField
             variant="vertical"
@@ -61,15 +60,33 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
           icon={Edit02Icon}
           onClick={onDebtorDataClicked}
         >
-          <DataCardField variant="vertical" label="Kreditornr." value={contact.creditor_number} />
+          <DataCardField
+            variant="vertical"
+            label="Kreditornr."
+            value={contact.formated_creditor_number}
+          />
         </DataCardSection>
-        <ContactDetailsMail mails={contact.mails || []} />
+
+        <DataCardSection
+          secondary
+          title="E-Mail-Adressen"
+          icon={Add01Icon}
+          forceChildren={(contact.mails?.length ?? 0) > 0}
+          onClick={() => {
+            handleAddButtonClick()
+          }}
+          emptyText="Keine E-Mail-Adressen vorhanden"
+        >
+          <ContactDetailsMail mails={contact.mails || []} />
+        </DataCardSection>
         <DataCardSection
           secondary
           title="Anschriften"
           icon={Add01Icon}
           forceChildren={true}
-          onClick={() => {handleAddButtonClick() }}
+          onClick={() => {
+            handleAddButtonClick()
+          }}
           emptyText="Keine Anschriften vorhanden"
         >
           <ContactDetailsAddresses addresses={contact.addresses || []} />
@@ -85,6 +102,5 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
         </DataCardSection>
       </DataCardContent>
     </DataCard>
-    </div>
   )
 }

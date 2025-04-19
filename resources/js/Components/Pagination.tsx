@@ -1,48 +1,77 @@
 import {
   Pagination as ShadcnPagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious
 } from '@/Components/ui/pagination'
-import { cn } from '@/Lib/utils'
-import type { HugeiconsProps } from '@hugeicons/react'
+import React, { useState } from 'react'
+import { FormSelect } from '@dspangenberg/twcui'
 
-import type { TabsProps, TabsTriggerProps } from '@radix-ui/react-tabs'
-import type React from 'react'
-import type { ReactNode } from 'react'
-
-type ReactNodeOrString = ReactNode | string
-
-interface PaginatorProps<T> extends TabsProps {
+interface PaginatorProps<T> {
   data: App.Data.Paginated.PaginationMeta<T>
+  itemName?: string
 }
 
-export const Pagination = <T,>({ data }: PaginatorProps<T>) => {
+export const Pagination = <T,>({ data, itemName = 'Datensätze' }: PaginatorProps<T>) => {
   const pages = data.links.slice(1, -1) // Remove first and last elements
+  const [recordsPerPage, setRecordsPerPage] = useState('10')
+
+  const options: { value: string; label: string }[] = [
+    {
+      value: '10',
+      label: '10/Seite'
+    },
+    {
+      value: '25',
+      label: '25/Seite'
+    },
+    {
+      value: '50',
+      label: '50/Seite'
+    }
+  ]
 
   return (
-    <ShadcnPagination className="p-2">
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious href={data.prev_page_url} disabled={data.current_page === 1} />
-        </PaginationItem>
-        {pages.map((link, index) => (
-          <PaginationItem key={index}>
-            <PaginationLink 
-              href={link.url} 
-              isActive={link.active}
-            >
-              {link.label}
-            </PaginationLink>
-          </PaginationItem>
-        ))}
-        <PaginationItem>
-          <PaginationNext href={data.next_page_url} disabled={data.current_page === data.last_page} />
-        </PaginationItem>
-      </PaginationContent>
-    </ShadcnPagination>
+    <div className="flex flex-none items-center px-4 py-2">
+      <div className="flex-1 items-center flex">
+        {data.total > data.per_page && (
+          <div className="flex items-center gap-1 text-sm text-foreground">
+            {data.from}-{data.to} von {data.total} {itemName}
+          </div>
+        )}
+      </div>
+      <div className="flex-2">
+        <ShadcnPagination>
+          <PaginationContent className="mx-auto">
+            <PaginationItem>
+              <PaginationPrevious href={pages[0]?.url || '#'} disabled={data.current_page === 1} />
+            </PaginationItem>
+            {pages.map((link, index) => (
+              <PaginationItem key={index}>
+                <PaginationLink href={link.url || '#'} isActive={link.active}>
+                  {link.label}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext
+                href={pages[pages.length - 1]?.url || '#'}
+                disabled={data.current_page === data.last_page}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </ShadcnPagination>
+      </div>
+      <div className="flex-1 flex justify-end">
+        <FormSelect
+          options={options}
+          value={recordsPerPage}
+          className="w-auto"
+          onValueChange={(value: string) => setRecordsPerPage(value)}
+        />
+      </div>
+    </div>
   )
 }

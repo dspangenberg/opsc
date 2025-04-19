@@ -23,12 +23,12 @@ export const DataCard: FC<DataCardProps> = ({
   return (
     <div
       className={cn(
-        'flex-none w-full shadow border-border/50 bg-background border-t rounded-md m-0.5',
+        'flex-none w-full border-border/80 bg-sidebar rounded-lg m-0.5 p-2 shadow-md border',
         className
       )}
     >
       {title && <DataCardHeader title={title} />}
-      {children}
+      <div className="rounded-md border-border/50 last:rounded-b-xl">{children}</div>
     </div>
   )
 }
@@ -47,7 +47,7 @@ export const DataCardHeader: FC<DataCardHeaderProps> = ({
   return (
     <div
       className={cn(
-        'flex-none text-lg bg-sidebar font-medium text-foreground px-4 py-2.5 border-border/50 border-b rounded-t-md',
+        'flex-none text-lg bg-sidebar font-medium text-foreground px-2.5 pb-1.5 pt-1',
         className
       )}
     >
@@ -87,12 +87,12 @@ export const DataCardContent: FC<DataCardContentProps> = ({ children, showSecond
 
   return (
     <div>
-      <div className="space-y-2 divide-y my-1.5">
+      <div className="space-y-1.5 my-1 divide-border/40">
         {showSecondarySections ? allChildren : filteredChildren}
       </div>
       {!showSecondarySections && allChildren.length > filteredChildren.length && (
         <div
-          className="flex items-center bg-accent/50 justify-center text-xs py-2 bg- text-foreground cursor-pointer hover:underline text-center"
+          className="flex items-center justify-center text-xs py-2  cursor-pointer hover:underline text-center"
           onClick={onShowSecondaryClicked}
           onKeyDown={handleKeyDown}
         >
@@ -149,7 +149,12 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
   const hasValidChildren = validChildren.length > 0
 
   return (
-    <div className={cn('text-base px-4 py-1 w-full flex flex-col group')}>
+    <div
+      className={cn(
+        'group',
+        !hasValidChildren && !forceChildren && suppressEmptyText ? 'hidden' : ''
+      )}
+    >
       {title && (
         <DataCardSectionHeader
           title={title}
@@ -160,7 +165,12 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
           onClick={onClick}
         />
       )}
-      <div className={cn('space-y-2 flex flex-1 flex-col', className)}>
+      <div
+        className={cn(
+          'space-y-2 flex flex-1 flex-col text-base px-2.5 py-1.5 w-full border border-border/50 rounded-md bg-background',
+          className
+        )}
+      >
         {hasValidChildren || forceChildren
           ? children
           : !suppressEmptyText && <div className="text-foreground/40">{emptyText}</div>}
@@ -178,7 +188,11 @@ export const DataCardFieldGroup: FC<DataFieldGroupProps> = ({
   children,
   className = ''
 }: DataFieldGroupProps) => {
-  return <div className={cn('text-foreground/50 text-sm truncate', className)}>{children}</div>
+  return (
+    <div className={cn('text-foreground/50 text-sm truncate divide-y divide-border', className)}>
+      {children}
+    </div>
+  )
 }
 
 interface DataCardSectionHeaderProps {
@@ -187,7 +201,7 @@ interface DataCardSectionHeaderProps {
   className?: string
   addonText?: string
   icon?: globalThis.IconSvgElement | string
-  buttonVariant?: 'ghost' | 'outline'
+  buttonVariant?: 'ghost' | 'outline' | 'default'
   onClick?: () => void
   buttonTooltip?: string
 }
@@ -198,12 +212,12 @@ export const DataCardSectionHeader: FC<DataCardSectionHeaderProps> = ({
   icon = '',
   className = '',
   addonText = '',
-  buttonVariant = 'outline',
+  buttonVariant = 'default',
   buttonTooltip = '',
   onClick
 }: DataCardSectionHeaderProps) => {
   return (
-    <div className="flex items-center">
+    <div className="flex items-center text-sm pl-2.5 py-1 pr-0.5">
       <div className={cn('font-medium pb-1 flex-1', className)}>
         {children || title}
         {addonText && (
@@ -211,9 +225,9 @@ export const DataCardSectionHeader: FC<DataCardSectionHeaderProps> = ({
         )}
       </div>
       {icon && (
-        <div>
+        <div className="flex items-center">
           <Button
-            variant={buttonVariant}
+            variant="outline"
             size="icon-xs"
             iconClassName="text-primary"
             className="opacity-0 group-hover:opacity-100"
@@ -288,7 +302,7 @@ export const DataCardFieldHorizontal: FC<DataCardFieldCommonProps> = ({
   return (
     <div className={cn('flex', className)}>
       <DataCardFieldLabel label={label} className="flex-none w-[50%]" />
-      <div className="text-foreground flex-1">{value || children}</div>
+      <div className="text-foreground font-medium flex-1">{value || children}</div>
     </div>
   )
 }
@@ -316,7 +330,7 @@ export const DataCardFieldVertical: FC<DataCardFieldCommonProps> = ({
   return (
     <div className={cn('block flex-1 w-full', className)}>
       <DataCardFieldLabel className="block" label={label} />
-      <div className="text-foreground block">{children || value}</div>
+      <div className="text-foreground font-medium text-sm block">{children || value}</div>
     </div>
   )
 }

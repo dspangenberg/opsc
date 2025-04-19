@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
+use Maize\Markable\Mark;
 use Maize\Markable\Markable;
 use Maize\Markable\Models\Favorite;
 
@@ -122,7 +123,7 @@ use Maize\Markable\Models\Favorite;
  * @property-read string $company_name
  * @property-read bool $is_favorite
  * @property-read string $primary_mail
- * @method static Builder<static>|Contact whereHasMark(\Maize\Markable\Mark $mark, \Illuminate\Database\Eloquent\Model $user, ?string $value = null)
+ * @method static Builder<static>|Contact whereHasMark(Mark $mark, \Illuminate\Database\Eloquent\Model $user, ?string $value = null)
  * @mixin Eloquent
  */
 class Contact extends Model
@@ -139,6 +140,8 @@ class Contact extends Model
         'reverse_full_name',
         'is_favorite',
         'initials',
+        'formated_debtor_number',
+        'formated_creditor_number',
         'primary_mail',
         'company_name',
     ];
@@ -228,6 +231,20 @@ class Contact extends Model
         return Favorite::has($this, auth()->user());
     }
 
+
+    public function getFormatedDebtorNumberAttribute(): string|null
+    {
+        if (!$this->debtor_number) return null;
+        return number_format($this->debtor_number, 0, '', '.');
+    }
+
+    public function getFormatedCreditorNumberAttribute(): string|null
+    {
+        if (!$this->creditor_number) return null;
+
+        return number_format($this->creditor_number, 0, '', '.');
+    }
+
     public function getPrimaryMailAttribute(): string
     {
         if (count($this->mails)) {
@@ -243,7 +260,19 @@ class Contact extends Model
             return strtoupper(substr($this->first_name, 0, 1) . substr($this->name, 0, 1));
         }
 
-        return strtoupper(substr($this->name, 0, 1));
+        $parts = explode(' ', $this->name);
+        $initials = substr($parts[0], 0, 1);
+
+        if (count($parts) > 1) {
+            $stoppWords = ['gmbh', 'ag', 'gbr', 'eg', 'kg', 'e.k.', 'e. k.', 'ug', 'ggmbh'];
+
+            if (!in_array(strtolower($parts[1]), $stoppWords)) {
+                $initials .= substr($parts[1], 0, 1);
+            }
+
+        }
+
+        return strtoupper($initials);
     }
 
     public function getReverseFullNameAttribute(): string

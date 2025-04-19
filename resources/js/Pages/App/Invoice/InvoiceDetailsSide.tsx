@@ -35,72 +35,61 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
     [invoice.contact_id]
   )
 
+  const title = `RG-${invoice.formated_invoice_number}`
+
   return (
-    <DataCard>
-      <DataCardHeader className="grid grid-cols-4 divide-x">
+    <DataCard title={title}>
+      <DataCardHeader className="grid grid-cols-4 divide-x rounded-md border bg-white divide-border/50 border-b border-border/50 p-1.5">
         <StatsField label="netto" value={currencyFormatter.format(invoice.amount_net)} />
         <StatsField label="USt." value={currencyFormatter.format(invoice.amount_tax)} />
         <StatsField label="brutto" value={currencyFormatter.format(invoice.amount_gross)} />
         <StatsField label="offen" value={currencyFormatter.format(0)} />
       </DataCardHeader>
-      <DataCardContent showSecondary={showSecondary}>
+      <DataCardContent>
+        <DataCardSection className="grid grid-cols-2 space-y-0" title="Rechnungsdetails">
+          <DataCardField variant="vertical" label="Datum" value={invoice.issued_on} />
+          <DataCardField variant="vertical" label="Fälligkeit" value={invoice.due_on} />
+        </DataCardSection>
         <DataCardSection>
           <DataCardField
-            variant="horizontal-right"
-            label="Rechnungsnummer"
-            value={invoice.formated_invoice_number}
-          />
-          <DataCardField
-            variant="horizontal-right"
+            variant="vertical"
             label="Rechnungstyp"
             value={invoice.type?.display_name}
           />
           <DataCardField
-            variant="horizontal-right"
-            label="Rechnungsdatum"
-            value={invoice.issued_on}
-          />
-          <DataCardField
-            variant="horizontal-right"
-            label="Fälligkeitsdatum"
-            value={invoice.due_on}
-          />
-        </DataCardSection>
-
-        <DataCardSection suppressEmptyText={true}>
-          <DataCardField
+            className="col-span-2"
             variant="vertical"
             label="Leistungsdatum"
             value={invoice.service_provision || invoice.service_period_begin}
           >
-            {invoice.service_provision ? (
-              invoice.service_provision
-            ) : (
+            {invoice.service_period_begin ? (
               <>
-                {invoice.service_period_begin} &mdash; {invoice.service_period_end}
+                {invoice.service_period_begin} &ndash; {invoice.service_period_end}
               </>
+            ) : (
+              invoice.service_provision
             )}
           </DataCardField>
+
+          <DataCardField
+            className="col-span-2"
+            variant="vertical"
+            label="Projekt"
+            value={invoice.project?.name}
+          />
         </DataCardSection>
-        <DataCardSection>
-          <DataCardField variant="vertical" label="Projekt:" value={invoice.project?.name} />
-        </DataCardSection>
-        <DataCardSection className="grid grid-cols-2">
+
+        <DataCardSection title="Rechnungsempfänger">
           <DataCardField
             variant="vertical"
             label="Debitor"
             value={invoice.contact?.full_name}
-            className="col-span-2"
+            className="col-span-3"
           >
             <Link href={contactRoute} className="hover:underline">
-              {invoice.contact?.full_name}
+              {invoice.contact?.formated_debtor_number} &ndash; {invoice.contact?.full_name}
             </Link>
           </DataCardField>
-          <DataCardField
-            variant="vertical"
-            label="Debitornr."
-            value={invoice.contact?.debtor_number}
-          />
           <DataCardField variant="vertical" label="Umsatzsteuer-ID" value={invoice.vat_id} />
         </DataCardSection>
         <DataCardSection>

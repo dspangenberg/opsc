@@ -25,7 +25,7 @@ interface SimpleTabsTriggerProps extends TabsTriggerProps {
 export const SimpleTabs: React.FC<SimpleTabsProps> = ({ children, ...props }: SimpleTabsProps) => {
   return (
     <Tabs {...props} className="w-full flex flex-full">
-      <TabsList className="relative h-auto w-full  bg-transparent border-0 shadow-none p-0 before:absolute before:inset-x-0 before:bottom-0  before:h-px before:bg-border justify-start">
+      <TabsList className="relative h-auto w-full  bg-transparent border-0 shadow-none p-0 before:absolute before:inset-x-0 before:bottom-0  before:h-px before:bg-border-border/50 justify-start">
         {children}
       </TabsList>
     </Tabs>
@@ -40,8 +40,8 @@ export const SimpleTabsTab: React.FC<SimpleTabsTriggerProps> = ({
     <TabsTrigger
       {...props}
       className={cn(
-        'flex  first:ml-2 border-0 bg-transparent items-center font-normal shadow-none rounded-none px-4 py-0  select-none  text-base! h-9 flex-none data-[state=active]:rounded-t-md text-foreground hover:text-blue-500 cursor-pointer',
-        'data-[state=active]:border data-[state=active]:border-b-0  data-[state=active]:text-foreground data-[state=active]:font-medium data-[state=active]:shadow-none data-[state=active]:border-b-border data-[state=active]:bg-background border-b-transparent   data-[state=active]:z-10 ',
+        'flex  first:ml-2 border-0 border-border/50 bg-transparent items-center font-normal shadow-none rounded-none px-4 py-0  select-none  text-base! h-9 flex-none data-[state=active]:rounded-t-md text-foreground hover:text-blue-500 cursor-pointer',
+        'data-[state=active]:border data-[state=active]:bg-sidebar-accent data-[state=active]:border-border data-[state=active]:border-b-0  data-[state=active]:text-foreground data-[state=active]:font-medium data-[state=active]:shadow-none data-[state=active]:border-b-border border-b-transparent   data-[state=active]:z-10 ',
         'disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:text-muted-foreground'
       )}
     >

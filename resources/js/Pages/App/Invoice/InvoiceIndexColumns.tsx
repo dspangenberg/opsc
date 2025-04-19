@@ -14,11 +14,10 @@ import { router } from '@inertiajs/react'
 const editUrl = (id: number | null) => (id ? route('app.invoice.details', { id }) : '#')
 const contactUrl = (id: number | null) => (id ? route('app.contact.details', { id }) : '#')
 
-const currencyFormatter = new Intl.NumberFormat('default', {
-  style: 'currency',
-  currency: 'EUR'
+const currencyFormatter = new Intl.NumberFormat('de-DE', {
+  style: 'decimal',
+  minimumFractionDigits: 2
 })
-
 const mailLink = (mail: string) => `mailto:${mail}`
 
 export const columns: ColumnDef<App.Data.InvoiceData>[] = [

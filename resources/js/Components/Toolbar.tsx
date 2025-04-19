@@ -24,6 +24,7 @@ interface ToolbarProps {
   title: ReactNodeOrString
   tabs?: ReactNode
   className?: string
+  activeView: string
 }
 
 interface ToolbarButtonProps extends Omit<ButtonProps, 'variant'> {
@@ -59,11 +60,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ children, title, className, ta
           <div className="shrink-0 ml-4 space-x-2">{children}</div>
         </div>
       </div>
-      {tabs && (
-        <div className="border-b rounded-none shadow-none my-3">
-          {tabs}
-        </div>
-      )}
+      {tabs && <div className="border-b rounded-none shadow-none my-3">{tabs}</div>}
     </>
   )
 }
@@ -74,21 +71,14 @@ export const ToolbarTabs: React.FC<ToolbarTabsProps> = ({
 }: ToolbarTabsProps) => {
   return (
     <Tabs {...props}>
-      <TabsList className="bg-transparent border-b w-full justify-start">
-        {children}
-      </TabsList>
+      <TabsList className="bg-transparent border-b w-full justify-start">{children}</TabsList>
     </Tabs>
   )
 }
 
 export const ToolbarTab: React.FC<ToolbarTabProps> = ({ children, ...props }: ToolbarTabProps) => {
   return (
-    <TabsTrigger
-      {...props}
-      className={
-        'xxx'
-      }
-    >
+    <TabsTrigger {...props} className={'xxx'}>
       {children}
     </TabsTrigger>
   )
@@ -100,7 +90,9 @@ export const ToolbarButton: React.FC<ToolbarButtonProps> = ({
   children,
   ...props
 }) => {
-  const iconElement = props.icon ? <HugeiconsIcon icon={props.icon} className="text-primary" size={16} strokeWidth={2} /> : null
+  const iconElement = props.icon ? (
+    <HugeiconsIcon icon={props.icon} className="text-primary" size={16} strokeWidth={2} />
+  ) : null
 
   if (variant === 'primary') {
     return (

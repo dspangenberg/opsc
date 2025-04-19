@@ -26,15 +26,10 @@ export const ContactDetailsMail: FC<Props> = ({ mails }: Props) => {
   if (!mails.length) return null
 
   return (
-    <DataCardSection
-      icon={icon}
-      onClick={handleAddButtonClick}
-      title="E-Mails"
-      forceChildren={mails.length > 0}
-    >
+    <>
       {mails.map((mail, index) => (
         <ContactDetailsMailField mail={mail} key={mail.id || index} />
       ))}
-    </DataCardSection>
+    </>
   )
 }

@@ -15,7 +15,7 @@ const ContactDetails: React.FC = () => {
   return (
     <ContactDetailsLayout contact={contact}>
       <div className="flex-1">xxx</div>
-      <div className="w-sm flex-none h-fit space-y-6 px-1">
+      <div className="w-sm flex-none h-fit px-1 !space-y-6">
         {contact.company_id !== 0 && <ContactDetailsPerson contact={contact} />}
         <ContactDetailsOrg
           contact={contact.company || contact}

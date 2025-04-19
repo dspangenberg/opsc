@@ -1,17 +1,31 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useId, useMemo } from 'react'
 import type * as React from 'react'
 import { usePage } from '@inertiajs/react'
 import { useModalStack } from '@inertiaui/modal-react'
-import { NoteEditIcon, PrinterIcon, Add01Icon, InboxIcon } from '@hugeicons/core-free-icons'
+import {
+  NoteEditIcon,
+  PrinterIcon,
+  Add01Icon,
+  InboxIcon,
+  Sorting05Icon
+} from '@hugeicons/core-free-icons'
 import { NavTabs, NavTabsTab } from '@/Components/NavTabs'
 import { DataTable } from '@/Components/DataTable'
 import { EmptyState } from '@/Components/EmptyState'
 import { PageContainer } from '@/Components/PageContainer'
-import { Toolbar, ToolbarButton } from '@dspangenberg/twcui'
+import { Button, Toolbar, ToolbarButton } from '@dspangenberg/twcui'
 import { columns } from './InvoiceIndexColumns'
 import type { PageProps } from '@/Types'
 import { Pagination } from '@/Components/Pagination'
 import { StatsField } from '@/Components/StatsField'
+import { ClassicNavTabsTab } from '@/Components/ClassicNavTabs'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/Components/ui/select'
 
 interface ContactIndexProps extends PageProps {
   invoices: App.Data.Paginated.PaginationMeta<App.Data.InvoiceData[]>
@@ -48,34 +62,37 @@ const InvoiceIndex: React.FC = () => {
   const toolbar = useMemo(
     () => (
       <Toolbar className="bg-background border-0 shadow-none">
-        <ToolbarButton variant="default" icon={NoteEditIcon} title="Bearbeiten" />
+        <ToolbarButton variant="default" icon={Add01Icon} title="Rechnung hinzufügen" />
         <ToolbarButton icon={PrinterIcon} />
       </Toolbar>
     ),
     []
   )
 
-  const tabs = useMemo(
+  const id = useId()
+
+  const header = useMemo(
     () => (
-      <NavTabs>
-        {years.map(year => (
-          <NavTabsTab
-            key={year}
-            href={`${route('app.invoice.index')}?year=${year}`}
-            activeRoute={`/app/invoices?year=${year}`}
-          >
-            Jahr {year}
-          </NavTabsTab>
-        ))}
-        <NavTabsTab
-          href={`${route('app.invoice.index')}?year=all`}
-          activeRoute="/app/invoices?year=all"
-        >
-          Alle Jahre
-        </NavTabsTab>
-      </NavTabs>
+      <div className="flex flex-col py-0 rounded-t-md">
+        <div className="flex-none space-x-2 p-2 flex items-center">
+          <div className="group relative min-w-64">
+            <Select>
+              <SelectTrigger id={id} className="bg-white">
+                <SelectValue placeholder="Gespeicherte Views" className="bg-white" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">2025</SelectItem>
+                <SelectItem value="2">Next.js</SelectItem>
+                <SelectItem value="3">Astro</SelectItem>
+                <SelectItem value="4">Gatsby</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button variant="ghost" size="sm" icon={Sorting05Icon} title="Filter + Sortierung" />
+        </div>
+      </div>
     ),
-    []
+    [invoices]
   )
 
   const footer = useMemo(() => <Pagination data={invoices} />, [invoices])
@@ -87,7 +104,6 @@ const InvoiceIndex: React.FC = () => {
       breadcrumbs={breadcrumbs}
       className="overflow-hidden flex"
       toolbar={toolbar}
-      tabs={tabs}
       header={
         <div className="flex gap-4">
           <StatsField label="netto" value={currencyFormatter.format(stats.total_net)} />
@@ -98,15 +114,15 @@ const InvoiceIndex: React.FC = () => {
       }
     >
       {invoices.data.length > 0 ? (
-        <DataTable columns={columns} data={invoices.data} footer={footer} />
+        <DataTable columns={columns} data={invoices.data} footer={footer} header={header} />
       ) : (
         <EmptyState
-          buttonLabel="Ersten Kontakt hinzufügen"
+          buttonLabel="Erste Rechnung hinzufügen"
           buttonIcon={Add01Icon}
           onClick={handleAdd}
           icon={InboxIcon}
         >
-          Ups, Du hast noch keine Kontakte.
+          Ups, Du hast noch keine Rechnungen.
         </EmptyState>
       )}
     </PageContainer>

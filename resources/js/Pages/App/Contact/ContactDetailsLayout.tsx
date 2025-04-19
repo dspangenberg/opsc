@@ -6,6 +6,7 @@ import { NoteEditIcon, PrinterIcon } from '@hugeicons/core-free-icons'
 import { NavTabs, NavTabsTab } from '@/Components/NavTabs'
 import { PageContainer } from '@/Components/PageContainer'
 import { Avatar, Toolbar, ToolbarButton } from '@dspangenberg/twcui'
+import { ClassicNavTabs, ClassicNavTabsTab } from '@/Components/ClassicNavTabs'
 
 interface Props {
   contact: App.Data.ContactData
@@ -35,16 +36,22 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
 
   const tabs = useMemo(
     () => (
-      <NavTabs>
-        <NavTabsTab href={route('app.contact.index')} activeRoute="/app/contacts">
-          Übersicht
-        </NavTabsTab>
+      <>
+        <ClassicNavTabsTab href={route('app.contact.index')} activeRoute="/app/contacts">
+          Aktivität
+        </ClassicNavTabsTab>
         {contact.is_org === true && (
-          <NavTabsTab href={route('app.contact.index')} activeRoute="/app/contacts/favorites">
+          <ClassicNavTabsTab
+            href={route('app.contact.index')}
+            activeRoute="/app/contacts/favorites"
+          >
             Kontakte
-          </NavTabsTab>
+          </ClassicNavTabsTab>
         )}
-      </NavTabs>
+        <ClassicNavTabsTab href={route('app.contact.index')} activeRoute="/app/contactsx">
+          Projekte
+        </ClassicNavTabsTab>
+      </>
     ),
     []
   )
@@ -58,7 +65,7 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
     () => (
       <div className="flex items-center gap-2">
         <div className="flex-none">
-          <Avatar initials={contact.initials} fullname={contact.full_name} className="size-10" />
+          <Avatar initials={contact.initials} fullname={contact.full_name} size="lg" />
         </div>
         <div className="flex-1">
           <div className="flex-1 text-2xl font-bold">{contact.full_name}</div>

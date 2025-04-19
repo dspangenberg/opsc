@@ -6,7 +6,7 @@
 import type React from 'react'
 import { createContext, useContext, useEffect, useState } from 'react'
 
-export type Container = '6xl' | '7xl' | 'full'
+export type Container = '6xl' | '7xl' | 'full' | '8xl' | '9xl'
 
 type ThemeContainerProviderProps = {
   children: React.ReactNode
@@ -25,8 +25,7 @@ const initialState: ContainerProviderState = {
   setWidth: () => null
 }
 
-const ThemeContainerProviderContext =
-  createContext<ContainerProviderState>(initialState)
+const ThemeContainerProviderContext = createContext<ContainerProviderState>(initialState)
 
 export function ThemeContainerProvider({
   children,
@@ -39,8 +38,10 @@ export function ThemeContainerProvider({
   const getClassNames = (width: Container): string => {
     return {
       full: 'max-w-full mx-4',
-      '6xl': 'max-w-sm md:max-w-6xl lg:mx-w-6xl mx-auto',
-      '7xl': 'max-w-sm md:max-w-7xl lg:mx-w-7xl mx-auto'
+      '6xl': 'max-w-sm md:max-w-6xl lg:max-w-6xl mx-auto md:min-w-6xl lg:min-w-6xl',
+      '7xl': 'max-w-sm md:max-w-7xl lg:max-w-7xl mx-auto md:min-w-7xl lg:min-w-7xl',
+      '8xl': 'max-w-sm md:max-w-[88rem] lg:max-w-[88rem] mx-auto md:min-w-[88rem] lg:min-w-[88rem]',
+      '9xl': 'max-w-sm md:max-w-[96rem] lg:max-w-[96rem] mx-auto md:min-w-[96rem] lg:min-w-[96rem]'
     }[width]
   }
 
@@ -66,8 +67,6 @@ export function ThemeContainerProvider({
 export const useThemeContainer = () => {
   const context = useContext(ThemeContainerProviderContext)
   if (context === undefined)
-    throw new Error(
-      'useThemeContainer must be used within a ThemeContainerProvider'
-    )
+    throw new Error('useThemeContainer must be used within a ThemeContainerProvider')
   return context
 }

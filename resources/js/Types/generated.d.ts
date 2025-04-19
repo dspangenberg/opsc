@@ -90,6 +90,8 @@ register_number: string | null;
 department: string | null;
 position: string | null;
 tax_number: string | null;
+formated_debtor_number: string | null;
+formated_creditor_number: string | null;
 company: App.Data.ContactData | null;
 title: App.Data.TitleData | null;
 salutation: App.Data.SalutationData | null;

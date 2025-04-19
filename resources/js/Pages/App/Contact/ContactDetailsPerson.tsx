@@ -6,7 +6,7 @@
 import type * as React from 'react'
 import type { FC } from 'react'
 import { DataCard, DataCardContent, DataCardField, DataCardSection } from '@/Components/DataCard'
-import { Edit02Icon } from '@hugeicons/core-free-icons'
+import { Add01Icon, Edit02Icon } from '@hugeicons/core-free-icons'
 import { ContactDetailsMail } from '@/Pages/App/Contact/ContactDetailsMails'
 
 interface ContactDetailsPersonInfoBoxProps {
@@ -27,7 +27,18 @@ export const ContactDetailsPerson: FC<ContactDetailsPersonInfoBoxProps> = ({
           <DataCardField variant="vertical" label="Abteilung" value={contact.department} />
           <DataCardField variant="vertical" label="Position" value={contact.position} />
         </DataCardSection>
-        <ContactDetailsMail mails={contact.mails || []} />
+        <DataCardSection
+          secondary
+          title="E-Mail-Adressen"
+          icon={Add01Icon}
+          forceChildren={(contact.mails?.length ?? 0) > 0}
+          onClick={() => {
+            handleAddButtonClick()
+          }}
+          emptyText="Keine E-Mail-Adressen vorhanden"
+        >
+          <ContactDetailsMail mails={contact.mails || []} />
+        </DataCardSection>
       </DataCardContent>
     </DataCard>
   )
