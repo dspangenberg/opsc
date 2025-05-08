@@ -23,9 +23,13 @@ import { ApplicationProvider } from '@/Components/ApplicationProvider'
 import React from 'react'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel'
+const sentryEnabled = import.meta.env.VITE_SENTRY_ENABLED === 'true'
+const sentryDsn = import.meta.env.VITE_SENTRY_DNS
 
+if (sentryEnabled && sentryDsn) {
+}
 Sentry.init({
-  dsn: 'https://bf946bb1582a0572bc21a0d36dd97088@o446798.ingest.us.sentry.io/4509008632086528'
+  dsn: sentryDsn
 })
 
 createInertiaApp({

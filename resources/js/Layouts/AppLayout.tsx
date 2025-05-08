@@ -1,50 +1,62 @@
 /*
- * opsc.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
+ * Beleg-Portal is a twiceware solution
+ * Copyright (c) 2025 by Rechtsanwalt Peter Trettin
+ *
  */
 
-import { AppProvider } from '@/Components/AppProvider'
-import { LayoutContainer } from '@/Components/LayoutContainer'
-import { PageBreadcrumbs } from '@/Components/PageBreadcrumbs'
-import { AppSidebar } from '@/Components/AppSidebar'
-import { SidebarProvider, SidebarTrigger, SidebarInset } from '@/Components/ui/sidebar'
-import type { PropsWithChildren, ReactNode } from 'react'
+import {AppProvider} from '@/Components/AppProvider'
+import {AppSidebar} from '@/Components/AppSidebar'
+import {SidebarProvider, SidebarInset, useSidebar} from '@/Components/ui/sidebar'
+import type {PropsWithChildren, ReactNode} from 'react'
 import type React from 'react'
-import { useAppInitializer } from '@/Hooks/useAppInitializer'
+import {useAppInitializer} from '@/Hooks/useAppInitializer'
+import {usePage} from '@inertiajs/react'
+import {Toaster} from '@/Components/ui/sonner'
+import {LayoutContainer} from '@/Components/LayoutContainer'
+import {SidebarLeftIcon} from "@hugeicons/core-free-icons";
+import {PageBreadcrumbs} from "@/Components/PageBreadcrumbs";
+import {Button} from "@dspangenberg/twcui";
 import { NavUser } from '@/Components/NavUser'
-import { usePage } from '@inertiajs/react'
-import { SidebarLeftIcon } from '@hugeicons/core-free-icons'
-import { HugeiconsIcon } from '@hugeicons/react'
+
+const SidebarContent: React.FC<PropsWithChildren> = ({ children }) => {
+  const { toggleSidebar } = useSidebar()
+
+  const user: App.Data.UserData = usePage().props.auth.user
+
+  return (
+    <>
+      <AppSidebar />
+
+      <SidebarInset className="relative border-0">
+        <div className="flex items-center h-10 z-20">
+          <LayoutContainer className="w-full flex py-1 flex-1 items-center">
+            <div className="flex items-center justify-between space-x-2 flex-1">
+              <Button variant="outline" icon={SidebarLeftIcon} onClick={toggleSidebar} title="Sidebar umschalten" size="icon-sm"/>
+              <PageBreadcrumbs className="hidden md:flex flex-1"/>
+              <div className="flex-none">
+                <NavUser user={user} />
+              </div>
+            </div>
+          </LayoutContainer>
+        </div>
+        <div className="absolute top-12 left-0 bottom-0 right-0 bg-background/50 overflow-hidden shadow-sm rounded-lg ">
+          <div className="mt-6">{children}</div>
+        </div>
+        <Toaster position="top-right"/>
+      </SidebarInset>
+    </>
+  )
+}
 
 export default function AppLayout({ children }: PropsWithChildren<{ header?: ReactNode }>) {
   useAppInitializer()
-  const user: App.Data.UserData = usePage().props.auth.user
 
   return (
     <AppProvider>
       <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset className="relative border-0  ">
-          <div className="absolute top-0 bottom-10 left-0 right-12 px-2 py-0 pointer-event">
-            <SidebarTrigger className="size-8 active:border pointer-event flex flex-1 h-10 items-center">
-              <HugeiconsIcon icon={SidebarLeftIcon} className="size-5" />
-              <span className="sr-only">Toggle Sidebar</span>
-            </SidebarTrigger>
-          </div>
-          <div className="flex items-center h-10 z-20">
-            <LayoutContainer className="w-full flex py-1 flex-1 items-center">
-              <div className="flex-1">
-                <PageBreadcrumbs className="hidden md:flex" />
-              </div>
-              <div className="flex-none">
-                <NavUser user={user} />
-              </div>
-            </LayoutContainer>
-          </div>
-          <div className="absolute top-12 left-0 bottom-0 right-0 bg-background/50 overflow-hidden shadow-sm rounded-lg ">
-            <div className="mt-6">{children}</div>
-          </div>
-        </SidebarInset>
+        <SidebarContent>
+          {children}
+        </SidebarContent>
       </SidebarProvider>
     </AppProvider>
   )

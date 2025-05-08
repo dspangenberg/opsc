@@ -22,3 +22,10 @@ yarn-error.log
 /.vscode
 /.zed
 .npmrc
+/storage/system/pdfs
+/storage/system/invoices
+/storage/system/receipts
+/storage/system/fonts/*.ttf
+/storage/system/letterheads/*.pdf
+/storage/system/templates
+/storage/system/cache

@@ -18,7 +18,13 @@ class ContactIndexController extends Controller
 
         $contacts = Contact::query()
             ->select([
-                'id', 'name', 'first_name', 'company_id', 'title_id', 'salutation_id', 'debtor_number',
+                'id',
+                'name',
+                'first_name',
+                'company_id',
+                'title_id',
+                'salutation_id',
+                'debtor_number',
                 'creditor_number'
             ])
             ->with('company')

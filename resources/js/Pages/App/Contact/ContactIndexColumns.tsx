@@ -61,12 +61,12 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
   {
     accessorKey: 'initials',
     header: '',
-    size: 50,
+    size: 40,
     cell: ({ row }) => (
       <Avatar
         initials={row.original.initials.toUpperCase()}
         fullname={row.original.full_name}
-        className="size-8"
+        size="md"
       />
     )
   },

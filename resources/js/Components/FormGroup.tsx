@@ -23,11 +23,7 @@ export const FormGroup: React.FC<FormGroupProps> = ({
   titleClass = 'font-medium text-base text-black mt-4 pb-3 border-b',
   children
 }) => {
-  const gridCols = {
-    6: 'grid-cols-6',
-    12: 'grid-cols-12',
-    24: 'grid-cols-24'
-  }[cols]
+
 
   return (
     <div className="flex-1 border-stone-100 p-1">

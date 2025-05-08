@@ -32,9 +32,9 @@ interface FolderHeaderProps {
 }
 
 export const ViewNavigation: React.FC<ViewNavigationProps> = ({
-  customViewsTitle = 'Views',
+  customViewsTitle = 'Gepseicherte Views',
   className,
-  title = '',
+  title = 'Standardviews',
   activeView,
   defaultViews = [],
   customViews = []
@@ -46,7 +46,7 @@ export const ViewNavigation: React.FC<ViewNavigationProps> = ({
           <FolderHeader>{title}</FolderHeader>
           {defaultViews.map(view => (
             <Folder
-              key={view.route}
+              key={view.name}
               isActive={activeView === view.name}
               name={view.name}
               title={view.title}
@@ -62,7 +62,7 @@ export const ViewNavigation: React.FC<ViewNavigationProps> = ({
           <FolderHeader>{customViewsTitle}</FolderHeader>
           {customViews.map(view => (
             <Folder
-              key={view.route}
+              key={view.name}
               name={view.name}
               title={view.title}
               isActive={activeView === view.name}

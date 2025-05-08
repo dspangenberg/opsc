@@ -23,7 +23,7 @@ export const DataCard: FC<DataCardProps> = ({
   return (
     <div
       className={cn(
-        'flex-none w-full border-border/80 bg-sidebar rounded-lg m-0.5 p-2 shadow-md border',
+        'flex-none w-full border-border/80 bg-sidebar rounded-lg m-0.5 p-1 shadow-md border',
         className
       )}
     >

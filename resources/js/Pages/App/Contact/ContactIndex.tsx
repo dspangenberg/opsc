@@ -3,11 +3,7 @@ import type * as React from 'react'
 import { usePage } from '@inertiajs/react'
 import { useModalStack } from '@inertiaui/modal-react'
 import {
-  FolderViewIcon,
-  FolderManagementIcon,
   Add01Icon,
-  InboxIcon,
-  FilterIcon,
   MoreVerticalCircle01Icon,
   Sorting05Icon
 } from '@hugeicons/core-free-icons'
@@ -22,16 +18,6 @@ import { Pagination } from '@/Components/Pagination'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useId } from 'react'
 import { ContactIndexFilterPopover } from './ContactIndexFilterPopover'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue
-} from '@/Components/ui/select'
-import { Badge } from '@/Components/ui/badge'
-import { Popover, PopoverContent, PopoverTrigger } from '@/Components/ui/popover'
 import { ContactIndexFolders } from '@/Pages/App/Contact/ContactIndexFolders'
 interface ContactIndexProps extends PageProps {
   contacts: App.Data.Paginated.Contact & App.Data.Paginated.PaginationMeta<App.Data.ContactData[]>
@@ -82,9 +68,6 @@ const ContactIndex: React.FC = () => {
       <div className="flex flex-col py-0 rounded-t-md w-7xl">
         <div className="flex-none space-x-2 pb-2 flex items-center">
           <ContactIndexFilterPopover />
-          <Button variant="ghost" icon={Sorting05Icon}>
-            Sortierung
-          </Button>
         </div>
       </div>
     ),
@@ -108,7 +91,6 @@ const ContactIndex: React.FC = () => {
             buttonLabel="Ersten Kontakt hinzufügen"
             buttonIcon={Add01Icon}
             onClick={handleAdd}
-            icon={InboxIcon}
           >
             Ups, Du hast noch keine Kontakte.
           </EmptyState>

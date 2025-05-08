@@ -120,6 +120,7 @@ class Invoice extends Model implements MediableInterface
         'payment_deadline_id',
         'invoice_contact_id',
         'payment_deadline_id',
+        'is_loss_of_receivables',
         'sent_at',
     ];
 
@@ -129,6 +130,7 @@ class Invoice extends Model implements MediableInterface
         'invoice_contact_id' => 0,
         'payment_deadline_id' => 0,
         'service_provision' => '',
+        'is_loss_of_receivables' => false,
     ];
 
     protected $appends = [
@@ -292,7 +294,7 @@ class Invoice extends Model implements MediableInterface
             return formated_invoice_id($this->invoice_number);
         }
 
-        return 'Entwurf ' . $this->id;
+        return 'Entwurf '.$this->id;
     }
 
     public function getInvoiceAddressAttribute(): array
@@ -307,7 +309,7 @@ class Invoice extends Model implements MediableInterface
 
     public function getFilenameAttribute(): string
     {
-        return 'RG-' . str_replace('.', '_', basename($this->formated_invoice_number, '.pdf'));
+        return 'RG-'.str_replace('.', '_', basename($this->formated_invoice_number)).'.pdf';
     }
 
     public function getAmountNetAttribute(): float
@@ -416,6 +418,8 @@ class Invoice extends Model implements MediableInterface
             'sent_at' => 'datetime',
             'service_period_begin' => 'date',
             'service_period_end' => 'date',
+            'is_loss_of_receivables' => 'boolean',
+            'is_draft' => 'boolean',
         ];
     }
 }

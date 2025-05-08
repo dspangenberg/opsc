@@ -58,9 +58,9 @@ const data = {
     },
     {
       title: 'Zeiterfassung',
-      url: route('app.dashboard', {}, false),
+      url: route('app.time.index', {}, false),
       icon: TimeScheduleIcon,
-      activePath: '/appsi',
+      activePath: '/app/times',
       hasSep: false
     },
     {

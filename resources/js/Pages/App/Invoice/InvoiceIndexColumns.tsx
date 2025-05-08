@@ -10,6 +10,7 @@ import { Link } from '@inertiajs/react'
 import type { ColumnDef } from '@tanstack/react-table'
 import type React from 'react'
 import { router } from '@inertiajs/react'
+import { Badge } from '@/Components/ui/badge'
 
 const editUrl = (id: number | null) => (id ? route('app.invoice.details', { id }) : '#')
 const contactUrl = (id: number | null) => (id ? route('app.contact.details', { id }) : '#')
@@ -52,20 +53,23 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
   {
     accessorKey: 'formated_invoice_number',
     header: 'Rechnungsnr.',
-    size: 150,
+    size: 140,
     cell: ({ row, getValue }) => (
+      <div className="flex items-center gap-3">
       <Link
         href={editUrl(row.original.id)}
         className="font-medium hover:underline align-middle truncate"
       >
         <span>{getValue() as string}</span>
       </Link>
+        {row.original.is_loss_of_receivables && <Badge variant="destructive" className="cursor-help">2400</Badge>}
+      </div>
     )
   },
   {
     accessorKey: 'contact.full_name',
-    header: '',
-    size: 350,
+    header: 'Debitor',
+    size: 250,
     cell: ({ getValue, row }) => (
       <Link
         href={contactUrl(row.original.contact_id)}
@@ -76,26 +80,39 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
     )
   },
   {
-    accessorKey: 'amount_net',
-    header: 'netto',
-    size: 110,
+    accessorKey: 'project_id',
+    header: 'Projekt',
+    size: 200,
     cell: ({ getValue, row }) => (
+      <Link
+        href={contactUrl(row.original.contact_id)}
+        className="hover:underline align-middle truncate"
+      >
+        {row.original.project?.name}
+      </Link>
+    )
+  },
+  {
+    accessorKey: 'amount_net',
+    header: () => <div className="text-right">netto</div>,
+    size: 110,
+    cell: ({  row }) => (
       <div className="text-right">{currencyFormatter.format(row.original.amount_net)}</div>
     )
   },
   {
     accessorKey: 'amount_tax',
-    header: 'Steuern',
+    header: () => <div className="text-right">USt.</div>,
     size: 110,
-    cell: ({ getValue, row }) => (
+    cell: ({ row }) => (
       <div className="text-right">{currencyFormatter.format(row.original.amount_tax)}</div>
     )
   },
   {
     accessorKey: 'amount_gross',
-    header: 'brutto',
+    header: () => <div className="text-right">brutto</div>,
     size: 110,
-    cell: ({ getValue, row }) => (
+    cell: ({ row }) => (
       <div className="text-right">{currencyFormatter.format(row.original.amount_gross)}</div>
     )
   }

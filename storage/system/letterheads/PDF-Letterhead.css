@@ -1,0 +1,58 @@
+@page {
+  margin: 5cm 4.0cm 2.5cm 2.5cm;
+  header: html_header;
+}
+
+@page :first {
+  margin: 10cm 2.5cm 2.5cm 2.5cm;
+  header: html_first_header;
+}
+
+body {
+  line-height:1.4;
+  font-size: 10pt;
+  font-family: "facit";
+}
+
+#recipient {
+  position: absolute;
+  top: 57mm;
+  left:25mm;
+  height:27.3mm;
+  width: 80mm;
+}
+
+p {
+  padding-bottom: 8pt;
+}
+
+table,
+table thead tr th,
+table thead tr td,
+table tbody tr td,
+table tr,
+table tr th,
+table tr td {
+  font-size: 10pt;
+}
+
+table thead tr th.center,
+table tbody tr td.center,
+table tr th.center,
+table tr td.center {
+  text-align: center;
+}
+
+#infobox-first-page {
+  position: absolute;
+  top: 57mm;
+  left:115mm;
+  width: 57mm;
+}
+
+#infobox {
+    position: absolute;
+    top: 25mm;
+    left:105mm;
+    width: 57mm;
+}

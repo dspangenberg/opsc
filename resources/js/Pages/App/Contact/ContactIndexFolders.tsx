@@ -31,7 +31,7 @@ export const ContactIndexFolders: React.FC = () => {
       name: 'view-contacts-creditors'
     },
     {
-      title: 'Archivierte Kontakte + Arschlöcher',
+      title: 'Archivierte Kontakte',
       counter: 6,
       route: '/contact',
       name: 'view-contacts-archived'
@@ -42,7 +42,6 @@ export const ContactIndexFolders: React.FC = () => {
     <div className="w-54 flex-none mt-6">
       <ViewNavigation
         activeView="view-contacts-all"
-        title="Kontakte"
         defaultViews={defaultViews}
         customViews={customViews}
       />

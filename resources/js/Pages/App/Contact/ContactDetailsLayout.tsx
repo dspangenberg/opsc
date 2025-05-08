@@ -1,12 +1,10 @@
 import { useMemo } from 'react'
 import type * as React from 'react'
 import { Link } from '@inertiajs/react'
-import { useModalStack } from '@inertiaui/modal-react'
-import { NoteEditIcon, PrinterIcon } from '@hugeicons/core-free-icons'
-import { NavTabs, NavTabsTab } from '@/Components/NavTabs'
+import { Edit03Icon, PrinterIcon } from '@hugeicons/core-free-icons'
 import { PageContainer } from '@/Components/PageContainer'
 import { Avatar, Toolbar, ToolbarButton } from '@dspangenberg/twcui'
-import { ClassicNavTabs, ClassicNavTabsTab } from '@/Components/ClassicNavTabs'
+import { ClassicNavTabsTab } from '@/Components/ClassicNavTabs'
 
 interface Props {
   contact: App.Data.ContactData
@@ -14,8 +12,6 @@ interface Props {
 }
 
 export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => {
-  const { visitModal } = useModalStack()
-
   const breadcrumbs = useMemo(
     () => [
       { title: 'Kontakte', route: route('app.contact.index') },
@@ -27,7 +23,7 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
   const toolbar = useMemo(
     () => (
       <Toolbar className="bg-background border-0 shadow-none">
-        <ToolbarButton variant="default" icon={NoteEditIcon} title="Bearbeiten" />
+        <ToolbarButton variant="default" icon={Edit03Icon} title="Bearbeiten" />
         <ToolbarButton icon={PrinterIcon} />
       </Toolbar>
     ),
@@ -53,7 +49,7 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
         </ClassicNavTabsTab>
       </>
     ),
-    []
+    [contact.is_org]
   )
 
   const companyRoute = useMemo(

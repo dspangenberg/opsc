@@ -13,19 +13,18 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 class InvoiceLineData extends Data
 {
     public function __construct(
-        public readonly ?int   $id,
-        public readonly int    $invoice_id,
-        public readonly int    $type_id,
-        public readonly int    $pos,
-        public readonly int    $tax_id,
-        public readonly float  $quantity,
-        public readonly string $unit,
+        public readonly ?int $id,
+        public readonly int $invoice_id,
+        public readonly int $type_id,
+        public readonly int $pos,
+        public readonly int $tax_id,
+        public readonly ?float $quantity,
+        public readonly ?string $unit,
         public readonly string $text,
-        public readonly float  $price,
-        public readonly float  $amount,
-        public readonly float  $tax,
-        public readonly float  $tax_rate,
-    )
-    {
+        public readonly ?float $price,
+        public readonly ?float $amount,
+        public readonly ?float $tax,
+        public readonly float $tax_rate,
+    ) {
     }
 }

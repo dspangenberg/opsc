@@ -90,10 +90,12 @@ class ContactAddress extends Model
         $lines[] = $this->address;
 
         if ($this->country_id === 1) {
-            $lines[] = $this->zip . ' ' . $this->city;
+            $lines[] = $this->zip.' '.$this->city;
         } else {
-            $lines[] = strtoupper($this->zip . ' ' . $this->city);
-            $lines[] = strtoupper($this->country->name);
+            $lines[] = strtoupper($this->zip.' '.$this->city);
+            if ($this->country) {
+                $lines[] = strtoupper($this->country->name);
+            }
         }
 
         return implode("\n", $lines);

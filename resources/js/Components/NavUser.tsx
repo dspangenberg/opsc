@@ -18,7 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/Components/ui/dropdown-menu'
-import { Logout01Icon, Settings05Icon, UserIcon } from '@hugeicons/core-free-icons'
+import { Door01Icon, Settings05Icon, UserIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import type React from 'react'
 
@@ -78,7 +78,7 @@ export function NavUser({
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
-          <HugeiconsIcon icon={Logout01Icon} />
+          <HugeiconsIcon icon={Door01Icon} />
           Logout
         </DropdownMenuItem>
       </DropdownMenuContent>
