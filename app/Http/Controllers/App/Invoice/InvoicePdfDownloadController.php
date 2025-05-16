@@ -9,25 +9,32 @@ namespace App\Http\Controllers\App\Invoice;
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Storage;
-
+use Inertia\Response;
+use Mpdf\MpdfException;
+use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class InvoicePdfDownloadController extends Controller
 {
-    public function __invoke(int $id)
+    /**
+     * @throws MpdfException
+     * @throws PathAlreadyExists
+     */
+    public function __invoke(Invoice $invoice): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
-
-        $invoice = Invoice::find($id);
-        $prefix = tenant('id');
-
-
         $file = '/Invoicing/Invoices/'.$invoice->issued_on->format('Y').'/'.$invoice->filename;
 
-        if (Storage::disk('s3')->missing($file)) {
-            dump($file.' nicht gefunden');
+        $pdfFile = Invoice::createOrGetPdf($invoice, false);
+
+
+        return response()->file($pdfFile);
+
+
+        if (Storage::disk('s3')->exists($file)) {
+            return Storage::disk('s3')->download($file, $invoice->filename);
         }
 
-//        return response()->download($file, $invoice->filename);
 
-        return Storage::disk('s3')->download($file, $invoice->filename);
+        abort(404);
     }
 }

@@ -15,7 +15,7 @@ import { NavTabs } from '@/Components/NavTabs'
 import { ClassicNavTabs } from '@/Components/ClassicNavTabs'
 
 interface PageContainerProps {
-  title: string
+  title?: string
   header?: string | React.ReactNode
   children: React.ReactNode
   toolbar?: React.ReactNode

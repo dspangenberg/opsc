@@ -13,9 +13,17 @@ use App\Http\Controllers\App\Contact\ContactDetailsController;
 use App\Http\Controllers\App\Contact\ContactEditAddressController;
 use App\Http\Controllers\App\Contact\ContactIndexController;
 use App\Http\Controllers\App\Contact\ContactToggleFavoriteController;
+use App\Http\Controllers\App\Invoice\InvoiceDeleteController;
+use App\Http\Controllers\App\Invoice\InvoiceDetailsEditBaseController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsController;
+use App\Http\Controllers\App\Invoice\InvoiceDetailsEditLinesController;
+use App\Http\Controllers\App\Invoice\InvoiceDetailsUpdateBaseController;
+use App\Http\Controllers\App\Invoice\InvoiceDuplicateController;
 use App\Http\Controllers\App\Invoice\InvoiceIndexController;
+use App\Http\Controllers\App\Invoice\InvoiceMarkAsSentController;
 use App\Http\Controllers\App\Invoice\InvoicePdfDownloadController;
+use App\Http\Controllers\App\Invoice\InvoiceReleaseController;
+use App\Http\Controllers\App\Invoice\InvoiceUnreleaseController;
 use App\Http\Controllers\App\Time\TimeIndexController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\NewPasswordController;
@@ -91,6 +99,32 @@ Route::middleware([
 
     Route::get('invoices/{invoice}',
         InvoiceDetailsController::class)->name('app.invoice.details');
+
+    Route::delete('invoices/{invoice}',
+        InvoiceDeleteController::class)->name('app.invoice.delete');
+
+    Route::get('invoices/{invoice}/base-edit',
+        InvoiceDetailsEditBaseController::class)->name('app.invoice.base-edit');
+
+    Route::get('invoices/{invoice}/lines-edit',
+        InvoiceDetailsEditLinesController::class)->name('app.invoice.lines-edit');
+
+    Route::get('invoices/{invoice}/unrelease',
+        InvoiceUnreleaseController::class)->name('app.invoice.unrelease');
+
+    Route::get('invoices/{invoice}/release',
+        InvoiceReleaseController::class)->name('app.invoice.release');
+
+    Route::get('invoices/{invoice}/mark-as-sent',
+        InvoiceMarkAsSentController::class)->name('app.invoice.mark-as-sent');
+
+
+    Route::put('invoices/{invoice}/base-update',
+        InvoiceDetailsUpdateBaseController::class)->name('app.invoice.base-update')->middleware([HandlePrecognitiveRequests::class]);
+
+    Route::get('invoices/{invoice}/duplicate',
+        InvoiceDuplicateController::class)->name('app.invoice.duplicate')->middleware([HandlePrecognitiveRequests::class]);
+
 
     Route::get('invoices/{invoice}/pdf',
         InvoicePdfDownloadController::class)->name('app.invoice.pdf');

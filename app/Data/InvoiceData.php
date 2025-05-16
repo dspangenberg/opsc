@@ -55,6 +55,24 @@ class InvoiceData extends Data
         public readonly float $amount_tax,
         public readonly float $amount_gross,
 
+        public readonly bool $is_recurring,
+        public readonly int $recurring_interval_days,
+
+        public readonly ?int $parent_id,
+
+        /** @var InvoiceData */
+        public readonly ?object $parent_invoice,
+
+        #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]
+        public readonly ?DateTime $sent_at,
+
+        #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
+        public readonly ?DateTime $recurring_begin_on,
+
+        #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
+        public readonly ?DateTime $recurring_end_on,
+
+
         /** @var InvoiceTypeData */
         public readonly ?object $type,
 
@@ -72,9 +90,7 @@ class InvoiceData extends Data
 
         /** @var InvoiceLineData[] */
         public readonly ?array $lines,
-
-        #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
-        public readonly ?DateTime $sent_at,
+    
     ) {
     }
 

@@ -4,14 +4,8 @@
  */
 
 import type React from 'react'
-import { useMemo, useRef, useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle
-} from '@/Components/ui/dialog'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/Components/ui/dialog'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { Separator } from '@/Components/ui/separator'
 import print from 'print-js'
@@ -20,24 +14,32 @@ import type { PDFDocumentProxy } from 'pdfjs-dist'
 import * as pdfjs from 'pdfjs-dist'
 import 'react-pdf/dist/Page/TextLayer.css'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
-import { Button, Toolbar, ToolbarButton, YkToolbarButton } from '@dspangenberg/twcui'
+import { Button, LogoSpinner, Toolbar, ToolbarButton, YkToolbarButton } from '@dspangenberg/twcui'
+
 import {
-  ArrowUp01Icon,
   ArrowDown01Icon,
+  ArrowUp01Icon,
   FileDownloadIcon,
-  SearchFocusIcon,
-  MoreVerticalIcon,
   MultiplicationSignIcon,
-  SquareArrowDiagonal02Icon,
   PrinterIcon,
   SearchAddIcon,
-  SearchMinusIcon
+  SearchMinusIcon,
+  SquareArrowDiagonal02Icon,
+  MoreVerticalIcon
 } from '@hugeicons/core-free-icons'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/Components/ui/dropdown-menu'
-import { HugeiconsIcon } from '@hugeicons/react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/Components/ui/dropdown-menu'
 import { useFileDownload } from '@/Hooks/useFileDownload'
-import { useFullscreen } from '@reactuses/core'
+import { useFullscreen, useLocalStorage } from '@reactuses/core'
 import { cn } from '@/Lib/utils'
+import { ChevronDown } from 'lucide-react'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
@@ -47,34 +49,47 @@ interface Props {
   filename?: string
   onOpenChange: (isOpen: boolean) => void
 }
-export const PdfViewer: React.FC<Props> = ({ document, open, onOpenChange, filename = 'unbekannt.pdf' }) => {
+export const PdfViewer: React.FC<Props> = ({
+  document,
+  open,
+  onOpenChange,
+  filename = 'unbekannt.pdf'
+}) => {
   const handleOpenChange = (newIsOpen: boolean) => () => {
     onOpenChange(newIsOpen)
   }
 
   const ref = useRef(null)
-  const [isFullscreen, {toggleFullscreen }]
-    = useFullscreen(ref);
+  const [isFullscreen, { toggleFullscreen }] = useFullscreen(ref)
 
-
+  const [savedScale, setSaveScale] = useLocalStorage('pdf-scale', 1.3) || 1.3
   const pdfRef = useRef<PDFDocumentProxy | null>(null)
   const [numPages, setNumPages] = useState<number | null>(null)
   const [pageNumber, setPageNumber] = useState<number>(1)
-  const [scale, setScale] = useState<number>(1.1)
+  const [scale, setScale] = useState<number>(savedScale || 1.3)
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const onDocumentLoadSuccess = (pdf: PDFDocumentProxy): void => {
-    setIsLoading(false)
     setNumPages(pdf.numPages)
     pdfRef.current = pdf
+    setScale(savedScale || 1.3)
+    setIsLoading(false)
   }
 
   const handleScaleIn = () => {
     setScale(prevScale => Math.min(prevScale + 0.1, 3))
   }
 
+  const handleSaveScale = () => {
+    setSaveScale(scale)
+  }
+
   const handleScaleOut = () => {
     setScale(prevScale => Math.max(prevScale - 0.1, 0.5))
+  }
+
+  const handleSetScale = (value: number) => {
+    setScale(prevScale => value)
   }
 
   const handleScaleReset = () => {
@@ -88,7 +103,8 @@ export const PdfViewer: React.FC<Props> = ({ document, open, onOpenChange, filen
   const { handleDownload } = useFileDownload({
     route: document,
     filename: filename
-  });
+  })
+
 
   const toolbar = useMemo(
     () => (
@@ -96,50 +112,79 @@ export const PdfViewer: React.FC<Props> = ({ document, open, onOpenChange, filen
         <ToolbarButton icon={ArrowUp01Icon} title="Seite zurück" />
         <ToolbarButton icon={ArrowDown01Icon} title="Seite vor" disabled={numPages === 1} />
         <Separator orientation="vertical" />
-        <ToolbarButton
-          icon={SearchMinusIcon}
-          title="Verkleinern"
-          onClick={handleScaleOut}
-        />
-
-        <ToolbarButton icon={SearchFocusIcon} title="Originalgröße" onClick={handleScaleReset} />
-        <ToolbarButton icon={SearchAddIcon} title="Vergrößern" onClick={handleScaleIn} />
-
-        <Separator orientation="vertical" />
-        <ToolbarButton icon={PrinterIcon} title="Drucken" onClick={handlePrint} />
-        <ToolbarButton icon={FileDownloadIcon} title="Download"  onClick={handleDownload}/>
-        <Separator orientation="vertical" />
-        <ToolbarButton icon={SquareArrowDiagonal02Icon} title="Vollbildmodus" onClick={toggleFullscreen}/>
-
+        <ToolbarButton icon={SearchMinusIcon} title="Verkleinern" onClick={handleScaleOut} />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <YkToolbarButton asChild>
-              <Button
-                variant="ghost"
-                tooltip=""
-                size="icon"
-                icon={MoreVerticalIcon}
-                className="text-primary"
-              />
+              <Button variant="outline" tooltip="" className="w-24" size="default">
+                {`${Math.round(scale * 100)}%`}
+                <ChevronDown className="size-4 text-muted-foreground" />
+              </Button>
             </YkToolbarButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={handlePrint}>
-              <HugeiconsIcon icon={PrinterIcon} />
-              PDF drucken &hellip;
-            </DropdownMenuItem>
+            <DropdownMenuRadioGroup
+              value={scale.toString()}
+              onValueChange={value => handleSetScale(Number.parseFloat(value))}
+            >
+              <DropdownMenuRadioItem value="0.5">
+                <span className="text-right">50%</span>
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem className="text-right" value="1">
+                <span className="text-right">100%</span>
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem className="text-right" value="1.5">
+                150%
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem className="text-right" value="2">
+                200%
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem className="text-right" value="2.5">
+                250%
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem className="text-right" value="3">
+                300%
+              </DropdownMenuRadioItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSaveScale}>
+                {`${Math.round(scale * 100)}%`} als Standard speichern
+              </DropdownMenuItem>
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <ToolbarButton icon={SearchAddIcon} title="Vergrößern" onClick={handleScaleIn} />
+        <Separator orientation="vertical" />
+        <ToolbarButton icon={PrinterIcon} title="Drucken" onClick={handlePrint} />
+        <ToolbarButton icon={FileDownloadIcon} title="Download" onClick={handleDownload} />
+        <Separator orientation="vertical" />
+        <ToolbarButton
+          icon={SquareArrowDiagonal02Icon}
+          title="Vollbildmodus"
+          onClick={toggleFullscreen}
+        />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <YkToolbarButton asChild>
+              <Button variant="ghost" size="icon" icon={MoreVerticalIcon} className="text-primary"/>
+            </YkToolbarButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            Hi
           </DropdownMenuContent>
         </DropdownMenu>
       </Toolbar>
     ),
-    []
+    [numPages, handleDownload, toggleFullscreen, scale]
   )
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         ref={ref}
-        className={cn('gap-0  bg-white rounded-b-lg', isFullscreen ? 'h-screen w-screen' : 'w-screen !max-w-3xl')}
+        className={cn(
+          'gap-0  bg-white rounded-b-lg',
+          isFullscreen ? 'h-screen w-screen' : 'w-screen !max-w-3xl'
+        )}
         onEscapeKeyDown={handleOpenChange(false)}
         onInteractOutside={handleOpenChange(false)}
       >
@@ -156,14 +201,12 @@ export const PdfViewer: React.FC<Props> = ({ document, open, onOpenChange, filen
                     variant="ghost"
                     size="icon-sm"
                     onClick={handleOpenChange(false)}
-                    className="text-foreground/50"
+                    className="text-foreground/50 cursor-default -mr-1"
                   />
                 </div>
               </div>
               <div className="flex-1 flex items-center w-full">
-                <div className="flex-1 items-start justify-start">
-                  {toolbar}
-                </div>
+                <div className="flex-1 items-start justify-start">{toolbar}</div>
               </div>
             </div>
           </DialogTitle>
@@ -172,17 +215,35 @@ export const PdfViewer: React.FC<Props> = ({ document, open, onOpenChange, filen
           </VisuallyHidden>
         </DialogHeader>
 
-        <div  className="flex items-center bg-white justify-center aspect-[210/297] w-3xl overflow-auto rounded-b-lg">
+        <div className="flex items-center bg-white justify-center aspect-[210/297] w-3xl overflow-auto rounded-b-lg">
+          {isLoading && (
+            <div className="mx-auto my-auto flex-1">
+              <LogoSpinner />
+            </div>
+          )}
           <Document
             file={document}
-            loading=""
+            loading={
+              <div className="mx-auto my-auto flex-1">
+                <LogoSpinner />
+              </div>
+            }
             className="bg-white mx-auto my-auto overflow-auto "
             onLoadSuccess={onDocumentLoadSuccess}
           >
-            <Page pageNumber={pageNumber} scale={scale} className="z-10 border flex-1" loading="" />
+            <Page
+              pageNumber={pageNumber}
+              scale={scale}
+
+              className="z-10 border flex-1"
+              loading={
+                <div className="mx-auto my-auto flex-1">
+                  <LogoSpinner />
+                </div>
+              }
+            />
           </Document>
         </div>
-
       </DialogContent>
     </Dialog>
   )

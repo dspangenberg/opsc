@@ -55,7 +55,7 @@ export function NavMain({
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map(item => (
-            <Collapsible key={item.title} asChild open={isPathActive(item)}>
+            <Collapsible key={item.title} asChild open={isPathActive(item) || item.is_active}>
               <SidebarMenuItem className={item.hasSep ? 'mb-3' : ''}>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton asChild tooltip={item.title} isActive={isPathActive(item)}>

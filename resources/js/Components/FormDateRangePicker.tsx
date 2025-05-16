@@ -1,4 +1,4 @@
-import { Button } from '@/Components/ui/button'
+import { Button, FormLabel } from '@dspangenberg/twcui'
 import { Calendar } from '@/Components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/Components/ui/popover'
 import { cn } from '@/Lib/utils'
@@ -32,6 +32,15 @@ export const FormDateRangePicker = forwardRef<HTMLButtonElement, FormDateRangePi
 
     const handleSelect = (selectedDate: DateRange | undefined) => {
       setDate(selectedDate)
+      console.log('Date selected:', selectedDate)
+
+      if (selectedDate === undefined) {
+        onChange({
+          from: '',
+          to: ''
+        })
+      }
+
       if (selectedDate) {
         const beginOn = selectedDate.from ? format(selectedDate.from as Date, 'dd.MM.yyyy') : ''
         const endOn = selectedDate.to ? format(selectedDate.to as Date, 'dd.MM.yyyy') : ''
@@ -43,15 +52,9 @@ export const FormDateRangePicker = forwardRef<HTMLButtonElement, FormDateRangePi
     }
 
     return (
-      <div className={cn('grid gap-2', className)}>
-        {label && (
-          <label
-            htmlFor="date"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            {label} {required && <span className="text-red-500">*</span>}
-          </label>
-        )}
+      <div className={cn('grid gap-2.5', className)}>
+        {label && <FormLabel value={label} required={required} htmlFor="date" />}
+
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -59,11 +62,11 @@ export const FormDateRangePicker = forwardRef<HTMLButtonElement, FormDateRangePi
               id="date"
               variant={'outline'}
               className={cn(
-                'w-full justify-start text-left font-normal shadow-none',
+                'w-full justify-start text-left h-9  font-medium text-base rounded-sm shadow-none bg-background',
                 !date && 'text-muted-foreground'
               )}
             >
-              <CalendarIcon className="-ml-2 mr-2 h-4 w-4" />
+              <CalendarIcon className="h-4 w-4" />
               {date?.from ? (
                 date.to ? (
                   <>
@@ -84,7 +87,6 @@ export const FormDateRangePicker = forwardRef<HTMLButtonElement, FormDateRangePi
               defaultMonth={date?.from}
               selected={date}
               onSelect={handleSelect}
-              numberOfMonths={2}
               locale={de}
             />
           </PopoverContent>

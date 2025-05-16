@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\PdfService;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -137,78 +138,16 @@ class Invoice extends Model implements MediableInterface
         'formated_invoice_number',
         'invoice_address',
         'amount_net',
+        'qr_code',
         'amount_tax',
         'amount_gross',
         'amount_open',
         'amount_paid',
     ];
 
-    public function scopeByYear(Builder $query, int|string $year): Builder
-    {
-        if ($year !== 'all') {
-            return $query->whereYear('issued_on', $year);
-        }
-        return $query;
-    }
-
-
-    public function setDueDate(): void
-    {
-        $paymentDeadline = PaymentDeadline::query()->where('id', $this->payment_deadline_id)->first();
-        if ($paymentDeadline->exists()) {
-            $this->due_on = $this->issued_on->addDays($paymentDeadline->days);
-        }
-    }
-
-    /**
-     * @throws MpdfException
-     * @throws PathAlreadyExists
-     */
-    public function release(): Invoice
-    {
-        if (!$this->invoice_number) {
-            $counter = Invoice::whereYear('issued_on', $this->issued_on->year)->max('invoice_number');
-            if ($counter == 0) {
-                $counter = $this->issued_on->year * 100000;
-            }
-
-            $counter++;
-
-            $this->invoice_number = $counter;
-        }
-
-        $this->is_draft = false;
-
-        if (!$this->number_range_document_numbers_id) {
-            $this->number_range_document_numbers_id = NumberRange::createDocumentNumber($this, 'issued_on');
-        }
-        $this->save();
-        $releasedInvoice = $this->refresh();
-
-        if (!$releasedInvoice->hasMedia('pdf')) {
-            Invoice::createOrGetPdf($releasedInvoice, true);
-        }
-
-        $releasedInvoice
-            ->load('lines')
-            ->load('contact')
-            ->load('project')
-            ->load('lines')
-            ->load('type')
-            ->load('range_document_number')
-            ->loadSum('lines', 'amount')
-            ->loadSum('lines', 'tax')
-            ->loadSum('payable', 'amount');
-
-        Invoice::createBooking($releasedInvoice);
-
-        return $releasedInvoice;
-    }
-
     /**
      * @throws MpdfException|PathAlreadyExists
      */
-    /*
     public static function createOrGetPdf(Invoice $invoice, bool $uploadToS3 = false): string
     {
         $invoice = Invoice::query()
@@ -232,11 +171,11 @@ class Invoice extends Model implements MediableInterface
             return $line->type_id !== 9;
         });
 
-        $bank_account = (object)[
-            'iban' => app(InvoicingSettings::class)->invoice_iban,
-            'bic' => app(InvoicingSettings::class)->invoice_bic,
-            'account_owner' => app(InvoicingSettings::class)->invoice_account_owner,
-            'bank_name' => app(InvoicingSettings::class)->invoice_bank_name,
+        $bank_account = (object) [
+            'iban' => 'DE39440100460126083465',
+            'bic' => 'PBNKDEFF',
+            'account_owner' => 'twiceware solutions e. K.',
+            'bank_name' => 'Postbank'
         ];
 
         $pdfConfig = [];
@@ -244,40 +183,91 @@ class Invoice extends Model implements MediableInterface
         $pdfConfig['hide'] = true;
         $pdfConfig['watermark'] = $invoice->is_draft ? 'ENTWURF' : '';
 
-        $pdfFile = PdfService::createPdf('invoice', 'pdf.invoice.index', ['invoice' => $invoice, 'bank_account' => $bank_account], $pdfConfig);
-        if ($uploadToS3) {
-            try {
-                $media = MediaUploader::fromSource($pdfFile)
-                    ->setOnDuplicateBehavior('replace')
-                    ->useFilename($invoice->filename)
-                    ->toDisk('s3')
-                    ->toDirectory('Documents/Invoicing/Invoices/' . $invoice->issued_on->year)
-                    ->makePrivate()
-                    ->upload();
+        $pdfFile = PdfService::createPdf('invoice', 'pdf.invoice.index',
+            ['invoice' => $invoice, 'bank_account' => $bank_account], $pdfConfig);
 
-                $invoice->attachMedia($media, 'pdf');
-            } catch (Exception $e) {
-                dd($e->getMessage());
+        return $pdfFile;
+    }
+
+    public function scopeByYear(Builder $query, int|string $year): Builder
+    {
+        if ($year !== 'all') {
+            return $query->whereYear('issued_on', $year);
+        }
+        return $query;
+    }
+
+    public function setDueDate(): void
+    {
+        $paymentDeadline = PaymentDeadline::query()->where('id', $this->payment_deadline_id)->first();
+        if ($paymentDeadline->exists()) {
+            $this->due_on = $this->issued_on->addDays($paymentDeadline->days);
+        }
+    }
+
+    /**
+     * @throws MpdfException
+     * @throws PathAlreadyExists
+     */
+    public function release(): void
+    {
+        if (!$this->invoice_number) {
+            $counter = Invoice::whereYear('issued_on', $this->issued_on->year)->max('invoice_number');
+            if ($counter == 0) {
+                $counter = $this->issued_on->year * 100000;
             }
-            $media = $invoice->firstMedia('pdf');
-            $content = $media->contents();
-        } else {
-            $content = file_get_contents($pdfFile);
+
+            $counter++;
+
+            $this->invoice_number = $counter;
         }
 
-        return Str::toBase64($content);
+        $this->is_draft = false;
+
+        /*
+        if (!$this->number_range_document_numbers_id) {
+            $this->number_range_document_numbers_id = NumberRange::createDocumentNumber($this, 'issued_on');
+        }
+        if (!$releasedInvoice->hasMedia('pdf')) {
+            Invoice::createOrGetPdf($releasedInvoice, true);
+
+        */
+
+        $this->save();
+
+        /*
+        $releasedInvoice = $this->refresh();
+        $releasedInvoice
+            ->load('lines')
+            ->load('contact')
+            ->load('project')
+            ->load('lines')
+            ->load('type')
+            ->load('range_document_number')
+            ->loadSum('lines', 'amount')
+            ->loadSum('lines', 'tax')
+            ->loadSum('payable', 'amount');
+
+        Invoice::createBooking($releasedInvoice);
+        */
+
+        // return $releasedInvoice;
     }
+
+    /*
 
     public static function createBooking($invoice): BookkeepingBooking
     {
 
-        $booking = BookkeepingBooking::whereMorphedTo('bookable', Invoice::class)->where('bookable_id', $invoice->id)->first();
+        $booking = BookkeepingBooking::whereMorphedTo('bookable', Invoice::class)->where('bookable_id',
+            $invoice->id)->first();
 
         $invoice->load('lines');
         $invoice->amount = $invoice->lines->sum('amount') + $invoice->lines->sum('tax');
 
         $accounts = Contact::getAccounts($invoice->contact_id, true, true);
-        $booking = BookkeepingBooking::createBooking($invoice, 'issued_on', 'amount', $accounts['subledgerAccount'], $accounts['outturnAccount'], 'A', $booking ? $booking->id : null);
+        $booking = BookkeepingBooking::createBooking($invoice, 'issued_on', 'amount', $accounts['subledgerAccount'],
+            $accounts['outturnAccount'], 'A', $booking ? $booking->id : null);
 
         if ($booking) {
             $name = strtoupper($accounts['name']);
@@ -287,7 +277,8 @@ class Invoice extends Model implements MediableInterface
 
         return $booking;
     }
-*/
+    */
+
     public function getFormatedInvoiceNumberAttribute(): string
     {
         if ($this->invoice_number) {
@@ -314,9 +305,7 @@ class Invoice extends Model implements MediableInterface
 
     public function getAmountNetAttribute(): float
     {
-
         return round($this->lines_sum_amount ?: 0, 2);
-
     }
 
     public function getAmountTaxAttribute(): float
@@ -355,25 +344,33 @@ class Invoice extends Model implements MediableInterface
         return $this->hasOne(NumberRangeDocumentNumber::class, 'id', 'number_range_document_numbers_id');
     }
 
-    /*
     public function getQrCodeAttribute(): string
     {
+        if (!$this->contact) {
+            return '';
+        };
 
         $purposeText = [];
-        $purposeText[] = 'RG-' . $this->formated_invoice_number;
-        $purposeText[] = 'K-' . number_format($this->contact->debtor_number, 0, ',', '.');
+        $purposeText[] = 'RG-'.$this->formated_invoice_number;
+        $purposeText[] = 'K-'.number_format($this->contact->debtor_number, 0, ',', '.');
 
-        $payment = new QrPayment(app(InvoicingSettings::class)->invoice_iban);
+        $bank_account = (object) [
+            'iban' => 'DE39440100460126083465',
+            'bic' => 'PBNKDEFF',
+            'account_owner' => 'twiceware solutions e. K.',
+            'bank_name' => 'Postbank'
+        ];
+
+        $payment = new QrPayment($bank_account->iban);
         $payment
-            ->setBic(app(InvoicingSettings::class)->invoice_bic)
-            ->setBeneficiaryName(app(InvoicingSettings::class)->invoice_account_owner)
+            ->setBic($bank_account->bic)
+            ->setBeneficiaryName($bank_account->account_owner)
             ->setAmount($this->amount_gross)
             ->setCurrency('EUR')
             ->setRemittanceText(implode(' ', $purposeText));
 
         return $payment->getQrCode()->getDataUri();
     }
-    */
 
     public function lines(): HasMany
     {

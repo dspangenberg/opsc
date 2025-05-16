@@ -13,6 +13,7 @@ import {
   ContractsIcon,
   DashboardSpeed02Icon,
   FileEuroIcon,
+  AbacusIcon,
   FolderFileStorageIcon,
   KanbanIcon,
   TimeScheduleIcon
@@ -68,6 +69,27 @@ const data = {
       url: route('app.invoice.index', {}, false),
       icon: FileEuroIcon,
       activePath: '/app/invoices',
+      hasSep: true
+    },
+    {
+      title: 'Buchhaltung',
+      url: route('app.invoice.index', {}, false),
+      icon: AbacusIcon,
+      activePath: '/app/bookkeeping',
+      is_active: true,
+      items: [{
+        title: 'Transaktionen',
+        url: route('app.invoice.index', {}, false),
+      },
+        {
+          title: 'Belege',
+          url: route('app.invoice.index', {}, false),
+        }
+        ,
+        {
+          title: 'Buchungen',
+          url: route('app.invoice.index', {}, false),
+        }],
       hasSep: true
     }
   ],

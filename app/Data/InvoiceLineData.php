@@ -6,8 +6,11 @@
 
 namespace App\Data;
 
+use Spatie\LaravelData\Attributes\WithTransformer;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\Transformers\DateTimeInterfaceTransformer;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
+use DateTime;
 
 #[TypeScript]
 class InvoiceLineData extends Data
@@ -25,6 +28,13 @@ class InvoiceLineData extends Data
         public readonly ?float $amount,
         public readonly ?float $tax,
         public readonly float $tax_rate,
+
+        #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
+        public readonly ?DateTime $service_period_begin,
+
+        #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
+        public readonly ?DateTime $service_period_end,
+
     ) {
     }
 }

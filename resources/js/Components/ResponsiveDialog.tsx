@@ -10,14 +10,13 @@ import {
   CredenzaDescription,
   CredenzaFooter,
   CredenzaHeader,
-  CredenzaPortal,
   CredenzaTabs,
   CredenzaTitle
 } from '@/Components/ui/credenza'
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
 import type * as React from 'react'
-import { type ReactNode, forwardRef } from 'react'
-
+import { forwardRef, type ReactNode, useCallback } from 'react'
+import { cn } from '@/Lib/utils'
 type ReactNodeOrString = ReactNode | string
 
 interface ResponsiveDialogProps {
@@ -25,26 +24,56 @@ interface ResponsiveDialogProps {
   footer: React.ReactNode
   isOpen: boolean
   showDescription?: boolean
-  title: ReactNodeOrString
+  title?: ReactNodeOrString
   description?: string | ReactNodeOrString
   tabs?: React.ReactNode
   dismissible?: boolean
   className?: string
   onClose: () => void
+  hideHeader?: boolean
+  backgroundClass?: string
   onOpenChange?: (open: boolean) => void
   onInteractOutside?: (event: Event) => void
+  onEscapeKeyDown?: (event: Event) => void
 }
 
 export const ResponsiveDialog = forwardRef<HTMLDivElement, ResponsiveDialogProps>(
-  ({ dismissible = false, showDescription = false, ...props }, ref) => {
+  ({ dismissible = false, showDescription = false, backgroundClass = 'accent', hideHeader = false, ...props }, ref) => {
+    const bgClass = {
+      accent: 'bg-accent/50',
+      sidebar: 'bg-sidebar',
+      background: 'bg-background'
+    }[backgroundClass]
+
+    const handleOpenChange = useCallback((open: boolean) => {
+      if (!open) {
+        console.log('Dialog closing')
+        if (dismissible) {
+          props.onClose()
+        }
+        props.onOpenChange?.(open)
+      }
+    }, [dismissible, props])
+
+    const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        console.log('Escape key pressed')
+        if (dismissible) {
+          props.onClose()
+        }
+        props.onEscapeKeyDown?.(event as unknown as Event)
+      }
+    }, [dismissible, props])
+
     return (
-      <Credenza open={props.isOpen} dismissible={dismissible} onOpenChange={props.onOpenChange}>
+      <Credenza open={props.isOpen} dismissible={dismissible} onOpenChange={handleOpenChange}>
         <CredenzaContent
           ref={ref}
           onInteractOutside={props.onInteractOutside}
           className={props.className}
+          onKeyDown={handleKeyDown}
         >
-          <CredenzaHeader>
+          <CredenzaHeader className={cn(bgClass, hideHeader ? 'sr-only' : '')}>
             <CredenzaTitle>{props.title}</CredenzaTitle>
             {props.description && (
               <CredenzaDescription className="pt-0">
@@ -58,7 +87,7 @@ export const ResponsiveDialog = forwardRef<HTMLDivElement, ResponsiveDialogProps
             {props.tabs && <CredenzaTabs>{props.tabs}</CredenzaTabs>}
           </CredenzaHeader>
           <CredenzaBody>{props.children}</CredenzaBody>
-          <CredenzaFooter>{props.footer}</CredenzaFooter>
+          <CredenzaFooter className={bgClass}>{props.footer}</CredenzaFooter>
         </CredenzaContent>
       </Credenza>
     )

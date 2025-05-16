@@ -15,6 +15,7 @@ import {
 import { ArrayTextField } from '@/Components/ArrayTextField'
 import { StatsField } from '@/Components/StatsField'
 import { Link } from '@inertiajs/react'
+import { cn } from '@/Lib/utils'
 
 interface ContactDetailsOrgInfoBoxProps {
   invoice: App.Data.InvoiceData
@@ -39,16 +40,17 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
 
   return (
     <DataCard title={title}>
-      <DataCardHeader className="grid grid-cols-4 divide-x rounded-md border bg-white divide-border/50 border-b border-border/50 p-1.5">
+      <DataCardHeader className={cn('grid  divide-x rounded-md border bg-white divide-border/50 border-b border-border/50 p-1.5', invoice.is_draft ? 'grid-cols-3' : 'grid-cols-4')}>
         <StatsField label="netto" value={currencyFormatter.format(invoice.amount_net)} />
         <StatsField label="USt." value={currencyFormatter.format(invoice.amount_tax)} />
         <StatsField label="brutto" value={currencyFormatter.format(invoice.amount_gross)} />
-        <StatsField label="offen" value={currencyFormatter.format(0)} />
+        {!invoice.is_draft && <StatsField label="offen" value={currencyFormatter.format(0)} />}
       </DataCardHeader>
       <DataCardContent>
-        <DataCardSection className="grid grid-cols-2 space-y-0" title="Rechnungsdetails">
+        <DataCardSection className={cn('grid space-y-0', invoice.is_draft ? 'grid-cols-2' : 'grid-cols-3 ')} title='Rechnungsdetails'>
           <DataCardField variant="vertical" label="Datum" value={invoice.issued_on} />
           <DataCardField variant="vertical" label="Fälligkeit" value={invoice.due_on} />
+          {!invoice.is_draft && <DataCardField variant="vertical" label="versendet" value={invoice.sent_at?.substr(0,10)} />}
         </DataCardSection>
         <DataCardSection>
           <DataCardField

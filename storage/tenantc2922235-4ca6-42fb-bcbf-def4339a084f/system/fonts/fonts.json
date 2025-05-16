@@ -1,0 +1,11 @@
+{
+  "fonts": [
+  {
+    "alias": "facit",
+    "filenames": {
+      "R": "facit-regular-webfont.ttf",
+      "B": "facit-semibold-webfont.ttf",
+      "i": null
+    }
+  }]
+}
