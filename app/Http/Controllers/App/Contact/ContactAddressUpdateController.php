@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ooboo.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
@@ -8,10 +9,8 @@ namespace App\Http\Controllers\App\Contact;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ContactAddressRequest;
-use App\Http\Requests\InboxRequest;
 use App\Models\Contact;
 use App\Models\ContactAddress;
-use App\Models\Inbox;
 
 class ContactAddressUpdateController extends Controller
 {
@@ -19,6 +18,7 @@ class ContactAddressUpdateController extends Controller
     {
         $updated = $contact_address->update($request->validated());
         dump($updated);
+
         return redirect()->route('app.contact.details', ['contact' => $contact->id]);
     }
 }

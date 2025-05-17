@@ -1,4 +1,5 @@
 <?php
+
 /*
  * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -13,11 +14,9 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 class InvoiceTypeData extends Data
 {
     public function __construct(
-        public readonly ?int   $id,
+        public readonly ?int $id,
         public readonly string $print_name,
         public readonly string $display_name,
         public readonly string $key,
-    )
-    {
-    }
+    ) {}
 }

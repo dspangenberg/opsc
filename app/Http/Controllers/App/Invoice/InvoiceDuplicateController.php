@@ -1,4 +1,5 @@
 <?php
+
 /*
  * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -15,17 +16,18 @@ class InvoiceDuplicateController extends Controller
 {
     public function __invoke(Invoice $invoice)
     {
-        $duplicatedInvoice = new Invoice($invoice->toArray());
+        $duplicatedInvoice = $invoice->replicate();
 
-        $duplicatedInvoice->id = null;
         $duplicatedInvoice->issued_on = Carbon::now()->format('Y-m-d');
         $duplicatedInvoice->is_draft = 1;
-        $duplicatedInvoice->invoice_number = 0;
+        $duplicatedInvoice->invoice_number = null;
+        $duplicatedInvoice->number_range_document_numbers_id = null;
         $duplicatedInvoice->save();
 
         $invoice->lines()->each(function ($line) use ($duplicatedInvoice) {
-            $line->invoice_id = $duplicatedInvoice->id;
-            InvoiceLine::create($line->toArray());
+            $replicatedLine = $line->replicate();
+            $replicatedLine->invoice_id = $duplicatedInvoice->id;
+            $replicatedLine->save();
         });
 
         return redirect()->route('app.invoice.details', ['invoice' => $duplicatedInvoice->id]);

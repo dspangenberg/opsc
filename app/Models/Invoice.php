@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
-
 use Mpdf\MpdfException;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
@@ -21,8 +20,6 @@ use rikudou\EuQrPayment\QrPayment;
 use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
 
 /**
- *
- *
  * @property int $id
  * @property int $contact_id
  * @property int $project_id
@@ -58,6 +55,7 @@ use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
  * @property-read PaymentDeadline|null $payment_deadline
  * @property-read Project|null $project
  * @property-read NumberRangeDocumentNumber|null $range_document_number
+ *
  * @method static MediableCollection<int, static> all($columns = ['*'])
  * @method static MediableCollection<int, static> get($columns = ['*'])
  * @method static Builder|Invoice newModelQuery()
@@ -90,6 +88,7 @@ use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
  * @method static Builder|Invoice withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static Builder|Invoice withMediaAndVariantsMatchAll($tags = [])
  * @method static Builder|Invoice withMediaMatchAll(bool $tags = [], bool $withVariants = false)
+ *
  * @property-read float $lines_sum_gross
  * @property-read InvoiceType|null $type
  * @property-read float $amount_gross
@@ -99,7 +98,9 @@ use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
  * @property-read float $amount_open
  * @property-read array $invoice_address
  * @property-read Contact|null $invoice_contact
+ *
  * @method static Builder<static>|Invoice byYear(int $year)
+ *
  * @mixin Eloquent
  */
 class Invoice extends Model implements MediableInterface
@@ -122,6 +123,9 @@ class Invoice extends Model implements MediableInterface
         'invoice_contact_id',
         'payment_deadline_id',
         'is_loss_of_receivables',
+        'service_period_begin',
+        'tax_id',
+        'service_period_end',
         'sent_at',
     ];
 
@@ -154,15 +158,16 @@ class Invoice extends Model implements MediableInterface
             ->with('contact')
             ->with('project')
             ->with('project.manager')
-            ->with('lines')
             ->with('contact.tax')
             ->with('payment_deadline')
             ->with('type')
+            ->with('lines', 'lines.rate')
             ->withSum('lines', 'amount')
             ->withSum('lines', 'tax')
             ->where('id', $invoice->id)
             ->first();
 
+        $taxes = $invoice->taxBreakdown($invoice->lines);
         $invoice->linked_invoices = $invoice->lines->filter(function ($line) {
             return $line->type_id === 9;
         });
@@ -175,7 +180,7 @@ class Invoice extends Model implements MediableInterface
             'iban' => 'DE39440100460126083465',
             'bic' => 'PBNKDEFF',
             'account_owner' => 'twiceware solutions e. K.',
-            'bank_name' => 'Postbank'
+            'bank_name' => 'Postbank',
         ];
 
         $pdfConfig = [];
@@ -184,9 +189,22 @@ class Invoice extends Model implements MediableInterface
         $pdfConfig['watermark'] = $invoice->is_draft ? 'ENTWURF' : '';
 
         $pdfFile = PdfService::createPdf('invoice', 'pdf.invoice.index',
-            ['invoice' => $invoice, 'bank_account' => $bank_account], $pdfConfig);
+            ['invoice' => $invoice, 'taxes' => $taxes, 'bank_account' => $bank_account], $pdfConfig);
 
         return $pdfFile;
+    }
+
+    public function taxBreakdown(Collection $invoiceLines): array
+    {
+        $groupedEntries = [];
+        foreach ($invoiceLines->groupBy('tax_rate_id') as $key => $value) {
+            $groupedEntries[$key]['sum'] = $value->sum('tax');
+            $groupedEntries[$key]['amount'] = $value->sum('amount');
+            $groupedEntries[$key]['tax_rate'] = $value->first()->toArray()['rate'];
+            // $sum = $sum + $groupedEntries[$key]['sum'];
+        }
+
+        return $groupedEntries;
     }
 
     public function scopeByYear(Builder $query, int|string $year): Builder
@@ -194,6 +212,7 @@ class Invoice extends Model implements MediableInterface
         if ($year !== 'all') {
             return $query->whereYear('issued_on', $year);
         }
+
         return $query;
     }
 
@@ -295,6 +314,7 @@ class Invoice extends Model implements MediableInterface
         }
 
         $address = explode("\n", $this->address);
+
         return array_filter($address, 'trim');
     }
 
@@ -348,7 +368,7 @@ class Invoice extends Model implements MediableInterface
     {
         if (!$this->contact) {
             return '';
-        };
+        }
 
         $purposeText = [];
         $purposeText[] = 'RG-'.$this->formated_invoice_number;
@@ -358,7 +378,7 @@ class Invoice extends Model implements MediableInterface
             'iban' => 'DE39440100460126083465',
             'bic' => 'PBNKDEFF',
             'account_owner' => 'twiceware solutions e. K.',
-            'bank_name' => 'Postbank'
+            'bank_name' => 'Postbank',
         ];
 
         $payment = new QrPayment($bank_account->iban);
@@ -395,6 +415,11 @@ class Invoice extends Model implements MediableInterface
     public function type(): HasOne
     {
         return $this->hasOne(InvoiceType::class, 'id', 'type_id');
+    }
+
+    public function tax(): HasOne
+    {
+        return $this->hasOne(Tax::class, 'id', 'tax_id');
     }
 
     public function project(): HasOne

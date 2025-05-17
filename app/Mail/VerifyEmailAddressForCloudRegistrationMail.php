@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ecting.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -19,6 +20,7 @@ class VerifyEmailAddressForCloudRegistrationMail extends Mailable
     use Queueable, SerializesModels;
 
     protected static TempData $tenant;
+
     protected static string $verificationUrl;
 
     /**
@@ -52,7 +54,7 @@ class VerifyEmailAddressForCloudRegistrationMail extends Mailable
             view: 'generated.emails.verify-email',
             with: [
                 'title' => 'ecting.cloud - E-Mail-Adresse bestätigen',
-                'name' => $tenant['first_name'], //.' '.$tenant['last_name'],
+                'name' => $tenant['first_name'], // .' '.$tenant['last_name'],
                 'verificationUrl' => VerifyEmailAddressForCloudRegistrationMail::$verificationUrl,
             ],
         );

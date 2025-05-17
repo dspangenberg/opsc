@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Cloud\Register;
 use App\Facades\CloudRegisterService;
 use App\Http\Requests\RegisterCredentialsRequest;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class StoreRegistrationCredentials
 {
@@ -21,6 +20,7 @@ class StoreRegistrationCredentials
         $domain = $tenantData['domain'].'.'.$domain;
 
         $token = tenancy()->impersonate($tenant, 1, tenant_route($domain, 'app.dashboard'), 'web')->token;
+
         return Inertia::location(tenant_route($domain, 'tenant.impersonate', ['token' => $token]));
     }
 }

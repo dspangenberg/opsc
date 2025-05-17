@@ -2,7 +2,7 @@ import type * as React from 'react'
 import { useCallback, useEffect, useRef } from 'react'
 import { cn } from '@/Lib/utils'
 import { Button } from '@dspangenberg/twcui'
-import { Edit03Icon } from '@hugeicons/core-free-icons'
+import { Copy01Icon, Delete04Icon, Edit03Icon, MoreVerticalIcon } from '@hugeicons/core-free-icons'
 
 import {
   Table as ShadcnTable,
@@ -15,15 +15,29 @@ import {
 import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
 import { usePage } from '@inertiajs/react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/Components/ui/dropdown-menu'
+import { HugeiconsIcon } from '@hugeicons/react'
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
   style: 'decimal',
   minimumFractionDigits: 2
 })
 
+export interface LineCommandProps {
+  command: string
+  lineId?: number
+}
+
 export interface InvoiceTableProps {
   invoice: App.Data.InvoiceData
-  onEditLine: (lineId: number) => void  // Neuer Prop
+  onLineCommand: (line: LineCommandProps) => void
 }
 
 export interface CommonTableProps {
@@ -128,15 +142,20 @@ export const TableNumberCell: React.FC<TableNumberCellProps> = ({
 
 export interface TableMarkdownCellProps extends TableCellProps {
   value: string
+  service_period_begin?: string
+  service_period_end?: string
 }
 export const TableMarkdownCell: React.FC<TableMarkdownCellProps> = ({
   className = '',
   value,
+  service_period_begin = '',
+  service_period_end = ',',
   ...props
 }) => {
   return (
     <TableCell className={className} {...props}>
       <Markdown remarkPlugins={[remarkBreaks]}>{value}</Markdown>
+      {service_period_begin && <div className="-mt-2.5">({service_period_begin}-{service_period_end})</div>}
     </TableCell>
   )
 }
@@ -147,53 +166,96 @@ export interface InvoicingTableCommonRowProps {
 
 export interface InvoicingTableRowProps extends InvoicingTableCommonRowProps {
   getNextIndex: (lineType: number) => number | null
-  onEditLine: (lineId: number) => void  // Neuer Prop
+  onLineCommand: (line: LineCommandProps) => void
 }
 
 export interface InvoicingTableDefaultRowProps {
   line: App.Data.InvoiceLineData
   conditional?: boolean
   index: number | null
-  onEditLine: (lineId: number) => void  // Neuer Prop
+  onLineCommand: (line: LineCommandProps) => void
 }
 
 export const InvoicingTableDefaultRow: React.FC<InvoicingTableDefaultRowProps> = ({
   line,
   index,
   conditional = false,
-  onEditLine
+  onLineCommand
 }) => {
   // @ts-ignore
   const { invoice } = usePage<App.Data.InvoiceData>().props as unknown as App.Data.InvoiceData
 
+  const handleDelete = useCallback(() => {
+    console.log('Delete line:', line)
+    onLineCommand({ command: 'delete', lineId: line.id || 0 })
+  }, [onLineCommand, line])
+
+  const handleDuplicate = useCallback(() => {
+    console.log('Duplicate line:', line)
+    onLineCommand({ command: 'duplicate', lineId: line.id || 0 })
+  }, [onLineCommand, line])
 
   return (
     <TableRow>
       <TableCell align="right" className="align-baseline">
         {index}
       </TableCell>
-      <TableNumberCell value={line.quantity as unknown as number} />
+      <TableNumberCell value={line.quantity || 0} />
       <TableCell align="center">{line.unit}</TableCell>
-      <TableMarkdownCell value={line.text} />
-      <TableNumberCell conditional={conditional} value={line.price} />
-      <TableNumberCell value={line.amount} />
-      <TableCell align="center">({line.tax_id})</TableCell>
+      <TableMarkdownCell
+        value={line.text}
+        className="gap-0 space-y-0 gap-y-0"
+        service_period_begin={line.service_period_begin as unknown as string}
+        service_period_end={line.service_period_end as unknown as string}
+      />
+      <TableNumberCell conditional={conditional} value={line.price || 0} />
+      <TableNumberCell value={line.amount || 0} />
+      <TableCell align="center">({line.tax_rate_id})</TableCell>
       {invoice.is_draft && (
         <TableCell align="center">
-          <Button
-            size="icon-sm"
-            icon={Edit03Icon}
-            iconClassName="text-primary"
-            variant="ghost"
-            onClick={() => onEditLine(line.id)}  // Hier wird der Callback aufgerufen
-          />
+          <div className="flex items-center space-x-1">
+            <Button
+              size="icon-sm"
+              icon={Edit03Icon}
+              iconClassName="text-primary"
+              variant="ghost"
+              onClick={() => onLineCommand({ command: 'edit', lineId: line.id || 0 })}
+            />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  iconClassName="text-primary"
+                  size="icon-sm"
+                  icon={MoreVerticalIcon}
+                />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={handleDuplicate}>
+                    <HugeiconsIcon icon={Copy01Icon} />
+                    Duplizieren
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleDelete} variant="destructive">
+                    <HugeiconsIcon icon={Delete04Icon} />
+                    Position löschen
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </TableCell>
       )}
     </TableRow>
   )
 }
 
-export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({ line, getNextIndex, onEditLine }) => {
+export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
+  line,
+  getNextIndex,
+  onLineCommand
+}) => {
   const conditional = line.type_id === 3
   const rowIndex = getNextIndex(line.type_id)
 
@@ -210,10 +272,17 @@ export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({ line, getN
     )
   }
 
-  return <InvoicingTableDefaultRow line={line} conditional={conditional} index={rowIndex} onEditLine={onEditLine} />
+  return (
+    <InvoicingTableDefaultRow
+      line={line}
+      conditional={conditional}
+      index={rowIndex}
+      onLineCommand={onLineCommand}
+    />
+  )
 }
 
-export const InvoicingTable: React.FC<InvoiceTableProps> = ({ invoice, onEditLine }) => {
+export const InvoicingTable: React.FC<InvoiceTableProps> = ({ invoice, onLineCommand }) => {
   const currentIndexRef = useRef(1)
 
   useEffect(() => {
@@ -245,7 +314,12 @@ export const InvoicingTable: React.FC<InvoiceTableProps> = ({ invoice, onEditLin
         </TableHeader>
         <TableBody className="rounded-b-lg">
           {invoice.lines?.map((line, index) => (
-            <InvoicingTableRow key={index} line={line} getNextIndex={getNextIndex} onEditLine={onEditLine} />
+            <InvoicingTableRow
+              key={index}
+              line={line}
+              getNextIndex={getNextIndex}
+              onLineCommand={onLineCommand}
+            />
           ))}
         </TableBody>
       </Table>

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -23,7 +24,7 @@ class InvoiceData extends Data
         public readonly int $invoice_contact_id,
 
         public readonly int $type_id,
-        public readonly int $invoice_number,
+        public readonly ?int $invoice_number,
 
         public readonly int $payment_deadline_id,
 
@@ -59,6 +60,7 @@ class InvoiceData extends Data
         public readonly int $recurring_interval_days,
 
         public readonly ?int $parent_id,
+        public readonly ?int $tax_id,
 
         /** @var InvoiceData */
         public readonly ?object $parent_invoice,
@@ -71,7 +73,6 @@ class InvoiceData extends Data
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
         public readonly ?DateTime $recurring_end_on,
-
 
         /** @var InvoiceTypeData */
         public readonly ?object $type,
@@ -90,7 +91,10 @@ class InvoiceData extends Data
 
         /** @var InvoiceLineData[] */
         public readonly ?array $lines,
-    
+
+        /** @var TaxData */
+        public readonly ?object $tax,
+
     ) {
     }
 

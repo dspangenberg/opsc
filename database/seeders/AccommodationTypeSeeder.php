@@ -21,7 +21,7 @@ class AccommodationTypeSeeder extends Seeder
                 'title' => $value['title'],
                 'description' => $value['description'],
                 'code' => $value['code'],
-                'is_from_system_catalog' => $value['is_from_system_catalog']
+                'is_from_system_catalog' => $value['is_from_system_catalog'],
             ]);
         }
     }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -24,7 +25,7 @@ class InvoiceIndexController extends Controller
             $year = $currentYear;
         }
 
-        if (!$years->contains($year)) {
+        if (! $years->contains($year)) {
             $years->push($year);
         }
 
@@ -50,7 +51,6 @@ class InvoiceIndexController extends Controller
             ->withSum('lines', 'tax')
             ->orderBy('issued_on', 'desc')
             ->paginate(15);
-
 
         $invoices->appends($_GET)->links();
 

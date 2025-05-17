@@ -1,4 +1,5 @@
 <?php
+
 /*
  * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -6,10 +7,8 @@
 
 namespace App\Http\Controllers\App\Time;
 
-use App\Data\InvoiceData;
 use App\Data\TimeData;
 use App\Http\Controllers\Controller;
-use App\Models\Invoice;
 use App\Models\Time;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -31,7 +30,6 @@ class TimeIndexController extends Controller
             ->paginate();
 
         $groupedByDate = self::groupByDate(collect($times->items()));
-
 
         $times->appends($_GET)->links();
 

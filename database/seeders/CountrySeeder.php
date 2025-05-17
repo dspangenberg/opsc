@@ -15,15 +15,15 @@ class CountrySeeder extends Seeder
     {
         $countries = Storage::disk('json')->json('countries.json');
 
-            foreach ($countries as $value) {
-                Country::updateOrCreate([
-                    'id' => $value['id'],
-                ], [
-                    'name' => $value['name'],
-                    'iso_code' => $value['iso_code'],
-                    'vehicle_code' => $value['vehicle_code'],
-                    'country_code' => $value['country_code'],
-                ]);
-            }
+        foreach ($countries as $value) {
+            Country::updateOrCreate([
+                'id' => $value['id'],
+            ], [
+                'name' => $value['name'],
+                'iso_code' => $value['iso_code'],
+                'vehicle_code' => $value['vehicle_code'],
+                'country_code' => $value['country_code'],
+            ]);
+        }
     }
 }

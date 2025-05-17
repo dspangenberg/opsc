@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ooboo.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
@@ -13,16 +14,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
- *
  * @method static Builder<static>|Season newModelQuery()
  * @method static Builder<static>|Season newQuery()
  * @method static Builder<static>|Season onlyTrashed()
  * @method static Builder<static>|Season query()
  * @method static Builder<static>|Season withTrashed()
  * @method static Builder<static>|Season withoutTrashed()
+ *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SeasonPeriod> $periods
  * @property-read int|null $periods_count
+ *
  * @mixin Eloquent
  */
 class Season extends Model
@@ -57,5 +58,4 @@ class Season extends Model
     {
         return $this->hasMany(SeasonPeriod::class);
     }
-
 }

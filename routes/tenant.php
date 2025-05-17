@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ecting.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -14,12 +15,15 @@ use App\Http\Controllers\App\Contact\ContactEditAddressController;
 use App\Http\Controllers\App\Contact\ContactIndexController;
 use App\Http\Controllers\App\Contact\ContactToggleFavoriteController;
 use App\Http\Controllers\App\Invoice\InvoiceDeleteController;
-use App\Http\Controllers\App\Invoice\InvoiceDetailsEditBaseController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsController;
+use App\Http\Controllers\App\Invoice\InvoiceDetailsEditBaseController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsEditLinesController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsUpdateBaseController;
 use App\Http\Controllers\App\Invoice\InvoiceDuplicateController;
 use App\Http\Controllers\App\Invoice\InvoiceIndexController;
+use App\Http\Controllers\App\Invoice\InvoiceLineDeleteController;
+use App\Http\Controllers\App\Invoice\InvoiceLineDuplicateController;
+use App\Http\Controllers\App\Invoice\InvoiceLineUpdateController;
 use App\Http\Controllers\App\Invoice\InvoiceMarkAsSentController;
 use App\Http\Controllers\App\Invoice\InvoicePdfDownloadController;
 use App\Http\Controllers\App\Invoice\InvoiceReleaseController;
@@ -32,10 +36,9 @@ use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Laragear\WebAuthn\Http\Routes as WebAuthnRoutes;
 use Stancl\Tenancy\Features\UserImpersonation;
 use Stancl\Tenancy\Middleware;
-use Laragear\WebAuthn\Http\Routes as WebAuthnRoutes;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -79,7 +82,6 @@ Route::middleware([
     Route::get('contacts/{contact}/create',
         ContactAddressCreateController::class)->name('app.contact.create.address');
 
-
     Route::put('contacts/{contact}/{contact_address}',
         ContactAddressUpdateController::class)
         ->middleware([HandlePrecognitiveRequests::class])
@@ -95,7 +97,6 @@ Route::middleware([
 
     Route::get('invoices',
         InvoiceIndexController::class)->name('app.invoice.index');
-
 
     Route::get('invoices/{invoice}',
         InvoiceDetailsController::class)->name('app.invoice.details');
@@ -118,6 +119,14 @@ Route::middleware([
     Route::get('invoices/{invoice}/mark-as-sent',
         InvoiceMarkAsSentController::class)->name('app.invoice.mark-as-sent');
 
+    Route::get('invoices/{invoice}/line-duplicate/{invoiceLine}',
+        InvoiceLineDuplicateController::class)->name('app.invoice.line-duplicate')->middleware([HandlePrecognitiveRequests::class]);
+
+    Route::put('invoices/{invoice}/line-update/{invoiceLine}',
+        InvoiceLineUpdateController::class)->name('app.invoice.line-update')->middleware([HandlePrecognitiveRequests::class]);
+
+    Route::delete('invoices/{invoice}/line-delete/{invoiceLine}',
+        InvoiceLineDeleteController::class)->name('app.invoice.line-delete')->middleware([HandlePrecognitiveRequests::class]);
 
     Route::put('invoices/{invoice}/base-update',
         InvoiceDetailsUpdateBaseController::class)->name('app.invoice.base-update')->middleware([HandlePrecognitiveRequests::class]);
@@ -125,14 +134,12 @@ Route::middleware([
     Route::get('invoices/{invoice}/duplicate',
         InvoiceDuplicateController::class)->name('app.invoice.duplicate')->middleware([HandlePrecognitiveRequests::class]);
 
-
     Route::get('invoices/{invoice}/pdf',
         InvoicePdfDownloadController::class)->name('app.invoice.pdf');
 
     Route::get('/soon', function () {
         return Inertia::render('Soon');
     })->name('app.soon');
-
 
     Route::get('/onboarding', function () {
         return Inertia::modal('Onboarding')->baseRoute('app.soon');
@@ -155,10 +162,10 @@ Route::middleware([
         return UserImpersonation::makeResponse($token);
     })->name('tenant.impersonate');
     Route::get('login', [
-        AuthenticatedSessionController::class, 'create'
+        AuthenticatedSessionController::class, 'create',
     ])->name('login');
     Route::post('login', [
-        AuthenticatedSessionController::class, 'store'
+        AuthenticatedSessionController::class, 'store',
     ])->middleware([HandlePrecognitiveRequests::class])->name('login.store');
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');

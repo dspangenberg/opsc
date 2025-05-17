@@ -2,17 +2,14 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
-use DateTimeInterface;
-
 
 /**
- * 
- *
  * @property int $id
  * @property int $contact_id
  * @property int $email_category_id
@@ -20,6 +17,7 @@ use DateTimeInterface;
  * @property string $email
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @method static Builder|ContactMail newModelQuery()
  * @method static Builder|ContactMail newQuery()
  * @method static Builder|ContactMail query()
@@ -30,7 +28,9 @@ use DateTimeInterface;
  * @method static Builder|ContactMail whereId($value)
  * @method static Builder|ContactMail wherePos($value)
  * @method static Builder|ContactMail whereUpdatedAt($value)
+ *
  * @property-read \App\Models\EmailCategory|null $category
+ *
  * @mixin Eloquent
  */
 class ContactMail extends Model
@@ -43,10 +43,12 @@ class ContactMail extends Model
         'created_at',
         'updated_at',
     ];
+
     protected $hidden = [
         'created_at',
         'updated_at',
     ];
+
     protected $attributes = [
         'contact_id' => 0,
         'pos' => 0,

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ecting.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -19,7 +20,7 @@ class CalendarIndexController extends Controller
         $calendar = $calendar->load('events');
 
         return Inertia::render('App/Calendar/CalendarIndex', [
-            'calendar' => CalendarData::from($calendar)
+            'calendar' => CalendarData::from($calendar),
         ]);
 
     }

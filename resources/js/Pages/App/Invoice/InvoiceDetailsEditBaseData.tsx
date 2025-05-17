@@ -8,13 +8,14 @@ interface Props extends PageProps {
   invoice: App.Data.InvoiceData
   invoice_types: App.Data.InvoiceTypeData[]
   projects: App.Data.ProjectData[]
+  taxes: App.Data.TaxData[]
 }
 
-const InvoiceDetailsEditBaseData: React.FC<Props> = ({ invoice, invoice_types, projects }) => {
+const InvoiceDetailsEditBaseData: React.FC<Props> = ({ invoice, invoice_types, projects, taxes }) => {
   const { auth } = usePage<PageProps>().props
   return (
     <InvoiceDetails invoice={invoice} auth={auth}>
-      <InvoiceDetailsEditBaseDataDialog invoice={invoice} invoice_types={invoice_types} projects={projects}/>
+      <InvoiceDetailsEditBaseDataDialog invoice={invoice} invoice_types={invoice_types} projects={projects} taxes={taxes}/>
     </InvoiceDetails>
   )
 }

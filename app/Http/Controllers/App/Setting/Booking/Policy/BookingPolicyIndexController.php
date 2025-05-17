@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ospitality.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -18,7 +19,7 @@ class BookingPolicyIndexController extends Controller
         $policies = BookingPolicy::orderBy('is_default', 'DESC')->orderBy('name')->get();
 
         return Inertia::render('App/Settings/Booking/BookingPolicy/BookingPolicyIndex', [
-            '$policies' => BookingPolicyData::class::collect($policies)
+            '$policies' => BookingPolicyData::class::collect($policies),
         ]);
     }
 }

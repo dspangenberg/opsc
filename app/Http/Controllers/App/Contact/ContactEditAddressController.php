@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ospitality.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -27,7 +28,7 @@ class ContactEditAddressController extends Controller
         return Inertia::modal('App/Contact/ContactEditAddress', [
             'address' => ContactAddressData::from($address),
             'categories' => AddressCategoryData::collect($categories),
-            'countries' => CountryData::collect($countries)
+            'countries' => CountryData::collect($countries),
         ])->baseRoute('app.contact.details', ['contact' => $contact->id]);
 
     }

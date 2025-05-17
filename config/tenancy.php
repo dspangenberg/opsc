@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ecting.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -6,10 +7,10 @@
 
 declare(strict_types=1);
 
-use Stancl\Tenancy\Middleware;
-use Stancl\Tenancy\Resolvers;
 use Stancl\Tenancy\Bootstrappers;
 use Stancl\Tenancy\Enums\RouteMode;
+use Stancl\Tenancy\Middleware;
+use Stancl\Tenancy\Resolvers;
 use Stancl\Tenancy\UniqueIdentifierGenerators;
 
 return [
@@ -203,17 +204,17 @@ return [
             'pgsql' => Stancl\Tenancy\Database\TenantDatabaseManagers\PostgreSQLDatabaseManager::class,
             'sqlsrv' => Stancl\Tenancy\Database\TenantDatabaseManagers\MicrosoftSQLDatabaseManager::class,
 
-            /**
-             * Use these database managers to have a DB user created for each tenant database.
-             * You can customize the grants given to these users by changing the $grants property.
-             */
+        /**
+         * Use these database managers to have a DB user created for each tenant database.
+         * You can customize the grants given to these users by changing the $grants property.
+         */
             // 'mysql' => Stancl\Tenancy\Database\TenantDatabaseManagers\PermissionControlledMySQLDatabaseManager::class,
             // 'sqlsrv' => Stancl\Tenancy\TenantDatabaseManagers\PermissionControlledMicrosoftSQLServerDatabaseManager::class,
 
-            /**
-             * Disable the pgsql manager above, and enable the one below if you
-             * want to separate tenant DBs by schemas rather than databases.
-             */
+        /**
+         * Disable the pgsql manager above, and enable the one below if you
+         * want to separate tenant DBs by schemas rather than databases.
+         */
             // 'pgsql' => Stancl\Tenancy\Database\TenantDatabaseManagers\PostgreSQLSchemaManager::class, // Separate by schema instead of database
         ],
 

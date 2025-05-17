@@ -175,6 +175,10 @@
                 </td>
                 <td colspan="2" style="text-align:left;">
                     {!! md(nl2br($line->text))  !!}
+                    @if($line->service_period_begin)
+                        <br/>
+                        ({{$line->service_period_begin->format('d.m.Y')}} - {{ $line->service_period_end->format('d.m.Y')}})
+                    @endif
                </td>
                <td class="right">
                    @if($line->type_id === 3)
@@ -187,7 +191,7 @@
                    {{ number_format($line->amount, 2, ',', '.') }}
                </td>
                <td class="center">
-                   (1)
+                   ({{$line->tax_rate_id}})
                </td>
            </tr>
        @endforeach
@@ -275,26 +279,31 @@
                 </td>
             </tr>
 
-            <tr class="">
-                <td colspan="4">
+                @foreach ($taxes as $tax)
+                    <tr class="">
+                        <td colspan="4"></td>
 
-                </td>
-                <td colspan="2" style="border-top: 0px solid #aaa;">
-                    @if($invoice->amount_tax)
-                        19% Umsatzsteuer (1)
-                    @else
-                         0% Umsatzsteuer (1)
-                    @endif
-                </td>
-                <td style="border-top: 0px solid #aaa;text-align: right;">
+                        <td colspan="2">
 
-                    {{ number_format($invoice->amount_tax, 2, ',', '.') }}
 
-                </td>
-                <td style="text-align:right;border-top: 0px solid #aaa;text-align: center;">
-                    EUR
-                </td>
-            </tr>
+                            {{ number_format($tax['tax_rate']['rate'], 0, ',', '.') }}%
+                            Umsatzsteuer
+                            ({{$tax['tax_rate']['id'] }})
+                        </td>
+
+                        <td style="text-align: right;">
+
+                            {{ number_format($tax['sum'], 2, ',', '.') }}
+
+                        </td>
+
+                        <td style="text-align: center;">
+                            EUR
+                        </td>
+                    </tr>
+                @endforeach
+
+
 
             <tr>
                 <td colspan="4"></td>

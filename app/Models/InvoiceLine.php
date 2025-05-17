@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
- * 
- *
  * @property int $id
  * @property int $invoice_id
  * @property float|null $quantity
@@ -24,6 +22,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property int|null $type_id
+ *
  * @method static Builder|InvoiceLine newModelQuery()
  * @method static Builder|InvoiceLine newQuery()
  * @method static Builder|InvoiceLine query()
@@ -40,9 +39,13 @@ use Illuminate\Support\Carbon;
  * @method static Builder|InvoiceLine whereTypeId($value)
  * @method static Builder|InvoiceLine whereUnit($value)
  * @method static Builder|InvoiceLine whereUpdatedAt($value)
+ *
  * @property int $legacy_id
+ *
  * @method static Builder|InvoiceLine whereLegacyId($value)
- * @property-read \App\Models\Invoice|null $linked_invoice
+ *
+ * @property-read Invoice|null $linked_invoice
+ *
  * @mixin Eloquent
  */
 class InvoiceLine extends Model
@@ -57,7 +60,11 @@ class InvoiceLine extends Model
         'price',
         'amount',
         'tax',
+        'type_id',
         'tax_id',
+        'tax_rate_id',
+        'service_period_begin',
+        'service_period_end',
         'pos',
     ];
 
@@ -70,5 +77,18 @@ class InvoiceLine extends Model
     public function linked_invoice(): HasOne
     {
         return $this->hasOne(Invoice::class, 'id', 'linked_invoice_id');
+    }
+
+    public function rate(): HasOne
+    {
+        return $this->hasOne(TaxRate::class, 'id', 'tax_rate_id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'service_period_begin' => 'date',
+            'service_period_end' => 'date',
+        ];
     }
 }

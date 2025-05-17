@@ -22,12 +22,12 @@ class Handler extends Exception
     /**
      * Render the exception into an HTTP response.
      */
-    public function render(Exception $exception): Response|null
+    public function render(Exception $exception): ?Response
     {
         if (
             ($exception instanceof TenantDatabaseDoesNotExistException) ||
-            (tenant() && (!tenant('ready')) && $exception instanceof QueryException) ||
-            (tenant() && (!tenant('ready')) && $exception instanceof ViewException && $exception->getPrevious() instanceof QueryException)
+            (tenant() && (! tenant('ready')) && $exception instanceof QueryException) ||
+            (tenant() && (! tenant('ready')) && $exception instanceof ViewException && $exception->getPrevious() instanceof QueryException)
         ) {
             return Inertia::render('App/BuildingView');
         }

@@ -10,6 +10,7 @@ class TemporaryStoreRegistrationController
     public function __invoke(RegisterStoreRequest $request)
     {
         CloudRegisterService::storeRegistrationTemporary($request->validated());
+
         return inertia('Cloud/RegisterMailSend');
     }
 }

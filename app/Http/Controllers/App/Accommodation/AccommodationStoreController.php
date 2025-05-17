@@ -25,6 +25,7 @@ class AccommodationStoreController extends Controller
         $data['coordinates'] = new Point($latitude, $longitude);
 
         Accommodation::create($data);
+
         return Redirect::route('app.dashboard');
     }
 }

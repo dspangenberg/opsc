@@ -1,4 +1,5 @@
 <?php
+
 /*
  * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -17,6 +18,5 @@ class SalutationData extends Data
         public readonly string $name,
         public readonly bool $is_hidden,
         public readonly string $gender
-    ) {
-    }
+    ) {}
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ooboo.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
@@ -17,6 +18,7 @@ class ContactAddressStoreController extends Controller
         $validatedData = $request->validated();
 
         ContactAddress::create($validatedData);
+
         return redirect()->route('app.contact.details', ['contact' => $validatedData['contact_id']]);
     }
 }

@@ -52,12 +52,19 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
           <DataCardField variant="vertical" label="Fälligkeit" value={invoice.due_on} />
           {!invoice.is_draft && <DataCardField variant="vertical" label="versendet" value={invoice.sent_at?.substr(0,10)} />}
         </DataCardSection>
-        <DataCardSection>
+        <DataCardSection className="grid grid-cols-2">
           <DataCardField
             variant="vertical"
             label="Rechnungstyp"
             value={invoice.type?.display_name}
           />
+          <DataCardField
+            variant="vertical"
+            label="Umsatzsteuer"
+            value={invoice.tax?.name}
+          />
+        </DataCardSection>
+        <DataCardSection>
           <DataCardField
             className="col-span-2"
             variant="vertical"

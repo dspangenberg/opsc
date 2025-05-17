@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ooboo.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
@@ -17,7 +18,7 @@ class InboxEditController extends Controller
     {
 
         return Inertia::render('App/Settings/Email/Inbox/InboxEdit', [
-            'inbox' => InboxData::from($inbox)
+            'inbox' => InboxData::from($inbox),
         ]);
     }
 }

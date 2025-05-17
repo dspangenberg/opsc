@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 
 class AccommodationStoreRequest extends FormRequest
 {
-
     protected function prepareForValidation(): void
     {
         $this->merge([
@@ -30,7 +29,7 @@ class AccommodationStoreRequest extends FormRequest
             'email' => ['nullable', 'lowercase', 'email', 'max:255'],
             'place_id' => ['required', 'string'],
             'latitude' => ['required', 'numeric'],
-            'longitude' => ['required', 'numeric']
+            'longitude' => ['required', 'numeric'],
         ];
     }
 

@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * 
- *
  * @property int $id
  * @property string $name
  * @property string $short_name
@@ -18,6 +16,7 @@ use Illuminate\Support\Carbon;
  * @property string $hourly
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @method static Builder|TimeCategory newModelQuery()
  * @method static Builder|TimeCategory newQuery()
  * @method static Builder|TimeCategory query()
@@ -29,6 +28,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|TimeCategory wherePos($value)
  * @method static Builder|TimeCategory whereShortName($value)
  * @method static Builder|TimeCategory whereUpdatedAt($value)
+ *
  * @mixin Eloquent
  */
 class TimeCategory extends Model

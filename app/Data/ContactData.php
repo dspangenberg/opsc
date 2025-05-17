@@ -1,4 +1,5 @@
 <?php
+
 /*
  * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -13,19 +14,19 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 class ContactData extends Data
 {
     public function __construct(
-        public readonly ?int    $id,
-        public readonly string  $name,
+        public readonly ?int $id,
+        public readonly string $name,
         public readonly ?string $first_name,
         public readonly ?string $company_name,
-        public readonly ?int    $company_id,
-        public readonly string  $full_name,
-        public readonly string  $reverse_full_name,
-        public readonly string  $initials,
-        public readonly ?int    $title_id,
-        public readonly ?int    $salutation_id,
+        public readonly ?int $company_id,
+        public readonly string $full_name,
+        public readonly string $reverse_full_name,
+        public readonly string $initials,
+        public readonly ?int $title_id,
+        public readonly ?int $salutation_id,
         public readonly ?string $creditor_number,
-        public readonly ?bool   $is_favorite,
-        public readonly ?bool   $is_org,
+        public readonly ?bool $is_favorite,
+        public readonly ?bool $is_org,
         public readonly ?string $debtor_number,
         public readonly ?string $primary_mail,
         public readonly ?string $vat_id,
@@ -36,7 +37,6 @@ class ContactData extends Data
         public readonly ?string $tax_number,
         public readonly ?string $formated_debtor_number,
         public readonly ?string $formated_creditor_number,
-
 
         /** @var ContactData */
         public readonly ?object $company,
@@ -50,15 +50,12 @@ class ContactData extends Data
         /** @var PaymentDeadlineData */
         public readonly ?object $payment_deadline,
 
-
         /** @var ContactMailData[] */
-        public readonly ?array  $mails,
+        public readonly ?array $mails,
 
         /** @var ContactAddressData[] */
-        public readonly ?array  $addresses,
-    )
-    {
-    }
+        public readonly ?array $addresses,
+    ) {}
 
     public function defaultWrap(): string
     {

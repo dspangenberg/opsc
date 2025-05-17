@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ooboo.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
@@ -18,6 +19,5 @@ class CountryData extends Data
         public readonly string $iso_code,
         public readonly string $vehicle_code,
         public readonly string $country_code,
-    ) {
-    }
+    ) {}
 }

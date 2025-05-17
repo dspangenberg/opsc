@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ecting.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -17,7 +18,7 @@ class CalendarEditController extends Controller
     {
 
         return Inertia::modal('App/Calendar/CalendarEdit', [
-            'calendar' => CalendarData::from($calendar)
+            'calendar' => CalendarData::from($calendar),
         ])->baseRoute('app.calendar', ['calendar']);
     }
 }

@@ -10,12 +10,12 @@ return new class extends Migration
     {
         Schema::create('inboxes', function (Blueprint $table) {
             $table->id();
-$table->string('email_address')->nullable();
-$table->string('name');
-$table->string('is_default');
-$table->json('allowed_senders');
-$table->timestamps();
-$table->softDeletes();//
+            $table->string('email_address')->nullable();
+            $table->string('name');
+            $table->string('is_default');
+            $table->json('allowed_senders');
+            $table->timestamps();
+            $table->softDeletes(); //
         });
     }
 

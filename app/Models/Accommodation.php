@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ospitality.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -26,16 +27,17 @@ use MatanYadaev\EloquentSpatial\Objects\Point;
 use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 
 /**
- * 
- *
  * @method static Builder<static>|Accommodation newModelQuery()
  * @method static Builder<static>|Accommodation newQuery()
  * @method static Builder<static>|Accommodation onlyTrashed()
  * @method static Builder<static>|Accommodation query()
  * @method static Builder<static>|Accommodation withTrashed()
  * @method static Builder<static>|Accommodation withoutTrashed()
+ *
  * @mixin IdeHelperAccommodation
+ *
  * @property Geometry $coordinates
+ *
  * @method static Builder<static>|Accommodation orderByDistance(Expression|Geometry|string $column, Expression|Geometry|string $geometryOrColumn, string $direction = 'asc')
  * @method static Builder<static>|Accommodation orderByDistanceSphere(Expression|Geometry|string $column, Expression|Geometry|string $geometryOrColumn, string $direction = 'asc')
  * @method static Builder<static>|Accommodation whereContains(Expression|Geometry|string $column, Expression|Geometry|string $geometryOrColumn)
@@ -54,12 +56,14 @@ use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
  * @method static Builder<static>|Accommodation withCentroid(Expression|Geometry|string $column, string $alias = 'centroid')
  * @method static Builder<static>|Accommodation withDistance(Expression|Geometry|string $column, Expression|Geometry|string $geometryOrColumn, string $alias = 'distance')
  * @method static Builder<static>|Accommodation withDistanceSphere(Expression|Geometry|string $column, Expression|Geometry|string $geometryOrColumn, string $alias = 'distance')
+ *
  * @property-read \App\Models\AccommodationType|null $type
+ *
  * @mixin Eloquent
  */
 class Accommodation extends Model
 {
-    use SoftDeletes, HasSpatial;
+    use HasSpatial, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -73,7 +77,7 @@ class Accommodation extends Model
         'region_id',
         'phone',
         'email',
-        'website'
+        'website',
     ];
 
     protected $attributes = [
@@ -87,11 +91,11 @@ class Accommodation extends Model
         'region_id' => 0,
         'website' => '',
         'phone' => '',
-        'email' => ''
+        'email' => '',
     ];
 
     protected $casts = [
-        'coordinates' => Point::class
+        'coordinates' => Point::class,
     ];
 
     public function type(): BelongsTo

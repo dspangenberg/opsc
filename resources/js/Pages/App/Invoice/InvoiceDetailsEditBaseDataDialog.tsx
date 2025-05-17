@@ -12,12 +12,14 @@ interface Props {
   invoice: App.Data.InvoiceData
   invoice_types: App.Data.InvoiceTypeData[]
   projects: App.Data.ProjectData[]
+  taxes: App.Data.TaxData[]
 }
 
 export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
   invoice,
   invoice_types,
-  projects
+  projects,
+  taxes
 }) => {
   const [isOpen, setIsOpen] = useState(true)
 
@@ -36,6 +38,13 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
     value: project.id as unknown as string,
     label: project.name
   }))
+
+  const taxOptions: Option[] = taxes?.map(tax => ({
+    value: tax.id as unknown as string,
+    label: tax.name
+  }))
+
+  console.log(taxes)
 
   projectOptions.unshift({ value: '0', label: 'ohne Projekt' })
 
@@ -103,7 +112,8 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
               onChange={handleIssuedOnChange}
             />
           </div>
-          <div className="col-span-16">
+          <div className="col-span-16" />
+          <div className="col-span-12">
             <FormSelect
               name="type_id"
               label="Rechnungsart"
@@ -111,6 +121,16 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
               error={errors?.type_id || ''}
               onValueChange={value => handleValueChange('type_id', value)}
               options={invoiceTypeOptions}
+            />
+          </div>
+          <div className="col-span-12">
+            <FormSelect
+              name="tax_id"
+              label="Umsatzsteuer"
+              value={data.tax_id as unknown as string}
+              error={errors?.tax_id || ''}
+              onValueChange={value => handleValueChange('tax_id', value)}
+              options={taxOptions}
             />
           </div>
           <div className="col-span-24">

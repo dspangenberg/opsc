@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 
 class AccommodationContactStoreRequest extends FormRequest
 {
-
     protected function prepareForValidation(): void
     {
         $this->merge([
@@ -23,7 +22,7 @@ class AccommodationContactStoreRequest extends FormRequest
             'email' => ['nullable', 'lowercase', 'email', 'max:255'],
         ];
     }
-    
+
     public function authorize(): bool
     {
         return true;

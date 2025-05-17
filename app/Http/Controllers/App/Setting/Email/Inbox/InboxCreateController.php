@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ooboo.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
@@ -17,14 +18,14 @@ class InboxCreateController extends Controller
     public function __invoke()
     {
 
-        $inbox = new Inbox();
+        $inbox = new Inbox;
         $hex = RandomHexGenerator::generate($inbox);
 
         $inbox->email_address = $hex.'+'.tenant('prefix').'@in.ooboo.cloud';
         $inbox->is_default = false;
 
         return Inertia::modal('App/Settings/Email/Inbox/InboxEdit', [
-            'inbox' => InboxData::from($inbox)
+            'inbox' => InboxData::from($inbox),
         ])->baseRoute('app.settings.email.inboxes');
     }
 }

@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * 
- *
  * @property int $id
  * @property string $name
  * @property int $days
@@ -17,6 +15,7 @@ use Illuminate\Support\Carbon;
  * @property int $is_default
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @method static Builder|PaymentDeadline newModelQuery()
  * @method static Builder|PaymentDeadline newQuery()
  * @method static Builder|PaymentDeadline query()
@@ -27,6 +26,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|PaymentDeadline whereIsImmediately($value)
  * @method static Builder|PaymentDeadline whereName($value)
  * @method static Builder|PaymentDeadline whereUpdatedAt($value)
+ *
  * @mixin Eloquent
  */
 class PaymentDeadline extends Model

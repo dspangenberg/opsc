@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ooboo.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
@@ -18,7 +19,7 @@ class InboxIndexController extends Controller
         $inboxes = Inbox::orderBy('is_default', 'DESC')->orderBy('name')->get();
 
         return Inertia::render('App/Settings/Email/Inbox/InboxIndex', [
-            'inboxes' => InboxData::collect($inboxes)
+            'inboxes' => InboxData::collect($inboxes),
         ]);
     }
 }

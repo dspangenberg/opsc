@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ecting.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -20,6 +21,5 @@ class CalendarData extends Data
         public readonly bool $is_default,
         /** @var CalendarEventData[] */
         public readonly ?array $events,
-    ) {
-    }
+    ) {}
 }

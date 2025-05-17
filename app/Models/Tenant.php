@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ecting.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -6,7 +7,6 @@
 
 namespace App\Models;
 
-use App\Helpers\TenantHelper;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,8 +23,6 @@ use Stancl\Tenancy\Database\TenantCollection;
 use Torann\Hashids\Facade\Hashids;
 
 /**
- * 
- *
  * @property string $id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -51,6 +49,7 @@ use Torann\Hashids\Facade\Hashids;
  * @property-read string $full_name
  * @property-read string $initials
  * @property-read string $reverse_full_name
+ *
  * @method static TenantCollection<int, static> all($columns = ['*'])
  * @method static Builder<static>|Tenant findSimilarSlugs(string $attribute, array $config, string $slug)
  * @method static TenantCollection<int, static> get($columns = ['*'])
@@ -79,12 +78,18 @@ use Torann\Hashids\Facade\Hashids;
  * @method static Builder<static>|Tenant whereWebsite($value)
  * @method static Builder<static>|Tenant whereZip($value)
  * @method static Builder<static>|Tenant withUniqueSlugConstraints(Model $model, string $attribute, array $config, string $slug)
+ *
  * @mixin IdeHelperTenant
+ *
  * @property string|null $prefix
  * @property-read string $formated_prefix
+ *
  * @method static Builder<static>|Tenant wherePrefix($value)
+ *
  * @property string $organisation
+ *
  * @method static Builder<static>|Tenant whereOrganisation($value)
+ *
  * @mixin Eloquent
  */
 class Tenant extends BaseTenant implements TenantWithDatabase
@@ -103,11 +108,12 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'email' => '',
         'subdomain' => '',
     ];
+
     protected $appends = [
         'full_name',
         'reverse_full_name',
         'initials',
-        'formatedPrefix'
+        'formatedPrefix',
     ];
 
     public static function getCustomColumns(): array
@@ -157,7 +163,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return implode('-', [
             strtoupper(substr($this->prefix, 0, 4)),
             strtoupper(substr($this->prefix, 4, 4)),
-            strtoupper(substr($this->prefix, 8, 4))
+            strtoupper(substr($this->prefix, 8, 4)),
         ]);
     }
 

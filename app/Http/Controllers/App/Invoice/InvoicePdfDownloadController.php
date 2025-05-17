@@ -1,4 +1,5 @@
 <?php
+
 /*
  * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -9,10 +10,8 @@ namespace App\Http\Controllers\App\Invoice;
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Storage;
-use Inertia\Response;
 use Mpdf\MpdfException;
 use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class InvoicePdfDownloadController extends Controller
 {
@@ -26,14 +25,11 @@ class InvoicePdfDownloadController extends Controller
 
         $pdfFile = Invoice::createOrGetPdf($invoice, false);
 
-
         return response()->file($pdfFile);
-
 
         if (Storage::disk('s3')->exists($file)) {
             return Storage::disk('s3')->download($file, $invoice->filename);
         }
-
 
         abort(404);
     }

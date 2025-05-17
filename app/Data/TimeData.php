@@ -1,4 +1,5 @@
 <?php
+
 /*
  * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -63,8 +64,7 @@ class TimeData extends Data
 
         /** @var UserData */
         public readonly ?object $user,
-    ) {
-    }
+    ) {}
 
     public function defaultWrap(): string
     {

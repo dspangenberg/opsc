@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Torann\Hashids\Facade\Hashids;
 
 /**
- * 
- *
  * @property int $id
  * @property string $parent_type
  * @property string $parent_id
@@ -15,6 +13,7 @@ use Torann\Hashids\Facade\Hashids;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read string $hid
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TempData newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TempData newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TempData query()
@@ -24,6 +23,7 @@ use Torann\Hashids\Facade\Hashids;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TempData whereParentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TempData whereParentType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TempData whereUpdatedAt($value)
+ *
  * @mixin IdeHelperTempData
  * @mixin \Eloquent
  */

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ospitality.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -19,8 +20,6 @@ use Laragear\WebAuthn\Contracts\WebAuthnAuthenticatable;
 use Laragear\WebAuthn\WebAuthnAuthentication;
 
 /**
- * 
- *
  * @property int $id
  * @property string $name
  * @property string $email
@@ -36,6 +35,7 @@ use Laragear\WebAuthn\WebAuthnAuthentication;
  * @property-read string $reverse_full_name
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ *
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static Builder<static>|User newModelQuery()
  * @method static Builder<static>|User newQuery()
@@ -50,14 +50,17 @@ use Laragear\WebAuthn\WebAuthnAuthentication;
  * @method static Builder<static>|User whereProfilePhotoPath($value)
  * @method static Builder<static>|User whereRememberToken($value)
  * @method static Builder<static>|User whereUpdatedAt($value)
+ *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laragear\WebAuthn\Models\WebAuthnCredential> $webAuthnCredentials
  * @property-read int|null $web_authn_credentials_count
+ *
  * @mixin Eloquent
  */
 class User extends Authenticatable implements WebAuthnAuthenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory;
+
     use Notifiable;
     use WebAuthnAuthentication;
 
@@ -71,14 +74,12 @@ class User extends Authenticatable implements WebAuthnAuthenticatable
         'email_verified_at',
     ];
 
-
     protected $hidden = [
         'password',
         'remember_token',
         'two_factor_recovery_codes',
         'two_factor_secret',
     ];
-
 
     protected $appends = [
         'full_name',
@@ -120,5 +121,4 @@ class User extends Authenticatable implements WebAuthnAuthenticatable
             'password' => 'hashed',
         ];
     }
-
 }

@@ -3,12 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Str;
 
 class AccommodationAddressStoreRequest extends FormRequest
 {
-
-
     public function rules(): array
     {
         return [
@@ -27,7 +24,6 @@ class AccommodationAddressStoreRequest extends FormRequest
             'region_id.exists' => 'Region ist ein Pflichtfeld.',
         ];
     }
-
 
     public function authorize(): bool
     {

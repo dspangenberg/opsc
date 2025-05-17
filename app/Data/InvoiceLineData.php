@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ecting.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -6,11 +7,11 @@
 
 namespace App\Data;
 
+use DateTime;
 use Spatie\LaravelData\Attributes\WithTransformer;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Transformers\DateTimeInterfaceTransformer;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
-use DateTime;
 
 #[TypeScript]
 class InvoiceLineData extends Data
@@ -27,7 +28,10 @@ class InvoiceLineData extends Data
         public readonly ?float $price,
         public readonly ?float $amount,
         public readonly ?float $tax,
-        public readonly float $tax_rate,
+        public readonly float $tax_rate_id,
+
+        /** @var TaxRateData */
+        public readonly ?object $rate,
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
         public readonly ?DateTime $service_period_begin,

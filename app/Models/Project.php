@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
- * 
- *
  * @property int $id
  * @property string $name
  * @property int $owner_contact_id
@@ -35,6 +33,7 @@ use Illuminate\Support\Carbon;
  * @property-read ProjectCategory|null $category
  * @property-read User|null $lead
  * @property-read Contact|null $owner
+ *
  * @method static Builder|Project newModelQuery()
  * @method static Builder|Project newQuery()
  * @method static Builder|Project query()
@@ -59,7 +58,9 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Project whereProjectCategoryId($value)
  * @method static Builder|Project whereUpdatedAt($value)
  * @method static Builder|Project whereWebsite($value)
+ *
  * @property-read \App\Models\Contact|null $manager
+ *
  * @mixin Eloquent
  */
 class Project extends Model

@@ -30,6 +30,7 @@ interface ResponsiveDialogProps {
   dismissible?: boolean
   className?: string
   onClose: () => void
+  width?: string
   hideHeader?: boolean
   backgroundClass?: string
   onOpenChange?: (open: boolean) => void
@@ -38,12 +39,17 @@ interface ResponsiveDialogProps {
 }
 
 export const ResponsiveDialog = forwardRef<HTMLDivElement, ResponsiveDialogProps>(
-  ({ dismissible = false, showDescription = false, backgroundClass = 'accent', hideHeader = false, ...props }, ref) => {
+  ({ dismissible = false, showDescription = false, backgroundClass = 'accent', width='default', hideHeader = false, ...props }, ref) => {
     const bgClass = {
       accent: 'bg-accent/50',
       sidebar: 'bg-sidebar',
       background: 'bg-background'
     }[backgroundClass]
+
+    const widthClass = {
+      default: 'w-full max-w-md',
+      '4xl': 'w-4xl min-w-4xl'
+    }[width]
 
     const handleOpenChange = useCallback((open: boolean) => {
       if (!open) {
@@ -70,8 +76,8 @@ export const ResponsiveDialog = forwardRef<HTMLDivElement, ResponsiveDialogProps
         <CredenzaContent
           ref={ref}
           onInteractOutside={props.onInteractOutside}
-          className={props.className}
           onKeyDown={handleKeyDown}
+          className={cn(widthClass)}
         >
           <CredenzaHeader className={cn(bgClass, hideHeader ? 'sr-only' : '')}>
             <CredenzaTitle>{props.title}</CredenzaTitle>

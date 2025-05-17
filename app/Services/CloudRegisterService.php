@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ecting.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -45,7 +46,7 @@ class CloudRegisterService
             $hostname = $hostnameParts[1];
         }
 
-        if (!$hostname) {
+        if (! $hostname) {
             $hostname = SlugService::createSlug(Tenant::class, 'subdomain', $tenant['organisation']);
         } else {
             $hostname = SlugService::createSlug(Tenant::class, 'subdomain', $hostname);
@@ -59,7 +60,6 @@ class CloudRegisterService
     public function createTenant(array $tenantData): Tenant
     {
         $tempTenantData = TempData::getByHid($tenantData['hid'])['data'];
-
 
         $tempTenantData['password'] = bcrypt($tenantData['password']);
         $domain = $tenantData['domain'];

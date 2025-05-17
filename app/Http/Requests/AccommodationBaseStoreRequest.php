@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 
 class AccommodationBaseStoreRequest extends FormRequest
 {
-
     protected function prepareForValidation(): void
     {
         $this->merge([

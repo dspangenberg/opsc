@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ooboo.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
@@ -18,6 +19,5 @@ class RegionData extends Data
         public readonly string $name,
         public readonly string $short_name,
         public readonly string $place_short_name,
-    ) {
-    }
+    ) {}
 }

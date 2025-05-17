@@ -1,4 +1,5 @@
 <?php
+
 /*
  * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -13,7 +14,7 @@ use Inertia\Inertia;
 
 class InvoiceDetailsController extends Controller
 {
-    public function __invoke(Invoice $invoice)
+    public function __invoke(Invoice $invoice, ?int $line = null)
     {
 
         $invoice
@@ -22,15 +23,18 @@ class InvoiceDetailsController extends Controller
             ->load('project')
             ->load('payment_deadline')
             ->load('type')
-            ->load(['lines' => function ($query) {
-                $query->orderBy('pos');
-            }])
+            ->load([
+                'lines' => function ($query) {
+                    $query->orderBy('pos');
+                },
+            ])
+            ->load('tax')
+            ->load('tax.rates')
             ->loadSum('lines', 'amount')
             ->loadSum('lines', 'tax');
 
-
         return Inertia::render('App/Invoice/InvoiceDetails', [
-            'invoice' => InvoiceData::from($invoice)
+            'invoice' => InvoiceData::from($invoice),
         ]);
     }
 }

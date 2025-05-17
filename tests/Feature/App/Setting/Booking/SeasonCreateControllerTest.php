@@ -18,10 +18,10 @@ class SeasonCreateControllerTest extends TestCase
 
         $response->assertInertia(function (Assert $assert) {
             $assert->component('App/Settings/Booking/Season/SeasonEdit')
-                   ->has('season', function (Assert $assert) {
-                       $assert->where('id', null)
-                              ->etc();
-                   });
+                ->has('season', function (Assert $assert) {
+                    $assert->where('id', null)
+                        ->etc();
+                });
         });
     }
 
@@ -46,7 +46,7 @@ class SeasonCreateControllerTest extends TestCase
 
         $response->assertInertia(function (Assert $assert) {
             $assert->has('season', function (Assert $assert) {
-                $emptySeasonData = SeasonData::from(new Season());
+                $emptySeasonData = SeasonData::from(new Season);
                 foreach ($emptySeasonData->toArray() as $key => $value) {
                     $assert->where($key, $value);
                 }

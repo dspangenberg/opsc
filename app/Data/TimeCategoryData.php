@@ -1,4 +1,5 @@
 <?php
+
 /*
  * opsc.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
@@ -19,6 +20,5 @@ class TimeCategoryData extends Data
         public readonly int $pos,
         public readonly bool $is_default,
         public readonly float $hourly,
-    ) {
-    }
+    ) {}
 }

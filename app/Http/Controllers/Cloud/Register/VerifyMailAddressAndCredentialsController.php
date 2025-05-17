@@ -10,7 +10,7 @@ class VerifyMailAddressAndCredentialsController
 {
     public function __invoke(Request $request)
     {
-        if (!$request->hasValidSignature()) {
+        if (! $request->hasValidSignature()) {
             abort(500, 'Der Bestätigungslink ist leider ungültig oder bereits abgelaufen.');
         }
 

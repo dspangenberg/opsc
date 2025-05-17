@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ooboo.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
@@ -6,7 +7,6 @@
 
 namespace App\Http\Controllers\App\Setting\Booking\Season;
 
-use App\Data\SeasonPeriodData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SeasonRequest;
 use App\Models\Season;
@@ -39,8 +39,6 @@ class SeasonUpdateController extends Controller
             }
         }
 
-
         return to_route('app.settings.booking.seasons');
     }
-
 }

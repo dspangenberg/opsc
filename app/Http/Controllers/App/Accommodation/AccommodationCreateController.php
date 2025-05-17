@@ -14,7 +14,7 @@ class AccommodationCreateController extends Controller
     public function __invoke()
     {
 
-        $accommodation = new Accommodation();
+        $accommodation = new Accommodation;
         $accommodation->name = tenant('company_house_name');
         $accommodation->website = tenant('website');
         $accommodation->email = tenant('email');

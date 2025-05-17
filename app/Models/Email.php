@@ -1,4 +1,5 @@
 <?php
+
 /*
  * ooboo.core is licensed under the terms of the EUPL-1.2 license
  * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
@@ -9,11 +10,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Email newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Email newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Email query()
+ *
  * @mixin \Eloquent
  */
 class Email extends Model
