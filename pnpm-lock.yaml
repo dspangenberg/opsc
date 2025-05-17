@@ -35,6 +35,9 @@ importers:
       '@inertiaui/modal-react':
         specifier: ^0.19.5
         version: 0.19.5(@inertiajs/react@2.0.0(react@19.0.0))(axios@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@intentui/icons':
+        specifier: ^1.11.0
+        version: 1.11.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@internationalized/date':
         specifier: ^3.8.0
         version: 3.8.0
@@ -926,6 +929,12 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
+
+  '@intentui/icons@1.11.0':
+    resolution: {integrity: sha512-5Bh1HTvzAdLSDDLPauDRlZBdXkhJ6J1yFrSuktHC1ISHK9cjB8Kox40g102MC1H+NHj4UhlWFH9SohDVnGueyw==}
+    peerDependencies:
+      react: ^19.1.0
+      react-dom: ^19.1.0
 
   '@internationalized/date@3.8.0':
     resolution: {integrity: sha512-J51AJ0fEL68hE4CwGPa6E0PO6JDaVLd8aln48xFCSy7CZkZc96dGEGmLs2OEEbBxcsVZtfrqkXJwI2/MSG8yKw==}
@@ -5880,6 +5889,12 @@ snapshots:
   '@inquirer/type@3.0.6(@types/node@22.15.17)':
     optionalDependencies:
       '@types/node': 22.15.17
+
+  '@intentui/icons@1.11.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      '@babel/runtime': 7.27.1
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
 
   '@internationalized/date@3.8.0':
     dependencies:
