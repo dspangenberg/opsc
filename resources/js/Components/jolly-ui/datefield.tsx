@@ -19,7 +19,7 @@ import {
 
 import { cn } from "@/Lib/utils"
 
-import { FieldError, fieldGroupVariants, Label } from "./Field"
+import { FieldError, fieldGroupVariants, Label } from "./field"
 
 const DateField = AriaDateField
 

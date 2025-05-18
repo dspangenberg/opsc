@@ -76,7 +76,6 @@ const data = {
       url: route('app.invoice.index', {}, false),
       icon: AbacusIcon,
       activePath: '/app/bookkeeping',
-      is_active: true,
       items: [{
         title: 'Transaktionen',
         url: route('app.invoice.index', {}, false),

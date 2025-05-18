@@ -1,11 +1,4 @@
-/*
- * opsc.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
- */
-
-"use client"
-
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon } from "@radix-ui/react-icons"
 import {
   DatePicker as AriaDatePicker,
   type DatePickerProps as AriaDatePickerProps,
@@ -21,8 +14,10 @@ import {
 } from "react-aria-components"
 
 import { cn } from "@/Lib/utils"
+import { FieldGroup } from "@/Components/jolly-ui/field"
+import { Popover } from "@/Components/jolly-ui/popover"
 
-import { Button } from "./Button"
+import { Button } from "./button"
 import {
   Calendar,
   CalendarCell,
@@ -32,10 +27,9 @@ import {
   CalendarHeaderCell,
   CalendarHeading,
   RangeCalendar,
-} from "./Calendar"
-import { DateInput } from "./DateField"
-import { FieldError, FieldGroup, Label } from "./Field"
-import { Popover } from "./Popover"
+} from "./calendar"
+import { DateInput } from "./datefield"
+import { FieldError, Label } from "./field"
 
 const DatePicker = AriaDatePicker
 
@@ -53,7 +47,7 @@ const DatePickerContent = ({
   >
     <AriaDialog
       className={cn(
-        "flex w-full flex-col space-y-4 outline-none sm:flex-row sm:space-x-4 sm:space-y-0",
+        "flex w-full flex-col space-y-4 outline-none sm:flex-row sm:space-x-4 sm:space-y-0 pointer-events-auto z-[100]",
         className
       )}
       {...props}

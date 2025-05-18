@@ -20,6 +20,7 @@ class InvoiceLineUpdateRequest extends FormRequest
             'invoice_id' => ['required', 'exists:invoices,id'],
             'amount' => ['required', 'numeric'],
             'text' => ['required', 'string'],
+            'unit' => ['required', 'string'],
             'service_period_begin' => ['nullable', 'date', 'date_format:d.m.Y'],
             'service_period_end' => [
                 'nullable',

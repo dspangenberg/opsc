@@ -20,11 +20,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
   const handeLineCommand = async (props: LineCommandProps) => {
     console.log('Handle line command:', props) // Verarbeitung des Line Commandos
     if (props.command === 'edit') {
-      const line = invoice.lines?.find(line => line.id === props.lineId) // Finden der Zeile mit der entsprechenden ID
-      await InvoiceDetailsEditPosition.call({
-        invoice: invoice,
-        invoiceLine: line as unknown as App.Data.InvoiceLineData
-      })
+      router.get(route('app.invoice.line-edit', { invoice: invoice.id, invoiceLine: props.lineId }))
     }
 
     if (props.command === 'delete') {
@@ -66,7 +62,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
         <div className="w-sm flex-none h-fit space-y-6 px-1">
           <InvoiceDetailsSide invoice={invoice} />
         </div>
-        <InvoiceDetailsEditPosition.Root />
+
         <ConfirmationDialog.Root />
       </InvoiceDetailsLayout>
     </>

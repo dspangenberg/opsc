@@ -30,7 +30,7 @@ const Label = ({ className, ...props }: AriaLabelProps) => (
 function FormDescription({ className, ...props }: AriaTextProps) {
   return (
     <AriaText
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-[0.8rem] text-muted-foreground", className)}
       {...props}
       slot="description"
     />
@@ -40,7 +40,7 @@ function FormDescription({ className, ...props }: AriaTextProps) {
 function FieldError({ className, ...props }: AriaFieldErrorProps) {
   return (
     <AriaFieldError
-      className={cn("text-sm font-medium text-destructive", className)}
+      className={cn("text-[0.8rem] font-medium text-destructive", className)}
       {...props}
     />
   )
@@ -50,9 +50,9 @@ const fieldGroupVariants = cva("", {
   variants: {
     variant: {
       default: [
-        "relative flex h-10 w-full items-center overflow-hidden rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background",
+        "relative flex h-9 w-full items-center overflow-hidden rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
         /* Focus Within */
-        "data-[focus-within]:outline-none data-[focus-within]:ring-2 data-[focus-within]:ring-ring data-[focus-within]:ring-offset-2",
+        "data-[focus-within]:outline-none data-[focus-within]:ring-1 data-[focus-within]:ring-ring",
         /* Disabled */
         "data-[disabled]:opacity-50",
       ],

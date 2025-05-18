@@ -1,0 +1,10 @@
+{
+  "ui": "resources/js/Components/intentui/",
+  "lib": "resources/js/Lib",
+  "hooks": "resources/js/Hooks",
+  "gray": "stone",
+  "css": "resources/css/intent.css",
+  "alias": "@",
+  "language": "typescript",
+  "$schema": "https://intentui.com/schema.json"
+}

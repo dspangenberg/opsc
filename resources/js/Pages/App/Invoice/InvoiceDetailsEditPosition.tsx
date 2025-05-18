@@ -1,21 +1,17 @@
 import { createCallable } from 'react-call'
 import type * as React from 'react'
-import { Button, FormErrors, FormGroup, FormSelect, FormInput, FormTextarea, type Option } from '@dspangenberg/twcui'
-import { ResponsiveDialog } from '@/Components/ResponsiveDialog'
-import { Copy01Icon, Delete04Icon, MoreVerticalIcon } from '@hugeicons/core-free-icons'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@/Components/ui/dropdown-menu'
-import { HugeiconsIcon } from '@hugeicons/react'
+import { type FormEvent, useEffect, useState } from 'react'
+import { FormErrors, FormGroup } from '@dspangenberg/twcui'
 import { useForm } from '@/Hooks/use-form'
-import type { FormEvent } from 'react'
 import { FormDateRangePicker } from '@/Components/FormDateRangePicker'
-import { FormNumberInput } from '@/Components/FormNumberInput'
+import { JollyNumberField } from '@/Components/jolly-ui/numberfield'
+import { JollyTextField, Input } from '@/Components/jolly-ui/textfield'
+import { format, parse } from 'date-fns'
+import { JollySelect, SelectItem } from '@/Components/jolly-ui/select'
+import { Button } from '@/Components/jolly-ui/button'
+import { DialogContent, DialogHeader, DialogFooter, DialogOverlay, DialogTitle, DialogBody } from '@/Components/jolly-ui/dialog'
+import { JollyDatePicker } from '@/Components/jolly-ui/date-picker'
+import { CalendarDate } from '@internationalized/date'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -24,20 +20,23 @@ interface Props {
 
 export const InvoiceDetailsEditPosition = createCallable<Props, boolean>(
   ({ call, invoice, invoiceLine }) => {
+    const { data, errors, updateAndValidate, submit, updateAndValidateWithoutEvent } =
+      useForm<App.Data.InvoiceLineData>(
+        'put',
+        route('app.invoice.line-update', {
+          invoice: invoice.id,
+          invoiceLine: invoiceLine.id
+        }),
+        invoiceLine
+      )
 
-    const { data, errors, updateAndValidate, submit, updateAndValidateWithoutEvent } = useForm<App.Data.InvoiceLineData>(
-      'put',
-      route('app.invoice.line-update', {
-        invoice: invoice.id,
-        invoiceLine: invoiceLine.id
-      }),
-      invoiceLine
-    )
+    const beginOn = data.service_period_begin
+      ? parse(data.service_period_begin, 'dd.MM.yyyy', new Date())
+      : undefined
+    const endOn = data.service_period_end
+      ? parse(data.service_period_end, 'dd.MM.yyyy', new Date())
+      : undefined
 
-    const taxOptions: Option[] = invoice.tax?.rates?.map(tax => ({
-      value: tax.id as unknown as string,
-      label: tax.name
-    }))
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
       try {
         await submit(event)
@@ -45,116 +44,159 @@ export const InvoiceDetailsEditPosition = createCallable<Props, boolean>(
       } catch (error) {}
     }
 
+    const handleClose = () => {
+      call.end(false)
+    }
+    const [parsedDate, setParsedDate] = useState<CalendarDate | undefined>(() => {
+      if (data.service_period_begin) {
+        const issuedOn = parse(data.service_period_begin, 'dd.MM.yyyy', new Date())
+        return new CalendarDate(issuedOn.getFullYear(), issuedOn.getMonth() + 1, issuedOn.getDate())
+      }
+      return undefined
+    })
+
+    useEffect(() => {
+      if (data.service_period_begin) {
+        const issuedOn = parse(data.service_period_begin, 'dd.MM.yyyy', new Date())
+        setParsedDate(new CalendarDate(issuedOn.getFullYear(), issuedOn.getMonth() + 1, issuedOn.getDate()))
+      } else {
+        setParsedDate(undefined)
+      }
+    }, [data.service_period_begin])
+
+    const handleIssuedOnChange = (date: CalendarDate | null) => {
+      if (date) {
+        const formattedDate = format(date.toDate('Europe/Berlin'), 'dd.MM.yyyy')
+        updateAndValidateWithoutEvent('service_period_begin', formattedDate)
+      } else {
+        updateAndValidateWithoutEvent('service_period_begin', null)
+      }
+    }
+
     const handlePeriodChange = (range: { from: string; to: string }) => {
       updateAndValidateWithoutEvent('service_period_begin', range.from)
       updateAndValidateWithoutEvent('service_period_end', range.to)
     }
 
-    const handleValueChange = (name: keyof App.Data.InvoiceLineData, value: string) => {
-      updateAndValidateWithoutEvent(name, Number.parseInt(value))
-    }
-
-    const handleNumberInputChange = (name: string) => (value: number | undefined) => {
+    const handleValueChange = (name: keyof App.Data.InvoiceLineData, value: number) => {
+      console.log(value)
       updateAndValidateWithoutEvent(name, value)
     }
 
-    return (
-      <ResponsiveDialog
-        isOpen={true}
-        onClose={() => call.end(false)}
-        description="Rechnungsposition bearbeiten"
-        title="Rechnungsposition bearbeiten"
-        width="4xl"
-        dismissible={true}
-        footer={
-          <div className="flex items-start flex-1 justify-start">
+    const handleTextChange =
+      (name: keyof App.Data.InvoiceLineData) => (value: string | undefined) => {
+        console.log(value)
+        updateAndValidateWithoutEvent(name, value || '')
+      }
 
-            <div className="flex-1 space-x-2 justify-end items-center flex">
-              <Button variant="outline" onClick={() => call.end(false)}>
-                Abbrechen
-              </Button>
-              <Button form="invoiceLineForm" variant="default" type="submit">
-                Position speichern
-              </Button>
-            </div>
-          </div>
-        }
-      >
-        <div className="px-2">
-          <form onSubmit={handleSubmit} id="invoiceLineForm">
-          <FormErrors errors={errors} />
-            <FormGroup>
-              <div className="col-span-3">
-                <FormNumberInput
-                  name="quantity"
-                  onValueChange={handleNumberInputChange('quantity')}
-                  thousandSeparator={'.'}
-                  allowedDecimalSeparators={[',']}
-                  decimalSeparator=","
-                  fixedDecimalScale={true}
-                  value={data.quantity as number}
-                  decimalScale={2}
-                />
-              </div>
-              <div className="col-span-12">
-                <FormTextarea
-                  value={data.text}
-                  rows={5}
-                  onChange={updateAndValidate}
-                  autoFocus
-                  error={errors?.text || ''}
-                  name="text"
-                />
-              </div>
-              <div className="col-span-4">
-                <FormNumberInput
-                  name="price"
-                  onValueChange={handleNumberInputChange('price')}
-                  thousandSeparator={'.'}
-                  allowedDecimalSeparators={[',']}
-                  decimalSeparator=","
-                  fixedDecimalScale={true}
-                  value={data.price as number}
-                  decimalScale={2}
-                  suffix=" EUR"
-                />
-              </div>
-              <div className="col-span-4">
-                <FormNumberInput
-                  name="amount"
-                  onValueChange={handleNumberInputChange('amount')}
-                  thousandSeparator={'.'}
-                  allowedDecimalSeparators={[',']}
-                  decimalSeparator=","
-                  fixedDecimalScale={true}
-                  value={data.amount as number}
-                  decimalScale={2}
-                  suffix=" EUR"
-                />
-              </div>
-              <div className="col-span-12">
-                <FormSelect
-                  name="tax_rate_id"
-                  label="Ust.-Satz"
-                  onValueChange={value => handleValueChange('tax_rate_id', value)}
-                  value={data.tax_rate_id as unknown as string}
-                  error={errors?.tax_rate_id || ''}
-                  options={taxOptions}
-                />
-              </div>
-              <div className="col-span-12">
-                <FormDateRangePicker
-                  label="Leistungszeitraum"
-                  from={data.service_period_begin as unknown as string}
-                  to={data.service_period_end as unknown as string}
-                  onChange={range => handlePeriodChange(range)}
-                />
-              </div>
-              {invoiceLine.id}
-            </FormGroup>
-          </form>
-        </div>
-      </ResponsiveDialog>
+    const handleNumberInputChange =
+      (name: keyof App.Data.InvoiceLineData) => (value: number | undefined) => {
+        updateAndValidateWithoutEvent(name, value ?? null)
+      }
+
+    return (
+      <DialogOverlay isOpen={true} onOpenChange={() => call.end(false)}>
+        <DialogContent className="min-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Rechnungsposition bearbeiten</DialogTitle>
+          </DialogHeader>
+
+
+          <DialogBody>
+                <form onSubmit={handleSubmit} id="invoiceLineForm">
+                  <FormErrors errors={errors} />
+                  <FormGroup>
+                    <div className="col-span-3">
+                      <JollyNumberField
+                        autoFocus
+                        formatOptions={{
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2
+                        }}
+                        label="Menge"
+                        value={data.quantity as unknown as number}
+                        isInvalid={!!errors.quantity || false}
+                        onChange={handleNumberInputChange('quantity')}
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <JollyTextField
+                        name="unit"
+                        label="Einheit"
+                        className="pointer-events-auto"
+                        value={data.unit as unknown as string}
+                        onChange={handleTextChange('unit')}
+                        isInvalid={!!errors.unit || false}
+                      />
+                    </div>
+                    <div className="col-span-11">
+                      <JollyTextField
+                        name="text"
+                        label="Beschreibung"
+                        textArea={true}
+                        value={data.text}
+                        isInvalid={!!errors.text || false}
+                        onChange={value => handleTextChange('text')(value)}
+                      />
+                    </div>
+                    <div className="col-span-4">
+                      <JollyNumberField
+                        formatOptions={{
+                          style: 'currency',
+                          currency: 'EUR'
+                        }}
+                        label="Einzelpreis"
+                        value={data.price as unknown as number}
+                        onChange={handleNumberInputChange('price')}
+                      />
+                    </div>
+                    <div className="col-span-4">
+                      <JollyNumberField
+                        formatOptions={{
+                          style: 'currency',
+                          currency: 'EUR'
+                        }}
+                        label="Gesamtbetrag"
+                        value={data.amount as unknown as number}
+                        isDisabled={data.type_id === 1}
+                        onChange={handleNumberInputChange('amount')}
+                      />
+                    </div>
+                    <div className="col-span-5" />
+                    <div className="col-span-11">
+
+
+                      <FormDateRangePicker
+                        label="Leistungszeitraum"
+                        from={data.service_period_begin as unknown as string}
+                        to={data.service_period_end as unknown as string}
+                        onChange={range => handlePeriodChange(range)}
+                      />
+                    </div>
+                    <div className="col-span-4">
+                      <JollySelect<App.Data.TaxRateData>
+                        onSelectionChange={selected =>
+                          handleValueChange('tax_rate_id', selected as unknown as number)
+                        }
+                        selectedKey={data.tax_rate_id}
+                        label="USt.-Satz"
+                        items={invoice.tax?.rates || []}
+                      >
+                        {item => <SelectItem>{item.name}</SelectItem>}
+                      </JollySelect>
+                    </div>
+                  </FormGroup>
+                </form>
+          </DialogBody>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => call.end(false)}>Abbrechen</Button>
+            <Button form="invoiceLineForm" type="submit">
+              Speichern
+            </Button>
+          </DialogFooter>
+
+        </DialogContent>
+      </DialogOverlay>
     )
   },
   300

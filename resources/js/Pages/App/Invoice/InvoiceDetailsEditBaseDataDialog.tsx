@@ -6,7 +6,11 @@ import { Button, FormErrors, FormGroup, FormSelect, type Option } from '@dspange
 import { useForm } from '@/Hooks/use-form'
 import { router } from '@inertiajs/react'
 import { ResponsiveDialog } from '@/Components/ResponsiveDialog'
-import { FormDatePicker } from '@/Components/FormDatePicker'
+import { JollyDatePicker } from '@/Components/jolly-ui/date-picker'
+import { format, parse } from 'date-fns'
+import {CalendarDate} from '@internationalized/date'
+import { Input } from '@/Components/jolly-ui/textfield'
+
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -28,6 +32,8 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
     router.visit(route('app.invoice.details', { invoice: invoice.id }))
   }
   const selectRef = useRef<HTMLButtonElement>(null)
+
+
 
   const invoiceTypeOptions: Option[] = invoice_types?.map(type => ({
     value: type.id as unknown as string,
@@ -57,6 +63,24 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
       invoice
     )
 
+  const [parsedDate, setParsedDate] = useState<CalendarDate | undefined>(() => {
+    if (data.issued_on) {
+      const issuedOn = parse(data.issued_on, 'dd.MM.yyyy', new Date())
+      return new CalendarDate(issuedOn.getFullYear(), issuedOn.getMonth() + 1, issuedOn.getDate())
+    }
+    return undefined
+  })
+
+  useEffect(() => {
+    if (data.issued_on) {
+      const issuedOn = parse(data.issued_on, 'dd.MM.yyyy', new Date())
+      setParsedDate(new CalendarDate(issuedOn.getFullYear(), issuedOn.getMonth() + 1, issuedOn.getDate()))
+    } else {
+      setParsedDate(undefined)
+    }
+  }, [data.issued_on])
+
+
   useEffect(() => {
     selectRef.current?.focus()
   }, [])
@@ -77,8 +101,13 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
     updateAndValidateWithoutEvent('service_period_end', range.to)
   }
 
-  const handleIssuedOnChange = (date: string) => {
-    updateAndValidateWithoutEvent('issued_on', date)
+  const handleIssuedOnChange = (date: CalendarDate | null) => {
+    if (date) {
+      const formattedDate = format(date.toDate('Europe/Berlin'), 'dd.MM.yyyy')
+      updateAndValidateWithoutEvent('issued_on', formattedDate)
+    } else {
+      updateAndValidateWithoutEvent('issued_on', null)
+    }
   }
 
   return (
@@ -105,15 +134,15 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
         <FormErrors errors={errors} />
         <FormGroup>
           <div className="col-span-8">
-            <FormDatePicker
+            <JollyDatePicker
               label="Rechnungsdatum"
-              value={data.issued_on}
-              error={errors?.issued_on || ''}
+              value={parsedDate}
               onChange={handleIssuedOnChange}
             />
           </div>
           <div className="col-span-16" />
           <div className="col-span-12">
+            <Input value="sfdsdfdsfdfs"/>
             <FormSelect
               name="type_id"
               label="Rechnungsart"

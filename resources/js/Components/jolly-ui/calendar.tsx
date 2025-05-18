@@ -1,8 +1,6 @@
-"use client"
-
 import * as React from "react"
 import { getLocalTimeZone, today } from "@internationalized/date"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons"
 import {
   Button as AriaButton,
   Calendar as AriaCalendar,
@@ -28,7 +26,7 @@ import {
 } from "react-aria-components"
 
 import { cn } from "@/Lib/utils"
-import { buttonVariants } from "@/Components/jollyui/Button"
+import { buttonVariants } from "@/Components/jolly-ui/button"
 
 const Calendar = AriaCalendar
 
@@ -38,9 +36,10 @@ const CalendarHeading = (props: React.HTMLAttributes<HTMLElement>) => {
   const { direction } = useLocale()
 
   return (
-    <header className="flex w-full items-center gap-1 px-1 pb-4" {...props}>
+    <header className="flex w-full items-center gap-1 px-1 pb-4 " {...props}>
       <AriaButton
         slot="previous"
+        type="button"
         className={cn(
           buttonVariants({ variant: "outline" }),
           "size-7 bg-transparent p-0 opacity-50",
@@ -49,14 +48,15 @@ const CalendarHeading = (props: React.HTMLAttributes<HTMLElement>) => {
         )}
       >
         {direction === "rtl" ? (
-          <ChevronRight aria-hidden className="size-4" />
+          <ChevronRightIcon aria-hidden className="size-4" />
         ) : (
-          <ChevronLeft aria-hidden className="size-4" />
+          <ChevronLeftIcon aria-hidden className="size-4" />
         )}
       </AriaButton>
       <AriaHeading className="grow text-center text-sm font-medium" />
       <AriaButton
         slot="next"
+        type="button"
         className={cn(
           buttonVariants({ variant: "outline" }),
           "size-7 bg-transparent p-0 opacity-50",
@@ -65,9 +65,9 @@ const CalendarHeading = (props: React.HTMLAttributes<HTMLElement>) => {
         )}
       >
         {direction === "rtl" ? (
-          <ChevronLeft aria-hidden className="size-4" />
+          <ChevronLeftIcon aria-hidden className="size-4" />
         ) : (
-          <ChevronRight aria-hidden className="size-4" />
+          <ChevronRightIcon aria-hidden className="size-4" />
         )}
       </AriaButton>
     </header>
@@ -94,7 +94,7 @@ const CalendarHeaderCell = ({
 }: AriaCalendarHeaderCellProps) => (
   <AriaCalendarHeaderCell
     className={cn(
-      "w-9 rounded-md text-[0.8rem] font-normal text-muted-foreground",
+      "w-8 rounded-md text-[0.8rem] font-normal text-muted-foreground",
       className
     )}
     {...props}
@@ -115,36 +115,36 @@ const CalendarCell = ({ className, ...props }: AriaCalendarCellProps) => {
       className={composeRenderProps(className, (className, renderProps) =>
         cn(
           buttonVariants({ variant: "ghost" }),
-          "relative flex size-9 items-center justify-center p-0 text-sm font-normal",
+          "relative flex size-8 items-center justify-center p-0 text-sm font-normal z-[60]",
           /* Disabled */
           renderProps.isDisabled && "text-muted-foreground opacity-50",
           /* Selected */
           renderProps.isSelected &&
-          "bg-primary text-primary-foreground data-[focused]:bg-primary  data-[focused]:text-primary-foreground",
+            "bg-primary text-primary-foreground data-[focused]:bg-primary  data-[focused]:text-primary-foreground",
           /* Hover */
           renderProps.isHovered &&
-          renderProps.isSelected &&
-          (renderProps.isSelectionStart ||
-            renderProps.isSelectionEnd ||
-            !isRange) &&
-          "data-[hovered]:bg-primary data-[hovered]:text-primary-foreground",
+            renderProps.isSelected &&
+            (renderProps.isSelectionStart ||
+              renderProps.isSelectionEnd ||
+              !isRange) &&
+            "data-[hovered]:bg-primary data-[hovered]:text-primary-foreground",
           /* Selection Start/End */
           renderProps.isSelected &&
-          isRange &&
-          !renderProps.isSelectionStart &&
-          !renderProps.isSelectionEnd &&
-          "rounded-none bg-accent text-accent-foreground",
+            isRange &&
+            !renderProps.isSelectionStart &&
+            !renderProps.isSelectionEnd &&
+            "rounded-none bg-accent text-accent-foreground",
           /* Outside Month */
           renderProps.isOutsideMonth &&
-          "text-muted-foreground opacity-50 data-[selected]:bg-accent/50 data-[selected]:text-muted-foreground data-[selected]:opacity-30",
+            "text-muted-foreground opacity-50 data-[selected]:bg-accent/50 data-[selected]:text-muted-foreground data-[selected]:opacity-30",
           /* Current Date */
           renderProps.date.compare(today(getLocalTimeZone())) === 0 &&
-          !renderProps.isSelected &&
-          "bg-accent text-accent-foreground",
+            !renderProps.isSelected &&
+            "bg-accent text-accent-foreground",
           /* Unavailable Date */
           renderProps.isUnavailable && "cursor-default text-destructive ",
           renderProps.isInvalid &&
-          "bg-destructive text-destructive-foreground data-[focused]:bg-destructive data-[hovered]:bg-destructive data-[focused]:text-destructive-foreground data-[hovered]:text-destructive-foreground",
+            "bg-destructive text-destructive-foreground data-[focused]:bg-destructive data-[hovered]:bg-destructive data-[focused]:text-destructive-foreground data-[hovered]:text-destructive-foreground",
           className
         )
       )}
@@ -235,4 +235,5 @@ export {
   JollyCalendar,
   JollyRangeCalendar,
 }
+
 export type { JollyCalendarProps, JollyRangeCalendarProps }

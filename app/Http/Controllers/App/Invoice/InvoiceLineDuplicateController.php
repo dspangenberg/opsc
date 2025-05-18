@@ -18,6 +18,7 @@ class InvoiceLineDuplicateController extends Controller
         $duplicatedLine = $invoiceLine->replicate();
         $duplicatedLine->save();
 
-        return redirect()->route('app.invoice.details', ['invoice' => $invoice->id, 'line' => $duplicatedLine->id]);
+        return redirect()->route('app.invoice.line-edit',
+            ['invoice' => $invoice->id, 'invoiceLine' => $duplicatedLine->id]);
     }
 }

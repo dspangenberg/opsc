@@ -1,17 +1,10 @@
-/*
- * opsc.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
- */
-
-"use client"
-
 import * as React from "react"
 import {
   Dialog as AriaDialog,
-  type DialogProps as AriaDialogProps,
+  DialogProps as AriaDialogProps,
   DialogTrigger as AriaDialogTrigger,
   Popover as AriaPopover,
-  type PopoverProps as AriaPopoverProps,
+  PopoverProps as AriaPopoverProps,
   composeRenderProps,
 } from "react-aria-components"
 
