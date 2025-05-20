@@ -5,7 +5,6 @@ import { InvoiceDetailsSide } from '@/Pages/App/Invoice/InvoiceDetailsSide'
 import { InvoiceDetailsLayout } from '@/Pages/App/Invoice/InvoiceDetailsLayout'
 import { InvoicingTable, type LineCommandProps } from '@/Pages/App/Invoice/InvoicingTable'
 import { ConfirmationDialog } from '@/Pages/App/Invoice/ConfirmationDialog'
-import { useRoute } from 'ziggy-js'
 
 interface InvoiceDetailsProps extends PageProps {
   invoice: App.Data.InvoiceData
@@ -16,20 +15,17 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
   const { invoice } = usePage<InvoiceDetailsProps>().props
 
   const handeLineCommand = async (props: LineCommandProps) => {
-    console.log('Handle line command:', props) // Verarbeitung des Line Commandos
     if (props.command === 'edit') {
       router.get(route('app.invoice.line-edit', { invoice: invoice.id, invoiceLine: props.lineId }))
     }
 
     if (props.command === 'delete') {
-      console.log('Delete line with ID:', props.lineId) // Löschen der Zeile mit der entsprechenden ID
       const promise = await ConfirmationDialog.call({
         title: 'Rechnungsposition löschen',
         message: 'Möchtest Du die Rechnungsposition wirklich löschen?',
         buttonTitle: 'Position löschen'
       })
       if (promise) {
-        // Implementiere den Löschvorgang
         router.delete(
           route('app.invoice.line-delete', { invoice: invoice.id, invoiceLine: props.lineId })
         )
@@ -37,15 +33,8 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
     }
 
     if (props.command === 'duplicate') {
-      console.log('Duplicate line with ID:', props.lineId) // Duplizieren der Zeile mit der entsprechenden ID
-
       router.get(
-        route('app.invoice.line-duplicate', { invoice: invoice.id, invoiceLine: props.lineId }),{},{
-          onSuccess: (page) => {
-
-            console.log(page)
-          }
-        }
+        route('app.invoice.line-duplicate', { invoice: invoice.id, invoiceLine: props.lineId })
       )
     }
   }
