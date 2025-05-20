@@ -1,15 +1,10 @@
-/*
- * ecting.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
- */
-
 'use client'
+import { useState, useEffect } from 'react'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/Components/ui/collapsible'
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -17,11 +12,9 @@ import {
   SidebarMenuSubItem
 } from '@/Components/ui/sidebar'
 import { usePathActive } from '@/Hooks/usePathActive'
-import { HugeiconsIcon, type HugeiconsProps } from '@hugeicons/react'
-import { Link, usePage } from '@inertiajs/react'
-import { ChevronRight, type LucideIcon, Plus } from 'lucide-react'
+import { HugeiconsIcon  } from '@hugeicons/react'
+import { Link } from '@inertiajs/react'
 import type * as React from 'react'
-export type CombinedIcon = LucideIcon | React.FC<HugeiconsProps>
 
 export interface NavMainItem {
   title: string
@@ -49,16 +42,41 @@ export function NavMain({
   items: NavMainItem[]
 }) {
   const isPathActive = usePathActive()
+  const [openItems, setOpenItems] = useState<{ [key: string]: boolean }>({})
+
+  useEffect(() => {
+    const initialOpenState = items.reduce((acc, item) => {
+      acc[item.title] = isActive(item)
+      return acc
+    }, {} as { [key: string]: boolean })
+    setOpenItems(initialOpenState)
+  }, [items])
+
+  const isActive = (item: NavMainItem) => {
+    if (item.isActive) {
+      return true
+    }
+    return isPathActive(item.url)
+  }
+
+  const toggleItem = (title: string) => {
+    setOpenItems(prev => ({ ...prev, [title]: !prev[title] }))
+  }
 
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map(item => (
-            <Collapsible key={item.title} asChild open={isPathActive(item) || item.isActive}>
+            <Collapsible
+              key={item.title}
+              asChild
+              open={openItems[item.title]}
+              onOpenChange={() => toggleItem(item.title)}
+            >
               <SidebarMenuItem className={item.hasSep ? 'mb-3' : ''}>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton asChild tooltip={item.title} isActive={isPathActive(item)}>
+                  <SidebarMenuButton asChild tooltip={item.title} isActive={isActive(item)}>
                     <Link href={item.url}>
                       <HugeiconsIcon
                         icon={item.icon}
@@ -71,25 +89,23 @@ export function NavMain({
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 {item.items?.length ? (
-                  <>
-                    <CollapsibleContent>
-                      <SidebarMenuSub className="block md:hidden">
-                        {item.items.map(subItem => (
-                          <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton
-                              asChild
-                              className="ml-1"
-                              isActive={isPathActive(subItem)}
-                            >
-                              <Link href={subItem.url}>
-                                <span>{subItem.title}</span>
-                              </Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  </>
+                  <CollapsibleContent>
+                    <SidebarMenuSub className="block md:hidden">
+                      {item.items.map(subItem => (
+                        <SidebarMenuSubItem key={subItem.title}>
+                          <SidebarMenuSubButton
+                            asChild
+                            className="ml-1"
+                            isActive={isPathActive(subItem)}
+                          >
+                            <Link href={subItem.url}>
+                              <span>{subItem.title}</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
                 ) : null}
               </SidebarMenuItem>
             </Collapsible>

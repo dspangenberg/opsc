@@ -30,15 +30,14 @@ function DateSegment({ className, ...props }: AriaDateSegmentProps) {
     <AriaDateSegment
       className={composeRenderProps(className, (className) =>
         cn(
-          "type-literal:px-0 inline rounded p-0.5 caret-transparent outline outline-0",
+          "type-literal:px-0 inline rounded p-0.5 caret-transparent outline-0",
           /* Placeholder */
-          "data-[placeholder]:text-muted-foreground",
+          "data-[placeholder]:text-muted-foreground ",
           /* Disabled */
           "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
           /* Focused */
           "data-[focused]:bg-accent data-[focused]:text-accent-foreground",
-          /* Invalid */
-          "data-[invalid]:data-[focused]:bg-destructive data-[invalid]:data-[focused]:data-[placeholder]:text-destructive-foreground data-[invalid]:data-[focused]:text-destructive-foreground data-[invalid]:data-[placeholder]:text-destructive data-[invalid]:text-destructive",
+
           className
         )
       )}
@@ -59,7 +58,7 @@ function DateInput({
   return (
     <AriaDateInput
       className={composeRenderProps(className, (className) =>
-        cn(fieldGroupVariants({ variant }), "text-sm", className)
+        cn(fieldGroupVariants({ variant }), "text-base", className)
       )}
       {...props}
     >
@@ -85,7 +84,7 @@ function JollyDateField<T extends AriaDateValue>({
   return (
     <DateField
       className={composeRenderProps(className, (className) =>
-        cn("group flex flex-col gap-2", className)
+        cn("group flex flex-col gap-2",className)
       )}
       {...props}
     >

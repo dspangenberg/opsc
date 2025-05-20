@@ -50,14 +50,14 @@ const fieldGroupVariants = cva("", {
   variants: {
     variant: {
       default: [
-        "relative flex h-9 w-full items-center overflow-hidden rounded-sm border border-input bg-transparent px-3 py-1 text-base font-medium shadow-none transition-colors",
+        "relative flex h-9 w-full items-center overflow-hidden rounded-sm border border-input bg-background px-3 py-1 text-base font-medium shadow-none transition-colors",
         /* Focus Within */
         "data-[focus-within]:border-ring data-[focus-within]:ring-ring/20 data-[focus-within]:ring-[3px] ",
         "data-[invalid]:focus-within:ring-destructive/20  data-[invalid]:focus-within:border-destructive  data-[invalid]:border-destructive",
         /* Disabled */
         "data-[disabled]:opacity-50",
       ],
-      ghost: "",
+      ghost: "w-full data-[invalid]:border-destructive",
     },
   },
   defaultVariants: {

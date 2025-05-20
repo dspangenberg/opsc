@@ -1,5 +1,5 @@
 import * as React from "react"
-import { getLocalTimeZone, today } from "@internationalized/date"
+import { type CalendarDate, getLocalTimeZone, today } from "@internationalized/date"
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons"
 import {
   Button as AriaButton,
@@ -115,7 +115,7 @@ const CalendarCell = ({ className, ...props }: AriaCalendarCellProps) => {
       className={composeRenderProps(className, (className, renderProps) =>
         cn(
           buttonVariants({ variant: "ghost" }),
-          "relative flex size-8 items-center justify-center p-0 text-sm font-normal z-[60]",
+          "relative flex size-8 items-center justify-center p-0 text-sm font-normal z-[60] cursor-pointer",
           /* Disabled */
           renderProps.isDisabled && "text-muted-foreground opacity-50",
           /* Selected */

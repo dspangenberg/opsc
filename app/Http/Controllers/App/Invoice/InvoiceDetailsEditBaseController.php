@@ -34,6 +34,8 @@ class InvoiceDetailsEditBaseController extends Controller
                     $query->orderBy('pos');
                 },
             ])
+            ->load('tax')
+            ->load('tax.rates')
             ->loadSum('lines', 'amount')
             ->loadSum('lines', 'tax');
 

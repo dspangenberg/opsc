@@ -3,7 +3,7 @@ import { type FormEvent, useEffect, useState } from 'react'
 import { FormErrors, FormGroup } from '@dspangenberg/twcui'
 import { useForm } from '@/Hooks/use-form'
 import { router } from '@inertiajs/react'
-import { format, parse } from 'date-fns'
+
 import { JollyTextField } from '@/Components/jolly-ui/textfield'
 import { Button } from '@/Components/jolly-ui/button'
 import {
@@ -16,9 +16,7 @@ import {
 } from '@/Components/jolly-ui/dialog'
 import { JollyNumberField } from '@/Components/jolly-ui/numberfield'
 import { JollySelect, SelectItem } from '@/Components/jolly-ui/select'
-import { JollyDateRangePicker } from '@/Components/jolly-ui/date-picker'
-import { CalendarDate, type DateValue } from '@internationalized/date'
-import type { DateRange } from 'react-aria-components'
+import { createDateRangeChangeHandler, DateRangePicker } from '@/Components/twice-ui/date-range-picker'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -30,7 +28,10 @@ const currencyFormatter = new Intl.NumberFormat('de-DE', {
   minimumFractionDigits: 0
 })
 
-export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({ invoice, invoiceLine }) => {
+export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
+  invoice,
+  invoiceLine
+}) => {
   const [isOpen, setIsOpen] = useState(true)
 
   const handleClose = () => {
@@ -38,7 +39,13 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({ invoice, invoice
     router.visit(route('app.invoice.details', { invoice: invoice.id }))
   }
 
-  const { data, errors, updateAndValidate, submit, updateAndValidateWithoutEvent } =
+  const {
+    data,
+    errors,
+    updateAndValidate,
+    submit,
+    updateAndValidateWithoutEvent
+  } =
     useForm<App.Data.InvoiceLineData>(
       'put',
       route('app.invoice.line-update', {
@@ -48,26 +55,6 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({ invoice, invoice
       invoiceLine
     )
 
-  const [servicePeriod, setServicePeriod] = useState<DateRange | null>(() => {
-    if (!data.service_period_begin || !data.service_period_end) {
-      return null
-    }
-
-    const parseDate = (dateString: string): DateValue => {
-      const parsedDate = parse(dateString, 'dd.MM.yyyy', new Date())
-      return new CalendarDate(
-        parsedDate.getFullYear(),
-        parsedDate.getMonth() + 1,
-        parsedDate.getDate()
-      )
-    }
-
-    return {
-      start: parseDate(data.service_period_begin),
-      end: parseDate(data.service_period_end)
-    }
-  })
-
   useEffect(() => {
     if (data.type_id === 1 && data.quantity && data.price) {
       const totalPrice = data.quantity * data.price
@@ -76,13 +63,11 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({ invoice, invoice
   }, [data.quantity, data.price, data.type_id])
 
   const handleValueChange = (name: keyof App.Data.InvoiceLineData, value: number) => {
-    console.log(value)
     updateAndValidateWithoutEvent(name, value)
   }
 
   const handleTextChange =
     (name: keyof App.Data.InvoiceLineData) => (value: string | undefined) => {
-      console.log(value)
       updateAndValidateWithoutEvent(name, value || '')
     }
 
@@ -95,21 +80,15 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({ invoice, invoice
     try {
       await submit(event)
       handleClose()
-    } catch (error) {}
-  }
-
-  const handlePeriodChange = (range: DateRange | null) => {
-    setServicePeriod(range)
-
-    if (range === null) {
-      updateAndValidateWithoutEvent('service_period_begin', null)
-      updateAndValidateWithoutEvent('service_period_end', null)
-    } else {
-      const formatDate = (date: DateValue) => format(date.toDate('Europe/Berlin'), 'dd.MM.yyyy')
-      updateAndValidateWithoutEvent('service_period_begin', formatDate(range.start))
-      updateAndValidateWithoutEvent('service_period_end', formatDate(range.end))
+    } catch (error) {
     }
   }
+
+  const handlePeriodChange = createDateRangeChangeHandler(
+    updateAndValidateWithoutEvent,
+    'service_period_begin',
+    'service_period_end'
+  )
 
   return (
     <DialogOverlay isOpen={isOpen} onOpenChange={handleClose}>
@@ -197,13 +176,17 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({ invoice, invoice
               </div>
               <div className="col-span-5" />
               <div className="col-span-6">
-                <JollyDateRangePicker
+                <DateRangePicker
                   label="Leistungsdatum"
-                  value={servicePeriod}
+                  value={{
+                    start: data.service_period_begin,
+                    end: data.service_period_end
+                  }}
+                  name="service_period"
                   onChange={handlePeriodChange}
+                  hasError={!!errors.service_period_begin || !!errors.service_period_end}
                 />
               </div>
-
             </FormGroup>
           </form>
         </DialogBody>

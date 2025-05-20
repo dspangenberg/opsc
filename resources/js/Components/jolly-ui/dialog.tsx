@@ -100,7 +100,7 @@ const DialogContent = ({
           {closeButton && (
             <AriaButton
               onPress={renderProps.close}
-              className="absolute right-4 top-3 rounded-sm opacity-70 ring-offset-background transition-opacity data-[disabled]:pointer-events-none data-[entering]:bg-accent data-[entering]:text-muted-foreground data-[hovered]:opacity-100 data-[focused]:outline-none data-[focused]:ring-2 data-[focused]:ring-ring data-[focused]:ring-offset-2"
+              className="absolute right-4 top-3 rounded-sm opacity-70 ring-offset-background transition-opacity data-[disabled]:pointer-events-none data-[entering]:bg-accent data-[entering]:text-muted-foreground data-[hovered]:opacity-100 data-[focused]:outline-none data-[focused]:ring-2 data-[focused]:ring-ring data-[focused]:ring-offset-2 backdrop-blur-lg"
             >
               <Cross2Icon className="size-4" />
               <span className="sr-only">Close</span>
@@ -144,7 +144,7 @@ const DialogBody = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col-reverse px-4 py-2 sm:flex-row sm:space-x-2 ",
+      "flex flex-col-reverse px-4 py-2 sm:flex-row sm:space-x-2 w-full",
       className
     )}
     {...props}

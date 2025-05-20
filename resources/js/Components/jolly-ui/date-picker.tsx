@@ -61,11 +61,9 @@ const DatePickerClearButton = () => {
   if (!state || !state.value) return null
   return (
     <Button
-      slot={null}
       variant="ghost"
-      aria-label="Clear"
       size="icon"
-      className="mx-1 size-5 data-[focus-visible]:ring-offset-0"
+      className="size-6 data-[focus-visible]:ring-offset-0 flex-none"
       onPress={() => state.setValue(null)}
     >
       <HugeiconsIcon icon={MultiplicationSignIcon} className="size-4" />
@@ -75,16 +73,14 @@ const DatePickerClearButton = () => {
 
 const DateRangePickerClearButton = () => {
   const state = React.useContext(DateRangePickerStateContext)
-  
-  if (!state || !state.value) return null
+
   return (
     <Button
-      slot={null}
       variant="ghost"
       aria-label="Clear"
       size="icon"
-      className="mx-1 size-5 data-[focus-visible]:ring-offset-0"
-      onPress={() => state.setValue(null)}
+      className="size-6 data-[focus-visible]:ring-offset-0 flex-none"
+      onPress={() => state?.setValue(null)}
     >
       <HugeiconsIcon icon={MultiplicationSignIcon} className="size-4" />
     </Button>
@@ -101,8 +97,10 @@ function JollyDatePicker<T extends AriaDateValue>({
   description,
   errorMessage,
   className,
+
   ...props
 }: JollyDatePickerProps<T>) {
+
   return (
     <DatePicker
       className={composeRenderProps(className, className =>
@@ -111,8 +109,8 @@ function JollyDatePicker<T extends AriaDateValue>({
       {...props}
     >
       <Label>{label}:</Label>
-      <FieldGroup>
-        <DateInput className="flex-1" variant="ghost" />
+      <FieldGroup className="data-[invalid]:focus-visible:ring-destructive/20 gap-0 data-[invalid]:focus-visible:border-destructive  data-[invalid]:border-destructive px-3 !pr-1">
+        <DateInput variant="ghost" className="flex-1"  />
         <DatePickerClearButton />
         <Button
           variant="ghost"
