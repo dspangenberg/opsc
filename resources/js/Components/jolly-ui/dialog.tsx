@@ -144,7 +144,7 @@ const DialogBody = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col-reverse px-4 py-3 sm:flex-row sm:space-x-2 ",
+      "flex flex-col-reverse px-4 py-2 sm:flex-row sm:space-x-2 ",
       className
     )}
     {...props}

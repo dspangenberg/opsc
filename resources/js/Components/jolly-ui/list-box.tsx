@@ -38,13 +38,15 @@ function ListBox<T extends object>({
 const ListBoxItem = <T extends object>({
   className,
   children,
+  id,
   ...props
-}: AriaListBoxItemProps<T>) => {
+}: Omit<AriaListBoxItemProps<T>, 'id'> & { id?: number }) => {
   return (
     <AriaListBoxItem
       textValue={
         props.textValue || (typeof children === "string" ? children : undefined)
       }
+      id={id}
       className={composeRenderProps(className, (className) =>
         cn(
           "relative flex pointer-events-auto w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
@@ -55,7 +57,7 @@ const ListBoxItem = <T extends object>({
           /* Hovered */
           "data-[hovered]:bg-accent data-[hovered]:text-accent-foreground",
           /* Selection */
-          "data-[selection-mode]:pr-8",
+          "data-[selection-mode]:pl-8",
           className
         )
       )}
@@ -64,8 +66,8 @@ const ListBoxItem = <T extends object>({
       {composeRenderProps(children, (children, renderProps) => (
         <>
           {renderProps.isSelected && (
-            <span className="absolute right-2 flex size-4 items-center justify-center">
-              <CheckIcon className="size-4" />
+            <span className="absolute left-2 flex size-4 items-center justify-center">
+              <CheckIcon className="size-4 text-primary" />
             </span>
           )}
           {children}

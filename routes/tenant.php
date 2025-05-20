@@ -24,6 +24,7 @@ use App\Http\Controllers\App\Invoice\InvoiceIndexController;
 use App\Http\Controllers\App\Invoice\InvoiceLineDeleteController;
 use App\Http\Controllers\App\Invoice\InvoiceLineDuplicateController;
 use App\Http\Controllers\App\Invoice\InvoiceLineEditController;
+use App\Http\Controllers\App\Invoice\InvoiceLineUpdateController;
 use App\Http\Controllers\App\Invoice\InvoiceMarkAsSentController;
 use App\Http\Controllers\App\Invoice\InvoicePdfDownloadController;
 use App\Http\Controllers\App\Invoice\InvoiceReleaseController;
@@ -128,7 +129,7 @@ Route::middleware([
 
 
     Route::put('invoices/{invoice}/line-update/{invoiceLine}',
-        InvoiceLineEditController::class)->name('app.invoice.line-update')->middleware([HandlePrecognitiveRequests::class]);
+        InvoiceLineUpdateController::class)->name('app.invoice.line-update')->middleware([HandlePrecognitiveRequests::class]);
 
     Route::delete('invoices/{invoice}/line-delete/{invoiceLine}',
         InvoiceLineDeleteController::class)->name('app.invoice.line-delete')->middleware([HandlePrecognitiveRequests::class]);

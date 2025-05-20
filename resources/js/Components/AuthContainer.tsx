@@ -14,11 +14,11 @@ import { TwicewareSolution } from '@dspangenberg/twcui'
 interface AuthContainerProps {
   title: string
   cardTitle?: string
-  cardDescription: string
+  cardDescription?: string
   maxWidth?: 'sm' | 'md' | 'lg'
   children: React.ReactNode
   appName?: string
-  logo: React.ReactElement
+  logo?: React.ReactElement
   appVersion?: string
 }
 

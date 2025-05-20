@@ -24,7 +24,7 @@ class InvoiceLineUpdateRequest extends FormRequest
             'service_period_begin' => ['nullable', 'date', 'date_format:d.m.Y'],
             'service_period_end' => [
                 'nullable',
-                'required_if:invoice,service_period_begin', 'date', 'date_format:d.m.Y',
+                'required_if:invoice_lines,service_period_begin', 'date', 'date_format:d.m.Y',
                 'after_or_equal:service_period_begin',
             ],
             'type_id' => ['required', 'int'],

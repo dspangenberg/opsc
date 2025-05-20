@@ -5,14 +5,14 @@
 
 import AuthContainer from '@/Components/AuthContainer'
 import { Button } from '@dspangenberg/twcui'
-import { FormErrors } from '@/Components/FormErrors'
-import { FormGroup } from '@/Components/FormGroup'
-import { FormInput } from '@/Components/FormInput'
-import { FormLabel } from '@/Components/FormLabel'
+
+import { FormErrors, FormGroup, FormInput, FormLabel} from '@dspangenberg/twcui'
+
+
 import { FormPasswordInput } from '@/Components/FormPasswordInput'
 import { useForm } from '@/Hooks/use-form'
 import GuestLayout from '@/Layouts/GuestLayout'
-import { focusInput, hasErrorInput } from '@/Lib/utils'
+import { focusInput } from '@/Lib/utils'
 import type React from 'react'
 
 interface RegisterCredentialsProps {
@@ -142,8 +142,7 @@ const RegisterCredentials: React.FC<RegisterCredentialsProps> = ({ registrationD
               disabled={processing}
               loading={processing}
               form="credentials"
-              full
-              variant="primary"
+              variant="default"
               type="submit"
             >
               Jetzt registrieren

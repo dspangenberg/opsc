@@ -52,9 +52,9 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
     cell: ({ row }) => (
       <div className="flex items-center">
         <Avatar
-          initials={row.original.user.initials.toUpperCase()}
-          fullname={row.original.user.full_name}
-          src={row.original.user.avatar_url as unknown as string}
+          initials={row.original.user?.initials}
+          fullname={row.original.user?.full_name}
+          src={row.original.user?.avatar_url as unknown as string}
           size="sm"
         />
       </div>

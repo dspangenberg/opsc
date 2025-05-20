@@ -67,6 +67,7 @@ interface JollyTextFieldProps extends AriaTextFieldProps {
   description?: string
   errorMessage?: string | ((validation: AriaValidationResult) => string)
   textArea?: boolean
+  rows?: number
 }
 
 function JollyTextField({
@@ -77,6 +78,7 @@ function JollyTextField({
   className,
   ...props
 }: JollyTextFieldProps) {
+
   return (
     <TextField
       className={composeRenderProps(className, className =>
@@ -85,7 +87,13 @@ function JollyTextField({
       {...props}
     >
       <Label>{label}:</Label>
-      {textArea ? <TextArea /> : <Input />}
+      {textArea ? (
+        <TextArea
+          rows={props.rows}
+        />
+      ) : (
+        <Input />
+      )}
       {description && (
         <Text className="text-sm text-muted-foreground" slot="description">
           {description}

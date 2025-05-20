@@ -32,9 +32,6 @@ export const ContactDetailsPerson: FC<ContactDetailsPersonInfoBoxProps> = ({
           title="E-Mail-Adressen"
           icon={Add01Icon}
           forceChildren={(contact.mails?.length ?? 0) > 0}
-          onClick={() => {
-            handleAddButtonClick()
-          }}
           emptyText="Keine E-Mail-Adressen vorhanden"
         >
           <ContactDetailsMail mails={contact.mails || []} />

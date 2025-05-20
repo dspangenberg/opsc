@@ -29,7 +29,7 @@ import {
 } from '@/Components/ui/drawer'
 import { useMediaQuery } from '@/Hooks/use-media-query'
 import { cn } from '@/Lib/utils'
-import React from 'react';
+import type React from 'react'
 
 interface BaseProps {
   children: React.ReactNode
@@ -45,7 +45,6 @@ interface CredenzaPortalProps extends BaseProps {
   forceMount?: boolean
   container?: HTMLElement
 }
-
 
 interface CredenzaProps extends BaseProps {
   className?: string
@@ -63,13 +62,11 @@ const Credenza = ({ children, ...props }: RootCredenzaProps) => {
 
 const CredenzaPortal = ({ children, forceMount = false, ...props }: CredenzaPortalProps) => {
   const isDesktop = useMediaQuery(desktop)
-  const CredenzaPortalComponent = isDesktop? DialogPortal : DrawerPortal
+  const CredenzaPortalComponent = isDesktop ? DialogPortal : DrawerPortal
 
   return (
     <>
-      <CredenzaPortalComponent {...props}>
-        {children}
-      </CredenzaPortalComponent>
+      <CredenzaPortalComponent {...props}>{children}</CredenzaPortalComponent>
     </>
   )
 }
@@ -96,16 +93,14 @@ const CredenzaClose = ({ className, children, ...props }: CredenzaProps) => {
   )
 }
 
-const CredenzaContent = (
-  {
-    ref,
-    className,
-    children,
-    ...props
-  }: CredenzaProps & {
-    ref: React.RefObject<HTMLDivElement>;
-  }
-) => {
+const CredenzaContent = ({
+  ref,
+  className,
+  children,
+  ...props
+}: CredenzaProps & {
+  ref?: React.RefObject<HTMLDivElement>
+}) => {
   const isDesktop = useMediaQuery(desktop)
   const CredenzaContentComponent = isDesktop ? DialogContent : DrawerContent
   return (
@@ -158,7 +153,7 @@ const CredenzaTitle = ({ className, children, ...props }: CredenzaProps) => {
 
 const CredenzaBody = ({ className, children, ...props }: CredenzaProps) => {
   return (
-    <div className={cn('px-4 overflow-y-auto', className)} {...props} >
+    <div className={cn('px-4 overflow-y-auto', className)} {...props}>
       {children}
     </div>
   )

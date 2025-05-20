@@ -3,10 +3,12 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { FormLabel } from '@/Components/FormLabel'
 import { Input } from '@/Components/ui/input'
 import { Check, Eye, EyeOff, X } from 'lucide-react'
-import React, { type InputHTMLAttributes, useMemo, useState } from 'react';
+import { FormLabel } from '@dspangenberg/twcui'
+
+import type React from 'react';
+import { type InputHTMLAttributes, useMemo, useState } from 'react';
 
 interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -28,7 +30,7 @@ export const FormPasswordInput = (
     passwordRules,
     ...props
   }: FormInputProps & {
-    ref: React.RefObject<HTMLInputElement>;
+    ref?: React.RefObject<HTMLInputElement>;
   }
 ) => {
   const [isVisible, setIsVisible] = useState<boolean>(false)
@@ -86,9 +88,7 @@ export const FormPasswordInput = (
             type={isVisible ? 'text' : 'password'}
             name={props.id}
             aria-invalid={strengthScore < 4}
-            hasError={!!error}
             aria-describedby="password-strength"
-            passwordRules={passwordRules}
             {...props}
           />
           <button

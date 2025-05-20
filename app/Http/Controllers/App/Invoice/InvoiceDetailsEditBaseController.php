@@ -38,7 +38,7 @@ class InvoiceDetailsEditBaseController extends Controller
             ->loadSum('lines', 'tax');
 
         $invoiceTypes = InvoiceType::orderBy('display_name')->get();
-        $projects = Project::whereNot('is_archived')->orderBy('name')->get();
+        $projects = Project::where('is_archived', false)->orderBy('name')->get();
         $taxes = Tax::with('rates')->orderBy('name')->get();
 
         return Inertia::render('App/Invoice/InvoiceDetailsEditBaseData', [

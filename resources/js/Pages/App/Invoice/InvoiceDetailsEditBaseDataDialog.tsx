@@ -1,16 +1,24 @@
 import type * as React from 'react'
 import { type FormEvent, useEffect, useRef, useState } from 'react'
-import { FormDateRangePicker } from '@/Components/FormDateRangePicker'
 
-import { Button, FormErrors, FormGroup, FormSelect, type Option } from '@dspangenberg/twcui'
+import { FormErrors, FormGroup } from '@dspangenberg/twcui'
 import { useForm } from '@/Hooks/use-form'
 import { router } from '@inertiajs/react'
-import { ResponsiveDialog } from '@/Components/ResponsiveDialog'
 import { JollyDatePicker } from '@/Components/jolly-ui/date-picker'
+import { JollySelect, SelectItem } from '@/Components/jolly-ui/select'
+import { ComboboxItem, JollyComboBox } from "@/Components/jolly-ui/combobox"
+
 import { format, parse } from 'date-fns'
 import {CalendarDate} from '@internationalized/date'
-import { Input } from '@/Components/jolly-ui/textfield'
-
+import { Button } from '@/Components/jolly-ui/button'
+import {
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogTitle
+} from '@/Components/jolly-ui/dialog'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -33,27 +41,6 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
   }
   const selectRef = useRef<HTMLButtonElement>(null)
 
-
-
-  const invoiceTypeOptions: Option[] = invoice_types?.map(type => ({
-    value: type.id as unknown as string,
-    label: type.display_name
-  }))
-
-  const projectOptions: Option[] = projects?.map(project => ({
-    value: project.id as unknown as string,
-    label: project.name
-  }))
-
-  const taxOptions: Option[] = taxes?.map(tax => ({
-    value: tax.id as unknown as string,
-    label: tax.name
-  }))
-
-  console.log(taxes)
-
-  projectOptions.unshift({ value: '0', label: 'ohne Projekt' })
-
   const { data, errors, updateAndValidate, submit, updateAndValidateWithoutEvent } =
     useForm<App.Data.InvoiceData>(
       'put',
@@ -63,12 +50,14 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
       invoice
     )
 
-  const [parsedDate, setParsedDate] = useState<CalendarDate | undefined>(() => {
+  const [parsedDate, setParsedDate] = useState<CalendarDate | null>(() => {
+
     if (data.issued_on) {
-      const issuedOn = parse(data.issued_on, 'dd.MM.yyyy', new Date())
-      return new CalendarDate(issuedOn.getFullYear(), issuedOn.getMonth() + 1, issuedOn.getDate())
+      const issuedOn = data.issued_on ? parse(data.issued_on, 'dd.MM.yyyy', new Date()) : null
+      return issuedOn ? new CalendarDate(issuedOn.getFullYear(), issuedOn.getMonth() + 1, issuedOn.getDate()) : null
     }
-    return undefined
+
+   return null
   })
 
   useEffect(() => {
@@ -76,7 +65,7 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
       const issuedOn = parse(data.issued_on, 'dd.MM.yyyy', new Date())
       setParsedDate(new CalendarDate(issuedOn.getFullYear(), issuedOn.getMonth() + 1, issuedOn.getDate()))
     } else {
-      setParsedDate(undefined)
+      setParsedDate(null)
     }
   }, [data.issued_on])
 
@@ -85,9 +74,10 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
     selectRef.current?.focus()
   }, [])
 
-  const handleValueChange = (name: keyof App.Data.InvoiceData, value: string) => {
-    updateAndValidateWithoutEvent(name, Number.parseInt(value))
+  const handleValueChange = (name: keyof App.Data.InvoiceData, value: unknown) => {
+    updateAndValidateWithoutEvent(name, Number(value))
   }
+
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     try {
@@ -96,10 +86,6 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
     } catch (error) {}
   }
 
-  const handlePeriodChange = (range: { from: string; to: string }) => {
-    updateAndValidateWithoutEvent('service_period_begin', range.from)
-    updateAndValidateWithoutEvent('service_period_end', range.to)
-  }
 
   const handleIssuedOnChange = (date: CalendarDate | null) => {
     if (date) {
@@ -110,31 +96,21 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
     }
   }
 
+  // @ts-ignore
   return (
-    <ResponsiveDialog
-      title="Rechnungsstammdaten bearbeiten"
-      isOpen={isOpen}
-      onClose={handleClose}
-      showDescription={false}
-      className="max-w-xl"
-      description="Rechnungsstammdaten bearbeiten"
-      dismissible={true}
-      footer={
-        <div className="flex items-center justify-end space-x-2">
-          <Button variant="outline" onClick={handleClose}>
-            Abbrechen
-          </Button>
-          <Button form="clientForm" type="submit">
-            Speichern
-          </Button>
-        </div>
-      }
-    >
-      <form onSubmit={handleSubmit} id="clientForm">
+    <DialogOverlay isOpen={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="min-w-lg">
+        <DialogHeader>
+          <DialogTitle>Rechnungsstammdaten bearbeiten</DialogTitle>
+        </DialogHeader>
+
+        <DialogBody>
+      <form onSubmit={handleSubmit} id="baseDataForm">
         <FormErrors errors={errors} />
         <FormGroup>
           <div className="col-span-8">
             <JollyDatePicker
+              autoFocus
               label="Rechnungsdatum"
               value={parsedDate}
               onChange={handleIssuedOnChange}
@@ -142,46 +118,67 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
           </div>
           <div className="col-span-16" />
           <div className="col-span-12">
-            <Input value="sfdsdfdsfdfs"/>
-            <FormSelect
-              name="type_id"
+            <JollySelect<App.Data.InvoiceTypeData>
+              onSelectionChange={selected =>
+                handleValueChange('type_id', selected)
+              }
+              selectedKey={data.type_id}
               label="Rechnungsart"
-              value={data.type_id as unknown as string}
-              error={errors?.type_id || ''}
-              onValueChange={value => handleValueChange('type_id', value)}
-              options={invoiceTypeOptions}
-            />
+              items={invoice_types || []}
+            >
+              {item => (
+                <SelectItem id={Number(item.id)}>
+                  {item.display_name}
+                </SelectItem>
+              )}
+            </JollySelect>
           </div>
           <div className="col-span-12">
-            <FormSelect
-              name="tax_id"
+            <JollySelect<App.Data.TaxData>
+              onSelectionChange={selected =>
+                handleValueChange('tax_id', selected)
+              }
+              selectedKey={data.tax_id}
               label="Umsatzsteuer"
-              value={data.tax_id as unknown as string}
-              error={errors?.tax_id || ''}
-              onValueChange={value => handleValueChange('tax_id', value)}
-              options={taxOptions}
-            />
+              items={taxes || []}
+            >
+              {item => (
+                <SelectItem>
+                  { item.name}
+                </SelectItem>
+              )}
+            </JollySelect>
           </div>
           <div className="col-span-24">
-            <FormSelect
-              name="project_id"
+            <JollyComboBox
               label="Projekt"
-              value={data.project_id as unknown as string}
-              error={errors?.project_id || ''}
-              onValueChange={value => handleValueChange('project_id', value)}
-              options={projectOptions}
-            />
+              selectedKey={data.project_id}
+              onSelectionChange={selected =>
+                handleValueChange('project_id', selected)
+              }
+            >
+              {projects.map(project => (
+                <ComboboxItem key={project.id} id={project.id as number}>
+                  {project.name}
+                </ComboboxItem>
+              ))}
+            </JollyComboBox>
           </div>
           <div className="col-span-12">
-            <FormDateRangePicker
-              label="Leistungszeitraum"
-              from={invoice.service_period_begin as unknown as string}
-              to={invoice.service_period_end as unknown as string}
-              onChange={range => handlePeriodChange(range)}
-            />
+            Leistungszeitraum
           </div>
         </FormGroup>
       </form>
-    </ResponsiveDialog>
+        </DialogBody>
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose}>
+            Abbrechen
+          </Button>
+          <Button form="baseDataForm" type="submit">
+            Speichern
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </DialogOverlay>
   )
 }

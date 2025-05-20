@@ -16,6 +16,7 @@ import {
   Sent02Icon,
   UnavailableIcon
 } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { PageContainer } from '@/Components/PageContainer'
 import { Button, Toolbar, ToolbarButton, YkToolbarButton } from '@dspangenberg/twcui'
 import {
@@ -30,7 +31,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from '@/Components/ui/dropdown-menu'
-import { HugeiconsIcon } from '@hugeicons/react'
+
 import { ClassicNavTabsTab } from '@/Components/ClassicNavTabs'
 import { PdfViewer } from '@/Components/PdfViewer'
 import print from 'print-js'
@@ -38,7 +39,6 @@ import { useFileDownload } from '@/Hooks/useFileDownload'
 import { router } from '@inertiajs/react'
 import { InvoiceDetailsReleaseConfirm } from '@/Pages/App/Invoice/InvoiceDetailsReleaseConfirm'
 import { ConfirmationDialog } from '@/Pages/App/Invoice/ConfirmationDialog'
-import { Confirmations } from '@/Pages/App/Invoice/Confirmations'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -104,10 +104,6 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
 
   const handleMarkAsSent = () => {
     router.get(route('app.invoice.mark-as-sent', { id: invoice.id }))
-  }
-
-  const handleEditLines = () => {
-    router.get(route('app.invoice.lines-edit', { invoice: invoice.id }))
   }
 
   const handleUnrelease = () => {

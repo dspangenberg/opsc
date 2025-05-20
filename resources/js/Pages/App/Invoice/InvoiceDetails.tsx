@@ -4,18 +4,16 @@ import type { PageProps } from '@/Types'
 import { InvoiceDetailsSide } from '@/Pages/App/Invoice/InvoiceDetailsSide'
 import { InvoiceDetailsLayout } from '@/Pages/App/Invoice/InvoiceDetailsLayout'
 import { InvoicingTable, type LineCommandProps } from '@/Pages/App/Invoice/InvoicingTable'
-import { InvoiceDetailsEditPosition } from '@/Pages/App/Invoice/InvoiceDetailsEditPosition'
 import { ConfirmationDialog } from '@/Pages/App/Invoice/ConfirmationDialog'
 import { useRoute } from 'ziggy-js'
 
 interface InvoiceDetailsProps extends PageProps {
   invoice: App.Data.InvoiceData
-  line?: number
   children?: React.ReactNode
 }
 
 const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
-  const { invoice, line } = usePage<InvoiceDetailsProps>().props
+  const { invoice } = usePage<InvoiceDetailsProps>().props
 
   const handeLineCommand = async (props: LineCommandProps) => {
     console.log('Handle line command:', props) // Verarbeitung des Line Commandos

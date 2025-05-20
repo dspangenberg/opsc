@@ -3,12 +3,12 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { ToolbarButton } from '@/Components/Toolbar'
 import { cn } from '@/Lib/utils'
 import { Add01Icon, GeometricShapes01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import type React from 'react'
 import type { ReactNode } from 'react'
+import {ToolbarButton} from '@dspangenberg/twcui'
 
 interface Props {
   children: ReactNode
@@ -40,9 +40,8 @@ export const EmptyState: React.FC<Props> = ({
       </div>
       <div>{children}</div>
       <ToolbarButton
-        autoFocus
-        variant="primary"
-        label={buttonLabel}
+        variant="default"
+        title={buttonLabel}
         icon={buttonIcon}
         onClick={onClick}
         className="text-black"

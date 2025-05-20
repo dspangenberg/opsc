@@ -3,6 +3,8 @@
  * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
+import type React from 'react'
+import { forwardRef, useCallback, useImperativeHandle, useRef, type ReactNode } from 'react'
 import {
   Credenza,
   CredenzaBody,
@@ -14,9 +16,8 @@ import {
   CredenzaTitle
 } from '@/Components/ui/credenza'
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
-import type * as React from 'react'
-import { forwardRef, type ReactNode, useCallback } from 'react'
 import { cn } from '@/Lib/utils'
+
 type ReactNodeOrString = ReactNode | string
 
 interface ResponsiveDialogProps {
@@ -30,16 +31,23 @@ interface ResponsiveDialogProps {
   dismissible?: boolean
   className?: string
   onClose: () => void
-  width?: string
+  width?: 'default' | '4xl'
   hideHeader?: boolean
-  backgroundClass?: string
+  backgroundClass?: 'accent' | 'sidebar' | 'background'
   onOpenChange?: (open: boolean) => void
   onInteractOutside?: (event: Event) => void
-  onEscapeKeyDown?: (event: Event) => void
+  onEscapeKeyDown?: (event: React.KeyboardEvent) => void
 }
 
 export const ResponsiveDialog = forwardRef<HTMLDivElement, ResponsiveDialogProps>(
-  ({ dismissible = false, showDescription = false, backgroundClass = 'accent', width='default', hideHeader = false, ...props }, ref) => {
+  ({
+    dismissible = false,
+    showDescription = false,
+    backgroundClass = 'accent',
+    width = 'default',
+    hideHeader = false,
+    ...props
+  }, ref) => {
     const bgClass = {
       accent: 'bg-accent/50',
       sidebar: 'bg-sidebar',
@@ -51,6 +59,10 @@ export const ResponsiveDialog = forwardRef<HTMLDivElement, ResponsiveDialogProps
       '4xl': 'w-4xl min-w-4xl'
     }[width]
 
+    const innerRef = useRef<HTMLDivElement>(null);
+
+    useImperativeHandle(ref, () => innerRef.current as HTMLDivElement);
+
     const handleOpenChange = useCallback((open: boolean) => {
       if (!open) {
         console.log('Dialog closing')
@@ -61,23 +73,12 @@ export const ResponsiveDialog = forwardRef<HTMLDivElement, ResponsiveDialogProps
       }
     }, [dismissible, props])
 
-    const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        console.log('Escape key pressed')
-        if (dismissible) {
-          props.onClose()
-        }
-        props.onEscapeKeyDown?.(event as unknown as Event)
-      }
-    }, [dismissible, props])
 
     return (
       <Credenza open={props.isOpen} dismissible={dismissible} onOpenChange={handleOpenChange}>
         <CredenzaContent
-          ref={ref}
           onInteractOutside={props.onInteractOutside}
-          onKeyDown={handleKeyDown}
-          className={cn(widthClass)}
+          className={cn(widthClass, props.className)}
         >
           <CredenzaHeader className={cn(bgClass, hideHeader ? 'sr-only' : '')}>
             <CredenzaTitle>{props.title}</CredenzaTitle>

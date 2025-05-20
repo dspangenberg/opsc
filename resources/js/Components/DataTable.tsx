@@ -17,7 +17,6 @@ interface DataTableProps<TData, TValue> {
   footer?: React.ReactNode
   header?: React.ReactNode
   itemName?: string
-  verticalAlign: string
   onSelectedRowsChange?: (selectedRows: TData[]) => void
 }
 
@@ -27,7 +26,6 @@ export function DataTable<TData, TValue>({
   footer,
   header,
   onSelectedRowsChange,
-  verticalAlign = 'middle',
   itemName = 'Datensätze'
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({

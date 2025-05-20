@@ -1,13 +1,11 @@
 import type * as React from 'react'
-import { type FormEvent, useEffect, useRef, useState } from 'react'
-import { FormDateRangePicker } from '@/Components/FormDateRangePicker'
-
-import { Button, FormErrors, FormGroup } from '@dspangenberg/twcui'
+import { type FormEvent, useEffect, useState } from 'react'
+import { FormErrors, FormGroup } from '@dspangenberg/twcui'
 import { useForm } from '@/Hooks/use-form'
 import { router } from '@inertiajs/react'
 import { format, parse } from 'date-fns'
-import {CalendarDate} from '@internationalized/date'
-import { Input, JollyTextField } from '@/Components/jolly-ui/textfield'
+import { JollyTextField } from '@/Components/jolly-ui/textfield'
+import { Button } from '@/Components/jolly-ui/button'
 import {
   DialogBody,
   DialogContent,
@@ -18,17 +16,21 @@ import {
 } from '@/Components/jolly-ui/dialog'
 import { JollyNumberField } from '@/Components/jolly-ui/numberfield'
 import { JollySelect, SelectItem } from '@/Components/jolly-ui/select'
-
+import { JollyDateRangePicker } from '@/Components/jolly-ui/date-picker'
+import { CalendarDate, type DateValue } from '@internationalized/date'
+import type { DateRange } from 'react-aria-components'
 
 interface Props {
   invoice: App.Data.InvoiceData
   invoiceLine: App.Data.InvoiceLineData
 }
 
-export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
-  invoice,
-  invoiceLine
-}) => {
+const currencyFormatter = new Intl.NumberFormat('de-DE', {
+  style: 'decimal',
+  minimumFractionDigits: 0
+})
+
+export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({ invoice, invoiceLine }) => {
   const [isOpen, setIsOpen] = useState(true)
 
   const handleClose = () => {
@@ -45,6 +47,33 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
       }),
       invoiceLine
     )
+
+  const [servicePeriod, setServicePeriod] = useState<DateRange | null>(() => {
+    if (!data.service_period_begin || !data.service_period_end) {
+      return null
+    }
+
+    const parseDate = (dateString: string): DateValue => {
+      const parsedDate = parse(dateString, 'dd.MM.yyyy', new Date())
+      return new CalendarDate(
+        parsedDate.getFullYear(),
+        parsedDate.getMonth() + 1,
+        parsedDate.getDate()
+      )
+    }
+
+    return {
+      start: parseDate(data.service_period_begin),
+      end: parseDate(data.service_period_end)
+    }
+  })
+
+  useEffect(() => {
+    if (data.type_id === 1 && data.quantity && data.price) {
+      const totalPrice = data.quantity * data.price
+      updateAndValidateWithoutEvent('amount', totalPrice)
+    }
+  }, [data.quantity, data.price, data.type_id])
 
   const handleValueChange = (name: keyof App.Data.InvoiceLineData, value: number) => {
     console.log(value)
@@ -69,19 +98,25 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
     } catch (error) {}
   }
 
-  const handlePeriodChange = (range: { from: string; to: string }) => {
-    updateAndValidateWithoutEvent('service_period_begin', range.from)
-    updateAndValidateWithoutEvent('service_period_end', range.to)
-  }
+  const handlePeriodChange = (range: DateRange | null) => {
+    setServicePeriod(range)
 
+    if (range === null) {
+      updateAndValidateWithoutEvent('service_period_begin', null)
+      updateAndValidateWithoutEvent('service_period_end', null)
+    } else {
+      const formatDate = (date: DateValue) => format(date.toDate('Europe/Berlin'), 'dd.MM.yyyy')
+      updateAndValidateWithoutEvent('service_period_begin', formatDate(range.start))
+      updateAndValidateWithoutEvent('service_period_end', formatDate(range.end))
+    }
+  }
 
   return (
     <DialogOverlay isOpen={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="min-w-4xl">
+      <DialogContent className="min-w-6xl">
         <DialogHeader>
           <DialogTitle>Rechnungsposition bearbeiten</DialogTitle>
         </DialogHeader>
-
 
         <DialogBody>
           <form onSubmit={handleSubmit} id="invoiceLineForm">
@@ -114,13 +149,14 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
                 <JollyTextField
                   name="text"
                   label="Beschreibung"
+                  rows={2}
                   textArea={true}
                   value={data.text}
                   isInvalid={!!errors.text || false}
                   onChange={value => handleTextChange('text')(value)}
                 />
               </div>
-              <div className="col-span-4">
+              <div className="col-span-3">
                 <JollyNumberField
                   formatOptions={{
                     style: 'currency',
@@ -131,7 +167,7 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
                   onChange={handleNumberInputChange('price')}
                 />
               </div>
-              <div className="col-span-4">
+              <div className="col-span-3">
                 <JollyNumberField
                   formatOptions={{
                     style: 'currency',
@@ -143,11 +179,7 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
                   onChange={handleNumberInputChange('amount')}
                 />
               </div>
-              <div className="col-span-5" />
-              <div className="col-span-11">
-                x
-              </div>
-              <div className="col-span-4">
+              <div className="col-span-2">
                 <JollySelect<App.Data.TaxRateData>
                   onSelectionChange={selected =>
                     handleValueChange('tax_rate_id', selected as unknown as number)
@@ -156,19 +188,33 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
                   label="USt.-Satz"
                   items={invoice.tax?.rates || []}
                 >
-                  {item => <SelectItem>{item.name}</SelectItem>}
+                  {item => (
+                    <SelectItem className="!text-right">
+                      {currencyFormatter.format(item.rate)}
+                    </SelectItem>
+                  )}
                 </JollySelect>
               </div>
+              <div className="col-span-5" />
+              <div className="col-span-6">
+                <JollyDateRangePicker
+                  label="Leistungsdatum"
+                  value={servicePeriod}
+                  onChange={handlePeriodChange}
+                />
+              </div>
+
             </FormGroup>
           </form>
         </DialogBody>
         <DialogFooter>
-          <Button variant="outline" onClick={handleClose}>Abbrechen</Button>
+          <Button variant="outline" onClick={handleClose}>
+            Abbrechen
+          </Button>
           <Button form="invoiceLineForm" type="submit">
             Speichern
           </Button>
         </DialogFooter>
-
       </DialogContent>
     </DialogOverlay>
   )

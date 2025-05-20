@@ -4,7 +4,7 @@
  */
 
 import { useTheme } from '@/Components/theme-provider'
-import { Label } from "@/Components/ui/label";
+import { FormLabel } from "@dspangenberg/twcui";
 import { Switch } from "@/Components/ui/switch";
 import { Moon, Sun } from "lucide-react";
 import { useState } from "react";
@@ -25,9 +25,9 @@ export const ThemeSwitch = () => {
 
     return (
       <div className="mx-auto text-center">
-        <Label htmlFor="switch-10" className="sr-only">
+        <FormLabel htmlFor="switch-10" className="sr-only">
           Toggle switch
-        </Label>
+        </FormLabel>
         <div
           className="group inline-flex items-center gap-2"
           data-state={checked ? "checked" : "unchecked"}

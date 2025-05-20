@@ -26,7 +26,7 @@ export const ContactDetailsAddresses: FC<Props> = ({ addresses }: Props) => {
   }
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(firstAddress?.full_address)
+    navigator.clipboard.writeText(firstAddress?.full_address as string)
   }
 
   return (

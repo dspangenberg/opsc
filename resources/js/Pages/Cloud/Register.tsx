@@ -4,10 +4,7 @@
  */
 
 import AuthContainer from '@/Components/AuthContainer'
-import { Button } from '@dspangenberg/twcui'
-import { FormErrors } from '@/Components/FormErrors'
-import { FormGroup } from '@/Components/FormGroup'
-import { FormInput } from '@/Components/FormInput'
+import { Button, FormGroup, FormInput, FormErrors} from '@dspangenberg/twcui'
 import { useForm } from '@/Hooks/use-form'
 import GuestLayout from '@/Layouts/GuestLayout'
 import type React from 'react'
@@ -130,8 +127,7 @@ const Register: React.FC = () => {
               form="register"
               disabled={processing}
               loading={processing}
-              full
-              variant="primary"
+              variant="default"
               type="submit"
             >
               Jetzt registrieren

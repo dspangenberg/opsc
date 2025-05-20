@@ -11,14 +11,13 @@ import { FormSelect } from '@dspangenberg/twcui'
 
 interface PaginatorProps<T> {
   data: App.Data.Paginated.PaginationMeta<T>
+  itemName?: string
+  selected?: number
 }
 
-export const Pagination = <T,>({ data }: PaginatorProps<T>) => {
+export const Pagination = <T,>({ data, itemName = 'Datensätze', selected = 0 }: PaginatorProps<T>) => {
   const pages = data.links.slice(1, -1) // Remove first and last elements
   const [recordsPerPage, setRecordsPerPage] = useState('10')
-
-  const currencyFormatter = new Intl.NumberFormat('de-DE', {
-  })
 
   const options: { value: string; label: string }[] = [
     {
@@ -38,11 +37,14 @@ export const Pagination = <T,>({ data }: PaginatorProps<T>) => {
   return (
     <div className="flex flex-none items-center px-4 py-2">
       <div className="flex-1 items-center flex">
-        {data.total > 0 && (
-          <div className="flex items-center gap-1 text-sm text-foreground">
-            {data.from}-{data.to} von {currencyFormatter.format(data.total)}
-          </div>
-        )}
+        <div className="flex items-center gap-1 text-sm text-foreground">
+          {data.total > 0 && (
+            <>
+              {data.from}-{data.to} von {data.total} {itemName}
+              {selected > 0 && ` | ${selected} ausgewählt`}
+            </>
+          )}
+        </div>
       </div>
       <div className="flex-2">
         <ShadcnPagination>
