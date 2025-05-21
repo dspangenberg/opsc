@@ -101,20 +101,12 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
               </div>
               <div className="col-span-3">
                 <NumberInput
-                  formatOptions={{
-                    style: 'currency',
-                    currency: 'EUR'
-                  }}
                   label="Einzelpreis"
                   {...form.register('price')}
                 />
               </div>
               <div className="col-span-3">
                 <NumberInput
-                  formatOptions={{
-                    style: 'currency',
-                    currency: 'EUR'
-                  }}
                   label="Gesamtbetrag"
                   isDisabled={data.type_id === 1}
                   {...form.register('amount')}

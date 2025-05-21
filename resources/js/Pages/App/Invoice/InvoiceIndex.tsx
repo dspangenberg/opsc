@@ -96,7 +96,7 @@ const InvoiceIndex: React.FC = () => {
     () => (
       <div className="flex flex-col py-0 rounded-t-md">
         <div className="flex-none space-x-2 p-2 flex items-center">
-          <div className="group relative min-w-64">
+          <div className="group relative">
             <Select>
               <SelectTrigger id={id} className="bg-white">
                 <SelectValue placeholder="Gespeicherte Views" className="bg-white" />

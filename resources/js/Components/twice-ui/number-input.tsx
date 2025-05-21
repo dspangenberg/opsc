@@ -11,13 +11,19 @@ interface NumberInputProps extends Omit<NumberFieldProps, 'value' | 'onChange'> 
   className?: string
   autoFocus?: boolean
   hasError?: boolean
+  formatOptions?: Intl.NumberFormatOptions;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+const defaultFormatOptions: Intl.NumberFormatOptions = {
+  style: 'currency',
+  currency: 'EUR'
 }
 
 export const NumberInput: React.FC<NumberInputProps> = ({
   label,
   value,
   name,
+  formatOptions,
   className = '',
   autoFocus = false,
   hasError = false,
@@ -29,10 +35,15 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     onChange
   })
 
+  if (formatOptions === undefined) {
+    formatOptions = defaultFormatOptions;
+  }
+
   return (
     <JollyNumberField
       label={label}
       value={value || 0}
+      formatOptions={formatOptions}
       isInvalid={hasError}
       onChange={handleValueChange}
       {...props}

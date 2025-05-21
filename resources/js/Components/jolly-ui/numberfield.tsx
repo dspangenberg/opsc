@@ -17,6 +17,7 @@ import { FieldError, FieldGroup, Label } from './field'
 
 const NumberField = AriaNumberField
 
+
 function NumberFieldInput({ className, ...props }: AriaInputProps) {
   return (
     <AriaInput
