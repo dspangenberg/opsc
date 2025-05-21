@@ -1,10 +1,8 @@
 import type * as React from 'react'
-import { type FormEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FormErrors, FormGroup } from '@dspangenberg/twcui'
-import { useForm } from '@/Hooks/use-form'
 import { router } from '@inertiajs/react'
 
-import { JollyTextField } from '@/Components/jolly-ui/textfield'
 import { Button } from '@/Components/jolly-ui/button'
 import {
   DialogBody,
@@ -14,19 +12,16 @@ import {
   DialogOverlay,
   DialogTitle
 } from '@/Components/jolly-ui/dialog'
-import { JollyNumberField } from '@/Components/jolly-ui/numberfield'
-import { JollySelect, SelectItem } from '@/Components/jolly-ui/select'
+import { Form, useForm } from '@/Components/twice-ui/form'
 import { createDateRangeChangeHandler, DateRangePicker } from '@/Components/twice-ui/date-picker'
+import { Select } from '@/Components/twice-ui/select'
+import { Input } from '@/Components/twice-ui/input'
+import { NumberInput } from '@/Components/twice-ui/number-input'
 
 interface Props {
   invoice: App.Data.InvoiceData
   invoiceLine: App.Data.InvoiceLineData
 }
-
-const currencyFormatter = new Intl.NumberFormat('de-DE', {
-  style: 'decimal',
-  minimumFractionDigits: 0
-})
 
 export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
   invoice,
@@ -38,22 +33,20 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
     setIsOpen(false)
     router.visit(route('app.invoice.details', { invoice: invoice.id }))
   }
-
   const {
-    data,
+    form,
     errors,
-    updateAndValidate,
-    submit,
+    data,
     updateAndValidateWithoutEvent
-  } =
-    useForm<App.Data.InvoiceLineData>(
-      'put',
-      route('app.invoice.line-update', {
-        invoice: invoice.id,
-        invoiceLine: invoiceLine.id
-      }),
-      invoiceLine
-    )
+  } = useForm<App.Data.InvoiceLineData>(
+    'invoice-line-edit-form',
+    'put',
+    route('app.invoice.line-update', {
+      invoice: invoice.id,
+      invoiceLine: invoiceLine.id
+    }),
+    invoiceLine
+  )
 
   useEffect(() => {
     if (data.type_id === 1 && data.quantity && data.price) {
@@ -61,29 +54,6 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
       updateAndValidateWithoutEvent('amount', totalPrice)
     }
   }, [data.quantity, data.price, data.type_id])
-
-  const handleValueChange = (name: keyof App.Data.InvoiceLineData, value: number) => {
-    updateAndValidateWithoutEvent(name, value)
-  }
-
-  const handleTextChange =
-    (name: keyof App.Data.InvoiceLineData) => (value: string | undefined) => {
-      updateAndValidateWithoutEvent(name, value || '')
-    }
-
-  const handleNumberInputChange =
-    (name: keyof App.Data.InvoiceLineData) => (value: number | undefined) => {
-      updateAndValidateWithoutEvent(name, value ?? null)
-    }
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    console.log('handleSubmit', event)
-    try {
-      await submit(event)
-      handleClose()
-    } catch (error) {
-    }
-  }
 
   const handlePeriodChange = createDateRangeChangeHandler(
     updateAndValidateWithoutEvent,
@@ -99,83 +69,65 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
         </DialogHeader>
 
         <DialogBody>
-          <form onSubmit={handleSubmit} id="invoiceLineForm">
+          <Form
+            form={form}
+          >
             <FormErrors errors={errors} />
             <FormGroup>
-              <div className="col-span-3">
-                <JollyNumberField
+              <div className="col-span-2">
+                <NumberInput
                   autoFocus
                   formatOptions={{
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
                   }}
                   label="Menge"
-                  value={data.quantity as unknown as number}
-                  isInvalid={!!errors.quantity || false}
-                  onChange={handleNumberInputChange('quantity')}
+                  {...form.register('quantity')}
                 />
               </div>
               <div className="col-span-2">
-                <JollyTextField
-                  name="unit"
+                <Input
                   label="Einheit"
-                  className="pointer-events-auto"
-                  value={data.unit as unknown as string}
-                  onChange={handleTextChange('unit')}
-                  isInvalid={!!errors.unit || false}
+                  {...form.register('unit')}
                 />
               </div>
               <div className="col-span-11">
-                <JollyTextField
-                  name="text"
+                <Input
                   label="Beschreibung"
                   rows={2}
                   textArea={true}
-                  value={data.text}
-                  isInvalid={!!errors.text || false}
-                  onChange={value => handleTextChange('text')(value)}
+                  {...form.register('text')}
                 />
               </div>
               <div className="col-span-3">
-                <JollyNumberField
+                <NumberInput
                   formatOptions={{
                     style: 'currency',
                     currency: 'EUR'
                   }}
                   label="Einzelpreis"
-                  value={data.price as unknown as number}
-                  onChange={handleNumberInputChange('price')}
+                  {...form.register('price')}
                 />
               </div>
               <div className="col-span-3">
-                <JollyNumberField
+                <NumberInput
                   formatOptions={{
                     style: 'currency',
                     currency: 'EUR'
                   }}
                   label="Gesamtbetrag"
-                  value={data.amount as unknown as number}
                   isDisabled={data.type_id === 1}
-                  onChange={handleNumberInputChange('amount')}
+                  {...form.register('amount')}
                 />
               </div>
-              <div className="col-span-2">
-                <JollySelect<App.Data.TaxRateData>
-                  onSelectionChange={selected =>
-                    handleValueChange('tax_rate_id', selected as unknown as number)
-                  }
-                  selectedKey={data.tax_rate_id}
+              <div className="col-span-3">
+                <Select<App.Data.TaxRateData>
+                  {...form.register('tax_rate_id')}
                   label="USt.-Satz"
-                  items={invoice.tax?.rates || []}
-                >
-                  {item => (
-                    <SelectItem className="!text-right">
-                      {currencyFormatter.format(item.rate)}
-                    </SelectItem>
-                  )}
-                </JollySelect>
+                  items={invoice.tax?.rates}
+                />
               </div>
-              <div className="col-span-5" />
+              <div className="col-span-4" />
               <div className="col-span-6">
                 <DateRangePicker
                   label="Leistungsdatum"
@@ -189,15 +141,13 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
                 />
               </div>
             </FormGroup>
-          </form>
+          </Form>
         </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={handleClose}>
             Abbrechen
           </Button>
-          <Button form="invoiceLineForm" type="submit">
-            Speichern
-          </Button>
+          <Button form={form.id} type="submit">Speichern</Button>
         </DialogFooter>
       </DialogContent>
     </DialogOverlay>

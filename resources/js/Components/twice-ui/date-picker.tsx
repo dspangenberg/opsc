@@ -6,13 +6,14 @@ import { JollyDatePicker, JollyDateRangePicker } from '@/Components/jolly-ui/dat
 import type { DateRange } from 'react-aria-components'
 
 // DatePicker interfaces and functions
-interface DatePickerProps {
+interface DatePickerProps<T extends Record<string, unknown>> {
   label?: string
   value: string | null
   name: string
   className?: string
   autoFocus?: boolean
   hasError?: boolean
+  errors?: Partial<Record<keyof T, string>>
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
 }
 
@@ -26,16 +27,25 @@ export function createDateChangeHandler<T>(
   }
 }
 
-export const DatePicker: React.FC<DatePickerProps> = ({
+const joinErrors = <T extends Record<string, unknown>>(
+  errors?: Partial<Record<keyof T, string>>
+): string => {
+  if (!errors) return ''
+  const errorMessages = Object.values(errors) as string[];
+  return errorMessages.join(', ');
+};
+
+export const DatePicker = <T extends Record<string, unknown>>({
   label,
   value,
   name,
   className = '',
   autoFocus = false,
   hasError = false,
+  errors,
   onChange,
   ...props
-}) => {
+}: DatePickerProps<T>) => {
   const [parsedDate, setParsedDate] = useState<CalendarDate | null>(() => {
     if (value) {
       const date = parse(value, 'dd.MM.yyyy', new Date())
@@ -77,6 +87,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   return (
     <JollyDatePicker
       autoFocus={autoFocus}
+      errorMessage={joinErrors<T>(errors)}
       label={label}
       isInvalid={hasError}
       value={parsedDate}
@@ -88,17 +99,18 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 }
 
 // DateRangePicker interfaces and functions
-interface DateRangePickerProps {
-  label?: string
+interface DateRangePickerProps<T extends Record<string, unknown>> {
+  label?: string;
   value: {
-    start: string | null
-    end: string | null
-  } | null
-  name: string
-  className?: string
-  autoFocus?: boolean
-  hasError?: boolean
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void
+    start: string | null;
+    end: string | null;
+  } | null;
+  name: string;
+  className?: string;
+  autoFocus?: boolean;
+  hasError?: boolean;
+  errors?: Partial<Record<keyof T, string>>;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export function createDateRangeChangeHandler<T>(
@@ -124,16 +136,17 @@ export function createDateRangeChangeHandler<T>(
   }
 }
 
-export const DateRangePicker: React.FC<DateRangePickerProps> = ({
+export const DateRangePicker = <T extends Record<string, unknown>>({
   label,
   value,
   name,
   className = '',
   autoFocus = false,
   hasError = false,
+  errors,
   onChange,
   ...props
-}) => {
+}: DateRangePickerProps<T>) => {
   const [parsedDate, setParsedDate] = useState<DateRange | null>(() => {
     if (value?.start && value.end) {
       const dateStart = parse(value.start, 'dd.MM.yyyy', new Date())
@@ -192,6 +205,7 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
   return (
     <JollyDateRangePicker
       autoFocus={autoFocus}
+      errorMessage={joinErrors<T>(errors)}
       label={label}
       isInvalid={hasError}
       value={parsedDate}

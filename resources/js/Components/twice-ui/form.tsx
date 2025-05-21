@@ -1,9 +1,10 @@
 import type { FormDataConvertible } from '@inertiajs/core'
 import type React from 'react'
 import { createContext, type HTMLAttributes, useContext } from 'react'
-import { useForm as internalUseForm } from '@/Hooks/form'
+import { useForm as internalUseForm } from '@/Hooks/use-form'
 import type { RequestMethod, ValidationConfig } from 'laravel-precognition'
 import { cn } from '@/Lib/utils'
+
 export type FormSchema = Record<string, FormDataConvertible>;
 
 type UseFormReturn<T extends FormSchema> = ReturnType<typeof internalUseForm<T>>;
@@ -12,21 +13,25 @@ type BaseFormProps = Omit<HTMLAttributes<HTMLFormElement>, 'onSubmit'>;
 const FormContext = createContext<UseFormReturn<FormSchema> | null>(null)
 
 interface FormProps<T extends FormSchema> extends BaseFormProps {
-  form: ReturnType<typeof useForm<T>>;
-  children: React.ReactNode;
-  className?: string;
+  form: ReturnType<typeof useForm<T>>
+  children: React.ReactNode
+  className?: string
 }
 
-export const Form = <T extends FormSchema>({ form, children, ...props }: FormProps<T>) => {
+export const Form = <T extends FormSchema> ({
+  form,
+  children,
+  ...props
+}: FormProps<T>) => {
   if (!form) {
-    console.error('Form component received undefined form prop');
-    return null;
+    console.error('Form component received undefined form prop')
+    return null
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    form.submit();
-  };
+    e.preventDefault()
+    form.submit()
+  }
 
   return (
     <FormContext.Provider value={form as UseFormReturn<FormSchema>}>
@@ -41,10 +46,10 @@ export const Form = <T extends FormSchema>({ form, children, ...props }: FormPro
         {children}
       </form>
     </FormContext.Provider>
-  );
+  )
 }
 
-export const useFormContext = <T extends FormSchema>() => {
+export const useFormContext = <T extends FormSchema> () => {
   const context = useContext(FormContext)
   if (context === null) {
     throw new Error('useFormContext must be used within a Form component')
@@ -52,7 +57,7 @@ export const useFormContext = <T extends FormSchema>() => {
   return context as UseFormReturn<T>
 }
 
-export const useForm = <T extends FormSchema>(
+export const useForm = <T extends FormSchema> (
   id: string,
   method: RequestMethod,
   action: string,
@@ -66,13 +71,13 @@ export const useForm = <T extends FormSchema>(
     id,
     form: {
       id,
-      ...internalForm,
+      ...internalForm
     },
     method,
     action,
     config,
     submit: internalForm.submit,
     errors: internalForm.errors || {},
-    data: internalForm.data || data,
+    data: internalForm.data || data
   }
 }

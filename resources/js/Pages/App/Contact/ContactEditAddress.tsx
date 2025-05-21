@@ -13,7 +13,7 @@ import {
 } from '@dspangenberg/twcui'
 import { InertiaDialog } from '@/Components/InertiaDialog'
 import type { PageProps } from '@/Types'
-import { useForm } from '@/Hooks/use-form'
+import { useForm } from '@/Hooks/use-form-old'
 interface Props extends PageProps {
   contact: App.Data.ContactData
   address: App.Data.ContactAddressData

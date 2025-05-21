@@ -3,9 +3,9 @@ import { useState } from 'react'
 
 import { FormErrors, FormGroup, Button } from '@dspangenberg/twcui'
 import { router } from '@inertiajs/react'
-import { JollySelect, SelectItem } from '@/Components/jolly-ui/select'
-import { ComboboxItem, JollyComboBox } from '@/Components/jolly-ui/combobox'
+import { Select } from '@/Components/twice-ui/select'
 import { useForm, Form, } from "@/Components/twice-ui/form"
+import { Combobox } from '@/Components/twice-ui/combobox'
 
 import {
   DialogBody,
@@ -23,7 +23,6 @@ interface Props {
   projects: App.Data.ProjectData[]
   taxes: App.Data.TaxData[]
 }
-
 export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
   invoice,
   invoice_types,
@@ -37,14 +36,12 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
     router.visit(route('app.invoice.details', { invoice: invoice.id }))
   }
 
-  const { form, errors, data, updateAndValidateWithoutEvent, updateAndValidate } = useForm<App.Data.InvoiceData>(
+  const { form, errors, data, updateAndValidateWithoutEvent } = useForm<App.Data.InvoiceData>(
     'basedata-form',
     'put',
     route('app.invoice.base-update', { invoice: invoice.id }),
     invoice
   );
-
-  console.log(form)
 
   const handlePeriodChange = createDateRangeChangeHandler(
     updateAndValidateWithoutEvent,
@@ -52,11 +49,6 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
     'service_period_end'
   )
 
-  const handleValueChange = (name: keyof App.Data.InvoiceData, value: unknown) => {
-    updateAndValidateWithoutEvent(name, Number(value))
-  }
-
-    // @ts-ignore
   return (
     <DialogOverlay isOpen={isOpen} onOpenChange={handleClose}>
       <DialogContent className="min-w-lg">
@@ -79,51 +71,30 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
               </div>
               <div className="col-span-14" />
               <div className="col-span-12">
-                <JollySelect<App.Data.InvoiceTypeData>
-                  onSelectionChange={selected =>
-                    handleValueChange('type_id', selected)
-                  }
-                  selectedKey={data.type_id}
+                <Select<App.Data.InvoiceTypeData>
+                  {...form.register("type_id")}
                   label="Rechnungsart"
-                  items={invoice_types || []}
-                >
-                  {item => (
-                    <SelectItem id={Number(item.id)}>
-                      {item.display_name}
-                    </SelectItem>
-                  )}
-                </JollySelect>
+                  items={invoice_types}
+                  itemName="display_name"
+                  itemValue="id"
+                />
               </div>
               <div className="col-span-12">
-                <JollySelect<App.Data.TaxData>
-                  onSelectionChange={selected =>
-                    handleValueChange('tax_id', selected)
-                  }
-                  selectedKey={data.tax_id}
+                <Select<App.Data.TaxData>
+                  {...form.register("tax_id")}
                   label="Umsatzsteuer"
-                  items={taxes || []}
-                >
-                  {item => (
-                    <SelectItem>
-                      {item.name}
-                    </SelectItem>
-                  )}
-                </JollySelect>
+                  items={taxes}
+                />
               </div>
               <div className="col-span-24">
-                <JollyComboBox
+                <Combobox<App.Data.ProjectData>
                   label="Projekt"
-                  selectedKey={data.project_id}
-                  onSelectionChange={selected =>
-                    handleValueChange('project_id', selected)
-                  }
-                >
-                  {projects.map(project => (
-                    <ComboboxItem key={project.id} id={project.id as number}>
-                      {project.name}
-                    </ComboboxItem>
-                  ))}
-                </JollyComboBox>
+                  {...form.register("project_id")}
+                  isOptional
+                  optionalValue='(kein Projekt zugeordnet)'
+                  description='blbla'
+                  items={projects}
+                />
               </div>
               <div className="col-span-16">
                 <DateRangePicker
