@@ -16,7 +16,7 @@ import {
 } from '@/Components/jolly-ui/dialog'
 import { JollyNumberField } from '@/Components/jolly-ui/numberfield'
 import { JollySelect, SelectItem } from '@/Components/jolly-ui/select'
-import { createDateRangeChangeHandler, DateRangePicker } from '@/Components/twice-ui/date-range-picker'
+import { createDateRangeChangeHandler, DateRangePicker } from '@/Components/twice-ui/date-picker'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -77,6 +77,7 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
     }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    console.log('handleSubmit', event)
     try {
       await submit(event)
       handleClose()

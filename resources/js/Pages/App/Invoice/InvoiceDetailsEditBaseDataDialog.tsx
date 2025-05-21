@@ -1,14 +1,12 @@
 import type * as React from 'react'
-import { type FormEvent, useState } from 'react'
+import { useState } from 'react'
 
-import { FormErrors, FormGroup } from '@dspangenberg/twcui'
-import { useForm } from '@/Hooks/use-form'
+import { FormErrors, FormGroup, Button } from '@dspangenberg/twcui'
 import { router } from '@inertiajs/react'
-import { DatePicker } from '@/Components/twice-ui/date-picker'
 import { JollySelect, SelectItem } from '@/Components/jolly-ui/select'
 import { ComboboxItem, JollyComboBox } from '@/Components/jolly-ui/combobox'
+import { useForm, Form, } from "@/Components/twice-ui/form"
 
-import { Button } from '@/Components/jolly-ui/button'
 import {
   DialogBody,
   DialogContent,
@@ -17,7 +15,7 @@ import {
   DialogOverlay,
   DialogTitle
 } from '@/Components/jolly-ui/dialog'
-import { createDateRangeChangeHandler, DateRangePicker } from '@/Components/twice-ui/date-range-picker'
+import { createDateRangeChangeHandler, DateRangePicker, DatePicker } from '@/Components/twice-ui/date-picker'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -39,20 +37,14 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
     router.visit(route('app.invoice.details', { invoice: invoice.id }))
   }
 
-  const {
-    data,
-    errors,
-    updateAndValidate,
-    submit,
-    updateAndValidateWithoutEvent
-  } =
-    useForm<App.Data.InvoiceData>(
-      'put',
-      route('app.invoice.base-update', {
-        invoice: invoice.id
-      }),
-      invoice
-    )
+  const { form, errors, data, updateAndValidateWithoutEvent, updateAndValidate } = useForm<App.Data.InvoiceData>(
+    'basedata-form',
+    'put',
+    route('app.invoice.base-update', { invoice: invoice.id }),
+    invoice
+  );
+
+  console.log(form)
 
   const handlePeriodChange = createDateRangeChangeHandler(
     updateAndValidateWithoutEvent,
@@ -64,15 +56,7 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
     updateAndValidateWithoutEvent(name, Number(value))
   }
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    try {
-      await submit(event)
-      handleClose()
-    } catch (error) {
-    }
-  }
-
-  // @ts-ignore
+    // @ts-ignore
   return (
     <DialogOverlay isOpen={isOpen} onOpenChange={handleClose}>
       <DialogContent className="min-w-lg">
@@ -81,17 +65,16 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
         </DialogHeader>
 
         <DialogBody>
-          <form onSubmit={handleSubmit} id="baseDataForm" className="w-full">
+          <Form
+            form={form}
+          >
             <FormErrors errors={errors} />
             <FormGroup>
               <div className="col-span-9">
                 <DatePicker
                   autoFocus
                   label="Rechnungsdatum"
-                  name="issued_on"
-                  value={data.issued_on}
-                  hasError={!!errors.issued_on || false}
-                  onChange={updateAndValidate}
+                  {...form.register("issued_on")}
                 />
               </div>
               <div className="col-span-14" />
@@ -142,7 +125,7 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
                   ))}
                 </JollyComboBox>
               </div>
-              <div className="col-span-14">
+              <div className="col-span-16">
                 <DateRangePicker
                   label="Leistungsdatum"
                   value={{
@@ -155,15 +138,13 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
                 />
               </div>
             </FormGroup>
-          </form>
+          </Form>
         </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={handleClose}>
             Abbrechen
           </Button>
-          <Button form="baseDataForm" type="submit">
-            Speichern
-          </Button>
+          <Button form={form.id} type="submit">Speichern</Button>
         </DialogFooter>
       </DialogContent>
     </DialogOverlay>

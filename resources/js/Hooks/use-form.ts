@@ -86,6 +86,8 @@ export const useForm = <T extends Record<string, any>>(
     form.validate(name)
   }
 
+  
+
   const updateAndValidate = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
