@@ -24,6 +24,7 @@ class InvoiceDetailsBaseUpdateRequest extends FormRequest
             'type_id' => ['required', 'exists:invoice_types,id'],
             'project_id' => ['nullable'],
             'tax_id' => ['required', 'exists:taxes,id'],
+            'is_recurring' => ['required', 'boolean'],
         ];
     }
 

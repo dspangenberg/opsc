@@ -65,11 +65,25 @@ const data = {
       hasSep: false
     },
     {
-      title: 'Rechnungen',
+      title: 'Fakturierung',
       url: route('app.invoice.index', {}, false),
       icon: FileEuroIcon,
-      activePath: '/app/invoices',
-      hasSep: true
+      activePath: '/app/invoicing',
+      hasSep: true,
+      items: [{
+        title: 'Rechnungen',
+        url: route('app.invoice.index', {}, false),
+        activePath: '/app/invoicing/invoices',
+      },
+        {
+          title: 'Angebote',
+          url: route('app.invoice.index', {}, false),
+        }
+        ,
+        {
+          title: 'Mahnungen',
+          url: route('app.invoice.index', {}, false),
+        }],
     },
     {
       title: 'Buchhaltung',

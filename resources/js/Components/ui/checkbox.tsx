@@ -1,7 +1,7 @@
 "use client";
 
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
-import * as React from "react";
+import type * as React from "react";
 
 import {cn} from "@/Lib/utils";
 
@@ -27,6 +27,7 @@ function Checkbox({className, ...props}: React.ComponentProps<typeof CheckboxPri
                         fill="currentcolor"
                         xmlns="http://www.w3.org/2000/svg"
                     >
+                        <title>Checkbox indeterminate</title>
                         <path
                             fillRule="evenodd"
                             clipRule="evenodd"
@@ -41,6 +42,7 @@ function Checkbox({className, ...props}: React.ComponentProps<typeof CheckboxPri
                         fill="currentcolor"
                         xmlns="http://www.w3.org/2000/svg"
                     >
+                        <title>Checkbox checked</title>
                         <path
                             fillRule="evenodd"
                             clipRule="evenodd"

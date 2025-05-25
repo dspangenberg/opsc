@@ -1,21 +1,18 @@
 import type * as React from 'react'
 import { useState } from 'react'
 
-import { FormErrors, FormGroup, Button } from '@dspangenberg/twcui'
+import { Button, FormErrors } from '@dspangenberg/twcui'
 import { router } from '@inertiajs/react'
-import { Select } from '@/Components/twice-ui/select'
-import { useForm, Form, } from "@/Components/twice-ui/form"
-import { Combobox } from '@/Components/twice-ui/combobox'
+import { Select } from '@/Components/twcui/select'
+import { Form, useForm } from '@/Components/twcui/form'
+import { Combobox } from '@/Components/twcui/combobox'
 
 import {
-  DialogBody,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogTitle
-} from '@/Components/jolly-ui/dialog'
-import { createDateRangeChangeHandler, DateRangePicker, DatePicker } from '@/Components/twice-ui/date-picker'
+ Dialog
+} from '@/Components/twcui/dialog'
+import { createDateRangeChangeHandler, DatePicker, DateRangePicker } from '@/Components/twcui/date-picker'
+import { Checkbox } from '@/Components/jolly-ui/checkbox'
+import { FormGroup } from '@/Components/twcui/form-group'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -23,6 +20,7 @@ interface Props {
   projects: App.Data.ProjectData[]
   taxes: App.Data.TaxData[]
 }
+
 export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
   invoice,
   invoice_types,
@@ -32,16 +30,22 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
   const [isOpen, setIsOpen] = useState(true)
 
   const handleClose = () => {
-    setIsOpen(false)
-    router.visit(route('app.invoice.details', { invoice: invoice.id }))
+    console.log('Close dialog', form.isDirty)
+    return !form.isDirty
+    //router.visit(route('app.invoice.details', { invoice: invoice.id }))
   }
 
-  const { form, errors, data, updateAndValidateWithoutEvent } = useForm<App.Data.InvoiceData>(
+  const {
+    form,
+    errors,
+    data,
+    updateAndValidateWithoutEvent
+  } = useForm<App.Data.InvoiceData>(
     'basedata-form',
     'put',
     route('app.invoice.base-update', { invoice: invoice.id }),
     invoice
-  );
+  )
 
   const handlePeriodChange = createDateRangeChangeHandler(
     updateAndValidateWithoutEvent,
@@ -50,53 +54,37 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
   )
 
   return (
-    <DialogOverlay isOpen={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="min-w-lg">
-        <DialogHeader>
-          <DialogTitle>Rechnungsstammdaten bearbeiten</DialogTitle>
-        </DialogHeader>
+    <Dialog
+      isOpen={isOpen}
+      onOpenChange={handleClose}
+      onClose={handleClose}
+      confirmClose={form.isDirty}
+      onConfirmClose={handleClose}
+      title="Rechnungsstammdaten bearbeiten"
+      footer={
+      <>
+        <Button variant="outline" onClick={handleClose}>
+          {form.isDirty? 'Abbrechen' : 'Schließen'}
+        </Button>
+        <Button form={form.id} type="submit">Speichern</Button>
+      </>
+      }
+    >
 
-        <DialogBody>
           <Form
             form={form}
           >
             <FormErrors errors={errors} />
             <FormGroup>
-              <div className="col-span-9">
+              <div className="col-span-8">
                 <DatePicker
                   autoFocus
                   label="Rechnungsdatum"
-                  {...form.register("issued_on")}
+                  {...form.register('issued_on')}
                 />
               </div>
-              <div className="col-span-14" />
+              <div className="col-span-4" />
               <div className="col-span-12">
-                <Select<App.Data.InvoiceTypeData>
-                  {...form.register("type_id")}
-                  label="Rechnungsart"
-                  items={invoice_types}
-                  itemName="display_name"
-                  itemValue="id"
-                />
-              </div>
-              <div className="col-span-12">
-                <Select<App.Data.TaxData>
-                  {...form.register("tax_id")}
-                  label="Umsatzsteuer"
-                  items={taxes}
-                />
-              </div>
-              <div className="col-span-24">
-                <Combobox<App.Data.ProjectData>
-                  label="Projekt"
-                  {...form.register("project_id")}
-                  isOptional
-                  optionalValue='(kein Projekt zugeordnet)'
-                  description='blbla'
-                  items={projects}
-                />
-              </div>
-              <div className="col-span-16">
                 <DateRangePicker
                   label="Leistungsdatum"
                   value={{
@@ -108,16 +96,40 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
                   hasError={!!errors.service_period_begin || !!errors.service_period_end}
                 />
               </div>
+
+              <div className="col-span-12">
+                <Select<App.Data.InvoiceTypeData>
+                  {...form.register('type_id')}
+                  label="Rechnungsart"
+                  items={invoice_types}
+                  itemName="display_name"
+                  itemValue="id"
+                />
+              </div>
+              <div className="col-span-12">
+                <Select<App.Data.TaxData>
+                  {...form.register('tax_id')}
+                  label="Umsatzsteuer"
+                  items={taxes}
+                />
+              </div>
+              <div className="col-span-24">
+                <Combobox<App.Data.ProjectData>
+                  label="Projekt"
+                  {...form.register('project_id')}
+                  isOptional
+                  optionalValue="(kein Projekt)"
+                  items={projects}
+                />
+                <Checkbox
+                  {...form.registerCheckbox('is_recurring')}
+                  className="pt-1.5"
+                >
+                  Wiederkehrende Rechnung
+                </Checkbox>
+              </div>
             </FormGroup>
           </Form>
-        </DialogBody>
-        <DialogFooter>
-          <Button variant="outline" onClick={handleClose}>
-            Abbrechen
-          </Button>
-          <Button form={form.id} type="submit">Speichern</Button>
-        </DialogFooter>
-      </DialogContent>
-    </DialogOverlay>
+        </Dialog>
   )
 }

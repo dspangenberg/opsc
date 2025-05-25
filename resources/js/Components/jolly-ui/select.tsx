@@ -19,6 +19,7 @@ import { cn } from '@/Lib/utils'
 import { FieldError, Label } from './field'
 import { ListBoxCollection, ListBoxHeader, ListBoxItem, ListBoxSection } from './list-box'
 import { Popover } from './popover'
+import type React from 'react'
 
 const Select = AriaSelect
 

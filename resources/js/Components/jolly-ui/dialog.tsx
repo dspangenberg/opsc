@@ -84,7 +84,7 @@ const DialogContent = ({
       cn(
         side
           ? sheetVariants({ side, className: "h-full" })
-          : "fixed left-[50vw] top-1/2 z-50 w-full max-w-lg border-4 -translate-x-1/2 -translate-y-1/2  bg-background shadow-lg duration-200 data-[exiting]:duration-300 data-[entering]:animate-in data-[exiting]:animate-out data-[entering]:fade-in-0 data-[exiting]:fade-out-0 data-[entering]:zoom-in-95 data-[exiting]:zoom-out-95  sm:rounded-lg md:w-full",
+          : "fixed left-[50vw] top-1/2 z-50 w-full max-w-lg border -translate-x-1/2 -translate-y-1/2  bg-background shadow-lg duration-200 data-[exiting]:duration-300 data-[entering]:animate-in data-[exiting]:animate-out data-[entering]:fade-in-0 data-[exiting]:fade-out-0 data-[entering]:zoom-in-95 data-[exiting]:zoom-out-95 sm:rounded-lg md:w-full",
         className
       )
     )}
@@ -118,7 +118,7 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col space-y-1.5 px-4 py-3 text-center sm:text-left bg-sidebar",
+      "flex flex-col space-y-1.5 px-4 py-3 text-center sm:text-left bg-sidebar rounded-t-lg",
       className
     )}
     {...props}
@@ -131,7 +131,7 @@ const DialogFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col-reverse px-4 py-3 sm:flex-row sm:justify-end sm:space-x-2 bg-sidebar",
+      "flex flex-col-reverse px-4 py-3 sm:flex-row sm:justify-end sm:space-x-2 bg-sidebar rounded-b-lg",
       className
     )}
     {...props}
@@ -144,7 +144,7 @@ const DialogBody = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col-reverse px-4 py-2 sm:flex-row sm:space-x-2 w-full",
+      "flex flex-col-reverse px-0 py-2 sm:flex-row sm:space-x-2 w-full",
       className
     )}
     {...props}

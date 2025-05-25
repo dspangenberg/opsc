@@ -37,7 +37,6 @@ use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Laragear\WebAuthn\Http\Routes as WebAuthnRoutes;
 use Stancl\Tenancy\Features\UserImpersonation;
 use Stancl\Tenancy\Middleware;
 
@@ -96,51 +95,51 @@ Route::middleware([
     Route::put('contacts/{contact}/toggle-favorite',
         ContactToggleFavoriteController::class)->name('app.contact.toggle-favorite');
 
-    Route::get('invoices',
+    Route::get('invoicing/invoices',
         InvoiceIndexController::class)->name('app.invoice.index');
 
-    Route::get('invoices/{invoice}',
+    Route::get('invoicing/invoices/{invoice}',
         InvoiceDetailsController::class)->name('app.invoice.details');
 
-    Route::delete('invoices/{invoice}',
+    Route::delete('invoicing/invoices/{invoice}',
         InvoiceDeleteController::class)->name('app.invoice.delete');
 
-    Route::get('invoices/{invoice}/base-edit',
+    Route::get('invoicing/invoices/{invoice}/base-edit',
         InvoiceDetailsEditBaseController::class)->name('app.invoice.base-edit');
 
-    Route::get('invoices/{invoice}/lines-edit',
+    Route::get('invoicing/invoices/{invoice}/lines-edit',
         InvoiceDetailsEditLinesController::class)->name('app.invoice.lines-edit');
 
-    Route::get('invoices/{invoice}/unrelease',
+    Route::get('invoicing/invoices/{invoice}/unrelease',
         InvoiceUnreleaseController::class)->name('app.invoice.unrelease');
 
-    Route::get('invoices/{invoice}/release',
+    Route::get('invoicing/invoices/{invoice}/release',
         InvoiceReleaseController::class)->name('app.invoice.release');
 
-    Route::get('invoices/{invoice}/mark-as-sent',
+    Route::get('invoicing/invoices/{invoice}/mark-as-sent',
         InvoiceMarkAsSentController::class)->name('app.invoice.mark-as-sent');
 
-    Route::get('invoices/{invoice}/line-duplicate/{invoiceLine}',
+    Route::get('invoicing/invoices/{invoice}/line-duplicate/{invoiceLine}',
         InvoiceLineDuplicateController::class)->name('app.invoice.line-duplicate')->middleware([HandlePrecognitiveRequests::class]);
 
 
-    Route::get('invoices/{invoice}/line-edit/{invoiceLine}',
+    Route::get('invoicing/invoices/{invoice}/line-edit/{invoiceLine}',
         InvoiceLineEditController::class)->name('app.invoice.line-edit')->middleware([HandlePrecognitiveRequests::class]);
 
 
-    Route::put('invoices/{invoice}/line-update/{invoiceLine}',
+    Route::put('invoicing/invoices/{invoice}/line-update/{invoiceLine}',
         InvoiceLineUpdateController::class)->name('app.invoice.line-update')->middleware([HandlePrecognitiveRequests::class]);
 
-    Route::delete('invoices/{invoice}/line-delete/{invoiceLine}',
+    Route::delete('invoicing/invoices/{invoice}/line-delete/{invoiceLine}',
         InvoiceLineDeleteController::class)->name('app.invoice.line-delete')->middleware([HandlePrecognitiveRequests::class]);
 
-    Route::put('invoices/{invoice}/base-update',
+    Route::put('invoicing/invoices/{invoice}/base-update',
         InvoiceDetailsUpdateBaseController::class)->name('app.invoice.base-update')->middleware([HandlePrecognitiveRequests::class]);
 
-    Route::get('invoices/{invoice}/duplicate',
+    Route::get('invoicing/invoices/{invoice}/duplicate',
         InvoiceDuplicateController::class)->name('app.invoice.duplicate')->middleware([HandlePrecognitiveRequests::class]);
 
-    Route::get('invoices/{invoice}/pdf',
+    Route::get('invoicing/invoices/{invoice}/pdf',
         InvoicePdfDownloadController::class)->name('app.invoice.pdf');
 
     Route::get('/soon', function () {
@@ -161,8 +160,6 @@ Route::middleware([
     Middleware\PreventAccessFromUnwantedDomains::class,
     Middleware\ScopeSessions::class,
 ])->prefix('auth')->group(function () {
-
-    WebAuthnRoutes::register()->withoutMiddleware(VerifyCsrfToken::class);
 
     Route::get('/impersonate/{token}', function ($token) {
         return UserImpersonation::makeResponse($token);

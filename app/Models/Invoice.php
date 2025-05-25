@@ -122,6 +122,7 @@ class Invoice extends Model implements MediableInterface
         'payment_deadline_id',
         'invoice_contact_id',
         'payment_deadline_id',
+        'is_recurring',
         'is_loss_of_receivables',
         'service_period_begin',
         'tax_id',

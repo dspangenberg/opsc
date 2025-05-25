@@ -16,8 +16,6 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
-use Laragear\WebAuthn\Contracts\WebAuthnAuthenticatable;
-use Laragear\WebAuthn\WebAuthnAuthentication;
 
 /**
  * @property int $id
@@ -36,7 +34,7 @@ use Laragear\WebAuthn\WebAuthnAuthentication;
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  *
- * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
+ * @method static UserFactory factory($count = null, $state = [])
  * @method static Builder<static>|User newModelQuery()
  * @method static Builder<static>|User newQuery()
  * @method static Builder<static>|User query()
@@ -50,20 +48,14 @@ use Laragear\WebAuthn\WebAuthnAuthentication;
  * @method static Builder<static>|User whereProfilePhotoPath($value)
  * @method static Builder<static>|User whereRememberToken($value)
  * @method static Builder<static>|User whereUpdatedAt($value)
- *
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laragear\WebAuthn\Models\WebAuthnCredential> $webAuthnCredentials
- * @property-read int|null $web_authn_credentials_count
- *
  * @mixin Eloquent
  */
-class User extends Authenticatable implements WebAuthnAuthenticatable
+class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory;
 
     use Notifiable;
-    use WebAuthnAuthentication;
-
     protected $fillable = [
         'name',
         'email',

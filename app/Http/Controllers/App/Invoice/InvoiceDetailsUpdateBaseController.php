@@ -15,7 +15,13 @@ class InvoiceDetailsUpdateBaseController extends Controller
 {
     public function __invoke(InvoiceDetailsBaseUpdateRequest $request, Invoice $invoice)
     {
+        if ($request->validated('project_id') === -1) {
+            $invoice->project_id = 0;
+            $invoice->save();
+        }
+
         $invoice->update($request->validated());
+
 
         /*
         $invoice->service_period_begin = $request->validated('service_period_begin');

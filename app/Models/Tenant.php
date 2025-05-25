@@ -7,7 +7,6 @@
 
 namespace App\Models;
 
-use Cviebrock\EloquentSluggable\Sluggable;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -94,7 +93,7 @@ use Torann\Hashids\Facade\Hashids;
  */
 class Tenant extends BaseTenant implements TenantWithDatabase
 {
-    use HasDatabase, HasDomains, MaintenanceMode, Sluggable;
+    use HasDatabase, HasDomains, MaintenanceMode;
 
     protected $attributes = [
         'last_name' => '',
@@ -148,15 +147,6 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return Tenant::findOrFail($id);
     }
 
-    public function sluggable(): array
-    {
-        return [
-            'subdomain' => [
-                'source' => 'company_house_name',
-                'unique' => true,
-            ],
-        ];
-    }
 
     public function getFormatedPrefixAttribute(): string
     {

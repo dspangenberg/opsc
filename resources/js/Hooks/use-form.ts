@@ -2,6 +2,7 @@ import type { FormDataConvertible } from '@inertiajs/core'
 import { useForm as useInertiaForm } from 'laravel-precognition-react-inertia'
 import type { ChangeEvent } from 'react'
 import type { RequestMethod, ValidationConfig } from 'laravel-precognition'
+import { isEqual } from 'moderndash'
 
 type InputElements = HTMLInputElement | HTMLSelectElement;
 
@@ -11,7 +12,11 @@ export function useForm<T extends Record<string, FormDataConvertible>> (
   data: T,
   config?: ValidationConfig
 ) {
+
+  const initialData = {...data}
   const form = useInertiaForm<T>(method, url, data, config)
+
+  const isDirty =!isEqual(initialData, form.data)
 
   const updateAndValidateWithoutEvent = (name: keyof T, value: T[keyof T]) => {
     form.setData(name, value)
@@ -22,7 +27,7 @@ export function useForm<T extends Record<string, FormDataConvertible>> (
     return {
       name,
       value: form.data[name],
-      hasError: form.errors[name],
+      error: form.errors[name],
       onChange: (e: ChangeEvent<InputElements>) => {
         form.setData(
           name,
@@ -35,6 +40,26 @@ export function useForm<T extends Record<string, FormDataConvertible>> (
       }
     } as const
   }
+
+  const registerCheckbox = (name: keyof T) => {
+    return {
+      name,
+      checked: Boolean(form.data[name]),
+      hasError: !!form.errors[name],
+      isSelected:  Boolean(form.data[name]),
+      onChange: (checked: boolean) => {
+        form.setData(
+          name,
+          checked
+        )
+        form.validate(name)
+      },
+      onBlur: () => {
+        form.validate(name)
+      }
+    } as const
+  }
+
 
   const updateAndValidate = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -50,9 +75,13 @@ export function useForm<T extends Record<string, FormDataConvertible>> (
     form.validate(name as keyof T)
   }
 
+  form.isDirty = isDirty
+
   return {
     ...form,
+    isDirty,
     register,
+    registerCheckbox,
     updateAndValidate,
     updateAndValidateWithoutEvent
   } as const

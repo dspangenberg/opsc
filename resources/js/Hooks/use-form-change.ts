@@ -4,11 +4,11 @@ import type { Key } from '@react-types/shared'
 
 type UseFormChangeProps = {
   name: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
 export const useFormChange = ({ name, onChange }: UseFormChangeProps) => {
-  return useCallback((selected: Key | null) => {
+  return useCallback((selected: Key | string | number | boolean | null) => {
     const syntheticEvent = {
       target: {
         name,
@@ -22,6 +22,8 @@ export const useFormChange = ({ name, onChange }: UseFormChangeProps) => {
       }
     } as ChangeEvent<HTMLInputElement>;
 
-    onChange(syntheticEvent);
+    if (onChange) {
+      onChange(syntheticEvent);
+    }
   }, [name, onChange]);
 };

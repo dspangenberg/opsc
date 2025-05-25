@@ -1,9 +1,9 @@
 import type React from 'react'
 import { type ChangeEvent, useEffect, useState } from 'react'
 import { format, parse } from 'date-fns'
-import { CalendarDate } from '@internationalized/date'
+import { CalendarDate, type DateValue } from '@internationalized/date'
 import { JollyDatePicker, JollyDateRangePicker } from '@/Components/jolly-ui/date-picker'
-import type { DateRange } from 'react-aria-components'
+import type { RangeValue } from '@react-types/shared'
 
 // DatePicker interfaces and functions
 interface DatePickerProps<T extends Record<string, unknown>> {
@@ -17,7 +17,7 @@ interface DatePickerProps<T extends Record<string, unknown>> {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
 }
 
-export function createDateChangeHandler<T>(
+export function createDateChangeHandler<T> (
   updateAndValidateWithoutEvent: <K extends keyof T>(field: K, value: T[K]) => void,
   field: keyof T
 ) {
@@ -27,15 +27,15 @@ export function createDateChangeHandler<T>(
   }
 }
 
-const joinErrors = <T extends Record<string, unknown>>(
+const joinErrors = <T extends Record<string, unknown>> (
   errors?: Partial<Record<keyof T, string>>
 ): string => {
   if (!errors) return ''
-  const errorMessages = Object.values(errors) as string[];
-  return errorMessages.join(', ');
-};
+  const errorMessages = Object.values(errors) as string[]
+  return errorMessages.join(', ')
+}
 
-export const DatePicker = <T extends Record<string, unknown>>({
+export const DatePicker = <T extends Record<string, unknown>> ({
   label,
   value,
   name,
@@ -46,7 +46,7 @@ export const DatePicker = <T extends Record<string, unknown>>({
   onChange,
   ...props
 }: DatePickerProps<T>) => {
-  const [parsedDate, setParsedDate] = useState<CalendarDate | null>(() => {
+  const [parsedDate, setParsedDate] = useState<DateValue | null>(() => {
     if (value) {
       const date = parse(value, 'dd.MM.yyyy', new Date())
       return new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate())
@@ -54,7 +54,7 @@ export const DatePicker = <T extends Record<string, unknown>>({
     return null
   })
 
-  const handleDateChange = (date: CalendarDate | null) => {
+  const handleDateChange = (date: DateValue | null) => {
     const formattedDate = date ? format(date.toDate('Europe/Berlin'), 'dd.MM.yyyy') : null
 
     const syntheticEvent = {
@@ -62,14 +62,14 @@ export const DatePicker = <T extends Record<string, unknown>>({
         name,
         value: formattedDate,
         type: 'date',
-        checked: false,
+        checked: false
       },
       currentTarget: {
         name,
         value: formattedDate,
         type: 'date',
-        checked: false,
-      },
+        checked: false
+      }
     } as ChangeEvent<HTMLInputElement>
 
     onChange(syntheticEvent)
@@ -83,16 +83,15 @@ export const DatePicker = <T extends Record<string, unknown>>({
       setParsedDate(null)
     }
   }, [value])
-
   return (
     <JollyDatePicker
       autoFocus={autoFocus}
       errorMessage={joinErrors<T>(errors)}
       label={label}
       isInvalid={hasError}
-      value={parsedDate}
+      value={parsedDate as any}
       className={className}
-      onChange={handleDateChange}
+      onChange={handleDateChange as any}
       {...props}
     />
   )
@@ -113,7 +112,7 @@ interface DateRangePickerProps<T extends Record<string, unknown>> {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export function createDateRangeChangeHandler<T>(
+export function createDateRangeChangeHandler<T> (
   updateAndValidateWithoutEvent: <K extends keyof T>(field: K, value: T[K]) => void,
   beginField: keyof T,
   endField: keyof T
@@ -125,7 +124,10 @@ export function createDateRangeChangeHandler<T>(
       updateAndValidateWithoutEvent(endField, null as any)
     } else {
       try {
-        const { start, end } = JSON.parse(value)
+        const {
+          start,
+          end
+        } = JSON.parse(value)
         updateAndValidateWithoutEvent(beginField, start as any)
         updateAndValidateWithoutEvent(endField, end as any)
       } catch (error) {
@@ -136,7 +138,7 @@ export function createDateRangeChangeHandler<T>(
   }
 }
 
-export const DateRangePicker = <T extends Record<string, unknown>>({
+export const DateRangePicker = <T extends Record<string, unknown>> ({
   label,
   value,
   name,
@@ -147,7 +149,8 @@ export const DateRangePicker = <T extends Record<string, unknown>>({
   onChange,
   ...props
 }: DateRangePickerProps<T>) => {
-  const [parsedDate, setParsedDate] = useState<DateRange | null>(() => {
+  // Use the more generic type from react-aria
+  const [parsedDate, setParsedDate] = useState<RangeValue<DateValue> | null>(() => {
     if (value?.start && value.end) {
       const dateStart = parse(value.start, 'dd.MM.yyyy', new Date())
       const dateEnd = parse(value.end, 'dd.MM.yyyy', new Date())
@@ -160,11 +163,11 @@ export const DateRangePicker = <T extends Record<string, unknown>>({
     return null
   })
 
-  const handleDateChange = (date: DateRange | null) => {
+  const handleDateChange = (value: RangeValue<DateValue> | null) => {
     let newDate = null
-    if (date?.start && date.end) {
-      const dateStart = format(date.start.toDate('Europe/Berlin'), 'dd.MM.yyyy')
-      const dateEnd = format(date.end.toDate('Europe/Berlin'), 'dd.MM.yyyy')
+    if (value?.start && value.end) {
+      const dateStart = format(value.start.toDate('Europe/Berlin'), 'dd.MM.yyyy')
+      const dateEnd = format(value.end.toDate('Europe/Berlin'), 'dd.MM.yyyy')
       newDate = {
         start: dateStart,
         end: dateEnd
@@ -208,9 +211,9 @@ export const DateRangePicker = <T extends Record<string, unknown>>({
       errorMessage={joinErrors<T>(errors)}
       label={label}
       isInvalid={hasError}
-      value={parsedDate}
+      value={parsedDate as any}
       className={className}
-      onChange={handleDateChange}
+      onChange={handleDateChange as any}
       {...props}
     />
   )

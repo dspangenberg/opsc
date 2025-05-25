@@ -1,25 +1,27 @@
 import type React from 'react'
-import { ComboboxItem, JollyComboBox } from '@/Components/jolly-ui/combobox'
+import { JollyRadioGroup, Radio } from "@/Components/jolly-ui/radio-group"
 import { useFormChange } from '@/Hooks/use-form-change'
+import { cn } from '@/Lib/utils'
 
-interface ComboboxProps<T extends Record<string, unknown>> {
+interface RadioGroupProps<T extends Record<string, unknown>> {
   label?: string
-  value: number
   name: string
   className?: string
   autoFocus?: boolean
   items: Iterable<T>
-  description?: string
+  value: number | string
   itemName?: keyof T & string
   itemValue?: keyof T & string
   hasError?: boolean
+  orientation?: 'horizontal' | 'vertical'  // Changed this line
   errors?: Partial<Record<keyof T, string>>
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  selected: number | string
   isOptional?: boolean
   optionalValue?: string
 }
 
-export const Combobox = <T extends Record<string, unknown>> ({
+export const RadioGroup = <T extends Record<string, unknown>> ({
   label,
   value,
   name,
@@ -27,15 +29,15 @@ export const Combobox = <T extends Record<string, unknown>> ({
   itemValue = 'id' as keyof T & string,
   isOptional = false,
   optionalValue = '(leer)',
+  orientation = 'vertical',
   className = '',
-  description,
   autoFocus = false,
   hasError = false,
   items,
   errors,
   onChange,
   ...props
-}: ComboboxProps<T>) => {
+}: RadioGroupProps<T>) => {
   const handleValueChange = useFormChange({
     name,
     onChange
@@ -48,22 +50,20 @@ export const Combobox = <T extends Record<string, unknown>> ({
     : Array.from(items)
 
   return (
-    <JollyComboBox<T>
-      onSelectionChange={handleValueChange}
-      selectedKey={Number(value)}
+    <JollyRadioGroup<T>
+      onChange={handleValueChange}
+      value={String(value)}
       label={label}
-      items={itemsWithNothing}
-      description={description}
-      autoFocus={autoFocus}
-      className={className}
+      className={cn('font-medium', className)}
+      orientation={orientation}
       isInvalid={hasError}
       {...props}
     >
-      {item => (
-        <ComboboxItem id={Number(item[itemValue])}>
+      {Array.from(itemsWithNothing).map(item => (
+        <Radio className="text-base" key={String(item[itemValue])} value={String(item[itemValue])}>
           {typeof item[itemName] === 'string' ? item[itemName] : String(item[itemName])}
-        </ComboboxItem>
-      )}
-    </JollyComboBox>
+        </Radio>
+      ))}
+    </JollyRadioGroup>
   )
 }

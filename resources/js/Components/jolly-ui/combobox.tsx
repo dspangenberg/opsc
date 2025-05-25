@@ -1,13 +1,13 @@
 import { CaretSortIcon } from "@radix-ui/react-icons"
 import {
   ComboBox as AriaComboBox,
-  ComboBoxProps as AriaComboBoxProps,
+  type ComboBoxProps as AriaComboBoxProps,
   Input as AriaInput,
-  InputProps as AriaInputProps,
+  type InputProps as AriaInputProps,
   ListBox as AriaListBox,
-  ListBoxProps as AriaListBoxProps,
-  PopoverProps as AriaPopoverProps,
-  ValidationResult as AriaValidationResult,
+  type ListBoxProps as AriaListBoxProps,
+  type PopoverProps as AriaPopoverProps,
+  type ValidationResult as AriaValidationResult,
   composeRenderProps,
   Text,
 } from "react-aria-components"
@@ -23,6 +23,7 @@ import {
   ListBoxSection,
 } from "./list-box"
 import { Popover } from "./popover"
+import type React from 'react'
 
 const Combobox = AriaComboBox
 
@@ -38,12 +39,13 @@ const ComboboxInput = ({ className, ...props }: AriaInputProps) => (
   <AriaInput
     className={composeRenderProps(className, (className) =>
       cn(
-        "flex h-10 w-full bg-background text-base px-3 py-2 outline-none file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground",
+        "flex h-9 w-full bg-background text-base px-3 py-2 outline-none file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground",
         /* Disabled */
         "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
         className
       )
     )}
+    onFocus={event => event.target.select()}
     {...props}
   />
 )
@@ -95,7 +97,7 @@ function JollyComboBox<T extends object>({
       )}
       {...props}
     >
-      <Label>{label}</Label>
+      <Label>{label}:</Label>
       <FieldGroup className="p-0">
         <ComboboxInput  className="focus:ring-0 border-transparent"/>
         <Button variant="ghost" size="icon" className="mr-1.5 size-6 p-1">
