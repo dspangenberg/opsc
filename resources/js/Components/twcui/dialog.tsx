@@ -23,33 +23,15 @@ import { composeRenderProps } from 'react-aria-components'
 
 type ReactNodeOrString = ReactNode | string
 
-interface ConfirmationProps {
-  title?: string;
-  message?: string;
-  buttonTitle?: string;
-  variant?: 'default' | 'destructive';
-}
 
-export async function showDiscardChangesConfirmation(settings: ConfirmationProps): Promise<boolean> {
-  console.log(settings)
-  const defaults = {
+export function showDiscardChangesConfirmation(): Promise<boolean> {
+  return AlertDialog.call({
     title: 'Änderungen verwerfen',
     message: 'Möchtest Du die Änderungen verwerfen?',
     buttonTitle: 'Verwerfen',
-    variant: 'default' as const
-  };
-
-  const options = { ...defaults, ...settings };
-
-  return AlertDialog.call({
-    title: options.title,
-    message: options.message,
-    buttonTitle: options.buttonTitle,
-    variant: options.variant
-  });
+    variant: 'default'
+  })
 }
-
-
 
 /**
  * Props for the Dialog component.
@@ -73,10 +55,6 @@ interface DialogProps {
   confirmClose?: boolean
   description?: string | ReactNodeOrString
   isDismissible?: boolean
-  confirmationTitle?: string
-  confirmationMessage?: string
-  confirmationButtonTitle?: string
-  confirmationVariant?: 'default' | 'destructive'
   tabs?: React.ReactNode
   dismissible?: boolean
   footerClassName?: string
@@ -177,13 +155,7 @@ export const Dialog: React.FC<DialogProps> = ({
         setTimeout(async () => {
           try {
             // Use the utility function to show the confirmation dialog
-            const result = await showDiscardChangesConfirmation({
-                title: props.confirmationTitle,
-                message: props.confirmationMessage,
-                buttonTitle: props.confirmationButtonTitle,
-                variant: props.confirmationVariant,
-              }
-            )
+            const result = await showDiscardChangesConfirmation()
             // Resolve with the user's choice (true if confirmed, false if cancelled)
             resolve(result)
           } catch (error) {
@@ -207,12 +179,7 @@ export const Dialog: React.FC<DialogProps> = ({
         setTimeout(async () => {
           try {
             // Use the utility function to show the confirmation dialog
-            const result = await showDiscardChangesConfirmation({
-              title: props.confirmationTitle,
-              message: props.confirmationMessage,
-              buttonTitle: props.confirmationButtonTitle,
-              variant: props.confirmationVariant,
-            })
+            const result = await showDiscardChangesConfirmation()
 
             // Only close the dialog if the user confirmed
             if (result) {
