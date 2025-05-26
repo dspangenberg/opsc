@@ -4,7 +4,7 @@ import type { PageProps } from '@/Types'
 import { InvoiceDetailsSide } from '@/Pages/App/Invoice/InvoiceDetailsSide'
 import { InvoiceDetailsLayout } from '@/Pages/App/Invoice/InvoiceDetailsLayout'
 import { InvoicingTable, type LineCommandProps } from '@/Pages/App/Invoice/InvoicingTable'
-import { ConfirmationDialog } from '@/Pages/App/Invoice/ConfirmationDialog'
+import { AlertDialog } from '@/Components/twcui/alert-dialog'
 
 interface InvoiceDetailsProps extends PageProps {
   invoice: App.Data.InvoiceData
@@ -20,7 +20,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
     }
 
     if (props.command === 'delete') {
-      const promise = await ConfirmationDialog.call({
+      const promise = await AlertDialog.call({
         title: 'Rechnungsposition löschen',
         message: 'Möchtest Du die Rechnungsposition wirklich löschen?',
         buttonTitle: 'Position löschen'
@@ -50,7 +50,6 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
           <InvoiceDetailsSide invoice={invoice} />
         </div>
 
-        <ConfirmationDialog.Root />
       </InvoiceDetailsLayout>
     </>
   )

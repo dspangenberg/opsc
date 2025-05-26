@@ -10,11 +10,12 @@ import { cn } from "@/Lib/utils"
 
 const buttonVariants = cva(
   [
-    "inline-flex items-center justify-center whitespace-nowrap rounded-md text-base font-medium transition-colors",
+    "inline-flex items-center justify-center whitespace-nowrap rounded-md text-base font-medium transition-colors active:border-ring",
     /* Disabled */
     "data-[disabled]:pointer-events-none data-[disabled]:opacity-50 ",
     /* Focus Visible */
     'focus-visible:border-ring focus-visible:ring-ring/20 focus-visible:ring-[3px]',
+    'active:ring-[3px]',
     /* Resets */
     "focus-visible:outline-none",
   ],
@@ -22,11 +23,11 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow data-[hovered]:bg-primary/90 active:border-ring active:ring-ring/50 active:ring-[3px]",
+          "bg-primary text-primary-foreground shadow data-[hovered]:bg-primary/90 active:ring-ring/50 ",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm data-[hovered]:bg-destructive/90",
+          "bg-destructive text-destructive-foreground text-white shadow-sm data-[hovered]:bg-destructive/90 active:ring-destructive/50",
         outline:
-          "border border-input bg-background shadow-sm  data-[hovered]:bg-accent data-[hovered]:text-accent-foreground active:border-ring active:ring-ring/50 active:ring-[3px]",
+          "border border-input bg-background shadow-sm  data-[hovered]:bg-accent data-[hovered]:text-accent-foreground  active:ring-ring/50",
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm data-[hovered]:bg-secondary/80",
         ghost: "data-[hovered]:bg-accent data-[hovered]:text-accent-foreground",

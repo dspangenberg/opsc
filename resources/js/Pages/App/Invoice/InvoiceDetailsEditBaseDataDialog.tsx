@@ -1,18 +1,18 @@
-import type * as React from 'react'
-import { useState } from 'react'
+import * as React from 'react'
 
 import { Button, FormErrors } from '@dspangenberg/twcui'
 import { router } from '@inertiajs/react'
 import { Select } from '@/Components/twcui/select'
 import { Form, useForm } from '@/Components/twcui/form'
 import { Combobox } from '@/Components/twcui/combobox'
-
 import {
  Dialog
 } from '@/Components/twcui/dialog'
 import { createDateRangeChangeHandler, DatePicker, DateRangePicker } from '@/Components/twcui/date-picker'
 import { Checkbox } from '@/Components/jolly-ui/checkbox'
 import { FormGroup } from '@/Components/twcui/form-group'
+import { AlertDialog } from '@/Components/twcui/alert-dialog'
+import { useRef } from 'react'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -27,13 +27,6 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
   projects,
   taxes
 }) => {
-  const [isOpen, setIsOpen] = useState(true)
-
-  const handleClose = () => {
-    console.log('Close dialog', form.isDirty)
-    return !form.isDirty
-    //router.visit(route('app.invoice.details', { invoice: invoice.id }))
-  }
 
   const {
     form,
@@ -52,15 +45,46 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
     'service_period_begin',
     'service_period_end'
   )
+  const dialogCloseRef = useRef<{
+    (): Promise<boolean>;
+    showConfirmation?: () => Promise<boolean>;
+  } | null>(null);
+
+  // This function is called when the user clicks the Cancel/Close button in the footer
+  const handleClose = async () => {
+    if (dialogCloseRef.current) {
+      try {
+        if (form.isDirty) {
+          // If the form is dirty, show the confirmation dialog directly
+          const confirmed = await AlertDialog.call({
+            title: 'Änderungen verwerfen',
+            message: 'Möchtest Du die Änderungen verwerfen?',
+            buttonTitle: 'Verwerfen',
+            variant: "default"
+          });
+
+          if (confirmed) {
+            // If the user confirmed, close the dialog
+            await dialogCloseRef.current();
+          }
+          // If the user cancelled, do nothing (dialog stays open)
+        } else {
+          // If the form is not dirty, close the dialog without confirmation
+          await dialogCloseRef.current();
+        }
+      } catch (error) {
+        console.error("Error in handleClose:", error);
+      }
+    }
+  };
 
   return (
     <Dialog
-      isOpen={isOpen}
-      onOpenChange={handleClose}
-      onClose={handleClose}
+      isOpen={true}
       confirmClose={form.isDirty}
-      onConfirmClose={handleClose}
       title="Rechnungsstammdaten bearbeiten"
+      closeRef={dialogCloseRef}
+      description="Rechnungstammdaten wie Rechnungsnummer, Rechnungsdatum, Leistungsdatum, Rechnungsart, Projekt, Umsatzsteuer, etc. bearbeiten"
       footer={
       <>
         <Button variant="outline" onClick={handleClose}>
@@ -70,6 +94,8 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
       </>
       }
     >
+
+
 
           <Form
             form={form}

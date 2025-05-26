@@ -12,6 +12,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type * as React from 'react'
 import { ThemeContainerProvider } from '@/Components/theme-container-provider'
 
+
 export function AppProvider(props: React.PropsWithChildren) {
   const queryClient = new QueryClient()
 

@@ -37,8 +37,7 @@ import { PdfViewer } from '@/Components/PdfViewer'
 import print from 'print-js'
 import { useFileDownload } from '@/Hooks/useFileDownload'
 import { router } from '@inertiajs/react'
-import { InvoiceDetailsReleaseConfirm } from '@/Pages/App/Invoice/InvoiceDetailsReleaseConfirm'
-import { ConfirmationDialog } from '@/Pages/App/Invoice/ConfirmationDialog'
+import { AlertDialog } from '@/Components/twcui/alert-dialog'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -82,8 +81,11 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
   }
 
   const handleRelease = useCallback(async () => {
-    const promise = await InvoiceDetailsReleaseConfirm.call({
-      invoice
+    const promise = await AlertDialog.call({
+      title: 'Rechnung abschließen',
+      message: 'Möchtest Du die Rechnung wirklich abschließen?',
+      buttonTitle: 'Rechnung abschließen',
+      variant: "default"
     })
 
     if (promise) {
@@ -92,7 +94,7 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
   }, [invoice])
 
   const handleDelete = async () => {
-    const promise = await ConfirmationDialog.call({
+    const promise = await AlertDialog.call({
       title: 'Rechnung löschen',
       message: 'Möchtest Du die Rechnung wirklich löschen?',
       buttonTitle: 'Rechnung löschen'
@@ -283,8 +285,6 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
         document={route('app.invoice.pdf', { id: invoice.id })}
       />
       {children}
-
-      <InvoiceDetailsReleaseConfirm.Root />
     </PageContainer>
   )
 }
