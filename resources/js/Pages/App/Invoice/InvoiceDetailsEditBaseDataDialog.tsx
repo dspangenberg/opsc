@@ -9,7 +9,7 @@ import { Dialog } from '@/Components/twcui/dialog'
 import { createDateRangeChangeHandler, DatePicker, DateRangePicker } from '@/Components/twcui/date-picker'
 import { Checkbox } from '@/Components/jolly-ui/checkbox'
 import { FormGroup } from '@/Components/twcui/form-group'
-import { showDiscardChangesConfirmation } from '@/Lib/dialog-utils'
+import { showDiscardChangesConfirmation } from '@/Components/twcui/dialog'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -52,7 +52,7 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
 
   // This function is called when the user clicks the Cancel/Close button in the footer
   const handleClose = async () => {
-    if(!dialogCloseRef?.current) return
+    if (!dialogCloseRef?.current) return
 
     if (form.isDirty && !isClosingAfterConfirmation) {
       // Show the confirmation dialog
@@ -70,12 +70,13 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
       await dialogCloseRef.current()
     }
   }
-  
+
   return (
     <Dialog
       isOpen={true}
       confirmClose={form.isDirty && !isClosingAfterConfirmation}
       title="Rechnungsstammdaten bearbeiten"
+      confirmationButtonTitle="Stammdaten verwerfen"
       closeRef={dialogCloseRef}
       description="Rechnungstammdaten wie Rechnungsnummer, Rechnungsdatum, Leistungsdatum, Rechnungsart, Projekt, Umsatzsteuer, etc. bearbeiten"
       footer={
@@ -87,8 +88,6 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
         </>
       }
     >
-
-
       <Form
         form={form}
       >

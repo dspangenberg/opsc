@@ -9,19 +9,8 @@ export interface MutableRef<T> {
   current: T
 }
 
-/**
- * Shows a confirmation dialog asking if the user wants to discard changes.
- *
- * @returns A Promise that resolves to true if the user confirmed, false otherwise
- */
-export async function showDiscardChangesConfirmation (): Promise<boolean> {
-  return AlertDialog.call({
-    title: 'Änderungen verwerfen',
-    message: 'Möchtest Du die Änderungen verwerfen?',
-    buttonTitle: 'Verwerfen',
-    variant: 'default'
-  })
-}
+// The showDiscardChangesConfirmation function has been moved to dialog.tsx
+// Import it from there instead of from this file
 
 /**
  * Type definition for the closeRef used in dialog components.
