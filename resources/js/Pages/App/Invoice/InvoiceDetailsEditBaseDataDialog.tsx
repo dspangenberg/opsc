@@ -13,6 +13,7 @@ import { Checkbox } from '@/Components/jolly-ui/checkbox'
 import { FormGroup } from '@/Components/twcui/form-group'
 import { AlertDialog } from '@/Components/twcui/alert-dialog'
 import { useRef } from 'react'
+import { showDiscardChangesConfirmation } from '@/Lib/dialog-utils'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -56,12 +57,7 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
       try {
         if (form.isDirty) {
           // If the form is dirty, show the confirmation dialog directly
-          const confirmed = await AlertDialog.call({
-            title: 'Änderungen verwerfen',
-            message: 'Möchtest Du die Änderungen verwerfen?',
-            buttonTitle: 'Verwerfen',
-            variant: "default"
-          });
+          const confirmed = await showDiscardChangesConfirmation();
 
           if (confirmed) {
             // If the user confirmed, close the dialog

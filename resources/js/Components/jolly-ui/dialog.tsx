@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Cross2Icon } from "@radix-ui/react-icons"
 import { cva, type VariantProps } from "class-variance-authority"
+import { DialogCloseRef, MutableRef, setupDialogCloseRef } from "@/Lib/dialog-utils"
 import {
   Button as AriaButton,
   Dialog as AriaDialog,
@@ -74,22 +75,27 @@ interface DialogContentProps
   onCloseClick?: () => void
   onOpenChange?: (open: boolean) => void
   /**
-   * Ref object to expose the close method to parent components.
-   * Parent components can use this ref to programmatically close the dialog.
+   * Ref object to expose methods to parent components.
+   * Parent components can use this ref to programmatically interact with the dialog.
    *
    * @example
    * ```tsx
-   * const closeRef = useRef<() => void>(null);
+   * const closeRef = useRef<DialogCloseRef>(null);
    *
    * // Later in your component
-   * <button onClick={() => closeRef.current?.()}>Close Dialog</button>
+   * <button onClick={async () => {
+   *   const closed = await closeRef.current?.();
+   *   if (closed) {
+   *     // Dialog was closed
+   *   }
+   * }}>Close Dialog</button>
    *
    * <DialogContent closeRef={closeRef}>
    *   Dialog content
    * </DialogContent>
    * ```
    */
-  closeRef?: React.MutableRefObject<(() => void) | null>
+  closeRef?: MutableRef<DialogCloseRef>
 }
 
 const DialogContent = ({
@@ -108,27 +114,33 @@ const DialogContent = ({
   // Create a ref to store the close function
   const closeFunction = React.useRef<(() => void) | null>(null);
 
-  // Use useEffect to set closeRef.current
-  React.useEffect(() => {
-    if (closeRef && closeRef.current === null && closeFunction.current) {
-      // Make the closeRef.current function async to ensure it properly waits for any confirmation dialogs
-      closeRef.current = async () => {
-        // Add a small delay before closing the dialog
-        // This ensures that any confirmation dialogs have time to be shown
-        await new Promise(resolve => setTimeout(resolve, 50));
-        // Call the close function if available
-        if (closeFunction.current) {
-          // The close function might trigger a confirmation dialog in the parent component
-          // By awaiting it, we ensure the dialog doesn't close until the confirmation is handled
-          await closeFunction.current();
+  // Create a close function that will be called when the dialog should be closed
+  const handleClose = React.useCallback(async () => {
+    // Return a promise that resolves when the dialog should be closed
+    return new Promise<boolean>((resolve) => {
+      // Add a small delay before closing the dialog
+      // This ensures that any confirmation dialogs have time to be shown
+      setTimeout(async () => {
+        try {
+          // Call the close function if available
+          if (closeFunction.current) {
+            await closeFunction.current();
+          }
+          // Also call onOpenChange to ensure the dialog state is updated
+          if (onOpenChange) {
+            onOpenChange(false);
+          }
+          resolve(true); // Resolve the promise with true to indicate the dialog was closed
+        } catch (error) {
+          console.error("Error in handleClose:", error);
+          resolve(false); // Resolve the promise with false in case of error
         }
-        // Also call onOpenChange to ensure the dialog state is updated
-        if (onOpenChange) {
-          onOpenChange(false);
-        }
-      };
-    }
-  }, [closeRef, onOpenChange, closeFunction]);
+      }, 50);
+    });
+  }, [closeFunction, onOpenChange]);
+
+  // Use the shared utility function to set up the closeRef
+  setupDialogCloseRef(closeRef, handleClose);
 
   return (
     <AriaModal
