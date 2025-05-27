@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Cross2Icon } from "@radix-ui/react-icons"
 import { cva, type VariantProps } from "class-variance-authority"
-import { DialogCloseRef, MutableRef, setupDialogCloseRef } from "@/Lib/dialog-utils"
+import { type DialogCloseRef, type MutableRef, setupDialogCloseRef } from "@/Lib/dialog-utils"
 import {
   Button as AriaButton,
   Dialog as AriaDialog,

@@ -22,6 +22,8 @@ use Stancl\Tenancy\Database\TenantCollection;
 use Torann\Hashids\Facade\Hashids;
 
 /**
+ * 
+ *
  * @property string $id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -48,7 +50,6 @@ use Torann\Hashids\Facade\Hashids;
  * @property-read string $full_name
  * @property-read string $initials
  * @property-read string $reverse_full_name
- *
  * @method static TenantCollection<int, static> all($columns = ['*'])
  * @method static Builder<static>|Tenant findSimilarSlugs(string $attribute, array $config, string $slug)
  * @method static TenantCollection<int, static> get($columns = ['*'])
@@ -77,18 +78,12 @@ use Torann\Hashids\Facade\Hashids;
  * @method static Builder<static>|Tenant whereWebsite($value)
  * @method static Builder<static>|Tenant whereZip($value)
  * @method static Builder<static>|Tenant withUniqueSlugConstraints(Model $model, string $attribute, array $config, string $slug)
- *
  * @mixin IdeHelperTenant
- *
  * @property string|null $prefix
  * @property-read string $formated_prefix
- *
  * @method static Builder<static>|Tenant wherePrefix($value)
- *
  * @property string $organisation
- *
  * @method static Builder<static>|Tenant whereOrganisation($value)
- *
  * @mixin Eloquent
  */
 class Tenant extends BaseTenant implements TenantWithDatabase

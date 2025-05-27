@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
+ * 
+ *
  * @property int $id
  * @property int $invoice_id
  * @property float|null $quantity
@@ -18,7 +20,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int|null $type_id
- *
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLine newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLine newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLine query()
@@ -35,19 +36,14 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLine whereTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLine whereUnit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLine whereUpdatedAt($value)
- *
  * @property int $legacy_id
- *
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceLine whereLegacyId($value)
- *
  * @property string $print_name
  * @property string $display_name
  * @property string $key
- *
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceType whereDisplayName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceType whereKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceType wherePrintName($value)
- *
  * @mixin \Eloquent
  */
 class InvoiceType extends Model

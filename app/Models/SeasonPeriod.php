@@ -11,13 +11,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
+ * 
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonPeriod newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonPeriod newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonPeriod onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonPeriod query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonPeriod withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonPeriod withoutTrashed()
- *
  * @mixin \Eloquent
  */
 class SeasonPeriod extends Model

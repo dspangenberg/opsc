@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
+ * 
+ *
  * @property int $id
  * @property string $name
  * @property string $correspondence_salutation_male
@@ -15,7 +17,6 @@ use Illuminate\Support\Carbon;
  * @property string $correspondence_salutation_other
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @method static Builder|Title newModelQuery()
  * @method static Builder|Title newQuery()
  * @method static Builder|Title query()
@@ -26,7 +27,6 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Title whereId($value)
  * @method static Builder|Title whereName($value)
  * @method static Builder|Title whereUpdatedAt($value)
- *
  * @mixin Eloquent
  */
 class Title extends Model

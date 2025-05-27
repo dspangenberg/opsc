@@ -4,11 +4,6 @@ import { Button } from '@/Components/jolly-ui/button'
 
 import { cn } from '@/Lib/utils'
 import {
-  type DialogCloseRef,
-  type MutableRef,
-  setupDialogCloseRef
-} from '@/Lib/dialog-utils'
-import {
   DialogBody as JollyDialogBody,
   DialogContent as JollyDialogContent,
   DialogDescription as JollyDialogDescription,
@@ -23,36 +18,23 @@ import { composeRenderProps } from 'react-aria-components'
 
 type ReactNodeOrString = ReactNode | string
 
-
-export function showDiscardChangesConfirmation(): Promise<boolean> {
-  return AlertDialog.call({
-    title: 'Änderungen verwerfen',
-    message: 'Möchtest Du die Änderungen verwerfen?',
-    buttonTitle: 'Verwerfen',
-    variant: 'default'
-  })
+export interface DialogRenderProps {
+  close: () => void;
 }
 
-/**
- * Props for the Dialog component.
- *
- * To enable confirmation before closing the dialog, set `confirmClose` to true and provide an `onConfirmClose` function.
- * The `onConfirmClose` function should return a boolean:
- * - Return true to allow the dialog to close
- * - Return false to prevent the dialog from closing
- *
- * If `confirmClose` is true but no `onConfirmClose` function is provided, the dialog will not close when the user
- * attempts to close it by clicking outside or pressing Escape.
- */
 interface DialogProps {
-  children: React.ReactNode
-  footer: React.ReactNode
+  children: React.ReactNode | ((renderProps: DialogRenderProps) => React.ReactNode)
+  footer: React.ReactNode | ((renderProps: DialogRenderProps) => React.ReactNode)
   isOpen: boolean
   role?: 'alertdialog' | 'dialog',
   showDescription?: boolean
   title?: string
   header?: ReactNodeOrString
   confirmClose?: boolean
+  confirmationTitle?: string
+  confirmationMessage?: string
+  confirmationButtonTitle?: string
+  confirmationVariant?: 'default' | 'destructive'
   description?: string | ReactNodeOrString
   isDismissible?: boolean
   tabs?: React.ReactNode
@@ -66,44 +48,7 @@ interface DialogProps {
   onOpenChange?: (open: boolean) => void
   onClose?: () => void
   onInteractOutside?: (event: Event) => void
-  /**
-   * Ref object to expose methods to parent components.
-   * Parent components can use this ref to programmatically interact with the dialog.
-   *
-   * The ref exposes the following methods:
-   * - `closeRef.current()`: Attempts to close the dialog, showing a confirmation dialog if `confirmClose` is true.
-   *   Returns a Promise that resolves to `true` if the dialog was closed, or `false` if the user cancelled.
-   * - `closeRef.current.showConfirmation()`: Shows the confirmation dialog without closing the dialog.
-   *   Returns a Promise that resolves to `true` if the user confirmed, or `false` if the user cancelled.
-   *   This is useful when you want to show the confirmation dialog but handle the closing logic yourself.
-   *
-   * @example
-   * ```tsx
-   * const dialogRef = useRef<DialogCloseRef>(null);
-   *
-   * // Later in your component
-   * <button onClick={async () => {
-   *   // Show confirmation dialog without closing
-   *   const confirmed = await dialogRef.current?.showConfirmation?.();
-   *   if (confirmed) {
-   *     // Handle confirmation (e.g., save data, navigate away, etc.)
-   *   }
-   * }}>Show Confirmation</button>
-   *
-   * <button onClick={async () => {
-   *   // Close dialog with confirmation
-   *   const closed = await dialogRef.current?.();
-   *   if (closed) {
-   *     // Dialog was closed
-   *   }
-   * }}>Close Dialog</button>
-   *
-   * <Dialog closeRef={dialogRef}>
-   *   Dialog content
-   * </Dialog>
-   * ```
-   */
-  closeRef?: MutableRef<DialogCloseRef>
+  onClosed?: () => void
 }
 
 export const Dialog: React.FC<DialogProps> = ({
@@ -113,6 +58,10 @@ export const Dialog: React.FC<DialogProps> = ({
   confirmClose = false,
   showDescription = false,
   isDismissible = false,
+  confirmationTitle = 'Änderungen verwerfen',
+  confirmationVariant = 'default',
+  confirmationButtonTitle='Verwerfen',
+  confirmationMessage = 'Möchtest Du die Änderungen verwerfen?',
   title,
   role = 'dialog',
   description,
@@ -126,7 +75,6 @@ export const Dialog: React.FC<DialogProps> = ({
   hideHeader = false,
   backgroundClass = 'sidebar',
   onOpenChange,
-  closeRef,
   ...props
 }) => {
 
@@ -138,37 +86,22 @@ export const Dialog: React.FC<DialogProps> = ({
 
   const bodyClass = bodyPadding ? 'px-6' : ''
 
+  function showDiscardChangesConfirmation (): Promise<boolean> {
+    return AlertDialog.call({
+      title: confirmationTitle,
+      message: confirmationMessage,
+      buttonTitle: confirmationButtonTitle,
+      variant: confirmationVariant
+    })
+  }
+
+
   const widthClass = {
     default: 'max-w-xl',
     '4xl': 'max-w-4xl'
   }[width]
 
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(isOpen)
-  // Use the closeRef passed as a prop instead of creating a local one
-
-  // Function to show the confirmation dialog without closing the dialog
-  const showConfirmation = async () => {
-    // Return a promise that resolves with the user's confirmation choice
-    return new Promise<boolean>((resolve) => {
-      if (confirmClose) {
-        // Show the confirmation dialog with a small delay to ensure it's visible
-        setTimeout(async () => {
-          try {
-            // Use the utility function to show the confirmation dialog
-            const result = await showDiscardChangesConfirmation()
-            // Resolve with the user's choice (true if confirmed, false if cancelled)
-            resolve(result)
-          } catch (error) {
-            console.error('Error in confirmation dialog:', error)
-            resolve(false) // Resolve with false in case of error
-          }
-        }, 100)
-      } else {
-        // If confirmClose is false, resolve with true immediately (no confirmation needed)
-        resolve(true)
-      }
-    })
-  }
 
   const handleClose = async () => {
     // Return a promise that resolves when the dialog should be closed
@@ -184,10 +117,9 @@ export const Dialog: React.FC<DialogProps> = ({
             // Only close the dialog if the user confirmed
             if (result) {
               setIsDialogOpen(false)
-              onOpenChange?.(false)
-              onClose?.()
               resolve(true) // Resolve the promise with true to indicate the dialog was closed
             } else {
+              setIsDialogOpen(true)
               resolve(false) // Resolve the promise with false to indicate the dialog was not closed
             }
           } catch (error) {
@@ -197,7 +129,6 @@ export const Dialog: React.FC<DialogProps> = ({
         }, 100) // Small delay to ensure the main dialog doesn't close immediately
       } else {
         setIsDialogOpen(false)
-        onOpenChange?.(false)
         onClose?.()
         resolve(true) // Resolve the promise with true to indicate the dialog was closed
       }
@@ -207,14 +138,16 @@ export const Dialog: React.FC<DialogProps> = ({
   const handleOpenChange = async (open: boolean) => {
     if (!open) {
       const shouldClose = await handleClose()
+      if (shouldClose) {
+        props.onClosed?.()
+      } else {
+        setIsDialogOpen(true)
+      }
     } else {
       setIsDialogOpen(true)
       onOpenChange?.(true)
     }
   }
-
-  // Use the shared utility function to set up the closeRef
-  setupDialogCloseRef(closeRef, handleClose, showConfirmation)
 
   return (
     <JollyDialogOverlay
@@ -229,19 +162,23 @@ export const Dialog: React.FC<DialogProps> = ({
         onOpenChange={handleOpenChange}
         role={role}
         title={title}
-        closeRef={closeRef}  // Hier weitergeben
         bgColor={bgClass}
       >
-        {composeRenderProps(children, (children, renderProps) => {
-          // closeRef is now handled in useEffect
+        {composeRenderProps(children, (children, providedRenderProps) => {
+          // Create our own renderProps with a close function that respects the confirmation result
+          const renderProps: DialogRenderProps = {
+            close: () => {
+              // Use handleClose to show confirmation if needed
+              void handleClose()
+              // The dialog will be closed by handleClose if confirmation is successful
+            }
+          }
+
           return (
             <>
-
               {!hideHeader && <JollyDialogHeader className={cn(bgClass, ' my-0 gap-y-0')}>
-
                 <JollyDialogTitle>{title}</JollyDialogTitle>
                 <AlertDialog.Root />
-
 
                 <JollyDialogDescription
                   className={cn('', !showDescription ? 'sr-only' : '')}
@@ -250,9 +187,8 @@ export const Dialog: React.FC<DialogProps> = ({
                 </JollyDialogDescription>
               </JollyDialogHeader>
               }
-              <Button variant="ghost" size="icon-xs" className="absolute right-2 top-2" onClick={async () => {
-                await handleClose()
-              }}
+              <Button variant="ghost" size="icon-xs" className="absolute right-2 top-2"
+                      onClick={() => renderProps.close()}
               >
                 <Cross2Icon className="size-4" />
                 <span className="sr-only">Close</span>
@@ -263,7 +199,7 @@ export const Dialog: React.FC<DialogProps> = ({
               {!!footer && <JollyDialogFooter
                 className={cn('px-6 py-3 flex items-center justify-end space-x-2', footerClassName, bgClass)}
               >
-                {footer}
+                {typeof footer === 'function' ? footer(renderProps) : footer}
               </JollyDialogFooter>}
             </>
           )

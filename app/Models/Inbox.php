@@ -11,13 +11,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
+ * 
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Inbox newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Inbox newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Inbox onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Inbox query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Inbox withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Inbox withoutTrashed()
- *
  * @mixin \Eloquent
  */
 class Inbox extends Model

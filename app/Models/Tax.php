@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
+ * 
+ *
  * @property int $id
  * @property string $name
  * @property string $invoice_text
@@ -17,7 +19,6 @@ use Illuminate\Support\Carbon;
  * @property int $is_default
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @method static Builder|Tax newModelQuery()
  * @method static Builder|Tax newQuery()
  * @method static Builder|Tax query()
@@ -29,27 +30,20 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Tax whereNeedsVatId($value)
  * @method static Builder|Tax whereUpdatedAt($value)
  * @method static Builder|Tax whereValue($value)
- *
  * @property int $account_input_tax
  * @property int $account_vat
  * @property int $tax_code_number
- *
  * @method static Builder|Tax whereAccountInputTax($value)
  * @method static Builder|Tax whereAccountVat($value)
  * @method static Builder|Tax whereTaxCodeNumber($value)
- *
  * @property int $is_bidirectional
- *
  * @method static Builder|Tax whereIsBidirectional($value)
- *
  * @property int $legacy_id
- *
  * @method static Builder|Tax whereLegacyId($value)
- *
  * @property int $is_used_in_invoicing
- *
  * @method static Builder|Tax whereIsUsedInInvoicing($value)
- *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TaxRate> $rates
+ * @property-read int|null $rates_count
  * @mixin Eloquent
  */
 class Tax extends Model

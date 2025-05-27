@@ -1,5 +1,4 @@
 import type * as React from 'react'
-import { useRef, useState } from 'react'
 
 import { Button, FormErrors } from '@dspangenberg/twcui'
 import { Select } from '@/Components/twcui/select'
@@ -9,7 +8,7 @@ import { Dialog } from '@/Components/twcui/dialog'
 import { createDateRangeChangeHandler, DatePicker, DateRangePicker } from '@/Components/twcui/date-picker'
 import { Checkbox } from '@/Components/jolly-ui/checkbox'
 import { FormGroup } from '@/Components/twcui/form-group'
-import { showDiscardChangesConfirmation } from '@/Components/twcui/dialog'
+import { router } from '@inertiajs/react'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -42,52 +41,34 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
     'service_period_begin',
     'service_period_end'
   )
-  // State to track whether we're in the process of closing the dialog after a confirmation
-  const [isClosingAfterConfirmation, setIsClosingAfterConfirmation] = useState(false)
+  // No need for isClosingAfterConfirmation state anymore since we're using renderProps.close() directly
 
-  const dialogCloseRef = useRef<{
-    (): Promise<boolean>;
-    showConfirmation?: () => Promise<boolean>;
-  } | null>(null)
-
-  // This function is called when the user clicks the Cancel/Close button in the footer
-  const handleClose = async () => {
-    if (!dialogCloseRef?.current) return
-
-    if (form.isDirty && !isClosingAfterConfirmation) {
-      // Show the confirmation dialog
-      const confirmed = await showDiscardChangesConfirmation()
-
-      if (confirmed) {
-        // Set the flag to indicate we're closing after confirmation
-        setIsClosingAfterConfirmation(true)
-        // Close the dialog directly without showing another confirmation
-        await dialogCloseRef.current()
-        // Reset the flag after closing
-        setIsClosingAfterConfirmation(false)
-      }
-    } else {
-      await dialogCloseRef.current()
-    }
+  const handleOnClosed = () => {
+    router.get(route('app.invoice.details', { invoice: invoice.id }))
   }
 
   return (
     <Dialog
       isOpen={true}
-      confirmClose={form.isDirty && !isClosingAfterConfirmation}
+      confirmClose={form.isDirty}
       title="Rechnungsstammdaten bearbeiten"
-      confirmationButtonTitle="Stammdaten verwerfen"
-      closeRef={dialogCloseRef}
+      confirmationVariant='destructive'
+      onClosed={handleOnClosed}
       description="Rechnungstammdaten wie Rechnungsnummer, Rechnungsdatum, Leistungsdatum, Rechnungsart, Projekt, Umsatzsteuer, etc. bearbeiten"
-      footer={
+      footer={(renderProps) => (
         <>
-          <Button id="dialog-cancel-button" variant="outline" onClick={handleClose}>
+          <Button
+            id="dialog-cancel-button"
+            variant="outline"
+            onClick={() => renderProps.close()}
+          >
             {form.isDirty ? 'Abbrechen' : 'Schließen'}
           </Button>
           <Button form={form.id} type="submit">Speichern</Button>
         </>
-      }
+      )}
     >
+
       <Form
         form={form}
       >

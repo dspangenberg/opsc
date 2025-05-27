@@ -8,13 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
+ * 
+ *
  * @property int $id
  * @property string $name
  * @property string $prefix
  * @property string $model
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @method static Builder|NumberRange newModelQuery()
  * @method static Builder|NumberRange newQuery()
  * @method static Builder|NumberRange query()
@@ -24,7 +25,6 @@ use Illuminate\Support\Carbon;
  * @method static Builder|NumberRange whereName($value)
  * @method static Builder|NumberRange wherePrefix($value)
  * @method static Builder|NumberRange whereUpdatedAt($value)
- *
  * @mixin Eloquent
  */
 class NumberRange extends Model

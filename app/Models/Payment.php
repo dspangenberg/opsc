@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
+ * 
+ *
  * @property int $id
  * @property string $payable_type
  * @property int $payable_id
@@ -24,7 +26,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @method static Builder|Payment newModelQuery()
  * @method static Builder|Payment newQuery()
  * @method static Builder|Payment onlyTrashed()
@@ -44,17 +45,12 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Payment whereUpdatedAt($value)
  * @method static Builder|Payment withTrashed()
  * @method static Builder|Payment withoutTrashed()
- *
  * @property-read Model|\Eloquent $payable
  * @property-read \App\Models\Transaction|null $transaction
  * @property int $is_currency_difference
- *
  * @method static Builder|Payment whereIsCurrencyDifference($value)
- *
  * @property int $is_ignored
- *
  * @method static Builder|Payment whereIsIgnored($value)
- *
  * @mixin Eloquent
  */
 class Payment extends Model

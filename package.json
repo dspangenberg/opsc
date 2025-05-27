@@ -49,7 +49,7 @@
     "@inertiajs/core": "2.0.0",
     "@inertiaui/modal-react": "^0.19.5",
     "@intentui/icons": "^1.11.0",
-    "@internationalized/date": "^3.8.0",
+    "@internationalized/date": "^3.8.1",
     "@jswork/next-nl2br": "^1.0.2",
     "@laragear/webpass": "2",
     "@maskito/core": "^3.7.2",

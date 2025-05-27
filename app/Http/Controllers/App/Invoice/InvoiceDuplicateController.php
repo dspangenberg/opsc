@@ -22,6 +22,7 @@ class InvoiceDuplicateController extends Controller
         $duplicatedInvoice->is_draft = 1;
         $duplicatedInvoice->invoice_number = null;
         $duplicatedInvoice->number_range_document_numbers_id = null;
+        $duplicatedInvoice->sent_at = null;
         $duplicatedInvoice->save();
 
         $invoice->lines()->each(function ($line) use ($duplicatedInvoice) {

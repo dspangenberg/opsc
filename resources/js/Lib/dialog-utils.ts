@@ -42,9 +42,11 @@ export function setupDialogCloseRef (
       }
 
       // Add the showConfirmation method if provided
+      /*
       if (showConfirmation) {
         closeFn.showConfirmation = showConfirmation
       }
+       */
 
       // Set closeRef.current to the closeFn
       closeRef.current = closeFn

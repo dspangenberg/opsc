@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
+ * 
+ *
  * @property int $id
  * @property int $contact_id
  * @property int $email_category_id
@@ -17,7 +19,6 @@ use Illuminate\Support\Carbon;
  * @property string $email
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @method static Builder|ContactMail newModelQuery()
  * @method static Builder|ContactMail newQuery()
  * @method static Builder|ContactMail query()
@@ -28,9 +29,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|ContactMail whereId($value)
  * @method static Builder|ContactMail wherePos($value)
  * @method static Builder|ContactMail whereUpdatedAt($value)
- *
  * @property-read \App\Models\EmailCategory|null $category
- *
  * @mixin Eloquent
  */
 class ContactMail extends Model

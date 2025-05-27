@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
+ * 
+ *
  * @property int $id
  * @property string $name
  * @property string $iso_code
@@ -15,7 +17,6 @@ use Illuminate\Support\Carbon;
  * @property string $country_code
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @method static Builder|Country newModelQuery()
  * @method static Builder|Country newQuery()
  * @method static Builder|Country query()
@@ -26,7 +27,6 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Country whereName($value)
  * @method static Builder|Country whereUpdatedAt($value)
  * @method static Builder|Country whereVehicleCode($value)
- *
  * @mixin Eloquent
  */
 class Country extends Model

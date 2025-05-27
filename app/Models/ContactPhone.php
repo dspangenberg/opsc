@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
+ * 
+ *
  * @property int $id
  * @property int $contact_id
  * @property int $phone_category_id
@@ -15,7 +17,6 @@ use Illuminate\Support\Carbon;
  * @property string $phone
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @method static Builder|ContactPhone newModelQuery()
  * @method static Builder|ContactPhone newQuery()
  * @method static Builder|ContactPhone query()
@@ -26,7 +27,6 @@ use Illuminate\Support\Carbon;
  * @method static Builder|ContactPhone wherePhoneCategoryId($value)
  * @method static Builder|ContactPhone wherePos($value)
  * @method static Builder|ContactPhone whereUpdatedAt($value)
- *
  * @mixin Eloquent
  */
 class ContactPhone extends Model

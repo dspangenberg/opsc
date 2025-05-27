@@ -10,10 +10,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
+ * 
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Email newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Email newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Email query()
- *
  * @mixin \Eloquent
  */
 class Email extends Model

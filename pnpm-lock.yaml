@@ -39,8 +39,8 @@ importers:
         specifier: ^1.11.0
         version: 1.11.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@internationalized/date':
-        specifier: ^3.8.0
-        version: 3.8.0
+        specifier: ^3.8.1
+        version: 3.8.1
       '@jswork/next-nl2br':
         specifier: ^1.0.2
         version: 1.0.2
@@ -965,9 +965,6 @@ packages:
     peerDependencies:
       react: ^19.1.0
       react-dom: ^19.1.0
-
-  '@internationalized/date@3.8.0':
-    resolution: {integrity: sha512-J51AJ0fEL68hE4CwGPa6E0PO6JDaVLd8aln48xFCSy7CZkZc96dGEGmLs2OEEbBxcsVZtfrqkXJwI2/MSG8yKw==}
 
   '@internationalized/date@3.8.1':
     resolution: {integrity: sha512-PgVE6B6eIZtzf9Gu5HvJxRK3ufUFz9DhspELuhW/N0GuMGMTLvPQNRkHP2hTuP9lblOk+f+1xi96sPiPXANXAA==}
@@ -5966,10 +5963,6 @@ snapshots:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
 
-  '@internationalized/date@3.8.0':
-    dependencies:
-      '@swc/helpers': 0.5.17
-
   '@internationalized/date@3.8.1':
     dependencies:
       '@swc/helpers': 0.5.17
@@ -7089,7 +7082,7 @@ snapshots:
       '@react-types/autocomplete': 3.0.0-alpha.31(react@19.0.0)
       '@react-types/button': 3.12.1(react@19.0.0)
       '@react-types/shared': 3.29.1(react@19.0.0)
-      '@swc/helpers': 0.5.13
+      '@swc/helpers': 0.5.17
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
 
@@ -7153,7 +7146,7 @@ snapshots:
       '@react-aria/ssr': 3.9.8(react@19.0.0)
       '@react-aria/utils': 3.29.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@react-types/shared': 3.29.1(react@19.0.0)
-      '@swc/helpers': 0.5.13
+      '@swc/helpers': 0.5.17
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       use-sync-external-store: 1.4.0(react@19.0.0)
@@ -7321,7 +7314,7 @@ snapshots:
 
   '@react-aria/i18n@3.12.8(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@internationalized/date': 3.8.0
+      '@internationalized/date': 3.8.1
       '@internationalized/message': 3.1.7
       '@internationalized/number': 3.6.1
       '@internationalized/string': 3.2.6
@@ -7682,7 +7675,7 @@ snapshots:
       '@react-aria/i18n': 3.12.9(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@react-aria/utils': 3.29.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@react-types/shared': 3.29.1(react@19.0.0)
-      '@swc/helpers': 0.5.13
+      '@swc/helpers': 0.5.17
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
 
@@ -7748,7 +7741,7 @@ snapshots:
       '@react-aria/utils': 3.29.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@react-stately/virtualizer': 4.4.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@react-types/shared': 3.29.1(react@19.0.0)
-      '@swc/helpers': 0.5.13
+      '@swc/helpers': 0.5.17
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
 
@@ -7898,7 +7891,7 @@ snapshots:
       '@react-types/grid': 3.3.2(react@19.0.0)
       '@react-types/shared': 3.29.1(react@19.0.0)
       '@react-types/table': 3.13.0(react@19.0.0)
-      '@swc/helpers': 0.5.13
+      '@swc/helpers': 0.5.17
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
 
@@ -8042,7 +8035,7 @@ snapshots:
     dependencies:
       '@react-aria/utils': 3.29.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@react-types/shared': 3.29.1(react@19.0.0)
-      '@swc/helpers': 0.5.13
+      '@swc/helpers': 0.5.17
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
 

@@ -14,17 +14,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
+ * 
+ *
  * @method static Builder<static>|Calendar newModelQuery()
  * @method static Builder<static>|Calendar newQuery()
  * @method static Builder<static>|Calendar onlyTrashed()
  * @method static Builder<static>|Calendar query()
  * @method static Builder<static>|Calendar withTrashed()
  * @method static Builder<static>|Calendar withoutTrashed()
- *
  * @property bool|mixed $is_default
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CalendarEvent> $events
  * @property-read int|null $events_count
- *
  * @mixin Eloquent
  */
 class Calendar extends Model
