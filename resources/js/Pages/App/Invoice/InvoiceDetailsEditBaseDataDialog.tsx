@@ -1,12 +1,13 @@
 import type * as React from 'react'
 
-import { Button, FormErrors } from '@dspangenberg/twcui'
+import { Button } from "@/Components/twcui/button"
 import { Select } from '@/Components/twcui/select'
 import { Form, useForm } from '@/Components/twcui/form'
 import { Combobox } from '@/Components/twcui/combobox'
 import { Dialog } from '@/Components/twcui/dialog'
 import { createDateRangeChangeHandler, DatePicker, DateRangePicker } from '@/Components/twcui/date-picker'
 import { Checkbox } from '@/Components/jolly-ui/checkbox'
+import { RadioGroup } from '@/Components/twcui/radio-group'
 import { FormGroup } from '@/Components/twcui/form-group'
 import { router } from '@inertiajs/react'
 
@@ -15,11 +16,13 @@ interface Props {
   invoice_types: App.Data.InvoiceTypeData[]
   projects: App.Data.ProjectData[]
   taxes: App.Data.TaxData[]
+  payment_deadlines: App.Data.PaymentDeadlineData[]
 }
 
 export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
   invoice,
   invoice_types,
+  payment_deadlines,
   projects,
   taxes
 }) => {
@@ -72,16 +75,26 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
       <Form
         form={form}
       >
-        <FormErrors errors={errors} />
+        <FormGroup>
+          <div className="col-span-24">
+            <RadioGroup
+              autoFocus
+              label='Rechnungsart'
+              itemName={'display_name'}
+              items={invoice_types}
+              {...form.register('type_id')}
+            />
+          </div>
+        </FormGroup>
         <FormGroup>
           <div className="col-span-8">
             <DatePicker
-              autoFocus
               label="Rechnungsdatum"
               {...form.register('issued_on')}
             />
           </div>
           <div className="col-span-4" />
+
           <div className="col-span-12">
             <DateRangePicker
               label="Leistungsdatum"
@@ -94,14 +107,14 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
               hasError={!!errors.service_period_begin || !!errors.service_period_end}
             />
           </div>
+        </FormGroup>
+        <FormGroup>
 
           <div className="col-span-12">
-            <Select<App.Data.InvoiceTypeData>
-              {...form.register('type_id')}
-              label="Rechnungsart"
-              items={invoice_types}
-              itemName="display_name"
-              itemValue="id"
+            <Select<App.Data.PaymentDeadlineData>
+              {...form.register('payment_deadline_id')}
+              label="Zahlungsziel"
+              items={payment_deadlines}
             />
           </div>
           <div className="col-span-12">

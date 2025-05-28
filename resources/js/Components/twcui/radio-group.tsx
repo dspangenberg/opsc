@@ -60,7 +60,7 @@ export const RadioGroup = <T extends Record<string, unknown>> ({
       {...props}
     >
       {Array.from(itemsWithNothing).map(item => (
-        <Radio className="text-base" key={String(item[itemValue])} value={String(item[itemValue])}>
+        <Radio className="text-base" key={String(item[itemValue])} value={String(item[itemValue])} autoFocus={autoFocus}>
           {typeof item[itemName] === 'string' ? item[itemName] : String(item[itemName])}
         </Radio>
       ))}

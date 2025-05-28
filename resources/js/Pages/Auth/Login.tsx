@@ -4,11 +4,16 @@
  */
 
 import { AuthContainer } from '@/Components/AuthContainer'
-import { useForm } from '@/Hooks/use-form-old'
 import GuestLayout from '@/Layouts/GuestLayout'
 import { Link } from '@inertiajs/react'
 import type React from 'react'
-import { Logo, FormErrors, FormGroup, Button, FormCheckbox, FormInput } from '@dspangenberg/twcui'
+import { Logo } from '@dspangenberg/twcui'
+import { Form, useForm } from '@/Components/twcui/form'
+import { FormGroup } from '@/Components/twcui/form-group'
+import { Input } from '@/Components/twcui/input'
+import { Checkbox } from '@/Components/jolly-ui/checkbox'
+import { Button} from '@/Components/twcui/button'
+
 
 interface LoginForm {
   email: string
@@ -22,7 +27,8 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
-  const { data, errors, processing, setData, submit, updateAndValidate } = useForm<LoginForm>(
+  const { form } = useForm<App.Data.LoginData>(
+    'auth-login-form',
     'post',
     route('login'),
     {
@@ -39,38 +45,32 @@ const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
       cardTitle="Willkommen zurück"
       cardDescription="Melde Dich mit Deinen Zugangsdaten an."
     >
-      <form onSubmit={submit} id="form">
-        <FormErrors errors={errors} />
+      <Form form={form}>
         <FormGroup>
           <div className="col-span-24">
-            <FormInput
-              id="email"
-              type="email"
+            <Input
+              autocomplete="username"
+              label="E-Mail"
               autoFocus
-              label="E-Mail-Adresse"
-              value={data.email}
-              error={errors?.email || ''}
-              autoComplete="username"
-              onChange={updateAndValidate}
+              {...form.register('email')}
             />
           </div>
 
           <div className="col-span-24">
-            <FormInput
-              id="password"
-              type="password"
-              value={data.password}
-              label="Kennwort"
-              error={errors?.password || ''}
+            <Input
               autoComplete="current-password"
-              onChange={updateAndValidate}
+              type="password"
+              label="Kennwort"
+              {...form.register('password')}
             />
+
             <div className="mt-1">
-              <FormCheckbox
-                checked={data.remember}
-                label="Angemeldet bleiben"
-                onCheckedChange={checked => setData('remember', checked)}
-              />
+              <Checkbox
+                {...form.registerCheckbox('remember')}
+                className="pt-1.5"
+              >
+                Angemeldet bleiben
+              </Checkbox>
             </div>
           </div>
 
@@ -86,8 +86,8 @@ const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
           </div>
           <div className="col-span-24">
             <Button
-              loading={processing}
-              form="form"
+              loading={form.processing}
+              form={form.id}
               variant="default"
               className="w-full"
               type="submit"
@@ -96,7 +96,7 @@ const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
             </Button>
           </div>
         </FormGroup>
-      </form>
+      </Form>
     </AuthContainer>
   )
 

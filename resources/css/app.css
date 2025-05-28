@@ -40,6 +40,11 @@
   --sidebar-ring: oklch(0.708 0 0);
   --destructive-foreground: 0 0% 98%;
   --color-page-content: oklch(0.99 0.0011 197.13);
+  --color: pink;
+  --blur-1-size: clamp(400px, 60vw, 60vw);
+  --blur-2-size: clamp(300px, 40vw, 40vw);
+  --blur-3-size: clamp(100px, 10vw, 10vw);
+  --blur-amount: clamp(40px, 5vw, 90px);
 }
 
 .dark {
@@ -113,6 +118,11 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --blur-amount: var(----blur-amount);
+  --blur-3-size: var(----blur-3-size);
+  --blur-2-size: var(----blur-2-size);
+  --blur-1-size: var(----blur-1-size);
+  --color: var(----color);
 }
 
 @layer base {
@@ -129,7 +139,6 @@
 @theme {
   --font-sans: "Clear Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
   "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-
 
   --font-weight-thin: 100;
   --font-weight-light: 300;
@@ -195,4 +204,13 @@
   --grid-column-start-32: 32;
   --grid-column-start-33: 33;
   --grid-column-start-34: 34;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

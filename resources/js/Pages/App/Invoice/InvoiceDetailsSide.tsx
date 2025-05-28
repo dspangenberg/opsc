@@ -28,7 +28,8 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
 }: ContactDetailsOrgInfoBoxProps) => {
   const currencyFormatter = new Intl.NumberFormat('de-DE', {
     style: 'decimal',
-    minimumFractionDigits: 2
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
   })
 
   const contactRoute = useMemo(
@@ -50,7 +51,7 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
         <DataCardSection className={cn('grid space-y-0', invoice.is_draft ? 'grid-cols-2' : 'grid-cols-3 ')} title='Rechnungsdetails'>
           <DataCardField variant="vertical" label="Datum" value={invoice.issued_on} />
           <DataCardField variant="vertical" label="Fälligkeit" value={invoice.due_on} />
-          {!invoice.is_draft && <DataCardField variant="vertical" label="versendet" value={invoice.sent_at?.substr(0,10)} />}
+          {!invoice.is_draft && <DataCardField variant="vertical" label="versendet" value={invoice.sent_at?.substring(0,10)} />}
         </DataCardSection>
         <DataCardSection className="grid grid-cols-2">
           <DataCardField

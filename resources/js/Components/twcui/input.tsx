@@ -8,7 +8,8 @@ interface InputProps {
   name: string
   className?: string
   autoFocus?: boolean
-  hasError?: boolean
+  autoComplete?: string
+  error?: string
   textArea?: boolean
   rows?: number
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -18,10 +19,11 @@ export const Input: React.FC<InputProps> = ({
   label,
   value,
   name,
+  error = '',
   textArea = false,
   className = '',
+  autoComplete = 'off',
   autoFocus = false,
-  hasError = false,
   rows,
   onChange,
   ...props
@@ -31,6 +33,8 @@ export const Input: React.FC<InputProps> = ({
     onChange
   })
 
+  const hasError = !!error
+
   return (
     <JollyTextField
       onChange={handleValueChange}
@@ -38,6 +42,7 @@ export const Input: React.FC<InputProps> = ({
       value={value !== null ? String(value) : ''}
       name={name}
       rows={rows}
+      autoComplete={autoComplete}
       autoFocus={autoFocus}
       className={className}
       isInvalid={hasError}

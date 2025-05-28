@@ -14,7 +14,7 @@ import {
 
 import { cn } from "@/Lib/utils"
 
-import { Button } from "./button"
+import { Button } from "@/Components/twcui/button"
 import { FieldError, FieldGroup, Label } from "./field"
 import {
   ListBoxCollection,
@@ -39,7 +39,7 @@ const ComboboxInput = ({ className, ...props }: AriaInputProps) => (
   <AriaInput
     className={composeRenderProps(className, (className) =>
       cn(
-        "flex h-9 w-full bg-background text-base px-3 py-2 outline-none file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground",
+        "flex h-9 w-full border-input bg-background text-base px-3 py-2 outline-none file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground",
         /* Disabled */
         "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
         className

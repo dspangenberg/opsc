@@ -187,6 +187,11 @@ print_name: string;
 display_name: string;
 key: string;
 };
+export type LoginData = {
+email: string;
+password: string;
+remember: boolean | null;
+};
 export type PaymentDeadlineData = {
 id: number | null;
 name: string;

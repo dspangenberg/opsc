@@ -43,12 +43,12 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
       <Head title={title} />
       <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
         <div className={cn('flex w-full max-w-sm flex-col gap-6', containerSize)}>
-          <a href="#" className="flex items-center gap-3 self-center font-medium flex-col">
+          <a href="#" className="flex items-center gap-3 self-center font-medium flex-col  z-50 text-foreground drop-shadow-accent-foreground">
             <div className="flex items-center justify-center">{logo}</div>
             {appWithVersion}
           </a>
 
-          <Card>
+          <Card className="bg-white z-50">
             <CardHeader className="text-center">
               <CardTitle className="text-xl">{cardTitle}</CardTitle>
               <CardDescription className="text-base">{cardDescription}</CardDescription>
@@ -56,7 +56,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
             <CardContent>{children}</CardContent>
           </Card>
 
-          <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
+          <div className="text-balance z-50 text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
             <TwicewareSolution
               appName={appName}
               appWebsite={appWebsite}

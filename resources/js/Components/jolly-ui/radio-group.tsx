@@ -30,6 +30,7 @@ const RadioGroup = ({ className, ...props }: AriaRadioGroupProps) => {
 const Radio = ({ className, children, ...props }: AriaRadioProps) => {
   return (
     <AriaRadio
+      autoFocus={props.autoFocus}
       className={composeRenderProps(className, (className) =>
         cn(
           "group/radio flex items-center gap-x-2",

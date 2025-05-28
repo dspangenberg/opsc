@@ -12,7 +12,6 @@ interface DatePickerProps<T extends Record<string, unknown>> {
   name: string
   className?: string
   autoFocus?: boolean
-  hasError?: boolean
   errors?: Partial<Record<keyof T, string>>
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
 }
@@ -41,7 +40,6 @@ export const DatePicker = <T extends Record<string, unknown>> ({
   name,
   className = '',
   autoFocus = false,
-  hasError = false,
   errors,
   onChange,
   ...props
@@ -75,6 +73,8 @@ export const DatePicker = <T extends Record<string, unknown>> ({
     onChange(syntheticEvent)
   }
 
+  const hasError = !!errors
+
   useEffect(() => {
     if (value) {
       const date = parse(value, 'dd.MM.yyyy', new Date())
@@ -89,6 +89,7 @@ export const DatePicker = <T extends Record<string, unknown>> ({
       errorMessage={joinErrors<T>(errors)}
       label={label}
       isInvalid={hasError}
+      aria-invalid={hasError}
       value={parsedDate as any}
       className={className}
       onChange={handleDateChange as any}

@@ -4,6 +4,7 @@ import { createContext, type HTMLAttributes, useContext } from 'react'
 import { useForm as internalUseForm } from '@/Hooks/use-form'
 import type { RequestMethod, ValidationConfig } from 'laravel-precognition'
 import { cn } from '@/Lib/utils'
+import { FormErrors } from '@/Components/twcui/form-errors'
 
 export type FormSchema = Record<string, FormDataConvertible>;
 
@@ -43,7 +44,10 @@ export const Form = <T extends FormSchema> ({
         className={cn('w-full', form.className)}
         {...props}
       >
-        {children}
+        <FormErrors errors={form.errors} />
+        <div className="divide-y divide-border">
+          {children}
+        </div>
       </form>
     </FormContext.Provider>
   )

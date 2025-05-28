@@ -41,6 +41,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
 
   return (
     <JollyNumberField
+      autoFocus={autoFocus}
       label={label}
       value={value || 0}
       formatOptions={formatOptions}

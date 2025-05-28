@@ -9,11 +9,13 @@ namespace App\Http\Controllers\App\Invoice;
 
 use App\Data\InvoiceData;
 use App\Data\InvoiceTypeData;
+use App\Data\PaymentDeadlineData;
 use App\Data\ProjectData;
 use App\Data\TaxData;
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
 use App\Models\InvoiceType;
+use App\Models\PaymentDeadline;
 use App\Models\Project;
 use App\Models\Tax;
 use Illuminate\Support\Facades\Request;
@@ -42,12 +44,14 @@ class InvoiceDetailsEditBaseController extends Controller
         $invoiceTypes = InvoiceType::orderBy('display_name')->get();
         $projects = Project::where('is_archived', false)->orderBy('name')->get();
         $taxes = Tax::with('rates')->orderBy('name')->get();
+        $paymentDeadlines = PaymentDeadline::orderBy('name')->get();
 
         return Inertia::render('App/Invoice/InvoiceDetailsEditBaseData', [
             'invoice' => InvoiceData::from($invoice),
             'invoice_types' => InvoiceTypeData::collect($invoiceTypes),
             'projects' => ProjectData::collect($projects),
             'taxes' => TaxData::collect($taxes),
+            'payment_deadlines' => PaymentDeadlineData::collect($paymentDeadlines),
         ]);
 
     }

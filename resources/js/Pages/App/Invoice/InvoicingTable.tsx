@@ -212,8 +212,8 @@ export const InvoicingTableDefaultRow: React.FC<InvoicingTableDefaultRowProps> =
       <TableNumberCell value={line.amount || 0} />
       <TableCell align="center">({line.tax_rate_id})</TableCell>
       {invoice.is_draft && (
-        <TableCell align="center">
-          <div className="flex items-center space-x-1">
+        <TableCell align="right">
+          <div className="flex items-center space-x-1  justify-end">
             <Button
               size="icon-sm"
               icon={Edit03Icon}

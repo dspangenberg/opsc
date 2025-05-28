@@ -38,6 +38,7 @@ function DateSegment({ className, ...props }: AriaDateSegmentProps) {
           /* Focused */
           "data-[focused]:bg-accent data-[focused]:text-accent-foreground",
 
+
           className
         )
       )}
@@ -84,7 +85,7 @@ function JollyDateField<T extends AriaDateValue>({
   return (
     <DateField
       className={composeRenderProps(className, (className) =>
-        cn("group flex flex-col gap-2",className)
+        cn("data-[invalid]:border-destructive group flex flex-col gap-2",className)
       )}
       {...props}
     >

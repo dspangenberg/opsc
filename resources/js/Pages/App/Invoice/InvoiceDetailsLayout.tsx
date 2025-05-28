@@ -115,7 +115,7 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
   const tabs = useMemo(
     () => (
       <>
-        <ClassicNavTabsTab href={route('app.invoice.index')} activeRoute="/app/invoices">
+        <ClassicNavTabsTab href={route('app.invoice.index')} activeRoute="/app/invoicing/invoices">
           Rechnungsdaten
         </ClassicNavTabsTab>
 

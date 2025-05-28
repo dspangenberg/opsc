@@ -1,6 +1,6 @@
 import type React from 'react'
 import { type ReactNode, useState } from 'react'
-import { Button } from '@/Components/jolly-ui/button'
+import { Button } from "@/Components/twcui/button"
 
 import { cn } from '@/Lib/utils'
 import {
@@ -15,6 +15,7 @@ import {
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { AlertDialog } from '@/Components/twcui/alert-dialog'
 import { composeRenderProps } from 'react-aria-components'
+import { useIsMobile } from '@/Hooks/use-mobile'
 
 type ReactNodeOrString = ReactNode | string
 
@@ -42,7 +43,7 @@ interface DialogProps {
   footerClassName?: string
   className?: string
   bodyPadding?: boolean
-  width?: 'default' | '4xl'
+  width?: 'default' | '4xl' | '5xl' | '6xl'
   hideHeader?: boolean
   backgroundClass?: 'accent' | 'sidebar' | 'background'
   onOpenChange?: (open: boolean) => void
@@ -62,7 +63,7 @@ export const Dialog: React.FC<DialogProps> = ({
   confirmationVariant = 'default',
   confirmationButtonTitle='Verwerfen',
   confirmationMessage = 'Möchtest Du die Änderungen verwerfen?',
-  title,
+  title = 'Dialog',
   role = 'dialog',
   description,
   bodyPadding = false,
@@ -95,10 +96,13 @@ export const Dialog: React.FC<DialogProps> = ({
     })
   }
 
+  const isMobile = useIsMobile()
 
   const widthClass = {
     default: 'max-w-xl',
-    '4xl': 'max-w-4xl'
+    '4xl': 'max-w-4xl',
+    '5xl': 'max-w-6xl',
+    '6xl': 'max-w-5xl'
   }[width]
 
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(isOpen)
@@ -117,6 +121,7 @@ export const Dialog: React.FC<DialogProps> = ({
             // Only close the dialog if the user confirmed
             if (result) {
               setIsDialogOpen(false)
+
               resolve(true) // Resolve the promise with true to indicate the dialog was closed
             } else {
               setIsDialogOpen(true)
@@ -160,9 +165,8 @@ export const Dialog: React.FC<DialogProps> = ({
         closeButton={false}
         className={cn('relative', widthClass, className)}
         onOpenChange={handleOpenChange}
+        side={isMobile ? 'bottom' : null}
         role={role}
-        title={title}
-        bgColor={bgClass}
       >
         {composeRenderProps(children, (children, providedRenderProps) => {
           // Create our own renderProps with a close function that respects the confirmation result
@@ -176,9 +180,8 @@ export const Dialog: React.FC<DialogProps> = ({
 
           return (
             <>
-              {!hideHeader && <JollyDialogHeader className={cn(bgClass, ' my-0 gap-y-0')}>
+              {!hideHeader && <JollyDialogHeader className={cn('my-0 gap-y-0', bgClass)}>
                 <JollyDialogTitle>{title}</JollyDialogTitle>
-                <AlertDialog.Root />
 
                 <JollyDialogDescription
                   className={cn('', !showDescription ? 'sr-only' : '')}
@@ -190,10 +193,10 @@ export const Dialog: React.FC<DialogProps> = ({
               <Button variant="ghost" size="icon-xs" className="absolute right-2 top-2"
                       onClick={() => renderProps.close()}
               >
-                <Cross2Icon className="size-4" />
+                <Cross2Icon className="size-3.5" />
                 <span className="sr-only">Close</span>
               </Button>
-              <JollyDialogBody className={cn('my-0', 'bg-background py-3', bodyClass)}>
+              <JollyDialogBody className={cn('my-0', 'bg-background py-3', hideHeader ? 'rounded-lg pt-3' : '', bodyClass)}>
                 {children}
               </JollyDialogBody>
               {!!footer && <JollyDialogFooter

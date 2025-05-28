@@ -1,12 +1,13 @@
 import type * as React from 'react'
 import { createRoot } from 'react-dom/client'
-import { Button } from '@/Components/jolly-ui/button'
+import { Button } from "@/Components/twcui/button"
 import {
   Dialog
 } from '@/Components/twcui/dialog'
 import { Alert02Icon, HelpCircleIcon} from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { cn } from '@/Lib/utils'
+import { Heading } from 'react-aria-components'
 
 interface AlertDialogProps {
   title: string
@@ -66,15 +67,15 @@ const AlertDialogComponent: React.FC<AlertDialogProps> = ({
       </div>
     }
   >
-    <div className="flex pt-3">
+    <div className="flex pt-3 rounded-t-lg">
       <div className="sm:flex sm:items-start">
         <div className={cn('mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10', variant === 'destructive' ? 'bg-destructive/20' : 'bg-primary/20')}>
         <HugeiconsIcon icon={variant === 'destructive' ? Alert02Icon : HelpCircleIcon} className={cn('size-6 stroke-2', variant === 'destructive' ? 'text-destructive' : 'text-primary')} />
         </div>
         <div className="my-3 sm:mt-0 sm:ml-4 text-left">
-          <h3 className="text-large font-semibold text-left text-foreground">
-            { title }
-          </h3>
+          <Heading slot="title" className="text-large font-semibold text-left text-foreground">
+          { title }
+          </Heading>
           <div className="mt-2">
             <p className="text-base text-gray-500">
               { message }
