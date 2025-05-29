@@ -8,12 +8,13 @@ import {
   Sorting05Icon,
   ArrowRight01Icon,
   Pin02Icon,
+  Copy01Icon,
   ArrowLeft01Icon,
   MoreVerticalCircle01Icon
 } from '@hugeicons/core-free-icons'
 import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
-import { Button, Toolbar, ToolbarButton, FormSelect } from '@dspangenberg/twcui'
+import { ToolbarButton, FormSelect } from '@dspangenberg/twcui'
 import { columns } from './InvoiceIndexColumns'
 import type { PageProps } from '@/Types'
 import { Pagination } from '@/Components/Pagination'
@@ -23,6 +24,9 @@ import { getYear } from "date-fns";
 import { router } from '@inertiajs/core'
 import { debounce } from 'lodash'
 import { Separator } from '@/Components/ui/separator'
+import { Toolbar } from '@/Components/twcui/toolbar'
+import { Button } from '@/Components/twcui/button'
+import { DropdownButton, MenuItem } from "@/Components/twcui/dropdown-button"
 
 interface ContactIndexProps extends PageProps {
   invoices: App.Data.Paginated.PaginationMeta<App.Data.InvoiceData[]>
@@ -81,10 +85,13 @@ const InvoiceIndex: React.FC = () => {
 
   const toolbar = useMemo(
     () => (
-      <Toolbar className="bg-background border-0 shadow-none">
-        <ToolbarButton variant="default" icon={Add01Icon} title="Rechnung hinzufügen" />
-        <ToolbarButton icon={PrinterIcon} />
-        <ToolbarButton icon={MoreVerticalCircle01Icon} />
+      <Toolbar>
+        <Button variant="toolbar-default" icon={Add01Icon} title="Rechnung hinzufügen" />
+        <Button variant="toolbar" icon={PrinterIcon} title="Drucken"/>
+        <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon}>
+          <MenuItem icon={Add01Icon} title="Rechnung hinzufügen" ellipsis separator />
+          <MenuItem icon={PrinterIcon} title="Auswertung drucken" ellipsis />
+        </DropdownButton>
       </Toolbar>
     ),
     []
@@ -110,10 +117,10 @@ const InvoiceIndex: React.FC = () => {
             </Select>
           </div>
 
-          <Button variant="ghost" size="icon" icon={Pin02Icon} />
+          <Button variant="ghost" size="auto" icon={Pin02Icon} />
           <Separator orientation="vertical" />
 
-          <Button variant="ghost" size="sm" icon={Sorting05Icon} title="Filter + Sortierung" />
+          <Button variant="ghost" size="auto" icon={Sorting05Icon} title="Filter + Sortierung" />
         </div>
       </div>
     ),

@@ -15,10 +15,21 @@ export const Button = ({
   title = '',
   type = 'button',
   form,
+  variant,
   size = 'default',
   children,
   ...props
 }: ButtonProps): JSX.Element => {
+
+  if (variant === 'toolbar-default') {
+    size = 'auto'
+    forceTitle = true
+  }
+
+  if (variant === 'toolbar') {
+    tooltip = title
+    title = ''
+  }
 
   if (!forceTitle && title && !tooltip && ['icon', 'icon-sm', 'icon-xs'].includes(size as string)) {
     tooltip = title
@@ -28,17 +39,19 @@ export const Button = ({
   if (tooltip) {
     return (
       <TooltipTrigger>
-        <BaseButton size={size} title={title} form={form} type={type} {...props}>
-          {children}
+        <BaseButton size={size} title={title} form={form} variant={variant}  type={type} {...props}>
+          <>
+          {title || children}
+            <Tooltip  placement="bottom">{tooltip}</Tooltip>
+          </>
         </BaseButton>
-        <Tooltip>{tooltip}</Tooltip>
       </TooltipTrigger>
     )
   }
 
   return (
-    <BaseButton size={size} title={title} form={form} type={type} {...props}>
-      {children}
+    <BaseButton size={size} title={title} form={form} type={type} variant={variant} {...props}>
+      {title || children}
     </BaseButton>
   )
 }

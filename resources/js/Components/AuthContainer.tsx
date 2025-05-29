@@ -43,13 +43,13 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
       <Head title={title} />
       <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
         <div className={cn('flex w-full max-w-sm flex-col gap-6', containerSize)}>
-          <a href="#" className="flex items-center gap-3 self-center font-medium flex-col  z-50 text-foreground drop-shadow-accent-foreground">
-            <div className="flex items-center justify-center">{logo}</div>
-            {appWithVersion}
-          </a>
 
           <Card className="bg-white z-50">
             <CardHeader className="text-center">
+              <div className="justify-center items-center flex flex-col gap-1">
+                <a href={appWebsite} target="_blank" className="text-center">{logo}</a>
+                {appWithVersion}
+              </div>
               <CardTitle className="text-xl">{cardTitle}</CardTitle>
               <CardDescription className="text-base">{cardDescription}</CardDescription>
             </CardHeader>

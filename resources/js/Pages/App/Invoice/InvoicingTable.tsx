@@ -50,18 +50,18 @@ export const Table: React.FC<CommonTableProps> = ({ className = '', children }) 
 }
 
 export const TableHeader: React.FC<CommonTableProps> = ({ className = '', children }) => {
-  return <ShadcnTableHeader className={cn('', className)}>{children}</ShadcnTableHeader>
+  return <ShadcnTableHeader className={cn('rounded-t-lg', className)}>{children}</ShadcnTableHeader>
 }
 
 export const TableBody: React.FC<CommonTableProps> = ({ className = '', children }) => {
   return (
-    <ShadcnTableBody className={cn('hover:bg-transparent', className)}>{children}</ShadcnTableBody>
+    <ShadcnTableBody className={cn('hover:bg-transparent rounded-b-lg', className)}>{children}</ShadcnTableBody>
   )
 }
 
 export const TableRow: React.FC<CommonTableProps> = ({ className = '', children }) => {
   return (
-    <ShadcnTableRow className={cn('align-baseline hover:bg-transparent', className)}>
+    <ShadcnTableRow className={cn('align-baseline hover:bg-transparent first:rounded-t-lg last:rounded-b-lg', className)}>
       {children}
     </ShadcnTableRow>
   )
@@ -89,7 +89,7 @@ export const TableHead: React.FC<TableCellProps> = ({
   return (
     <ShadcnTableHead
       colSpan={colSpan}
-      className={cn('align-middle font-medium bg-sidebar hover:bg-sidebar', alignClass, className)}
+      className={cn('align-middle font-medium bg-sidebar hover:bg-sidebar rounded-t-lg', alignClass, className)}
     >
       {children}
     </ShadcnTableHead>

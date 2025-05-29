@@ -9,42 +9,33 @@ import {
   FileEditIcon,
   FileRemoveIcon,
   Files02Icon,
-  MoreVerticalIcon,
+  MoreVerticalCircle01Icon,
   Pdf02Icon,
   PrinterIcon,
   RepeatIcon,
   Sent02Icon,
   UnavailableIcon
 } from '@hugeicons/core-free-icons'
-import { HugeiconsIcon } from '@hugeicons/react'
 import { PageContainer } from '@/Components/PageContainer'
-import { Button, Toolbar, ToolbarButton, YkToolbarButton } from '@dspangenberg/twcui'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger
-} from '@/Components/ui/dropdown-menu'
-
+import { Button } from '@/Components/twcui/button'
 import { ClassicNavTabsTab } from '@/Components/ClassicNavTabs'
 import { PdfViewer } from '@/Components/PdfViewer'
 import print from 'print-js'
 import { useFileDownload } from '@/Hooks/useFileDownload'
 import { router } from '@inertiajs/react'
 import { AlertDialog } from '@/Components/twcui/alert-dialog'
+import { DropdownButton, Menu, MenuItem, MenuPopover, MenuSubTrigger } from '@/Components/twcui/dropdown-button'
+import { Toolbar } from '@/Components/twcui/toolbar'
 
 interface Props {
   invoice: App.Data.InvoiceData
   children: React.ReactNode
 }
 
-export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => {
+export const InvoiceDetailsLayout: React.FC<Props> = ({
+  invoice,
+  children
+}) => {
   const onPrintPdf = () => {
     print(route('app.invoice.pdf', { id: invoice.id }))
   }
@@ -59,7 +50,10 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
 
   const breadcrumbs = useMemo(
     () => [
-      { title: 'Rechnungen', route: route('app.invoice.index') },
+      {
+        title: 'Rechnungen',
+        route: route('app.invoice.index')
+      },
       {
         title: invoice.formated_invoice_number,
         route: route('app.invoice.details', { id: invoice.id })
@@ -85,7 +79,7 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
       title: 'Rechnung abschließen',
       message: 'Möchtest Du die Rechnung wirklich abschließen?',
       buttonTitle: 'Rechnung abschließen',
-      variant: "default"
+      variant: 'default'
     })
 
     if (promise) {
@@ -129,141 +123,71 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
 
   const toolbar = useMemo(
     () => (
-      <Toolbar className="bg-background border-0 shadow-none space-x-1">
+      <Toolbar>
         {!invoice.is_draft && invoice.sent_at && (
-          <ToolbarButton variant="default" icon={EuroReceiveIcon} title="Zahlung zuordnen" />
+          <Button variant="toolbar-default" icon={EuroReceiveIcon} title="Zahlung zuordnen" />
         )}
         {!invoice.is_draft && !invoice.sent_at && (
-          <ToolbarButton
-            variant="default"
-            icon={Sent02Icon}
-            title="Rechnung per E-Mail versenden"
+          <Button variant="toolbar-default" icon={Sent02Icon} title="Rechnung per E-Mail versenden" />
+        )}
+        {invoice.is_draft && (
+          <Button variant="toolbar-default" icon={Edit03Icon} title="Stammdaten bearbeiten"
+                  onClick={handleEditBaseDataButtonClick}
           />
         )}
         {invoice.is_draft && (
-          <ToolbarButton
-            icon={Edit03Icon}
-            variant="default"
-            title="Stammdaten bearbeiten"
-            onClick={handleEditBaseDataButtonClick}
+          <Button variant="toolbar" icon={DocumentValidationIcon} title="Rechnung abschließen"
+                  onClick={handleRelease}
           />
         )}
-        {invoice.is_draft && (
-          <ToolbarButton
-            icon={DocumentValidationIcon}
-            title="Rechnung abschließen"
-            onClick={handleRelease}
-          />
-        )}
-        <ToolbarButton
-          icon={Pdf02Icon}
-          title="PDF anzeigen"
-          onClick={() => setShowPdfViewer(true)}
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <YkToolbarButton asChild>
-              <Button
-                variant="ghost"
-                tooltip=""
-                size="icon"
-                icon={MoreVerticalIcon}
-                className="text-primary"
+
+        <Button variant="toolbar" icon={Pdf02Icon} title="PDF anzeigen" onClick={() => setShowPdfViewer(true)} />
+
+        <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon}>
+          {invoice.is_draft && (
+            <>
+              <MenuItem icon={Edit03Icon} title="Stammdaten bearbeiten" ellipsis separator
+                        onAction={handleEditBaseDataButtonClick}
               />
-            </YkToolbarButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            {invoice.is_draft && (
-              <DropdownMenuGroup>
-                <DropdownMenuItem onClick={handleEditBaseDataButtonClick}>
-                  <HugeiconsIcon icon={Edit03Icon} />
-                  Stammdaten bearbeiten &hellip;
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleRelease}>
-                  <HugeiconsIcon icon={DocumentValidationIcon} />
-                  Rechnung abschließen
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-              </DropdownMenuGroup>
-            )}
+              <MenuItem icon={DocumentValidationIcon} title="Rechnung abschließen" ellipsis separator
+                        onAction={handleRelease}
+              />
+            </>
+          )}
+          <MenuItem icon={Pdf02Icon} title="PDF-Vorschau" ellipsis onAction={() => setShowPdfViewer(true)} />
+          <MenuItem icon={FileDownloadIcon} title="PDF herunterladen" ellipsis onAction={handleDownload} />
+          <MenuItem icon={PrinterIcon} title="Rechnung drucken" ellipsis separator onAction={onPrintPdf} />
+          <MenuItem icon={Sent02Icon} title="Rechnung per E-Mail versenden" ellipsis separator />
 
-            <DropdownMenuItem onClick={() => setShowPdfViewer(true)}>
-              <HugeiconsIcon icon={Pdf02Icon} />
-              PDF-Vorschau &hellip;
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleDownload}>
-              <HugeiconsIcon icon={FileDownloadIcon} />
-              PDF herunterladen &hellip;
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <HugeiconsIcon icon={Sent02Icon} />
-              Rechnung per E-Mail versenden &hellip;
-            </DropdownMenuItem>
-
-            <DropdownMenuItem onClick={onPrintPdf}>
-              <HugeiconsIcon icon={PrinterIcon} />
-              Rechnung drucken &hellip;
-            </DropdownMenuItem>
-
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <HugeiconsIcon icon={EuroReceiveIcon} />
-              Zahlung zuordnen &hellip;
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <span className="size-4" />
-                Erweitert
-              </DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem
-                    disabled={invoice.is_draft || !!invoice.sent_at}
-                    onClick={handleMarkAsSent}
-                  >
-                    <HugeiconsIcon icon={Sent02Icon} />
-                    Als versendet markieren
-                  </DropdownMenuItem>
-
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleDuplicate}>
-                    <HugeiconsIcon icon={Files02Icon} />
-                    Rechnung duplizieren &hellip;
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <HugeiconsIcon icon={RepeatIcon} />
-                    Wiederkehrende Rechnung &hellip;
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    disabled={!invoice.is_draft && !!invoice.sent_at}
-                    onClick={handleUnrelease}
-                  >
-                    <HugeiconsIcon icon={FileEditIcon} />
-                    Rechnung korrigieren
-                  </DropdownMenuItem>
-                  <DropdownMenuItem disabled={invoice.is_draft}>
-                    <HugeiconsIcon icon={FileRemoveIcon} />
-                    Rechnung stornieren &hellip;
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem disabled={!invoice.is_draft} onClick={handleDelete}>
-                    <HugeiconsIcon icon={Delete02Icon} />
-                    Rechnung löschen
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem disabled={invoice.is_draft}>
-                    <HugeiconsIcon icon={UnavailableIcon} />
-                    Als Forderungsverlust markieren
-                  </DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          <MenuItem icon={EuroReceiveIcon} title="Zahlung zuordnen" ellipsis separator />
+          <MenuSubTrigger>
+            <MenuItem title="Erweitert" />
+            <MenuPopover>
+              <Menu>
+                <MenuItem
+                  disabled={invoice.is_draft || !!invoice.sent_at}
+                  icon={Sent02Icon}
+                  title="Als versendet markieren"
+                  separator
+                  onAction={handleMarkAsSent}
+                />
+                <MenuItem icon={Files02Icon} title="Rechnung duplizieren" separator onAction={handleDuplicate} />
+                <MenuItem icon={RepeatIcon} title="Wiederkehrende Rechnung" separator ellipsis />
+                <MenuItem
+                  icon={FileEditIcon}
+                  title="Rechnung korrigieren"
+                  onAction={handleUnrelease}
+                  disabled={!invoice.is_draft && !!invoice.sent_at}
+                />
+                <MenuItem icon={FileRemoveIcon} title="Rechnung stornieren" separator />
+                <MenuItem icon={Delete02Icon} title="Rechnung löschen" separator disabled={!invoice.is_draft}
+                          onAction={handleDelete}
+                />
+                <MenuItem icon={UnavailableIcon} title="Als Forderungsverlust markieren" disabled={invoice.is_draft} />
+              </Menu>
+            </MenuPopover>
+          </MenuSubTrigger>
+        </DropdownButton>
       </Toolbar>
     ),
     [invoice.is_draft, handleDownload, invoice.sent_at, handleRelease]
