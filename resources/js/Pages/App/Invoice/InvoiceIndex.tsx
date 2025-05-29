@@ -8,18 +8,15 @@ import {
   Sorting05Icon,
   ArrowRight01Icon,
   Pin02Icon,
-  Copy01Icon,
   ArrowLeft01Icon,
   MoreVerticalCircle01Icon
 } from '@hugeicons/core-free-icons'
 import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
-import { ToolbarButton, FormSelect } from '@dspangenberg/twcui'
 import { columns } from './InvoiceIndexColumns'
 import type { PageProps } from '@/Types'
 import { Pagination } from '@/Components/Pagination'
 import { StatsField } from '@/Components/StatsField'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select'
 import { getYear } from "date-fns";
 import { router } from '@inertiajs/core'
 import { debounce } from 'lodash'
@@ -27,6 +24,7 @@ import { Separator } from '@/Components/ui/separator'
 import { Toolbar } from '@/Components/twcui/toolbar'
 import { Button } from '@/Components/twcui/button'
 import { DropdownButton, MenuItem } from "@/Components/twcui/dropdown-button"
+import { Select } from '@/Components/twcui/select'
 
 interface ContactIndexProps extends PageProps {
   invoices: App.Data.Paginated.PaginationMeta<App.Data.InvoiceData[]>
@@ -35,9 +33,15 @@ interface ContactIndexProps extends PageProps {
     total_gross: number
     total_tax: number
     total_net: number
+    total_loss_of_receivables: number
   }
   years: number[]
   currentYear: number
+}
+
+interface YearsProps extends Record<string, unknown> {
+  id: number
+  name: string
 }
 
 const InvoiceIndex: React.FC = () => {
@@ -78,6 +82,17 @@ const InvoiceIndex: React.FC = () => {
     }
   }, [year])
 
+  const yearItems = useMemo(() => {
+    const items = years.map(year => ({
+      id: year,
+      name: year.toString()
+    }))
+    items.push({
+      id: 0,
+      name: 'Alle'
+    })
+    return items
+  }, [years])
 
   const { visitModal } = useModalStack()
 
@@ -104,17 +119,7 @@ const InvoiceIndex: React.FC = () => {
       <div className="flex flex-col py-0 rounded-t-md">
         <div className="flex-none space-x-2 p-2 flex items-center">
           <div className="group relative">
-            <Select>
-              <SelectTrigger id={id} className="bg-white">
-                <SelectValue placeholder="Gespeicherte Views" className="bg-white" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">2025</SelectItem>
-                <SelectItem value="2">Next.js</SelectItem>
-                <SelectItem value="3">Astro</SelectItem>
-                <SelectItem value="4">Gatsby</SelectItem>
-              </SelectContent>
-            </Select>
+           Select fehlt
           </div>
 
           <Button variant="ghost" size="auto" icon={Pin02Icon} />
@@ -147,11 +152,15 @@ const InvoiceIndex: React.FC = () => {
               disabled={year <= currentYear - 10}
             />
             Rechnungen&nbsp;
-            <FormSelect
-              value={year.toString()}
-              options={years?.map(year => ({ value: year.toString(), label: year.toString() }))}
-              onValueChange={(value) => setYear(Number(value))}
+            <Select<YearsProps>
+              className="w-20"
+              aria-label="Jahr"
+              name="year"
+              value={Number(year)}
+              items={yearItems}
+              onChange={(value) => setYear(Number(value.target.value))}
             />
+
             <Button
               variant="ghost"
               size="icon"
@@ -165,8 +174,11 @@ const InvoiceIndex: React.FC = () => {
               <StatsField label="netto" value={currencyFormatter.format(stats.total_net)} />
               <StatsField label="USt." value={currencyFormatter.format(stats.total_tax)} />
               <StatsField label="brutto" value={currencyFormatter.format(stats.total_gross)} />
-              <StatsField label={`OP (${year})`} value={currencyFormatter.format(0)} />
-              <StatsField label="OP (komplett)" value={currencyFormatter.format(0)} />
+              <StatsField label="Offene Posten" value={currencyFormatter.format(0)} />
+              {stats.total_loss_of_receivables > 0 && (
+                  <StatsField label="Forderungsverluste" value={currencyFormatter.format(stats.total_loss_of_receivables)} />
+              )}
+
             </div>
           </div>
         </div>

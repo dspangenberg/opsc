@@ -20,7 +20,7 @@ use rikudou\EuQrPayment\QrPayment;
 use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $contact_id
@@ -207,9 +207,9 @@ class Invoice extends Model implements MediableInterface
         return $groupedEntries;
     }
 
-    public function scopeByYear(Builder $query, int|string $year): Builder
+    public function scopeByYear(Builder $query, int $year): Builder
     {
-        if ($year !== 'all') {
+        if ($year !== 0) {
             return $query->whereYear('issued_on', $year);
         }
 

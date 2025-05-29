@@ -1,28 +1,28 @@
-import * as React from "react"
+import type * as React from "react"
 import {
   CheckIcon,
   ChevronRightIcon,
   DotFilledIcon,
 } from "@radix-ui/react-icons"
-import { VariantProps } from "class-variance-authority"
+import type { VariantProps } from "class-variance-authority"
 import {
   Header as AriaHeader,
   Keyboard as AriaKeyboard,
   Menu as AriaMenu,
   MenuItem as AriaMenuItem,
-  MenuItemProps as AriaMenuItemProps,
-  MenuProps as AriaMenuProps,
+  type MenuItemProps as AriaMenuItemProps,
+  type MenuProps as AriaMenuProps,
   MenuTrigger as AriaMenuTrigger,
-  MenuTriggerProps as AriaMenuTriggerProps,
+  type MenuTriggerProps as AriaMenuTriggerProps,
   Separator as AriaSeparator,
-  SeparatorProps as AriaSeparatorProps,
+  type SeparatorProps as AriaSeparatorProps,
   SubmenuTrigger as AriaSubmenuTrigger,
   composeRenderProps,
-  PopoverProps,
+  type PopoverProps,
 } from "react-aria-components"
 import { HugeiconsIcon } from '@hugeicons/react'
 import { cn } from "@/Lib/utils"
-import { Button, buttonVariants } from "@/Components/twcui/button"
+import { Button, type buttonVariants } from "@/Components/twcui/button"
 import { ListBoxCollection, ListBoxSection } from "@/Components/jolly-ui/list-box"
 import { SelectPopover } from "@/Components/jolly-ui/select"
 
@@ -55,7 +55,7 @@ function MenuPopover({ className, ...props }: PopoverProps) {
 const Menu = <T extends object>({ className, ...props }: AriaMenuProps<T>) => (
   <AriaMenu
     className={cn(
-      "max-h-[inherit] overflow-auto rounded-md p-1 outline outline-0 [clip-path:inset(0_0_0_0_round_calc(var(--radius)-2px))]",
+      "max-h-[inherit] overflow-auto rounded-md p-1 outline-0 [clip-path:inset(0_0_0_0_round_calc(var(--radius)-2px))]",
       className
     )}
     {...props}
@@ -76,6 +76,7 @@ interface MenuItemProps extends AriaMenuItemProps {
 const MenuItem = ({ children, className, icon, disabled, separator = false, shortcut = '', title, ellipsis=false, ...props }: MenuItemProps) => (
   <>
   <AriaMenuItem
+    id={props.id}
     textValue={
       props.textValue || (typeof children === "string" ? children : undefined)
     }
@@ -96,14 +97,14 @@ const MenuItem = ({ children, className, icon, disabled, separator = false, shor
   >
     {composeRenderProps(children, (children, renderProps) => (
       <div className="flex items-center gap-2 flex-1">
-        { !!icon ? ( <HugeiconsIcon icon={icon} className="flex-none size-4 text-primary" />) : (<span className="size-4"></span>)}
+        { icon ? ( <HugeiconsIcon icon={icon} className="flex-none size-4 text-foreground/80" />) : (<span className="size-4" />)}
         <span className="absolute left-2 flex size-4 items-center justify-center">
           {renderProps.isSelected && (
             <>
-              {renderProps.selectionMode == "single" && (
+              {renderProps.selectionMode === "single" && (
                 <DotFilledIcon className="size-4 fill-current" />
               )}
-              {renderProps.selectionMode == "multiple" && (
+              {renderProps.selectionMode === "multiple" && (
                 <CheckIcon className="size-4" />
               )}
             </>
@@ -174,22 +175,28 @@ interface DropdownMenuProps<T>
     VariantProps<typeof buttonVariants>,
     Omit<AriaMenuTriggerProps, "children"> {
   title?: string
-  icon: IconSvgElement
+  icon?: IconSvgElement
   placement?: PopoverProps['placement']
+  selectionMode?: AriaMenuProps<T>['selectionMode']
+  selectedKeys?: AriaMenuProps<T>['selectedKeys']
+  onSelectionChange?: AriaMenuProps<T>['onSelectionChange']
 }
 function DropdownButton<T extends object>({
   title,
   children,
   variant,
   placement = 'bottom right',
+  selectionMode = undefined,
+  selectedKeys = undefined,
+  onSelectionChange,
   size,
   ...props
 }: DropdownMenuProps<T>) {
   return (
     <MenuTrigger {...props}>
       <Button variant={variant} size={size} icon={props.icon} title={title} />
-      <MenuPopover className="min-w-[--trigger-width]" placement={placement}>
-        <Menu {...props}>{children}</Menu>
+      <MenuPopover className="min-w-[--trigger-width]" placement={placement} >
+        <Menu selectionMode={selectionMode} selectedKeys={selectedKeys} onSelectionChange={onSelectionChange} {...props}>{children}</Menu>
       </MenuPopover>
     </MenuTrigger>
   )

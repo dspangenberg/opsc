@@ -168,6 +168,7 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({
                   disabled={invoice.is_draft || !!invoice.sent_at}
                   icon={Sent02Icon}
                   title="Als versendet markieren"
+                  shortcut="Cmd+S"
                   separator
                   onAction={handleMarkAsSent}
                 />

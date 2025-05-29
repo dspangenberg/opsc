@@ -92,9 +92,10 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
           <ContactDetailsAddresses addresses={contact.addresses || []} />
         </DataCardSection>
         <DataCardSection title="Register- und Steuerdaten" icon={Edit02Icon} secondary>
-          <DataCardField variant="vertical" label="Register" value={contact.register_number}>
+          {contact.register_number && <DataCardField variant="vertical" label="Register" value={contact.register_number}>
             {contact.register_court} ({contact.register_number})
           </DataCardField>
+          }
           <div className="grid grid-cols-2 gap-2">
             <DataCardField variant="vertical" label="Umsatzsteuer-ID" value={contact.vat_id} />
             <DataCardField variant="vertical" label="Steuernummer" value={contact.tax_number} />

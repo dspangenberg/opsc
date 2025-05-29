@@ -6,7 +6,7 @@
 import type React from 'react'
 import { useMemo, useRef, useState } from 'react'
 import { Dialog } from '@/Components/twcui/dialog'
-import { Separator } from '@/Components/ui/separator'
+import { Separator } from '@/Components/twcui/separator'
 import print from 'print-js'
 import { Document, Page } from 'react-pdf'
 import type { PDFDocumentProxy } from 'pdfjs-dist'
@@ -54,7 +54,7 @@ export const PdfViewer: React.FC<Props> = ({
 
   const divRef = useRef<HTMLDivElement>(null);
   const [show, toggle] = useToggle(false);
-  const isFullscreen = useFullscreen(divRef, show, {onClose: () => toggle(false)});
+  const isFullscreen = useFullscreen(divRef as React.RefObject<Element>, show, {onClose: () => toggle(false)});
 
 
   // const [savedScale, setSaveScale] = useLocalStorage('pdf-scale', 1.3) || 1.3
@@ -105,13 +105,22 @@ export const PdfViewer: React.FC<Props> = ({
     () => (
       <Toolbar>
         <Button variant="toolbar" icon={ArrowUp01Icon} title="Seite zurück" disabled={pageNumber === 1} />
-        <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} placement="bottom start">
-          <MenuItem icon={Add01Icon} title="Rechnung hinzufügen" ellipsis separator />
-          <MenuItem icon={PrinterIcon} title="Auswertung drucken" ellipsis />
-        </DropdownButton>
         <Button variant="toolbar" icon={ArrowDown01Icon} title="Seite vor" disabled={numPages === 1}  />
         <Separator orientation="vertical" />
         <Button variant="toolbar" icon={SearchMinusIcon} title="Verkleinern" onClick={handleScaleOut}/>
+        <DropdownButton
+          variant="outline"
+          size="auto"
+          placement="bottom start"
+          title={`${Math.round(scale * 100)} %`}
+          onSelectionChange={() => setScale}
+          selectedKeys={`scale-${Math.round(scale * 100)}`}
+        >
+          <MenuItem id="scale-100" title="Originalgröße" separator />
+          <MenuItem id="scale-120" title="120 %" onAction={() => setScale(1.2)}/>
+          <MenuItem id="scale-130" title="130 %" onAction={() => setScale(1.3)}/>
+          <MenuItem icon={PrinterIcon} title="Auswertung drucken" ellipsis />
+        </DropdownButton>
         <Button variant="toolbar" icon={SearchAddIcon} title="Vergrößern" onClick={handleScaleIn}/>
         <Separator orientation="vertical" />
         <Button variant="toolbar" icon={PrinterIcon} title="Drucken" onClick={handlePrint}/>
@@ -141,7 +150,7 @@ export const PdfViewer: React.FC<Props> = ({
     >
 
 
-        <div ref={divRef}  className="flex flex-col items-center bg-white justify-center aspect-[210/297] w-3xl overflow-auto rounded-b-lg">
+        <div ref={divRef}  className="flex flex-col items-center bg-white justify-center aspect-[210/297] w-3xl overflow-auto">
           {isFullscreen && (<div>{fullscreenControls}</div>)}
           {isLoading && (
             <div className="mx-auto my-auto flex-1">
@@ -156,7 +165,7 @@ export const PdfViewer: React.FC<Props> = ({
                 <LogoSpinner />
               </div>
             }
-            className="bg-white mx-auto my-auto overflow-auto "
+            className="bg-white mx-auto my-auto overflow-auto"
             onLoadSuccess={onDocumentLoadSuccess}
           >
             <Page

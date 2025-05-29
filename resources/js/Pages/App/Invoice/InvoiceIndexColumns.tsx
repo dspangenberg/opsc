@@ -16,7 +16,8 @@ const editUrl = (id: number | null) => (id ? route('app.invoice.details', { id }
 const contactUrl = (id: number | null) => (id ? route('app.contact.details', { id }) : '#')
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
-  style: 'decimal',
+  style: 'currency',
+  currency: 'EUR',
   minimumFractionDigits: 2
 })
 const mailLink = (mail: string) => `mailto:${mail}`

@@ -113,7 +113,7 @@ function JollySelect<T extends object>({
       )}
       {...props}
     >
-      <Label>{label}:</Label>
+      {label && <Label>{label}:</Label> }
       <SelectTrigger>
         <SelectValue className="" />
       </SelectTrigger>

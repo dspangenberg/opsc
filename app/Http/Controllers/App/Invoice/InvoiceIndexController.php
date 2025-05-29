@@ -25,7 +25,7 @@ class InvoiceIndexController extends Controller
             $year = $currentYear;
         }
 
-        if (! $years->contains($year)) {
+        if ($year && ! $years->contains($year)) {
             $years->push($year);
         }
 
@@ -35,9 +35,19 @@ class InvoiceIndexController extends Controller
             ->selectRaw('SUM(lines.amount + lines.tax) as total_gross')
             ->join('invoice_lines as lines', 'invoices.id', '=', 'lines.invoice_id')
             ->where('is_draft', false)
-            ->whereYear('issued_on', $year)
+            ->byYear($year)
             ->where('is_loss_of_receivables', 0)
             ->get();
+
+        $loss_of_receivables = Invoice::query()
+            ->selectRaw('SUM(lines.amount) as loss_of_receivables')
+            ->join('invoice_lines as lines', 'invoices.id', '=', 'lines.invoice_id')
+            ->byYear($year)
+            ->where('is_loss_of_receivables', 1)
+            ->get();
+
+        $stats[0]['total_loss_of_receivables'] = $loss_of_receivables[0]['loss_of_receivables'];
+
 
         $invoices = Invoice::query()
             ->with('invoice_contact')
