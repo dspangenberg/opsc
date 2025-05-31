@@ -1,15 +1,14 @@
 import * as React from 'react'
 import { useCallback, useEffect, useId, useMemo } from 'react'
 import { usePage } from '@inertiajs/react'
-import { useModalStack } from '@inertiaui/modal-react'
 import {
   Add01Icon,
-  PrinterIcon,
-  Sorting05Icon,
-  ArrowRight01Icon,
-  Pin02Icon,
   ArrowLeft01Icon,
-  MoreVerticalCircle01Icon
+  ArrowRight01Icon,
+  MoreVerticalCircle01Icon,
+  Pin02Icon,
+  PrinterIcon,
+  Sorting05Icon
 } from '@hugeicons/core-free-icons'
 import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
@@ -17,14 +16,15 @@ import { columns } from './InvoiceIndexColumns'
 import type { PageProps } from '@/Types'
 import { Pagination } from '@/Components/Pagination'
 import { StatsField } from '@/Components/StatsField'
-import { getYear } from "date-fns";
+import { getYear } from 'date-fns'
 import { router } from '@inertiajs/core'
 import { debounce } from 'lodash'
 import { Separator } from '@/Components/ui/separator'
 import { Toolbar } from '@/Components/twcui/toolbar'
 import { Button } from '@/Components/twcui/button'
-import { DropdownButton, MenuItem } from "@/Components/twcui/dropdown-button"
+import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 import { Select } from '@/Components/twcui/select'
+import { BorderedBox } from '@/Components/twcui/bordered-box'
 
 interface ContactIndexProps extends PageProps {
   invoices: App.Data.Paginated.PaginationMeta<App.Data.InvoiceData[]>
@@ -60,11 +60,16 @@ const InvoiceIndex: React.FC = () => {
   })
 
   const handlePreviousYear = useCallback(() => {
-    setYear(prevYear => Math.max(currentYear - 10, Number(prevYear) - 1))
+    const newYear = Number(year) === 0 ? localCurrentYear - 1 : year - 1
+    setYear(prevYear => newYear)
+
+    // setYear(prevYear => Math.max(currentYear - 10, Number(prevYear) - 1))
   }, [currentYear, setYear])
 
   const handleNextYear = useCallback(() => {
-    setYear(prevYear => Math.min(localCurrentYear, Number(prevYear) + 1))
+    const newYear = Number(year) === 0 ? localCurrentYear : Number.parseInt(year as unknown as string) + 1
+    setYear(prevYear => newYear)
+
   }, [localCurrentYear, setYear])
 
   useEffect(() => {
@@ -94,15 +99,16 @@ const InvoiceIndex: React.FC = () => {
     return items
   }, [years])
 
-  const { visitModal } = useModalStack()
-
-  const breadcrumbs = useMemo(() => [{ title: 'Rechnungen', route: route('app.invoice.index') }], [])
+  const breadcrumbs = useMemo(() => [{
+    title: 'Rechnungen',
+    route: route('app.invoice.index')
+  }], [])
 
   const toolbar = useMemo(
     () => (
       <Toolbar>
         <Button variant="toolbar-default" icon={Add01Icon} title="Rechnung hinzufügen" />
-        <Button variant="toolbar" icon={PrinterIcon} title="Drucken"/>
+        <Button variant="toolbar" icon={PrinterIcon} title="Drucken" />
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon}>
           <MenuItem icon={Add01Icon} title="Rechnung hinzufügen" ellipsis separator />
           <MenuItem icon={PrinterIcon} title="Auswertung drucken" ellipsis />
@@ -116,10 +122,27 @@ const InvoiceIndex: React.FC = () => {
 
   const header = useMemo(
     () => (
-      <div className="flex flex-col py-0 rounded-t-md">
+      <div className="flex flex-col">
+        <BorderedBox className="flex-none mx-auto">
+          <div
+            className="flex mx-auto gap-4 justify-center divide-y lg:divide-x lg:divide-y-0 bg-white px-2 py-2.5"
+          >
+            <StatsField label="netto" value={currencyFormatter.format(stats.total_net)} />
+            <StatsField label="USt." value={currencyFormatter.format(stats.total_tax)} />
+            <StatsField label="brutto" value={currencyFormatter.format(stats.total_gross)} />
+            <StatsField label="Offene Posten" value={currencyFormatter.format(0)} />
+            {stats.total_loss_of_receivables > 0 && (
+              <StatsField label="Forderungsverluste"
+                          value={currencyFormatter.format(stats.total_loss_of_receivables)}
+              />
+            )}
+          </div>
+        </BorderedBox>
+
+
         <div className="flex-none space-x-2 p-2 flex items-center">
           <div className="group relative">
-           Select fehlt
+            Select fehlt
           </div>
 
           <Button variant="ghost" size="auto" icon={Pin02Icon} />
@@ -144,6 +167,8 @@ const InvoiceIndex: React.FC = () => {
       header={
         <div className="flex gap-2 items-center flex-1">
           <div className="flex flex-none gap-1 text-xl font-bold items-center">
+
+            Rechnungen&nbsp;
             <Button
               variant="ghost"
               size="icon"
@@ -151,7 +176,6 @@ const InvoiceIndex: React.FC = () => {
               onClick={handlePreviousYear}
               disabled={year <= currentYear - 10}
             />
-            Rechnungen&nbsp;
             <Select<YearsProps>
               className="w-20"
               aria-label="Jahr"
@@ -169,22 +193,12 @@ const InvoiceIndex: React.FC = () => {
               disabled={year >= localCurrentYear}
             />
           </div>
-          <div className="flex flex-1 justify-center divide-x">
-            <div className="flex gap-4 divide-x">
-              <StatsField label="netto" value={currencyFormatter.format(stats.total_net)} />
-              <StatsField label="USt." value={currencyFormatter.format(stats.total_tax)} />
-              <StatsField label="brutto" value={currencyFormatter.format(stats.total_gross)} />
-              <StatsField label="Offene Posten" value={currencyFormatter.format(0)} />
-              {stats.total_loss_of_receivables > 0 && (
-                  <StatsField label="Forderungsverluste" value={currencyFormatter.format(stats.total_loss_of_receivables)} />
-              )}
-
-            </div>
-          </div>
         </div>
       }
     >
-        <DataTable columns={columns} data={invoices.data} footer={footer} header={header} itemName="Rechnungen mit den Suchkriterien"/>
+      <DataTable columns={columns} data={invoices.data} footer={footer} header={header}
+                 itemName="Rechnungen mit den Suchkriterien"
+      />
     </PageContainer>
   )
 }

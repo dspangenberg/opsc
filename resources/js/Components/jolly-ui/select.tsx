@@ -102,6 +102,7 @@ function JollySelect<T extends object>({
   description,
   errorMessage,
   children,
+  autoFocus,
   className,
   items,
   ...props
@@ -114,7 +115,7 @@ function JollySelect<T extends object>({
       {...props}
     >
       {label && <Label>{label}:</Label> }
-      <SelectTrigger>
+      <SelectTrigger autoFocus={autoFocus}>
         <SelectValue className="" />
       </SelectTrigger>
       {description && (

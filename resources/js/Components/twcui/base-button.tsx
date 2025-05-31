@@ -114,13 +114,16 @@ export const BaseButton = ({ className, disabled = false, variant, size, form, t
       {...props}
     >
       {composeRenderProps(children, (children) => (
-        <>
+        <div className={cn('flex gap-2', size === 'icon' ? 'mx-auto' : '')}>
           {!loading && icon && (
             <HugeiconsIcon icon={icon} className={cn(isToolbar ? 'text-primary' : '', disabled ? 'text-muted-foreground' : '', iconSizeClass, iconClassName)} />
           )}
           {loading && <LoaderCircleIcon className="animate-spin mr-2" size={16} aria-hidden="true" />}
-          {title || children}
-        </>
+          {(title || children) && variant !== 'toolbar'  && <div className={cn(isToolbar ? 'hidden lg:flex' : '')}>
+            {title || children}
+
+          </div>}
+        </div>
       ))}
     </AriaButton>
   )

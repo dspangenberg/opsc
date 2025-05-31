@@ -1,6 +1,6 @@
 import type { FormDataConvertible } from '@inertiajs/core'
 import type React from 'react'
-import { createContext, type HTMLAttributes, useContext } from 'react'
+import { createContext, type HTMLAttributes, useContext, type FormEvent } from 'react'
 import { useForm as internalUseForm } from '@/Hooks/use-form'
 import type { RequestMethod, ValidationConfig } from 'laravel-precognition'
 import { cn } from '@/Lib/utils'
@@ -16,23 +16,39 @@ const FormContext = createContext<UseFormReturn<FormSchema> | null>(null)
 interface FormProps<T extends FormSchema> extends BaseFormProps {
   form: ReturnType<typeof useForm<T>>
   children: React.ReactNode
+  onSubmitted?: () => void,
   className?: string
 }
 
 export const Form = <T extends FormSchema> ({
   form,
   children,
+  onSubmitted,
   ...props
 }: FormProps<T>) => {
   if (!form) {
     console.error('Form component received undefined form prop')
     return null
   }
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (
+    e: FormEvent<HTMLFormElement>
+  ): Promise<Partial<Record<keyof T, string>> | boolean> => {
     e.preventDefault()
-    form.submit()
+    return new Promise((resolve, reject) => {
+      form.submit({
+        preserveScroll: true,
+        onError: (errors: Partial<Record<keyof T, string>>) => {
+          form.setErrors(errors)
+          reject(errors)
+        },
+        onSuccess: () => {
+          onSubmitted?.()
+          resolve(true)
+        }
+      })
+    })
   }
+
 
   return (
     <FormContext.Provider value={form as UseFormReturn<FormSchema>}>
@@ -80,7 +96,6 @@ export const useForm = <T extends FormSchema> (
     method,
     action,
     config,
-    submit: internalForm.submit,
     errors: internalForm.errors || {},
     data: internalForm.data || data
   }

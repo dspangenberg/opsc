@@ -16,13 +16,14 @@ const Dashboard: React.FC<PageProps> = ({ auth }) => {
       width="7xl"
       header={<div className="font-medium">{headerTitle}</div>}
       breadcrumbs={[]}
-      headerClassname="py-6"
+      containerBackground='bg-background'
+      hideHeader
     >
       <div className="flex flex-1 flex-col gap-4 pt-0">
-        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          <div className="aspect-video rounded-xl bg-muted/50" />
-          <div className="aspect-video rounded-xl bg-muted/50" />
-          <div className="aspect-video rounded-xl bg-muted/50" />
+        <div className="grid auto-rows-min gap-4">
+          <div className="aspect-video rounded-xl p-6 bg-muted/50 text-xl font-medium">
+            Willkommen zurück, {auth.user.first_name}!
+          </div>
         </div>
 
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">

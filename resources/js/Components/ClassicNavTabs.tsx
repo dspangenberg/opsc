@@ -26,7 +26,7 @@ export const ClassicNavTabs: React.FC<ClassicNavTabs> = ({
 }: ClassicNavTabs) => {
   return (
     <Tabs {...props} className="w-full flex flex-full  relative">
-      <TabsList className="w-full -ml-4 inline-flex items-center justify-start rounded-md  bg-background">
+      <TabsList className="w-full inline-flex items-center justify-start rounded-md  bg-background">
         {children}
       </TabsList>
     </Tabs>

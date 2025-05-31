@@ -21,7 +21,7 @@ declare module '@inertiaui/modal-react' {
   }
 
   export interface ModalStack {
-    visitModal(url: string, options?: Partial<VisitOptions> & { modal?: boolean }): Promise<void>
+    visitModal(url: string, options?: Partial<VisitOptions> & { modal?: boolean, navigate?:boolean }): Promise<void>
   }
 
   export interface ModalStackProviderProps {
@@ -43,6 +43,9 @@ declare module '@inertiaui/modal-react' {
 
   export function useModalStack(): ModalStack
   export function useModal(): UseModalProps
+  export function putConfig({
+    navigate: boolean
+  }): void
 
   export const ModalStackProvider: FC<ModalStackProviderProps>
 

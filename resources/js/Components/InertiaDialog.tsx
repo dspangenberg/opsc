@@ -3,7 +3,7 @@
  * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { ResponsiveDialog } from '@/Components/ResponsiveDialog'
+import { Dialog } from '@/Components/twcui/dialog'
 import { cn } from '@/Lib/utils'
 import { HeadlessModal, type HeadlessModalProps } from '@inertiaui/modal-react'
 import type { ReactNode, RefObject } from 'react'
@@ -76,13 +76,13 @@ export const InertiaDialog = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
   return (
     <HeadlessModal ref={modalRef} {...props}>
-      {({ isOpen, setOpen }: HeadlessModalProps) => (
-        <ResponsiveDialog
+      {({ isOpen, setOpen, close }: HeadlessModalProps) => (
+        <Dialog
           ref={ref}
-          data-inertia-dialog
           isOpen={isOpen}
           onClose={() => setOpen(false)}
           onInteractOutside={handleInteractOutside}
+          onClosed={close}
           onOpenChange={handleOpenChange}
           showDescription={showDescription}
           dismissible={dismissible}
@@ -93,7 +93,7 @@ export const InertiaDialog = forwardRef<HTMLDivElement, Props>((props, ref) => {
           footer={typeof footer === 'function' ? footer(handleFooterEvents) : footer}
         >
           {children}
-        </ResponsiveDialog>
+        </Dialog>
       )}
     </HeadlessModal>
   )

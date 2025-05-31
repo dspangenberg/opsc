@@ -26,7 +26,7 @@ type ReactNodeOrString = ReactNode | string
 
 const sheetVariants = cva(
   [
-    'fixed z-50 gap-4 bg-background shadow-lg transition ease-in-out',
+    'fixed z-50 gap-4 bg-background shadow-lg transition ease-in-out ',
     /* Entering */
     'data-[entering]:duration-500 data-[entering]:animate-in',
     /* Exiting */
@@ -57,7 +57,7 @@ export const DialogOverlay = ({
     isDismissable={isDismissable}
     className={composeRenderProps(className, (className) =>
       cn(
-        'fixed inset-0 z-50 bg-black/80',
+        'fixed inset-0 z-50 bg-black/80 ',
         /* Exiting */
         'data-[exiting]:duration-300 data-[exiting]:animate-out data-[exiting]:fade-out-0',
         /* Entering */
@@ -93,7 +93,7 @@ export const DialogContent = ({
             side,
             className: 'h-full'
           })
-          : 'fixed left-[50vw] top-1/2 z-50 w-full max-w-lg border -translate-x-1/2 -translate-y-1/2  bg-background shadow-lg duration-200 data-[exiting]:duration-300 data-[entering]:animate-in data-[exiting]:animate-out data-[entering]:fade-in-0 data-[exiting]:fade-out-0 data-[entering]:zoom-in-95 data-[exiting]:zoom-out-95 sm:rounded-lg md:w-full',
+          : 'fixed left-[50vw] top-[50%] max-h-screen  z-50 w-full max-w-lg border -translate-x-1/2 -translate-y-1/2  bg-background shadow-lg duration-200 data-[exiting]:duration-300 data-[entering]:animate-in data-[exiting]:animate-out data-[entering]:fade-in-0 data-[exiting]:fade-out-0 data-[entering]:zoom-in-95 data-[exiting]:zoom-out-95 sm:rounded-lg md:w-full',
         className
       )
     )}
@@ -101,7 +101,7 @@ export const DialogContent = ({
   >
     <AriaDialog
       role={role}
-      className={cn(!side && 'grid h-full', 'h-full outline-none')}
+      className={cn(!side && 'grid h-full ', 'h-full outline-none')}
     >
       {composeRenderProps(children, (children, renderProps) => (
         <>
@@ -214,7 +214,7 @@ interface DialogProps {
   bodyPadding?: boolean
   width?: 'default' | '4xl' | '5xl' | '6xl'
   hideHeader?: boolean
-  background?: 'accent' | 'sidebar' | 'background'
+  background?: 'accent' | 'sidebar' | 'background' | 'page'
   onOpenChange?: (open: boolean) => void
   onClose?: () => void
   onInteractOutside?: (event: Event) => void
@@ -244,7 +244,7 @@ export const Dialog: React.FC<DialogProps> = ({
   width = 'default',
   footerClassName = '',
   hideHeader = false,
-  background = 'sidebar',
+  background = 'page',
   onOpenChange,
   ...props
 }) => {
@@ -252,7 +252,8 @@ export const Dialog: React.FC<DialogProps> = ({
   const bgClass = {
     accent: 'bg-accent/50',
     sidebar: 'bg-sidebar',
-    background: 'bg-background'
+    background: 'bg-background',
+    page: 'bg-page-content'
   }[background]
 
   const bodyClass = bodyPadding ? 'px-6' : ''
@@ -334,13 +335,15 @@ export const Dialog: React.FC<DialogProps> = ({
       isKeyboardDismissDisabled={false}
       onOpenChange={handleOpenChange}
     >
+
       <DialogContent
         closeButton={false}
-        className={cn('relative', widthClass, className)}
+        className={cn('relative gap-0 space-y-0 rounded-lg', widthClass, className)}
         onOpenChange={handleOpenChange}
         side={isMobile ? 'bottom' : null}
         role={role}
       >
+
         {composeRenderProps(children, (children, providedRenderProps) => {
           // Create our own renderProps with a close function that respects the confirmation result
           const renderProps: DialogRenderProps = {
@@ -353,8 +356,8 @@ export const Dialog: React.FC<DialogProps> = ({
 
           return (
             <>
-              {!hideHeader && <DialogHeader className={cn('flex flex-col px-3 items-center py-0 my-0 gap-0', bgClass)}>
-                <DialogTitle className="flex w-full items-center justify-between py-1">
+              {!hideHeader && <DialogHeader className={cn('flex flex-col px-3 items-center py-1 my-0 gap-0', bgClass)}>
+                <DialogTitle className="flex w-full text-lg items-center justify-between py-1">
                   <span className="flex-1">
                     {title}
                   </span>
@@ -373,13 +376,15 @@ export const Dialog: React.FC<DialogProps> = ({
                 </DialogDescription>
 
                 {!!toolbar && <div className="flex-1 justify-start items-start self-start py-2">
-                  { toolbar }
-                  </div>
+                  {toolbar}
+                </div>
                 }
               </DialogHeader>
               }
 
-              <DialogBody className={cn('my-0', 'bg-background py-3', hideHeader ? 'rounded-lg pt-3' : '', bodyClass)}>
+              <DialogBody
+                className={cn('my-0 flex flex-col mx-0 px-0 w-full', 'bg-background', hideHeader ? 'rounded-lg' : '', bodyClass)}
+              >
                 {children}
               </DialogBody>
               {!!footer && <DialogFooter

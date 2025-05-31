@@ -200,7 +200,7 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({
       width="7xl"
       tabs={tabs}
       breadcrumbs={breadcrumbs}
-      className="overflow-hidden flex gap-4"
+      className="overflow-y-auto flex gap-4"
       toolbar={toolbar}
     >
       <PdfViewer

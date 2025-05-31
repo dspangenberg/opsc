@@ -55,7 +55,6 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
       isOpen={true}
       confirmClose={form.isDirty}
       title="Rechnungsstammdaten bearbeiten"
-      confirmationVariant='destructive'
       onClosed={handleOnClosed}
       description="Rechnungstammdaten wie Rechnungsnummer, Rechnungsdatum, Leistungsdatum, Rechnungsart, Projekt, Umsatzsteuer, etc. bearbeiten"
       footer={(renderProps) => (

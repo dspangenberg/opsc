@@ -29,7 +29,9 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
     visitModal(
       route('app.contact.create.address', {
         contact: contact.id
-      })
+      }), {
+        navigate: true
+      }
     )
   }
 

@@ -16,9 +16,7 @@ class ContactAddressUpdateController extends Controller
 {
     public function __invoke(ContactAddressRequest $request, Contact $contact, ContactAddress $contact_address)
     {
-        $updated = $contact_address->update($request->validated());
-        dump($updated);
-
+        $contact_address->update($request->validated());
         return redirect()->route('app.contact.details', ['contact' => $contact->id]);
     }
 }

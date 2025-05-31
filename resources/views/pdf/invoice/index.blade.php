@@ -112,7 +112,11 @@
         </div>
     </htmlpageheader>
 
-        <h2>{{$invoice->type->print_name}}</h2>
+        @if ($invoice->type)
+            <h2>{{$invoice->type->print_name}}</h2>
+        @else
+                <h2>Rechnung</h2>
+        @endif
 
 
 

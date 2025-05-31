@@ -1,10 +1,12 @@
 import { useMemo } from 'react'
 import type * as React from 'react'
 import { Link } from '@inertiajs/react'
-import { Edit03Icon, PrinterIcon } from '@hugeicons/core-free-icons'
+import { Add01Icon, Edit03Icon, MoreVerticalCircle01Icon, PrinterIcon } from '@hugeicons/core-free-icons'
 import { PageContainer } from '@/Components/PageContainer'
-import { Avatar, Toolbar, ToolbarButton } from '@dspangenberg/twcui'
+import { Avatar } from '@dspangenberg/twcui'
 import { ClassicNavTabsTab } from '@/Components/ClassicNavTabs'
+import { Toolbar } from '@/Components/twcui/toolbar'
+import { Button } from '@/Components/twcui/button'
 
 interface Props {
   contact: App.Data.ContactData
@@ -22,9 +24,8 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
 
   const toolbar = useMemo(
     () => (
-      <Toolbar className="bg-background border-0 shadow-none">
-        <ToolbarButton variant="default" icon={Edit03Icon} title="Bearbeiten" />
-        <ToolbarButton icon={PrinterIcon} />
+      <Toolbar>
+        <Button variant="toolbar-default" icon={Edit03Icon} title="Bearbeiten" />
       </Toolbar>
     ),
     []

@@ -10,6 +10,7 @@ import '@fontsource/clear-sans/300.css'
 import '@fontsource/clear-sans/400.css'
 import '@fontsource/clear-sans/500.css'
 import '@fontsource/clear-sans/700.css'
+import { putConfig } from '@inertiaui/modal-react'
 
 import 'mapbox-gl/dist/mapbox-gl.css'
 import * as Sentry from '@sentry/react'
@@ -30,6 +31,10 @@ if (sentryEnabled && sentryDsn) {
 }
 Sentry.init({
   dsn: sentryDsn
+})
+
+putConfig({
+  navigate: true,
 })
 
 createInertiaApp({

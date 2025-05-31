@@ -1,6 +1,6 @@
 import type { FormDataConvertible } from '@inertiajs/core'
 import { useForm as useInertiaForm } from 'laravel-precognition-react-inertia'
-import type { ChangeEvent } from 'react'
+import type { ChangeEvent, FormEvent } from 'react'
 import type { RequestMethod, ValidationConfig } from 'laravel-precognition'
 import { isEqual } from 'moderndash'
 
@@ -59,8 +59,6 @@ export function useForm<T extends Record<string, FormDataConvertible>> (
       }
     } as const
   }
-
-
   const updateAndValidate = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {

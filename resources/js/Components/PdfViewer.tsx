@@ -150,8 +150,9 @@ export const PdfViewer: React.FC<Props> = ({
     >
 
 
-        <div ref={divRef}  className="flex flex-col items-center bg-white justify-center aspect-[210/297] w-3xl overflow-auto">
+        <div ref={divRef}  className="flex flex-col max-h-[90%] items-center bg-white justify-center aspect-[210/297] w-3xl overflow-auto">
           {isFullscreen && (<div>{fullscreenControls}</div>)}
+
           {isLoading && (
             <div className="mx-auto my-auto flex-1">
               <LogoSpinner />
@@ -180,6 +181,7 @@ export const PdfViewer: React.FC<Props> = ({
               }
             />
           </Document>
+
         </div>
     </Dialog>
   )

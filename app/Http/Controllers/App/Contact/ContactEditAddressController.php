@@ -22,7 +22,7 @@ class ContactEditAddressController extends Controller
 {
     public function __invoke(Request $request, Contact $contact, ContactAddress $address)
     {
-        $countries = Country::all();
+        $countries = Country::orderBy('name')->get();
         $categories = AddressCategory::all();
 
         return Inertia::modal('App/Contact/ContactEditAddress', [

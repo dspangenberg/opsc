@@ -63,7 +63,7 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
       >
         <span>{getValue() as string}</span>
       </Link>
-        {row.original.is_loss_of_receivables && <Badge variant="destructive" className="cursor-help">2400</Badge>}
+        {row.original.is_loss_of_receivables && <Badge variant="destructive" className="cursor-help">FV</Badge>}
       </div>
     )
   },

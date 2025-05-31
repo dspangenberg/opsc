@@ -1,24 +1,19 @@
-import { useCallback, useMemo } from 'react'
 import type * as React from 'react'
+import { useCallback, useId, useMemo } from 'react'
 import { usePage } from '@inertiajs/react'
 import { useModalStack } from '@inertiaui/modal-react'
-import {
-  Add01Icon,
-  MoreVerticalCircle01Icon,
-  Sorting05Icon
-} from '@hugeicons/core-free-icons'
+import { Add01Icon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
 import { NavTabs, NavTabsTab } from '@/Components/NavTabs'
 import { DataTable } from '@/Components/DataTable'
 import { EmptyState } from '@/Components/EmptyState'
 import { PageContainer } from '@/Components/PageContainer'
-import { Button, Toolbar, ToolbarButton } from '@dspangenberg/twcui'
+import { Toolbar, ToolbarButton } from '@dspangenberg/twcui'
 import { columns } from './ContactIndexColumns'
 import type { PageProps } from '@/Types'
 import { Pagination } from '@/Components/Pagination'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { useId } from 'react'
 import { ContactIndexFilterPopover } from './ContactIndexFilterPopover'
-import { ContactIndexFolders } from '@/Pages/App/Contact/ContactIndexFolders'
+
 interface ContactIndexProps extends PageProps {
   contacts: App.Data.Paginated.Contact & App.Data.Paginated.PaginationMeta<App.Data.ContactData[]>
 }
@@ -33,7 +28,10 @@ const ContactIndex: React.FC = () => {
     visitModal(route('app.accommodation.create'))
   }, [visitModal])
 
-  const breadcrumbs = useMemo(() => [{ title: 'Kontakte', route: route('app.contact.index') }], [])
+  const breadcrumbs = useMemo(() => [{
+    title: 'Kontakte',
+    route: route('app.contact.index')
+  }], [])
 
   const toolbar = useMemo(
     () => (
@@ -77,25 +75,23 @@ const ContactIndex: React.FC = () => {
   return (
     <PageContainer
       title="Kontakte"
-      width="9xl"
       breadcrumbs={breadcrumbs}
-      className="overflow-hidden flex gap-2"
+      className="overflow-hidden flex"
       toolbar={toolbar}
     >
-      <ContactIndexFolders />
-      <div className="flex-1 mx-4">
-        {contacts.data.length > 0 ? (
-          <DataTable columns={columns} data={contacts.data} footer={footer} header={header} />
-        ) : (
-          <EmptyState
-            buttonLabel="Ersten Kontakt hinzufügen"
-            buttonIcon={Add01Icon}
-            onClick={handleAdd}
-          >
-            Ups, Du hast noch keine Kontakte.
-          </EmptyState>
-        )}
-      </div>
+
+      {contacts.data.length > 0 ? (
+        <DataTable columns={columns} data={contacts.data} footer={footer} header={header} />
+      ) : (
+        <EmptyState
+          buttonLabel="Ersten Kontakt hinzufügen"
+          buttonIcon={Add01Icon}
+          onClick={handleAdd}
+        >
+          Ups, Du hast noch keine Kontakte.
+        </EmptyState>
+      )}
+      
     </PageContainer>
   )
 }

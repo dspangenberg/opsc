@@ -7,6 +7,7 @@ import { Children, type FC, type ReactElement, type ReactNode } from 'react'
 import { cn } from '@/Lib/utils'
 import React from 'react'
 import { Button } from '@dspangenberg/twcui'
+import { BorderedBox } from './twcui/bordered-box'
 
 export interface DataCardProps {
   title?: string
@@ -21,15 +22,17 @@ export const DataCard: FC<DataCardProps> = ({
   className = ''
 }: DataCardProps) => {
   return (
+    <BorderedBox>
     <div
       className={cn(
-        'flex-none w-full border-border/80 bg-sidebar rounded-lg m-0.5 p-1.5 shadow-md border',
+        'flex-none w-full rounded-lg',
         className
       )}
     >
       {title && <DataCardHeader title={title} />}
-      <div className="rounded-md border-border/50 last:rounded-b-xl">{children}</div>
+      <div className="rounded-lg p-2">{children}</div>
     </div>
+    </BorderedBox>
   )
 }
 
@@ -47,7 +50,7 @@ export const DataCardHeader: FC<DataCardHeaderProps> = ({
   return (
     <div
       className={cn(
-        'flex-none text-lg bg-sidebar font-medium text-foreground px-2.5 pb-1.5 pt-1',
+        'flex-none text-lg bg-sidebar font-medium text-foreground px-2.5 py-2',
         className
       )}
     >
