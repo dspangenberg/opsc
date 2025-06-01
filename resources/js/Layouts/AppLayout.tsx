@@ -45,7 +45,7 @@ const SidebarContent: React.FC<PropsWithChildren> = ({ children }) => {
         <div className="flex items-center h-10 z-20">
           <LayoutContainer className="w-full flex py-1 flex-1 items-center px-4">
             <div className="flex items-center justify-between space-x-2 flex-1">
-              <Button variant="outline" icon={SidebarLeftIcon} onClick={toggleSidebar} title="Sidebar umschalten"
+              <Button variant="outline" icon={SidebarLeftIcon} onClick={toggleSidebar} title="Sidebar umschalten" aria-label="Sidebar umschalten"
                       size="icon-sm"
               />
               <PageBreadcrumbs className="hidden md:flex flex-1" />

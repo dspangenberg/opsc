@@ -9,6 +9,7 @@ import {
   FileEditIcon,
   FileRemoveIcon,
   Files02Icon,
+  Add01Icon,
   MoreVerticalCircle01Icon,
   Pdf02Icon,
   PrinterIcon,
@@ -26,6 +27,8 @@ import { router } from '@inertiajs/react'
 import { AlertDialog } from '@/Components/twcui/alert-dialog'
 import { DropdownButton, Menu, MenuItem, MenuPopover, MenuSubTrigger } from '@/Components/twcui/dropdown-button'
 import { Toolbar } from '@/Components/twcui/toolbar'
+import { SplitButton } from '@/Components/twcui/split-button'
+
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -131,7 +134,7 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({
           <Button variant="toolbar-default" icon={Sent02Icon} title="Rechnung per E-Mail versenden" />
         )}
         {invoice.is_draft && (
-          <Button variant="toolbar-default" icon={Edit03Icon} title="Stammdaten bearbeiten"
+          <SplitButton variant="toolbar-default" icon={Add01Icon} title="Position hinzufügen"
                   onClick={handleEditBaseDataButtonClick}
           />
         )}
@@ -141,7 +144,7 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({
           />
         )}
 
-        <Button variant="toolbar" icon={Pdf02Icon} title="PDF anzeigen" onClick={() => setShowPdfViewer(true)} />
+        <Button variant="toolbar" icon={Pdf02Icon} title="PDF-Vorschau" onClick={() => setShowPdfViewer(true)} />
 
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon}>
           {invoice.is_draft && (

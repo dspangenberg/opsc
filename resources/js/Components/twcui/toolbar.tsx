@@ -2,7 +2,7 @@ import React from "react"
 import {
   Toolbar as AriaToolbar,
   composeRenderProps,
-  ToolbarProps,
+  type ToolbarProps,
 } from "react-aria-components"
 
 import { cn } from "@/Lib/utils"
@@ -13,7 +13,7 @@ export function Toolbar(props: ToolbarProps) {
       {...props}
       className={composeRenderProps(props.className, (className) =>
         cn(
-          "flex gap-2 ",
+          "flex gap-1 ",
           /* Orientation */
           "data-[orientation=vertical]:flex-col",
           className

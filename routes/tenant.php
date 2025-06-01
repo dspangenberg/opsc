@@ -34,7 +34,6 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Stancl\Tenancy\Features\UserImpersonation;
@@ -82,6 +81,9 @@ Route::middleware([
     Route::get('contacts/{contact}/create',
         ContactAddressCreateController::class)->name('app.contact.create.address');
 
+    Route::put('contacts/{contact}/toggle-favorite',
+        ContactToggleFavoriteController::class)->name('app.contact.toggle-favorite');
+
     Route::put('contacts/{contact}/{contact_address}',
         ContactAddressUpdateController::class)
         ->middleware([HandlePrecognitiveRequests::class])
@@ -92,8 +94,6 @@ Route::middleware([
         ->middleware([HandlePrecognitiveRequests::class])
         ->name('app.contact.address.store');
 
-    Route::put('contacts/{contact}/toggle-favorite',
-        ContactToggleFavoriteController::class)->name('app.contact.toggle-favorite');
 
     Route::get('invoicing/invoices',
         InvoiceIndexController::class)->name('app.invoice.index');
@@ -141,10 +141,6 @@ Route::middleware([
 
     Route::get('invoicing/invoices/{invoice}/pdf',
         InvoicePdfDownloadController::class)->name('app.invoice.pdf');
-
-    Route::get('/soon', function () {
-        return Inertia::render('Soon');
-    })->name('app.soon');
 
     Route::get('/onboarding', function () {
         return Inertia::modal('Onboarding')->baseRoute('app.soon');

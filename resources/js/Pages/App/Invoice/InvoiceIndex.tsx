@@ -6,9 +6,10 @@ import {
   ArrowLeft01Icon,
   ArrowRight01Icon,
   MoreVerticalCircle01Icon,
-  Pin02Icon,
+  FilterHorizontalIcon,
+  FolderManagementIcon,
   PrinterIcon,
-  Sorting05Icon
+  FilterIcon
 } from '@hugeicons/core-free-icons'
 import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
@@ -19,12 +20,13 @@ import { StatsField } from '@/Components/StatsField'
 import { getYear } from 'date-fns'
 import { router } from '@inertiajs/core'
 import { debounce } from 'lodash'
-import { Separator } from '@/Components/ui/separator'
+import { Separator } from '@/Components/twcui/separator'
 import { Toolbar } from '@/Components/twcui/toolbar'
 import { Button } from '@/Components/twcui/button'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 import { Select } from '@/Components/twcui/select'
 import { BorderedBox } from '@/Components/twcui/bordered-box'
+import { Badge } from '@/Components/ui/badge'
 
 interface ContactIndexProps extends PageProps {
   invoices: App.Data.Paginated.PaginationMeta<App.Data.InvoiceData[]>
@@ -44,13 +46,24 @@ interface YearsProps extends Record<string, unknown> {
   name: string
 }
 
+interface ViewProps extends Record<string, unknown> {
+  id: number
+  name: string
+  is_default?: boolean
+}
+
 const InvoiceIndex: React.FC = () => {
   const invoices = usePage<ContactIndexProps>().props.invoices
   const stats = usePage<ContactIndexProps>().props.stats
   const currentYear = usePage<ContactIndexProps>().props.currentYear
   const years = usePage<ContactIndexProps>().props.years as unknown as number[]
 
+  const minYear = Math.min(...years)
+
   const [year, setYear] = React.useState<number>(currentYear)
+  const [view, setView] = React.useState<number>(1)
+  const [selectedRows, setSelectedRows] = React.useState<App.Data.InvoiceData[]>([])
+
 
   const localCurrentYear = getYear(new Date())
 
@@ -99,6 +112,18 @@ const InvoiceIndex: React.FC = () => {
     return items
   }, [years])
 
+  const views: ViewProps[] = [
+    {
+      id: 1,
+      name: 'Aktuelles Jahr',
+      is_default: true
+    },
+    {
+      id: 2,
+      name: 'Vorjahresrechnungen'
+    }
+  ]
+
   const breadcrumbs = useMemo(() => [{
     title: 'Rechnungen',
     route: route('app.invoice.index')
@@ -107,9 +132,9 @@ const InvoiceIndex: React.FC = () => {
   const toolbar = useMemo(
     () => (
       <Toolbar>
-        <Button variant="toolbar-default" icon={Add01Icon} title="Rechnung hinzufügen" />
+        <Button variant="toolbar-default" icon={Add01Icon} title="Neue Rechnung" />
         <Button variant="toolbar" icon={PrinterIcon} title="Drucken" />
-        <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon}>
+        <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} title="Weitere Optionen">
           <MenuItem icon={Add01Icon} title="Rechnung hinzufügen" ellipsis separator />
           <MenuItem icon={PrinterIcon} title="Auswertung drucken" ellipsis />
         </DropdownButton>
@@ -118,12 +143,33 @@ const InvoiceIndex: React.FC = () => {
     []
   )
 
+  const actionBar = useMemo(() => {
+    return (
+    <Toolbar className="px-4 pt-2">
+      <div className="self-center text-sm">
+        <Badge variant="outline" className="bg-background mr-1.5">{selectedRows.length}</Badge>
+        ausgewählte Datensätze
+      </div>
+      <Button variant="ghost" size="auto" icon={FolderManagementIcon} title="View in Sidebar anheften" />
+    </Toolbar>
+    )
+  }, [selectedRows])
+
+  const filterBar = useMemo(() => {
+    return (
+      <Toolbar className="px-4 pt-2 pb-3">
+        <Badge>Rechnungsdatum</Badge>
+      </Toolbar>
+    )
+  }, [invoices])
+
+
   const id = useId()
 
   const header = useMemo(
     () => (
       <div className="flex flex-col">
-        <BorderedBox className="flex-none mx-auto">
+        <BorderedBox className="flex-none mx-auto mb-3">
           <div
             className="flex mx-auto gap-4 justify-center divide-y lg:divide-x lg:divide-y-0 bg-white px-2 py-2.5"
           >
@@ -141,21 +187,33 @@ const InvoiceIndex: React.FC = () => {
 
 
         <div className="flex-none space-x-2 p-2 flex items-center">
-          <div className="group relative">
-            Select fehlt
-          </div>
-
-          <Button variant="ghost" size="auto" icon={Pin02Icon} />
+          <Toolbar className="flex flex-1">
+          <Select<ViewProps>
+            aria-label="View"
+            className="bg-background w-48"
+            name="view"
+            value={Number(view)}
+            items={views}
+            onChange={(value) => setView(Number(value.target.value))}
+          />
+          <Button variant="ghost" size="icon" icon={FolderManagementIcon} title="Optionen für virtuellen Ordner" />
           <Separator orientation="vertical" />
 
-          <Button variant="ghost" size="auto" icon={Sorting05Icon} title="Filter + Sortierung" />
+          <Button variant="ghost" size="icon" icon={FilterIcon} title="Filter ein-/ ausblenden" />
+          <div className="flex-1" />
+          <Button variant="ghost" size="icon" icon={FilterHorizontalIcon} title="Drucken" />
+          </Toolbar>
         </div>
       </div>
     ),
     [id]
   )
 
-  const footer = useMemo(() => <Pagination data={invoices} />, [invoices])
+  const footer = useMemo(() => {
+    return (
+      <Pagination data={invoices} selected={selectedRows.length} />
+    )
+  }, [invoices, selectedRows])
 
   return (
     <PageContainer
@@ -174,7 +232,7 @@ const InvoiceIndex: React.FC = () => {
               size="icon"
               icon={ArrowLeft01Icon}
               onClick={handlePreviousYear}
-              disabled={year <= currentYear - 10}
+              disabled={year <= minYear}
             />
             <Select<YearsProps>
               className="w-20"
@@ -196,8 +254,15 @@ const InvoiceIndex: React.FC = () => {
         </div>
       }
     >
-      <DataTable columns={columns} data={invoices.data} footer={footer} header={header}
-                 itemName="Rechnungen mit den Suchkriterien"
+      <DataTable
+        actionBar={actionBar}
+        columns={columns}
+        data={invoices.data}
+        filterBar={filterBar}
+        footer={footer}
+        header={header}
+        onSelectedRowsChange={setSelectedRows}
+        itemName="Rechnungen mit den Suchkriterien"
       />
     </PageContainer>
   )

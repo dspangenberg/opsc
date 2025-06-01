@@ -50,11 +50,11 @@ const SelectTrigger = ({ className, children, ...props }: AriaButtonProps) => (
     type="button"
     className={composeRenderProps(className, className =>
       cn(
-        'flex h-9 w-full items-center justify-between whitespace-nowrap rounded-sm border border-input bg-transparent px-3 py-2 text-base font-medium shadow-none',
+        'flex h-9 w-full items-center justify-between whitespace-nowrap rounded-sm border ring-offset-0 border-input bg-transparent px-3 py-2 text-base font-medium shadow-none',
         /* Disabled */
         'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
         /* Focused */
-        'focus-visible:border-ring focus-visible:ring-ring/20 focus-visible:ring-[3px]',
+        'focus-visible:border-ring focus-visible:ring-ring/20 focus-visible:ring-[3px] focus-visible:!ring-offset-0',
         'data-[invalid]:focus-visible:ring-destructive/20  data-[invalid]:focus-visible:border-destructive  data-[invalid]:border-destructive',
         className
       )

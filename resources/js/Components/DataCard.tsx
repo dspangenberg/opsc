@@ -50,7 +50,7 @@ export const DataCardHeader: FC<DataCardHeaderProps> = ({
   return (
     <div
       className={cn(
-        'flex-none text-lg bg-sidebar font-medium text-foreground px-2.5 py-2',
+        'flex-none text-lg bg-sidebar font-medium text-foreground px-4 py-2.5',
         className
       )}
     >
@@ -261,8 +261,8 @@ export const DataCardField: FC<DataCardFieldProps> = ({
   value,
   className = ''
 }: DataCardFieldProps) => {
-  if (value === null || value === undefined) {
-    if (!empty && !children) return null
+  if (!value && !children) {
+    if (!empty) return null
   }
 
   const props = { label, value, children, className }

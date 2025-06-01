@@ -79,11 +79,7 @@ const data = {
           title: 'Angebote',
           url: route('app.invoice.index', {}, false),
         }
-        ,
-        {
-          title: 'Mahnungen',
-          url: route('app.invoice.index', {}, false),
-        }],
+      ],
     },
     {
       title: 'Buchhaltung',

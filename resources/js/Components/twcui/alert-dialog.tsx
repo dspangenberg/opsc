@@ -67,7 +67,7 @@ const AlertDialogComponent: React.FC<AlertDialogProps> = ({
       </div>
     }
   >
-    <div className="flex pt-3 rounded-t-lg">
+    <div className="flex mt-6 rounded-t-lg">
       <div className="sm:flex sm:items-start">
         <div className={cn('mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10', variant === 'destructive' ? 'bg-destructive/20' : 'bg-primary/20')}>
         <HugeiconsIcon icon={variant === 'destructive' ? Alert02Icon : HelpCircleIcon} className={cn('size-6 stroke-2', variant === 'destructive' ? 'text-destructive' : 'text-primary')} />

@@ -41,7 +41,7 @@ export const Pagination = <T,>({ data, itemName = 'Datensätze', selected = 0 }:
           {data.total > 0 && (
             <>
               {data.from}-{data.to} von {data.total} {itemName}
-              {selected > 0 && ` | ${selected} ausgewählt`}
+              {selected > 0 && ` (${selected} ausgewählt)`}
             </>
           )}
         </div>

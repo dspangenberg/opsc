@@ -4,7 +4,7 @@
  */
 
 'use client'
-import { FavouriteIcon } from '@hugeicons/core-free-icons'
+import { StarIcon } from '@hugeicons/core-free-icons'
 import { Avatar } from '@dspangenberg/twcui'
 import { Checkbox } from '@/Components/ui/checkbox'
 import { Link } from '@inertiajs/react'
@@ -52,8 +52,8 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
     header: '',
     cell: ({ row }) => (
       <HugeiconsIcon
-        icon={FavouriteIcon}
-        className={`size-5 mx-auto ${row.original.is_favorite ? 'text-red-500 hover:text-foreground fill-red-500' : 'hover:text-foreground/50  text-border/90'}`}
+        icon={StarIcon}
+        className={`size-5 mx-auto ${row.original.is_favorite ? 'text-yellow-500 hover:text-foreground fill-yellow-500' : 'hover:text-foreground/50  text-border/90'}`}
         onClick={() => onFavoriteToggle(row.original.id)}
       />
     )

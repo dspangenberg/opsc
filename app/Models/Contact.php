@@ -19,7 +19,7 @@ use Maize\Markable\Markable;
 use Maize\Markable\Models\Favorite;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int|null $company_id

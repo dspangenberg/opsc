@@ -15,7 +15,7 @@ const Separator = ({
   <AriaSeparator
     orientation={orientation}
     className={cn(
-      "bg-border",
+      "bg-border/80",
       /* Orientation */
       orientation === "horizontal" ? "h-px w-full" : "w-px",
       className

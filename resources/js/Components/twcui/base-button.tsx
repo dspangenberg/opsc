@@ -38,7 +38,7 @@ const buttonVariants = cva(
           "border border-input bg-background  data-[hovered]:bg-accent data-[hovered]:text-accent-foreground focus-visible:ring-ring/20 active:ring-ring/50",
         secondary:
           "bg-secondary text-secondary-foreground  data-[hovered]:bg-secondary/80",
-        ghost: "data-[hovered]:bg-accent data-[hovered]:text-accent-foreground active:ring-ring/20",
+        ghost: "data-[hovered]:bg-accent data-[hovered]:text-accent-foreground active:ring-ring/20 focus-visible:border focus-visible:border-primary focus-visible:ring-ring/20 active:ring-ring/50 text-sm",
         link: "text-primary underline-offset-4 data-[hovered]:underline",
         toolbar: 'data-[hovered]:bg-accent data-[hovered]:text-accent-foreground active:ring-ring/20 focus-visible:border focus-visible:border-primary focus-visible:ring-ring/20 active:ring-ring/50 text-sm',
         'toolbar-default': 'border border-input bg-background  data-[hovered]:bg-accent data-[hovered]:text-accent-foreground focus-visible:ring-ring/20 active:ring-ring/50 text-sm'
@@ -106,10 +106,9 @@ export const BaseButton = ({ className, disabled = false, variant, size, form, t
           'gap-2',
           buttonVariants({
             variant,
-            size,
-            className,
-          })
-        )
+            size
+          }),
+        className)
       )}
       {...props}
     >

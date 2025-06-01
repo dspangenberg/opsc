@@ -17,12 +17,16 @@ interface DataTableProps<TData, TValue> {
   footer?: React.ReactNode
   header?: React.ReactNode
   itemName?: string
+  actionBar?: React.ReactNode
+  filterBar?: React.ReactNode
   onSelectedRowsChange?: (selectedRows: TData[]) => void
 }
 
 export function DataTable<TData, TValue>({
+  actionBar,
   columns,
   data,
+  filterBar,
   footer,
   header,
   onSelectedRowsChange,
@@ -48,6 +52,7 @@ export function DataTable<TData, TValue>({
       <div className="flex-none mx-2">{header}</div>
 
         <div className="relative flex flex-1 border-border/80 bg-page-content rounded-lg p-1.5 border overflow-hidden flex-col max-h-fit">
+          {filterBar}
           <ScrollArea className="flex-1 border rounded-md max-h-fit bg-page-content absolute top-0 bottom-0 left-0 right-0 overflow-scroll">
             <Table className="bg-background [&_td]:border-border border-b-0 [&_th]:border-border table-fixed border-spacing-0 [&_tfoot_td]:border-t [&_th]:border-b [&_tr]:border-none [&_tr:not(:last-child)_td]:border-b">
               <TableHeader className="rounded-t-md bg-sidebar">
@@ -88,6 +93,7 @@ export function DataTable<TData, TValue>({
               </TableBody>
             </Table>
           </ScrollArea>
+          {table.getSelectedRowModel().rows.length > 0 ? actionBar : null}
       </div>
       {footer && <div className="flex-none mx-2">{footer}</div>}
     </div>
