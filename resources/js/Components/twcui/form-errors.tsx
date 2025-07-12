@@ -34,8 +34,8 @@ export const FormErrors: React.FC<Props> = ({
             </div>
             <div className="text-base font-medium flex-1">{title}</div>
           </div>
-          <div className="grow space-y-1">
-            <ul className="list-inside list-disc text-sm opacity-80 pl-12 motion-opacity-in-0 motion-translate-y-in-100 motion-blur-in-md">
+          <div className="grow">
+            <ul className="list-inside list-disc text-sm opacity-80 pl-12 motion-opacity-in-0 motion-translate-y-in-100 motion-blur-in-md space-y-1">
               {errorMessages.map((message, index) => (
                 <li key={index}>{message}</li>
               ))}

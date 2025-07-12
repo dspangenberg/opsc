@@ -20,6 +20,7 @@ use App\Http\Controllers\App\Invoice\InvoiceDetailsEditBaseController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsEditLinesController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsUpdateBaseController;
 use App\Http\Controllers\App\Invoice\InvoiceDuplicateController;
+use App\Http\Controllers\App\Invoice\InvoiceHistoryController;
 use App\Http\Controllers\App\Invoice\InvoiceIndexController;
 use App\Http\Controllers\App\Invoice\InvoiceLineDeleteController;
 use App\Http\Controllers\App\Invoice\InvoiceLineDuplicateController;
@@ -100,6 +101,10 @@ Route::middleware([
 
     Route::get('invoicing/invoices/{invoice}',
         InvoiceDetailsController::class)->name('app.invoice.details');
+
+    Route::get('invoicing/invoices/{invoice}/history',
+        InvoiceHistoryController::class)->name('app.invoice.history');
+
 
     Route::delete('invoicing/invoices/{invoice}',
         InvoiceDeleteController::class)->name('app.invoice.delete');

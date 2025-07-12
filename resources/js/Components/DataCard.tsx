@@ -50,7 +50,7 @@ export const DataCardHeader: FC<DataCardHeaderProps> = ({
   return (
     <div
       className={cn(
-        'flex-none text-lg bg-sidebar font-medium text-foreground px-4 py-2.5',
+        'flex-none text-base bg-sidebar font-medium text-foreground px-4 py-2.5',
         className
       )}
     >

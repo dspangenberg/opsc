@@ -28,7 +28,7 @@ import { AlertDialog } from '@/Components/twcui/alert-dialog'
 import { DropdownButton, Menu, MenuItem, MenuPopover, MenuSubTrigger } from '@/Components/twcui/dropdown-button'
 import { Toolbar } from '@/Components/twcui/toolbar'
 import { SplitButton } from '@/Components/twcui/split-button'
-
+import { Tab, TabList, Tabs, TabPanel } from '@/Components/twcui/tabs'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -109,17 +109,17 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({
     router.get(route('app.invoice.unrelease', { id: invoice.id }))
   }
 
+  const currentRoute = route().current()
+  console.log(currentRoute)
+
   const tabs = useMemo(
     () => (
-      <>
-        <ClassicNavTabsTab href={route('app.invoice.index')} activeRoute="/app/invoicing/invoices">
-          Rechnungsdaten
-        </ClassicNavTabsTab>
-
-        <ClassicNavTabsTab href={route('app.contact.index')} activeRoute="/app/contacts/favorites">
-          Historie + Buchungen
-        </ClassicNavTabsTab>
-      </>
+      <Tabs variant="underlined" defaultSelectedKey={currentRoute} tabClassName="text-base -mb-1">
+        <TabList aria-label="Ansicht">
+          <Tab id="app.invoice.details" href={route('app.invoice.details', {invoice}, false)}>Details</Tab>
+          <Tab id="app.invoice.history" href={route('app.invoice.history', {invoice}, false)}>Historie + Buchungen</Tab>
+        </TabList>
+      </Tabs>
     ),
     []
   )
@@ -134,7 +134,7 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({
           <Button variant="toolbar-default" icon={Sent02Icon} title="Rechnung per E-Mail versenden" />
         )}
         {invoice.is_draft && (
-          <SplitButton variant="toolbar-default" icon={Add01Icon} title="Position hinzufügen"
+          <Button variant="toolbar-default" icon={Edit03Icon} title="Rechnung bearbeiten"
                   onClick={handleEditBaseDataButtonClick}
           />
         )}

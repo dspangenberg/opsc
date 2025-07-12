@@ -10,7 +10,6 @@ import { Sidebar, SidebarContent, SidebarHeader } from '@/Components/ui/sidebar'
 
 import {
   ContactBookIcon,
-  ContractsIcon,
   DashboardSpeed02Icon,
   FileEuroIcon,
   AbacusIcon,
@@ -42,12 +41,6 @@ const data = {
       title: 'Dokumente',
       url: route('app.dashboard', {}, false),
       icon: FolderFileStorageIcon,
-      activePath: '/appsi'
-    },
-    {
-      title: 'Verträge',
-      url: route('app.dashboard', {}, false),
-      icon: ContractsIcon,
       activePath: '/appsi'
     },
     {

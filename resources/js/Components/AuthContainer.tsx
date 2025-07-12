@@ -10,7 +10,6 @@ import { cn } from '@/Lib/utils'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card'
 import { useApplicationProvider } from '@/Components/ApplicationProvider'
 import { TwicewareSolution } from '@dspangenberg/twcui'
-import { BorderedBox } from './twcui/bordered-box'
 
 interface AuthContainerProps {
   title: string
@@ -37,37 +36,27 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
     lg: 'max-w-lg px-6'
   }[maxWidth]
 
-  const { appWithVersion, appName, appVersion, appBuild, appWebsite, appCopyrightYear } = useApplicationProvider()
+  const { appWithVersion, appName, appWebsite, appCopyrightYear } = useApplicationProvider()
 
   return (
     <>
       <Head title={title} />
-      <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
-        <div className={cn('flex w-full max-w-sm flex-col gap-3', containerSize)}>
-          <div className="items-center flex flex-col gap-1 z-50">
-            <a href={appWebsite} target="_blank" className="text-center" rel="noreferrer">{logo}</a>
-            <div className="p-2 font-medium">
-            {appWithVersion}
-            </div>
-          </div>
-          <BorderedBox className="bg-page-content/50">
-          <Card className="rounded-lg border-0 shadow-none">
-            <CardHeader className="text-center">
+      <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
+        <div className={cn('flex w-full max-w-sm flex-col gap-6', containerSize)}>
 
+          <Card className='z-50 bg-white'>
+            <CardHeader className="text-center">
+              <div className='flex flex-col items-center justify-center gap-1'>
+                <a href={appWebsite} target="_blank" className="text-center" rel="noreferrer">{logo}</a>
+                {appWithVersion}
+              </div>
               <CardTitle className="text-xl">{cardTitle}</CardTitle>
               <CardDescription className="text-base">{cardDescription}</CardDescription>
             </CardHeader>
-            <CardContent className="p-0">{children}
-              <div className="text-xxs p-0 text-center">
-                {appVersion}.{appBuild}
-              </div>
-            </CardContent>
+            <CardContent>{children}</CardContent>
+          </Card>
 
-</Card>
-          </BorderedBox>
-
-          <div className="text-balance z-50 text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
-
+          <div className='z-50 text-balance text-center text-muted-foreground text-xs [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary '>
             <TwicewareSolution
               appName={appName}
               appWebsite={appWebsite}

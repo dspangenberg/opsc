@@ -13,7 +13,7 @@ export interface TooltipProps extends Omit<AriaTooltipProps, 'children'> {
 }
 
 const styles = tv({
-  base: 'group bg-foreground text-white text-xs rounded-md will-change-transform py-1.5 px-3',
+  base: 'group bg-foreground text-white text-sm rounded-md will-change-transform py-1.5 px-3',
   variants: {
     isEntering: {
       true: 'animate-in fade-in  duration-200'

@@ -123,7 +123,7 @@ use Maize\Markable\Models\Favorite;
  * @property-read string $company_name
  * @property-read bool $is_favorite
  * @property-read string $primary_mail
- * @method static Builder<static>|Contact whereHasMark(Mark $mark, \Illuminate\Database\Eloquent\Model $user, ?string $value = null)
+ * @method static Builder<static>|Contact whereHasMark(Mark $mark, Model $user, ?string $value = null)
  * @property-read string|null $formated_creditor_number
  * @property-read string|null $formated_debtor_number
  * @mixin Eloquent

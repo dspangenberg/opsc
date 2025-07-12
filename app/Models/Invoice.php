@@ -18,7 +18,8 @@ use Plank\Mediable\MediableCollection;
 use Plank\Mediable\MediableInterface;
 use rikudou\EuQrPayment\QrPayment;
 use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
-
+use Spatie\Holidays\Holidays;
+use Spatie\Holidays\Countries\Germany;
 /**
  *
  *
@@ -220,7 +221,12 @@ class Invoice extends Model implements MediableInterface
     {
         $paymentDeadline = PaymentDeadline::query()->where('id', $this->payment_deadline_id)->first();
         if ($paymentDeadline->exists()) {
-            $this->due_on = $this->issued_on->addDays($paymentDeadline->days);
+            $dueDate = $this->issued_on->addDays($paymentDeadline->days);
+            while ($dueDate->isWeekend() || Holidays::for(Germany::make('DE-NW'))->isHoliday($dueDate)) {
+                $dueDate->addDays(1);
+            }
+
+            $this->due_on = $dueDate;
         }
     }
 
@@ -241,6 +247,11 @@ class Invoice extends Model implements MediableInterface
             $this->invoice_number = $counter;
         }
 
+        if ($this->issued_on->isBefore(now())) {
+            $this->issued_on = now();
+        }
+
+        $this->setDueDate();
         $this->is_draft = false;
 
         /*
@@ -364,6 +375,7 @@ class Invoice extends Model implements MediableInterface
         return $this->hasOne(NumberRangeDocumentNumber::class, 'id', 'number_range_document_numbers_id');
     }
 
+
     public function getQrCodeAttribute(): string
     {
         if (!$this->contact) {
@@ -405,6 +417,11 @@ class Invoice extends Model implements MediableInterface
     public function contact(): HasOne
     {
         return $this->hasOne(Contact::class, 'id', 'contact_id');
+    }
+
+    public function linked_invoice(): HasOne
+    {
+        return $this->hasOne(Contact::class, 'id', 'linked_invoice_id');
     }
 
     public function invoice_contact(): HasOne

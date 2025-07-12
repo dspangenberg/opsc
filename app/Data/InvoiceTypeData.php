@@ -17,6 +17,7 @@ class InvoiceTypeData extends Data
         public readonly ?int $id,
         public readonly string $print_name,
         public readonly string $display_name,
+        public readonly string $abbreviation,
         public readonly string $key,
     ) {}
 }

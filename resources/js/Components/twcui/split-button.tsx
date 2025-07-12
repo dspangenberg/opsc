@@ -183,6 +183,7 @@ interface DropdownMenuProps<T>
   selectionMode?: AriaMenuProps<T>['selectionMode']
   selectedKeys?: AriaMenuProps<T>['selectedKeys']
   onSelectionChange?: AriaMenuProps<T>['onSelectionChange']
+  onClick?: () => void
 }
 function SplitButton<T extends object>({
   title,
@@ -193,11 +194,12 @@ function SplitButton<T extends object>({
   selectedKeys = undefined,
   onSelectionChange,
   size,
+  onClick,
   ...props
 }: DropdownMenuProps<T>) {
   return (
     <Group className="flex items-center group focus-within:ring-ring/20 focus-within:ring-[3px] rounded-md border border-input">
-      <Button variant={variant} size={size} icon={props.icon} title={title} className="border-0 border-r !border-r-transparent group-hover:!border-r-border !rounded-r-none focus-visible:ring-0" />
+      <Button variant={variant} size={size} icon={props.icon} title={title} onClick={onClick} className="border-0 border-r !border-r-transparent group-hover:!border-r-border !rounded-r-none focus-visible:ring-0" />
     <MenuTrigger {...props}>
 
         <Pressable aria-label="Open menu">

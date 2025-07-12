@@ -96,8 +96,8 @@ const MenuItem = ({ children, className, icon, disabled, separator = false, shor
     {...props}
   >
     {composeRenderProps(children, (children, renderProps) => (
-      <div className="flex items-center gap-2 flex-1">
-        { icon ? ( <HugeiconsIcon icon={icon} className="flex-none size-4 text-foreground/80" />) : (<span className="size-4" />)}
+      <div className='flex flex-1 items-center gap-2'>
+        { icon ? ( <HugeiconsIcon icon={icon} className='size-4 flex-none text-foreground/80' />) : (<span className="size-4" />)}
         <span className="absolute left-2 flex size-4 items-center justify-center">
           {renderProps.isSelected && (
             <>
@@ -142,7 +142,7 @@ const MenuHeader = ({
 }: MenuHeaderProps) => (
   <AriaHeader
     className={cn(
-      "px-3 py-1.5 text-sm font-semibold",
+      'px-3 py-1.5 font-semibold text-sm',
       inset && "pl-8",
       separator && "-mx-1 mb-1 border-b border-b-border pb-2.5",
       className

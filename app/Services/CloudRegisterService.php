@@ -47,9 +47,9 @@ class CloudRegisterService
         }
 
         if (! $hostname) {
-            $hostname = SlugService::createSlug(Tenant::class, 'subdomain', $tenant['organisation']);
+            // $hostname = SlugService::createSlug(Tenant::class, 'subdomain', $tenant['organisation']);
         } else {
-            $hostname = SlugService::createSlug(Tenant::class, 'subdomain', $hostname);
+            // $hostname = SlugService::createSlug(Tenant::class, 'subdomain', $hostname);
         }
 
         $tenant['domain'] = $hostname;

@@ -28,6 +28,7 @@ class InvoiceDetailsController extends Controller
                     $query->orderBy('pos');
                 },
             ])
+            ->load('lines.linked_invoice')
             ->load('tax')
             ->load('tax.rates')
             ->loadSum('lines', 'amount')

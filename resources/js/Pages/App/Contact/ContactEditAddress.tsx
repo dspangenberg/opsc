@@ -8,7 +8,7 @@ import { Select } from '@/Components/twcui/select'
 import { Input } from '@/Components/twcui/input'
 import { Button } from '@/Components/twcui/button'
 import { FormGroup } from '@/Components/twcui/form-group'
-import { Tab, TabList, TabPanel, Tabs } from "@/Components/twcui/tabs"
+import { Tab, TabList, Tabs, TabPanel } from '@/Components/twcui/tabs'
 
 interface Props extends PageProps {
   contact: App.Data.ContactData
@@ -68,14 +68,16 @@ const ContactEditAddress: React.FC<Props> = () => {
       <Form
         form={form}
         onSubmitted={() => {handleClose()}}
+        className="flex flex-col bg-background"
       >
-      <Tabs className="w-full flex">
-        <TabList aria-label="History of Ancient Rome" className="flex-1 bg-page-content border-b justify-start">
-          <Tab id="FoR">Stammdaten</Tab>
-          <Tab id="MaR">Komunikation</Tab>
-          <Tab id="Emp">Empire</Tab>
-        </TabList>
-        <TabPanel id="FoR">
+
+        <Tabs variant="classic" className="bg-sidebar">
+          <TabList aria-label="History of Ancient Rome" className="border-b px-4">
+            <Tab id="FoR">Stammdaten</Tab>
+            <Tab id="MaR">Komunikation</Tab>
+            <Tab id="Emp">Empire</Tab>
+          </TabList>
+          <TabPanel id="FoR">
           <FormGroup>
 
 
@@ -123,9 +125,6 @@ const ContactEditAddress: React.FC<Props> = () => {
         <TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel>
         <TabPanel id="Emp">Alea jacta est.</TabPanel>
       </Tabs>
-
-
-
 
       </Form>
     </InertiaDialog>

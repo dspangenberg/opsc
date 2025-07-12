@@ -8,6 +8,9 @@ import {
   MoreVerticalCircle01Icon,
   FilterHorizontalIcon,
   FolderManagementIcon,
+  FilterRemoveIcon,
+  FileDownloadIcon,
+  FilterAddIcon,
   PrinterIcon,
   FilterIcon
 } from '@hugeicons/core-free-icons'
@@ -27,6 +30,7 @@ import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 import { Select } from '@/Components/twcui/select'
 import { BorderedBox } from '@/Components/twcui/bordered-box'
 import { Badge } from '@/Components/ui/badge'
+import { Toggle } from '@/Components/twcui/toggle'
 
 interface ContactIndexProps extends PageProps {
   invoices: App.Data.Paginated.PaginationMeta<App.Data.InvoiceData[]>
@@ -63,6 +67,7 @@ const InvoiceIndex: React.FC = () => {
   const [year, setYear] = React.useState<number>(currentYear)
   const [view, setView] = React.useState<number>(1)
   const [selectedRows, setSelectedRows] = React.useState<App.Data.InvoiceData[]>([])
+  const [showFilter, setShowFilter] = React.useState<boolean>(false)
 
 
   const localCurrentYear = getYear(new Date())
@@ -74,7 +79,7 @@ const InvoiceIndex: React.FC = () => {
 
   const handlePreviousYear = useCallback(() => {
     const newYear = Number(year) === 0 ? localCurrentYear - 1 : year - 1
-    setYear(prevYear => newYear)
+    setYear( newYear)
 
     // setYear(prevYear => Math.max(currentYear - 10, Number(prevYear) - 1))
   }, [currentYear, setYear])
@@ -133,7 +138,7 @@ const InvoiceIndex: React.FC = () => {
     () => (
       <Toolbar>
         <Button variant="toolbar-default" icon={Add01Icon} title="Neue Rechnung" />
-        <Button variant="toolbar" icon={PrinterIcon} title="Drucken" />
+        <Button variant="toolbar" icon={PrinterIcon} title="Drucken" disabled={true}  />
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} title="Weitere Optionen">
           <MenuItem icon={Add01Icon} title="Rechnung hinzufügen" ellipsis separator />
           <MenuItem icon={PrinterIcon} title="Auswertung drucken" ellipsis />
@@ -150,18 +155,21 @@ const InvoiceIndex: React.FC = () => {
         <Badge variant="outline" className="bg-background mr-1.5">{selectedRows.length}</Badge>
         ausgewählte Datensätze
       </div>
-      <Button variant="ghost" size="auto" icon={FolderManagementIcon} title="View in Sidebar anheften" />
+      <Button variant="ghost" size="auto" icon={FileDownloadIcon} title="Herunterladen" />
     </Toolbar>
     )
   }, [selectedRows])
 
   const filterBar = useMemo(() => {
+    if (!showFilter) {
+      return null
+    }
     return (
       <Toolbar className="px-4 pt-2 pb-3">
         <Badge>Rechnungsdatum</Badge>
       </Toolbar>
     )
-  }, [invoices])
+  }, [showFilter])
 
 
   const id = useId()
@@ -199,14 +207,16 @@ const InvoiceIndex: React.FC = () => {
           <Button variant="ghost" size="icon" icon={FolderManagementIcon} title="Optionen für virtuellen Ordner" />
           <Separator orientation="vertical" />
 
-          <Button variant="ghost" size="icon" icon={FilterIcon} title="Filter ein-/ ausblenden" />
+          <Toggle icon={FilterIcon} tooltip="Filter ein- /ausblenden" variant="default" size="default" isSelected={showFilter} onChange={setShowFilter} />
+          
+
           <div className="flex-1" />
           <Button variant="ghost" size="icon" icon={FilterHorizontalIcon} title="Drucken" />
           </Toolbar>
         </div>
       </div>
     ),
-    [id]
+    [id, showFilter, stats, view]
   )
 
   const footer = useMemo(() => {

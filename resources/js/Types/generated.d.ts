@@ -180,11 +180,13 @@ tax_rate_id: number;
 rate: App.Data.TaxRateData | null;
 service_period_begin: string | null;
 service_period_end: string | null;
+linked_invoice: App.Data.InvoiceData | null;
 };
 export type InvoiceTypeData = {
 id: number | null;
 print_name: string;
 display_name: string;
+abbreviation: string;
 key: string;
 };
 export type LoginData = {

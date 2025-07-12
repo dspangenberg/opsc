@@ -11,12 +11,20 @@ import { TooltipProvider } from '@/Components/ui/tooltip'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type * as React from 'react'
 import { ThemeContainerProvider } from '@/Components/theme-container-provider'
-
+import { RouterProvider } from 'react-aria-components'
+import { router } from '@inertiajs/react'
+import { useCallback } from 'react'
 
 export function AppProvider(props: React.PropsWithChildren) {
   const queryClient = new QueryClient()
 
+  const navigate = useCallback(
+    (to: string, options?: Parameters<typeof router.visit>[1]) =>
+      router.visit(to, options),
+    []
+  )
   return (
+    <RouterProvider navigate={navigate}>
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
       <ThemeContainerProvider width="7xl">
         <BreadcrumbProvider>
@@ -30,5 +38,6 @@ export function AppProvider(props: React.PropsWithChildren) {
         </BreadcrumbProvider>
       </ThemeContainerProvider>
     </ThemeProvider>
+    </RouterProvider>
   )
 }

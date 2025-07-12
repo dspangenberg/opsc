@@ -22,14 +22,12 @@ import {
   PrinterIcon,
   SearchAddIcon,
   SearchMinusIcon,
-  SquareArrowDiagonal02Icon,
-  MoreVerticalIcon, MoreVerticalCircle01Icon, Add01Icon
+  SquareArrowDiagonal02Icon
 } from '@hugeicons/core-free-icons'
 import { useFileDownload } from '@/Hooks/useFileDownload'
-import {useFullscreen, useToggle} from 'react-use'
+import { useFullscreen, useToggle } from 'react-use'
 
 import { cn } from '@/Lib/utils'
-import { ChevronDown } from 'lucide-react'
 import { Toolbar } from '@/Components/twcui/toolbar'
 import { Button } from '@/Components/twcui/button'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
@@ -42,6 +40,7 @@ interface Props {
   filename?: string
   onOpenChange: (isOpen: boolean) => void
 }
+
 export const PdfViewer: React.FC<Props> = ({
   document,
   open,
@@ -52,10 +51,9 @@ export const PdfViewer: React.FC<Props> = ({
     onOpenChange(newIsOpen)
   }
 
-  const divRef = useRef<HTMLDivElement>(null);
-  const [show, toggle] = useToggle(false);
-  const isFullscreen = useFullscreen(divRef as React.RefObject<Element>, show, {onClose: () => toggle(false)});
-
+  const divRef = useRef<HTMLDivElement>(null)
+  const [show, toggle] = useToggle(false)
+  const isFullscreen = useFullscreen(divRef as React.RefObject<Element>, show, { onClose: () => toggle(false) })
 
   // const [savedScale, setSaveScale] = useLocalStorage('pdf-scale', 1.3) || 1.3
   const pdfRef = useRef<PDFDocumentProxy | null>(null)
@@ -100,45 +98,37 @@ export const PdfViewer: React.FC<Props> = ({
     filename: filename
   })
 
-
   const toolbar = useMemo(
     () => (
       <Toolbar>
         <Button variant="toolbar" icon={ArrowUp01Icon} title="Seite zurück" disabled={pageNumber === 1} />
-        <Button variant="toolbar" icon={ArrowDown01Icon} title="Seite vor" disabled={numPages === 1}  />
+        <Button variant="toolbar" icon={ArrowDown01Icon} title="Seite vor" disabled={numPages === 1} />
         <Separator orientation="vertical" />
-        <Button variant="toolbar" icon={SearchMinusIcon} title="Verkleinern" onClick={handleScaleOut}/>
-        <DropdownButton
+        <Button variant="toolbar" icon={SearchMinusIcon} title="Verkleinern" onClick={handleScaleOut} />
+        {!isFullscreen && <DropdownButton
           variant="outline"
           size="auto"
           placement="bottom start"
           title={`${Math.round(scale * 100)} %`}
+          className="z-[100] isolate"
           onSelectionChange={() => setScale}
           selectedKeys={`scale-${Math.round(scale * 100)}`}
         >
           <MenuItem id="scale-100" title="Originalgröße" separator />
-          <MenuItem id="scale-120" title="120 %" onAction={() => setScale(1.2)}/>
-          <MenuItem id="scale-130" title="130 %" onAction={() => setScale(1.3)}/>
+          <MenuItem id="scale-120" title="120 %" onAction={() => setScale(1.2)} />
+          <MenuItem id="scale-130" title="130 %" onAction={() => setScale(1.3)} />
           <MenuItem icon={PrinterIcon} title="Auswertung drucken" ellipsis />
         </DropdownButton>
-        <Button variant="toolbar" icon={SearchAddIcon} title="Vergrößern" onClick={handleScaleIn}/>
+        }
+        <Button variant="toolbar" icon={SearchAddIcon} title="Vergrößern" onClick={handleScaleIn} />
         <Separator orientation="vertical" />
-        <Button variant="toolbar" icon={PrinterIcon} title="Drucken" onClick={handlePrint}/>
-        <Button variant="toolbar" icon={FileDownloadIcon} title="Download" onClick={handleDownload}/>
+        <Button variant="toolbar" icon={PrinterIcon} title="Drucken" onClick={handlePrint} />
+        <Button variant="toolbar" icon={FileDownloadIcon} title="Download" onClick={handleDownload} />
         <Separator orientation="vertical" />
-        <Button variant="toolbar" icon={SquareArrowDiagonal02Icon} title="Vollbildmodus" onClick={toggle}/>
+        <Button variant="toolbar" icon={SquareArrowDiagonal02Icon} title="Vollbildmodus" onClick={toggle} />
       </Toolbar>
     ),
-    [numPages, handleDownload, scale]
-  )
-
-  const fullscreenControls = useMemo(
-    () => (
-      <div className="border rounded-lg shadow-md m-6 py-2 px-4">
-        {toolbar}
-      </div>
-    ),
-    [isFullscreen]
+    [numPages, handleDownload, scale, isFullscreen]
   )
 
   return (
@@ -146,43 +136,46 @@ export const PdfViewer: React.FC<Props> = ({
       isOpen={open}
       onOpenChange={handleOpenChange}
       title={filename}
-      toolbar={toolbar}
     >
 
 
-        <div ref={divRef}  className="flex flex-col max-h-[90%] items-center bg-white justify-center aspect-[210/297] w-3xl overflow-auto">
-          {isFullscreen && (<div>{fullscreenControls}</div>)}
+      <div ref={divRef}
+           className="flex aspect-[210/297] max-h-[90%] w-3xl flex-col items-center justify-center overflow-auto bg-white"
+      >
+        <div className={cn(' py-1', isFullscreen ? 'self-center' : 'w-full self-start px-4 bg-page-content')}>
+          {toolbar}
+        </div>
 
-          {isLoading && (
+        {isLoading && (
+          <div className="mx-auto my-auto flex-1">
+            <LogoSpinner />
+          </div>
+        )}
+        <Document
+          file={document}
+
+          loading={
             <div className="mx-auto my-auto flex-1">
               <LogoSpinner />
             </div>
-          )}
-          <Document
-            file={document}
+          }
+          className="mx-auto my-auto overflow-auto bg-white"
+          onLoadSuccess={onDocumentLoadSuccess}
+        >
+          <Page
+            pageNumber={pageNumber}
+            scale={scale}
 
+            className="z-10 flex-1 border"
             loading={
               <div className="mx-auto my-auto flex-1">
                 <LogoSpinner />
               </div>
             }
-            className="bg-white mx-auto my-auto overflow-auto"
-            onLoadSuccess={onDocumentLoadSuccess}
-          >
-            <Page
-              pageNumber={pageNumber}
-              scale={scale}
+          />
+        </Document>
 
-              className="z-10 border flex-1"
-              loading={
-                <div className="mx-auto my-auto flex-1">
-                  <LogoSpinner />
-                </div>
-              }
-            />
-          </Document>
-
-        </div>
+      </div>
     </Dialog>
   )
 }

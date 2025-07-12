@@ -195,7 +195,7 @@ interface DialogProps {
   children: React.ReactNode | ((renderProps: DialogRenderProps) => React.ReactNode)
   footer?: React.ReactNode | ((renderProps: DialogRenderProps) => React.ReactNode)
   toolbar?: React.ReactNode
-  isOpen: boolean
+  isOpen?: boolean
   role?: 'alertdialog' | 'dialog',
   showDescription?: boolean
   title?: string
@@ -270,7 +270,7 @@ export const Dialog: React.FC<DialogProps> = ({
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(isOpen)
 
   useEffect(() => {
-    setIsDialogOpen(prevState => isOpen)
+    setIsDialogOpen(isOpen)
   }, [isOpen])
 
   const handleClose = async () => {

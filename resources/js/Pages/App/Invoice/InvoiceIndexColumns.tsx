@@ -52,6 +52,12 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
     cell: ({ row, getValue }) => <span>{getValue() as string}</span>
   },
   {
+    accessorKey: 'type.abbreviation',
+    header: '',
+    size: 36,
+    cell: ({ row, getValue }) => <span>{getValue() as string}</span>
+  },
+  {
     accessorKey: 'formated_invoice_number',
     header: 'Rechnungsnr.',
     size: 140,

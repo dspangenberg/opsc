@@ -18,7 +18,8 @@ class InvoiceUnreleaseController extends Controller
             abort('Invoice cannot be unreleased once it has been sent.');
         }
 
-        $invoice->invoice_number = 0;
+
+        $invoice->invoice_number = null;
         $invoice->is_draft = true;
         $invoice->save();
 

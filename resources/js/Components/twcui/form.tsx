@@ -4,8 +4,6 @@ import { createContext, type HTMLAttributes, useContext, type FormEvent } from '
 import { useForm as internalUseForm } from '@/Hooks/use-form'
 import type { RequestMethod, ValidationConfig } from 'laravel-precognition'
 import { cn } from '@/Lib/utils'
-import { FormErrors } from '@/Components/twcui/form-errors'
-
 export type FormSchema = Record<string, FormDataConvertible>;
 
 type UseFormReturn<T extends FormSchema> = ReturnType<typeof internalUseForm<T>>;
@@ -16,13 +14,19 @@ const FormContext = createContext<UseFormReturn<FormSchema> | null>(null)
 interface FormProps<T extends FormSchema> extends BaseFormProps {
   form: ReturnType<typeof useForm<T>>
   children: React.ReactNode
+  hideColonInLabels?: boolean
   onSubmitted?: () => void,
+  errorTitle?: string,
   className?: string
+  errorVariant?: 'form' | 'field'
 }
 
 export const Form = <T extends FormSchema> ({
   form,
   children,
+  errorVariant = 'form',
+  hideColonInLabels = false,
+  errorTitle = 'Something went wrong',
   onSubmitted,
   ...props
 }: FormProps<T>) => {
@@ -60,7 +64,6 @@ export const Form = <T extends FormSchema> ({
         className={cn('w-full', form.className)}
         {...props}
       >
-        <FormErrors errors={form.errors} />
         <div className="divide-y divide-border">
           {children}
         </div>

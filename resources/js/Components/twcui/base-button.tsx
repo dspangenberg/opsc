@@ -1,4 +1,3 @@
-import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import {
   Button as AriaButton,
@@ -6,15 +5,8 @@ import {
   type ButtonProps as AriaButtonProps,
 } from "react-aria-components"
 import { cn } from "@/Lib/utils"
-import { HugeiconsIcon } from '@hugeicons/react'
+import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react'
 import { LoaderCircleIcon } from 'lucide-react'
-
-export type IconSvgElement = readonly (readonly [
-  string,
-  {
-    readonly [key: string]: string | number
-  }
-])[]
 
 const buttonVariants = cva(
   [
@@ -117,7 +109,7 @@ export const BaseButton = ({ className, disabled = false, variant, size, form, t
           {!loading && icon && (
             <HugeiconsIcon icon={icon} className={cn(isToolbar ? 'text-primary' : '', disabled ? 'text-muted-foreground' : '', iconSizeClass, iconClassName)} />
           )}
-          {loading && <LoaderCircleIcon className="animate-spin mr-2" size={16} aria-hidden="true" />}
+          {loading && <LoaderCircleIcon className='mr-2 animate-spin' size={16} aria-hidden="true" />}
           {(title || children) && variant !== 'toolbar'  && <div className={cn(isToolbar ? 'hidden lg:flex' : '')}>
             {title || children}
 

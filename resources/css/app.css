@@ -1,10 +1,12 @@
 @import "tailwindcss";
-
 @import "tw-animate-css";
-
+@plugin "tailwindcss-react-aria-components";
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  --text-xs: 0.775rem;
+  --text-xxs: 0.667rem;
+  
   --page-content: oklch(0.99 0.0011 197.13);
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -13,7 +15,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.546 0.245 262.881);
+  --primary: oklch(0.609 0.182 257.292);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -147,19 +149,6 @@
   --font-weight-medium: 600;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-
-  --text-xxs: 0.67rem;
-  --text-sm: 0.85rem;
-  --text-base: 0.9rem;
-  --text-lg: 1.0rem;
-  --text-xl: 1.2rem;
-  --text-2xl: 1.3rem;
-  --text-3xl: 3.157rem;
-  --text-3xl--line-height: 1.25;
-  --text-4xl: 4.209rem;
-  --text-4xl--line-height: 1.25;
-  --text-5xl: 5.61rem;
-  --text-5xl--line-height: 1.25;
 
   --grid-template-columns-6: repeat(6, minmax(0, 1fr));
   --grid-template-columns-16: repeat(16, minmax(0, 1fr));

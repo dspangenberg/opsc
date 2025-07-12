@@ -160,6 +160,23 @@ export const TableMarkdownCell: React.FC<TableMarkdownCellProps> = ({
   )
 }
 
+export const TableLinkedInvoiceCell: React.FC<TableMarkdownCellProps> = ({
+  className = '',
+  service_period_begin = '',
+  service_period_end = ',',
+  ...props
+}) => {
+  return (
+    <TableCell className={className} {...props}>
+      <Markdown remarkPlugins={[remarkBreaks]}>
+        abzüglich geleisteter Akontozahlung
+
+      </Markdown>
+
+    </TableCell>
+  )
+}
+
 export interface InvoicingTableCommonRowProps {
   line: App.Data.InvoiceLineData
 }
@@ -251,6 +268,80 @@ export const InvoicingTableDefaultRow: React.FC<InvoicingTableDefaultRowProps> =
   )
 }
 
+export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowProps> = ({
+  line,
+  index,
+  conditional = false,
+  onLineCommand
+}) => {
+  // @ts-ignore
+  const { invoice } = usePage<App.Data.InvoiceData>().props as unknown as App.Data.InvoiceData
+
+  const handleDelete = useCallback(() => {
+    console.log('Delete line:', line)
+    onLineCommand({ command: 'delete', lineId: line.id || 0 })
+  }, [onLineCommand, line])
+
+  const handleDuplicate = useCallback(() => {
+    console.log('Duplicate line:', line)
+    onLineCommand({ command: 'duplicate', lineId: line.id || 0 })
+  }, [onLineCommand, line])
+
+  return (
+    <TableRow>
+      <TableCell align="right" className="align-baseline">
+        {index}
+      </TableCell>
+      <TableNumberCell value={line.quantity || 0} />
+      <TableCell align="center">{line.unit}</TableCell>
+      <TableMarkdownCell>
+        abzüglich geleisteter Akontozahlung<br/>
+        RG-{line.linked_invoice?.formated_invoice_number} vom {line.linked_invoice?.issued_on}
+      </TableMarkdownCell>
+      <TableNumberCell conditional={conditional} value={line.price || 0} />
+      <TableNumberCell value={line.amount || 0} />
+      <TableCell align="center">({line.tax_rate_id})</TableCell>
+      {invoice.is_draft && (
+        <TableCell align="right">
+          <div className="flex items-center space-x-1  justify-end">
+            <Button
+              size="icon-sm"
+              icon={Edit03Icon}
+              iconClassName="text-primary"
+              variant="ghost"
+              onClick={() => onLineCommand({ command: 'edit', lineId: line.id || 0 })}
+            />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  iconClassName="text-primary"
+                  size="icon-sm"
+                  icon={MoreVerticalIcon}
+                />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={handleDuplicate}>
+                    <HugeiconsIcon icon={Copy01Icon} />
+                    Duplizieren
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleDelete} variant="destructive">
+                    <HugeiconsIcon icon={Delete04Icon} />
+                    Position löschen
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </TableCell>
+      )}
+    </TableRow>
+  )
+}
+
+
 export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
   line,
   getNextIndex,
@@ -270,6 +361,10 @@ export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
         </TableCell>
       </TableRow>
     )
+  }
+
+  if (line.type_id === 9) {
+    return (<InvoicingTableLinkedInvoiceRow line={line} index={rowIndex} conditional={conditional} onLineCommand={onLineCommand} />)
   }
 
   return (

@@ -1,4 +1,5 @@
-import * as React from "react"
+import { cva, type VariantProps } from 'class-variance-authority'
+import React, { createContext, useContext } from 'react'
 import {
   Tab as AriaTab,
   TabList as AriaTabList,
@@ -8,76 +9,133 @@ import {
   type TabProps as AriaTabProps,
   Tabs as AriaTabs,
   type TabsProps as AriaTabsProps,
-  composeRenderProps,
-} from "react-aria-components"
+  type Key
+} from 'react-aria-components'
+import { cn } from '@/Lib/utils'
 
-import { cn } from "@/Lib/utils"
+// Varianten für Tabs definieren
+const tabsVariants = cva('', {
+  variants: {
+    variant: {
+      classic: '',
+      underlined: '',
+      default: ''
+    }
+  },
+  defaultVariants: {
+    variant: 'default'
+  }
+})
 
-function Tabs({ className, ...props }: AriaTabsProps) {
+const tabListVariants = cva('flex', {
+  variants: {
+    variant: {
+      underlined: 'flex gap-4',
+      default: 'flex bg-muted rounded-lg p-1 w-fit',
+      classic: 'w-full p-0 justify-start rounded-none border-b'
+    }
+  }
+})
+
+const tabVariants = cva(
+  'cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:text-muted-foreground data-[selected]:font-medium text-sm',
+  {
+    variants: {
+      variant: {
+        underlined:
+          'border-b-2 py-1 border-transparent data-[selected]:border-primary data-[selected]:text-foreground data-[hovered]:text-foreground',
+        default:
+          'rounded-md px-3 py-1 data-[selected]:bg-background data-[selected]:text-foreground data-[selected]:shadow',
+        classic:
+          'px-4 py-1.5 rounded-none border border-transparent border-b-border data-[selected]:border-border data-[selected]:bg-background  data-[selected]:border-b-transparent  data-[selected]:rounded-t-md'
+      }
+    }
+  }
+)
+
+// Context für die Variant - erweitert um null und undefined
+type TabsContextType = {
+  variant: 'underlined' | 'classic' | 'default' | null | undefined,
+  tabClassName?: string
+}
+
+const TabsContext = createContext<TabsContextType>({ variant: 'default', tabClassName: '' })
+
+// Hook für den Context
+const useTabsContext = () => {
+  const context = useContext(TabsContext)
+  if (!context) {
+    throw new Error('Tab components must be used within a Tabs component')
+  }
+  return context
+}
+
+// Tabs Props Interface - Custom onSelectionChange erlauben
+export interface TabsProps
+  extends Omit<AriaTabsProps, 'onSelectionChange'>,
+    VariantProps<typeof tabsVariants> {
+  className?: string
+  tabClassName?: string
+  onSelectionChange?: (key: Key) => void
+}
+
+// Hauptkomponente Tabs
+export const Tabs = ({
+  className,
+  variant = 'default',
+  onSelectionChange,
+  tabClassName = '',
+  children,
+  ...props
+}: TabsProps) => {
   return (
-    <AriaTabs
-      className={composeRenderProps(className, (className) =>
-        cn(
-          "group flex flex-col relative",
-          /* Orientation */
-          "data-[orientation=vertical]:flex-row",
-          className
-        )
-      )}
+    <TabsContext.Provider value={{ variant, tabClassName }}>
+      <AriaTabs
+        className={cn(tabsVariants({ variant }), className)}
+        onSelectionChange={onSelectionChange}
+        {...props}
+      >
+        {children}
+      </AriaTabs>
+    </TabsContext.Provider>
+  )
+}
+
+// TabList Komponente
+export interface TabListProps<T extends object = object> extends AriaTabListProps<T> {
+  className?: string
+}
+
+export function TabList<T extends object = object>({ className, ...props }: TabListProps<T>) {
+  const { variant } = useTabsContext()
+
+  return (
+    <AriaTabList<T>
+      className={cn(tabListVariants({ variant: variant ?? 'default' }), className)}
       {...props}
     />
   )
 }
 
-const TabList = <T extends object>({
-  className,
-  ...props
-}: AriaTabListProps<T>) => (
-  <AriaTabList
-    className={composeRenderProps(className, (className) =>
-      cn(
-        "w-full px-6 inline-flex items-center justify-start rounded-none bg-page-content gap-2",
-        /* Orientation */
-        "data-[orientation=vertical]:h-auto data-[orientation=vertical]:flex-col",
-        className
-      )
-    )}
-    {...props}
-  />
-)
+// Tab Komponente
+export interface TabProps extends AriaTabProps {
+  className?: string
+  href?: string // href als optional hinzugefügt
+}
 
-const Tab = ({ className, ...props }: AriaTabProps) => (
-  <AriaTab
-    className={composeRenderProps(className, (className) =>
-      cn(
-        "flex z-50  bg-transparent border-transparent border items-center font-normal rounded-none px-4 py-0 select-none text-base h-9 flex-none !rounded-t-md text-foreground hover:underline cursor-pointer shadow-none transition-all",
-        /* Focus Visible */
-        "data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring/20  data-[focus-visible]:border-primary",
-        /* Disabled */
-        "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-        /* Selected */
-        "data-[selected]:border data-[selected]:bg-background data-[selected]:border-border data-[selected]:border-b-background data-[selected]:-mb-[4px] data-[selected]:text-foreground data-[selected]:font-medium ",
-        /* Orientation */
-        "group-data-[orientation=vertical]:w-full",
-        className
-      )
-    )}
-    {...props}
-  />
-)
+export const Tab = ({ className, ...props }: TabProps) => {
+  const { variant, tabClassName } = useTabsContext()
 
-const TabPanel = ({ className, ...props }: AriaTabPanelProps) => (
-  <AriaTabPanel
-    className={composeRenderProps(className, (className) =>
-      cn(
-        "p-6 ring-offset-background",
-        /* Focus Visible */
-        "data-[focus-visible]:outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2",
-        className
-      )
-    )}
-    {...props}
-  />
-)
+  return (
+    <AriaTab className={cn(tabVariants({ variant: variant ?? 'default' }), className, tabClassName)} {...props} />
+  )
+}
 
-export { Tabs, TabList, TabPanel, Tab }
+// TabPanel Komponente
+export interface TabPanelProps extends AriaTabPanelProps {
+  className?: string
+}
+
+export const TabPanel = ({ className, ...props }: TabPanelProps) => {
+  return <AriaTabPanel className={cn('my-2', className)} {...props} />
+}

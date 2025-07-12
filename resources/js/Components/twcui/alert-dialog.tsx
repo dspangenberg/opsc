@@ -14,6 +14,7 @@ interface AlertDialogProps {
   message: string
   variant?: 'default' | 'destructive'
   buttonTitle: string
+  cancelButtonTitle?: string
   onConfirm: () => void
   onCancel: () => void
 }
@@ -27,6 +28,7 @@ const AlertDialogComponent: React.FC<AlertDialogProps> = ({
   message,
   buttonTitle,
   variant = "destructive",
+  cancelButtonTitle = 'Abbrechen',
   onConfirm,
   onCancel
 }) => (
@@ -54,7 +56,7 @@ const AlertDialogComponent: React.FC<AlertDialogProps> = ({
             onCancel();
           }, 50);
         }}>
-          Abbrechen
+          { cancelButtonTitle }
         </Button>
         <Button form="clientForm" variant={variant} onClick={() => {
           // Add a small delay before resolving the promise
