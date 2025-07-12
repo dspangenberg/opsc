@@ -1,13 +1,8 @@
-/*
- * opsc.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
- */
-
-import tailwindcss from '@tailwindcss/vite'
-import react from '@vitejs/plugin-react'
-import laravel from 'laravel-vite-plugin'
 
 import { defineConfig } from 'vite'
+import laravel from 'laravel-vite-plugin'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 import { run } from 'vite-plugin-run'
 
 export default defineConfig({
@@ -30,5 +25,25 @@ export default defineConfig({
         condition: file => file.includes('/routes/')
       }
     ])
-  ]
+  ],
+  optimizeDeps: {
+    include: ['react-pdf', 'pdfjs-dist']
+  },
+  build: {
+    commonjsOptions: {
+      include: [/react-pdf/, /pdfjs-dist/]
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          pdfWorker: ['pdfjs-dist/build/pdf.worker.min']
+        }
+      }
+    }
+  },
+  resolve: {
+    alias: {
+      'pdfjs-dist': 'pdfjs-dist/legacy/build/pdf'
+    }
+  }
 })

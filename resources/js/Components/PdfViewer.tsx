@@ -8,12 +8,14 @@ import { useMemo, useRef, useState } from 'react'
 import { Dialog } from '@/Components/twcui/dialog'
 import { Separator } from '@/Components/twcui/separator'
 import print from 'print-js'
-import { Document, Page } from 'react-pdf'
-import type { PDFDocumentProxy } from 'pdfjs-dist'
-import * as pdfjs from 'pdfjs-dist'
+import { Document, Page, pdfjs } from 'react-pdf'
+import type { PDFDocumentProxy } from 'react-pdf'
 import 'react-pdf/dist/Page/TextLayer.css'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import { LogoSpinner } from '@dspangenberg/twcui'
+
+// Set the worker source
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
 import {
   ArrowDown01Icon,
@@ -32,7 +34,6 @@ import { Toolbar } from '@/Components/twcui/toolbar'
 import { Button } from '@/Components/twcui/button'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
 interface Props {
   document: string
