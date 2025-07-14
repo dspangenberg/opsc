@@ -11,6 +11,9 @@ import {
   composeRenderProps,
   Text,
 } from "react-aria-components"
+import type { Key } from 'react-aria-components'
+import { useFilter } from 'react-aria'
+import { useMemo, useState, useCallback } from 'react'
 
 import { cn } from "@/Lib/utils"
 
@@ -24,8 +27,9 @@ import {
 } from "./list-box"
 import { Popover } from "./popover"
 import type React from 'react'
+import { useFormChange } from '@/Hooks/use-form-change'
 
-const Combobox = AriaComboBox
+const BaseCombobox = AriaComboBox
 
 const ComboboxItem = ListBoxItem
 
@@ -91,7 +95,7 @@ function JollyComboBox<T extends object>({
   ...props
 }: JollyComboBoxProps<T>) {
   return (
-    <Combobox
+    <BaseCombobox
       className={composeRenderProps(className, (className) =>
         cn("group flex flex-col gap-2", className)
       )}
@@ -99,7 +103,7 @@ function JollyComboBox<T extends object>({
     >
       <Label>{label}:</Label>
       <FieldGroup className="p-0">
-        <ComboboxInput  className="focus:ring-0 border-transparent"/>
+        <ComboboxInput className="focus:ring-0 border-transparent"/>
         <Button variant="ghost" size="icon" className="mr-1.5 size-6 p-1">
           <CaretSortIcon aria-hidden="true" className="size-4 opacity-50" />
         </Button>
@@ -113,13 +117,100 @@ function JollyComboBox<T extends object>({
       <ComboboxPopover>
         <ComboboxListBox>{children}</ComboboxListBox>
       </ComboboxPopover>
-    </Combobox>
+    </BaseCombobox>
+  )
+}
+
+interface ComboboxProps<T extends Record<string, unknown>> {
+  label?: string
+  value: number
+  name: string
+  className?: string
+  autoFocus?: boolean
+  items: T[],
+  description?: string
+  itemName?: keyof T & string
+  itemValue?: keyof T & string
+  hasError?: boolean
+  errors?: Partial<Record<keyof T, string>>
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  isOptional?: boolean
+  optionalValue?: string
+}
+
+function Combobox<T extends Record<string, unknown>> ({
+  label,
+  value,
+  name,
+  itemName = 'name' as keyof T & string,
+  itemValue = 'id' as keyof T & string,
+  isOptional = false,
+  optionalValue = '(leer)',
+  className = '',
+  description,
+  autoFocus = false,
+  hasError = false,
+  items,
+  errors,
+  onChange,
+  ...props
+}: ComboboxProps<T>) {
+  const formChange = useFormChange({ name, onChange });
+
+  const handleValueChange = useCallback((key: Key | null) => {
+    let adjustedValue: number;
+    if (key === null) {
+      adjustedValue = 0;
+    } else if (typeof key === 'string') {
+      adjustedValue = Number.parseInt(key, 10) || 0;
+    } else {
+      adjustedValue = key;
+    }
+
+    formChange(adjustedValue);
+  }, [formChange]);
+
+  const itemsWithPlaceholder = useMemo(() =>
+    isOptional
+      ? [...Array.from(items),{
+        [itemValue]: -1,
+        [itemName]: optionalValue
+      } as T]
+      : Array.from(items),
+    [isOptional, itemValue, itemName, optionalValue, items]
+  );
+
+  const { contains } = useFilter({ sensitivity: 'base' });
+  const [filterValue, setFilterValue] = useState('');
+  const filteredItems: T[] = useMemo(
+    () => itemsWithPlaceholder.filter((item) => contains(String(item[itemName]), filterValue)),
+    [itemsWithPlaceholder, itemName, contains, filterValue]
+  );
+
+  return (
+    <JollyComboBox<T>
+      onSelectionChange={handleValueChange}
+      selectedKey={value}
+      label={label}
+      items={filteredItems}
+      description={description}
+      autoFocus={autoFocus}
+      onInputChange={setFilterValue}
+      className={className}
+      isInvalid={hasError}
+      {...props}
+    >
+      {item => (
+        <ComboboxItem id={Number(item[itemValue])}>
+          {String(item[itemName])}
+        </ComboboxItem>
+      )}
+    </JollyComboBox>
   )
 }
 
 export {
   ComboboxSection,
-  Combobox,
   ComboboxListBox,
   ComboboxInput,
   ComboboxCollection,
@@ -127,5 +218,6 @@ export {
   ComboboxHeader,
   ComboboxPopover,
   JollyComboBox,
+  Combobox,
 }
-export type { JollyComboBoxProps }
+export type { JollyComboBoxProps, ComboboxProps }

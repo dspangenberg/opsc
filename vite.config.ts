@@ -27,7 +27,7 @@ export default defineConfig({
     ])
   ],
   optimizeDeps: {
-    include: ['react-pdf', 'pdfjs-dist']
+    include: ['react-pdf', 'pdfjs-dist', 'pdfjs-dist/build/pdf.worker.min.js']
   },
   build: {
     commonjsOptions: {
@@ -43,6 +43,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      // Exclude the worker file from the alias
+      'pdfjs-dist/build/pdf.worker.min.js': 'pdfjs-dist/build/pdf.worker.min.js',
       'pdfjs-dist': 'pdfjs-dist/legacy/build/pdf'
     }
   }

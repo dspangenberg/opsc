@@ -8,14 +8,14 @@ import { useMemo, useRef, useState } from 'react'
 import { Dialog } from '@/Components/twcui/dialog'
 import { Separator } from '@/Components/twcui/separator'
 import print from 'print-js'
-import { Document, Page, pdfjs } from 'react-pdf'
+import { Document, Page } from 'react-pdf'
 import type { PDFDocumentProxy } from 'react-pdf'
 import 'react-pdf/dist/Page/TextLayer.css'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import { LogoSpinner } from '@dspangenberg/twcui'
 
-// Set the worker source
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
+// Import the worker setup
+import '@/utils/pdf-worker'
 
 import {
   ArrowDown01Icon,
