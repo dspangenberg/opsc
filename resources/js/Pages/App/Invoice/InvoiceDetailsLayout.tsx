@@ -18,8 +18,7 @@ import {
   UnavailableIcon
 } from '@hugeicons/core-free-icons'
 import { PageContainer } from '@/Components/PageContainer'
-import { Button } from '@/Components/twcui/button'
-import { ClassicNavTabsTab } from '@/Components/ClassicNavTabs'
+import { Button } from '@/Components/ui/twc-ui/button'
 import { PdfViewer } from '@/Components/PdfViewer'
 import print from 'print-js'
 import { useFileDownload } from '@/Hooks/useFileDownload'

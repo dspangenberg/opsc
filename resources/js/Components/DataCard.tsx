@@ -22,15 +22,15 @@ export const DataCard: FC<DataCardProps> = ({
   className = ''
 }: DataCardProps) => {
   return (
-    <BorderedBox>
+    <BorderedBox className="flex overflow-y-hidden flex-1" innerClassName="overflow-y-hidden">
     <div
       className={cn(
-        'flex-none w-full rounded-lg',
+        'flex-1 flex flex-col w-full rounded-lg',
         className
       )}
     >
       {title && <DataCardHeader title={title} />}
-      <div className="rounded-lg p-2">{children}</div>
+      <div className="rounded-lg p-2 overflow-y-auto flex-1">{children}</div>
     </div>
     </BorderedBox>
   )
@@ -89,13 +89,13 @@ export const DataCardContent: FC<DataCardContentProps> = ({ children, showSecond
   }
 
   return (
-    <div>
-      <div className="space-y-1.5 my-1 divide-border/40">
+    <div className=" border border-red-500">
+      <div className="space-y-1.5 my-1 divide-border/40 overflow-y-auto">
         {showSecondarySections ? allChildren : filteredChildren}
       </div>
       {!showSecondarySections && allChildren.length > filteredChildren.length && (
         <div
-          className="flex items-center justify-center text-xs py-2  cursor-pointer hover:underline text-center"
+          className="flex items-center justify-center text-xs py-2  cursor-pointer hover:underline text-center overflow-y-auto"
           onClick={onShowSecondaryClicked}
           onKeyDown={handleKeyDown}
         >

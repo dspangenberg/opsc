@@ -11,8 +11,7 @@ import {
 } from 'react-aria-components'
 
 import { cn } from '@/Lib/utils'
-import { BaseButton, IconSvgElement } from '@/Components/twcui/base-button'
-import { HugeiconsIcon } from '@hugeicons/react'
+import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react'
 import { Tooltip, TooltipTrigger } from '@/Components/twcui/tooltip'
 
 const toggleVariants = cva(

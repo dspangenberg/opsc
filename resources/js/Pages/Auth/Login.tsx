@@ -8,18 +8,12 @@ import GuestLayout from '@/Layouts/GuestLayout'
 import { Link } from '@inertiajs/react'
 import type React from 'react'
 import { Logo } from '@dspangenberg/twcui'
-import { Form, useForm } from '@/Components/twcui/form'
-import { FormGroup } from '@/Components/twcui/form-group'
-import { Input } from '@/Components/twcui/input'
-import { Checkbox } from '@/Components/jolly-ui/checkbox'
-import { Button} from '@/Components/twcui/button'
+import { Form, useForm } from '@/Components/ui/twc-ui/form'
+import { FormGroup } from '@/Components/ui/twc-ui/form-group'
+import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
+import { Button } from '@/Components/ui/twc-ui/button'
 
-
-interface LoginForm {
-  email: string
-  password: string
-  remember: boolean
-}
 
 interface LoginProps {
   status?: string
@@ -27,7 +21,7 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
-  const { form } = useForm<App.Data.LoginData>(
+  const form = useForm<App.Data.LoginData>(
     'auth-login-form',
     'post',
     route('login'),
@@ -48,8 +42,8 @@ const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
       <Form form={form}>
         <FormGroup>
           <div className="col-span-24">
-            <Input
-              autocomplete="username"
+            <TextField
+              autoComplete="username"
               label="E-Mail"
               autoFocus
               {...form.register('email')}
@@ -57,7 +51,7 @@ const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
           </div>
 
           <div className="col-span-24">
-            <Input
+            <TextField
               autoComplete="current-password"
               type="password"
               label="Kennwort"
@@ -78,7 +72,7 @@ const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
             {canResetPassword && (
               <Link
                 href={route('password.request')}
-                className="rounded-xs text-sm text-gray-600 underline hover:text-gray-900 "
+                className='rounded-xs text-gray-600 text-sm underline hover:text-gray-900 '
               >
                 Kennwort vergessen?
               </Link>
@@ -86,7 +80,7 @@ const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
           </div>
           <div className="col-span-24">
             <Button
-              loading={form.processing}
+              isLoading={form.processing}
               form={form.id}
               variant="default"
               className="w-full"

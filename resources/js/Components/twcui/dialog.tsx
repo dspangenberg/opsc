@@ -1,6 +1,6 @@
 import type React from 'react'
 import { type ReactNode, useEffect, useState } from 'react'
-import { Button } from '@/Components/twcui/button'
+import { Button } from '@/Components/ui/twc-ui/button'
 
 import { cn } from '@/Lib/utils'
 import { Cross2Icon } from '@radix-ui/react-icons'
@@ -127,7 +127,7 @@ export const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      'flex flex-col space-y-1.5 px-4 py-1 gap-0  items-center  justify-center text-center sm:text-left bg-sidebar rounded-t-lg',
+      'flex flex-col space-y-1.5 px-4 py-1 gap-0  items-center  justify-center text-center sm:text-left !bg-muted rounded-t-lg',
       className
     )}
     {...props}
@@ -140,7 +140,7 @@ export const DialogFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      'flex flex-col-reverse px-4 py-3 sm:flex-row sm:justify-end sm:space-x-2 bg-sidebar rounded-b-lg',
+      'flex flex-col-reverse px-4 py-3 sm:flex-row sm:justify-end sm:space-x-2 !bg-muted rounded-b-lg',
       className
     )}
     {...props}
@@ -167,7 +167,7 @@ export const DialogTitle = ({
   <AriaHeading
     slot="title"
     className={cn(
-      'text-base font-medium leading-none tracking-tight text-center py-0 w-full ',
+      '!text-base font-medium leading-none tracking-tight text-center py-0 w-full ',
       className
     )}
     {...props}

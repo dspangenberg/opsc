@@ -25,7 +25,7 @@ const mailLink = (mail: string) => `mailto:${mail}`
 export const columns: ColumnDef<App.Data.InvoiceData>[] = [
   {
     id: 'select',
-    size: 40,
+    size: 45,
     header: ({ table }) => (
       <Checkbox
         checked={

@@ -4,10 +4,12 @@
  */
 
 import AuthContainer from '@/Components/AuthContainer'
-import { Button, FormGroup, FormInput, FormErrors} from '@dspangenberg/twcui'
-import { useForm } from '@/Hooks/use-form-old'
 import GuestLayout from '@/Layouts/GuestLayout'
 import type React from 'react'
+import { Form, type FormSchema, useForm } from '@/Components/ui/twc-ui/form'
+import { Button } from '@/Components/ui/twc-ui/button'
+import { FormGroup } from '@/Components/ui/twc-ui/form-group'
+import { TextField} from '@/Components/ui/twc-ui/text-field'
 
 interface RegisterForm {
   email: string
@@ -18,7 +20,8 @@ interface RegisterForm {
 }
 
 const Register: React.FC = () => {
-  const { data, errors, processing, submit, updateAndValidate, setErrors } = useForm<RegisterForm>(
+  const form = useForm<RegisterForm & FormSchema>(
+    'register-form',
     'post',
     route('cloud.register.store'),
     {
@@ -30,86 +33,52 @@ const Register: React.FC = () => {
     }
   )
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log('Submitting form')
-    try {
-      await submit(e)
-    } catch (error) {
-      console.error('Form submission failed', error)
-      setErrors(error as Record<keyof RegisterForm, string>)
-    }
-  }
-
   const registerContent = (
     <AuthContainer title="Registrierung" maxWidth="md">
-      <form id="register" onSubmit={handleSubmit}>
-        <FormErrors errors={errors} />
+      <Form form={form}>
         <FormGroup>
           <div className="col-span-12">
-            <FormInput
-              id="first_name"
+            <TextField
               label="Vorname"
-              required
-              autoFocus
-              value={data.first_name}
-              error={errors?.first_name || ''}
               placeholder="Gabriele"
-              onChange={updateAndValidate}
-              onBlur={updateAndValidate}
+              autoFocus
+              {...form.register('first_name')}
             />
           </div>
           <div className="col-span-12">
-            <FormInput
-              id="last_name"
-              label="Nachname"
-              required
-              value={data.last_name}
-              error={errors?.last_name || ''}
-              onChange={updateAndValidate}
-              onBlur={updateAndValidate}
+            <TextField
+              label="Name"
               placeholder="Mustermann"
+              autoFocus
+              {...form.register('last_name')}
             />
           </div>
           <div className="col-span-24">
-            <FormInput
-              id="organisation"
+            <TextField
               label="Organisation"
-              value={data.organisation}
-              error={errors?.organisation || ''}
-              placeholder="Verein Musterhausen e.V."
-              onChange={updateAndValidate}
-              onBlur={updateAndValidate}
+              placeholder="Mustermann AG"
+              autoFocus
+              {...form.register('organisation')}
             />
           </div>
           <div className="col-span-24">
-            <FormInput
-              id="email"
-              type="email"
-              required
+            <TextField
               label="E-Mail-Adresse"
-              value={data.email}
-              error={errors?.email || ''}
-              autoComplete="username"
-              placeholder="info@verein-musterhausen.de"
-              onChange={updateAndValidate}
-              onBlur={updateAndValidate}
+              placeholder="info@mustermann-ag.de"
+              autoFocus
+              {...form.register('email')}
             />
           </div>
           <div className="col-span-24">
-            <FormInput
-              id="website"
-              required
+            <TextField
               label="Website"
-              value={data.website}
-              error={errors?.website || ''}
-              autoComplete="website"
-              placeholder="https://verein-musterhausen.de"
-              onChange={updateAndValidate}
-              onBlur={updateAndValidate}
+              placeholder="https://mustermann-ag.de"
+              autoFocus
+              {...form.register('website')}
             />
           </div>
-          <div className="col-span-24 text-sm text-center">
-            <p className="text-center text-base font-medium my-3 text-black">
+          <div className='col-span-24 text-center text-sm'>
+            <p className='my-3 text-center font-medium text-base text-black'>
               Indem Du mit der Registrierung fortfährst, stimmst Du unseren&nbsp;
               <a href="/terms" className="underline underline-offset-4 hover:text-primary">
                 Nutzungsbedingungen
@@ -124,16 +93,16 @@ const Register: React.FC = () => {
           </div>
           <div className="col-span-24">
             <Button
-              form="register"
-              disabled={processing}
-              loading={processing}
+              form={form.id}
+              isLoading={form.processing}
+              size="full"
               variant="default"
               type="submit"
             >
               Jetzt registrieren
             </Button>
           </div>
-          <div className="col-span-24 text-center text-base pt-4">
+          <div className='col-span-24 pt-4 text-center text-base'>
             <span className="font-bold">Du hast bereits ein Konto?</span> Melde Dich auf Deiner
             ooboo-Subdomain an oder
             <a href="/terms" className="underline underline-offset-4 hover:text-primary">
@@ -141,7 +110,7 @@ const Register: React.FC = () => {
             </a>
           </div>
         </FormGroup>
-      </form>
+      </Form>
     </AuthContainer>
   )
 

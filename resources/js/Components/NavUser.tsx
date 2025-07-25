@@ -20,7 +20,6 @@ import {
 } from '@/Components/ui/dropdown-menu'
 import { Door01Icon, Settings05Icon, UserIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import type React from 'react'
 
 export function NavUser({
   user
@@ -32,7 +31,9 @@ export function NavUser({
   }
   return (
     <DropdownMenu>
+
       <DropdownMenuTrigger asChild>
+        <div className='mr-4 flex items-center gap-2'>
         <Button size="icon" variant="ghost" className="rounded-full">
           <Avatar
             src={user.avatar_url as unknown as string}
@@ -40,7 +41,12 @@ export function NavUser({
             fullname={user.full_name}
           />
         </Button>
+          <div className='cursor-default font-medium text-sm'>
+            {user.full_name}
+          </div>
+        </div>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent
         className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
         side="bottom"

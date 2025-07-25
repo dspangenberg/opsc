@@ -1,6 +1,6 @@
 import type * as React from 'react'
 import { createRoot } from 'react-dom/client'
-import { Button } from "@/Components/twcui/button"
+import { Button } from "@/Components/ui/twc-ui/button"
 import {
   Dialog
 } from '@/Components/twcui/dialog'

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useCallback, useEffect, useId, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { usePage } from '@inertiajs/react'
 import {
   Add01Icon,
@@ -8,9 +8,7 @@ import {
   MoreVerticalCircle01Icon,
   FilterHorizontalIcon,
   FolderManagementIcon,
-  FilterRemoveIcon,
   FileDownloadIcon,
-  FilterAddIcon,
   PrinterIcon,
   FilterIcon
 } from '@hugeicons/core-free-icons'
@@ -22,12 +20,12 @@ import { Pagination } from '@/Components/Pagination'
 import { StatsField } from '@/Components/StatsField'
 import { getYear } from 'date-fns'
 import { router } from '@inertiajs/core'
-import { debounce } from 'lodash'
+import { debounce, sumBy } from 'lodash'
 import { Separator } from '@/Components/twcui/separator'
 import { Toolbar } from '@/Components/twcui/toolbar'
-import { Button } from '@/Components/twcui/button'
+import { Button } from '@/Components/ui/twc-ui/button'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
-import { Select } from '@/Components/twcui/select'
+import { Select } from '@/Components/ui/twc-ui/select'
 import { BorderedBox } from '@/Components/twcui/bordered-box'
 import { Badge } from '@/Components/ui/badge'
 import { Toggle } from '@/Components/twcui/toggle'
@@ -61,14 +59,13 @@ const InvoiceIndex: React.FC = () => {
   const stats = usePage<ContactIndexProps>().props.stats
   const currentYear = usePage<ContactIndexProps>().props.currentYear
   const years = usePage<ContactIndexProps>().props.years as unknown as number[]
-
+  const [selectedAmount, setSelectedAmount] = useState<number>(0)
   const minYear = Math.min(...years)
 
   const [year, setYear] = React.useState<number>(currentYear)
   const [view, setView] = React.useState<number>(1)
   const [selectedRows, setSelectedRows] = React.useState<App.Data.InvoiceData[]>([])
   const [showFilter, setShowFilter] = React.useState<boolean>(false)
-
 
   const localCurrentYear = getYear(new Date())
 
@@ -79,16 +76,16 @@ const InvoiceIndex: React.FC = () => {
 
   const handlePreviousYear = useCallback(() => {
     const newYear = Number(year) === 0 ? localCurrentYear - 1 : year - 1
-    setYear( newYear)
+    setYear(newYear)
 
     // setYear(prevYear => Math.max(currentYear - 10, Number(prevYear) - 1))
-  }, [currentYear, setYear])
+  }, [setYear, year, localCurrentYear])
 
   const handleNextYear = useCallback(() => {
     const newYear = Number(year) === 0 ? localCurrentYear : Number.parseInt(year as unknown as string) + 1
-    setYear(prevYear => newYear)
+    setYear(_prevYear => newYear)
 
-  }, [localCurrentYear, setYear])
+  }, [localCurrentYear, setYear, year])
 
   useEffect(() => {
     const debouncedNavigate = debounce(() => {
@@ -115,7 +112,7 @@ const InvoiceIndex: React.FC = () => {
       name: 'Alle'
     })
     return items
-  }, [years])
+  }, [])
 
   const views: ViewProps[] = [
     {
@@ -138,7 +135,7 @@ const InvoiceIndex: React.FC = () => {
     () => (
       <Toolbar>
         <Button variant="toolbar-default" icon={Add01Icon} title="Neue Rechnung" />
-        <Button variant="toolbar" icon={PrinterIcon} title="Drucken" disabled={true}  />
+        <Button variant="toolbar" icon={PrinterIcon} title="Drucken" disabled={true} />
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} title="Weitere Optionen">
           <MenuItem icon={Add01Icon} title="Rechnung hinzufügen" ellipsis separator />
           <MenuItem icon={PrinterIcon} title="Auswertung drucken" ellipsis />
@@ -149,16 +146,19 @@ const InvoiceIndex: React.FC = () => {
   )
 
   const actionBar = useMemo(() => {
+    const sum = sumBy(selectedRows, 'amount_net')
+    setSelectedAmount(sum)
     return (
-    <Toolbar className="px-4 pt-2">
-      <div className="self-center text-sm">
-        <Badge variant="outline" className="bg-background mr-1.5">{selectedRows.length}</Badge>
-        ausgewählte Datensätze
-      </div>
-      <Button variant="ghost" size="auto" icon={FileDownloadIcon} title="Herunterladen" />
-    </Toolbar>
+      <Toolbar className="px-4 pt-2">
+        <div className="self-center text-sm">
+          <Badge variant="outline" className="mr-1.5 bg-background">{selectedRows.length}</Badge>
+          ausgewählte Datensätze
+        </div>
+        <Button variant="ghost" size="auto" icon={FileDownloadIcon} title="Herunterladen" />
+        <div className="flex-1 text-right font-medium text-sm">{currencyFormatter.format(selectedAmount)} €</div>
+      </Toolbar>
     )
-  }, [selectedRows])
+  }, [selectedRows, selectedAmount])
 
   const filterBar = useMemo(() => {
     if (!showFilter) {
@@ -171,15 +171,12 @@ const InvoiceIndex: React.FC = () => {
     )
   }, [showFilter])
 
-
-  const id = useId()
-
   const header = useMemo(
     () => (
       <div className="flex flex-col">
-        <BorderedBox className="flex-none mx-auto mb-3">
+        <BorderedBox className="mx-auto mb-3 flex-none">
           <div
-            className="flex mx-auto gap-4 justify-center divide-y lg:divide-x lg:divide-y-0 bg-white px-2 py-2.5"
+            className="mx-auto flex justify-center gap-4 divide-y bg-white px-2 py-2.5 lg:divide-x lg:divide-y-0"
           >
             <StatsField label="netto" value={currencyFormatter.format(stats.total_net)} />
             <StatsField label="USt." value={currencyFormatter.format(stats.total_tax)} />
@@ -194,47 +191,49 @@ const InvoiceIndex: React.FC = () => {
         </BorderedBox>
 
 
-        <div className="flex-none space-x-2 p-2 flex items-center">
+        <div className="flex flex-none items-center space-x-2 p-2">
           <Toolbar className="flex flex-1">
-          <Select<ViewProps>
-            aria-label="View"
-            className="bg-background w-48"
-            name="view"
-            value={Number(view)}
-            items={views}
-            onChange={(value) => setView(Number(value.target.value))}
-          />
-          <Button variant="ghost" size="icon" icon={FolderManagementIcon} title="Optionen für virtuellen Ordner" />
-          <Separator orientation="vertical" />
+            <Select<ViewProps>
+              aria-label="View"
+              className="w-48 bg-background"
+              name="view"
+              value={Number(view)}
+              items={views}
+              onChange={(value) => setView(Number(value.target.value))}
+            />
+            <Button variant="ghost" size="icon" icon={FolderManagementIcon} title="Optionen für virtuellen Ordner" />
+            <Separator orientation="vertical" />
 
-          <Toggle icon={FilterIcon} tooltip="Filter ein- /ausblenden" variant="default" size="default" isSelected={showFilter} onChange={setShowFilter} />
-          
+            <Toggle icon={FilterIcon} tooltip="Filter ein- /ausblenden" variant="default" size="default"
+                    isSelected={showFilter} onChange={setShowFilter}
+            />
 
-          <div className="flex-1" />
-          <Button variant="ghost" size="icon" icon={FilterHorizontalIcon} title="Drucken" />
+
+            <div className="flex-1" />
+            <Button variant="ghost" size="icon" icon={FilterHorizontalIcon} title="Drucken" />
           </Toolbar>
         </div>
       </div>
     ),
-    [id, showFilter, stats, view]
+    [showFilter, view, stats.total_net, stats.total_tax, stats.total_gross, stats.total_loss_of_receivables, setView, setShowFilter]
   )
 
   const footer = useMemo(() => {
     return (
       <Pagination data={invoices} selected={selectedRows.length} />
     )
-  }, [invoices, selectedRows])
+  }, [invoices, selectedRows.length])
 
   return (
     <PageContainer
       title="Rechnungen"
       width="7xl"
       breadcrumbs={breadcrumbs}
-      className="overflow-hidden flex"
+      className="flex overflow-hidden"
       toolbar={toolbar}
       header={
-        <div className="flex gap-2 items-center flex-1">
-          <div className="flex flex-none gap-1 text-xl font-bold items-center">
+        <div className="flex flex-1 items-center gap-2">
+          <div className="flex flex-none items-center gap-1 font-bold text-xl">
 
             Rechnungen&nbsp;
             <Button

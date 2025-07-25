@@ -1,4 +1,3 @@
-import { cva } from 'class-variance-authority'
 import type React from 'react'
 import {
   Tooltip as AriaTooltip,
@@ -7,7 +6,8 @@ import {
   OverlayArrow,
   TooltipTrigger
 } from 'react-aria-components'
-import { cn } from '/lib/utils'
+import { cva } from 'class-variance-authority'
+import { cn } from '@/Lib/utils'
 
 export interface TooltipProps extends Omit<AriaTooltipProps, 'children'> {
   children: React.ReactNode

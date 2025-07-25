@@ -31,7 +31,7 @@ const tabListVariants = cva('flex', {
     variant: {
       underlined: 'flex gap-4',
       default: 'flex bg-muted rounded-lg p-1 w-fit',
-      classic: 'w-full p-0 justify-start rounded-none'
+      classic: 'w-full p-0 justify-start rounded-none border-b'
     }
   }
 })
@@ -46,19 +46,23 @@ const tabVariants = cva(
         default:
           'rounded-md px-3 py-1 data-[selected]:bg-background data-[selected]:text-foreground data-[selected]:shadow',
         classic:
-          'px-4 py-2 rounded-none border border-transparent border-b-border data-[selected]:border-border  data-[selected]:border-b-transparent  data-[selected]:rounded-t-md'
+          'px-4 py-2 z-50 -mb-px rounded-none border border-transparent data-[selected]:border-border  data-[selected]:border-b-white  data-[selected]:rounded-t-md'
       }
     }
   }
 )
 
 type TabsContextType = {
-  variant: 'underlined' | 'classic' | 'default' | null | undefined,
+  variant: 'underlined' | 'classic' | 'default' | null | undefined
   tabClassName?: string
   panelClassName?: string
 }
 
-const TabsContext = createContext<TabsContextType>({ variant: 'default', tabClassName: '', panelClassName: '' })
+const TabsContext = createContext<TabsContextType>({
+  variant: 'default',
+  tabClassName: '',
+  panelClassName: ''
+})
 
 const useTabsContext = () => {
   const context = useContext(TabsContext)
@@ -123,7 +127,10 @@ export const Tab = ({ className, ...props }: TabProps) => {
   const { variant, tabClassName } = useTabsContext()
 
   return (
-    <AriaTab className={cn(tabVariants({ variant: variant ?? 'default' }), tabClassName, className)} {...props} />
+    <AriaTab
+      className={cn(tabVariants({ variant: variant ?? 'default' }), tabClassName, className)}
+      {...props}
+    />
   )
 }
 

@@ -7,8 +7,8 @@ import {
   composeRenderProps,
   type TooltipProps
 } from 'react-aria-components'
-import { Icon, type IconType } from '/components/twc-ui/icon'
-import { cn } from '/lib/utils'
+import { cn } from '@/Lib/utils'
+import { Icon, type IconType } from './icon'
 import { Tooltip, TooltipTrigger } from './tooltip'
 
 const buttonVariants = cva(
@@ -46,6 +46,7 @@ const buttonVariants = cva(
         sm: 'h-8 rounded-md px-3 text-xs',
         lg: 'h-10 rounded-md px-8',
         icon: 'size-9',
+        full: 'h-9 w-full px-2',
         auto: 'h-9 w-auto py-2 px-2',
         'icon-xs': 'size-6',
         'icon-sm': 'size-7'
@@ -112,6 +113,7 @@ export const Button = ({
     sm: 'size-5',
     lg: 'size-5',
     icon: 'size-5',
+    full: 'size-5',
     'icon-sm': 'size-4',
     'icon-xs': 'size-3'
   }[size || 'default']
@@ -140,15 +142,16 @@ export const Button = ({
     >
       {composeRenderProps(children, children => (
         <div className={cn('flex gap-2', size === 'icon' ? 'mx-auto' : '')}>
-          {!isLoading && icon && (
-            <Icon
-              aria-label={title || tooltip}
-              icon={icon}
-              className={cn(disabled ? 'text-muted-foreground' : '', iconSizeClass, iconClassName)}
-            />
-          )}
-          {isLoading && (
-            <LoaderCircleIcon className={cn('animate-spin', iconSizeClass)} aria-hidden="true" />
+          {!isLoading ? (
+            icon && (
+              <Icon
+                aria-label={title || tooltip}
+                icon={icon}
+                className={cn(disabled ? 'text-muted-foreground' : '', iconSizeClass, iconClassName)}
+              />
+            )
+          ) : (
+            <LoaderCircleIcon className={cn('animate-spin', iconSizeClass)}  />
           )}
           {(title || children) && variant !== 'toolbar' && (
             <div className={cn(isToolbar ? 'hidden md:flex' : '')}>{title || children}</div>

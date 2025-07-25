@@ -4,15 +4,12 @@
  */
 
 import AuthContainer from '@/Components/AuthContainer'
-import { Button } from '@dspangenberg/twcui'
-
-import { FormErrors, FormGroup, FormInput, FormLabel} from '@dspangenberg/twcui'
-
-
-import { FormPasswordInput } from '@/Components/FormPasswordInput'
-import { useForm } from '@/Hooks/use-form-old'
+import { Form, type FormSchema, useForm } from '@/Components/ui/twc-ui/form'
+import { Button } from '@/Components/ui/twc-ui/button'
+import { FormGroup } from '@/Components/ui/twc-ui/form-group'
+import { TextField} from '@/Components/ui/twc-ui/text-field'
 import GuestLayout from '@/Layouts/GuestLayout'
-import { focusInput } from '@/Lib/utils'
+
 import type React from 'react'
 
 interface RegisterCredentialsProps {
@@ -33,10 +30,9 @@ interface RegisterCredentialsForm {
   password_confirmation: string
   hid: string
 }
-
 const RegisterCredentials: React.FC<RegisterCredentialsProps> = ({ registrationData }) => {
-  const { data, errors, processing, setErrors, submit, updateAndValidate } =
-    useForm<RegisterCredentialsForm>('post', route('cloud.register.credentials'), {
+  const form =
+    useForm<RegisterCredentialsForm & FormSchema>('credentials','post', route('cloud.register.credentials'), {
       domain: registrationData.domain,
       email: registrationData.email,
       password: '',
@@ -46,85 +42,54 @@ const RegisterCredentials: React.FC<RegisterCredentialsProps> = ({ registrationD
 
   const domain = import.meta.env.VITE_APP_URL.replace('https://', '')
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log('Submitting form')
-    try {
-      await submit(e)
-    } catch (error) {
-      console.error('Form submission failed', error)
-      setErrors(error as Record<keyof RegisterCredentialsForm, string>)
-    }
-  }
-
   const registerCredentialsContent = (
     <AuthContainer title="Registrierung" maxWidth="md">
-      <form id="credentials" onSubmit={handleSubmit}>
-        <FormErrors errors={errors} />
+        <Form form={form}>
         <FormGroup>
           <div className="col-span-24">
-            <FormLabel htmlFor="company-website" required>
-              Deine Subdomain:
-            </FormLabel>
-            <div className={`mt-2 flex rounded-sm  ${focusInput}`}>
-              <input
-                id="company-website"
-                name="company-website"
-                type="text"
-                placeholder="www.example.com"
-                value={data.domain}
-                onChange={updateAndValidate}
-                className={
-                  'block w-full min-w-0 flex-1 rounded-none text-base px-2.5 py-2 rounded-l border-0 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400sm:text-sm/6 '
-                }
-              />
-              <span className="inline-flex items-center rounded-r border border-l-0 border-gray-300 px-3 text-gray-500 sm:text-sm">
-                {domain}
-              </span>
-            </div>
+
+            <TextField
+              label="Deine Subdomain"
+              placeholder="www.example.com"
+              autoFocus
+              {...form.register('domain')}
+            />
+
+            <span className='inline-flex items-center rounded-r border border-gray-300 border-l-0 px-3 text-gray-500 sm:text-sm'>
+              {domain}
+            </span>
+          </div>
+          <div className="col-span-24">
+            <TextField
+              label="E-Mail-Adresse"
+              autoComplete="username"
+              isDisabled={true}
+              {...form.register('email')}
+            />
+          </div>
+          <div className="col-span-24">
+            <TextField
+              password-rules="minlength: 8; maxLength: 24; required: lower; required: upper; required: digit; required: [!@#$%^&*+=.-];"
+              label="Kennwort"
+              autoComplete="new-password"
+              type="password"
+              {...form.register('password')}
+              isRequired
+            />
           </div>
 
           <div className="col-span-24">
-            <FormInput
-              id="email"
-              type="email"
-              required
-              label="E-Mail-Adresse"
-              value={data.email}
-              error={errors?.email || ''}
-              autoComplete="username"
-              placeholder="info@haus-gabriele.de"
-              onBlur={updateAndValidate}
-              onChange={updateAndValidate}
-            />
-          </div>
-          <div className="col-span-24">
-            <FormPasswordInput
-              id="password"
-              type="password"
-              required
-              label="Kennwort"
-              passwordRules="minlength: 8; maxLength: 24; required: lower; required: upper; required: digit; required: [!@#$%^&*+=.-];"
-              autoComplete="new-password"
-              value={data.password}
-              error={errors?.password || ''}
-              onChange={updateAndValidate}
-              onBlur={updateAndValidate}
-            />
-          </div>
-          <div className="col-span-24">
-            <FormInput
-              type="password"
-              id="password_confirmation"
-              required
+            <TextField
               label="Kennwort-Bestätigung"
-              value={data.password_confirmation}
-              error={errors?.password_confirmation || ''}
-              autoComplete="password"
-              onChange={updateAndValidate}
+              autoComplete="new-password"
+              type="password"
+              {...form.register('password_confirmation')}
+              isRequired
             />
           </div>
-          <div className="col-span-24 text-sm text-center">
-            <p className="text-center text-base font-medium my-3 text-black">
+
+          <div className='col-span-24 text-center text-sm'>
+            <p className='my-3 text-center font-medium text-base text-black'>
               Indem Du mit der Registrierung fortfährst, stimmst Du unseren&nbsp;
               <a href="/terms" className="underline underline-offset-4 hover:text-primary">
                 Nutzungsbedingungen
@@ -139,8 +104,7 @@ const RegisterCredentials: React.FC<RegisterCredentialsProps> = ({ registrationD
           </div>
           <div className="col-span-24">
             <Button
-              disabled={processing}
-              loading={processing}
+              isLoading={form.processing}
               form="credentials"
               variant="default"
               type="submit"
@@ -148,7 +112,7 @@ const RegisterCredentials: React.FC<RegisterCredentialsProps> = ({ registrationD
               Jetzt registrieren
             </Button>
           </div>
-          <div className="col-span-24 text-center text-base pt-4">
+          <div className='col-span-24 pt-4 text-center text-base'>
             <span className="font-bold">Du hast bereits ein Konto?</span> Melde Dich auf Deiner
             ooboo-Subdomain an oder
             <a href="/terms" className="underline underline-offset-4 hover:text-primary">
@@ -156,7 +120,7 @@ const RegisterCredentials: React.FC<RegisterCredentialsProps> = ({ registrationD
             </a>
           </div>
         </FormGroup>
-      </form>
+        </Form>
     </AuthContainer>
   )
 

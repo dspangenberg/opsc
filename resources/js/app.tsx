@@ -21,20 +21,19 @@ import { renderApp } from '@inertiaui/modal-react'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { createRoot } from 'react-dom/client'
 import { ApplicationProvider } from '@/Components/ApplicationProvider'
-import React from 'react'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel'
 const sentryEnabled = import.meta.env.VITE_SENTRY_ENABLED === 'true'
 const sentryDsn = import.meta.env.VITE_SENTRY_DNS
 
 if (sentryEnabled && sentryDsn) {
+  Sentry.init({
+    dsn: sentryDsn
+  })
 }
-Sentry.init({
-  dsn: sentryDsn
-})
 
 putConfig({
-  navigate: true,
+  navigate: true
 })
 
 createInertiaApp({
@@ -50,7 +49,11 @@ createInertiaApp({
 
     return page
   },
-  setup({ el, App, props }) {
+  setup ({
+    el,
+    App,
+    props
+  }) {
     const root = createRoot(el)
     root.render(<ApplicationProvider>{renderApp(App, props)}</ApplicationProvider>)
   },

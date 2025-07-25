@@ -4,9 +4,9 @@ import { Link } from '@inertiajs/react'
 import { Add01Icon, Edit03Icon, MoreVerticalCircle01Icon, PrinterIcon } from '@hugeicons/core-free-icons'
 import { PageContainer } from '@/Components/PageContainer'
 import { Avatar } from '@dspangenberg/twcui'
-import { ClassicNavTabsTab } from '@/Components/ClassicNavTabs'
 import { Toolbar } from '@/Components/twcui/toolbar'
-import { Button } from '@/Components/twcui/button'
+import { Button } from '@/Components/ui/twc-ui/button'
+import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
 
 interface Props {
   contact: App.Data.ContactData
@@ -30,28 +30,20 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
     ),
     []
   )
+  const currentRoute = route().current()
 
   const tabs = useMemo(
     () => (
-      <>
-        <ClassicNavTabsTab href={route('app.contact.index')} activeRoute="/app/contacts">
-          Aktivität
-        </ClassicNavTabsTab>
-        {contact.is_org === true && (
-          <ClassicNavTabsTab
-            href={route('app.contact.index')}
-            activeRoute="/app/contacts/favorites"
-          >
-            Kontakte
-          </ClassicNavTabsTab>
-        )}
-        <ClassicNavTabsTab href={route('app.contact.index')} activeRoute="/app/contactsx">
-          Projekte
-        </ClassicNavTabsTab>
-      </>
+      <Tabs variant="underlined" defaultSelectedKey={currentRoute} tabClassName="text-base -mb-1">
+        <TabList aria-label="Ansicht">
+          <Tab id="app.invoice.details" href={route('app.contact.details', {contact}, false)}>Übersicht</Tab>
+          <Tab id="app.invoice.history">Kontakte</Tab>
+        </TabList>
+      </Tabs>
     ),
-    [contact.is_org]
+    []
   )
+
 
   const companyRoute = useMemo(
     () => route('app.contact.details', { id: contact.company_id }),
@@ -64,8 +56,8 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
         <div className="flex-none">
           <Avatar initials={contact.initials} fullname={contact.full_name} size="lg" />
         </div>
-        <div className="flex-1">
-          <div className="flex-1 text-2xl font-bold">{contact.full_name}</div>
+        <div className="flex-1 flex">
+          <div className="flex-1 max-w-lg font-bold text-xl truncate">{contact.full_name}</div>
           {!!contact.company_id && (
             <div className="text-base text-foreground">
               <Link href={companyRoute} className="hover:underline">
@@ -84,7 +76,7 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
       title={contact.full_name}
       width="7xl"
       breadcrumbs={breadcrumbs}
-      className="overflow-hidden flex gap-4"
+      className='flex gap-4 overflow-hidden'
       toolbar={toolbar}
       tabs={tabs}
       header={headerContent}

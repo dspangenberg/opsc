@@ -1,15 +1,15 @@
 import type * as React from 'react'
 import { useEffect } from 'react'
-import { FormErrors, FormGroup } from '@dspangenberg/twcui'
+import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 import { router } from '@inertiajs/react'
 
-import { Button } from "@/Components/twcui/button"
-import { Form, useForm } from '@/Components/twcui/form'
-import { createDateRangeChangeHandler, DateRangePicker } from '@/Components/twcui/date-picker'
-import { Select } from '@/Components/twcui/select'
+import { Button } from "@/Components/ui/twc-ui/button"
+import { Form, useForm } from '@/Components/ui/twc-ui/form'
+import { DateRangePicker } from '@/Components/ui/twc-ui/date-picker'
+import { Select } from '@/Components/ui/twc-ui/select'
+import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { NumberField } from '@/Components/ui/twc-ui/number-field'
 
-import { Input } from '@/Components/twcui/input'
-import { NumberInput } from '@/Components/twcui/number-input'
 import { Dialog } from '@/Components/twcui/dialog'
 
 interface Props {
@@ -22,13 +22,7 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
   invoiceLine
 }) => {
 
-
-  const {
-    form,
-    errors,
-    data,
-    updateAndValidateWithoutEvent
-  } = useForm<App.Data.InvoiceLineData>(
+  const form  = useForm<App.Data.InvoiceLineData>(
     'invoice-line-edit-form',
     'put',
     route('app.invoice.line-update', {
@@ -39,17 +33,12 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
   )
 
   useEffect(() => {
-    if (data.type_id === 1 && data.quantity && data.price) {
-      const totalPrice = data.quantity * data.price
-      updateAndValidateWithoutEvent('amount', totalPrice)
+    if (form.data.type_id === 1 && form.data.quantity && form.data.price) {
+      const totalPrice = form.data.quantity * form.data.price
+      form.updateAndValidateWithoutEvent('amount', totalPrice)
     }
-  }, [data.quantity, data.price, data.type_id])
+  }, [form.data.quantity, form.data.price, form.data.type_id])
 
-  const handlePeriodChange = createDateRangeChangeHandler(
-    updateAndValidateWithoutEvent,
-    'service_period_begin',
-    'service_period_end'
-  )
 
   const handleOnClosed = () => {
     router.get(route('app.invoice.details', { invoice: invoice.id }))
@@ -83,7 +72,7 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
       >
         <FormGroup>
           <div className="col-span-2">
-            <NumberInput
+            <NumberField
               autoFocus
               formatOptions={{
                 minimumFractionDigits: 2,
@@ -94,13 +83,13 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
             />
           </div>
           <div className="col-span-2">
-            <Input
+            <TextField
               label="Einheit"
               {...form.register('unit')}
             />
           </div>
           <div className="col-span-11">
-            <Input
+            <TextField
               label="Beschreibung"
               rows={2}
               textArea={true}
@@ -108,15 +97,15 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
             />
           </div>
           <div className="col-span-3">
-            <NumberInput
+            <NumberField
               label="Einzelpreis"
               {...form.register('price')}
             />
           </div>
           <div className="col-span-3">
-            <NumberInput
+            <NumberField
               label="Gesamtbetrag"
-              isDisabled={data.type_id === 1}
+              isDisabled={form.data.type_id === 1}
               {...form.register('amount')}
             />
           </div>
@@ -124,20 +113,14 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
             <Select<App.Data.TaxRateData>
               {...form.register('tax_rate_id')}
               label="USt.-Satz"
-              items={invoice.tax?.rates}
+              items={invoice.tax?.rates || [] }
             />
           </div>
           <div className="col-span-4" />
           <div className="col-span-7">
             <DateRangePicker
               label="Leistungsdatum"
-              value={{
-                start: data.service_period_begin,
-                end: data.service_period_end
-              }}
-              name="service_period"
-              onChange={handlePeriodChange}
-              hasError={!!errors.service_period_begin || !!errors.service_period_end}
+              {...form.registerDateRange('service_period_begin', 'service_period_end')}
             />
           </div>
         </FormGroup>

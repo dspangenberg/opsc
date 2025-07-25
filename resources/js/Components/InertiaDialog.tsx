@@ -15,7 +15,7 @@ type ReactNodeOrString = ReactNode | string
 export interface Props {
   children: ReactNode
   footer: ((handleFooterEvents?: (isCancel?: boolean) => void) => ReactNode) | ReactNode
-  title: ReactNodeOrString
+  title: string
   description?: ReactNodeOrString
   dismissible?: boolean
   showDescription?: boolean
@@ -78,12 +78,12 @@ export const InertiaDialog = forwardRef<HTMLDivElement, Props>((props, ref) => {
     <HeadlessModal ref={modalRef} {...props}>
       {({ isOpen, setOpen, close }: HeadlessModalProps) => (
         <Dialog
-          ref={ref}
           isOpen={isOpen}
           onClose={() => setOpen(false)}
           onInteractOutside={handleInteractOutside}
           onClosed={close}
           onOpenChange={handleOpenChange}
+          isDismissable={false}
           showDescription={showDescription}
           dismissible={dismissible}
           className={cn('max-w-xl', className)}

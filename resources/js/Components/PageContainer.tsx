@@ -11,8 +11,6 @@ import type { BreadcrumbProp } from '@/Components/PageBreadcrumbs'
 import { type BackgroundColor, type Container, useThemeContainer } from '@/Components/theme-container-provider'
 import { cn } from '@/Lib/utils'
 import { useBreadcrumbProvider } from '@/Components/BreadcrumbProvider'
-import { NavTabs } from '@/Components/NavTabs'
-import { ClassicNavTabs } from '@/Components/ClassicNavTabs'
 
 interface PageContainerProps {
   title?: string
@@ -90,7 +88,7 @@ export const PageContainer: React.FC<PageContainerProps> = ({
 
           <div className="flex flex-1 items-center">
 
-            <div>{tabs && <ClassicNavTabs>{tabs}</ClassicNavTabs>}</div>
+            <div>{tabs && tabs}</div>
           </div>
           </div>
         </LayoutContainer>

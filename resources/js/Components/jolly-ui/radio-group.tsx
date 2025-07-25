@@ -7,12 +7,13 @@ import {
   composeRenderProps,
   Text,
 } from "react-aria-components"
-
+import type React from 'react'
 import { cn } from "@/Lib/utils"
+import { useFormChange } from '@/Hooks/use-form-change'
 
 import { FieldError, Label, labelVariants } from "./field"
 
-const RadioGroup = ({ className, ...props }: AriaRadioGroupProps) => {
+const BaseRadioGroup = ({ className, ...props }: AriaRadioGroupProps) => {
   return (
     <AriaRadioGroup
       className={composeRenderProps(className, (className, renderProps) =>
@@ -84,38 +85,80 @@ interface JollyRadioGroupProps extends AriaRadioGroupProps {
   errorMessage?: string | ((validation: AriaValidationResult) => string)
 }
 
-function JollyRadioGroup<T extends object>({
+interface RadioGroupProps<T extends Record<string, unknown>> extends JollyRadioGroupProps {
+  name: string
+  autoFocus?: boolean
+  items: Iterable<T>
+  value: number | string
+  itemName?: keyof T & string
+  itemValue?: keyof T & string
+  hasError?: boolean
+  errors?: Partial<Record<keyof T, string>>
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  selected: number | string
+  isOptional?: boolean
+  optionalValue?: string
+}
+
+const RadioGroup = <T extends Record<string, unknown>>({
   label,
-  description,
-  className,
-  errorMessage,
-  children,
+  value,
+  name,
+  itemName = 'name' as keyof T & string,
+  itemValue = 'id' as keyof T & string,
+  isOptional = false,
+  optionalValue = '(leer)',
+  orientation = 'vertical',
+  className = '',
+  autoFocus = false,
+  hasError = false,
+  items,
+  errors,
+  onChange,
   ...props
-}: JollyRadioGroupProps) {
+}: RadioGroupProps<T>) => {
+  const handleValueChange = useFormChange({
+    name,
+    onChange
+  })
+  const itemsWithNothing = isOptional
+    ? [{
+      [itemValue]: 0,
+      [itemName]: optionalValue
+    } as T, ...Array.from(items)]
+    : Array.from(items)
+
   return (
-    <RadioGroup
+    <BaseRadioGroup
+      onChange={handleValueChange}
+      value={String(value)}
       className={composeRenderProps(className, (className) =>
-        cn("group/radiogroup flex-col items-start", className)
+        cn("group/radiogroup flex-col items-start font-medium", className)
       )}
+      orientation={orientation}
+      isInvalid={hasError}
       {...props}
     >
-      {composeRenderProps(children, (children) => (
-        <>
-          <Label>{label}:</Label>
-          <div className="flex flex-col flex-wrap gap-0.5 group-data-[orientation=horizontal]/radiogroup:flex-row">
-            {children}
-          </div>
-          {description && (
-            <Text slot="description" className="text-sm text-muted-foreground">
-              {description}
-            </Text>
-          )}
-          <FieldError>{errorMessage}</FieldError>
-        </>
-      ))}
-    </RadioGroup>
+      <>
+        <Label>{label}:</Label>
+        <div className="flex flex-col flex-wrap gap-0.5 group-data-[orientation=horizontal]/radiogroup:flex-row">
+          {Array.from(itemsWithNothing).map(item => (
+            <Radio className="text-base" key={String(item[itemValue])} value={String(item[itemValue])} autoFocus={autoFocus}>
+              {typeof item[itemName] === 'string' ? item[itemName] : String(item[itemName])}
+            </Radio>
+          ))}
+        </div>
+        {props.description && (
+          <Text slot="description" className="text-muted-foreground text-sm">
+            {props.description}
+          </Text>
+        )}
+        <FieldError>{props.errorMessage}</FieldError>
+      </>
+    </BaseRadioGroup>
   )
 }
 
-export { RadioGroup, Radio, JollyRadioGroup }
-export type { JollyRadioGroupProps }
+
+export { BaseRadioGroup, RadioGroup, Radio }
+export type { RadioGroupProps }

@@ -9,7 +9,7 @@ import { Dialog } from '@/Components/twcui/dialog'
 import { Separator } from '@/Components/twcui/separator'
 import print from 'print-js'
 import { Document, Page } from 'react-pdf'
-import type { PDFDocumentProxy } from 'react-pdf'
+import type { PDFDocumentProxy } from 'pdfjs-dist'
 import 'react-pdf/dist/Page/TextLayer.css'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import { LogoSpinner } from '@dspangenberg/twcui'
@@ -31,7 +31,7 @@ import { useFullscreen, useToggle } from 'react-use'
 
 import { cn } from '@/Lib/utils'
 import { Toolbar } from '@/Components/twcui/toolbar'
-import { Button } from '@/Components/twcui/button'
+import { Button } from '@/Components/ui/twc-ui/button'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 
 

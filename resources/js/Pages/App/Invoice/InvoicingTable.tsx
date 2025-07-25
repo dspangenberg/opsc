@@ -294,7 +294,7 @@ export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowPr
       </TableCell>
       <TableNumberCell value={line.quantity || 0} />
       <TableCell align="center">{line.unit}</TableCell>
-      <TableMarkdownCell>
+      <TableMarkdownCell value="">
         abzüglich geleisteter Akontozahlung<br/>
         RG-{line.linked_invoice?.formated_invoice_number} vom {line.linked_invoice?.issued_on}
       </TableMarkdownCell>

@@ -1,14 +1,14 @@
 import type * as React from 'react'
 
-import { Button } from "@/Components/twcui/button"
-import { Select } from '@/Components/twcui/select'
-import { Form, useForm } from '@/Components/twcui/form'
+import { Button } from "@/Components/ui/twc-ui/button"
+import { Select } from '@/Components/ui/twc-ui/select'
+import { Form, useForm } from '@/Components/ui/twc-ui/form'
 import { Combobox } from '@/Components/twcui/combobox'
 import { Dialog } from '@/Components/twcui/dialog'
-import { createDateRangeChangeHandler, DatePicker, DateRangePicker } from '@/Components/twcui/date-picker'
+import { DatePicker, DateRangePicker } from '@/Components/ui/twc-ui/date-picker'
 import { Checkbox } from '@/Components/jolly-ui/checkbox'
 import { RadioGroup } from '@/Components/twcui/radio-group'
-import { FormGroup } from '@/Components/twcui/form-group'
+import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 import { router } from '@inertiajs/react'
 
 interface Props {
@@ -27,24 +27,12 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
   taxes
 }) => {
 
-  const {
-    form,
-    errors,
-    data,
-    updateAndValidateWithoutEvent
-  } = useForm<App.Data.InvoiceData>(
+  const form = useForm<App.Data.InvoiceData>(
     'basedata-form',
     'put',
     route('app.invoice.base-update', { invoice: invoice.id }),
     invoice
   )
-
-  const handlePeriodChange = createDateRangeChangeHandler(
-    updateAndValidateWithoutEvent,
-    'service_period_begin',
-    'service_period_end'
-  )
-  // No need for isClosingAfterConfirmation state anymore since we're using renderProps.close() directly
 
   const handleOnClosed = () => {
     router.get(route('app.invoice.details', { invoice: invoice.id }))
@@ -97,13 +85,7 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
           <div className="col-span-12">
             <DateRangePicker
               label="Leistungsdatum"
-              value={{
-                start: data.service_period_begin,
-                end: data.service_period_end
-              }}
-              name="service_period"
-              onChange={handlePeriodChange}
-              hasError={!!errors.service_period_begin || !!errors.service_period_end}
+              {...form.registerDateRange('service_period_begin', 'service_period_end')}
             />
           </div>
         </FormGroup>
@@ -117,7 +99,7 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
             />
           </div>
           <div className="col-span-12">
-            <Select<App.Data.TaxData>
+            <Select<App.Data.TaxData, number | null>
               {...form.register('tax_id')}
               label="Umsatzsteuer"
               items={taxes}

@@ -1,6 +1,6 @@
-import * as React from "react"
-import { type CalendarDate, getLocalTimeZone, today } from "@internationalized/date"
-import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons"
+import { type CalendarDate, getLocalTimeZone, today } from '@internationalized/date'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import * as React from 'react'
 import {
   Button as AriaButton,
   Calendar as AriaCalendar,
@@ -22,11 +22,11 @@ import {
   RangeCalendarStateContext as AriaRangeCalendarStateContext,
   composeRenderProps,
   Text,
-  useLocale,
-} from "react-aria-components"
+  useLocale
+} from 'react-aria-components'
 
-import { cn } from "@/Lib/utils"
-import { buttonVariants } from "@/Components/ui/twc-ui/button"
+import { cn } from '@/Lib/utils'
+import { buttonVariants } from './button'
 
 const Calendar = AriaCalendar
 
@@ -36,50 +36,50 @@ const CalendarHeading = (props: React.HTMLAttributes<HTMLElement>) => {
   const { direction } = useLocale()
 
   return (
-    <header className="flex w-full items-center gap-1 px-1 pb-4 " {...props}>
+    <header className="flex w-full items-center justify-center gap-1 px-1 py-2 " {...props}>
       <AriaButton
         slot="previous"
         type="button"
         className={cn(
-          buttonVariants({ variant: "outline" }),
-          "size-7 bg-transparent p-0 opacity-50",
+          buttonVariants({ variant: 'outline' }),
+          'size-7 bg-transparent p-0 opacity-50',
           /* Hover */
-          "data-[hovered]:opacity-100"
+          'data-[hovered]:opacity-100'
         )}
       >
-        {direction === "rtl" ? (
-          <ChevronRightIcon aria-hidden className="size-4" />
+        {direction === 'rtl' ? (
+          <ChevronRight aria-hidden className="size-4" />
         ) : (
-          <ChevronLeftIcon aria-hidden className="size-4" />
+          <ChevronLeft aria-hidden className="size-4" />
         )}
       </AriaButton>
-      <AriaHeading className="grow text-center text-sm font-medium" />
+      <AriaHeading className="!text-base h-7 flex-1 items-center justify-center text-center font-medium" />
       <AriaButton
         slot="next"
         type="button"
         className={cn(
-          buttonVariants({ variant: "outline" }),
-          "size-7 bg-transparent p-0 opacity-50",
+          buttonVariants({ variant: 'outline' }),
+          'size-7 bg-transparent p-0 opacity-50',
           /* Hover */
-          "data-[hovered]:opacity-100"
+          'data-[hovered]:opacity-100'
         )}
       >
-        {direction === "rtl" ? (
-          <ChevronLeftIcon aria-hidden className="size-4" />
+        {direction === 'rtl' ? (
+          <ChevronLeft aria-hidden className="size-4" />
         ) : (
-          <ChevronRightIcon aria-hidden className="size-4" />
+          <ChevronRight aria-hidden className="size-4" />
         )}
       </AriaButton>
     </header>
   )
 }
 
-const CalendarGrid = ({ className, ...props }: AriaCalendarGridProps) => (
+const CalendarGrid = ({
+  className,
+  ...props
+}: AriaCalendarGridProps) => (
   <AriaCalendarGrid
-    className={cn(
-      " border-separate border-spacing-x-0 border-spacing-y-1 ",
-      className
-    )}
+    className={cn(' border-separate border-spacing-x-0 border-spacing-y-1 ', className)}
     {...props}
   />
 )
@@ -93,10 +93,7 @@ const CalendarHeaderCell = ({
   ...props
 }: AriaCalendarHeaderCellProps) => (
   <AriaCalendarHeaderCell
-    className={cn(
-      "w-8 rounded-md text-[0.8rem] font-normal text-muted-foreground",
-      className
-    )}
+    className={cn('w-8 rounded-md font-normal text-[0.8rem] text-muted-foreground', className)}
     {...props}
   />
 )
@@ -105,46 +102,47 @@ const CalendarGridBody = ({
   className,
   ...props
 }: AriaCalendarGridBodyProps) => (
-  <AriaCalendarGridBody className={cn("[&>tr>td]:p-0", className)} {...props} />
+  <AriaCalendarGridBody className={cn('[&>tr>td]:p-0', className)} {...props} />
 )
 
-const CalendarCell = ({ className, ...props }: AriaCalendarCellProps) => {
+const CalendarCell = ({
+  className,
+  ...props
+}: AriaCalendarCellProps) => {
   const isRange = Boolean(React.useContext(AriaRangeCalendarStateContext))
   return (
     <AriaCalendarCell
       className={composeRenderProps(className, (className, renderProps) =>
         cn(
-          buttonVariants({ variant: "ghost" }),
-          "relative flex size-8 items-center justify-center p-0 text-sm font-normal z-[60] cursor-pointer",
+          buttonVariants({ variant: 'ghost' }),
+          'relative z-[60] flex size-8 cursor-pointer items-center justify-center p-0 font-normal text-sm',
           /* Disabled */
-          renderProps.isDisabled && "text-muted-foreground opacity-50",
+          renderProps.isDisabled && 'text-muted-foreground opacity-50',
           /* Selected */
           renderProps.isSelected &&
-          "bg-primary text-primary-foreground data-[focused]:bg-primary  data-[focused]:text-primary-foreground",
+          'bg-primary text-primary-foreground data-[focused]:bg-primary data-[focused]:text-primary-foreground',
           /* Hover */
           renderProps.isHovered &&
           renderProps.isSelected &&
-          (renderProps.isSelectionStart ||
-            renderProps.isSelectionEnd ||
-            !isRange) &&
-          "data-[hovered]:bg-primary data-[hovered]:text-primary-foreground",
+          (renderProps.isSelectionStart || renderProps.isSelectionEnd || !isRange) &&
+          'data-[hovered]:bg-primary data-[hovered]:text-primary-foreground',
           /* Selection Start/End */
           renderProps.isSelected &&
           isRange &&
           !renderProps.isSelectionStart &&
           !renderProps.isSelectionEnd &&
-          "rounded-none bg-accent text-accent-foreground",
+          'rounded-none bg-accent text-accent-foreground',
           /* Outside Month */
           renderProps.isOutsideMonth &&
-          "text-muted-foreground opacity-50 data-[selected]:bg-accent/50 data-[selected]:text-muted-foreground data-[selected]:opacity-30",
+          'text-muted-foreground opacity-50 data-[selected]:bg-accent/50 data-[selected]:text-muted-foreground data-[selected]:opacity-30',
           /* Current Date */
           renderProps.date.compare(today(getLocalTimeZone())) === 0 &&
           !renderProps.isSelected &&
-          "bg-accent text-accent-foreground",
+          'bg-accent text-accent-foreground',
           /* Unavailable Date */
-          renderProps.isUnavailable && "cursor-default text-destructive ",
+          renderProps.isUnavailable && 'cursor-default text-destructive ',
           renderProps.isInvalid &&
-          "bg-destructive text-destructive-foreground data-[focused]:bg-destructive data-[hovered]:bg-destructive data-[focused]:text-destructive-foreground data-[hovered]:text-destructive-foreground",
+          'bg-destructive text-destructive-foreground data-[focused]:bg-destructive data-[hovered]:bg-destructive data-[focused]:text-destructive-foreground data-[hovered]:text-destructive-foreground',
           className
         )
       )}
@@ -153,34 +151,29 @@ const CalendarCell = ({ className, ...props }: AriaCalendarCellProps) => {
   )
 }
 
-interface JollyCalendarProps<T extends AriaDateValue>
-  extends AriaCalendarProps<T> {
+interface JollyCalendarProps<T extends AriaDateValue> extends AriaCalendarProps<T> {
   errorMessage?: string
 }
 
-function JollyCalendar<T extends AriaDateValue>({
+function JollyCalendar<T extends AriaDateValue> ({
   errorMessage,
   className,
   ...props
 }: JollyCalendarProps<T>) {
   return (
     <Calendar
-      className={composeRenderProps(className, (className) =>
-        cn("w-fit", className)
-      )}
+      className={composeRenderProps(className, className => cn('w-fit', className))}
       {...props}
     >
       <CalendarHeading />
       <CalendarGrid>
         <CalendarGridHeader>
-          {(day) => <CalendarHeaderCell>{day}</CalendarHeaderCell>}
+          {day => <CalendarHeaderCell>{day}</CalendarHeaderCell>}
         </CalendarGridHeader>
-        <CalendarGridBody>
-          {(date) => <CalendarCell date={date} />}
-        </CalendarGridBody>
+        <CalendarGridBody>{date => <CalendarCell date={date} />}</CalendarGridBody>
       </CalendarGrid>
       {errorMessage && (
-        <Text className="text-sm text-destructive" slot="errorMessage">
+        <Text className="text-destructive text-sm" slot="errorMessage">
           {errorMessage}
         </Text>
       )}
@@ -188,34 +181,29 @@ function JollyCalendar<T extends AriaDateValue>({
   )
 }
 
-interface JollyRangeCalendarProps<T extends AriaDateValue>
-  extends AriaRangeCalendarProps<T> {
+interface JollyRangeCalendarProps<T extends AriaDateValue> extends AriaRangeCalendarProps<T> {
   errorMessage?: string
 }
 
-function JollyRangeCalendar<T extends AriaDateValue>({
+function JollyRangeCalendar<T extends AriaDateValue> ({
   errorMessage,
   className,
   ...props
 }: JollyRangeCalendarProps<T>) {
   return (
     <RangeCalendar
-      className={composeRenderProps(className, (className) =>
-        cn("w-fit", className)
-      )}
+      className={composeRenderProps(className, className => cn('w-fit', className))}
       {...props}
     >
       <CalendarHeading />
       <CalendarGrid>
         <CalendarGridHeader>
-          {(day) => <CalendarHeaderCell>{day}</CalendarHeaderCell>}
+          {day => <CalendarHeaderCell>{day}</CalendarHeaderCell>}
         </CalendarGridHeader>
-        <CalendarGridBody>
-          {(date) => <CalendarCell date={date} />}
-        </CalendarGridBody>
+        <CalendarGridBody>{date => <CalendarCell date={date} />}</CalendarGridBody>
       </CalendarGrid>
       {errorMessage && (
-        <Text slot="errorMessage" className="text-sm text-destructive">
+        <Text slot="errorMessage" className="text-destructive text-sm">
           {errorMessage}
         </Text>
       )}
@@ -233,7 +221,7 @@ export {
   CalendarHeading,
   RangeCalendar,
   JollyCalendar,
-  JollyRangeCalendar,
+  JollyRangeCalendar
 }
 
 export type { JollyCalendarProps, JollyRangeCalendarProps }
