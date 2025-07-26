@@ -1,5 +1,3 @@
-"use client"
-
 import { CalendarDate, type DateValue } from '@internationalized/date'
 import type { VariantProps } from "class-variance-authority"
 import { format, parse } from 'date-fns'
@@ -35,7 +33,7 @@ const DateSegment = ({ className, ...props }: AriaDateSegmentProps) => (
         /* Disabled */
         "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
         /* Focused */
-        "data-[focused]:bg-accent data-[focused]:text-accent-foreground",
+        'data-[placeholder]:data-[focused]:text-white data-[focused]:bg-primary data-[focused]:text-white',
         className
       )
     )}

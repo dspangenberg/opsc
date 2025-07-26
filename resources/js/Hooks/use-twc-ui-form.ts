@@ -36,8 +36,8 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
       name,
       value: form.data[name],
       error: form.errors[name],
-      onChange: (value: FormDataValues<T, K>) => {
-        form.setData(name, value)
+      onChange: (value: FormDataValues<T, K> | null) => {
+        form.setData(name, value as FormDataValues<T, K>)
         form.validate(name)
       },
       onBlur: () => {

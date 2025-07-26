@@ -5,7 +5,7 @@
 
 import type React from 'react'
 import { useMemo, useRef, useState } from 'react'
-import { Dialog } from '@/Components/twcui/dialog'
+import { Dialog } from '@/Components/ui/twc-ui/dialog'
 import { Separator } from '@/Components/twcui/separator'
 import print from 'print-js'
 import { Document, Page } from 'react-pdf'
@@ -30,7 +30,7 @@ import { useFileDownload } from '@/Hooks/useFileDownload'
 import { useFullscreen, useToggle } from 'react-use'
 
 import { cn } from '@/Lib/utils'
-import { Toolbar } from '@/Components/twcui/toolbar'
+import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 

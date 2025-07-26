@@ -90,26 +90,26 @@ const SelectListBox = <T extends object>({ className, ...props }: AriaListBoxPro
   />
 )
 
-// Erweiterte SelectValue-Typen um null zu unterstützen
-type SelectValue = string | number | null | undefined
+// Generischer Value-Typ
+type SelectValue = string | number | null
 
 interface SelectProps<T extends object, V extends SelectValue = SelectValue> extends Omit<AriaSelectProps<T>, 'children'> {
   label?: string
   description?: string
   error?: string | ((validation: AriaValidationResult) => string)
   children?: React.ReactNode | ((item: T) => React.ReactNode)
-  onChange: (value: V) => void
+  onChange: (value: V) => void // Generischer Value-Typ
   onBlur?: () => void
   isOptional?: boolean
   optionalValue?: string
-  value: V
+  value: V | undefined
   items: Iterable<T>
   itemName?: keyof T & string
   itemValue?: keyof T & string
   name?: string
   // Neue Props für Value-Konvertierung
-  valueType?: 'string' | 'number'
-  nullValue?: V
+  valueType?: 'string' | 'number' // Bestimmt, welcher Typ zurückgegeben wird
+  nullValue?: V // Wert für "keine Auswahl"
 }
 
 function Select<T extends object, V extends SelectValue = number>({
@@ -129,31 +129,26 @@ function Select<T extends object, V extends SelectValue = number>({
   name,
   value,
   valueType = 'number',
-  nullValue,
+  nullValue = (valueType === 'number' ? 0 : null) as V,
   ...props
 }: SelectProps<T, V>) {
   const form = useFormContext()
   const realError = form?.errors?.[name as string] || error
   const hasError = !!realError
 
-  // Bestimme den nullValue basierend auf dem valueType, falls nicht explizit gesetzt
-  const effectiveNullValue: V = nullValue !== undefined
-    ? nullValue
-    : (valueType === 'number' ? 0 : null) as V
-
   const itemsWithNothing = isOptional
     ? [
-        {
-          [itemValue]: effectiveNullValue,
-          [itemName]: optionalValue
-        } as T,
-        ...Array.from(items)
-      ]
+      {
+        [itemValue]: nullValue,
+        [itemName]: optionalValue
+      } as T,
+      ...Array.from(items)
+    ]
     : Array.from(items)
 
   const handleSelectionChange = (key: Key | null) => {
     if (key === null) {
-      onChange(effectiveNullValue)
+      onChange(nullValue)
       return
     }
 
@@ -169,8 +164,7 @@ function Select<T extends object, V extends SelectValue = number>({
   }
 
   // Konvertiere value zu selectedKey für React Aria
-  // Berücksichtige null und undefined
-  const selectedKey = (value !== null && value !== undefined) ? String(value) : null
+  const selectedKey = value !== null && value !== undefined ? String(value) : null
 
   return (
     <BaseSelect

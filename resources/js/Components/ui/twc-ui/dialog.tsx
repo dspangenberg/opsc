@@ -1,13 +1,9 @@
+import { cva, type VariantProps } from 'class-variance-authority'
+import { X } from 'lucide-react'
 import type React from 'react'
 import { type ReactNode, useEffect, useState } from 'react'
-import { Button } from '@/Components/ui/twc-ui/button'
-
-import { cn } from '@/Lib/utils'
-import { Cross2Icon } from '@radix-ui/react-icons'
-import { cva, type VariantProps } from 'class-variance-authority'
 import {
   Button as AriaButton,
-  composeRenderProps,
   Dialog as AriaDialog,
   type DialogProps as AriaDialogProps,
   DialogTrigger as AriaDialogTrigger,
@@ -15,12 +11,13 @@ import {
   type HeadingProps as AriaHeadingProps,
   Modal as AriaModal,
   ModalOverlay as AriaModalOverlay,
-  type ModalOverlayProps as AriaModalOverlayProps
+  type ModalOverlayProps as AriaModalOverlayProps,
+  composeRenderProps
 } from 'react-aria-components'
+import { cn } from '@/Lib/utils'
 
-import { AlertDialog } from '@/Components/twcui/alert-dialog'
-
-import { useIsMobile } from '@/Hooks/use-mobile'
+import { AlertDialog } from './alert-dialog'
+import { Button } from './button'
 
 type ReactNodeOrString = ReactNode | string
 
@@ -55,13 +52,13 @@ export const DialogOverlay = ({
 }: AriaModalOverlayProps) => (
   <AriaModalOverlay
     isDismissable={isDismissable}
-    className={composeRenderProps(className, (className) =>
+    className={composeRenderProps(className, className =>
       cn(
         'fixed inset-0 z-50 bg-black/80 ',
         /* Exiting */
-        'data-[exiting]:duration-300 data-[exiting]:animate-out data-[exiting]:fade-out-0',
+        'data-[exiting]:fade-out-0 data-[exiting]:animate-out data-[exiting]:duration-300',
         /* Entering */
-        'data-[entering]:animate-in data-[entering]:fade-in-0',
+        'data-[entering]:fade-in-0 data-[entering]:animate-in',
         className
       )
     )}
@@ -86,32 +83,29 @@ export const DialogContent = ({
   ...props
 }: DialogContentProps) => (
   <AriaModal
-    className={composeRenderProps(className, (className) =>
+    className={composeRenderProps(className, className =>
       cn(
         side
           ? sheetVariants({
-            side,
-            className: 'h-full'
-          })
-          : 'fixed left-[50vw] top-[50%] max-h-screen  z-50 w-full max-w-lg border -translate-x-1/2 -translate-y-1/2  bg-background shadow-lg duration-200 data-[exiting]:duration-300 data-[entering]:animate-in data-[exiting]:animate-out data-[entering]:fade-in-0 data-[exiting]:fade-out-0 data-[entering]:zoom-in-95 data-[exiting]:zoom-out-95 sm:rounded-lg md:w-full',
+              side,
+              className: 'h-full'
+            })
+          : '-translate-x-1/2 -translate-y-1/2 data-[entering]:fade-in-0 data-[exiting]:fade-out-0 data-[entering]:zoom-in-95 data-[exiting]:zoom-out-95 fixed top-[50%] left-[50vw] z-50 max-h-screen w-full max-w-lg border bg-background shadow-lg duration-200 data-[entering]:animate-in data-[exiting]:animate-out data-[exiting]:duration-300 sm:rounded-lg md:w-full',
         className
       )
     )}
     {...props}
   >
-    <AriaDialog
-      role={role}
-      className={cn(!side && 'grid h-full ', 'h-full outline-none')}
-    >
+    <AriaDialog role={role} className={cn(!side && 'grid h-full ', 'h-full outline-none')}>
       {composeRenderProps(children, (children, renderProps) => (
         <>
           {children}
           {closeButton && (
             <AriaButton
               onPress={renderProps.close}
-              className="absolute right-4 top-3 rounded-sm opacity-70 ring-offset-background transition-opacity data-[disabled]:pointer-events-none data-[entering]:bg-accent data-[entering]:text-muted-foreground data-[hovered]:opacity-100 data-[focused]:outline-none data-[focused]:ring-2 data-[focused]:ring-ring data-[focused]:ring-offset-2 backdrop-blur-lg"
+              className="absolute top-3 right-4 rounded-sm opacity-70 ring-offset-background backdrop-blur-lg transition-opacity data-[disabled]:pointer-events-none data-[entering]:bg-accent data-[entering]:text-muted-foreground data-[hovered]:opacity-100 data-[focused]:outline-none data-[focused]:ring-2 data-[focused]:ring-ring data-[focused]:ring-offset-2"
             >
-              <Cross2Icon className="size-4" />
+              <X className="size-4" />
               <span className="sr-only">Close</span>
             </AriaButton>
           )}
@@ -121,53 +115,37 @@ export const DialogContent = ({
   </AriaModal>
 )
 
-export const DialogHeader = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
+export const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      'flex flex-col space-y-1.5 px-4 py-1 gap-0  items-center  justify-center text-center sm:text-left !bg-muted rounded-t-lg',
+      '!bg-muted flex flex-col items-center justify-center gap-0 rounded-t-lg px-4 text-center sm:text-left',
       className
     )}
     {...props}
   />
 )
 
-export const DialogFooter = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
+export const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      'flex flex-col-reverse px-4 py-3 sm:flex-row sm:justify-end sm:space-x-2 !bg-muted rounded-b-lg',
+      '!bg-muted flex flex-col-reverse rounded-b-lg px-4 py-3 sm:flex-row sm:justify-end sm:space-x-2',
       className
     )}
     {...props}
   />
 )
 
-export const DialogBody = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
+export const DialogBody = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cn(
-      'flex flex-col-reverse px-0 py-0 sm:flex-row sm:space-x-2 w-full',
-      className
-    )}
+    className={cn('flex w-full flex-col-reverse px-0 py-0 sm:flex-row sm:space-x-2', className)}
     {...props}
   />
 )
 
-export const DialogTitle = ({
-  className,
-  ...props
-}: AriaHeadingProps) => (
+export const DialogTitle = ({ className, ...props }: AriaHeadingProps) => (
   <AriaHeading
     slot="title"
     className={cn(
-      '!text-base font-medium leading-none tracking-tight text-center py-0 w-full ',
       className
     )}
     {...props}
@@ -178,17 +156,11 @@ export const DialogDescription = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLParagraphElement>) => (
-  <p
-    className={cn(
-      'flex flex-col space-y-1.5 text-center sm:text-left',
-      className
-    )}
-    {...props}
-  />
+  <p className={cn('flex flex-col border text-center sm:text-left', className)} {...props} />
 )
 
 export interface DialogRenderProps {
-  close: () => void;
+  close: () => void
 }
 
 interface DialogProps {
@@ -196,7 +168,7 @@ interface DialogProps {
   footer?: React.ReactNode | ((renderProps: DialogRenderProps) => React.ReactNode)
   toolbar?: React.ReactNode
   isOpen?: boolean
-  role?: 'alertdialog' | 'dialog',
+  role?: 'alertdialog' | 'dialog'
   showDescription?: boolean
   title?: string
   header?: ReactNodeOrString
@@ -248,7 +220,6 @@ export const Dialog: React.FC<DialogProps> = ({
   onOpenChange,
   ...props
 }) => {
-
   const bgClass = {
     accent: 'bg-accent/50',
     sidebar: 'bg-sidebar',
@@ -257,8 +228,6 @@ export const Dialog: React.FC<DialogProps> = ({
   }[background]
 
   const bodyClass = bodyPadding ? 'px-6' : ''
-
-  const isMobile = useIsMobile()
 
   const widthClass = {
     default: 'max-w-xl',
@@ -275,7 +244,7 @@ export const Dialog: React.FC<DialogProps> = ({
 
   const handleClose = async () => {
     // Return a promise that resolves when the dialog should be closed
-    return new Promise<boolean>((resolve) => {
+    return new Promise<boolean>(resolve => {
       if (confirmClose) {
         // First, make sure the main dialog is not closed immediately
         // by delaying the confirmation dialog slightly
@@ -335,17 +304,13 @@ export const Dialog: React.FC<DialogProps> = ({
       isKeyboardDismissDisabled={false}
       onOpenChange={handleOpenChange}
     >
-
       <DialogContent
         closeButton={false}
         className={cn('relative gap-0 space-y-0 rounded-lg', widthClass, className)}
         onOpenChange={handleOpenChange}
-        side={isMobile ? 'bottom' : null}
-        role={role}
+          role={role}
       >
-
-        {composeRenderProps(children, (children, providedRenderProps) => {
-          // Create our own renderProps with a close function that respects the confirmation result
+        {composeRenderProps(children, (children, _providedRenderProps) => {
           const renderProps: DialogRenderProps = {
             close: () => {
               // Use handleClose to show confirmation if needed
@@ -356,42 +321,48 @@ export const Dialog: React.FC<DialogProps> = ({
 
           return (
             <>
-              {!hideHeader && <DialogHeader className={cn('flex flex-col px-3 items-center py-1 my-0 gap-0', bgClass)}>
-                <DialogTitle className="flex w-full text-lg items-center justify-between py-1">
-                  <span className="flex-1">
-                    {title}
-                  </span>
-                  <Button variant="ghost" size="icon-xs" className="flex-none"
-                          onClick={() => renderProps.close()}
-                  >
-                    <Cross2Icon className="size-3.5" />
-                    <span className="sr-only">Close</span>
-                  </Button>
-                </DialogTitle>
-
-                <DialogDescription
-                  className={cn('', !showDescription ? 'sr-only py-0' : '')}
+              {!hideHeader && (
+                <DialogHeader
+                  className={cn('my-0 flex flex-1 flex-col gap-0 px-3 py-0', bgClass)}
                 >
-                  {description}
-                </DialogDescription>
+                  <DialogTitle className="!py-1.5 !leading-0 flex w-full items-center justify-between text-left text-base md:text-center">
+                    <span className="flex-1 text-base">{title}</span>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      icon={X}
+                      aria-label="Close"
+                      onClick={() => renderProps.close()}
+                    />
+                  </DialogTitle>
 
-                {!!toolbar && <div className="flex-1 justify-start items-start self-start py-2">
-                  {toolbar}
-                </div>
-                }
-              </DialogHeader>
-              }
+                  <DialogDescription className={cn('', !showDescription ? 'sr-only py-0' : '')}>
+                    {description}
+                  </DialogDescription>
+                </DialogHeader>
+              )}
 
               <DialogBody
-                className={cn('my-0 flex flex-col mx-0 px-0 w-full', 'bg-background', hideHeader ? 'rounded-lg' : '', bodyClass)}
+                className={cn(
+                  'mx-0 my-0 flex w-full flex-col px-0',
+                  'bg-background',
+                  hideHeader ? 'rounded-lg' : '',
+                  bodyClass
+                )}
               >
                 {children}
               </DialogBody>
-              {!!footer && <DialogFooter
-                className={cn('px-6 py-3 flex items-center justify-end space-x-2', footerClassName, bgClass)}
-              >
-                {typeof footer === 'function' ? footer(renderProps) : footer}
-              </DialogFooter>}
+              {!!footer && (
+                <DialogFooter
+                  className={cn(
+                    'flex items-center justify-end space-x-2 px-6 py-3',
+                    footerClassName,
+                    bgClass
+                  )}
+                >
+                  {typeof footer === 'function' ? footer(renderProps) : footer}
+                </DialogFooter>
+              )}
             </>
           )
         })}

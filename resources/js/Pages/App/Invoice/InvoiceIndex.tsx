@@ -22,10 +22,9 @@ import { getYear } from 'date-fns'
 import { router } from '@inertiajs/core'
 import { debounce, sumBy } from 'lodash'
 import { Separator } from '@/Components/twcui/separator'
-import { Toolbar } from '@/Components/twcui/toolbar'
+import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
-import { Select } from '@/Components/ui/twc-ui/select'
 import { BorderedBox } from '@/Components/twcui/bordered-box'
 import { Badge } from '@/Components/ui/badge'
 import { Toggle } from '@/Components/twcui/toggle'
@@ -149,7 +148,7 @@ const InvoiceIndex: React.FC = () => {
     const sum = sumBy(selectedRows, 'amount_net')
     setSelectedAmount(sum)
     return (
-      <Toolbar className="px-4 pt-2">
+      <Toolbar variant="secondary" className="px-4 pt-2">
         <div className="self-center text-sm">
           <Badge variant="outline" className="mr-1.5 bg-background">{selectedRows.length}</Badge>
           ausgewählte Datensätze
@@ -165,7 +164,7 @@ const InvoiceIndex: React.FC = () => {
       return null
     }
     return (
-      <Toolbar className="px-4 pt-2 pb-3">
+      <Toolbar variant="secondary" className="px-4 pt-2 pb-3">
         <Badge>Rechnungsdatum</Badge>
       </Toolbar>
     )
@@ -192,15 +191,8 @@ const InvoiceIndex: React.FC = () => {
 
 
         <div className="flex flex-none items-center space-x-2 p-2">
-          <Toolbar className="flex flex-1">
-            <Select<ViewProps>
-              aria-label="View"
-              className="w-48 bg-background"
-              name="view"
-              value={Number(view)}
-              items={views}
-              onChange={(value) => setView(Number(value.target.value))}
-            />
+          <Toolbar variant="secondary" className="flex flex-1">
+
             <Button variant="ghost" size="icon" icon={FolderManagementIcon} title="Optionen für virtuellen Ordner" />
             <Separator orientation="vertical" />
 
@@ -242,14 +234,6 @@ const InvoiceIndex: React.FC = () => {
               icon={ArrowLeft01Icon}
               onClick={handlePreviousYear}
               disabled={year <= minYear}
-            />
-            <Select<YearsProps>
-              className="w-20"
-              aria-label="Jahr"
-              name="year"
-              value={Number(year)}
-              items={yearItems}
-              onChange={(value) => setYear(Number(value.target.value))}
             />
 
             <Button

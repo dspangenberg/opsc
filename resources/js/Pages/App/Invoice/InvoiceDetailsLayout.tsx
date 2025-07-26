@@ -23,11 +23,11 @@ import { PdfViewer } from '@/Components/PdfViewer'
 import print from 'print-js'
 import { useFileDownload } from '@/Hooks/useFileDownload'
 import { router } from '@inertiajs/react'
-import { AlertDialog } from '@/Components/twcui/alert-dialog'
+import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
 import { DropdownButton, Menu, MenuItem, MenuPopover, MenuSubTrigger } from '@/Components/twcui/dropdown-button'
-import { Toolbar } from '@/Components/twcui/toolbar'
+import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { SplitButton } from '@/Components/twcui/split-button'
-import { Tab, TabList, Tabs, TabPanel } from '@/Components/twcui/tabs'
+import { Tab, TabList, Tabs, TabPanel } from '@/Components/ui/twc-ui/tabs'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -113,7 +113,7 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({
 
   const tabs = useMemo(
     () => (
-      <Tabs variant="underlined" defaultSelectedKey={currentRoute} tabClassName="text-base -mb-1">
+      <Tabs variant="underlined" defaultSelectedKey={currentRoute}>
         <TabList aria-label="Ansicht">
           <Tab id="app.invoice.details" href={route('app.invoice.details', {invoice}, false)}>Details</Tab>
           <Tab id="app.invoice.history" href={route('app.invoice.history', {invoice}, false)}>Historie + Buchungen</Tab>

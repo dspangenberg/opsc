@@ -3,11 +3,11 @@ import type * as React from 'react'
 import { Button } from "@/Components/ui/twc-ui/button"
 import { Select } from '@/Components/ui/twc-ui/select'
 import { Form, useForm } from '@/Components/ui/twc-ui/form'
-import { Combobox } from '@/Components/twcui/combobox'
-import { Dialog } from '@/Components/twcui/dialog'
+import { ComboBox } from '@/Components/ui/twc-ui/combo-box'
+import { Dialog } from '@/Components/ui/twc-ui/dialog'
 import { DatePicker, DateRangePicker } from '@/Components/ui/twc-ui/date-picker'
-import { Checkbox } from '@/Components/jolly-ui/checkbox'
-import { RadioGroup } from '@/Components/twcui/radio-group'
+import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
+import { RadioGroup } from '@/Components/ui/twc-ui/radio-group'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 import { router } from '@inertiajs/react'
 
@@ -64,7 +64,7 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
       >
         <FormGroup>
           <div className="col-span-24">
-            <RadioGroup
+            <RadioGroup<App.Data.InvoiceTypeData>
               autoFocus
               label='Rechnungsart'
               itemName={'display_name'}
@@ -106,7 +106,7 @@ export const InvoiceDetailsEditBaseDataDialog: React.FC<Props> = ({
             />
           </div>
           <div className="col-span-24">
-            <Combobox<App.Data.ProjectData>
+            <ComboBox<App.Data.ProjectData>
               label="Projekt"
               {...form.register('project_id')}
               isOptional

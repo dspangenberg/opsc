@@ -4,7 +4,7 @@ import type { PageProps } from '@/Types'
 import { InvoiceDetailsSide } from '@/Pages/App/Invoice/InvoiceDetailsSide'
 import { InvoiceDetailsLayout } from '@/Pages/App/Invoice/InvoiceDetailsLayout'
 import { InvoicingTable, type LineCommandProps } from '@/Pages/App/Invoice/InvoicingTable'
-import { AlertDialog } from '@/Components/twcui/alert-dialog'
+import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
 
 interface InvoiceDetailsProps extends PageProps {
   invoice: App.Data.InvoiceData

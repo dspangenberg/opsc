@@ -3,7 +3,7 @@
  * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Dialog } from '@/Components/twcui/dialog'
+import { Dialog } from '@/Components/ui/twc-ui/dialog'
 import { cn } from '@/Lib/utils'
 import { HeadlessModal, type HeadlessModalProps } from '@inertiaui/modal-react'
 import type { ReactNode, RefObject } from 'react'

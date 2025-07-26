@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @plugin 'tailwindcss-animate';
+@plugin "tailwindcss-react-aria-components";
 
 @source '../views';
 
@@ -252,4 +253,9 @@ h4[id],
 h5[id],
 h6[id] {
   scroll-margin-top: 80px;
+}
+
+::selection {
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
 }

@@ -4,7 +4,7 @@ import { Link } from '@inertiajs/react'
 import { Add01Icon, Edit03Icon, MoreVerticalCircle01Icon, PrinterIcon } from '@hugeicons/core-free-icons'
 import { PageContainer } from '@/Components/PageContainer'
 import { Avatar } from '@dspangenberg/twcui'
-import { Toolbar } from '@/Components/twcui/toolbar'
+import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
 
@@ -34,7 +34,7 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
 
   const tabs = useMemo(
     () => (
-      <Tabs variant="underlined" defaultSelectedKey={currentRoute} tabClassName="text-base -mb-1">
+      <Tabs variant="underlined" defaultSelectedKey={currentRoute}>
         <TabList aria-label="Ansicht">
           <Tab id="app.invoice.details" href={route('app.contact.details', {contact}, false)}>Übersicht</Tab>
           <Tab id="app.invoice.history">Kontakte</Tab>

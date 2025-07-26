@@ -12,7 +12,7 @@ import {
 
 import { cn } from '@/Lib/utils'
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react'
-import { Tooltip, TooltipTrigger } from '@/Components/twcui/tooltip'
+import { Tooltip, TooltipTrigger } from '@/Components/ui/twc-ui/tooltip'
 
 const toggleVariants = cva(
   [

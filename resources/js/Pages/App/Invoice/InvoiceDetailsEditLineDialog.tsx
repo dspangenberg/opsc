@@ -10,7 +10,7 @@ import { Select } from '@/Components/ui/twc-ui/select'
 import { TextField } from '@/Components/ui/twc-ui/text-field'
 import { NumberField } from '@/Components/ui/twc-ui/number-field'
 
-import { Dialog } from '@/Components/twcui/dialog'
+import { Dialog } from '@/Components/ui/twc-ui/dialog'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -38,7 +38,6 @@ export const InvoiceDetailsEditLineDialog: React.FC<Props> = ({
       form.updateAndValidateWithoutEvent('amount', totalPrice)
     }
   }, [form.data.quantity, form.data.price, form.data.type_id])
-
 
   const handleOnClosed = () => {
     router.get(route('app.invoice.details', { invoice: invoice.id }))
