@@ -3,13 +3,13 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
+import { Separator } from '@/Components/twcui/separator'
+import { Dialog } from '@/Components/ui/twc-ui/dialog'
+import type { PDFDocumentProxy } from 'pdfjs-dist'
+import print from 'print-js'
 import type React from 'react'
 import { useMemo, useRef, useState } from 'react'
-import { Dialog } from '@/Components/ui/twc-ui/dialog'
-import { Separator } from '@/Components/twcui/separator'
-import print from 'print-js'
 import { Document, Page } from 'react-pdf'
-import type { PDFDocumentProxy } from 'pdfjs-dist'
 import 'react-pdf/dist/Page/TextLayer.css'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import { LogoSpinner } from '@dspangenberg/twcui'
@@ -17,6 +17,7 @@ import { LogoSpinner } from '@dspangenberg/twcui'
 // Import the worker setup
 import '@/utils/pdf-worker'
 
+import { useFileDownload } from '@/Hooks/useFileDownload'
 import {
   ArrowDown01Icon,
   ArrowUp01Icon,
@@ -26,14 +27,12 @@ import {
   SearchMinusIcon,
   SquareArrowDiagonal02Icon
 } from '@hugeicons/core-free-icons'
-import { useFileDownload } from '@/Hooks/useFileDownload'
 import { useFullscreen, useToggle } from 'react-use'
 
-import { cn } from '@/Lib/utils'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
-import { Button } from '@/Components/ui/twc-ui/button'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
-
+import { Button } from '@/Components/ui/twc-ui/button'
+import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
+import { cn } from '@/Lib/utils'
 
 interface Props {
   document: string
@@ -54,7 +53,9 @@ export const PdfViewer: React.FC<Props> = ({
 
   const divRef = useRef<HTMLDivElement>(null)
   const [show, toggle] = useToggle(false)
-  const isFullscreen = useFullscreen(divRef as React.RefObject<Element>, show, { onClose: () => toggle(false) })
+  const isFullscreen = useFullscreen(divRef as React.RefObject<Element>, show, {
+    onClose: () => toggle(false)
+  })
 
   // const [savedScale, setSaveScale] = useLocalStorage('pdf-scale', 1.3) || 1.3
   const pdfRef = useRef<PDFDocumentProxy | null>(null)
@@ -63,9 +64,9 @@ export const PdfViewer: React.FC<Props> = ({
   const [scale, setScale] = useState<number>(1.3)
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  const onDocumentLoadSuccess = (pdf: PDFDocumentProxy): void => {
-    setNumPages(pdf.numPages)
-    pdfRef.current = pdf
+  const onDocumentLoadSuccess = (document: any): void => {
+    setNumPages(document.numPages)
+    pdfRef.current = document
     setScale(1.3)
     setIsLoading(false)
   }
@@ -102,48 +103,74 @@ export const PdfViewer: React.FC<Props> = ({
   const toolbar = useMemo(
     () => (
       <Toolbar>
-        <Button variant="toolbar" icon={ArrowUp01Icon} title="Seite zurück" disabled={pageNumber === 1} />
-        <Button variant="toolbar" icon={ArrowDown01Icon} title="Seite vor" disabled={numPages === 1} />
+        <Button
+          variant="toolbar"
+          icon={ArrowUp01Icon}
+          title="Seite zurück"
+          disabled={pageNumber === 1}
+        />
+        <Button
+          variant="toolbar"
+          icon={ArrowDown01Icon}
+          title="Seite vor"
+          disabled={numPages === 1}
+        />
         <Separator orientation="vertical" />
-        <Button variant="toolbar" icon={SearchMinusIcon} title="Verkleinern" onClick={handleScaleOut} />
-        {!isFullscreen && <DropdownButton
-          variant="outline"
-          size="auto"
-          placement="bottom start"
-          title={`${Math.round(scale * 100)} %`}
-          className="z-[100] isolate"
-          onSelectionChange={() => setScale}
-          selectedKeys={`scale-${Math.round(scale * 100)}`}
-        >
-          <MenuItem id="scale-100" title="Originalgröße" separator />
-          <MenuItem id="scale-120" title="120 %" onAction={() => setScale(1.2)} />
-          <MenuItem id="scale-130" title="130 %" onAction={() => setScale(1.3)} />
-          <MenuItem icon={PrinterIcon} title="Auswertung drucken" ellipsis />
-        </DropdownButton>
-        }
+        <Button
+          variant="toolbar"
+          icon={SearchMinusIcon}
+          title="Verkleinern"
+          onClick={handleScaleOut}
+        />
+        {!isFullscreen && (
+          <DropdownButton
+            variant="outline"
+            size="auto"
+            placement="bottom start"
+            title={`${Math.round(scale * 100)} %`}
+            className="isolate z-[100]"
+            onSelectionChange={() => setScale}
+            selectedKeys={`scale-${Math.round(scale * 100)}`}
+          >
+            <MenuItem id="scale-100" title="Originalgröße" separator />
+            <MenuItem id="scale-120" title="120 %" onAction={() => setScale(1.2)} />
+            <MenuItem id="scale-130" title="130 %" onAction={() => setScale(1.3)} />
+            <MenuItem icon={PrinterIcon} title="Auswertung drucken" ellipsis />
+          </DropdownButton>
+        )}
         <Button variant="toolbar" icon={SearchAddIcon} title="Vergrößern" onClick={handleScaleIn} />
         <Separator orientation="vertical" />
         <Button variant="toolbar" icon={PrinterIcon} title="Drucken" onClick={handlePrint} />
-        <Button variant="toolbar" icon={FileDownloadIcon} title="Download" onClick={handleDownload} />
+        <Button
+          variant="toolbar"
+          icon={FileDownloadIcon}
+          title="Download"
+          onClick={handleDownload}
+        />
         <Separator orientation="vertical" />
-        <Button variant="toolbar" icon={SquareArrowDiagonal02Icon} title="Vollbildmodus" onClick={toggle} />
+        <Button
+          variant="toolbar"
+          icon={SquareArrowDiagonal02Icon}
+          title="Vollbildmodus"
+          onClick={toggle}
+        />
       </Toolbar>
     ),
     [numPages, handleDownload, scale, isFullscreen]
   )
 
   return (
-    <Dialog
-      isOpen={open}
-      onOpenChange={handleOpenChange}
-      title={filename}
-    >
-
-
-      <div ref={divRef}
-           className="flex aspect-[210/297] max-h-[90%] w-3xl flex-col items-center justify-center overflow-auto bg-white"
+    <Dialog isOpen={open} onOpenChange={handleOpenChange} title={filename}>
+      <div
+        ref={divRef}
+        className="flex aspect-[210/297] max-h-[90%] w-3xl flex-col items-center justify-center overflow-auto bg-white"
       >
-        <div className={cn(' py-1', isFullscreen ? 'self-center' : 'w-full self-start px-4 bg-page-content')}>
+        <div
+          className={cn(
+            ' py-1',
+            isFullscreen ? 'self-center' : 'w-full self-start bg-page-content px-4'
+          )}
+        >
           {toolbar}
         </div>
 
@@ -154,7 +181,6 @@ export const PdfViewer: React.FC<Props> = ({
         )}
         <Document
           file={document}
-
           loading={
             <div className="mx-auto my-auto flex-1">
               <LogoSpinner />
@@ -166,7 +192,6 @@ export const PdfViewer: React.FC<Props> = ({
           <Page
             pageNumber={pageNumber}
             scale={scale}
-
             className="z-10 flex-1 border"
             loading={
               <div className="mx-auto my-auto flex-1">
@@ -175,7 +200,6 @@ export const PdfViewer: React.FC<Props> = ({
             }
           />
         </Document>
-
       </div>
     </Dialog>
   )

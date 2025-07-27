@@ -1,54 +1,55 @@
-/*
- * ospitality.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
- */
-
 import type { BreadcrumbProp } from '@/Components/PageBreadcrumbs'
-import type React from 'react'
-import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
+
+const createContext = React.createContext
 
 type BreadcrumbProviderProps = {
-  children: React.ReactNode
-  breadcrumbs?: BreadcrumbProp[]
+  children: ReactNode
 }
 
-type BreadcrumbProviderState = {
+type BreadcrumbContextType = {
   breadcrumbs: BreadcrumbProp[]
-  setBreadcrumbs: (items: BreadcrumbProp[]) => void
+  setBreadcrumbs: (breadcrumbs: BreadcrumbProp[]) => void
+  addBreadcrumb: (breadcrumb: BreadcrumbProp) => void
+  removeBreadcrumb: (index: number) => void
+  clearBreadcrumbs: () => void
 }
 
-const initialState: BreadcrumbProviderState = {
-  breadcrumbs: [],
-  setBreadcrumbs: () => null,
-}
+const BreadcrumbContext = createContext<BreadcrumbContextType | undefined>(undefined)
 
-const BreadcrumbProviderContext = createContext<BreadcrumbProviderState>(initialState)
+export const BreadcrumbProvider = ({ children }: BreadcrumbProviderProps) => {
+  const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbProp[]>([])
 
-export function BreadcrumbProvider({
-  children,
-  breadcrumbs: initialBreadcrumbs = [],
-  ...props
-}: BreadcrumbProviderProps) {
-  const [breadcrumbs, setBreadcrumbItems] = useState<BreadcrumbProp[]>(initialBreadcrumbs)
-
-  const setBreadcrumbs = useCallback((items: BreadcrumbProp[]) => {
-    setBreadcrumbItems(items)
+  const addBreadcrumb = useCallback((breadcrumb: BreadcrumbProp) => {
+    setBreadcrumbs(prev => [...prev, breadcrumb])
   }, [])
 
-  const value = useMemo<BreadcrumbProviderState>(() => ({
-    breadcrumbs,
-    setBreadcrumbs,
-  }), [breadcrumbs, setBreadcrumbs])
+  const removeBreadcrumb = useCallback((index: number) => {
+    setBreadcrumbs(prev => prev.filter((_, i) => i !== index))
+  }, [])
 
-  return (
-    <BreadcrumbProviderContext.Provider {...props} value={value}>
-      {children}
-    </BreadcrumbProviderContext.Provider>
+  const clearBreadcrumbs = useCallback(() => {
+    setBreadcrumbs([])
+  }, [])
+
+  const value = useMemo(
+    () => ({
+      breadcrumbs,
+      setBreadcrumbs,
+      addBreadcrumb,
+      removeBreadcrumb,
+      clearBreadcrumbs
+    }),
+    [breadcrumbs, addBreadcrumb, removeBreadcrumb, clearBreadcrumbs]
   )
+
+  return <BreadcrumbContext.Provider value={value}>{children}</BreadcrumbContext.Provider>
 }
 
-export const useBreadcrumbProvider = () => {
-  const context = useContext(BreadcrumbProviderContext)
-  if (context === undefined) throw new Error("useBreadcrumbProvider must be used within a BreadcrumbProvider")
+export const useBreadcrumb = (): BreadcrumbContextType => {
+  const context = useContext(BreadcrumbContext)
+  if (context === undefined) {
+    throw new Error('useBreadcrumb must be used within a BreadcrumbProvider')
+  }
   return context
 }

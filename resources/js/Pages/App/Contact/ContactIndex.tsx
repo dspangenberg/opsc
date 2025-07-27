@@ -1,9 +1,7 @@
 import type * as React from 'react'
 import { useCallback, useId, useMemo } from 'react'
 import { usePage } from '@inertiajs/react'
-import { useModalStack } from '@inertiaui/modal-react'
 import { Add01Icon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
-import { NavTabs, NavTabsTab } from '@/Components/NavTabs'
 import { DataTable } from '@/Components/DataTable'
 import { EmptyState } from '@/Components/EmptyState'
 import { PageContainer } from '@/Components/PageContainer'
@@ -11,7 +9,6 @@ import { Toolbar, ToolbarButton } from '@dspangenberg/twcui'
 import { columns } from './ContactIndexColumns'
 import type { PageProps } from '@/Types'
 import { Pagination } from '@/Components/Pagination'
-import { HugeiconsIcon } from '@hugeicons/react'
 import { ContactIndexFilterPopover } from './ContactIndexFilterPopover'
 
 interface ContactIndexProps extends PageProps {
@@ -22,11 +19,10 @@ const ContactIndex: React.FC = () => {
   const { contacts } = usePage<ContactIndexProps>().props
   const id = useId()
 
-  const { visitModal } = useModalStack()
 
   const handleAdd = useCallback(() => {
-    visitModal(route('app.accommodation.create'))
-  }, [visitModal])
+    console.log('Add contact clicked - modal functionality temporarily disabled')
+  }, [])
 
   const breadcrumbs = useMemo(() => [{
     title: 'Kontakte',
@@ -39,23 +35,6 @@ const ContactIndex: React.FC = () => {
         <ToolbarButton variant="default" icon={Add01Icon} title="Kontakt hinzufügen" />
         <ToolbarButton icon={MoreVerticalCircle01Icon} />
       </Toolbar>
-    ),
-    []
-  )
-
-  const tabs = useMemo(
-    () => (
-      <NavTabs>
-        <NavTabsTab href={route('app.contact.index')} activeRoute="/app/contacts">
-          Alle Kontakte (unarchiviert)
-        </NavTabsTab>
-        <NavTabsTab href={route('app.contact.index')} activeRoute="/app/contacts/favorites">
-          Favoriten
-        </NavTabsTab>
-        <NavTabsTab href={route('app.contact.index')} activeRoute="/app/contacts/favorites">
-          <HugeiconsIcon icon={Add01Icon} /> View
-        </NavTabsTab>
-      </NavTabs>
     ),
     []
   )
@@ -91,7 +70,7 @@ const ContactIndex: React.FC = () => {
           Ups, Du hast noch keine Kontakte.
         </EmptyState>
       )}
-      
+
     </PageContainer>
   )
 }

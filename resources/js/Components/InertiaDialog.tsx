@@ -5,10 +5,10 @@
 
 import { Dialog } from '@/Components/ui/twc-ui/dialog'
 import { cn } from '@/Lib/utils'
-import { HeadlessModal, type HeadlessModalProps } from '@inertiaui/modal-react'
+// import { HeadlessModal, type HeadlessModalProps } from '@inertiaui/modal-react' // Temporarily disabled
 import type { ReactNode, RefObject } from 'react'
 import type React from 'react'
-import { forwardRef, useRef } from 'react'
+import { forwardRef, useRef, useState } from 'react'
 
 type ReactNodeOrString = ReactNode | string
 
@@ -40,7 +40,9 @@ export const InertiaDialog = forwardRef<HTMLDivElement, Props>((props, ref) => {
     className,
     onClose
   } = props
-  const modalRef = useRef<HeadlessModalProps>(null)
+  
+  // Temporarily use simple state instead of HeadlessModal
+  const [isOpen, setIsOpen] = useState(true)
 
   const handleInteractOutside = (event: Event) => {
     if (!dismissible) {
@@ -62,39 +64,38 @@ export const InertiaDialog = forwardRef<HTMLDivElement, Props>((props, ref) => {
       handleOpenChange(false)
       return
     }
-    modalRef.current?.close()
+    setIsOpen(false)
+    if (onClose) onClose()
   }
 
   const handleOpenChange = (open: boolean) => {
     if (!dismissible) {
       return
     }
+    setIsOpen(open)
     if (!open && onClose) {
       onClose()
     }
   }
 
+  // Temporarily return a simple dialog without HeadlessModal wrapper
   return (
-    <HeadlessModal ref={modalRef} {...props}>
-      {({ isOpen, setOpen, close }: HeadlessModalProps) => (
-        <Dialog
-          isOpen={isOpen}
-          onClose={() => setOpen(false)}
-          onInteractOutside={handleInteractOutside}
-          onClosed={close}
-          onOpenChange={handleOpenChange}
-          isDismissable={false}
-          showDescription={showDescription}
-          dismissible={dismissible}
-          className={cn('max-w-xl', className)}
-          title={title}
-          tabs={tabs}
-          description={description}
-          footer={typeof footer === 'function' ? footer(handleFooterEvents) : footer}
-        >
-          {children}
-        </Dialog>
-      )}
-    </HeadlessModal>
+    <Dialog
+      isOpen={isOpen}
+      onClose={() => handleOpenChange(false)}
+      onInteractOutside={handleInteractOutside}
+      onClosed={() => setIsOpen(false)}
+      onOpenChange={handleOpenChange}
+      isDismissible={dismissible}
+      showDescription={showDescription}
+      dismissible={dismissible}
+      className={cn('max-w-xl', className)}
+      title={title}
+      tabs={tabs}
+      description={description}
+      footer={typeof footer === 'function' ? footer(handleFooterEvents) : footer}
+    >
+      {children}
+    </Dialog>
   )
 })

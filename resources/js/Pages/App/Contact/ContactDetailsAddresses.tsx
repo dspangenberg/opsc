@@ -5,7 +5,7 @@ import { Button } from '@dspangenberg/twcui'
 import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
 import { PencilEdit02Icon, Copy01Icon } from '@hugeicons/core-free-icons'
-import { useModalStack } from '@inertiaui/modal-react'
+// import { useModalStack } from '@inertiaui/modal-react' // Temporarily disabled
 import { router } from '@inertiajs/react'
 
 interface Props {
@@ -14,15 +14,16 @@ interface Props {
 
 export const ContactDetailsAddresses: FC<Props> = ({ addresses }: Props) => {
   const firstAddress = addresses.length ? addresses[0] : null
-  const { visitModal } = useModalStack()
+  // const { visitModal } = useModalStack() // Temporarily disabled
 
   const handleEditButtonClick = () => {
-    visitModal(
-      route('app.contact.edit.address', {
-        contact: firstAddress?.contact_id,
-        address: firstAddress?.id
-      })
-    )
+    // visitModal(
+    //   route('app.contact.edit.address', {
+    //     contact: firstAddress?.contact_id,
+    //     address: firstAddress?.id
+    //   })
+    // ) // Temporarily disabled
+    console.log('Edit address clicked - modal functionality temporarily disabled')
   }
 
   const handleCopy = () => {

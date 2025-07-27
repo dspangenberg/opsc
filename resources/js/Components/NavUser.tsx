@@ -3,12 +3,9 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-'use client'
-
 import { router } from '@inertiajs/react'
 
 import { ThemeSwitch } from '@/Components/theme-switch'
-import { Avatar, Button } from '@dspangenberg/twcui'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/Components/ui/dropdown-menu'
+import { Avatar, Button } from '@dspangenberg/twcui'
 import { Door01Icon, Settings05Icon, UserIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
@@ -31,19 +29,16 @@ export function NavUser({
   }
   return (
     <DropdownMenu>
-
       <DropdownMenuTrigger asChild>
-        <div className='mr-4 flex items-center gap-2'>
-        <Button size="icon" variant="ghost" className="rounded-full">
-          <Avatar
-            src={user.avatar_url as unknown as string}
-            initials={user.initials}
-            fullname={user.full_name}
-          />
-        </Button>
-          <div className='cursor-default font-medium text-sm'>
-            {user.full_name}
-          </div>
+        <div className="mr-4 flex items-center gap-2">
+          <Button size="icon" variant="ghost" className="rounded-full">
+            <Avatar
+              src={user.avatar_url as unknown as string}
+              initials={user.initials}
+              fullname={user.full_name}
+            />
+          </Button>
+          <div className="cursor-default font-medium text-sm">{user.full_name}</div>
         </div>
       </DropdownMenuTrigger>
 

@@ -3,13 +3,11 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-'use client'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/Components/ui/collapsible'
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -18,8 +16,8 @@ import {
 } from '@/Components/ui/sidebar'
 import { usePathActive } from '@/Hooks/usePathActive'
 import { HugeiconsIcon, type HugeiconsProps } from '@hugeicons/react'
-import { Link, usePage } from '@inertiajs/react'
-import { ChevronRight, type LucideIcon, Plus } from 'lucide-react'
+import { Link } from '@inertiajs/react'
+import type { LucideIcon } from 'lucide-react'
 import type * as React from 'react'
 export type CombinedIcon = LucideIcon | React.FC<HugeiconsProps>
 

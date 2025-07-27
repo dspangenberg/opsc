@@ -3,13 +3,11 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-'use client'
-import { Avatar } from '@dspangenberg/twcui'
 import { Checkbox } from '@/Components/ui/checkbox'
+import { minutesToHoursExtended, parseAndFormatDate } from '@/Lib/DateHelper'
+import { Avatar } from '@dspangenberg/twcui'
 import { Link } from '@inertiajs/react'
 import type { ColumnDef } from '@tanstack/react-table'
-import type React from 'react'
-import { minutesToHoursExtended, parseAndFormatDate} from '@/Lib/DateHelper'
 
 const editUrl = (id: number | null) => (id ? route('app.invoice.details', { id }) : '#')
 const contactUrl = (id: number | null) => (id ? route('app.contact.details', { id }) : '#')
@@ -30,7 +28,7 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
           table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-        className="align-middle mx-3 bg-background"
+        className="mx-3 bg-background align-middle"
         aria-label="Select all"
       />
     ),
@@ -39,7 +37,7 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={value => row.toggleSelected(!!value)}
-          className="align-middle bg-background mx-3"
+          className="mx-3 bg-background align-middle"
           aria-label="Select row"
         />
       </div>
@@ -78,15 +76,13 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
     size: 300,
     cell: ({ getValue, row }) => (
       <>
-      <Link
-        href={contactUrl(row.original.project_id)}
-        className="hover:underline align-middle truncate"
-      >
-        {row.original.project?.name}
-      </Link>
-        <div className="font-xxs text-foreground/60 line-clamp-1">
-          {row.original.note}
-        </div>
+        <Link
+          href={contactUrl(row.original.project_id)}
+          className="truncate align-middle hover:underline"
+        >
+          {row.original.project?.name}
+        </Link>
+        <div className="line-clamp-1 font-xxs text-foreground/60">{row.original.note}</div>
       </>
     )
   },
@@ -94,6 +90,8 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
     accessorKey: 'mins',
     header: 'Dauer',
     size: 20,
-    cell: ({ row, getValue }) => <div className="text-right">{minutesToHoursExtended(getValue() as number)}</div>
-  },
+    cell: ({ row, getValue }) => (
+      <div className="text-right">{minutesToHoursExtended(getValue() as number)}</div>
+    )
+  }
 ]

@@ -1,6 +1,5 @@
 import type * as React from 'react'
 import { useEffect, useRef } from 'react'
-import { useModal } from '@inertiaui/modal-react'
 import { Form, useForm } from '@/Components/ui/twc-ui/form'
 import { InertiaDialog } from '@/Components/InertiaDialog'
 import type { PageProps } from '@/Types'
@@ -9,6 +8,7 @@ import { TextField } from '@/Components/ui/twc-ui/text-field'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 import { Tab, TabList, Tabs, TabPanel } from '@/Components/ui/twc-ui/tabs'
+import { usePage } from '@inertiajs/react'
 
 interface Props extends PageProps {
   contact: App.Data.ContactData
@@ -19,11 +19,11 @@ interface Props extends PageProps {
 }
 
 const ContactEditAddress: React.FC<Props> = () => {
-  const { close } = useModal()
+  const close = () => {}
 
-  const address = useModal().props.address as App.Data.ContactAddressData
-  const countries = useModal().props.countries as App.Data.CountryData[]
-  const categories = useModal().props.categories as App.Data.AddressCategoryData[]
+  const address = usePage().props.address as App.Data.ContactAddressData
+  const countries = usePage().props.countries as App.Data.CountryData[]
+  const categories = usePage().props.categories as App.Data.AddressCategoryData[]
 
   const handleClose = () => {
     close()

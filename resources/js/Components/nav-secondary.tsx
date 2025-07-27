@@ -3,7 +3,6 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-'use client'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/Components/ui/collapsible'
 import {
   SidebarGroup,
@@ -16,9 +15,8 @@ import {
   SidebarMenuSubItem
 } from '@/Components/ui/sidebar'
 import { usePathActive } from '@/Hooks/usePathActive'
-import { HugeiconsIcon } from '@hugeicons/react';
+import { HugeiconsIcon } from '@hugeicons/react'
 import { Link } from '@inertiajs/react'
-import type * as React from 'react'
 
 export interface NavMainItem {
   title: string
@@ -59,7 +57,12 @@ export function NavSecondary({
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton asChild tooltip={item.title} isActive={isPathActive(item)}>
                     <Link href={item.url}>
-                      <HugeiconsIcon icon={item.icon} size={24} color="currentColor" className="size-5! text-sidebar-foreground!" />
+                      <HugeiconsIcon
+                        icon={item.icon}
+                        size={24}
+                        color="currentColor"
+                        className="size-5! text-sidebar-foreground!"
+                      />
                       <span className="text-base">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -72,7 +75,7 @@ export function NavSecondary({
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton
                               asChild
-                              className="ml-1 text"
+                              className="text ml-1"
                               isActive={isPathActive(subItem)}
                             >
                               <Link href={subItem.url}>

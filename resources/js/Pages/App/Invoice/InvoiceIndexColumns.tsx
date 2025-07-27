@@ -1,16 +1,7 @@
-/*
- * opsc.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
- */
-
-'use client'
-import { Avatar } from '@dspangenberg/twcui'
+import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
 import { Link } from '@inertiajs/react'
 import type { ColumnDef } from '@tanstack/react-table'
-import type React from 'react'
-import { router } from '@inertiajs/react'
-import { Badge } from '@/Components/ui/badge'
 
 const editUrl = (id: number | null) => (id ? route('app.invoice.details', { id }) : '#')
 const contactUrl = (id: number | null) => (id ? route('app.contact.details', { id }) : '#')
@@ -32,7 +23,7 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
           table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-        className="align-middle mx-3 bg-background"
+        className="mx-3 bg-background align-middle"
         aria-label="Select all"
       />
     ),
@@ -40,7 +31,7 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={value => row.toggleSelected(!!value)}
-        className="align-middle bg-background mx-3"
+        className="mx-3 bg-background align-middle"
         aria-label="Select row"
       />
     )
@@ -63,13 +54,17 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
     size: 140,
     cell: ({ row, getValue }) => (
       <div className="flex items-center gap-3">
-      <Link
-        href={editUrl(row.original.id)}
-        className="font-medium hover:underline align-middle truncate"
-      >
-        <span>{getValue() as string}</span>
-      </Link>
-        {row.original.is_loss_of_receivables && <Badge variant="destructive" className="cursor-help">FV</Badge>}
+        <Link
+          href={editUrl(row.original.id)}
+          className="truncate align-middle font-medium hover:underline"
+        >
+          <span>{getValue() as string}</span>
+        </Link>
+        {row.original.is_loss_of_receivables && (
+          <Badge variant="destructive" className="cursor-help">
+            FV
+          </Badge>
+        )}
       </div>
     )
   },
@@ -80,7 +75,7 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
     cell: ({ getValue, row }) => (
       <Link
         href={contactUrl(row.original.contact_id)}
-        className="hover:underline align-middle truncate"
+        className="truncate align-middle hover:underline"
       >
         {getValue() as string}
       </Link>
@@ -93,7 +88,7 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
     cell: ({ getValue, row }) => (
       <Link
         href={contactUrl(row.original.contact_id)}
-        className="hover:underline align-middle truncate"
+        className="truncate align-middle hover:underline"
       >
         {row.original.project?.name}
       </Link>
@@ -103,7 +98,7 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
     accessorKey: 'amount_net',
     header: () => <div className="text-right">netto</div>,
     size: 110,
-    cell: ({  row }) => (
+    cell: ({ row }) => (
       <div className="text-right">{currencyFormatter.format(row.original.amount_net)}</div>
     )
   },

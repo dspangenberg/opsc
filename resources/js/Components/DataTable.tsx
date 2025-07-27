@@ -3,11 +3,16 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-'use client'
-
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Components/ui/table'
-import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { ScrollArea } from '@/Components/ui/scroll-area'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/Components/ui/table'
+import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import type React from 'react'
 import { useEffect } from 'react'
 
@@ -45,57 +50,55 @@ export function DataTable<TData, TValue>({
     }
   }, [table.getState().rowSelection, onSelectedRowsChange])
 
-
-
   return (
-    <div className="flex-1 flex  overflow-hidden h-full flex-col ">
-      <div className="flex-none mx-2">{header}</div>
+    <div className="flex h-full flex-1 flex-col overflow-hidden ">
+      <div className="mx-2 flex-none">{header}</div>
 
-        <div className="relative flex flex-1 border-border/80 bg-page-content rounded-lg p-1.5 border overflow-hidden flex-col max-h-fit">
-          {filterBar}
-          <ScrollArea className="flex-1 border rounded-md max-h-fit bg-page-content absolute top-0 bottom-0 left-0 right-0 overflow-scroll">
-            <Table className="bg-background [&_td]:border-border border-b-0 [&_th]:border-border table-fixed border-spacing-0 [&_tfoot_td]:border-t [&_th]:border-b [&_tr]:border-none [&_tr:not(:last-child)_td]:border-b">
-              <TableHeader className="rounded-t-md bg-sidebar">
-                {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow key={headerGroup.id} className="hover:bg-sidebar border rounded-md">
-                    {headerGroup.headers.map(header => (
-                      <TableHead
-                        key={header.id}
-                        className="text-foreground"
-                        style={{ width: `${header.getSize()}px` }}
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
+      <div className="relative flex max-h-fit flex-1 flex-col overflow-hidden rounded-lg border border-border/80 bg-page-content p-1.5">
+        {filterBar}
+        <ScrollArea className="absolute top-0 right-0 bottom-0 left-0 max-h-fit flex-1 overflow-scroll rounded-md border bg-page-content">
+          <Table className="table-fixed border-spacing-0 border-b-0 bg-background [&_td]:border-border [&_tfoot_td]:border-t [&_th]:border-border [&_th]:border-b [&_tr:not(:last-child)_td]:border-b [&_tr]:border-none">
+            <TableHeader className="rounded-t-md bg-sidebar">
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow key={headerGroup.id} className="rounded-md border hover:bg-sidebar">
+                  {headerGroup.headers.map(header => (
+                    <TableHead
+                      key={header.id}
+                      className="text-foreground"
+                      style={{ width: `${header.getSize()}px` }}
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody className="mt-12 mb-12">
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map(row => (
+                  <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                    {row.getVisibleCells().map(cell => (
+                      <TableCell key={cell.id} className="truncate text-foreground">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
                     ))}
                   </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody className="mt-12 mb-12">
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map(row => (
-                    <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell key={cell.id} className="text-foreground truncate">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center">
-                      Keine {itemName} gefunden.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </ScrollArea>
-          {table.getSelectedRowModel().rows.length > 0 ? actionBar : null}
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                    Keine {itemName} gefunden.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </ScrollArea>
+        {table.getSelectedRowModel().rows.length > 0 ? actionBar : null}
       </div>
-      {footer && <div className="flex-none mx-2">{footer}</div>}
+      {footer && <div className="mx-2 flex-none">{footer}</div>}
     </div>
   )
 }

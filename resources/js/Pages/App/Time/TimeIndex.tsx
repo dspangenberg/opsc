@@ -1,7 +1,7 @@
 import type * as React from 'react'
 import { useCallback, useEffect, useId, useMemo } from 'react'
 import { usePage } from '@inertiajs/react'
-import { useModalStack } from '@inertiaui/modal-react'
+// import { useModalStack } from '@inertiaui/modal-react' // Temporarily disabled
 import {
   Add01Icon,
   PrinterIcon,
@@ -45,7 +45,7 @@ interface TimeIndexProps extends PageProps {
 const TimeIndex: React.FC = () => {
   const times = usePage<TimeIndexProps>().props.times
 
-  const { visitModal } = useModalStack()
+  // const { visitModal } = useModalStack() // Temporarily disabled
 
   const breadcrumbs = useMemo(() => [{ title: 'Kontakte', route: route('app.contact.index') }], [])
 

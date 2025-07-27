@@ -3,15 +3,13 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-'use client'
-import { StarIcon } from '@hugeicons/core-free-icons'
-import { Avatar } from '@dspangenberg/twcui'
 import { Checkbox } from '@/Components/ui/checkbox'
-import { Link } from '@inertiajs/react'
-import type { ColumnDef } from '@tanstack/react-table'
-import type React from 'react'
+import { Avatar } from '@dspangenberg/twcui'
+import { StarIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { Link } from '@inertiajs/react'
 import { router } from '@inertiajs/react'
+import type { ColumnDef } from '@tanstack/react-table'
 
 const editUrl = (id: number | null) => (id ? route('app.contact.details', { id }) : '#')
 const onFavoriteToggle = (id: number | null) => {
@@ -32,7 +30,7 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
           table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-        className="align-middle mx-3 bg-background"
+        className="mx-3 bg-background align-middle"
         aria-label="Select all"
       />
     ),
@@ -40,7 +38,7 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={value => row.toggleSelected(!!value)}
-        className="align-middle bg-background mx-3"
+        className="mx-3 bg-background align-middle"
         aria-label="Select row"
       />
     )
@@ -53,7 +51,7 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
     cell: ({ row }) => (
       <HugeiconsIcon
         icon={StarIcon}
-        className={`size-5 mx-auto ${row.original.is_favorite ? 'text-yellow-500 hover:text-foreground fill-yellow-500' : 'hover:text-foreground/50  text-border/90'}`}
+        className={`mx-auto size-5 ${row.original.is_favorite ? 'fill-yellow-500 text-yellow-500 hover:text-foreground' : 'text-border/90 hover:text-foreground/50'}`}
         onClick={() => onFavoriteToggle(row.original.id)}
       />
     )
@@ -77,7 +75,7 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
     cell: ({ row, getValue }) => (
       <Link
         href={editUrl(row.original.id)}
-        className="font-medium hover:underline align-middle truncate"
+        className="truncate align-middle font-medium hover:underline"
       >
         {getValue() as string}
       </Link>
@@ -98,7 +96,7 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
     header: 'Organisation',
     size: 300,
     cell: ({ row, getValue }) => (
-      <Link href={editUrl(row.original.company_id)} className="hover:underline truncate w-64">
+      <Link href={editUrl(row.original.company_id)} className="w-64 truncate hover:underline">
         <span>{(getValue() as string) || ''}</span>
       </Link>
     )

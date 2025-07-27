@@ -1,65 +1,41 @@
-/*
- * ospitality.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
- */
+import React from 'react'
 
-import { useBreadcrumbProvider } from '@/Components/BreadcrumbProvider'
+import { useBreadcrumb } from '@/Components/BreadcrumbProvider'
 import {
   Breadcrumb,
   BreadcrumbItem,
+  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/Components/ui/breadcrumb'
-import { Link } from '@inertiajs/react'
-import * as React from 'react'
-import { useEffect } from 'react'
 
-type BreadcrumbTypes = 'link' | 'text' | 'menu'
-export interface BreadcrumbProp {
+export type BreadcrumbProp = {
   title: string
-  route?: string
-  type?: BreadcrumbTypes
+  url?: string
 }
 
-interface Props {
-  items?: BreadcrumbProp[]
+type PageBreadcrumbsProps = {
   className?: string
 }
 
-export const PageBreadcrumbs: React.FC<Props> = ({ className = '', items }: Props) => {
-  const { breadcrumbs } = useBreadcrumbProvider()
+export const PageBreadcrumbs: React.FC<PageBreadcrumbsProps> = ({ className }) => {
+  const { breadcrumbs } = useBreadcrumb()
 
-  useEffect(() => {
-    items = breadcrumbs
-  }, [breadcrumbs])
+  if (!breadcrumbs || breadcrumbs.length === 0) {
+    return null
+  }
 
   return (
     <Breadcrumb className={className}>
       <BreadcrumbList>
-        <BreadcrumbItem>
-          <Link
-            className="transition-colors text-foreground hover:text-foreground font-medium hover:underline"
-            href={route('app.dashboard')}
-          >
-            Dashboard
-          </Link>
-        </BreadcrumbItem>
-
-        {breadcrumbs.length > 0 && <BreadcrumbSeparator />}
-
-        {breadcrumbs.map((item, index) => (
-          <React.Fragment key={item.route}>
+        {breadcrumbs.map((item: BreadcrumbProp, index: number) => (
+          <React.Fragment key={index}>
             <BreadcrumbItem>
-              {index === breadcrumbs.length - 1 ? (
-                <BreadcrumbPage>{item.title}</BreadcrumbPage>
+              {item.url ? (
+                <BreadcrumbLink href={item.url}>{item.title}</BreadcrumbLink>
               ) : (
-                <Link
-                  className="transition-colors hover:text-foreground"
-                  href={item.route as string}
-                >
-                  {item.title}
-                </Link>
+                <BreadcrumbPage>{item.title}</BreadcrumbPage>
               )}
             </BreadcrumbItem>
             {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}

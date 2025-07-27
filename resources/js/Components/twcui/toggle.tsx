@@ -1,18 +1,16 @@
-'use client'
-
-import * as React from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { type VariantProps, cva } from 'class-variance-authority'
 import {
-  composeRenderProps,
   ToggleButton as AriaToggleButton,
   ToggleButtonGroup as AriaToggleButtonGroup,
   type ToggleButtonGroupProps as AriaToggleButtonGroupProps,
-  type ToggleButtonProps as AriaToggleButtonProps, type TooltipProps
+  type ToggleButtonProps as AriaToggleButtonProps,
+  type TooltipProps,
+  composeRenderProps
 } from 'react-aria-components'
 
+import { Tooltip, TooltipTrigger } from '@/Components/ui/twc-ui/tooltip'
 import { cn } from '@/Lib/utils'
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react'
-import { Tooltip, TooltipTrigger } from '@/Components/ui/twc-ui/tooltip'
 
 const toggleVariants = cva(
   [
@@ -48,13 +46,11 @@ const toggleVariants = cva(
   }
 )
 
-interface ToggleProps
-  extends AriaToggleButtonProps,
-    VariantProps<typeof toggleVariants> {
-  icon: IconSvgElement;
+interface ToggleProps extends AriaToggleButtonProps, VariantProps<typeof toggleVariants> {
+  icon: IconSvgElement
   tooltip?: string
   tooltipPlacement?: TooltipProps['placement']
-  onChange?: (isSelected: boolean) => void;
+  onChange?: (isSelected: boolean) => void
 }
 
 const Toggle = ({
@@ -68,34 +64,29 @@ const Toggle = ({
   ...props
 }: ToggleProps) => (
   <TooltipTrigger>
-  <AriaToggleButton
-    className={composeRenderProps(className, (className) =>
-      cn(
-        'group-data-[orientation=vertical]/togglegroup:w-full',
-        toggleVariants({
-          variant,
-          size,
-          className
-        })
-      )
-    )}
-    onChange={onChange}
-    {...props}
-  >
-
-    <Tooltip  placement={tooltipPlacement}>{tooltip}</Tooltip>
-    <HugeiconsIcon icon={icon} className="size-5" />
-  </AriaToggleButton>
-</TooltipTrigger>
+    <AriaToggleButton
+      className={composeRenderProps(className, className =>
+        cn(
+          'group-data-[orientation=vertical]/togglegroup:w-full',
+          toggleVariants({
+            variant,
+            size,
+            className
+          })
+        )
+      )}
+      onChange={onChange}
+      {...props}
+    >
+      <Tooltip placement={tooltipPlacement}>{tooltip}</Tooltip>
+      <HugeiconsIcon icon={icon} className="size-5" />
+    </AriaToggleButton>
+  </TooltipTrigger>
 )
 
-const ToggleButtonGroup = ({
-  children,
-  className,
-  ...props
-}: AriaToggleButtonGroupProps) => (
+const ToggleButtonGroup = ({ children, className, ...props }: AriaToggleButtonGroupProps) => (
   <AriaToggleButtonGroup
-    className={composeRenderProps(className, (className) =>
+    className={composeRenderProps(className, className =>
       cn(
         'group/togglegroup flex items-center justify-center gap-1 data-[orientation=vertical]:flex-col',
         className

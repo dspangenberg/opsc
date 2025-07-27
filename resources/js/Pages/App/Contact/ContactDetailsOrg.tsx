@@ -9,7 +9,7 @@ import { DataCard, DataCardContent, DataCardField, DataCardSection } from '@/Com
 import { Add01Icon, Edit02Icon } from '@hugeicons/core-free-icons'
 import { ContactDetailsMail } from '@/Pages/App/Contact/ContactDetailsMails'
 import { ContactDetailsAddresses } from '@/Pages/App/Contact/ContactDetailsAddresses'
-import { useModalStack } from '@inertiaui/modal-react'
+// import { useModalStack } from '@inertiaui/modal-react' // Temporarily disabled
 
 interface ContactDetailsOrgInfoBoxProps {
   contact: App.Data.ContactData
@@ -23,16 +23,9 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
   const onDebtorDataClicked = () => {
     console.log('Debtor data clicked')
   }
-  const { visitModal } = useModalStack()
+  // const { visitModal } = useModalStack() // Temporarily disabled
 
   const handleAddButtonClick = () => {
-    visitModal(
-      route('app.contact.create.address', {
-        contact: contact.id
-      }), {
-        navigate: true
-      }
-    )
   }
 
   return (
