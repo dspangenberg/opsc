@@ -98,7 +98,7 @@ const AlertDialogComponent: React.FC<AlertDialogProps> = ({
           <div className="my-3 text-left sm:mt-0 sm:ml-4">
             <Heading
               slot="title"
-              className="!text-lg !pt-2 text-left font-semibold text-foreground"
+              className="!text-base !pt-2 text-left font-semibold text-foreground"
             >
               {title}
             </Heading>

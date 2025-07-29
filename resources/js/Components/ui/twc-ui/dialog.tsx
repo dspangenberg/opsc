@@ -1,4 +1,5 @@
-import { cva, type VariantProps } from 'class-variance-authority'
+import { cn } from '@/Lib/utils'
+import { type VariantProps, cva } from 'class-variance-authority'
 import { X } from 'lucide-react'
 import type React from 'react'
 import { type ReactNode, useEffect, useState } from 'react'
@@ -14,7 +15,6 @@ import {
   type ModalOverlayProps as AriaModalOverlayProps,
   composeRenderProps
 } from 'react-aria-components'
-import { cn } from '@/Lib/utils'
 
 import { AlertDialog } from './alert-dialog'
 import { Button } from './button'
@@ -143,13 +143,7 @@ export const DialogBody = ({ className, ...props }: React.HTMLAttributes<HTMLDiv
 )
 
 export const DialogTitle = ({ className, ...props }: AriaHeadingProps) => (
-  <AriaHeading
-    slot="title"
-    className={cn(
-      className
-    )}
-    {...props}
-  />
+  <AriaHeading slot="title" className={cn('font-medium', className)} {...props} />
 )
 
 export const DialogDescription = ({
@@ -218,6 +212,7 @@ export const Dialog: React.FC<DialogProps> = ({
   hideHeader = false,
   background = 'page',
   onOpenChange,
+  onClosed,
   ...props
 }) => {
   const bgClass = {
@@ -286,7 +281,7 @@ export const Dialog: React.FC<DialogProps> = ({
     if (!open) {
       const shouldClose = await handleClose()
       if (shouldClose) {
-        props.onClosed?.()
+        onClosed?.()
         // No need to call onOpenChange(false) here as it's already called in handleClose
       } else {
         setIsDialogOpen(true)
@@ -307,8 +302,7 @@ export const Dialog: React.FC<DialogProps> = ({
       <DialogContent
         closeButton={false}
         className={cn('relative gap-0 space-y-0 rounded-lg', widthClass, className)}
-        onOpenChange={handleOpenChange}
-          role={role}
+        role={role}
       >
         {composeRenderProps(children, (children, _providedRenderProps) => {
           const renderProps: DialogRenderProps = {
@@ -322,9 +316,7 @@ export const Dialog: React.FC<DialogProps> = ({
           return (
             <>
               {!hideHeader && (
-                <DialogHeader
-                  className={cn('my-0 flex flex-1 flex-col gap-0 px-3 py-0', bgClass)}
-                >
+                <DialogHeader className={cn('my-0 flex flex-1 flex-col gap-0 px-3 py-0', bgClass)}>
                   <DialogTitle className="!py-1.5 !leading-0 flex w-full items-center justify-between text-left text-base md:text-center">
                     <span className="flex-1 text-base">{title}</span>
                     <Button

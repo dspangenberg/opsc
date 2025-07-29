@@ -1,14 +1,13 @@
-import React from 'react'
+import type React from 'react'
 
 import { useBreadcrumb } from '@/Components/BreadcrumbProvider'
 import {
-  Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-  BreadcrumbList,
   BreadcrumbPage,
-  BreadcrumbSeparator
-} from '@/Components/ui/breadcrumb'
+  BreadcrumbSeparator,
+  Breadcrumbs
+} from '@/Components/ui/twc-ui/breadcrumbs'
 
 export type BreadcrumbProp = {
   title: string
@@ -22,26 +21,22 @@ type PageBreadcrumbsProps = {
 export const PageBreadcrumbs: React.FC<PageBreadcrumbsProps> = ({ className }) => {
   const { breadcrumbs } = useBreadcrumb()
 
-  if (!breadcrumbs || breadcrumbs.length === 0) {
-    return null
-  }
-
   return (
-    <Breadcrumb className={className}>
-      <BreadcrumbList>
-        {breadcrumbs.map((item: BreadcrumbProp, index: number) => (
-          <React.Fragment key={index}>
-            <BreadcrumbItem>
-              {item.url ? (
-                <BreadcrumbLink href={item.url}>{item.title}</BreadcrumbLink>
-              ) : (
-                <BreadcrumbPage>{item.title}</BreadcrumbPage>
-              )}
-            </BreadcrumbItem>
-            {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
-          </React.Fragment>
-        ))}
-      </BreadcrumbList>
-    </Breadcrumb>
+    <Breadcrumbs className={className}>
+      <BreadcrumbItem>
+        <BreadcrumbLink href={route('app.dashboard')}>Dashboard</BreadcrumbLink>
+        {breadcrumbs.length > 0 && <BreadcrumbSeparator />}
+      </BreadcrumbItem>
+      {breadcrumbs.map((item: BreadcrumbProp, index: number) => (
+        <BreadcrumbItem key={index}>
+          {item.url ? (
+            <BreadcrumbLink href={item.url}>{item.title}</BreadcrumbLink>
+          ) : (
+            <BreadcrumbPage>{item.title}</BreadcrumbPage>
+          )}
+          {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
+        </BreadcrumbItem>
+      ))}
+    </Breadcrumbs>
   )
 }

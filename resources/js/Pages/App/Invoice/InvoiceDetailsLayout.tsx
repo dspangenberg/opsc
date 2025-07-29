@@ -1,5 +1,17 @@
-import type * as React from 'react'
-import { useCallback, useMemo, useState } from 'react'
+import { PageContainer } from '@/Components/PageContainer'
+import { PdfViewer } from '@/Components/PdfViewer'
+import {
+  DropdownButton,
+  Menu,
+  MenuItem,
+  MenuPopover,
+  MenuSubTrigger
+} from '@/Components/twcui/dropdown-button'
+import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
+import { Button } from '@/Components/ui/twc-ui/button'
+import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
+import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
+import { useFileDownload } from '@/Hooks/useFileDownload'
 import {
   Delete02Icon,
   DocumentValidationIcon,
@@ -9,7 +21,6 @@ import {
   FileEditIcon,
   FileRemoveIcon,
   Files02Icon,
-  Add01Icon,
   MoreVerticalCircle01Icon,
   Pdf02Icon,
   PrinterIcon,
@@ -17,27 +28,17 @@ import {
   Sent02Icon,
   UnavailableIcon
 } from '@hugeicons/core-free-icons'
-import { PageContainer } from '@/Components/PageContainer'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { PdfViewer } from '@/Components/PdfViewer'
-import print from 'print-js'
-import { useFileDownload } from '@/Hooks/useFileDownload'
 import { router } from '@inertiajs/react'
-import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
-import { DropdownButton, Menu, MenuItem, MenuPopover, MenuSubTrigger } from '@/Components/twcui/dropdown-button'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
-import { SplitButton } from '@/Components/twcui/split-button'
-import { Tab, TabList, Tabs, TabPanel } from '@/Components/ui/twc-ui/tabs'
+import print from 'print-js'
+import type * as React from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 interface Props {
   invoice: App.Data.InvoiceData
   children: React.ReactNode
 }
 
-export const InvoiceDetailsLayout: React.FC<Props> = ({
-  invoice,
-  children
-}) => {
+export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => {
   const onPrintPdf = () => {
     print(route('app.invoice.pdf', { id: invoice.id }))
   }
@@ -54,11 +55,10 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({
     () => [
       {
         title: 'Rechnungen',
-        route: route('app.invoice.index')
+        url: route('app.invoice.index')
       },
       {
-        title: invoice.formated_invoice_number,
-        route: route('app.invoice.details', { id: invoice.id })
+        title: invoice.formated_invoice_number
       }
     ],
     [invoice.formated_invoice_number, invoice.id]
@@ -87,7 +87,7 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({
     if (promise) {
       router.get(route('app.invoice.release', { id: invoice.id }))
     }
-  }, [invoice])
+  }, [invoice.id])
 
   const handleDelete = async () => {
     const promise = await AlertDialog.call({
@@ -115,12 +115,16 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({
     () => (
       <Tabs variant="underlined" defaultSelectedKey={currentRoute}>
         <TabList aria-label="Ansicht">
-          <Tab id="app.invoice.details" href={route('app.invoice.details', {invoice}, false)}>Details</Tab>
-          <Tab id="app.invoice.history" href={route('app.invoice.history', {invoice}, false)}>Historie + Buchungen</Tab>
+          <Tab id="app.invoice.details" href={route('app.invoice.details', { invoice }, false)}>
+            Details
+          </Tab>
+          <Tab id="app.invoice.history" href={route('app.invoice.history', { invoice }, false)}>
+            Historie + Buchungen
+          </Tab>
         </TabList>
       </Tabs>
     ),
-    []
+    [currentRoute, invoice]
   )
 
   const toolbar = useMemo(
@@ -130,35 +134,74 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({
           <Button variant="toolbar-default" icon={EuroReceiveIcon} title="Zahlung zuordnen" />
         )}
         {!invoice.is_draft && !invoice.sent_at && (
-          <Button variant="toolbar-default" icon={Sent02Icon} title="Rechnung per E-Mail versenden" />
-        )}
-        {invoice.is_draft && (
-          <Button variant="toolbar-default" icon={Edit03Icon} title="Rechnung bearbeiten"
-                  onClick={handleEditBaseDataButtonClick}
+          <Button
+            variant="toolbar-default"
+            icon={Sent02Icon}
+            title="Rechnung per E-Mail versenden"
           />
         )}
         {invoice.is_draft && (
-          <Button variant="toolbar" icon={DocumentValidationIcon} title="Rechnung abschließen"
-                  onClick={handleRelease}
+          <Button
+            variant="toolbar-default"
+            icon={Edit03Icon}
+            title="Rechnung bearbeiten"
+            onClick={handleEditBaseDataButtonClick}
+          />
+        )}
+        {invoice.is_draft && (
+          <Button
+            variant="toolbar"
+            icon={DocumentValidationIcon}
+            title="Rechnung abschließen"
+            onClick={handleRelease}
           />
         )}
 
-        <Button variant="toolbar" icon={Pdf02Icon} title="PDF-Vorschau" onClick={() => setShowPdfViewer(true)} />
+        <Button
+          variant="toolbar"
+          icon={Pdf02Icon}
+          title="PDF-Vorschau"
+          onClick={() => setShowPdfViewer(true)}
+        />
 
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon}>
           {invoice.is_draft && (
             <>
-              <MenuItem icon={Edit03Icon} title="Stammdaten bearbeiten" ellipsis separator
-                        onAction={handleEditBaseDataButtonClick}
+              <MenuItem
+                icon={Edit03Icon}
+                title="Stammdaten bearbeiten"
+                ellipsis
+                separator
+                onAction={handleEditBaseDataButtonClick}
               />
-              <MenuItem icon={DocumentValidationIcon} title="Rechnung abschließen" ellipsis separator
-                        onAction={handleRelease}
+              <MenuItem
+                icon={DocumentValidationIcon}
+                title="Rechnung abschließen"
+                ellipsis
+                separator
+                onAction={handleRelease}
               />
             </>
           )}
-          <MenuItem icon={Pdf02Icon} title="PDF-Vorschau" ellipsis onAction={() => setShowPdfViewer(true)} />
-          <MenuItem icon={FileDownloadIcon} title="PDF herunterladen" ellipsis onAction={handleDownload} />
-          <MenuItem icon={PrinterIcon} title="Rechnung drucken" ellipsis separator onAction={onPrintPdf} />
+          <MenuItem
+            icon={Pdf02Icon}
+            title="PDF-Vorschau"
+            ellipsis
+            onAction={() => setShowPdfViewer(true)}
+          />
+          <MenuItem
+            icon={FileDownloadIcon}
+            title="PDF herunterladen"
+            ellipsis
+            onAction={handleDownload}
+          />
+          <MenuItem
+            icon={PrinterIcon}
+            title="Rechnung drucken"
+            ellipsis
+            separator
+            onAction={onPrintPdf}
+          />
           <MenuItem icon={Sent02Icon} title="Rechnung per E-Mail versenden" ellipsis separator />
 
           <MenuItem icon={EuroReceiveIcon} title="Zahlung zuordnen" ellipsis separator />
@@ -174,7 +217,12 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({
                   separator
                   onAction={handleMarkAsSent}
                 />
-                <MenuItem icon={Files02Icon} title="Rechnung duplizieren" separator onAction={handleDuplicate} />
+                <MenuItem
+                  icon={Files02Icon}
+                  title="Rechnung duplizieren"
+                  separator
+                  onAction={handleDuplicate}
+                />
                 <MenuItem icon={RepeatIcon} title="Wiederkehrende Rechnung" separator ellipsis />
                 <MenuItem
                   icon={FileEditIcon}
@@ -183,10 +231,18 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({
                   disabled={!invoice.is_draft && !!invoice.sent_at}
                 />
                 <MenuItem icon={FileRemoveIcon} title="Rechnung stornieren" separator />
-                <MenuItem icon={Delete02Icon} title="Rechnung löschen" separator disabled={!invoice.is_draft}
-                          onAction={handleDelete}
+                <MenuItem
+                  icon={Delete02Icon}
+                  title="Rechnung löschen"
+                  separator
+                  disabled={!invoice.is_draft}
+                  onAction={handleDelete}
                 />
-                <MenuItem icon={UnavailableIcon} title="Als Forderungsverlust markieren" disabled={invoice.is_draft} />
+                <MenuItem
+                  icon={UnavailableIcon}
+                  title="Als Forderungsverlust markieren"
+                  disabled={invoice.is_draft}
+                />
               </Menu>
             </MenuPopover>
           </MenuSubTrigger>
@@ -202,7 +258,7 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({
       width="7xl"
       tabs={tabs}
       breadcrumbs={breadcrumbs}
-      className="overflow-y-auto flex gap-4"
+      className="flex gap-4 overflow-y-auto"
       toolbar={toolbar}
     >
       <PdfViewer

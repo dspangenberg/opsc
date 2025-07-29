@@ -1,3 +1,4 @@
+import { cn } from '@/Lib/utils'
 import { ChevronsUpDown } from 'lucide-react'
 import type React from 'react'
 import {
@@ -11,12 +12,11 @@ import {
   SelectValue as AriaSelectValue,
   type SelectValueProps as AriaSelectValueProps,
   type ValidationResult as AriaValidationResult,
-  composeRenderProps,
   type Key,
-  Text
+  Text,
+  composeRenderProps
 } from 'react-aria-components'
-import { cn } from '@/Lib/utils'
-import { FieldError, Label } from './field'
+import { FieldError, BaseFieldError, Label } from './field'
 import { useFormContext } from './form'
 import { ListBoxCollection, ListBoxHeader, ListBoxItem, ListBoxSection } from './list-box'
 import { Popover } from './popover'
@@ -93,7 +93,8 @@ const SelectListBox = <T extends object>({ className, ...props }: AriaListBoxPro
 // Generischer Value-Typ
 type SelectValue = string | number | null
 
-interface SelectProps<T extends object, V extends SelectValue = SelectValue> extends Omit<AriaSelectProps<T>, 'children'> {
+interface SelectProps<T extends object, V extends SelectValue = SelectValue>
+  extends Omit<AriaSelectProps<T>, 'children'> {
   label?: string
   description?: string
   error?: string | ((validation: AriaValidationResult) => string)
@@ -112,10 +113,10 @@ interface SelectProps<T extends object, V extends SelectValue = SelectValue> ext
   nullValue?: V // Wert für "keine Auswahl"
 }
 
-function Select<T extends object, V extends SelectValue = number>({
+// Internal shared component that contains all the common logic
+function SelectCore<T extends object, V extends SelectValue = number>({
   label,
   description,
-  error,
   children,
   autoFocus,
   className,
@@ -130,20 +131,19 @@ function Select<T extends object, V extends SelectValue = number>({
   value,
   valueType = 'number',
   nullValue = (valueType === 'number' ? 0 : null) as V,
+  error,
+  hasError,
+  ErrorComponent,
   ...props
-}: SelectProps<T, V>) {
-  const form = useFormContext()
-  const realError = form?.errors?.[name as string] || error
-  const hasError = !!realError
-
+}: SelectProps<T, V> & { hasError: boolean; ErrorComponent: React.ComponentType<any> }) {
   const itemsWithNothing = isOptional
     ? [
-      {
-        [itemValue]: nullValue,
-        [itemName]: optionalValue
-      } as T,
-      ...Array.from(items)
-    ]
+        {
+          [itemValue]: nullValue,
+          [itemName]: optionalValue
+        } as T,
+        ...Array.from(items)
+      ]
     : Array.from(items)
 
   const handleSelectionChange = (key: Key | null) => {
@@ -187,22 +187,17 @@ function Select<T extends object, V extends SelectValue = number>({
           {description}
         </Text>
       )}
-      <FieldError>{realError}</FieldError>
+      <ErrorComponent>{error}</ErrorComponent>
       <SelectPopover>
         <SelectListBox items={itemsWithNothing}>
           {children ||
             (item => {
               // Sichere Konvertierung zu String für die ID
               const itemId = String(item[itemValue] ?? '')
-              const itemDisplayName = typeof item[itemName] === 'string'
-                ? item[itemName]
-                : String(item[itemName] ?? '')
+              const itemDisplayName =
+                typeof item[itemName] === 'string' ? item[itemName] : String(item[itemName] ?? '')
 
-              return (
-                <SelectItem id={itemId}>
-                  {itemDisplayName}
-                </SelectItem>
-              )
+              return <SelectItem id={itemId}>{itemDisplayName}</SelectItem>
             })}
         </SelectListBox>
       </SelectPopover>
@@ -210,8 +205,23 @@ function Select<T extends object, V extends SelectValue = number>({
   )
 }
 
+function Select<T extends object, V extends SelectValue = number>(props: SelectProps<T, V>) {
+  const form = useFormContext()
+  const realError = form?.errors?.[props.name as string] || props.error
+  const hasError = !!realError
+
+  return <SelectCore {...props} error={realError} hasError={hasError} ErrorComponent={FieldError} />
+}
+
+function FormlessSelect<T extends object, V extends SelectValue = number>(props: SelectProps<T, V>) {
+  const hasError = !!props.error
+
+  return <SelectCore {...props} hasError={hasError} ErrorComponent={BaseFieldError} />
+}
+
 export {
   Select,
+  FormlessSelect,
   BaseSelect,
   SelectValue,
   SelectTrigger,

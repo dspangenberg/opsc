@@ -3,10 +3,10 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Children, type FC, type ReactElement, type ReactNode } from 'react'
 import { cn } from '@/Lib/utils'
-import React from 'react'
 import { Button } from '@dspangenberg/twcui'
+import { Children, type FC, type ReactElement, type ReactNode } from 'react'
+import React from 'react'
 import { BorderedBox } from './twcui/bordered-box'
 
 export interface DataCardProps {
@@ -22,16 +22,11 @@ export const DataCard: FC<DataCardProps> = ({
   className = ''
 }: DataCardProps) => {
   return (
-    <BorderedBox className="flex overflow-y-hidden flex-1" innerClassName="overflow-y-hidden">
-    <div
-      className={cn(
-        'flex-1 flex flex-col w-full rounded-lg',
-        className
-      )}
-    >
-      {title && <DataCardHeader title={title} />}
-      <div className="rounded-lg p-2 overflow-y-auto flex-1">{children}</div>
-    </div>
+    <BorderedBox className="flex flex-1 overflow-y-hidden" innerClassName="overflow-y-hidden">
+      <div className={cn('flex w-full flex-1 flex-col rounded-lg', className)}>
+        {title && <DataCardHeader title={title} />}
+        <div className="flex-1 overflow-y-auto rounded-lg p-2">{children}</div>
+      </div>
     </BorderedBox>
   )
 }
@@ -50,7 +45,7 @@ export const DataCardHeader: FC<DataCardHeaderProps> = ({
   return (
     <div
       className={cn(
-        'flex-none text-base bg-sidebar font-medium text-foreground px-4 py-2.5',
+        'flex-none bg-sidebar px-4 py-2.5 font-medium text-base text-foreground',
         className
       )}
     >
@@ -89,13 +84,13 @@ export const DataCardContent: FC<DataCardContentProps> = ({ children, showSecond
   }
 
   return (
-    <div className=" border border-red-500">
-      <div className="space-y-1.5 my-1 divide-border/40 overflow-y-auto">
+    <div className="">
+      <div className="my-1 space-y-1.5 divide-border/40 overflow-y-auto">
         {showSecondarySections ? allChildren : filteredChildren}
       </div>
       {!showSecondarySections && allChildren.length > filteredChildren.length && (
         <div
-          className="flex items-center justify-center text-xs py-2  cursor-pointer hover:underline text-center overflow-y-auto"
+          className="flex cursor-pointer items-center justify-center overflow-y-auto py-2 text-center text-xs hover:underline"
           onClick={onShowSecondaryClicked}
           onKeyDown={handleKeyDown}
         >
@@ -170,7 +165,7 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
       )}
       <div
         className={cn(
-          'space-y-2 flex flex-1 flex-col text-base px-2.5 py-1.5 w-full border border-border/50 rounded-md bg-background',
+          'flex w-full flex-1 flex-col space-y-2 rounded-md border border-border/50 bg-background px-2.5 py-1.5 text-base',
           className
         )}
       >
@@ -192,7 +187,7 @@ export const DataCardFieldGroup: FC<DataFieldGroupProps> = ({
   className = ''
 }: DataFieldGroupProps) => {
   return (
-    <div className={cn('text-foreground/50 text-sm truncate divide-y divide-border', className)}>
+    <div className={cn('divide-y divide-border truncate text-foreground/50 text-sm', className)}>
       {children}
     </div>
   )
@@ -220,11 +215,11 @@ export const DataCardSectionHeader: FC<DataCardSectionHeaderProps> = ({
   onClick
 }: DataCardSectionHeaderProps) => {
   return (
-    <div className="flex items-center text-sm pl-2.5 py-1 pr-0.5">
-      <div className={cn('font-medium pb-1 flex-1', className)}>
+    <div className="flex items-center py-1 pr-0.5 pl-2.5 text-sm">
+      <div className={cn('flex-1 pb-1 font-medium', className)}>
         {children || title}
         {addonText && (
-          <span className="ml-2 text-foreground/40 text-sm font-normal">{addonText}</span>
+          <span className="ml-2 font-normal text-foreground/40 text-sm">{addonText}</span>
         )}
       </div>
       {icon && (
@@ -233,7 +228,7 @@ export const DataCardSectionHeader: FC<DataCardSectionHeaderProps> = ({
             variant="outline"
             size="icon-xs"
             iconClassName="text-primary"
-            className="opacity-0 group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100"
+            className="opacity-0 group-focus-within:opacity-100 group-hover:opacity-100 group-focus:opacity-100"
             tooltip={buttonTooltip}
             icon={icon}
             onClick={onClick}
@@ -286,7 +281,7 @@ export const DataCardFieldLabel: FC<DataCardFieldLabelProps> = ({
   label,
   className = ''
 }: DataCardFieldLabelProps) => {
-  return <div className={cn('text-foreground/50 text-sm truncate', className)}>{label}:</div>
+  return <div className={cn('truncate text-foreground/50 text-sm', className)}>{label}:</div>
 }
 
 export interface DataCardFieldCommonProps {
@@ -304,8 +299,8 @@ export const DataCardFieldHorizontal: FC<DataCardFieldCommonProps> = ({
 }: DataCardFieldCommonProps) => {
   return (
     <div className={cn('flex', className)}>
-      <DataCardFieldLabel label={label} className="flex-none w-[50%]" />
-      <div className="text-foreground font-medium flex-1">{value || children}</div>
+      <DataCardFieldLabel label={label} className="w-[50%] flex-none" />
+      <div className="flex-1 font-medium text-foreground">{value || children}</div>
     </div>
   )
 }
@@ -319,7 +314,7 @@ export const DataCardFieldHorizontalRight: FC<DataCardFieldCommonProps> = ({
   return (
     <div className={cn('flex', className)}>
       <DataCardFieldLabel label={label} className="flex-none" />
-      <div className="text-foreground flex-1 text-right">{value || children}</div>
+      <div className="flex-1 text-right text-foreground">{value || children}</div>
     </div>
   )
 }
@@ -331,9 +326,9 @@ export const DataCardFieldVertical: FC<DataCardFieldCommonProps> = ({
   className = ''
 }: DataCardFieldCommonProps) => {
   return (
-    <div className={cn('block flex-1 w-full', className)}>
+    <div className={cn('block w-full flex-1', className)}>
       <DataCardFieldLabel className="block" label={label} />
-      <div className="text-foreground font-medium text-sm block">{children || value}</div>
+      <div className="block font-medium text-foreground text-sm">{children || value}</div>
     </div>
   )
 }

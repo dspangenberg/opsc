@@ -1,33 +1,34 @@
-import * as React from 'react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { usePage } from '@inertiajs/react'
+import { DataTable } from '@/Components/DataTable'
+import { PageContainer } from '@/Components/PageContainer'
+import { Pagination } from '@/Components/Pagination'
+import { StatsField } from '@/Components/StatsField'
+import { BorderedBox } from '@/Components/twcui/bordered-box'
+import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
+import { Separator } from '@/Components/twcui/separator'
+import { Toggle } from '@/Components/twcui/toggle'
+import { Badge } from '@/Components/ui/badge'
+import { Button } from '@/Components/ui/twc-ui/button'
+import { FormlessSelect } from '@/Components/ui/twc-ui/select'
+import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
+import type { PageProps } from '@/Types'
 import {
   Add01Icon,
   ArrowLeft01Icon,
   ArrowRight01Icon,
-  MoreVerticalCircle01Icon,
-  FilterHorizontalIcon,
-  FolderManagementIcon,
   FileDownloadIcon,
-  PrinterIcon,
-  FilterIcon
+  FilterHorizontalIcon,
+  FilterIcon,
+  FolderManagementIcon,
+  MoreVerticalCircle01Icon,
+  PrinterIcon
 } from '@hugeicons/core-free-icons'
-import { DataTable } from '@/Components/DataTable'
-import { PageContainer } from '@/Components/PageContainer'
-import { columns } from './InvoiceIndexColumns'
-import type { PageProps } from '@/Types'
-import { Pagination } from '@/Components/Pagination'
-import { StatsField } from '@/Components/StatsField'
-import { getYear } from 'date-fns'
 import { router } from '@inertiajs/core'
+import { usePage } from '@inertiajs/react'
+import { getYear } from 'date-fns'
 import { debounce, sumBy } from 'lodash'
-import { Separator } from '@/Components/twcui/separator'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
-import { BorderedBox } from '@/Components/twcui/bordered-box'
-import { Badge } from '@/Components/ui/badge'
-import { Toggle } from '@/Components/twcui/toggle'
+import * as React from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { columns } from './InvoiceIndexColumns'
 
 interface ContactIndexProps extends PageProps {
   invoices: App.Data.Paginated.PaginationMeta<App.Data.InvoiceData[]>
@@ -81,9 +82,9 @@ const InvoiceIndex: React.FC = () => {
   }, [setYear, year, localCurrentYear])
 
   const handleNextYear = useCallback(() => {
-    const newYear = Number(year) === 0 ? localCurrentYear : Number.parseInt(year as unknown as string) + 1
+    const newYear =
+      Number(year) === 0 ? localCurrentYear : Number.parseInt(year as unknown as string) + 1
     setYear(_prevYear => newYear)
-
   }, [localCurrentYear, setYear, year])
 
   useEffect(() => {
@@ -91,7 +92,6 @@ const InvoiceIndex: React.FC = () => {
       if (year !== currentYear) {
         router.get(route('app.invoice.index', { _query: { year } }))
       }
-
     }, 300) // 300ms delay
 
     debouncedNavigate()
@@ -125,10 +125,15 @@ const InvoiceIndex: React.FC = () => {
     }
   ]
 
-  const breadcrumbs = useMemo(() => [{
-    title: 'Rechnungen',
-    route: route('app.invoice.index')
-  }], [])
+  const breadcrumbs = useMemo(
+    () => [
+      {
+        title: 'Rechnungen',
+        route: route('app.invoice.index')
+      }
+    ],
+    []
+  )
 
   const toolbar = useMemo(
     () => (
@@ -150,11 +155,15 @@ const InvoiceIndex: React.FC = () => {
     return (
       <Toolbar variant="secondary" className="px-4 pt-2">
         <div className="self-center text-sm">
-          <Badge variant="outline" className="mr-1.5 bg-background">{selectedRows.length}</Badge>
+          <Badge variant="outline" className="mr-1.5 bg-background">
+            {selectedRows.length}
+          </Badge>
           ausgewählte Datensätze
         </div>
         <Button variant="ghost" size="auto" icon={FileDownloadIcon} title="Herunterladen" />
-        <div className="flex-1 text-right font-medium text-sm">{currencyFormatter.format(selectedAmount)} €</div>
+        <div className="flex-1 text-right font-medium text-sm">
+          {currencyFormatter.format(selectedAmount)} €
+        </div>
       </Toolbar>
     )
   }, [selectedRows, selectedAmount])
@@ -174,32 +183,46 @@ const InvoiceIndex: React.FC = () => {
     () => (
       <div className="flex flex-col">
         <BorderedBox className="mx-auto mb-3 flex-none">
-          <div
-            className="mx-auto flex justify-center gap-4 divide-y bg-white px-2 py-2.5 lg:divide-x lg:divide-y-0"
-          >
+          <div className="mx-auto flex justify-center gap-4 divide-y bg-white px-2 py-2.5 lg:divide-x lg:divide-y-0">
             <StatsField label="netto" value={currencyFormatter.format(stats.total_net)} />
             <StatsField label="USt." value={currencyFormatter.format(stats.total_tax)} />
             <StatsField label="brutto" value={currencyFormatter.format(stats.total_gross)} />
             <StatsField label="Offene Posten" value={currencyFormatter.format(0)} />
             {stats.total_loss_of_receivables > 0 && (
-              <StatsField label="Forderungsverluste"
-                          value={currencyFormatter.format(stats.total_loss_of_receivables)}
+              <StatsField
+                label="Forderungsverluste"
+                value={currencyFormatter.format(stats.total_loss_of_receivables)}
               />
             )}
           </div>
         </BorderedBox>
 
-
         <div className="flex flex-none items-center space-x-2 p-2">
           <Toolbar variant="secondary" className="flex flex-1">
-
-            <Button variant="ghost" size="icon" icon={FolderManagementIcon} title="Optionen für virtuellen Ordner" />
+            <FormlessSelect<ViewProps>
+              aria-label="View"
+              className="w-48 bg-background"
+              name="view"
+              value={Number(view)}
+              items={views}
+              onChange={value => setView(Number(value))}
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              icon={FolderManagementIcon}
+              title="Optionen für virtuellen Ordner"
+            />
             <Separator orientation="vertical" />
 
-            <Toggle icon={FilterIcon} tooltip="Filter ein- /ausblenden" variant="default" size="default"
-                    isSelected={showFilter} onChange={setShowFilter}
+            <Toggle
+              icon={FilterIcon}
+              tooltip="Filter ein- /ausblenden"
+              variant="default"
+              size="default"
+              isSelected={showFilter}
+              onChange={setShowFilter}
             />
-
 
             <div className="flex-1" />
             <Button variant="ghost" size="icon" icon={FilterHorizontalIcon} title="Drucken" />
@@ -207,13 +230,20 @@ const InvoiceIndex: React.FC = () => {
         </div>
       </div>
     ),
-    [showFilter, view, stats.total_net, stats.total_tax, stats.total_gross, stats.total_loss_of_receivables, setView, setShowFilter]
+    [
+      showFilter,
+      view,
+      stats.total_net,
+      stats.total_tax,
+      stats.total_gross,
+      stats.total_loss_of_receivables,
+      setView,
+      setShowFilter
+    ]
   )
 
   const footer = useMemo(() => {
-    return (
-      <Pagination data={invoices} selected={selectedRows.length} />
-    )
+    return <Pagination data={invoices} selected={selectedRows.length} />
   }, [invoices, selectedRows.length])
 
   return (
@@ -226,7 +256,6 @@ const InvoiceIndex: React.FC = () => {
       header={
         <div className="flex flex-1 items-center gap-2">
           <div className="flex flex-none items-center gap-1 font-bold text-xl">
-
             Rechnungen&nbsp;
             <Button
               variant="ghost"
@@ -235,7 +264,14 @@ const InvoiceIndex: React.FC = () => {
               onClick={handlePreviousYear}
               disabled={year <= minYear}
             />
-
+            <FormlessSelect<YearsProps>
+              className="w-20"
+              aria-label="Jahr"
+              name="year"
+              value={Number(year)}
+              items={yearItems}
+              onChange={value => setYear(Number(value))}
+            />
             <Button
               variant="ghost"
               size="icon"

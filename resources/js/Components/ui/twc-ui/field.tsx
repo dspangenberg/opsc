@@ -1,4 +1,5 @@
-import { cva, type VariantProps } from 'class-variance-authority'
+import { cn } from '@/Lib/utils'
+import { type VariantProps, cva } from 'class-variance-authority'
 import {
   FieldError as AriaFieldError,
   type FieldErrorProps as AriaFieldErrorProps,
@@ -10,7 +11,6 @@ import {
   type TextProps as AriaTextProps,
   composeRenderProps
 } from 'react-aria-components'
-import { cn } from '@/Lib/utils'
 import { useFormContext } from './form'
 
 const labelVariants = cva([
@@ -60,6 +60,15 @@ function FieldError({ className, ...props }: AriaFieldErrorProps) {
   )
 }
 
+function BaseFieldError({ className, ...props }: AriaFieldErrorProps) {
+  return (
+    <AriaFieldError
+      className={cn('font-medium text-[0.8rem] text-destructive', className)}
+      {...props}
+    />
+  )
+}
+
 const fieldGroupVariants = cva('', {
   variants: {
     variant: {
@@ -92,4 +101,12 @@ function FieldGroup({ className, variant, ...props }: GroupProps) {
   )
 }
 
-export { Label, labelVariants, FieldGroup, fieldGroupVariants, FieldError, FormDescription }
+export {
+  Label,
+  labelVariants,
+  BaseFieldError,
+  FieldGroup,
+  fieldGroupVariants,
+  FieldError,
+  FormDescription
+}

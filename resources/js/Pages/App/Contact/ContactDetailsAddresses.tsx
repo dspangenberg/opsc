@@ -1,12 +1,10 @@
-import type * as React from 'react'
-import type { FC } from 'react'
 import { DataCardField, DataCardFieldGroup } from '@/Components/DataCard'
 import { Button } from '@dspangenberg/twcui'
+import { Copy01Icon, PencilEdit02Icon } from '@hugeicons/core-free-icons'
+import { useModalStack } from '@inertiaui/modal-react'
+import type { FC } from 'react'
 import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
-import { PencilEdit02Icon, Copy01Icon } from '@hugeicons/core-free-icons'
-// import { useModalStack } from '@inertiaui/modal-react' // Temporarily disabled
-import { router } from '@inertiajs/react'
 
 interface Props {
   addresses: App.Data.ContactAddressData[]
@@ -14,15 +12,15 @@ interface Props {
 
 export const ContactDetailsAddresses: FC<Props> = ({ addresses }: Props) => {
   const firstAddress = addresses.length ? addresses[0] : null
-  // const { visitModal } = useModalStack() // Temporarily disabled
+  const { visitModal } = useModalStack()
 
   const handleEditButtonClick = () => {
-    // visitModal(
-    //   route('app.contact.edit.address', {
-    //     contact: firstAddress?.contact_id,
-    //     address: firstAddress?.id
-    //   })
-    // ) // Temporarily disabled
+    visitModal(
+      route('app.contact.edit.address', {
+        contact: firstAddress?.contact_id,
+        address: firstAddress?.id
+      })
+    ) // Temporarily disabled
     console.log('Edit address clicked - modal functionality temporarily disabled')
   }
 
@@ -34,11 +32,11 @@ export const ContactDetailsAddresses: FC<Props> = ({ addresses }: Props) => {
     <DataCardFieldGroup>
       {firstAddress ? (
         <DataCardField variant="vertical" label={firstAddress.category?.name || 'Adresse'}>
-          <div className="flex items-center gap-0.5 group/address">
+          <div className="group/address flex items-center gap-0.5">
             <div className="flex-1">
               <Markdown remarkPlugins={[remarkBreaks]}>{firstAddress.full_address}</Markdown>
             </div>
-            <div className="flex-none self-start space-x-1">
+            <div className="flex-none space-x-1 self-start">
               <Button
                 variant="outline"
                 size="icon-xs"

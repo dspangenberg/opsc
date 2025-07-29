@@ -11,7 +11,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $project_id
@@ -107,6 +107,19 @@ class Time extends Model
         'is_locked' => false,
         'is_billable' => false,
     ];
+
+    protected $appends = [
+        'date',
+    ];
+
+    public function getDateAttribute(): string
+    {
+        if ($this->begin_at) {
+            return $this->begin_at->format('d.m.Y');
+        }
+
+        return '';
+    }
 
     public function scopeMaxDuration(Builder $query, $date): Builder
     {

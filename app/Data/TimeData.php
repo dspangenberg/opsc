@@ -34,6 +34,9 @@ class TimeData extends Data
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]
         public readonly DateTime $end_at,
 
+        #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
+        public readonly DateTime $date,
+
         public readonly bool $is_locked,
         public readonly bool $is_billable,
         public readonly bool $is_timer,

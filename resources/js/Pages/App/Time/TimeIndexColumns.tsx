@@ -4,7 +4,7 @@
  */
 
 import { Checkbox } from '@/Components/ui/checkbox'
-import { minutesToHoursExtended, parseAndFormatDate } from '@/Lib/DateHelper'
+import { parseAndFormatDate } from '@/Lib/DateHelper'
 import { Avatar } from '@dspangenberg/twcui'
 import { Link } from '@inertiajs/react'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -59,6 +59,12 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
     )
   },
   {
+    accessorKey: 'date',
+    header: 'Start',
+    size: 50,
+    cell: ({ row, getValue }) => <span>{getValue() as string}</span>
+  },
+  {
     accessorKey: 'begin_at',
     header: 'Start',
     size: 50,
@@ -82,16 +88,8 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
         >
           {row.original.project?.name}
         </Link>
-        <div className="line-clamp-1 font-xxs text-foreground/60">{row.original.note}</div>
+        <div className="line-clamp-1 font-xs text-foreground/60">{row.original.note}</div>
       </>
-    )
-  },
-  {
-    accessorKey: 'mins',
-    header: 'Dauer',
-    size: 20,
-    cell: ({ row, getValue }) => (
-      <div className="text-right">{minutesToHoursExtended(getValue() as number)}</div>
     )
   }
 ]

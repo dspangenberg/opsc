@@ -1,15 +1,9 @@
-/*
- * opsc.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
- */
-
-import type * as React from 'react'
-import type { FC } from 'react'
 import { DataCard, DataCardContent, DataCardField, DataCardSection } from '@/Components/DataCard'
-import { Add01Icon, Edit02Icon } from '@hugeicons/core-free-icons'
-import { ContactDetailsMail } from '@/Pages/App/Contact/ContactDetailsMails'
 import { ContactDetailsAddresses } from '@/Pages/App/Contact/ContactDetailsAddresses'
-// import { useModalStack } from '@inertiaui/modal-react' // Temporarily disabled
+import { ContactDetailsMail } from '@/Pages/App/Contact/ContactDetailsMails'
+import { Add01Icon, Edit02Icon } from '@hugeicons/core-free-icons'
+import { useModalStack } from '@inertiaui/modal-react' // Temporarily disabled
+import type { FC } from 'react'
 
 interface ContactDetailsOrgInfoBoxProps {
   contact: App.Data.ContactData
@@ -23,9 +17,17 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
   const onDebtorDataClicked = () => {
     console.log('Debtor data clicked')
   }
-  // const { visitModal } = useModalStack() // Temporarily disabled
+  const { visitModal } = useModalStack() // Temporarily disabled
 
   const handleAddButtonClick = () => {
+    visitModal(
+      route('app.contact.create.address', {
+        contact: contact.id
+      }),
+      {
+        navigate: true
+      }
+    )
   }
 
   return (
@@ -86,11 +88,17 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
         >
           <ContactDetailsAddresses addresses={contact.addresses || []} />
         </DataCardSection>
-        <DataCardSection title="Register- und Steuerdaten" icon={Edit02Icon} secondary suppressEmptyText={true}>
-          {contact.register_number && <DataCardField variant="vertical" label="Register" value={contact.register_number}>
-            {contact.register_court} ({contact.register_number})
-          </DataCardField>
-          }
+        <DataCardSection
+          title="Register- und Steuerdaten"
+          icon={Edit02Icon}
+          secondary
+          suppressEmptyText={true}
+        >
+          {contact.register_number && (
+            <DataCardField variant="vertical" label="Register" value={contact.register_number}>
+              {contact.register_court} ({contact.register_number})
+            </DataCardField>
+          )}
           <div className="grid grid-cols-2 gap-2">
             <DataCardField variant="vertical" label="Umsatzsteuer-ID" value={contact.vat_id} />
             <DataCardField variant="vertical" label="Steuernummer" value={contact.tax_number} />

@@ -5,29 +5,34 @@
 
 import { Dialog } from '@/Components/ui/twc-ui/dialog'
 import { cn } from '@/Lib/utils'
-// import { HeadlessModal, type HeadlessModalProps } from '@inertiaui/modal-react' // Temporarily disabled
-import type { ReactNode, RefObject } from 'react'
+import { HeadlessModal, type HeadlessModalProps } from '@inertiaui/modal-react'
+import type { ReactNode } from 'react'
 import type React from 'react'
-import { forwardRef, useRef, useState } from 'react'
+import { forwardRef, useRef } from 'react'
 
 type ReactNodeOrString = ReactNode | string
 
 export interface Props {
   children: ReactNode
   footer: ((handleFooterEvents?: (isCancel?: boolean) => void) => ReactNode) | ReactNode
-  title: string
+  title: ReactNodeOrString
   description?: ReactNodeOrString
   dismissible?: boolean
   showDescription?: boolean
   className?: string
   tabs?: React.ReactNode
-  ref: RefObject<Props>
+  confirmClose?: boolean
+  confirmationTitle?: string
+  confirmationMessage?: string
+  confirmationButtonTitle?: string
+  confirmationVariant?: 'default' | 'destructive'
   onClose?: () => void
+  onClosed?: () => void
   onOpenChange?: (open: boolean) => void
   onInteractOutside?: (event: Event) => void
 }
 
-export const InertiaDialog = forwardRef<HTMLDivElement, Props>((props, ref) => {
+export const InertiaDialog = forwardRef<HTMLDivElement, Props>(props => {
   const {
     children,
     footer,
@@ -36,13 +41,26 @@ export const InertiaDialog = forwardRef<HTMLDivElement, Props>((props, ref) => {
     description,
     dismissible = true,
     showDescription = false,
+    confirmClose = false,
+    confirmationTitle = 'Änderungen verwerfen',
+    confirmationMessage = 'Möchtest Du die Änderungen verwerfen?',
+    confirmationButtonTitle = 'Verwerfen',
+    confirmationVariant = 'default',
     onInteractOutside,
     className,
-    onClose
+    onClose,
+    onClosed
   } = props
-  
-  // Temporarily use simple state instead of HeadlessModal
-  const [isOpen, setIsOpen] = useState(true)
+  const modalRef = useRef<HeadlessModalProps>(null)
+
+  // Wird aufgerufen wenn der Dialog tatsächlich geschlossen wird
+  const handleOnClosed = () => {
+    console.log('Dialog geschlossen')
+    // Nur onClose aufrufen - afterLeave wird automatisch von HeadlessModal aufgerufen
+    if (onClosed) {
+      onClosed()
+    }
+  }
 
   const handleInteractOutside = (event: Event) => {
     if (!dismissible) {
@@ -52,50 +70,47 @@ export const InertiaDialog = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
     if (onInteractOutside) {
       onInteractOutside(event)
-    } else if (dismissible) {
-      if (onClose) {
-        onClose()
-      }
     }
   }
 
-  const handleFooterEvents = (isCancel = false) => {
-    if (isCancel) {
-      handleOpenChange(false)
-      return
-    }
-    setIsOpen(false)
-    if (onClose) onClose()
-  }
-
-  const handleOpenChange = (open: boolean) => {
-    if (!dismissible) {
-      return
-    }
-    setIsOpen(open)
-    if (!open && onClose) {
-      onClose()
-    }
-  }
-
-  // Temporarily return a simple dialog without HeadlessModal wrapper
   return (
-    <Dialog
-      isOpen={isOpen}
-      onClose={() => handleOpenChange(false)}
-      onInteractOutside={handleInteractOutside}
-      onClosed={() => setIsOpen(false)}
-      onOpenChange={handleOpenChange}
-      isDismissible={dismissible}
-      showDescription={showDescription}
-      dismissible={dismissible}
-      className={cn('max-w-xl', className)}
-      title={title}
-      tabs={tabs}
-      description={description}
-      footer={typeof footer === 'function' ? footer(handleFooterEvents) : footer}
-    >
-      {children}
-    </Dialog>
+    <HeadlessModal ref={modalRef} {...props}>
+      {({ isOpen }: HeadlessModalProps) => (
+        <Dialog
+          isOpen={isOpen}
+          onInteractOutside={handleInteractOutside}
+          confirmClose={confirmClose}
+          confirmationTitle={confirmationTitle}
+          confirmationMessage={confirmationMessage}
+          confirmationButtonTitle={confirmationButtonTitle}
+          confirmationVariant={confirmationVariant}
+          showDescription={showDescription}
+          isDismissible={dismissible}
+          onClosed={handleOnClosed}
+          className={cn('max-w-xl', className)}
+          title={title as string}
+          tabs={tabs}
+          description={description}
+          footer={
+            typeof footer === 'function'
+              ? renderProps => {
+                  const handleFooterEvents = (isCancel = false) => {
+                    if (isCancel) {
+                      // Bei Cancel verwende die Dialog-Close-Funktion (mit Bestätigung)
+                      renderProps.close()
+                      return
+                    }
+                    // Bei normalem Close (z.B. Submit) schließe direkt ohne Bestätigung
+                    modalRef.current?.close()
+                  }
+                  return footer(handleFooterEvents)
+                }
+              : footer
+          }
+        >
+          {children}
+        </Dialog>
+      )}
+    </HeadlessModal>
   )
 })

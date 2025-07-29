@@ -9,10 +9,10 @@ import { NavSecondary } from '@/Components/nav-secondary'
 import { Sidebar, SidebarContent, SidebarHeader } from '@/Components/ui/sidebar'
 
 import {
+  AbacusIcon,
   ContactBookIcon,
   DashboardSpeed02Icon,
   FileEuroIcon,
-  AbacusIcon,
   FolderFileStorageIcon,
   KanbanIcon,
   TimeScheduleIcon
@@ -52,10 +52,22 @@ const data = {
     },
     {
       title: 'Zeiterfassung',
-      url: route('app.time.index', {}, false),
+      url: route('app.time.my-week', {}, false),
       icon: TimeScheduleIcon,
       activePath: '/app/times',
-      hasSep: false
+      hasSep: false,
+      items: [
+        {
+          title: 'Meine Woche',
+          url: route('app.time.my-week', {}, false),
+          activePath: '/app/times/my-week'
+        },
+        {
+          title: 'Alle Zeiten',
+          url: route('app.time.index', {}, false),
+          activePath: '/app/times/all'
+        }
+      ]
     },
     {
       title: 'Fakturierung',
@@ -63,35 +75,37 @@ const data = {
       icon: FileEuroIcon,
       activePath: '/app/invoicing',
       hasSep: true,
-      items: [{
-        title: 'Rechnungen',
-        url: route('app.invoice.index', {}, false),
-        activePath: '/app/invoicing/invoices',
-      },
+      items: [
+        {
+          title: 'Rechnungen',
+          url: route('app.invoice.index', {}, false),
+          activePath: '/app/invoicing/invoices'
+        },
         {
           title: 'Angebote',
-          url: route('app.invoice.index', {}, false),
+          url: route('app.invoice.index', {}, false)
         }
-      ],
+      ]
     },
     {
       title: 'Buchhaltung',
       url: route('app.invoice.index', {}, false),
       icon: AbacusIcon,
       activePath: '/app/bookkeeping',
-      items: [{
-        title: 'Transaktionen',
-        url: route('app.invoice.index', {}, false),
-      },
+      items: [
+        {
+          title: 'Transaktionen',
+          url: route('app.invoice.index', {}, false)
+        },
         {
           title: 'Belege',
-          url: route('app.invoice.index', {}, false),
-        }
-        ,
+          url: route('app.invoice.index', {}, false)
+        },
         {
           title: 'Buchungen',
-          url: route('app.invoice.index', {}, false),
-        }],
+          url: route('app.invoice.index', {}, false)
+        }
+      ],
       hasSep: true
     }
   ],
@@ -101,10 +115,10 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar variant="inset" collapsible="icon" {...props}>
-      <SidebarHeader className="flex-none h-auto">
-        <img src={logo} className="rounded-md w-10 mx-auto mt-6 mb-6 object-cover" alt="Logo" />
+      <SidebarHeader className="h-auto flex-none">
+        <img src={logo} className="mx-auto mt-6 mb-6 w-10 rounded-md object-cover" alt="Logo" />
       </SidebarHeader>
-      <SidebarContent className="flex-1 -mt-3">
+      <SidebarContent className="-mt-3 flex-1">
         <NavMain items={data.navMain} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>

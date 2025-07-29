@@ -31,6 +31,7 @@ use App\Http\Controllers\App\Invoice\InvoicePdfDownloadController;
 use App\Http\Controllers\App\Invoice\InvoiceReleaseController;
 use App\Http\Controllers\App\Invoice\InvoiceUnreleaseController;
 use App\Http\Controllers\App\Time\TimeIndexController;
+use App\Http\Controllers\App\Time\TimeMyWeekIndexController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
@@ -70,8 +71,11 @@ Route::middleware([
     Route::get('contacts',
         ContactIndexController::class)->name('app.contact.index');
 
-    Route::get('times',
+    Route::get('times/all',
         TimeIndexController::class)->name('app.time.index');
+
+    Route::get('times/my-week',
+        TimeMyWeekIndexController::class)->name('app.time.my-week');
 
     Route::get('contacts/{contact}',
         ContactDetailsController::class)->name('app.contact.details');

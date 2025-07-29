@@ -3,9 +3,9 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
+import { PageContainer } from '@/Components/PageContainer'
 import type { PageProps } from '@/Types'
 import type * as React from 'react'
-import { PageContainer } from '@/Components/PageContainer'
 
 const Dashboard: React.FC<PageProps> = ({ auth }) => {
   const headerTitle: string = `Willkommen zurück, ${auth.user.first_name}!`
@@ -16,12 +16,12 @@ const Dashboard: React.FC<PageProps> = ({ auth }) => {
       width="7xl"
       header={<div className="font-medium">{headerTitle}</div>}
       breadcrumbs={[]}
-      containerBackground='bg-background'
+      containerBackground="bg-background"
       hideHeader
     >
       <div className="flex flex-1 flex-col gap-4 pt-0">
         <div className="grid auto-rows-min gap-4">
-          <div className="aspect-video rounded-xl p-6 bg-muted/50 text-xl font-medium">
+          <div className="aspect-video rounded-xl bg-muted/50 p-6 font-medium text-xl">
             Willkommen zurück, {auth.user.first_name}!
           </div>
         </div>

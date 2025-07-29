@@ -1,12 +1,12 @@
-import { useMemo } from 'react'
-import type * as React from 'react'
-import { Link } from '@inertiajs/react'
-import { Add01Icon, Edit03Icon, MoreVerticalCircle01Icon, PrinterIcon } from '@hugeicons/core-free-icons'
 import { PageContainer } from '@/Components/PageContainer'
-import { Avatar } from '@dspangenberg/twcui'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
+import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
+import { Avatar } from '@dspangenberg/twcui'
+import { Edit03Icon } from '@hugeicons/core-free-icons'
+import { Link } from '@inertiajs/react'
+import { useMemo } from 'react'
+import type * as React from 'react'
 
 interface Props {
   contact: App.Data.ContactData
@@ -16,8 +16,8 @@ interface Props {
 export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => {
   const breadcrumbs = useMemo(
     () => [
-      { title: 'Kontakte', route: route('app.contact.index') },
-      { title: contact.full_name, route: route('app.contact.details', { id: contact.id }) }
+      { title: 'Kontakte', url: route('app.contact.index') },
+      { title: contact.full_name, url: route('app.contact.details', { id: contact.id }) }
     ],
     [contact.full_name, contact.id]
   )
@@ -36,14 +36,15 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
     () => (
       <Tabs variant="underlined" defaultSelectedKey={currentRoute}>
         <TabList aria-label="Ansicht">
-          <Tab id="app.invoice.details" href={route('app.contact.details', {contact}, false)}>Übersicht</Tab>
+          <Tab id="app.invoice.details" href={route('app.contact.details', { contact }, false)}>
+            Übersicht
+          </Tab>
           <Tab id="app.invoice.history">Kontakte</Tab>
         </TabList>
       </Tabs>
     ),
     []
   )
-
 
   const companyRoute = useMemo(
     () => route('app.contact.details', { id: contact.company_id }),
@@ -56,8 +57,8 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
         <div className="flex-none">
           <Avatar initials={contact.initials} fullname={contact.full_name} size="lg" />
         </div>
-        <div className="flex-1 flex">
-          <div className="flex-1 max-w-lg font-bold text-xl truncate">{contact.full_name}</div>
+        <div className="flex flex-1">
+          <div className="max-w-lg flex-1 truncate font-bold text-xl">{contact.full_name}</div>
           {!!contact.company_id && (
             <div className="text-base text-foreground">
               <Link href={companyRoute} className="hover:underline">
@@ -76,7 +77,7 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
       title={contact.full_name}
       width="7xl"
       breadcrumbs={breadcrumbs}
-      className='flex gap-4 overflow-hidden'
+      className="flex gap-4 overflow-hidden"
       toolbar={toolbar}
       tabs={tabs}
       header={headerContent}
