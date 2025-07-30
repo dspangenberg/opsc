@@ -4,7 +4,7 @@
  */
 
 import { Checkbox } from '@/Components/ui/checkbox'
-import { Avatar } from '@dspangenberg/twcui'
+import { Avatar } from '@/Components/ui/twc-ui/avatar'
 import { StarIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Link } from '@inertiajs/react'
@@ -59,13 +59,15 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
   {
     accessorKey: 'initials',
     header: '',
-    size: 40,
+    size: 45,
     cell: ({ row }) => (
-      <Avatar
-        initials={row.original.initials.toUpperCase()}
-        fullname={row.original.full_name}
-        size="md"
-      />
+      <div className="flex items-center">
+        <Avatar
+          initials={row.original.initials.toUpperCase()}
+          fullname={row.original.full_name}
+          size="md"
+        />
+      </div>
     )
   },
   {

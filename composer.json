@@ -25,6 +25,7 @@
     "spatie/laravel-settings": "^3.4.4",
     "spatie/laravel-typescript-transformer": "^2.5.2",
     "spatie/temporary-directory": "^2.3",
+    "stancl/jobpipeline": "^2.0@RC",
     "stancl/tenancy": "dev-master",
     "tightenco/ziggy": "^2.5.3",
     "torann/hashids": "^3.0.5"
@@ -44,7 +45,6 @@
     "mockery/mockery": "^1.6.12",
     "nunomaduro/collision": "^8.8",
     "pestphp/pest": "^3.8.2",
-    "pestphp/pest-plugin-laravel": "^3.2",
     "phpstan/phpstan": "^2.1.17",
     "soloterm/solo": "^0.5.0"
   },
@@ -59,9 +59,7 @@
     }
   ],
   "autoload": {
-      "files":[
-          "app/Helpers/Opsc.php"
-  ],
+    "files": ["app/Helpers/Opsc.php"],
     "psr-4": {
       "App\\": "app/",
       "Database\\Factories\\": "database/factories/",

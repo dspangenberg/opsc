@@ -16,7 +16,7 @@ import {
   Text,
   composeRenderProps
 } from 'react-aria-components'
-import { FieldError, BaseFieldError, Label } from './field'
+import { BaseFieldError, FieldError, Label } from './field'
 import { useFormContext } from './form'
 import { ListBoxCollection, ListBoxHeader, ListBoxItem, ListBoxSection } from './list-box'
 import { Popover } from './popover'
@@ -213,7 +213,9 @@ function Select<T extends object, V extends SelectValue = number>(props: SelectP
   return <SelectCore {...props} error={realError} hasError={hasError} ErrorComponent={FieldError} />
 }
 
-function FormlessSelect<T extends object, V extends SelectValue = number>(props: SelectProps<T, V>) {
+function FormlessSelect<T extends object, V extends SelectValue = number>(
+  props: SelectProps<T, V>
+) {
   const hasError = !!props.error
 
   return <SelectCore {...props} hasError={hasError} ErrorComponent={BaseFieldError} />

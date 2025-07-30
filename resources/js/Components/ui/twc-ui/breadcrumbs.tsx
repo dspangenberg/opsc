@@ -77,7 +77,7 @@ interface BreadcrumbPageProps extends Omit<AriaLinkProps, 'href'> {}
 const BreadcrumbPage = ({ className, ...props }: BreadcrumbPageProps) => (
   <AriaLink
     className={composeRenderProps(className, className =>
-      cn('font-normal text-foreground/50', className)
+      cn('font-normal text-foreground/80', className)
     )}
     {...props}
   />

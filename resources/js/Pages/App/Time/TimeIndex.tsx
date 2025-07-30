@@ -48,7 +48,7 @@ const TimeIndex: React.FC = () => {
   const grouped_times = usePage<TimeIndexProps>().props.groupedByDate
   // const { visitModal } = useModalStack() // Temporarily disabled
 
-  const breadcrumbs = useMemo(() => [{ title: 'Kontakte', route: route('app.contact.index') }], [])
+  const breadcrumbs = useMemo(() => [{ title: 'Zeiterfassung' }], [])
 
   const toolbar = useMemo(
     () => (
@@ -104,7 +104,7 @@ const TimeIndex: React.FC = () => {
         </TabList>
       </Tabs>
     ),
-    []
+    [currentRoute]
   )
 
   const footer = useMemo(() => <Pagination data={times} />, [times])
