@@ -3,12 +3,12 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
+import { Button } from '@/Components/ui/twc-ui/button'
 import { cn } from '@/Lib/utils'
 import { Add01Icon, GeometricShapes01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import type React from 'react'
 import type { ReactNode } from 'react'
-import {ToolbarButton} from '@dspangenberg/twcui'
 
 interface Props {
   children: ReactNode
@@ -31,7 +31,7 @@ export const EmptyState: React.FC<Props> = ({
     <div
       className={cn(
         'empty-state-container',
-        'py-6 w-full flex flex-col justify-center space-y-6 items-center text-center rounded-lg text-base leading-normal text-muted-foreground',
+        'flex w-full flex-col items-center justify-center space-y-6 rounded-lg py-6 text-center text-base text-muted-foreground leading-normal',
         className
       )}
     >
@@ -39,12 +39,12 @@ export const EmptyState: React.FC<Props> = ({
         <HugeiconsIcon icon={icon} size={28} className="mx-auto " />
       </div>
       <div>{children}</div>
-      <ToolbarButton
-        variant="default"
+      <Button
+        variant="toolbar-default"
         title={buttonLabel}
         icon={buttonIcon}
         onClick={onClick}
-        className="text-black"
+        iconClassName="text-primary"
       />
     </div>
   )

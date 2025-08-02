@@ -15,9 +15,7 @@ class TenantSeeder extends Seeder
         $this->call([
             CountrySeeder::class,
             SalutationSeeder::class,
-            TitleSeeder::class,
-            RegionSeeder::class,
-            AccommodationTypeSeeder::class,
+            TitleSeeder::class
         ]);
 
     }

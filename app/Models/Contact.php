@@ -145,6 +145,7 @@ class Contact extends Model
         'formated_creditor_number',
         'primary_mail',
         'company_name',
+        'sales',
     ];
 
     protected $attributes = [
@@ -333,6 +334,11 @@ class Contact extends Model
         return $this->hasOne(PaymentDeadline::class, 'id', 'payment_deadline_id');
     }
 
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class, 'id', 'contact_id');
+    }
+
     public function tax(): HasOne
     {
         return $this->hasOne(Tax::class, 'id', 'tax_id');
@@ -350,9 +356,9 @@ class Contact extends Model
             'orgs' => $query->where('is_org', true),
             'creditors' => $query->where('is_creditor', true),
             'archived' => $query->where('is_archived', true),
+            'favourites' => $query->whereHas('marks', function ($query) {}),
             default => $query,
         };
-
     }
 
     protected function casts(): array
@@ -366,5 +372,27 @@ class Contact extends Model
             'has_dunning_block' => 'boolean',
             'dob' => 'datetime',
         ];
+    }
+
+    public function getSalesAttribute(): array
+    {
+        if (!$this->debtor_number) {
+            return ['currentYear' => 0, 'allTime' => 0];
+        }
+
+        $sales = ['currentYear' => 0, 'allTime' => 0];
+        $invoices = Invoice::query()
+            ->where('contact_id', $this->id)
+            ->withSum('lines', 'amount')
+            ->get();
+
+        foreach ($invoices as $invoice) {
+            if ($invoice->issued_on->year === now()->year) {
+                $sales['currentYear'] += $invoice->lines_sum_amount;
+            }
+            $sales['allTime'] += $invoice->lines_sum_amount;
+        }
+
+        return $sales;
     }
 }

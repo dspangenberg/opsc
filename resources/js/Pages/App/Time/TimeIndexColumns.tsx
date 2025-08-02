@@ -61,7 +61,7 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
   {
     accessorKey: 'date',
     header: 'Datum',
-    size: 30,
+    size: 40,
     cell: ({ row, getValue }) => <span>{getValue() as string}</span>
   },
   {

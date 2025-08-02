@@ -82,6 +82,11 @@ const data = {
           activePath: '/app/invoicing/invoices'
         },
         {
+          title: 'Offene Posten',
+          url: route('app.invoice.index', {}, false),
+          activePath: '/app/invoicing/invoices'
+        },
+        {
           title: 'Angebote',
           url: route('app.invoice.index', {}, false)
         }

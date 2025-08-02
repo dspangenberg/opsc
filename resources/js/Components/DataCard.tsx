@@ -23,7 +23,7 @@ export const DataCard: FC<DataCardProps> = ({
 }: DataCardProps) => {
   return (
     <BorderedBox className="flex flex-1 overflow-y-hidden" innerClassName="overflow-y-hidden">
-      <div className={cn('flex w-full flex-1 flex-col rounded-lg', className)}>
+      <div className={cn('flex w-full max-w-sm flex-1 flex-col rounded-lg ', className)}>
         {title && <DataCardHeader title={title} />}
         <div className="flex-1 overflow-y-auto rounded-lg p-2">{children}</div>
       </div>
@@ -45,7 +45,7 @@ export const DataCardHeader: FC<DataCardHeaderProps> = ({
   return (
     <div
       className={cn(
-        'flex-none bg-sidebar px-4 py-2.5 font-medium text-base text-foreground',
+        'flex-none overflow-x-hidden text-wrap hyphens-auto bg-sidebar px-4 py-2.5 font-medium text-base text-foreground',
         className
       )}
     >
@@ -149,7 +149,7 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
   return (
     <div
       className={cn(
-        'group',
+        'group max-w-sm',
         !hasValidChildren && !forceChildren && suppressEmptyText ? 'hidden' : ''
       )}
     >
@@ -165,7 +165,7 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
       )}
       <div
         className={cn(
-          'flex w-full flex-1 flex-col space-y-2 rounded-md border border-border/50 bg-background px-2.5 py-1.5 text-base',
+          'flex w-full flex-1 flex-col space-y-2 truncate hyphens-auto rounded-md border border-border/50 bg-background px-2.5 py-1.5 text-base',
           className
         )}
       >

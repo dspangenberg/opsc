@@ -53,6 +53,10 @@ class ContactData extends Data
         /** @var ContactMailData[] */
         public readonly ?array $mails,
 
+        /** @var SalesData */
+        public readonly ?SalesData $sales,
+
+
         /** @var ContactAddressData[] */
         public readonly ?array $addresses,
     ) {}

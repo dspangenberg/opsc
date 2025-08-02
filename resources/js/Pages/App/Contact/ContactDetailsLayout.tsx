@@ -2,7 +2,7 @@ import { PageContainer } from '@/Components/PageContainer'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
-import { Avatar } from '@dspangenberg/twcui'
+import { Avatar } from '@/Components/ui/twc-ui/avatar'
 import { Edit03Icon } from '@hugeicons/core-free-icons'
 import { Link } from '@inertiajs/react'
 import { useMemo } from 'react'
@@ -39,11 +39,11 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
           <Tab id="app.invoice.details" href={route('app.contact.details', { contact }, false)}>
             Übersicht
           </Tab>
-          <Tab id="app.invoice.history">Kontakte</Tab>
+          <Tab id="app.invoice.history">Ansprechpersonen</Tab>
         </TabList>
       </Tabs>
     ),
-    []
+    [currentRoute, contact]
   )
 
   const companyRoute = useMemo(
@@ -57,7 +57,7 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
         <div className="flex-none">
           <Avatar initials={contact.initials} fullname={contact.full_name} size="lg" />
         </div>
-        <div className="flex flex-1">
+        <div className="flex flex-1 flex-col">
           <div className="max-w-lg flex-1 truncate font-bold text-xl">{contact.full_name}</div>
           {!!contact.company_id && (
             <div className="text-base text-foreground">

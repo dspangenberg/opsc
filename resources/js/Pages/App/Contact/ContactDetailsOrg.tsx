@@ -1,14 +1,23 @@
-import { DataCard, DataCardContent, DataCardField, DataCardSection } from '@/Components/DataCard'
+import { DataCard, DataCardContent, DataCardField, DataCardHeader, DataCardSection } from '@/Components/DataCard'
 import { ContactDetailsAddresses } from '@/Pages/App/Contact/ContactDetailsAddresses'
 import { ContactDetailsMail } from '@/Pages/App/Contact/ContactDetailsMails'
 import { Add01Icon, Edit02Icon } from '@hugeicons/core-free-icons'
 import { useModalStack } from '@inertiaui/modal-react' // Temporarily disabled
 import type { FC } from 'react'
+import { cn } from '@/Lib/utils'
+import { StatsField } from '@/Components/StatsField'
+import type * as React from 'react'
 
 interface ContactDetailsOrgInfoBoxProps {
   contact: App.Data.ContactData
   showSecondary?: boolean
 }
+
+const currencyFormatter = new Intl.NumberFormat('de-DE', {
+  style: 'decimal',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+})
 
 export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
   contact,
@@ -30,8 +39,18 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
     )
   }
 
+  const salesCurrentYearTitle = `Umsatz ${new Date().getFullYear().toString()}`
+
   return (
     <DataCard title={contact.full_name}>
+      <DataCardContent>
+        <div
+          className="grid w-full divide-x rounded-md border bg-white divide-border/50 border-b border-border/50 p-1.5 grid-cols-2"
+        >
+          <StatsField label={salesCurrentYearTitle} value={currencyFormatter.format(contact.sales.currentYear)} />
+          <StatsField label="Gesamtumsatz" value={currencyFormatter.format(contact.sales.allTime)} />
+        </div>
+      </DataCardContent>
       <DataCardContent showSecondary={showSecondary}>
         <DataCardSection
           title="Debitorinfos"
