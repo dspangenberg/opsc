@@ -6,6 +6,7 @@
 import { format, minutesToHours, parse } from 'date-fns'
 
 export const parseAndFormatDate = (date: string, formatString = 'dd.MM.yyyy') => {
+  if (!date) return ''
   let parsedDate: Date
   if (date.length === 10) {
     parsedDate = parse(date, 'dd.MM.yyyy', new Date())

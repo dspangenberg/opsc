@@ -14,11 +14,16 @@ class TimeStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required'],
             'project_id' => ['required', 'exists:projects,id'],
-            'category_id' => ['required', 'exists:time_categories,id'],
+            'time_category_id' => ['required', 'exists:time_categories,id'],
             'user_id' => ['required', 'exists:users,id'],
             'note' => ['nullable'],
+            'begin_at' => ['required', 'date', 'date_format:d.m.Y H:i'],
+            'end_at' => [
+                'nullable',
+                'after_or_equal:begin_at',
+                'date', 'date_format:d.m.Y H:i',
+            ],
         ];
     }
 

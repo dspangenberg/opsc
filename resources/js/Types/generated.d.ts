@@ -280,7 +280,7 @@ invoice_id: number | null;
 user_id: number;
 note: string | null;
 begin_at: string;
-end_at: string;
+end_at: string | null;
 date: string;
 is_locked: boolean;
 is_billable: boolean;

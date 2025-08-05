@@ -31,6 +31,7 @@ use App\Http\Controllers\App\Invoice\InvoicePdfDownloadController;
 use App\Http\Controllers\App\Invoice\InvoiceReleaseController;
 use App\Http\Controllers\App\Invoice\InvoiceUnreleaseController;
 use App\Http\Controllers\App\Time\TimeCreateController;
+use App\Http\Controllers\App\Time\TimeEditController;
 use App\Http\Controllers\App\Time\TimeIndexController;
 use App\Http\Controllers\App\Time\TimeMyWeekIndexController;
 use App\Http\Controllers\App\Time\TimeStoreController;
@@ -75,7 +76,9 @@ Route::middleware([
         ContactIndexController::class)->name('app.contact.index');
 
     Route::get('times/create',TimeCreateController::class)->name('app.time.create');
-    Route::post('times',TimeStoreController::class)->name('app.time.store');
+    Route::post('times',TimeStoreController::class)
+        ->middleware([HandlePrecognitiveRequests::class])
+        ->name('app.time.store');
 
 
     Route::get('times/all',
@@ -84,7 +87,11 @@ Route::middleware([
         TimeMyWeekIndexController::class)->name('app.time.my-week');
 
 
-    Route::put('times/store/{time}', TimeUpateController::class)->name('app.time.update');
+    Route::get('times/{time}/edit', TimeEditController::class)->name('app.time.edit');
+
+    Route::put('times/store/{time}', TimeUpateController::class)
+        ->middleware([HandlePrecognitiveRequests::class])
+        ->name('app.time.update');
 
     Route::get('contacts/{contact}',
         ContactDetailsController::class)->name('app.contact.details');

@@ -32,7 +32,7 @@ class TimeData extends Data
         public readonly DateTime $begin_at,
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]
-        public readonly DateTime $end_at,
+        public readonly ?DateTime $end_at,
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
         public readonly DateTime $date,

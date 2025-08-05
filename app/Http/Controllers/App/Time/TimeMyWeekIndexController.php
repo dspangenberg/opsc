@@ -28,7 +28,6 @@ class TimeMyWeekIndexController extends Controller
             ->with('category')
             ->with('user')
             ->whereNotNull('begin_at')
-            ->whereNotNull('end_at')
             ->orderBy('begin_at', 'desc')
             ->paginate();
 

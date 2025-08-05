@@ -20,12 +20,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 
-class TimeCreateController extends Controller
+class TimeEditController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, Time $time)
     {
         $projects = Project::query()
             ->where('is_archived', false)
+            ->orWhere('id', $time->project_id)
             ->orderBy('name')
             ->get();
 
@@ -38,19 +39,6 @@ class TimeCreateController extends Controller
             ->orderBy('first_name')
             ->get();
 
-        $lastEntry = Time::query()->where('user_id', auth()->user()->id)->orderBy('begin_at', 'desc')->first();
-
-        $time = new Time();
-        $time->user_id = auth()->user()->id;
-        $time->begin_at = Carbon::now();
-        $time->end_at = null;
-
-        if ($lastEntry) {
-            $time->project_id = $lastEntry->project_id;
-            $time->time_category_id = $lastEntry->time_category_id;
-            $time->is_billable = $lastEntry->is_billable;
-            $time->is_locked = $lastEntry->is_locked;
-        }
 
         $baseRoute = $request->query('view', 'week') === 'week' ? 'app.time.my-week' : 'app.time.index';
 

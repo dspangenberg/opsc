@@ -17,7 +17,7 @@ import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { Add01Icon, PrinterIcon, Sorting05Icon } from '@hugeicons/core-free-icons'
 import { router, usePage } from '@inertiajs/react'
 import type * as React from 'react'
-import { useId, useMemo } from 'react'
+import { useMemo } from 'react'
 import { columns } from './TimeIndexColumns'
 
 export interface TimeGroupedEntries {
@@ -70,16 +70,13 @@ const TimeIndex: React.FC = () => {
     ),
     []
   )
-
-  const id = useId()
-
   const header = useMemo(
     () => (
       <div className="flex flex-col rounded-t-md py-0">
         <div className="flex flex-none items-center space-x-2 p-2">
           <div className="group relative min-w-64">
             <Select>
-              <SelectTrigger id={id} className="bg-white">
+              <SelectTrigger className="bg-white">
                 <SelectValue placeholder="Gespeicherte Views" className="bg-white" />
               </SelectTrigger>
               <SelectContent>
@@ -94,10 +91,8 @@ const TimeIndex: React.FC = () => {
         </div>
       </div>
     ),
-    [id]
+    []
   )
-
-  console.log(times, grouped_times)
 
   const currentRoute = route().current()
 

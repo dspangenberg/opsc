@@ -9,8 +9,9 @@ import { Avatar } from '@dspangenberg/twcui'
 import { Link } from '@inertiajs/react'
 import type { ColumnDef } from '@tanstack/react-table'
 
-const editUrl = (id: number | null) => (id ? route('app.invoice.details', { id }) : '#')
-const contactUrl = (id: number | null) => (id ? route('app.contact.details', { id }) : '#')
+const editUrl = (row: App.Data.TimeData) => {
+  return row.id ? route('app.time.edit', { id: row.id }) : '#'
+}
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
   style: 'decimal',
@@ -62,7 +63,7 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
     accessorKey: 'date',
     header: 'Datum',
     size: 40,
-    cell: ({ row, getValue }) => <span>{getValue() as string}</span>
+    cell: ({ row, getValue }) => <Link href={editUrl(row.original)}>{getValue() as string}</Link>
   },
   {
     accessorKey: 'begin_at',
@@ -82,10 +83,7 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
     size: 300,
     cell: ({ getValue, row }) => (
       <>
-        <Link
-          href={contactUrl(row.original.project_id)}
-          className="truncate align-middle hover:underline"
-        >
+        <Link href="#" className="truncate align-middle hover:underline">
           {row.original.project?.name}
         </Link>
         <div className="line-clamp-1 font-xs text-foreground/60">{row.original.note}</div>
