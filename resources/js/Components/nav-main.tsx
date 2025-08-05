@@ -71,7 +71,7 @@ export function NavMain({
                 {item.items?.length ? (
                   <>
                     <CollapsibleContent>
-                      <SidebarMenuSub className="block md:hidden">
+                      <SidebarMenuSub className="block">
                         {item.items.map(subItem => (
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton

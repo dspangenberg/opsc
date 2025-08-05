@@ -10,15 +10,12 @@ import {
 } from '@/Components/ui/select'
 import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
 import type { PageProps } from '@/Types'
-import { Button, Toolbar, ToolbarButton } from '@dspangenberg/twcui'
+
+import { Button } from '@/Components/ui/twc-ui/button'
+import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 // import { useModalStack } from '@inertiaui/modal-react' // Temporarily disabled
-import {
-  Add01Icon,
-  MoreVerticalCircle01Icon,
-  PrinterIcon,
-  Sorting05Icon
-} from '@hugeicons/core-free-icons'
-import { usePage } from '@inertiajs/react'
+import { Add01Icon, PrinterIcon, Sorting05Icon } from '@hugeicons/core-free-icons'
+import { router, usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { useId, useMemo } from 'react'
 import { columns } from './TimeIndexColumns'
@@ -49,13 +46,26 @@ const TimeIndex: React.FC = () => {
   // const { visitModal } = useModalStack() // Temporarily disabled
 
   const breadcrumbs = useMemo(() => [{ title: 'Zeiterfassung' }], [])
+  const handleTimeCreateClicked = () => {
+    router.visit(
+      route('app.time.create', {
+        _query: {
+          view: 'all'
+        }
+      })
+    )
+  }
 
   const toolbar = useMemo(
     () => (
-      <Toolbar className="border-0 bg-background shadow-none">
-        <ToolbarButton variant="default" icon={Add01Icon} title="Eintrag hinzufügen" />
-        <ToolbarButton icon={PrinterIcon} />
-        <ToolbarButton icon={MoreVerticalCircle01Icon} />
+      <Toolbar>
+        <Button
+          variant="toolbar-default"
+          icon={Add01Icon}
+          title="Neue Rechnung"
+          onPress={handleTimeCreateClicked}
+        />
+        <Button variant="toolbar" icon={PrinterIcon} title="Drucken" disabled={true} />
       </Toolbar>
     ),
     []

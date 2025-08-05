@@ -97,6 +97,7 @@ title: App.Data.TitleData | null;
 salutation: App.Data.SalutationData | null;
 payment_deadline: App.Data.PaymentDeadlineData | null;
 mails: Array<App.Data.ContactMailData> | null;
+sales: App.Data.SalesData | null;
 addresses: Array<App.Data.ContactAddressData> | null;
 };
 export type ContactMailData = {
@@ -212,6 +213,10 @@ name: string;
 short_name: string;
 place_short_name: string;
 };
+export type SalesData = {
+currentYear: number;
+allTime: number;
+};
 export type SalutationData = {
 id: number | null;
 name: string;
@@ -276,6 +281,7 @@ user_id: number;
 note: string | null;
 begin_at: string;
 end_at: string;
+date: string;
 is_locked: boolean;
 is_billable: boolean;
 is_timer: boolean;

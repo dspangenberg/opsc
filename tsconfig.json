@@ -14,7 +14,9 @@
     "types": ["vitest/globals", "@testing-library/jest-dom"],
     "paths": {
       "@/*": ["./resources/js/*"],
-      "ziggy-js": ["./vendor/tightenco/ziggy"]
+      "ziggy-js": ["./vendor/tightenco/ziggy"],
+      "momentum-modal-react": ["./node_modules/momentum-modal-react/dist/types/index.d.ts"],
+      "momentum-modal-react/*": ["./node_modules/momentum-modal-react/dist/types/*"]
     }
   },
   "include": ["resources/js/**/*.ts", "resources/js/**/*.tsx", "resources/js/**/*.d.ts"]

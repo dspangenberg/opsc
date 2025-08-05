@@ -18,7 +18,7 @@ import {
   PrinterIcon,
   Sorting05Icon
 } from '@hugeicons/core-free-icons'
-import { usePage } from '@inertiajs/react'
+import { router, usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { useId, useMemo } from 'react'
 import { columns } from './TimeIndexColumns'
@@ -53,10 +53,25 @@ const TimeIndex: React.FC = () => {
     []
   )
 
+  const handleTimeCreateClicked = () => {
+    router.visit(
+      route('app.time.create', {
+        _query: {
+          view: 'week'
+        }
+      })
+    )
+  }
+
   const toolbar = useMemo(
     () => (
       <Toolbar className="border-0 bg-background shadow-none">
-        <ToolbarButton variant="default" icon={Add01Icon} title="Eintrag hinzufügen" />
+        <ToolbarButton
+          variant="default"
+          icon={Add01Icon}
+          title="Eintrag hinzufügen"
+          onClick={handleTimeCreateClicked}
+        />
         <ToolbarButton icon={PrinterIcon} />
         <ToolbarButton icon={MoreVerticalCircle01Icon} />
       </Toolbar>

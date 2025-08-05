@@ -9,6 +9,7 @@ import { AppSidebar } from '@/Components/AppSidebar'
 import { LayoutContainer } from '@/Components/LayoutContainer'
 import { NavUser } from '@/Components/NavUser'
 import { PageBreadcrumbs } from '@/Components/PageBreadcrumbs'
+import { Modal } from '@/Components/momentum-modal-react'
 import { useThemeContainer } from '@/Components/theme-container-provider'
 import { SidebarInset, SidebarProvider, useSidebar } from '@/Components/ui/sidebar'
 import { Toaster } from '@/Components/ui/sonner'
@@ -80,7 +81,12 @@ export default function AppLayout({ children }: PropsWithChildren<{ header?: Rea
   return (
     <AppProvider>
       <SidebarProvider>
-        <SidebarContent>{children}</SidebarContent>
+        <SidebarContent>
+          <>
+            {children}
+            <Modal />
+          </>
+        </SidebarContent>
       </SidebarProvider>
     </AppProvider>
   )

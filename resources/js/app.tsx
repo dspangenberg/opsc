@@ -10,7 +10,6 @@ import '@fontsource/clear-sans/300.css'
 import '@fontsource/clear-sans/400.css'
 import '@fontsource/clear-sans/500.css'
 import '@fontsource/clear-sans/700.css'
-import { putConfig } from '@inertiaui/modal-react'
 
 import 'mapbox-gl/dist/mapbox-gl.css'
 import * as Sentry from '@sentry/react'
@@ -18,7 +17,6 @@ import * as Sentry from '@sentry/react'
 import { ApplicationProvider } from '@/Components/ApplicationProvider'
 import AppLayout from '@/Layouts/AppLayout'
 import { createInertiaApp } from '@inertiajs/react'
-import { renderApp } from '@inertiaui/modal-react'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { createRoot } from 'react-dom/client'
 
@@ -32,9 +30,10 @@ if (sentryEnabled && sentryDsn) {
   })
 }
 
-putConfig({
-  navigate: true
-})
+globalThis.resolveMomentumModal = name => {
+  const pages = import.meta.glob('./Pages/**/*.tsx', { eager: true })
+  return pages[`./Pages/${name}.tsx`]
+}
 
 createInertiaApp({
   title: title => `${title} - ${appName}`,
@@ -51,7 +50,11 @@ createInertiaApp({
   },
   setup({ el, App, props }) {
     const root = createRoot(el)
-    root.render(<ApplicationProvider>{renderApp(App, props)}</ApplicationProvider>)
+    root.render(
+      <ApplicationProvider>
+        <App {...props} />
+      </ApplicationProvider>
+    )
   },
   progress: {
     color: '#4B5563'

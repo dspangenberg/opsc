@@ -258,6 +258,7 @@ export const Dialog: React.FC<DialogProps> = ({
               setIsDialogOpen(false)
               onOpenChange?.(false) // Notify parent component that dialog is closed
               onClose?.()
+              onClosed?.() // Fire onClosed callback
               resolve(true) // Resolve the promise with true to indicate the dialog was closed
             } else {
               setIsDialogOpen(true)
@@ -271,6 +272,7 @@ export const Dialog: React.FC<DialogProps> = ({
       } else {
         setIsDialogOpen(false)
         onClose?.()
+        onClosed?.() // Fire onClosed callback
         onOpenChange?.(false) // Notify parent component that dialog is closed
         resolve(true) // Resolve the promise with true to indicate the dialog was closed
       }
@@ -281,7 +283,7 @@ export const Dialog: React.FC<DialogProps> = ({
     if (!open) {
       const shouldClose = await handleClose()
       if (shouldClose) {
-        onClosed?.()
+        // onClosed is already called in handleClose, no need to call it again here
         // No need to call onOpenChange(false) here as it's already called in handleClose
       } else {
         setIsDialogOpen(true)

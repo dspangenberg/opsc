@@ -1,7 +1,6 @@
 import { DataCardField, DataCardFieldGroup } from '@/Components/DataCard'
 import { Button } from '@dspangenberg/twcui'
 import { Copy01Icon, PencilEdit02Icon } from '@hugeicons/core-free-icons'
-import { useModalStack } from '@inertiaui/modal-react'
 import type { FC } from 'react'
 import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
@@ -12,15 +11,8 @@ interface Props {
 
 export const ContactDetailsAddresses: FC<Props> = ({ addresses }: Props) => {
   const firstAddress = addresses.length ? addresses[0] : null
-  const { visitModal } = useModalStack()
 
   const handleEditButtonClick = () => {
-    visitModal(
-      route('app.contact.edit.address', {
-        contact: firstAddress?.contact_id,
-        address: firstAddress?.id
-      })
-    ) // Temporarily disabled
     console.log('Edit address clicked - modal functionality temporarily disabled')
   }
 
