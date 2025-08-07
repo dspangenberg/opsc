@@ -11,7 +11,7 @@ interface Props extends PageProps {
   categories: App.Data.AddressCategoryData[]
 }
 
-const ContactEditAddress: React.FC<Props> = () => {
+const ContactEditAddress: React.FC<Props> = ({ address }) => {
   const selectRef = useRef<HTMLButtonElement>(null)
 
   const title = address.id ? 'Anschrift bearbeiten' : 'Neue Anschrift hinzufügen'

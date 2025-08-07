@@ -84,7 +84,7 @@ export default function AppLayout({ children }: PropsWithChildren<{ header?: Rea
         <SidebarContent>
           <>
             {children}
-            <Modal />
+            <Modal resolver={globalThis.resolveMomentumModal} />
           </>
         </SidebarContent>
       </SidebarProvider>

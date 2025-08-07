@@ -10,6 +10,7 @@ import { TextField } from '@/Components/ui/twc-ui/text-field'
 import type { PageProps } from '@/Types'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
+import { useState } from 'react'
 
 interface Props extends PageProps {
   time: App.Data.TimeData
@@ -20,6 +21,7 @@ interface Props extends PageProps {
 
 const TimeCreate: React.FC<Props> = ({ time, projects, categories, users }) => {
   const title = time.id ? 'Zeit bearbeiten' : 'Neue Zeit hinzufügen'
+  const [isOpen, setIsOpen] = useState(true)
 
   const form = useForm<App.Data.TimeData>(
     'form-contact-edit-address',
@@ -31,8 +33,7 @@ const TimeCreate: React.FC<Props> = ({ time, projects, categories, users }) => {
   )
 
   const handleClose = () => {
-    console.log('close')
-
+    setIsOpen(false)
     if (route().queryParams.view === 'week') {
       router.visit(route('app.time.my-week'))
     }
@@ -42,7 +43,7 @@ const TimeCreate: React.FC<Props> = ({ time, projects, categories, users }) => {
 
   return (
     <Dialog
-      isOpen={true}
+      isOpen={isOpen}
       onClosed={handleClose}
       title={title}
       confirmClose={form.isDirty}
