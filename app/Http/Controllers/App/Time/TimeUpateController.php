@@ -13,11 +13,11 @@ use App\Models\Time;
 
 class TimeUpateController extends Controller
 {
-    public function __invoke(TimeStoreRequest $request)
+    public function __invoke(TimeStoreRequest $request, Time $time)
     {
         $validatedData = $request->validated();
 
-        Time::create($validatedData);
+        $time->update($validatedData);
 
         return redirect()->route('app.time.index');
     }
