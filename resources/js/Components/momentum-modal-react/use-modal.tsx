@@ -59,7 +59,7 @@ export function useModal(resolverCallback: CallableFunction | null = null) {
     const component = modal?.component ? await resolver(modal.component) : null;
 
     setNonce(modal?.nonce);
-    if (component) {
+    if (component && component.default) {
       const ComponentToRender = component.default;
       setVnode(<ComponentToRender key={key} {...props} />);
     } else {

@@ -30,9 +30,11 @@ if (sentryEnabled && sentryDsn) {
   })
 }
 
-globalThis.resolveMomentumModal = name => {
+globalThis.resolveMomentumModal = async name => {
   const pages = import.meta.glob('./Pages/**/*.tsx')
-  return pages[`./Pages/${name}.tsx`]
+  const path = `./Pages/${name}.tsx`
+  const module = pages[path]
+  return module ? await module() : null
 }
 
 createInertiaApp({
