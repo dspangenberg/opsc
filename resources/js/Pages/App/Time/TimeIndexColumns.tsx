@@ -68,13 +68,13 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
   {
     accessorKey: 'begin_at',
     header: 'Start',
-    size: 20,
+    size: 30,
     cell: ({ row, getValue }) => <span>{parseAndFormatDate(getValue() as string, 'HH:mm')}</span>
   },
   {
     accessorKey: 'end_at',
     header: 'Ende',
-    size: 20,
+    size: 30,
     cell: ({ row, getValue }) => <span>{parseAndFormatDate(getValue() as string, 'HH:mm')}</span>
   },
   {
