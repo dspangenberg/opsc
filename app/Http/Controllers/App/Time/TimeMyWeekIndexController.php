@@ -18,11 +18,11 @@ class TimeMyWeekIndexController extends Controller
         $endDateParam   = $request->query('end_date');
 
         $startDate = $startDateParam
-            ? Carbon::parse($startDateParam)->startOfDay()
+            ? Carbon::parse($startDateParam)->startOfWeek()->startOfDay()
             : Carbon::now()->startOfWeek()->startOfDay();
 
         $endDate = $endDateParam
-            ? Carbon::parse($endDateParam)->endOfDay()
+            ? Carbon::parse($endDateParam)->endOfWeek()->endOfDay()
             : (clone $startDate)->endOfWeek()->endOfDay();
 
         $times = Time::query()
@@ -40,6 +40,8 @@ class TimeMyWeekIndexController extends Controller
         return Inertia::render('App/Time/TimeMyWeek', [
             'times'         => TimeData::collect($times),
             'groupedByDate' => $groupedByDate,
+            'startDate'     => $startDate->locale('de')->isoFormat('DD.MM.YYYY'),
+            'endDate'       => $endDate->locale('de')->isoFormat('DD.MM.YYYY'),
         ]);
     }
 

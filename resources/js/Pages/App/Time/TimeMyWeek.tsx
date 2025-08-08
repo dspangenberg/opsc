@@ -57,6 +57,9 @@ interface TimeIndexProps extends PageProps {
 const TimeIndex: React.FC = () => {
   const times = usePage<TimeIndexProps>().props.times
   const grouped_times = usePage<TimeIndexProps>().props.groupedByDate
+  const startDate = usePage<TimeIndexProps>().props.startDate
+  const endDate = usePage<TimeIndexProps>().props.endDate
+  console.log(startDate)
 
   const breadcrumbs = useMemo(
     () => [{ title: 'Zeiterfassung', url: route('app.time.index') }, { title: 'Meine Woche' }],
@@ -96,6 +99,7 @@ const TimeIndex: React.FC = () => {
       <div className="flex flex-col rounded-t-md py-0">
         <BorderedBox className="mx-auto mb-3 flex-none">
           <div className="mx-auto flex justify-center gap-4 divide-y bg-white px-2 py-2.5 lg:divide-x lg:divide-y-0">
+            <StatsField label="Zeitraum" value={`${startDate} - ${endDate}`} />
             {(() => {
               const weekdayOrder = [1, 2, 3, 4, 5, 6, 0] // Mo..So (Carbon: 0=So, 1=Mo, ...)
               const weekdayLabelsDe = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
