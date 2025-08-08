@@ -1,6 +1,8 @@
 import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
+import { StatsField } from '@/Components/StatsField'
+import { BorderedBox } from '@/Components/twcui/bordered-box'
 import {
   Select,
   SelectContent,
@@ -9,9 +11,9 @@ import {
   SelectValue
 } from '@/Components/ui/select'
 import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
+import { minutesToHoursExtended } from '@/Lib/DateHelper'
 import type { PageProps } from '@/Types'
 import { Button, Toolbar, ToolbarButton } from '@dspangenberg/twcui'
-// import { useModalStack } from '@inertiaui/modal-react' // Temporarily disabled
 import {
   Add01Icon,
   MoreVerticalCircle01Icon,
@@ -29,24 +31,32 @@ export interface TimeGroupedEntries {
   }
 }
 
+// Einzelner Tages-Eintrag
 export interface TimeGroupedByDate {
   [key: string]: {
-    entries: TimeGroupedEntries
+    entries: App.Data.TimeData[]
     date: string
     formatedDate: string
     sum: number
+    weekday: number
   }
+}
+
+// Neues Aggregat mit Summen (Controller gibt dieses Schema zurück)
+export interface TimeWeekGrouping {
+  entries: TimeGroupedByDate
+  sum: number
+  sumByWeekday: number[] // 0..6 => Minuten pro Wochentag
 }
 
 interface TimeIndexProps extends PageProps {
   times: App.Data.Paginated.PaginationMeta<App.Data.TimeData[]>
-  groupedByDate: TimeGroupedByDate[]
+  groupedByDate: TimeWeekGrouping
 }
 
 const TimeIndex: React.FC = () => {
   const times = usePage<TimeIndexProps>().props.times
   const grouped_times = usePage<TimeIndexProps>().props.groupedByDate
-  // const { visitModal } = useModalStack() // Temporarily disabled
 
   const breadcrumbs = useMemo(
     () => [{ title: 'Zeiterfassung', url: route('app.time.index') }, { title: 'Meine Woche' }],
@@ -84,6 +94,23 @@ const TimeIndex: React.FC = () => {
   const header = useMemo(
     () => (
       <div className="flex flex-col rounded-t-md py-0">
+        <BorderedBox className="mx-auto mb-3 flex-none">
+          <div className="mx-auto flex justify-center gap-4 divide-y bg-white px-2 py-2.5 lg:divide-x lg:divide-y-0">
+            {(() => {
+              const weekdayOrder = [1, 2, 3, 4, 5, 6, 0] // Mo..So (Carbon: 0=So, 1=Mo, ...)
+              const weekdayLabelsDe = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
+              return weekdayOrder.map((weekday, idx) => (
+                <StatsField
+                  key={`weekday-${weekday}`}
+                  label={weekdayLabelsDe[idx]}
+                  value={minutesToHoursExtended(grouped_times.sumByWeekday[weekday] ?? 0)}
+                />
+              ))
+            })()}
+            <StatsField label="Woche" value={minutesToHoursExtended(grouped_times.sum)} />
+          </div>
+        </BorderedBox>
+
         <div className="flex flex-none items-center space-x-2 p-2">
           <div className="group relative min-w-64">
             <Select>
@@ -104,8 +131,6 @@ const TimeIndex: React.FC = () => {
     ),
     [id]
   )
-
-  console.log(times, grouped_times)
 
   const currentRoute = route().current()
 

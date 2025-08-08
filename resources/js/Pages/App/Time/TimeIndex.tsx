@@ -11,13 +11,15 @@ import {
 import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
 import type { PageProps } from '@/Types'
 
+import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
-// import { useModalStack } from '@inertiaui/modal-react' // Temporarily disabled
-import { Add01Icon, PrinterIcon, Sorting05Icon } from '@hugeicons/core-free-icons'
+import { minutesToHoursExtended } from '@/Lib/DateHelper'
+import { Add01Icon, FileDownloadIcon, PrinterIcon, Sorting05Icon } from '@hugeicons/core-free-icons'
 import { router, usePage } from '@inertiajs/react'
+import { sumBy } from 'lodash'
 import type * as React from 'react'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { columns } from './TimeIndexColumns'
 
 export interface TimeGroupedEntries {
@@ -43,7 +45,8 @@ interface TimeIndexProps extends PageProps {
 const TimeIndex: React.FC = () => {
   const times = usePage<TimeIndexProps>().props.times
   const grouped_times = usePage<TimeIndexProps>().props.groupedByDate
-  // const { visitModal } = useModalStack() // Temporarily disabled
+  const [selectedRows, setSelectedRows] = useState<App.Data.TimeData[]>([])
+  const [showFilter, setShowFilter] = useState<boolean>(false)
 
   const breadcrumbs = useMemo(() => [{ title: 'Zeiterfassung' }], [])
   const handleTimeCreateClicked = () => {
@@ -70,6 +73,7 @@ const TimeIndex: React.FC = () => {
     ),
     []
   )
+
   const header = useMemo(
     () => (
       <div className="flex flex-col rounded-t-md py-0">
@@ -93,6 +97,26 @@ const TimeIndex: React.FC = () => {
     ),
     []
   )
+
+  // Derive total selected minutes from selectedRows
+  const selectedMins = useMemo(() => sumBy(selectedRows, 'mins'), [selectedRows])
+
+  const actionBar = useMemo(() => {
+    return (
+      <Toolbar variant="secondary" className="px-4 pt-2">
+        <div className="self-center text-sm">
+          <Badge variant="outline" className="mr-1.5 bg-background">
+            {selectedRows.length}
+          </Badge>
+          ausgewählte Datensätze
+        </div>
+        <Button variant="ghost" size="auto" icon={FileDownloadIcon} title="Herunterladen" />
+        <div className="flex-1 text-right font-medium text-sm">
+          {minutesToHoursExtended(selectedMins)}
+        </div>
+      </Toolbar>
+    )
+  }, [selectedMins, selectedRows.length])
 
   const currentRoute = route().current()
 
@@ -132,6 +156,8 @@ const TimeIndex: React.FC = () => {
     >
       <DataTable
         columns={columns}
+        actionBar={actionBar}
+        onSelectedRowsChange={setSelectedRows}
         data={times.data}
         footer={footer}
         header={header}

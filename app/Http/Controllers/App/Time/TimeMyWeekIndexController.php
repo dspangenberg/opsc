@@ -1,10 +1,5 @@
 <?php
 
-/*
- * opsc.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
- */
-
 namespace App\Http\Controllers\App\Time;
 
 use App\Data\TimeData;
@@ -19,41 +14,68 @@ class TimeMyWeekIndexController extends Controller
 {
     public function __invoke(Request $request)
     {
+        $startDateParam = $request->query('start_date');
+        $endDateParam   = $request->query('end_date');
 
-        // 28
+        $startDate = $startDateParam
+            ? Carbon::parse($startDateParam)->startOfDay()
+            : Carbon::now()->startOfWeek()->startOfDay();
+
+        $endDate = $endDateParam
+            ? Carbon::parse($endDateParam)->endOfDay()
+            : (clone $startDate)->endOfWeek()->endOfDay();
 
         $times = Time::query()
-            ->with('project')
+            ->with(['project', 'category', 'user'])
             ->withMinutes()
-            ->with('category')
-            ->with('user')
             ->whereNotNull('begin_at')
+            ->whereBetween('begin_at', [$startDate, $endDate])
             ->orderBy('begin_at', 'desc')
             ->paginate();
 
-        $groupedByDate = self::groupByDate(collect($times->items()));
+        $times->appends($request->query());
 
-        $times->appends($_GET)->links();
+        $groupedByDate = self::groupByDate(collect($times->items()), true);
 
         return Inertia::render('App/Time/TimeMyWeek', [
-            'times' => TimeData::collect($times),
+            'times'         => TimeData::collect($times),
             'groupedByDate' => $groupedByDate,
         ]);
     }
 
-    public static function groupByDate(Collection $times, $withSum = false): array
+    public static function groupByDate(Collection $times, bool $withSum = false): array
     {
         $groupedEntries = [];
         $sum = 0;
+
+        // Wochentags-Summen initialisieren: 0 (So) bis 6 (Sa)
+        $weekdaySums = array_fill(0, 7, 0);
+
         foreach ($times->groupBy('ts') as $key => $value) {
-            $groupedEntries[$key]['entries'] = $value->sortBy(['begin_at', 'asc']);
-            $groupedEntries[$key]['date'] = Carbon::parse($key);
-            $groupedEntries[$key]['formatedDate'] = Carbon::parse($key)->settings(['locale' => 'de'])->isoFormat('dddd, DD. MMMM YYYY');
-            $groupedEntries[$key]['sum'] = $value->sum('mins');
-            $sum = $sum + $groupedEntries[$key]['sum'];
+            $sorted = $value->sortBy([['begin_at', 'asc']])->values();
+
+            $date = Carbon::parse($key);
+            $dailySum = $value->sum('mins');
+            $weekday = $date->dayOfWeek;
+
+            $groupedEntries[$key] = [
+                'entries'      => $sorted,
+                'date'         => $date->toDateString(),
+                'formatedDate' => $date->locale('de')->isoFormat('dddd, DD. MMMM YYYY'),
+                'sum'          => $dailySum,
+                'weekday'      => $weekday,
+            ];
+
+            $sum += $dailySum;
+            $weekdaySums[$weekday] += $dailySum;
         }
+
         if ($withSum) {
-            return ['entries' => $groupedEntries, 'sum' => $sum];
+            return [
+                'entries'       => $groupedEntries,
+                'sum'           => $sum,
+                'sumByWeekday'  => $weekdaySums, // 0..6 => Minuten pro Wochentag
+            ];
         }
 
         return $groupedEntries;
