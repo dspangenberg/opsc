@@ -91,6 +91,12 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
     )
   },
   {
+    accessorKey: 'time_category_id',
+    header: 'Kat.',
+    size: 30,
+    cell: ({ row }) => <>{row.original.category?.short_name}</>
+  },
+  {
     accessorKey: 'mins',
     header: 'Dauer',
     size: 20,
