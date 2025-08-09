@@ -3,13 +3,6 @@ import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
 import { StatsField } from '@/Components/StatsField'
 import { BorderedBox } from '@/Components/twcui/bordered-box'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/Components/ui/select'
 import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
 import { minutesToHoursExtended } from '@/Lib/DateHelper'
 import type { PageProps } from '@/Types'
@@ -19,8 +12,7 @@ import {
   ArrowLeft01Icon,
   ArrowRight01Icon,
   MoreVerticalCircle01Icon,
-  PrinterIcon,
-  Sorting05Icon
+  PrinterIcon
 } from '@hugeicons/core-free-icons'
 import { router, usePage } from '@inertiajs/react'
 import type * as React from 'react'
@@ -101,7 +93,12 @@ const TimeIndex: React.FC = () => {
 
   const header = useMemo(
     () => (
-      <div className="flex flex-col rounded-t-md py-0">
+      <div className="flex flex-col space-y-3 rounded-t-md py-3">
+        <div className="flex flex-none items-center gap-1 font-bold text-sm">
+          <Button variant="ghost" size="icon" icon={ArrowLeft01Icon} />
+          {week}. KW &mdash; {startDate} - {endDate}
+          <Button variant="ghost" size="icon" icon={ArrowRight01Icon} />
+        </div>
         <BorderedBox className="mx-auto mb-3 flex-none">
           <div className="mx-auto flex justify-center gap-4 divide-y bg-white px-2 py-2.5 lg:divide-x lg:divide-y-0">
             {(() => {
@@ -118,26 +115,9 @@ const TimeIndex: React.FC = () => {
             <StatsField label="Woche" value={minutesToHoursExtended(grouped_times.sum)} />
           </div>
         </BorderedBox>
-
-        <div className="flex flex-none items-center space-x-2 p-2">
-          <div className="group relative min-w-64">
-            <Select>
-              <SelectTrigger id={id} className="bg-white">
-                <SelectValue placeholder="Gespeicherte Views" className="bg-white" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">Abbrechenbare Zeiten</SelectItem>
-                <SelectItem value="2">Next.js</SelectItem>
-                <SelectItem value="3">Astro</SelectItem>
-                <SelectItem value="4">Gatsby</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <Button variant="ghost" size="sm" icon={Sorting05Icon} title="Filter + Sortierung" />
-        </div>
       </div>
     ),
-    [id]
+    [grouped_times.sum, week, startDate, endDate]
   )
 
   const currentRoute = route().current()
@@ -166,18 +146,7 @@ const TimeIndex: React.FC = () => {
       breadcrumbs={breadcrumbs}
       className="flex overflow-hidden"
       toolbar={toolbar}
-      header={
-        <div className="flex flex-1 flex-col gap-2">
-          <div className="flex flex-none items-center gap-1 font-bold text-xl">
-            <Button variant="ghost" size="icon" icon={ArrowLeft01Icon} />
-            <div>Meine Woche</div>
-            <Button variant="ghost" size="icon" icon={ArrowRight01Icon} />
-          </div>
-          <div className="flex flex-none items-center gap-1 font-bold text-sm">
-            {week}. KW &mdash; {startDate} - {endDate}
-          </div>
-        </div>
-      }
+      title="Meine Woche"
     >
       <DataTable
         columns={columns}

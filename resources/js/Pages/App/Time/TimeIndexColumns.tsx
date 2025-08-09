@@ -31,7 +31,7 @@ const handleDeleteClicked = async (row: App.Data.TimeData) => {
 function RowActions({ row }: { row: Row<App.Data.TimeData> }) {
   return (
     <div className="mx-auto">
-      <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon}>
+      <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
         <>
           <MenuItem
             icon={Edit03Icon}
@@ -42,6 +42,7 @@ function RowActions({ row }: { row: Row<App.Data.TimeData> }) {
           />
           <MenuItem
             icon={Delete03Icon}
+            variant="destructive"
             title="Eintrag löschen"
             ellipsis
             onAction={() => handleDeleteClicked(row.original)}
@@ -126,7 +127,7 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
         <Link href="#" className="truncate align-middle hover:underline">
           {row.original.project?.name}
         </Link>
-        <div className="line-clamp-1 font-xs text-foreground/60">{row.original.note}</div>
+        <div className="line-clamp-1 pt-0.5 font-xs text-foreground/60">{row.original.note}</div>
       </>
     )
   },
@@ -139,7 +140,7 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
   {
     accessorKey: 'mins',
     header: 'Dauer',
-    size: 20,
+    size: 30,
     cell: ({ row, getValue }) => (
       <div className="text-right">{minutesToHoursExtended(getValue() as number)}</div>
     )

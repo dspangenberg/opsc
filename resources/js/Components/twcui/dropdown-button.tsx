@@ -1,10 +1,10 @@
-import type * as React from "react"
-import {
-  CheckIcon,
-  ChevronRightIcon,
-  DotFilledIcon,
-} from "@radix-ui/react-icons"
-import type { VariantProps } from "class-variance-authority"
+import { ListBoxCollection, ListBoxSection } from '@/Components/jolly-ui/list-box'
+import { SelectPopover } from '@/Components/jolly-ui/select'
+import { Button, type buttonVariants } from '@/Components/ui/twc-ui/button'
+import { cn } from '@/Lib/utils'
+import { CheckIcon, ChevronRightIcon, DotFilledIcon } from '@radix-ui/react-icons'
+import { type VariantProps, cva } from 'class-variance-authority'
+import type * as React from 'react'
 import {
   Header as AriaHeader,
   Keyboard as AriaKeyboard,
@@ -17,21 +17,10 @@ import {
   Separator as AriaSeparator,
   type SeparatorProps as AriaSeparatorProps,
   SubmenuTrigger as AriaSubmenuTrigger,
-  composeRenderProps,
   type PopoverProps,
-} from "react-aria-components"
-import { HugeiconsIcon } from '@hugeicons/react'
-import { cn } from "@/Lib/utils"
-import { Button, type buttonVariants } from "@/Components/ui/twc-ui/button"
-import { ListBoxCollection, ListBoxSection } from "@/Components/jolly-ui/list-box"
-import { SelectPopover } from "@/Components/jolly-ui/select"
-
-export type IconSvgElement = readonly (readonly [
-  string,
-  {
-    readonly [key: string]: string | number
-  }
-])[]
+  composeRenderProps
+} from 'react-aria-components'
+import { Icon, type IconType } from './icon'
 
 const MenuTrigger = AriaMenuTrigger
 
@@ -44,9 +33,7 @@ const MenuCollection = ListBoxCollection
 function MenuPopover({ className, ...props }: PopoverProps) {
   return (
     <SelectPopover
-      className={composeRenderProps(className, (className) =>
-        cn("w-auto", className)
-      )}
+      className={composeRenderProps(className, className => cn('w-auto', className))}
       {...props}
     />
   )
@@ -55,15 +42,38 @@ function MenuPopover({ className, ...props }: PopoverProps) {
 const Menu = <T extends object>({ className, ...props }: AriaMenuProps<T>) => (
   <AriaMenu
     className={cn(
-      "max-h-[inherit] overflow-auto rounded-md p-1 outline-0 [clip-path:inset(0_0_0_0_round_calc(var(--radius)-2px))]",
+      'max-h-[inherit] overflow-auto rounded-md p-1 outline-0 [clip-path:inset(0_0_0_0_round_calc(var(--radius)-2px))]',
       className
     )}
     {...props}
   />
 )
 
-interface MenuItemProps extends AriaMenuItemProps {
-  icon?: IconSvgElement
+const menuItemVariants = cva(
+  [
+    'relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors',
+    /* Disabled */
+    'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+    /* Selection Mode */
+    'data-[selection-mode]:pl-8'
+  ],
+  {
+    variants: {
+      variant: {
+        default: ['data-[focused]:bg-accent data-[focused]:text-accent-foreground'],
+        destructive: [
+          'data-[focused]:text-destructive data-[focused]:text-destructive-foreground data-[focused]:bg-destructive/10'
+        ]
+      }
+    },
+    defaultVariants: {
+      variant: 'default'
+    }
+  }
+)
+
+interface MenuItemProps extends AriaMenuItemProps, VariantProps<typeof menuItemVariants> {
+  icon?: IconType
   iconClassName?: string
   separator?: boolean
   title?: string
@@ -72,59 +82,53 @@ interface MenuItemProps extends AriaMenuItemProps {
   disabled?: boolean
 }
 
-
-const MenuItem = ({ children, className, icon, disabled, separator = false, shortcut = '', title, ellipsis=false, ...props }: MenuItemProps) => (
+const MenuItem = ({
+  children,
+  className,
+  icon,
+  disabled,
+  separator = false,
+  shortcut = '',
+  title,
+  ellipsis = false,
+  variant,
+  ...props
+}: MenuItemProps) => (
   <>
-  <AriaMenuItem
-    id={props.id}
-    textValue={
-      props.textValue || (typeof children === "string" ? children : undefined)
-    }
-    isDisabled={disabled}
-    className={composeRenderProps(className, (className) =>
-      cn(
-        "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors",
-        /* Disabled */
-        "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-        /* Focused */
-        "data-[focused]:bg-accent data-[focused]:text-accent-foreground ",
-        /* Selection Mode */
-        "data-[selection-mode]:pl-8",
-        className
-      )
-    )}
-    {...props}
-  >
-    {composeRenderProps(children, (children, renderProps) => (
-      <div className='flex flex-1 items-center gap-2'>
-        { icon ? ( <HugeiconsIcon icon={icon} className='size-4 flex-none text-foreground/80' />) : (<span className="size-4" />)}
-        <span className="absolute left-2 flex size-4 items-center justify-center">
-          {renderProps.isSelected && (
-            <>
-              {renderProps.selectionMode === "single" && (
-                <DotFilledIcon className="size-4 fill-current" />
-              )}
-              {renderProps.selectionMode === "multiple" && (
-                <CheckIcon className="size-4" />
-              )}
-            </>
-          )}
-        </span>
+    <AriaMenuItem
+      id={props.id}
+      textValue={props.textValue || (typeof children === 'string' ? children : undefined)}
+      isDisabled={disabled}
+      className={composeRenderProps(className, className =>
+        cn(menuItemVariants({ variant }), className)
+      )}
+      {...props}
+    >
+      {composeRenderProps(children, (children, renderProps) => (
+        <div className="flex flex-1 items-center gap-2">
+          {icon ? <Icon icon={icon} className="size-4 flex-none" /> : <span className="size-4" />}
+          <span className="absolute left-2 flex size-4 items-center justify-center">
+            {renderProps.isSelected && (
+              <>
+                {renderProps.selectionMode === 'single' && (
+                  <DotFilledIcon className="size-4 fill-current" />
+                )}
+                {renderProps.selectionMode === 'multiple' && <CheckIcon className="size-4" />}
+              </>
+            )}
+          </span>
 
-        <span className="flex-1">
-        {title}{!!ellipsis && <span>&hellip;</span>}
-        </span>
+          <span className="flex-1">
+            {title}
+            {!!ellipsis && <span>&hellip;</span>}
+          </span>
 
-        {!!shortcut && (
-          <MenuKeyboard>{shortcut}</MenuKeyboard>
-        )}
+          {!!shortcut && <MenuKeyboard>{shortcut}</MenuKeyboard>}
 
-        {renderProps.hasSubmenu && (
-          <ChevronRightIcon className="ml-auto size-4" />
-        )}
-      </div>
-    ))}
-  </AriaMenuItem>
+          {renderProps.hasSubmenu && <ChevronRightIcon className="ml-auto size-4" />}
+        </div>
+      ))}
+    </AriaMenuItem>
     {!!separator && <MenuSeparator />}
   </>
 )
@@ -134,17 +138,12 @@ interface MenuHeaderProps extends React.ComponentProps<typeof AriaHeader> {
   separator?: boolean
 }
 
-const MenuHeader = ({
-  className,
-  inset,
-  separator = true,
-  ...props
-}: MenuHeaderProps) => (
+const MenuHeader = ({ className, inset, separator = true, ...props }: MenuHeaderProps) => (
   <AriaHeader
     className={cn(
       'px-3 py-1.5 font-semibold text-sm',
-      inset && "pl-8",
-      separator && "-mx-1 mb-1 border-b border-b-border pb-2.5",
+      inset && 'pl-8',
+      separator && '-mx-1 mb-1 border-b border-b-border pb-2.5',
       className
     )}
     {...props}
@@ -152,19 +151,13 @@ const MenuHeader = ({
 )
 
 const MenuSeparator = ({ className, ...props }: AriaSeparatorProps) => (
-  <AriaSeparator
-    className={cn("-mx-1 my-1 h-px bg-muted", className)}
-    {...props}
-  />
+  <AriaSeparator className={cn('-mx-1 my-1 h-px bg-muted', className)} {...props} />
 )
 
-const MenuKeyboard = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof AriaKeyboard>) => {
+const MenuKeyboard = ({ className, ...props }: React.ComponentProps<typeof AriaKeyboard>) => {
   return (
     <AriaKeyboard
-      className={cn("ml-auto text-xs tracking-widest opacity-60", className)}
+      className={cn('ml-auto text-xs tracking-widest opacity-60', className)}
       {...props}
     />
   )
@@ -173,9 +166,9 @@ const MenuKeyboard = ({
 interface DropdownMenuProps<T>
   extends AriaMenuProps<T>,
     VariantProps<typeof buttonVariants>,
-    Omit<AriaMenuTriggerProps, "children"> {
+    Omit<AriaMenuTriggerProps, 'children'> {
   title?: string
-  icon?: IconSvgElement
+  icon?: IconType
   placement?: PopoverProps['placement']
   selectionMode?: AriaMenuProps<T>['selectionMode']
   selectedKeys?: AriaMenuProps<T>['selectedKeys']
@@ -189,14 +182,20 @@ function DropdownButton<T extends object>({
   selectionMode = undefined,
   selectedKeys = undefined,
   onSelectionChange,
-  size,
   ...props
 }: DropdownMenuProps<T>) {
   return (
     <MenuTrigger {...props}>
-      <Button variant={variant} size={size} icon={props.icon} title={title} />
-      <MenuPopover className="min-w-[--trigger-width]" placement={placement} >
-        <Menu selectionMode={selectionMode} selectedKeys={selectedKeys} onSelectionChange={onSelectionChange} {...props}>{children}</Menu>
+      <Button variant={variant} size={props.size} icon={props.icon} title={title} />
+      <MenuPopover className="min-w-[--trigger-width]" placement={placement}>
+        <Menu
+          selectionMode={selectionMode}
+          selectedKeys={selectedKeys}
+          onSelectionChange={onSelectionChange}
+          {...props}
+        >
+          {children}
+        </Menu>
       </MenuPopover>
     </MenuTrigger>
   )
@@ -213,6 +212,6 @@ export {
   MenuSection,
   MenuSubTrigger,
   MenuCollection,
-  DropdownButton,
+  DropdownButton
 }
 export type { MenuHeaderProps, DropdownMenuProps }

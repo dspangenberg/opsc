@@ -101,7 +101,9 @@ export const Button = ({
   if (variant === 'toolbar') {
     tooltip = title
     title = ''
-    size = 'icon'
+    if (!size) {
+      size = 'icon'
+    }
   }
 
   if (!forceTitle && title && !tooltip && ['icon', 'icon-sm', 'icon-xs'].includes(size as string)) {

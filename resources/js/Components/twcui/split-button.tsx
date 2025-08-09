@@ -5,7 +5,7 @@ import {
   ChevronDownIcon,
   DotFilledIcon,
 } from "@radix-ui/react-icons"
-import type { VariantProps } from "class-variance-authority"
+import { cva, type VariantProps } from "class-variance-authority"
 import {
   Header as AriaHeader,
   Keyboard as AriaKeyboard,
@@ -65,7 +65,33 @@ const Menu = <T extends object>({ className, ...props }: AriaMenuProps<T>) => (
   />
 )
 
-interface MenuItemProps extends AriaMenuItemProps {
+const menuItemVariants = cva(
+  [
+    "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors",
+    /* Disabled */
+    "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+    /* Selection Mode */
+    "data-[selection-mode]:pl-8"
+  ],
+  {
+    variants: {
+      variant: {
+        default: [
+          "data-[focused]:bg-accent data-[focused]:text-accent-foreground"
+        ],
+        destructive: [
+          "text-destructive",
+          "data-[focused]:bg-destructive data-[focused]:text-destructive-foreground"
+        ]
+      }
+    },
+    defaultVariants: {
+      variant: "default"
+    }
+  }
+)
+
+interface MenuItemProps extends AriaMenuItemProps, VariantProps<typeof menuItemVariants> {
   icon?: IconSvgElement
   iconClassName?: string
   separator?: boolean
@@ -76,7 +102,7 @@ interface MenuItemProps extends AriaMenuItemProps {
 }
 
 
-const MenuItem = ({ children, className, icon, disabled, separator = false, shortcut = '', title, ellipsis=false, ...props }: MenuItemProps) => (
+const MenuItem = ({ children, className, icon, disabled, separator = false, shortcut = '', title, ellipsis=false, variant, ...props }: MenuItemProps) => (
   <>
   <AriaMenuItem
     id={props.id}
@@ -86,13 +112,7 @@ const MenuItem = ({ children, className, icon, disabled, separator = false, shor
     isDisabled={disabled}
     className={composeRenderProps(className, (className) =>
       cn(
-        "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors",
-        /* Disabled */
-        "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-        /* Focused */
-        "data-[focused]:bg-accent data-[focused]:text-accent-foreground ",
-        /* Selection Mode */
-        "data-[selection-mode]:pl-8",
+        menuItemVariants({ variant }),
         className
       )
     )}

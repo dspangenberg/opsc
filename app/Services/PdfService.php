@@ -94,7 +94,7 @@ class PdfService
 
         $mpdf->WriteHTML($html);
         $mpdf->SetTitle($data['pdf_footer']['title']);
-        $mpdf->SetCreator('twiceware_myra');
+        $mpdf->SetCreator('opsc.cloud');
 
         if ($config['pdfA']) {
             $mpdf->PDFA = true;
