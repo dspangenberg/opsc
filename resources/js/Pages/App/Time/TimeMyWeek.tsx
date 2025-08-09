@@ -16,6 +16,8 @@ import type { PageProps } from '@/Types'
 import { Button, Toolbar, ToolbarButton } from '@dspangenberg/twcui'
 import {
   Add01Icon,
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
   MoreVerticalCircle01Icon,
   PrinterIcon,
   Sorting05Icon
@@ -51,6 +53,9 @@ export interface TimeWeekGrouping {
 
 interface TimeIndexProps extends PageProps {
   times: App.Data.Paginated.PaginationMeta<App.Data.TimeData[]>
+  week: number
+  startDate: string
+  endDate: string
   groupedByDate: TimeWeekGrouping
 }
 
@@ -59,7 +64,7 @@ const TimeIndex: React.FC = () => {
   const grouped_times = usePage<TimeIndexProps>().props.groupedByDate
   const startDate = usePage<TimeIndexProps>().props.startDate
   const endDate = usePage<TimeIndexProps>().props.endDate
-  console.log(startDate)
+  const week = usePage<TimeIndexProps>().props.week
 
   const breadcrumbs = useMemo(
     () => [{ title: 'Zeiterfassung', url: route('app.time.index') }, { title: 'Meine Woche' }],
@@ -99,7 +104,6 @@ const TimeIndex: React.FC = () => {
       <div className="flex flex-col rounded-t-md py-0">
         <BorderedBox className="mx-auto mb-3 flex-none">
           <div className="mx-auto flex justify-center gap-4 divide-y bg-white px-2 py-2.5 lg:divide-x lg:divide-y-0">
-            <StatsField label="Zeitraum" value={`${startDate} - ${endDate}`} />
             {(() => {
               const weekdayOrder = [1, 2, 3, 4, 5, 6, 0] // Mo..So (Carbon: 0=So, 1=Mo, ...)
               const weekdayLabelsDe = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
@@ -162,7 +166,18 @@ const TimeIndex: React.FC = () => {
       breadcrumbs={breadcrumbs}
       className="flex overflow-hidden"
       toolbar={toolbar}
-      title="Meine Woche"
+      header={
+        <div className="flex flex-1 flex-col gap-2">
+          <div className="flex flex-none items-center gap-1 font-bold text-xl">
+            <Button variant="ghost" size="icon" icon={ArrowLeft01Icon} />
+            <div>Meine Woche</div>
+            <Button variant="ghost" size="icon" icon={ArrowRight01Icon} />
+          </div>
+          <div className="flex flex-none items-center gap-1 font-bold text-sm">
+            {week}. KW &mdash; {startDate} - {endDate}
+          </div>
+        </div>
+      }
     >
       <DataTable
         columns={columns}

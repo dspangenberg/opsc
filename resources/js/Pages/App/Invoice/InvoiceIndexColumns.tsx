@@ -13,6 +13,8 @@ const currencyFormatter = new Intl.NumberFormat('de-DE', {
 })
 const mailLink = (mail: string) => `mailto:${mail}`
 
+
+
 export const columns: ColumnDef<App.Data.InvoiceData>[] = [
   {
     id: 'select',

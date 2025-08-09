@@ -42,6 +42,7 @@ class TimeMyWeekIndexController extends Controller
             'groupedByDate' => $groupedByDate,
             'startDate'     => $startDate->locale('de')->isoFormat('DD.MM.YYYY'),
             'endDate'       => $endDate->locale('de')->isoFormat('DD.MM.YYYY'),
+            'week'          => $startDate->locale('de')->weekOfYear,
         ]);
     }
 
