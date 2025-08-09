@@ -3,21 +3,54 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
+import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 import { Checkbox } from '@/Components/ui/checkbox'
+import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
 import { minutesToHoursExtended, parseAndFormatDate } from '@/Lib/DateHelper'
 import { Avatar } from '@dspangenberg/twcui'
-import { Link } from '@inertiajs/react'
-import type { ColumnDef } from '@tanstack/react-table'
+import { Delete03Icon, Edit03Icon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
+import { Link, router } from '@inertiajs/react'
+import type { ColumnDef, Row } from '@tanstack/react-table'
 
 const editUrl = (row: App.Data.TimeData) => {
   return row.id ? route('app.time.edit', { id: row.id }) : '#'
 }
 
-const currencyFormatter = new Intl.NumberFormat('de-DE', {
-  style: 'decimal',
-  minimumFractionDigits: 2
-})
-const mailLink = (mail: string) => `mailto:${mail}`
+const handleDeleteClicked = async (row: App.Data.TimeData) => {
+  const promise = await AlertDialog.call({
+    title: 'Löschen bestätigen',
+    message: 'Möchtest Du den Eintrag wirklich löschen?',
+    buttonTitle: 'Eintrag löschen',
+    variant: 'destructive'
+  })
+  if (promise) {
+    router.delete(route('app.times.delete', { id: row.id }))
+  }
+}
+
+function RowActions({ row }: { row: Row<App.Data.TimeData> }) {
+  return (
+    <div className="mx-auto">
+      <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon}>
+        <>
+          <MenuItem
+            icon={Edit03Icon}
+            title="Eintrag bearbeiten"
+            ellipsis
+            separator
+            href={editUrl(row.original)}
+          />
+          <MenuItem
+            icon={Delete03Icon}
+            title="Eintrag löschen"
+            ellipsis
+            onAction={() => handleDeleteClicked(row.original)}
+          />
+        </>
+      </DropdownButton>
+    </div>
+  )
+}
 
 export const columns: ColumnDef<App.Data.TimeData>[] = [
   {
@@ -63,7 +96,14 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
     accessorKey: 'date',
     header: 'Datum',
     size: 40,
-    cell: ({ row, getValue }) => <Link href={editUrl(row.original)}>{getValue() as string}</Link>
+    cell: ({ row, getValue }) => (
+      <Link
+        className="truncate align-middle font-medium hover:underline"
+        href={editUrl(row.original)}
+      >
+        {getValue() as string}
+      </Link>
+    )
   },
   {
     accessorKey: 'begin_at',
@@ -103,5 +143,12 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
     cell: ({ row, getValue }) => (
       <div className="text-right">{minutesToHoursExtended(getValue() as number)}</div>
     )
+  },
+  {
+    id: 'actions',
+    size: 30,
+    header: () => <span className="sr-only">Actions</span>,
+    cell: ({ row }) => <RowActions row={row} />,
+    enableHiding: false
   }
 ]

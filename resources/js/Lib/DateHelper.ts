@@ -17,6 +17,10 @@ export const parseAndFormatDate = (date: string, formatString = 'dd.MM.yyyy') =>
   return format(parsedDate, formatString)
 }
 
+export const formatDate = (date: Date, formatString = 'dd.MM.yyyy') => {
+  return format(date, formatString)
+}
+
 export const parseDate = (date: string, formatString = 'dd.MM.yyyy') => {
   let parsedDate: Date
   if (date.length === 10) {

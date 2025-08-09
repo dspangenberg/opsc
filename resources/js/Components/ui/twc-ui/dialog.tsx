@@ -118,7 +118,7 @@ export const DialogContent = ({
 export const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      '!bg-muted flex flex-col items-center justify-center gap-0 rounded-t-lg px-4 text-center sm:text-left',
+      '!bg-muted/80 flex flex-col items-center justify-center gap-0 rounded-t-lg px-4 text-center sm:text-left',
       className
     )}
     {...props}
@@ -128,7 +128,7 @@ export const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLD
 export const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      '!bg-muted flex flex-col-reverse rounded-b-lg px-4 py-3 sm:flex-row sm:justify-end sm:space-x-2',
+      '!bg-muted/40 flex flex-col-reverse rounded-b-lg px-4 py-4 sm:flex-row sm:justify-end sm:space-x-2',
       className
     )}
     {...props}
@@ -222,7 +222,7 @@ export const Dialog: React.FC<DialogProps> = ({
     page: 'bg-page-content'
   }[background]
 
-  const bodyClass = bodyPadding ? 'px-6' : ''
+  const bodyClass = bodyPadding ? 'px-4' : ''
 
   const widthClass = {
     default: 'max-w-xl',
@@ -349,7 +349,7 @@ export const Dialog: React.FC<DialogProps> = ({
               {!!footer && (
                 <DialogFooter
                   className={cn(
-                    'flex items-center justify-end space-x-2 px-6 py-3',
+                    'flex items-center justify-end space-x-2 px-4 py-3',
                     footerClassName,
                     bgClass
                   )}

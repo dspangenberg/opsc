@@ -7,7 +7,9 @@ import { Form, useForm } from '@/Components/ui/twc-ui/form'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 import { Select } from '@/Components/ui/twc-ui/select'
 import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { formatDate } from '@/Lib/DateHelper'
 import type { PageProps } from '@/Types'
+import { Clock05Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useState } from 'react'
@@ -41,6 +43,11 @@ const TimeCreate: React.FC<Props> = ({ time, projects, categories, users }) => {
     router.visit(route('app.time.index'))
   }
 
+  const handleClockClicked = (field: keyof App.Data.TimeData) => {
+    const now = formatDate(new Date(), 'dd.MM.yyyy HH:mm')
+    form.updateAndValidateWithoutEvent(field, now)
+  }
+
   return (
     <Dialog
       isOpen={isOpen}
@@ -48,23 +55,40 @@ const TimeCreate: React.FC<Props> = ({ time, projects, categories, users }) => {
       title={title}
       confirmClose={form.isDirty}
       footer={dialogRenderProps => (
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={dialogRenderProps.close}>
-            Abbrechen
-          </Button>
-          <Button variant="default" form={form.id} type="submit">
-            Speichern
-          </Button>
+        <div className="mx-0 flex w-full gap-2">
+          <div className="flex flex-1 justify-start" />
+          <div className="flex flex-none gap-2">
+            <Button variant="outline" onClick={dialogRenderProps.close}>
+              Abbrechen
+            </Button>
+            <Button variant="default" form={form.id} type="submit">
+              Speichern
+            </Button>
+          </div>
         </div>
       )}
     >
       <Form form={form} onSubmitted={handleClose}>
         <FormGroup>
-          <div className="col-span-8">
+          <div className="col-span-10 flex items-end gap-2">
             <DateTimeField autoFocus label="Start" {...form.register('begin_at')} />
+            <Button
+              icon={Clock05Icon}
+              variant="ghost"
+              size="icon"
+              onClick={() => handleClockClicked('begin_at')}
+              tooltip="Aktuelle Uhrzeit übernehmen"
+            />
           </div>
-          <div className="col-span-8">
+          <div className="col-span-10 flex items-end gap-2">
             <DateTimeField label="Ende" {...form.register('end_at')} />
+            <Button
+              icon={Clock05Icon}
+              variant="ghost"
+              size="icon"
+              onClick={() => handleClockClicked('end_at')}
+              tooltip="Aktuelle Uhrzeit übernehmen"
+            />
           </div>
           <div className="col-span-24">
             <TextField label="Notizen" textArea rows={2} {...form.register('note')} />

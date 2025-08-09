@@ -1,13 +1,13 @@
-import { cva, type VariantProps } from 'class-variance-authority'
+import { cn } from '@/Lib/utils'
+import { type VariantProps, cva } from 'class-variance-authority'
 import { LoaderCircleIcon } from 'lucide-react'
 import type { JSX } from 'react'
 import {
   Button as AriaButton,
   type ButtonProps as AriaButtonProps,
-  composeRenderProps,
-  type TooltipProps
+  type TooltipProps,
+  composeRenderProps
 } from 'react-aria-components'
-import { cn } from '@/Lib/utils'
 import { Icon, type IconType } from './icon'
 import { Tooltip, TooltipTrigger } from './tooltip'
 
@@ -35,6 +35,8 @@ const buttonVariants = cva(
           'bg-secondary/90 text-secondary-foreground border-transparent border focus-visible:border-input focus-visible:border data-[hovered]:bg-secondary/20 pressed:ring-ring/50',
         ghost:
           'data-[hovered]:bg-accent data-[hovered]:text-accent-foreground focus-visible:border border border-transparent focus-visible:border-input focus-visible:ring-ring/20 pressed:ring-ring/50 text-sm',
+        'ghost-destructive':
+          'data-[hovered]:bg-accent data-[hovered]:text-destructive-foreground focus-visible:border border border-transparent focus-visible:border-input focus-visible:ring-ring/20 pressed:ring-ring/50 text-sm',
         link: 'text-primary underline-offset-4 data-[hovered]:underline',
         toolbar:
           'data-[hovered]:bg-accent data-[hovered]:text-accent-foreground pressed:ring-ring/50 active:ring-ring/50 focus-visible:border focus-visible:border-primary focus-visible:ring-ring/20  text-sm',
@@ -147,11 +149,15 @@ export const Button = ({
               <Icon
                 aria-label={title || tooltip}
                 icon={icon}
-                className={cn(disabled ? 'text-muted-foreground' : '', iconSizeClass, iconClassName)}
+                className={cn(
+                  disabled ? 'text-muted-foreground' : '',
+                  iconSizeClass,
+                  iconClassName
+                )}
               />
             )
           ) : (
-            <LoaderCircleIcon className={cn('animate-spin', iconSizeClass)}  />
+            <LoaderCircleIcon className={cn('animate-spin', iconSizeClass)} />
           )}
           {(title || children) && variant !== 'toolbar' && (
             <div className={cn(isToolbar ? 'hidden md:flex' : '')}>{title || children}</div>

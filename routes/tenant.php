@@ -31,6 +31,7 @@ use App\Http\Controllers\App\Invoice\InvoicePdfDownloadController;
 use App\Http\Controllers\App\Invoice\InvoiceReleaseController;
 use App\Http\Controllers\App\Invoice\InvoiceUnreleaseController;
 use App\Http\Controllers\App\Time\TimeCreateController;
+use App\Http\Controllers\App\Time\TimeDeleteController;
 use App\Http\Controllers\App\Time\TimeEditController;
 use App\Http\Controllers\App\Time\TimeIndexController;
 use App\Http\Controllers\App\Time\TimeMyWeekIndexController;
@@ -93,8 +94,13 @@ Route::middleware([
         ->middleware([HandlePrecognitiveRequests::class])
         ->name('app.time.update');
 
+    Route::delete('times/{time}',
+        TimeDeleteController::class)->name('app.times.delete');
+
+
     Route::get('contacts/{contact}',
         ContactDetailsController::class)->name('app.contact.details');
+
 
     Route::get('contacts/{contact}/{address}/edit',
         ContactEditAddressController::class)->name('app.contact.edit.address');
