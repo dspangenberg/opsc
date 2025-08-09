@@ -66,7 +66,7 @@ export const PageContainer: React.FC<PageContainerProps> = ({
         header
       )
     }
-    return <span className="font-bold text-2xl">{title}</span>
+    return <div className="font-bold text-xl">{title}</div>
   }, [header, title])
 
   return (
@@ -77,16 +77,15 @@ export const PageContainer: React.FC<PageContainerProps> = ({
         <div className="z-10 flex-none rounded-t-xl border-border/50 border-y bg-background">
           <LayoutContainer className={cn('px-4', tabs ? 'py-0' : '', headerClassname)}>
             <div className="flex flex-1 flex-col">
-              <div className={cn('flex flex-1 justify-between ', tabs ? 'pt-3' : 'py-3')}>
-                <div className="flex h-fit flex-1 items-stretch py-3">{headerContent}</div>
-                {toolbar && (
-                  <div className="h-fit flex-none items-end justify-end py-3">{toolbar}</div>
-                )}
+              <div className={cn('flex flex-1 justify-between ')}>
+                <div
+                  className={cn('flex flex-1 items-center justify-stretch', tabs ? 'py-3' : 'py-6')}
+                >
+                  {headerContent}
+                </div>
+                {toolbar && <div className="flex-none items-end justify-end py-6">{toolbar}</div>}
               </div>
-
-              <div className="flex flex-1 items-center">
-                <div>{tabs && tabs}</div>
-              </div>
+              {tabs && <div className="flex flex-1 items-center">{tabs}</div>}
             </div>
           </LayoutContainer>
         </div>

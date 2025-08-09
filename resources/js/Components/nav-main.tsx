@@ -52,46 +52,51 @@ export function NavMain({
     <SidebarGroup {...props}>
       <SidebarGroupContent>
         <SidebarMenu>
-          {items.map(item => (
-            <Collapsible key={item.title} asChild open={isPathActive(item)}>
-              <SidebarMenuItem className={item.hasSep ? 'mb-3' : ''}>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton asChild tooltip={item.title} isActive={isPathActive(item)}>
-                    <Link href={item.url}>
-                      <HugeiconsIcon
-                        icon={item.icon}
-                        size={24}
-                        color="currentColor"
-                        className="size-5! text-sidebar-foreground!"
-                      />
-                      <span className="text-base">{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
-                {item.items?.length ? (
-                  <>
-                    <CollapsibleContent>
-                      <SidebarMenuSub className="block">
-                        {item.items.map(subItem => (
-                          <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton
-                              asChild
-                              className="ml-1"
-                              isActive={isPathActive(subItem)}
-                            >
-                              <Link href={subItem.url}>
-                                <span>{subItem.title}</span>
-                              </Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  </>
-                ) : null}
-              </SidebarMenuItem>
-            </Collapsible>
-          ))}
+          {items.map(item => {
+            // Für Collapsible: Hauptelement oder eines seiner Sub-Items ist aktiv
+            const isItemOrChildActive = isPathActive(item, false, item.items)
+
+            return (
+              <Collapsible key={item.title} asChild open={isItemOrChildActive}>
+                <SidebarMenuItem className={item.hasSep ? 'mb-3' : ''}>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton asChild tooltip={item.title} isActive={isPathActive(item)}>
+                      <Link href={item.url}>
+                        <HugeiconsIcon
+                          icon={item.icon}
+                          size={24}
+                          color="currentColor"
+                          className="size-5! text-sidebar-foreground!"
+                        />
+                        <span className="text-base">{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  {item.items?.length ? (
+                    <>
+                      <CollapsibleContent>
+                        <SidebarMenuSub className="block">
+                          {item.items.map(subItem => (
+                            <SidebarMenuSubItem key={subItem.title}>
+                              <SidebarMenuSubButton
+                                asChild
+                                className="ml-1"
+                                isActive={isPathActive(subItem)}
+                              >
+                                <Link href={subItem.url}>
+                                  <span>{subItem.title}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </>
+                  ) : null}
+                </SidebarMenuItem>
+              </Collapsible>
+            )
+          })}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

@@ -52,15 +52,15 @@ const data = {
     },
     {
       title: 'Zeiterfassung',
-      url: route('app.time.my-week', {}, false),
+      url: route('app.time.my-week', { _query: { view: 'my-week' } }, false),
       icon: TimeScheduleIcon,
       activePath: '/app/times',
       hasSep: false,
       items: [
         {
           title: 'Meine Woche',
-          url: route('app.time.my-week', {}, false),
-          activePath: '/app/times/my-week'
+          url: route('app.time.my-week', { _query: { view: 'my-week' } }, false),
+          activePath: '/app/times/my-week?view=my-week'
         },
         {
           title: 'Alle Zeiten',

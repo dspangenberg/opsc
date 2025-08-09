@@ -3,14 +3,16 @@ import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
 import { StatsField } from '@/Components/StatsField'
 import { BorderedBox } from '@/Components/twcui/bordered-box'
+import { Button } from '@/Components/ui/twc-ui/button'
 import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
-import { minutesToHoursExtended } from '@/Lib/DateHelper'
+import { getNextWeek, getPrevWeek, minutesToHoursExtended } from '@/Lib/DateHelper'
 import type { PageProps } from '@/Types'
-import { Button, Toolbar, ToolbarButton } from '@dspangenberg/twcui'
+import { Toolbar, ToolbarButton } from '@dspangenberg/twcui'
 import {
   Add01Icon,
   ArrowLeft01Icon,
   ArrowRight01Icon,
+  Calendar01Icon,
   MoreVerticalCircle01Icon,
   PrinterIcon
 } from '@hugeicons/core-free-icons'
@@ -89,15 +91,72 @@ const TimeIndex: React.FC = () => {
     []
   )
 
+  const handlePrevWeekClicked = () => {
+    const date = getPrevWeek(startDate)
+    router.get(
+      route('app.time.my-week', {
+        _query: {
+          view: 'my-week',
+          start_date: date
+        }
+      })
+    )
+  }
+
+  const handleNextWeekClicked = () => {
+    const date = getNextWeek(startDate)
+    router.get(
+      route('app.time.my-week', {
+        _query: {
+          view: 'my-week',
+          start_date: date
+        }
+      })
+    )
+  }
+
+  const handleCurrentWeekClicked = () => {
+    router.get(
+      route('app.time.my-week', {
+        _query: { view: 'my-week' }
+      })
+    )
+  }
+
+  const isNextWeekDisabled = useMemo(() => {
+    const date = getNextWeek(startDate, false)
+    return date > new Date()
+  }, [startDate])
+
   const id = useId()
 
   const header = useMemo(
     () => (
       <div className="flex flex-col space-y-3 rounded-t-md py-3">
         <div className="flex flex-none items-center gap-1 font-bold text-sm">
-          <Button variant="ghost" size="icon" icon={ArrowLeft01Icon} />
+          <Button
+            variant="ghost"
+            size="icon"
+            tooltip="Vorherige Woche"
+            icon={ArrowLeft01Icon}
+            onClick={handlePrevWeekClicked}
+          />
           {week}. KW &mdash; {startDate} - {endDate}
-          <Button variant="ghost" size="icon" icon={ArrowRight01Icon} />
+          <Button
+            variant="ghost"
+            size="icon"
+            icon={ArrowRight01Icon}
+            tooltip="Nächste Woche"
+            onClick={handleNextWeekClicked}
+            disabled={isNextWeekDisabled}
+          />
+          <Button
+            variant="ghost"
+            size="icon"
+            icon={Calendar01Icon}
+            tooltip="Aktuelle Woche"
+            onClick={handleCurrentWeekClicked}
+          />
         </div>
         <BorderedBox className="mx-auto mb-3 flex-none">
           <div className="mx-auto flex justify-center gap-4 divide-y bg-white px-2 py-2.5 lg:divide-x lg:divide-y-0">
@@ -117,7 +176,7 @@ const TimeIndex: React.FC = () => {
         </BorderedBox>
       </div>
     ),
-    [grouped_times.sum, week, startDate, endDate]
+    [grouped_times.sum, week, startDate, endDate, isNextWeekDisabled]
   )
 
   const currentRoute = route().current()

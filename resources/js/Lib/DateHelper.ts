@@ -21,6 +21,21 @@ export const formatDate = (date: Date, formatString = 'dd.MM.yyyy') => {
   return format(date, formatString)
 }
 
+export const getNextWeek = (date: string, asString = true) => {
+  const parsedDate = parse(date, 'dd.MM.yyyy', new Date())
+  parsedDate.setDate(parsedDate.getDate() + 7)
+  if (asString) {
+    return format(parsedDate, 'dd.MM.yyyy')
+  }
+  return parsedDate
+}
+
+export const getPrevWeek = (date: string) => {
+  const parsedDate = parse(date, 'dd.MM.yyyy', new Date())
+  parsedDate.setDate(parsedDate.getDate() - 7)
+  return format(parsedDate, 'dd.MM.yyyy')
+}
+
 export const parseDate = (date: string, formatString = 'dd.MM.yyyy') => {
   let parsedDate: Date
   if (date.length === 10) {
