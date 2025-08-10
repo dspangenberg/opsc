@@ -1,26 +1,26 @@
 import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
-import { Pagination } from '@/Components/Pagination'
 import { StatsField } from '@/Components/StatsField'
 import { BorderedBox } from '@/Components/twcui/bordered-box'
+import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/twc-ui/button'
-import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
+import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { getNextWeek, getPrevWeek, minutesToHoursExtended } from '@/Lib/DateHelper'
 import type { PageProps } from '@/Types'
-import { Toolbar, ToolbarButton } from '@dspangenberg/twcui'
+
 import {
   Add01Icon,
   ArrowLeft01Icon,
   ArrowRight01Icon,
   Calendar01Icon,
-  MoreVerticalCircle01Icon,
+  CoinsEuroIcon,
   PrinterIcon
 } from '@hugeicons/core-free-icons'
 import { router, usePage } from '@inertiajs/react'
+import { sumBy } from 'lodash'
 import type * as React from 'react'
-import { useId, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { columns } from './TimeIndexColumns'
-
 export interface TimeGroupedEntries {
   entries: {
     [key: number]: App.Data.TimeData[]
@@ -46,7 +46,7 @@ export interface TimeWeekGrouping {
 }
 
 interface TimeIndexProps extends PageProps {
-  times: App.Data.Paginated.PaginationMeta<App.Data.TimeData[]>
+  times: App.Data.TimeData[]
   week: number
   startDate: string
   endDate: string
@@ -59,6 +59,10 @@ const TimeIndex: React.FC = () => {
   const startDate = usePage<TimeIndexProps>().props.startDate
   const endDate = usePage<TimeIndexProps>().props.endDate
   const week = usePage<TimeIndexProps>().props.week
+
+  const [selectedRows, setSelectedRows] = useState<App.Data.TimeData[]>([])
+  const [showFilter, setShowFilter] = useState<boolean>(false)
+  const selectedMins = useMemo(() => sumBy(selectedRows, 'mins'), [selectedRows])
 
   const breadcrumbs = useMemo(
     () => [{ title: 'Zeiterfassung', url: route('app.time.index') }, { title: 'Meine Woche' }],
@@ -77,19 +81,35 @@ const TimeIndex: React.FC = () => {
 
   const toolbar = useMemo(
     () => (
-      <Toolbar className="border-0 bg-background shadow-none">
-        <ToolbarButton
-          variant="default"
+      <Toolbar>
+        <Button
+          variant="toolbar-default"
           icon={Add01Icon}
           title="Eintrag hinzufügen"
-          onClick={handleTimeCreateClicked}
+          onPress={handleTimeCreateClicked}
         />
-        <ToolbarButton icon={PrinterIcon} />
-        <ToolbarButton icon={MoreVerticalCircle01Icon} />
+        <Button variant="toolbar" icon={PrinterIcon} title="Drucken" disabled={true} />
       </Toolbar>
     ),
     []
   )
+
+  const actionBar = useMemo(() => {
+    return (
+      <Toolbar variant="secondary" className="items-center px-4 pt-2">
+        <div className="self-center text-sm">
+          <Badge variant="outline" className="mr-1.5 bg-background">
+            {selectedRows.length}
+          </Badge>
+          ausgewählte Datensätze
+        </div>
+        <Button variant="ghost" size="auto" icon={CoinsEuroIcon} title="abrechnen" />
+        <div className="flex-1 pr-16 text-right font-medium text-sm">
+          {minutesToHoursExtended(selectedMins)}
+        </div>
+      </Toolbar>
+    )
+  }, [selectedMins, selectedRows.length])
 
   const handlePrevWeekClicked = () => {
     const date = getPrevWeek(startDate)
@@ -127,8 +147,6 @@ const TimeIndex: React.FC = () => {
     const date = getNextWeek(startDate, false)
     return date > new Date()
   }, [startDate])
-
-  const id = useId()
 
   const header = useMemo(
     () => (
@@ -179,26 +197,6 @@ const TimeIndex: React.FC = () => {
     [grouped_times.sum, week, startDate, endDate, isNextWeekDisabled]
   )
 
-  const currentRoute = route().current()
-
-  const tabs = useMemo(
-    () => (
-      <Tabs variant="underlined" defaultSelectedKey={currentRoute}>
-        <TabList aria-label="Ansicht">
-          <Tab id="app.time.my-week" href={route('app.time.my-week', {}, false)}>
-            Meine Woche
-          </Tab>
-          <Tab id="app.time.index" href={route('app.time.index')}>
-            Alle Zeiten
-          </Tab>
-        </TabList>
-      </Tabs>
-    ),
-    [currentRoute]
-  )
-
-  const footer = useMemo(() => <Pagination data={times} />, [times])
-
   return (
     <PageContainer
       width="7xl"
@@ -209,8 +207,9 @@ const TimeIndex: React.FC = () => {
     >
       <DataTable
         columns={columns}
-        data={times.data}
-        footer={footer}
+        data={times}
+        actionBar={actionBar}
+        onSelectedRowsChange={setSelectedRows}
         header={header}
         itemName="Zeiten"
       />

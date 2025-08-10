@@ -18,6 +18,8 @@ class TimeStoreRequest extends FormRequest
             'time_category_id' => ['required', 'exists:time_categories,id'],
             'user_id' => ['required', 'exists:users,id'],
             'note' => ['nullable'],
+            'is_billable' => ['required', 'boolean'],
+            'is_locked' => ['required', 'boolean'],
             'begin_at' => ['required', 'date', 'date_format:d.m.Y H:i'],
             'end_at' => [
                 'nullable',

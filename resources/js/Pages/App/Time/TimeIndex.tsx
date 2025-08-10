@@ -47,6 +47,7 @@ const TimeIndex: React.FC = () => {
   const grouped_times = usePage<TimeIndexProps>().props.groupedByDate
   const [selectedRows, setSelectedRows] = useState<App.Data.TimeData[]>([])
   const [showFilter, setShowFilter] = useState<boolean>(false)
+  const selectedMins = useMemo(() => sumBy(selectedRows, 'mins'), [selectedRows])
 
   const breadcrumbs = useMemo(() => [{ title: 'Zeiterfassung' }], [])
   const handleTimeCreateClicked = () => {
@@ -99,7 +100,6 @@ const TimeIndex: React.FC = () => {
   )
 
   // Derive total selected minutes from selectedRows
-  const selectedMins = useMemo(() => sumBy(selectedRows, 'mins'), [selectedRows])
 
   const actionBar = useMemo(() => {
     return (

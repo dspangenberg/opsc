@@ -90,7 +90,7 @@ Route::middleware([
 
     Route::get('times/{time}/edit', TimeEditController::class)->name('app.time.edit');
 
-    Route::put('times/store/{time}', TimeUpateController::class)
+    Route::put('times/{time}', TimeUpateController::class)
         ->middleware([HandlePrecognitiveRequests::class])
         ->name('app.time.update');
 

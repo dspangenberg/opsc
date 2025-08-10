@@ -31,11 +31,10 @@ class TimeMyWeekIndexController extends Controller
             ->whereNotNull('begin_at')
             ->whereBetween('begin_at', [$startDate, $endDate])
             ->orderBy('begin_at', 'desc')
-            ->paginate();
+            ->get();
 
-        $times->appends($request->query());
 
-        $groupedByDate = self::groupByDate(collect($times->items()), true);
+        $groupedByDate = self::groupByDate(collect($times), true);
 
         return Inertia::render('App/Time/TimeMyWeek', [
             'times'         => TimeData::collect($times),

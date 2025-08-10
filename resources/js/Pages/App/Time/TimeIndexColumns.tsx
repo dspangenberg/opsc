@@ -4,11 +4,18 @@
  */
 
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
+import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
 import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
+import { Icon } from '@/Components/ui/twc-ui/icon'
 import { minutesToHoursExtended, parseAndFormatDate } from '@/Lib/DateHelper'
 import { Avatar } from '@dspangenberg/twcui'
-import { Delete03Icon, Edit03Icon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
+import {
+  Delete03Icon,
+  Edit03Icon,
+  EuroIcon,
+  MoreVerticalCircle01Icon
+} from '@hugeicons/core-free-icons'
 import { Link, router } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
 
@@ -83,13 +90,18 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
     header: '',
     size: 20,
     cell: ({ row }) => (
-      <div className="flex items-center">
+      <div className="relative flex items-center">
         <Avatar
           initials={row.original.user?.initials}
           fullname={row.original.user?.full_name}
           src={row.original.user?.avatar_url as unknown as string}
-          size="sm"
+          size="md"
         />
+        {row.original.is_billable && (
+          <div className="-bottom-1 -right-1 absolute flex size-5 items-center justify-center rounded-full border-2 border-white bg-green-300 ">
+            <Icon icon={EuroIcon} className="size-3 text-green-800" strokeWidth={2} />
+          </div>
+        )}
       </div>
     )
   },
@@ -120,22 +132,19 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
   },
   {
     accessorKey: 'project_id',
-    header: 'Projekt',
+    header: 'Projekt / Notizen',
     size: 300,
     cell: ({ getValue, row }) => (
       <>
         <Link href="#" className="truncate align-middle hover:underline">
           {row.original.project?.name}
-        </Link>
+        </Link>{' '}
+        <Badge variant="outline" className="ml-1">
+          {row.original.category?.short_name}
+        </Badge>
         <div className="line-clamp-1 pt-0.5 font-xs text-foreground/60">{row.original.note}</div>
       </>
     )
-  },
-  {
-    accessorKey: 'time_category_id',
-    header: 'Kat.',
-    size: 30,
-    cell: ({ row }) => <>{row.original.category?.short_name}</>
   },
   {
     accessorKey: 'mins',

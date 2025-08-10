@@ -29,7 +29,7 @@ const TimeCreate: React.FC<Props> = ({ time, projects, categories, users }) => {
     'form-contact-edit-address',
     time.id ? 'put' : 'post',
     route(time.id ? 'app.time.update' : 'app.time.store', {
-      time
+      id: time.id
     }),
     time
   )
