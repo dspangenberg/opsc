@@ -176,6 +176,23 @@ class Time extends Model
         return $date->format('d.m.Y H:i');
     }
 
+    public function scopeStartsAfter(Builder $query, $date): Builder
+    {
+        dump(Carbon::parse($date));
+        return $query->where('begin_at', '>=', Carbon::parse($date));
+    }
+
+    public function scopeStartsBetween(Builder $query, $from, $to): Builder
+    {
+        return $query->whereBetween('begin_at', [Carbon::parse($from), Carbon::parse($to)]);
+    }
+
+    public function scopeEndsBefore(Builder $query, $date): Builder
+    {
+        return $query->where('end_at', '=>=', Carbon::parse($date));
+    }
+
+
     protected function casts(): array
     {
         return [

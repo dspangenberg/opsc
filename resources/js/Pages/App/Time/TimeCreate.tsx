@@ -96,7 +96,11 @@ const TimeCreate: React.FC<Props> = ({ time, projects, categories, users }) => {
               <Checkbox {...form.registerCheckbox('is_billable')} className="pt-1.5">
                 abrechenbar
               </Checkbox>
-              <Checkbox {...form.registerCheckbox('is_locked')} className="pt-1.5">
+              <Checkbox
+                {...form.registerCheckbox('is_locked')}
+                className="pt-1.5"
+                isDisabled={!form.data.is_billable}
+              >
                 gesperrt
               </Checkbox>
             </div>

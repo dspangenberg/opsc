@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@cgarciagarcia/react-query-builder':
+        specifier: ^1.18.3
+        version: 1.18.3
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -520,6 +523,9 @@ packages:
 
   '@bundled-es-modules/tough-cookie@0.1.6':
     resolution: {integrity: sha512-dvMHbL464C0zI+Yqxbz6kZ5TOEp7GLW+pry/RWndAR8MJQAXZ2rPmIs8tziTZjeIyhSNZgZbCePtfSbdWqStJw==}
+
+  '@cgarciagarcia/react-query-builder@1.18.3':
+    resolution: {integrity: sha512-nGJ6YpFwJWxlp+Yie16mLlTnjZPuneq4iwt9CnYCA8dp7kgGog5IFtE2IeSHPtFNO8Z5SicLCammJAWcrMGKTg==}
 
   '@csstools/color-helpers@5.0.2':
     resolution: {integrity: sha512-JqWH1vsgdGcw2RR6VliXXdA0/59LttzlU8UlRT/iUUsEeWfYq8I+K0yhihEUTTHLRm1EXvpsCx3083EU15ecsA==}
@@ -5584,6 +5590,11 @@ snapshots:
     dependencies:
       '@types/tough-cookie': 4.0.5
       tough-cookie: 4.1.4
+
+  '@cgarciagarcia/react-query-builder@1.18.3':
+    dependencies:
+      lodash: 4.17.21
+      react: 18.3.1
 
   '@csstools/color-helpers@5.0.2': {}
 

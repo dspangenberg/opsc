@@ -116,7 +116,7 @@ export const Form = <T extends FormSchema>({
 export const useFormContext = <T extends FormSchema = FormSchema>() => {
   const context = useContext(FormContext)
   if (context === null) {
-    throw new Error('useFormContext must be used within a Form component')
+    return null
   }
   return context as ExtendedForm<T> & {
     hideColonInLabels?: boolean

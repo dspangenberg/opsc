@@ -7,19 +7,30 @@
 
 namespace App\Http\Controllers\App\Time;
 
+use App\Data\ProjectData;
 use App\Data\TimeData;
 use App\Http\Controllers\Controller;
+use App\Models\Project;
 use App\Models\Time;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class TimeIndexController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $times = Time::query()
+        // filter[starts_between]=01.01.2024,31.01.2024&filter[project_id]=7
+
+        $times = QueryBuilder::for(Time::class)
+            ->allowedFilters([
+                AllowedFilter::exact('project_id'),
+                AllowedFilter::scope('starts_after'),
+                AllowedFilter::scope('starts_between'),
+            ])
             ->with('project')
             ->withMinutes()
             ->with('category')
@@ -28,13 +39,23 @@ class TimeIndexController extends Controller
             ->orderBy('begin_at', 'desc')
             ->paginate();
 
+        $projectIds = Time::query()->distinct()->pluck('project_id');
+        $projects = Project::query()->whereIn('id', $projectIds)->orderBy('name')->get();
+
         $groupedByDate = self::groupByDate(collect($times->items()));
 
         $times->appends($_GET)->links();
 
+        // Aktuelle Filter extrahieren
+        $currentFilters = [
+            'project_id' => $request->input('filter.project_id', 0),
+        ];
+
         return Inertia::render('App/Time/TimeIndex', [
             'times' => TimeData::collect($times),
             'groupedByDate' => $groupedByDate,
+            'projects' => ProjectData::collect($projects),
+            'currentFilters' => $currentFilters, // Aktuelle Filter hinzufügen
         ]);
     }
 

@@ -98,7 +98,7 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
           size="md"
         />
         {row.original.is_billable && (
-          <div className="-bottom-1 -right-1 absolute flex size-5 items-center justify-center rounded-full border-2 border-white bg-green-300 ">
+          <div className="-bottom-1 -right-1 absolute flex size-5 items-center justify-center rounded-full border-2 border-background bg-green-300 ">
             <Icon icon={EuroIcon} className="size-3 text-green-800" strokeWidth={2} />
           </div>
         )}

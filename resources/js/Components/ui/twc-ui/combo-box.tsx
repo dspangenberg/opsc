@@ -1,3 +1,4 @@
+import { cn } from '@/Lib/utils'
 import { ChevronsUpDown } from 'lucide-react'
 import type React from 'react'
 import { useCallback, useMemo, useState } from 'react'
@@ -11,20 +12,14 @@ import {
   type ListBoxProps as AriaListBoxProps,
   type PopoverProps as AriaPopoverProps,
   type ValidationResult as AriaValidationResult,
-  composeRenderProps,
   Text,
-} from "react-aria-components"
+  composeRenderProps
+} from 'react-aria-components'
+import { Button } from './button'
+import { BaseFieldError, FieldError, FieldGroup, Label } from './field'
 import { useFormContext } from './form'
-import { cn } from "@/Lib/utils"
-import { Button } from "./button"
-import { FieldError, FieldGroup, Label } from "./field"
-import {
-  ListBoxCollection,
-  ListBoxHeader,
-  ListBoxItem,
-  ListBoxSection,
-} from "./list-box"
-import { Popover } from "./popover"
+import { ListBoxCollection, ListBoxHeader, ListBoxItem, ListBoxSection } from './list-box'
+import { Popover } from './popover'
 
 const BaseComboBox = AriaComboBox
 const ComboBoxItem = ListBoxItem
@@ -38,14 +33,14 @@ const ComboBoxInput = ({ className, ...props }: AriaInputProps) => {
 
   return (
     <AriaInput
-      className={composeRenderProps(className, (className) =>
+      className={composeRenderProps(className, className =>
         cn(
           'flex h-9 w-full border-input bg-background px-3 py-2 text-sm outline-none file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground',
-          "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
+          'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
           className
         )
       )}
-      onFocus={(event) => {
+      onFocus={event => {
         event.target.select()
         setIsReadOnly(false)
       }}
@@ -65,21 +60,18 @@ const ComboBoxInput = ({ className, ...props }: AriaInputProps) => {
 
 const ComboBoxPopover = ({ className, ...props }: AriaPopoverProps) => (
   <Popover
-    className={composeRenderProps(className, (className) =>
-      cn("w-[calc(var(--trigger-width)+4px)]", className)
+    className={composeRenderProps(className, className =>
+      cn('w-[calc(var(--trigger-width)+4px)]', className)
     )}
     {...props}
   />
 )
 
-const ComboBoxListBox = <T extends object>({
-  className,
-  ...props
-}: AriaListBoxProps<T>) => (
+const ComboBoxListBox = <T extends object>({ className, ...props }: AriaListBoxProps<T>) => (
   <AriaListBox
-    className={composeRenderProps(className, (className) =>
+    className={composeRenderProps(className, className =>
       cn(
-        "max-h-[inherit] overflow-auto p-1 outline-none [clip-path:inset(0_0_0_0_round_calc(var(--radius)-2px))]",
+        'max-h-[inherit] overflow-auto p-1 outline-none [clip-path:inset(0_0_0_0_round_calc(var(--radius)-2px))]',
         className
       )
     )}
@@ -113,7 +105,8 @@ interface ComboBoxProps<T extends object, V extends ComboBoxValue = ComboBoxValu
   nullValue?: V
 }
 
-function ComboBox<T extends object, V extends ComboBoxValue = number>({
+// Internal shared component that contains all the common logic
+function ComboBoxCore<T extends object, V extends ComboBoxValue = number>({
   label,
   value,
   name,
@@ -133,53 +126,56 @@ function ComboBox<T extends object, V extends ComboBoxValue = number>({
   children,
   valueType = 'number',
   nullValue,
+  ErrorComponent,
   ...props
-}: ComboBoxProps<T, V>) {
-  const form = useFormContext()
-  const realError = form?.errors?.[name as string] || errorMessage
-  const realHasError = !!realError
-
+}: ComboBoxProps<T, V> & { hasError: boolean; ErrorComponent: React.ComponentType<any> }) {
   // Bestimme den nullValue basierend auf dem valueType, falls nicht explizit gesetzt
-  const effectiveNullValue: V = nullValue !== undefined
-    ? nullValue
-    : (valueType === 'number' ? 0 : null) as V
+  const effectiveNullValue: V =
+    nullValue !== undefined ? nullValue : ((valueType === 'number' ? 0 : null) as V)
 
-  const handleSelectionChange = useCallback((key: Key | null) => {
-    if (key === null) {
-      onChange(effectiveNullValue)
-      return
-    }
+  const handleSelectionChange = useCallback(
+    (key: Key | null) => {
+      if (key === null) {
+        onChange(effectiveNullValue)
+        return
+      }
 
-    // Konvertiere basierend auf valueType
-    let convertedValue: V
-    if (valueType === 'string') {
-      convertedValue = String(key) as V
-    } else {
-      convertedValue = Number(key) as V
-    }
+      // Konvertiere basierend auf valueType
+      let convertedValue: V
+      if (valueType === 'string') {
+        convertedValue = String(key) as V
+      } else {
+        convertedValue = Number(key) as V
+      }
 
-    onChange(convertedValue)
-  }, [onChange, effectiveNullValue, valueType])
+      onChange(convertedValue)
+    },
+    [onChange, valueType]
+  )
 
-  const itemsWithPlaceholder = useMemo(() =>
+  const itemsWithPlaceholder = useMemo(
+    () =>
       isOptional
-        ? [...Array.from(items), {
-          [itemValue]: effectiveNullValue,
-          [itemName]: optionalValue
-        } as T]
+        ? [
+            ...Array.from(items),
+            {
+              [itemValue]: effectiveNullValue,
+              [itemName]: optionalValue
+            } as T
+          ]
         : Array.from(items),
-    [isOptional, itemValue, itemName, optionalValue, items, effectiveNullValue]
+    [isOptional, itemValue, itemName, optionalValue, items]
   )
 
   const { contains } = useFilter({ sensitivity: 'base' })
   const [filterValue, setFilterValue] = useState('')
   const filteredItems: T[] = useMemo(
-    () => itemsWithPlaceholder.filter((item) => contains(String(item[itemName]), filterValue)),
+    () => itemsWithPlaceholder.filter(item => contains(String(item[itemName]), filterValue)),
     [itemsWithPlaceholder, itemName, contains, filterValue]
   )
 
   // Konvertiere value zu selectedKey für React Aria - analog zu Select
-  const selectedKey = (value !== null && value !== undefined) ? String(value) : null
+  const selectedKey = value !== null && value !== undefined ? String(value) : null
 
   return (
     <BaseComboBox
@@ -187,16 +183,16 @@ function ComboBox<T extends object, V extends ComboBoxValue = number>({
       selectedKey={selectedKey}
       items={filteredItems}
       onInputChange={setFilterValue}
-      className={composeRenderProps(className, (className) =>
-        cn("group flex flex-col gap-2", className)
+      className={composeRenderProps(className, className =>
+        cn('group flex flex-col gap-2', className)
       )}
-      isInvalid={realHasError}
+      isInvalid={hasError}
       name={name}
       {...props}
     >
-      <Label value={label}/>
+      <Label value={label} />
       <FieldGroup className="p-0">
-        <ComboBoxInput className="border-transparent focus:ring-0"/>
+        <ComboBoxInput className="border-transparent focus:ring-0" />
         <Button variant="ghost" size="icon" className="mr-1.5 size-6 p-1">
           <ChevronsUpDown aria-hidden="true" className="size-4 opacity-50" />
         </Button>
@@ -206,18 +202,42 @@ function ComboBox<T extends object, V extends ComboBoxValue = number>({
           {description}
         </Text>
       )}
-      <FieldError>{realError}</FieldError>
+      <ErrorComponent>{errorMessage}</ErrorComponent>
       <ComboBoxPopover>
         <ComboBoxListBox>
-          {children || ((item: T) => (
-            <ComboBoxItem id={String(item[itemValue] ?? '')}>
-              {String(item[itemName])}
-            </ComboBoxItem>
-          ))}
+          {children ||
+            ((item: T) => (
+              <ComboBoxItem id={String(item[itemValue] ?? '')}>
+                {String(item[itemName])}
+              </ComboBoxItem>
+            ))}
         </ComboBoxListBox>
       </ComboBoxPopover>
     </BaseComboBox>
   )
+}
+
+function ComboBox<T extends object, V extends ComboBoxValue = number>(props: ComboBoxProps<T, V>) {
+  const form = useFormContext()
+  const realError = form?.errors?.[props.name as string] || props.errorMessage
+  const hasError = !!realError
+
+  return (
+    <ComboBoxCore
+      {...props}
+      errorMessage={realError}
+      hasError={hasError}
+      ErrorComponent={FieldError}
+    />
+  )
+}
+
+function FormlessCombobox<T extends object, V extends ComboBoxValue = number>(
+  props: ComboBoxProps<T, V>
+) {
+  const hasError = !!props.errorMessage
+
+  return <ComboBoxCore {...props} hasError={hasError} ErrorComponent={BaseFieldError} />
 }
 
 export {
@@ -229,5 +249,6 @@ export {
   ComboBoxHeader,
   ComboBoxPopover,
   ComboBox,
+  FormlessCombobox
 }
 export type { ComboBoxProps }

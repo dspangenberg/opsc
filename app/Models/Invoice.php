@@ -247,10 +247,6 @@ class Invoice extends Model implements MediableInterface
             $this->invoice_number = $counter;
         }
 
-        if ($this->issued_on->isBefore(now())) {
-            $this->issued_on = now();
-        }
-
         $this->setDueDate();
         $this->is_draft = false;
 
