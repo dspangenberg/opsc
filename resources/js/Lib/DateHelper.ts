@@ -55,3 +55,10 @@ export const minutesToHoursExtended = (minutes: number) => {
   const stringifiedMinutes = String(minutesLeft).length === 1 ? `0${minutesLeft}` : `${minutesLeft}`
   return `${stringifiedHours}:${stringifiedMinutes}`
 }
+
+export const minutesUntilNow = (date: string) => {
+  const parsedDate = parse(date, 'dd.MM.yyyy HH:mm', new Date())
+  const now = new Date()
+  const diff = now.getTime() - parsedDate.getTime()
+  return minutesToHoursExtended(Math.floor(diff / 1000 / 60))
+}
