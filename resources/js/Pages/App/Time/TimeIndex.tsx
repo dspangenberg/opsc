@@ -1,16 +1,23 @@
 import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
-import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
 import type { PageProps } from '@/Types'
 import { useQueryBuilder } from '@cgarciagarcia/react-query-builder'
 
+import { Toggle } from '@/Components/twcui/toggle'
 import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { FormlessCombobox } from '@/Components/ui/twc-ui/combo-box'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { minutesToHoursExtended } from '@/Lib/DateHelper'
-import { Add01Icon, FileDownloadIcon, PrinterIcon, Sorting05Icon } from '@hugeicons/core-free-icons'
+import {
+  Add01Icon,
+  FileDownloadIcon,
+  FilterAddIcon,
+  FilterIcon,
+  PrinterIcon,
+  Sorting05Icon
+} from '@hugeicons/core-free-icons'
 import { router, usePage } from '@inertiajs/react'
 import { sumBy } from 'lodash'
 import type * as React from 'react'
@@ -103,32 +110,48 @@ const TimeIndex: React.FC = () => {
     router.visit(route('app.time.index', { _query: queryParams }))
   }, [selectedProject])
 
+  const filterBar = useMemo(() => {
+    if (!showFilter) {
+      return null
+    }
+    return (
+      <Toolbar variant="secondary" className="px-4 pt-2 pb-3">
+        <FormlessCombobox<App.Data.ProjectData>
+          aria-label="View"
+          className="w-48 bg-background"
+          name="view"
+          value={selectedProject}
+          onChange={handleProjectChange}
+          items={projects}
+        />
+        <Button
+          variant="ghost"
+          size="sm"
+          icon={Sorting05Icon}
+          title="Filter + Sortierung"
+          onClick={handleFilterApplyClicked}
+        />
+      </Toolbar>
+    )
+  }, [showFilter, selectedProject, handleProjectChange, projects])
+
   const header = useMemo(
     () => (
-      <div className="flex flex-col rounded-t-md py-0">
-        <div className="flex flex-none items-center space-x-2 p-2">
-          <div className="group relative min-w-64">
-            <FormlessCombobox<App.Data.ProjectData>
-              aria-label="View"
-              className="w-48 bg-background"
-              name="view"
-              value={selectedProject}
-              onChange={handleProjectChange}
-              items={projects}
-            />
-            <Button
-              variant="ghost"
-              size="sm"
-              icon={Sorting05Icon}
-              title="Filter + Sortierung"
-              onClick={handleFilterApplyClicked}
-            />
-          </div>
-          <Button variant="ghost" size="sm" icon={Sorting05Icon} title="Filter + Sortierung" />
-        </div>
+      <div className="flex flex-col rounded-t-md py-1.5">
+        <Toolbar variant="secondary">
+          <Toggle
+            icon={FilterIcon}
+            tooltip="Filter ein- /ausblenden"
+            variant="default"
+            size="default"
+            isSelected={showFilter}
+            onChange={setShowFilter}
+          />
+          <Button variant="toolbar" icon={FilterAddIcon} title="Filter hinzufügen" />
+        </Toolbar>
       </div>
     ),
-    [selectedProject, handleProjectChange, projects, handleFilterApplyClicked] // Alle Dependencies hinzugefügt
+    [showFilter] // Alle Dependencies hinzugefügt
   )
 
   const actionBar = useMemo(() => {
@@ -149,23 +172,6 @@ const TimeIndex: React.FC = () => {
   }, [selectedMins, selectedRows.length])
 
   const currentRoute = route().current()
-
-  const tabs = useMemo(
-    () => (
-      <Tabs variant="underlined" defaultSelectedKey={currentRoute}>
-        <TabList aria-label="Ansicht">
-          <Tab id="app.time.my-week" href={route('app.time.my-week', {}, false)}>
-            Meine Woche
-          </Tab>
-          <Tab id="app.time.index" href={route('app.time.index')}>
-            Alle Zeiten
-          </Tab>
-        </TabList>
-      </Tabs>
-    ),
-    [currentRoute]
-  )
-
   const footer = useMemo(() => <Pagination data={times} />, [times])
 
   return (
@@ -175,7 +181,6 @@ const TimeIndex: React.FC = () => {
       breadcrumbs={breadcrumbs}
       className="flex overflow-hidden"
       toolbar={toolbar}
-      tabs={tabs}
       header={
         <div className="flex flex-1 items-center gap-2">
           <div className="flex flex-none items-center gap-1 font-bold text-xl">
@@ -186,6 +191,7 @@ const TimeIndex: React.FC = () => {
     >
       <DataTable
         columns={columns}
+        filterBar={filterBar}
         actionBar={actionBar}
         onSelectedRowsChange={setSelectedRows}
         data={times.data}

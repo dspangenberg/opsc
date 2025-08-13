@@ -39,6 +39,7 @@
     "larastan/larastan": "^3.4",
     "laravel-lang/http-statuses": "^3.10.3",
     "laravel-lang/lang": "^15.20.2",
+    "laravel/boost": "^1.0",
     "laravel/breeze": "^2.3.6",
     "laravel/pail": "^1.2.2",
     "laravel/pint": "^1.21",

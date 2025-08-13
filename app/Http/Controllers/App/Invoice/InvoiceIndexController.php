@@ -59,7 +59,7 @@ class InvoiceIndexController extends Controller
             ->with('lines')
             ->withSum('lines', 'amount')
             ->withSum('lines', 'tax')
-            ->orderBy('issued_on', 'desc')
+            ->orderBy('issued_on', 'desc')->orderBy('invoice_number', 'desc')
             ->paginate(15);
 
         $invoices->appends($_GET)->links();
