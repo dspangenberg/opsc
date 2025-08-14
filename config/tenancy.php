@@ -155,7 +155,7 @@ return [
 
         // Support for edge cases
         Bootstrappers\DatabaseSessionBootstrapper::class,
-        Bootstrappers\JobBatchBootstrapper::class,
+        // Bootstrappers\JobBatchBootstrapper::class, // Removed - class no longer exists in stancl/tenancy dev-master
 
         // Configurable bootstrappers
         // Bootstrappers\RootUrlBootstrapper::class,

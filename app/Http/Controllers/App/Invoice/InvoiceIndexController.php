@@ -29,37 +29,28 @@ class InvoiceIndexController extends Controller
             $years->push($year);
         }
 
+        // Optimize stats query by combining both calculations in a single query
         $stats = Invoice::query()
-            ->selectRaw('SUM(lines.amount) as total_net')
-            ->selectRaw('SUM(lines.tax) as total_tax')
-            ->selectRaw('SUM(lines.amount + lines.tax) as total_gross')
+            ->selectRaw('
+                SUM(CASE WHEN invoices.is_loss_of_receivables = 0 THEN lines.amount ELSE 0 END) as total_net,
+                SUM(CASE WHEN invoices.is_loss_of_receivables = 0 THEN lines.tax ELSE 0 END) as total_tax,
+                SUM(CASE WHEN invoices.is_loss_of_receivables = 0 THEN lines.amount + lines.tax ELSE 0 END) as total_gross,
+                SUM(CASE WHEN invoices.is_loss_of_receivables = 1 THEN lines.amount ELSE 0 END) as total_loss_of_receivables
+            ')
             ->join('invoice_lines as lines', 'invoices.id', '=', 'lines.invoice_id')
             ->where('is_draft', false)
             ->byYear($year)
-            ->where('is_loss_of_receivables', 0)
-            ->get();
-
-        $loss_of_receivables = Invoice::query()
-            ->selectRaw('SUM(lines.amount) as loss_of_receivables')
-            ->join('invoice_lines as lines', 'invoices.id', '=', 'lines.invoice_id')
-            ->byYear($year)
-            ->where('is_loss_of_receivables', 1)
-            ->get();
-
-        $stats[0]['total_loss_of_receivables'] = $loss_of_receivables[0]['loss_of_receivables'];
+            ->first();
 
 
+        // Optimize by combining related data and reducing N+1 queries
         $invoices = Invoice::query()
-            ->with('invoice_contact')
-            ->with('contact')
-            ->with('project')
-            ->with('payment_deadline')
-            ->byYear($year)
-            ->with('type')
-            ->with('lines')
+            ->with(['invoice_contact', 'contact', 'project', 'payment_deadline', 'type'])
             ->withSum('lines', 'amount')
             ->withSum('lines', 'tax')
-            ->orderBy('issued_on', 'desc')->orderBy('invoice_number', 'desc')
+            ->byYear($year)
+            ->orderBy('issued_on', 'desc')
+            ->orderBy('invoice_number', 'desc')
             ->paginate(15);
 
         $invoices->appends($_GET)->links();
@@ -67,7 +58,7 @@ class InvoiceIndexController extends Controller
         return Inertia::render('App/Invoice/InvoiceIndex', [
             'invoices' => InvoiceData::collect($invoices),
             'years' => $years,
-            'stats' => $stats[0],
+            'stats' => $stats ? $stats->toArray() : [],
             'currentYear' => $year,
         ]);
     }

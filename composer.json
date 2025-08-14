@@ -9,7 +9,7 @@
     "based/momentum-modal": "dev-master",
     "endroid/qr-code": "^6.0.8",
     "inertiajs/inertia-laravel": "^2.0",
-    "laravel/framework": "^11",
+    "laravel/framework": "^12",
     "laravel/sanctum": "^4.1.1",
     "laravel/tinker": "^2.10.1",
     "league/flysystem-aws-s3-v3": "^3.29",
@@ -28,8 +28,7 @@
     "spatie/temporary-directory": "^2.3",
     "stancl/jobpipeline": "^2.0@RC",
     "stancl/tenancy": "dev-master",
-    "tightenco/ziggy": "^2.5.3",
-    "torann/hashids": "^3.0.5"
+    "tightenco/ziggy": "^2.5.3"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "^3.15.4",
@@ -50,16 +49,6 @@
     "phpstan/phpstan": "^2.1.17",
     "soloterm/solo": "^0.5.0"
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/tenancy-for-laravel/v4"
-    },
-    {
-      "type": "vcs",
-      "url": "https://github.com/mysticseagull/momentum-modal"
-    }
-  ],
   "autoload": {
     "files": ["app/Helpers/Opsc.php"],
     "psr-4": {
