@@ -12,6 +12,7 @@ use App\Data\TimeData;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Time;
+use App\Services\PdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -19,7 +20,7 @@ use Inertia\Inertia;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class TimeIndexController extends Controller
+class TimePdfReportController extends Controller
 {
     public function __invoke(Request $request)
     {
@@ -39,25 +40,39 @@ class TimeIndexController extends Controller
             ->with('user')
             ->whereNotNull('begin_at')
             ->orderBy('begin_at', 'desc')
-            ->paginate();
+            ->paginate(1500);
 
         $projectIds = Time::query()->distinct()->pluck('project_id');
         $projects = Project::query()->whereIn('id', $projectIds)->orderBy('name')->get();
 
         $groupedByDate = self::groupByDate(collect($times->items()));
-        $times->appends($_GET)->links();
+
 
         // Aktuelle Filter extrahieren
         $currentFilters = [
             'project_id' => $request->input('filter.project_id', 0),
         ];
 
-        return Inertia::render('App/Time/TimeIndex', [
-            'times' => TimeData::collect($times),
+
+        $timesForReport = [
+            'stats' => [
+                'start' => Carbon::now(),
+                'end' => Carbon::now(),
+                'sum' => 0,
+            ],
+            'data' => $times->items(),
+            'groupedByProject' => self::groupByProjectsAndDate(collect($times->items())),
             'groupedByDate' => $groupedByDate,
-            'projects' => ProjectData::collect($projects),
-            'currentFilters' => $currentFilters, // Aktuelle Filter hinzufügen
+        ];
+
+        $now = Carbon::now()->format('d.m.Y');
+        $title = "Leistungsnachweis vom $now";
+
+        $pdfContent = PdfService::createPdf('proof-of-activity', 'pdf.proof-of-activity.index', ['times' => $timesForReport, ''], [
+            'title' => $title
         ]);
+
+        return response()->file($pdfContent);
     }
 
     public static function groupByDate(Collection $times, $withSum = false): array

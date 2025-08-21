@@ -14,6 +14,7 @@ use App\Http\Controllers\App\Contact\ContactDetailsController;
 use App\Http\Controllers\App\Contact\ContactEditAddressController;
 use App\Http\Controllers\App\Contact\ContactIndexController;
 use App\Http\Controllers\App\Contact\ContactToggleFavoriteController;
+use App\Http\Controllers\App\Invoice\InvoiceCreateController;
 use App\Http\Controllers\App\Invoice\InvoiceDeleteController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsEditBaseController;
@@ -29,12 +30,14 @@ use App\Http\Controllers\App\Invoice\InvoiceLineUpdateController;
 use App\Http\Controllers\App\Invoice\InvoiceMarkAsSentController;
 use App\Http\Controllers\App\Invoice\InvoicePdfDownloadController;
 use App\Http\Controllers\App\Invoice\InvoiceReleaseController;
+use App\Http\Controllers\App\Invoice\InvoiceStoreController;
 use App\Http\Controllers\App\Invoice\InvoiceUnreleaseController;
 use App\Http\Controllers\App\Time\TimeCreateController;
 use App\Http\Controllers\App\Time\TimeDeleteController;
 use App\Http\Controllers\App\Time\TimeEditController;
 use App\Http\Controllers\App\Time\TimeIndexController;
 use App\Http\Controllers\App\Time\TimeMyWeekIndexController;
+use App\Http\Controllers\App\Time\TimePdfReportController;
 use App\Http\Controllers\App\Time\TimeStoreController;
 use App\Http\Controllers\App\Time\TimeUpateController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -94,6 +97,10 @@ Route::middleware([
         ->middleware([HandlePrecognitiveRequests::class])
         ->name('app.time.update');
 
+    Route::get('times/pdf',
+        TimePdfReportController::class)->name('app.time.pdf');
+
+
     Route::delete('times/{time}',
         TimeDeleteController::class)->name('app.times.delete');
 
@@ -122,14 +129,29 @@ Route::middleware([
         ->name('app.contact.address.store');
 
 
+    Route::get('invoicing/invoices/create',
+        InvoiceCreateController::class)->name('app.invoice.create');
+
     Route::get('invoicing/invoices',
         InvoiceIndexController::class)->name('app.invoice.index');
+
+
+
+
+
 
     Route::get('invoicing/invoices/{invoice}',
         InvoiceDetailsController::class)->name('app.invoice.details');
 
     Route::get('invoicing/invoices/{invoice}/history',
         InvoiceHistoryController::class)->name('app.invoice.history');
+
+
+    Route::post('invoicing/invoices',
+        InvoiceStoreController::class)
+        ->middleware([HandlePrecognitiveRequests::class])
+        ->name('app.invoice.store');
+
 
 
     Route::delete('invoicing/invoices/{invoice}',

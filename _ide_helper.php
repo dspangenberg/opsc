@@ -24866,6 +24866,153 @@ namespace Stancl\Tenancy\Facades {
             }
     }
 
+namespace Vinkla\Hashids\Facades {
+    /**
+     * @method static string encode(mixed ...$numbers)
+     * @method static array decode(string $hash)
+     * @method static string encodeHex(string $str)
+     * @method static string decodeHex(string $hash)
+     */
+    class Hashids extends \GrahamCampbell\Manager\AbstractManager {
+        /**
+         * @static
+         */
+        public static function getFactory()
+        {
+            /** @var \Vinkla\Hashids\HashidsManager $instance */
+            return $instance->getFactory();
+        }
+
+        /**
+         * Get a connection instance.
+         *
+         * @param string|null $name
+         * @throws \InvalidArgumentException
+         * @return object
+         * @static
+         */
+        public static function connection($name = null)
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \Vinkla\Hashids\HashidsManager $instance */
+            return $instance->connection($name);
+        }
+
+        /**
+         * Reconnect to the given connection.
+         *
+         * @param string|null $name
+         * @throws \InvalidArgumentException
+         * @return object
+         * @static
+         */
+        public static function reconnect($name = null)
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \Vinkla\Hashids\HashidsManager $instance */
+            return $instance->reconnect($name);
+        }
+
+        /**
+         * Disconnect from the given connection.
+         *
+         * @param string|null $name
+         * @return void
+         * @static
+         */
+        public static function disconnect($name = null)
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \Vinkla\Hashids\HashidsManager $instance */
+            $instance->disconnect($name);
+        }
+
+        /**
+         * Get the configuration for a connection.
+         *
+         * @param string|null $name
+         * @throws \InvalidArgumentException
+         * @return array
+         * @static
+         */
+        public static function getConnectionConfig($name = null)
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \Vinkla\Hashids\HashidsManager $instance */
+            return $instance->getConnectionConfig($name);
+        }
+
+        /**
+         * Get the default connection name.
+         *
+         * @return string
+         * @static
+         */
+        public static function getDefaultConnection()
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \Vinkla\Hashids\HashidsManager $instance */
+            return $instance->getDefaultConnection();
+        }
+
+        /**
+         * Set the default connection name.
+         *
+         * @param string $name
+         * @return void
+         * @static
+         */
+        public static function setDefaultConnection($name)
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \Vinkla\Hashids\HashidsManager $instance */
+            $instance->setDefaultConnection($name);
+        }
+
+        /**
+         * Register an extension connection resolver.
+         *
+         * @param string $name
+         * @param callable $resolver
+         * @return void
+         * @static
+         */
+        public static function extend($name, $resolver)
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \Vinkla\Hashids\HashidsManager $instance */
+            $instance->extend($name, $resolver);
+        }
+
+        /**
+         * Return all of the created connections.
+         *
+         * @return array<string,object>
+         * @static
+         */
+        public static function getConnections()
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \Vinkla\Hashids\HashidsManager $instance */
+            return $instance->getConnections();
+        }
+
+        /**
+         * Get the config instance.
+         *
+         * @return \Illuminate\Contracts\Config\Repository
+         * @static
+         */
+        public static function getConfig()
+        {
+            //Method inherited from \GrahamCampbell\Manager\AbstractManager 
+            /** @var \Vinkla\Hashids\HashidsManager $instance */
+            return $instance->getConfig();
+        }
+
+            }
+    }
+
 namespace Illuminate\Support {
     /**
      * @template TKey of array-key
@@ -24881,6 +25028,30 @@ namespace Illuminate\Support {
         public static function debug()
         {
             return \Illuminate\Support\Collection::debug();
+        }
+
+        /**
+         * @see \LaraDumps\LaraDumps\LaraDumpsServiceProvider::registerMacros()
+         * @param string $label
+         * @static
+         */
+        public static function ds($label = '')
+        {
+            return \Illuminate\Support\Collection::ds($label);
+        }
+
+            }
+    /**
+     */
+    class Stringable {
+        /**
+         * @see \LaraDumps\LaraDumps\LaraDumpsServiceProvider::registerMacros()
+         * @param string $label
+         * @static
+         */
+        public static function ds($label = '')
+        {
+            return \Illuminate\Support\Stringable::ds($label);
         }
 
             }
@@ -25016,6 +25187,31 @@ namespace Illuminate\Testing {
         public static function inertiaProps($propName = null)
         {
             return \Illuminate\Testing\TestResponse::inertiaProps($propName);
+        }
+
+        /**
+         * @see \LaraDumps\LaraDumps\LaraDumpsServiceProvider::registerMacros()
+         * @static
+         */
+        public static function ds()
+        {
+            return \Illuminate\Testing\TestResponse::ds();
+        }
+
+            }
+    }
+
+namespace Illuminate\Database\Query {
+    /**
+     */
+    class Builder {
+        /**
+         * @see \LaraDumps\LaraDumps\LaraDumpsServiceProvider::registerMacros()
+         * @static
+         */
+        public static function ds()
+        {
+            return \Illuminate\Database\Query\Builder::ds();
         }
 
             }
@@ -29916,6 +30112,15 @@ namespace  {
             return $instance->macroCall($method, $parameters);
         }
 
+        /**
+         * @see \LaraDumps\LaraDumps\LaraDumpsServiceProvider::registerMacros()
+         * @static
+         */
+        public static function ds()
+        {
+            return \Illuminate\Database\Query\Builder::ds();
+        }
+
 }
     class Event extends \Illuminate\Support\Facades\Event {}
     class File extends \Illuminate\Support\Facades\File {}
@@ -29952,6 +30157,7 @@ namespace  {
     class ImageManipulator extends \Plank\Mediable\Facades\ImageManipulator {}
     class Tenancy extends \Stancl\Tenancy\Facades\Tenancy {}
     class GlobalCache extends \Stancl\Tenancy\Facades\GlobalCache {}
+    class Hashids extends \Vinkla\Hashids\Facades\Hashids {}
 }
 
 

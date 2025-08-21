@@ -1,8 +1,8 @@
+import { cn } from '@/Lib/utils'
 import { Alert02Icon, HelpCircleIcon, InformationCircleIcon } from '@hugeicons/core-free-icons'
 import type * as React from 'react'
 import { Heading } from 'react-aria-components'
 import { createRoot } from 'react-dom/client'
-import { cn } from '@/Lib/utils'
 import { Button } from './button'
 import { Dialog } from './dialog'
 import { Icon } from './icon'
@@ -24,7 +24,7 @@ const AlertDialogComponent: React.FC<AlertDialogProps> = ({
   message,
   buttonTitle = 'OK',
   variant = 'destructive',
-  cancelButtonTitle = 'Cancel',
+  cancelButtonTitle = 'Abbrechen',
   onConfirm,
   onCancel
 }) => {

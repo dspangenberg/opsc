@@ -29,18 +29,20 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
 
   return (
     <DataCard title={contact.full_name}>
-      <DataCardContent>
-        <div className="grid w-full grid-cols-2 divide-x divide-border/50 rounded-md border border-border/50 border-b bg-white p-1.5">
-          <StatsField
-            label={salesCurrentYearTitle}
-            value={currencyFormatter.format(contact.sales?.currentYear || 0)}
-          />
-          <StatsField
-            label="Gesamtumsatz"
-            value={currencyFormatter.format(contact.sales?.allTime || 0)}
-          />
-        </div>
-      </DataCardContent>
+      {contact.debtor_number && (
+        <DataCardContent>
+          <div className="grid w-full grid-cols-2 divide-x divide-border/50 rounded-md border border-border/50 border-b bg-white p-1.5">
+            <StatsField
+              label={salesCurrentYearTitle}
+              value={currencyFormatter.format(contact.sales?.currentYear || 0)}
+            />
+            <StatsField
+              label="Gesamtumsatz"
+              value={currencyFormatter.format(contact.sales?.allTime || 0)}
+            />
+          </div>
+        </DataCardContent>
+      )}
       <DataCardContent showSecondary={showSecondary}>
         <DataCardSection
           title="Debitorinfos"

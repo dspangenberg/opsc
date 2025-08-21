@@ -53,7 +53,10 @@ class PdfService
             'hide' => false,
             'pdfA' => false,
             'saveAs' => false,
+            'watermark' => ''
         ];
+
+
 
         $data['pdf_footer'] = array_merge($defaultConfig, $config);
         $data['pdf_config'] = array_merge($defaultConfig, $config);
@@ -87,7 +90,7 @@ class PdfService
         $mpdf->AddFontDirectory(storage_path('system/fonts'));
         $mpdf->SetDocTemplate($letterheadPdfFile, true);
 
-        if ($config['watermark']) {
+        if ($data['pdf_config']['watermark']) {
             $mpdf->SetWatermarkText(new WatermarkText($config['watermark']));
             $mpdf->showWatermarkText = true;
         }
@@ -96,7 +99,8 @@ class PdfService
         $mpdf->SetTitle($data['pdf_footer']['title']);
         $mpdf->SetCreator('opsc.cloud');
 
-        if ($config['pdfA']) {
+
+        if ($data['pdf_config']['pdfA']) {
             $mpdf->PDFA = true;
         }
 

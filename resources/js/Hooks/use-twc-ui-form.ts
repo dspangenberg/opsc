@@ -140,10 +140,6 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
     startFieldName: KStart,
     endFieldName: KEnd
   ) => {
-
-    console.log('registerDateRange', startFieldName, endFieldName)
-    console.log('Originaldaten:', form.data[startFieldName], form.data[endFieldName])
-
     // Konvertiere die gespeicherten Werte zu RangeValue für DateRangePicker
     const convertToRangeValue = (): RangeValue<string> | null => {
       const startValue = form.data[startFieldName] as string
@@ -151,7 +147,14 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
 
       if (!startValue || !endValue) return null
 
-      console.log('Konvertiere Datum-Range von', DATE_FORMAT, 'zu ISO:', startValue, 'bis', endValue)
+      console.log(
+        'Konvertiere Datum-Range von',
+        DATE_FORMAT,
+        'zu ISO:',
+        startValue,
+        'bis',
+        endValue
+      )
 
       // Konvertiere beide Werte mit date-fns zu ISO-Format
       const startISO = convertToISO(startValue)
@@ -174,14 +177,18 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
       value,
       error,
       onChange: (rangeValue: RangeValue<string> | null) => {
-        console.log('DateRange onChange:', rangeValue)
-
         if (rangeValue) {
           // Konvertiere von yyyy-MM-dd zurück zum konfigurierten Format mit date-fns
           const startFormatted = convertFromISO(rangeValue.start)
           const endFormatted = convertFromISO(rangeValue.end)
 
-          console.log('Rückkonvertierung von ISO zu', DATE_FORMAT, ':', startFormatted, endFormatted)
+          console.log(
+            'Rückkonvertierung von ISO zu',
+            DATE_FORMAT,
+            ':',
+            startFormatted,
+            endFormatted
+          )
 
           form.setData(startFieldName, startFormatted as FormDataValues<T, KStart>)
           form.setData(endFieldName, endFormatted as FormDataValues<T, KEnd>)

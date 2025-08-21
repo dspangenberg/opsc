@@ -1,10 +1,4 @@
-/*
- * opsc.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
- */
-
-import type * as React from 'react'
-import { type FC, useMemo } from 'react'
+import { ArrayTextField } from '@/Components/ArrayTextField'
 import {
   DataCard,
   DataCardContent,
@@ -12,10 +6,10 @@ import {
   DataCardHeader,
   DataCardSection
 } from '@/Components/DataCard'
-import { ArrayTextField } from '@/Components/ArrayTextField'
 import { StatsField } from '@/Components/StatsField'
-import { Link } from '@inertiajs/react'
 import { cn } from '@/Lib/utils'
+import { Link } from '@inertiajs/react'
+import { type FC, useMemo } from 'react'
 
 interface ContactDetailsOrgInfoBoxProps {
   invoice: App.Data.InvoiceData
@@ -41,17 +35,31 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
 
   return (
     <DataCard title={title}>
-      <DataCardHeader className={cn('grid  divide-x rounded-md border bg-white divide-border/50 border-b border-border/50 p-1.5', invoice.is_draft ? 'grid-cols-3' : 'grid-cols-4')}>
+      <DataCardHeader
+        className={cn(
+          'grid divide-x divide-border/50 rounded-md border border-border/50 border-b bg-background p-1.5',
+          invoice.is_draft ? 'grid-cols-3' : 'grid-cols-4'
+        )}
+      >
         <StatsField label="netto" value={currencyFormatter.format(invoice.amount_net)} />
         <StatsField label="USt." value={currencyFormatter.format(invoice.amount_tax)} />
         <StatsField label="brutto" value={currencyFormatter.format(invoice.amount_gross)} />
         {!invoice.is_draft && <StatsField label="offen" value={currencyFormatter.format(0)} />}
       </DataCardHeader>
       <DataCardContent>
-        <DataCardSection className={cn('grid space-y-0', invoice.is_draft ? 'grid-cols-2' : 'grid-cols-3 ')} title='Rechnungsdetails'>
+        <DataCardSection
+          className={cn('grid space-y-0', invoice.is_draft ? 'grid-cols-2' : 'grid-cols-3 ')}
+          title="Rechnungsdetails"
+        >
           <DataCardField variant="vertical" label="Datum" value={invoice.issued_on} />
           <DataCardField variant="vertical" label="Fälligkeit" value={invoice.due_on} />
-          {!invoice.is_draft && <DataCardField variant="vertical" label="versendet" value={invoice.sent_at?.substring(0,10)} />}
+          {!invoice.is_draft && (
+            <DataCardField
+              variant="vertical"
+              label="versendet"
+              value={invoice.sent_at?.substring(0, 10)}
+            />
+          )}
         </DataCardSection>
         <DataCardSection className="grid grid-cols-2">
           <DataCardField
@@ -59,11 +67,7 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
             label="Rechnungstyp"
             value={invoice.type?.display_name}
           />
-          <DataCardField
-            variant="vertical"
-            label="Umsatzsteuer"
-            value={invoice.tax?.name}
-          />
+          <DataCardField variant="vertical" label="Umsatzsteuer" value={invoice.tax?.name} />
         </DataCardSection>
         <DataCardSection>
           <DataCardField

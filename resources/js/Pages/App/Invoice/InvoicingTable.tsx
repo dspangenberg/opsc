@@ -1,20 +1,9 @@
-import type * as React from 'react'
-import { useCallback, useEffect, useRef } from 'react'
 import { cn } from '@/Lib/utils'
 import { Button } from '@dspangenberg/twcui'
 import { Copy01Icon, Delete04Icon, Edit03Icon, MoreVerticalIcon } from '@hugeicons/core-free-icons'
+import type * as React from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
-import {
-  Table as ShadcnTable,
-  TableBody as ShadcnTableBody,
-  TableCell as ShadcnTableCell,
-  TableHead as ShadcnTableHead,
-  TableHeader as ShadcnTableHeader,
-  TableRow as ShadcnTableRow
-} from '@/Components/ui/table'
-import Markdown from 'react-markdown'
-import remarkBreaks from 'remark-breaks'
-import { usePage } from '@inertiajs/react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +12,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/Components/ui/dropdown-menu'
+import {
+  Table as ShadcnTable,
+  TableBody as ShadcnTableBody,
+  TableCell as ShadcnTableCell,
+  TableHead as ShadcnTableHead,
+  TableHeader as ShadcnTableHeader,
+  TableRow as ShadcnTableRow
+} from '@/Components/ui/table'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { usePage } from '@inertiajs/react'
+import Markdown from 'react-markdown'
+import remarkBreaks from 'remark-breaks'
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
   style: 'decimal',
@@ -55,13 +55,20 @@ export const TableHeader: React.FC<CommonTableProps> = ({ className = '', childr
 
 export const TableBody: React.FC<CommonTableProps> = ({ className = '', children }) => {
   return (
-    <ShadcnTableBody className={cn('hover:bg-transparent rounded-b-lg', className)}>{children}</ShadcnTableBody>
+    <ShadcnTableBody className={cn('rounded-b-lg hover:bg-transparent', className)}>
+      {children}
+    </ShadcnTableBody>
   )
 }
 
 export const TableRow: React.FC<CommonTableProps> = ({ className = '', children }) => {
   return (
-    <ShadcnTableRow className={cn('align-baseline hover:bg-transparent first:rounded-t-lg last:rounded-b-lg', className)}>
+    <ShadcnTableRow
+      className={cn(
+        'align-baseline first:rounded-t-lg last:rounded-b-lg hover:bg-transparent',
+        className
+      )}
+    >
       {children}
     </ShadcnTableRow>
   )
@@ -89,7 +96,11 @@ export const TableHead: React.FC<TableCellProps> = ({
   return (
     <ShadcnTableHead
       colSpan={colSpan}
-      className={cn('align-middle font-medium bg-sidebar hover:bg-sidebar rounded-t-lg', alignClass, className)}
+      className={cn(
+        'rounded-t-lg bg-sidebar align-middle font-medium hover:bg-sidebar',
+        alignClass,
+        className
+      )}
     >
       {children}
     </ShadcnTableHead>
@@ -111,7 +122,7 @@ export const TableCell: React.FC<TableCellProps> = ({
   return (
     <ShadcnTableCell
       colSpan={colSpan}
-      className={cn('align-baseline bg-transparent hover:bg-transparent', alignClass, className)}
+      className={cn('bg-transparent align-baseline hover:bg-transparent', alignClass, className)}
     >
       {children}
     </ShadcnTableCell>
@@ -155,7 +166,11 @@ export const TableMarkdownCell: React.FC<TableMarkdownCellProps> = ({
   return (
     <TableCell className={className} {...props}>
       <Markdown remarkPlugins={[remarkBreaks]}>{value}</Markdown>
-      {service_period_begin && <div className="-mt-2.5">({service_period_begin}-{service_period_end})</div>}
+      {service_period_begin && (
+        <div className="-mt-2.5">
+          ({service_period_begin}-{service_period_end})
+        </div>
+      )}
     </TableCell>
   )
 }
@@ -168,11 +183,7 @@ export const TableLinkedInvoiceCell: React.FC<TableMarkdownCellProps> = ({
 }) => {
   return (
     <TableCell className={className} {...props}>
-      <Markdown remarkPlugins={[remarkBreaks]}>
-        abzüglich geleisteter Akontozahlung
-
-      </Markdown>
-
+      <Markdown remarkPlugins={[remarkBreaks]}>abzüglich geleisteter Akontozahlung</Markdown>
     </TableCell>
   )
 }
@@ -221,7 +232,7 @@ export const InvoicingTableDefaultRow: React.FC<InvoicingTableDefaultRowProps> =
       <TableCell align="center">{line.unit}</TableCell>
       <TableMarkdownCell
         value={line.text}
-        className="gap-0 space-y-0 gap-y-0"
+        className="gap-0 gap-y-0 space-y-0"
         service_period_begin={line.service_period_begin as unknown as string}
         service_period_end={line.service_period_end as unknown as string}
       />
@@ -230,7 +241,7 @@ export const InvoicingTableDefaultRow: React.FC<InvoicingTableDefaultRowProps> =
       <TableCell align="center">({line.tax_rate_id})</TableCell>
       {invoice.is_draft && (
         <TableCell align="right">
-          <div className="flex items-center space-x-1  justify-end">
+          <div className="flex items-center justify-end space-x-1">
             <Button
               size="icon-sm"
               icon={Edit03Icon}
@@ -287,6 +298,10 @@ export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowPr
     onLineCommand({ command: 'duplicate', lineId: line.id || 0 })
   }, [onLineCommand, line])
 
+  if (line.type_id === 9) {
+    return null
+  }
+
   return (
     <TableRow>
       <TableCell align="right" className="align-baseline">
@@ -295,7 +310,8 @@ export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowPr
       <TableNumberCell value={line.quantity || 0} />
       <TableCell align="center">{line.unit}</TableCell>
       <TableMarkdownCell value="">
-        abzüglich geleisteter Akontozahlung<br/>
+        abzüglich geleisteter Akontozahlung
+        <br />
         RG-{line.linked_invoice?.formated_invoice_number} vom {line.linked_invoice?.issued_on}
       </TableMarkdownCell>
       <TableNumberCell conditional={conditional} value={line.price || 0} />
@@ -303,7 +319,7 @@ export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowPr
       <TableCell align="center">({line.tax_rate_id})</TableCell>
       {invoice.is_draft && (
         <TableCell align="right">
-          <div className="flex items-center space-x-1  justify-end">
+          <div className="flex items-center justify-end space-x-1">
             <Button
               size="icon-sm"
               icon={Edit03Icon}
@@ -341,7 +357,6 @@ export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowPr
   )
 }
 
-
 export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
   line,
   getNextIndex,
@@ -356,7 +371,7 @@ export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
     return (
       <TableRow>
         <TableCell colSpan={3} />
-        <TableCell colSpan={3} className="text-lg font-medium">
+        <TableCell colSpan={3} className="font-medium text-lg">
           {line.text}
         </TableCell>
       </TableRow>
@@ -364,7 +379,14 @@ export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
   }
 
   if (line.type_id === 9) {
-    return (<InvoicingTableLinkedInvoiceRow line={line} index={rowIndex} conditional={conditional} onLineCommand={onLineCommand} />)
+    return (
+      <InvoicingTableLinkedInvoiceRow
+        line={line}
+        index={rowIndex}
+        conditional={conditional}
+        onLineCommand={onLineCommand}
+      />
+    )
   }
 
   return (
@@ -394,8 +416,8 @@ export const InvoicingTable: React.FC<InvoiceTableProps> = ({ invoice, onLineCom
   }, [])
 
   return (
-    <div className="relative flex flex-1 border-border/80 bg-page-content rounded-lg p-1.5 border overflow-hidden flex-col max-h-fit">
-      <Table className="bg-background [&_td]:border-border border rounded-lg [&_th]:border-border border-spacing-0 [&_tfoot_td]:border-t [&_th]:border-b [&_tr]:border-none [&_tr:not(:last-child)_td]:border-b">
+    <div className="relative flex max-h-fit flex-1 flex-col overflow-hidden rounded-lg border border-border/80 bg-page-content p-1.5">
+      <Table className="border-spacing-0 rounded-lg border bg-background [&_td]:border-border [&_tfoot_td]:border-t [&_th]:border-border [&_th]:border-b [&_tr:not(:last-child)_td]:border-b [&_tr]:border-none">
         <TableHeader className="rounded-t-lg">
           <TableRow>
             <TableHead align="right">Pos</TableHead>

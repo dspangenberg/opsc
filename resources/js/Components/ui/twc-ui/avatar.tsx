@@ -1,11 +1,11 @@
+import { generateColorFromString, getIdealTextColor } from '@/Lib/color-utils'
+import { cn } from '@/Lib/utils'
 import * as AvatarPrimitive from '@radix-ui/react-avatar'
 import type * as React from 'react'
 import { useEffect, useState } from 'react'
-import { generateColorFromString, getIdealTextColor } from '@/Lib/color-utils'
-import { cn } from '@/Lib/utils'
 
 // Basic Avatar components (original shadcn/ui implementation)
-function AvatarRoot({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Root>) {
+const AvatarRoot = ({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Root>) => {
   return (
     <AvatarPrimitive.Root
       data-slot="avatar"
@@ -15,7 +15,10 @@ function AvatarRoot({ className, ...props }: React.ComponentProps<typeof AvatarP
   )
 }
 
-function AvatarImage({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Image>) {
+const AvatarImage = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof AvatarPrimitive.Image>) => {
   return (
     <AvatarPrimitive.Image
       data-slot="avatar-image"
@@ -25,10 +28,10 @@ function AvatarImage({ className, ...props }: React.ComponentProps<typeof Avatar
   )
 }
 
-function AvatarFallback({
+const AvatarFallback = ({
   className,
   ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
+}: React.ComponentProps<typeof AvatarPrimitive.Fallback>) => {
   return (
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
@@ -47,14 +50,14 @@ interface AvatarProps extends React.ComponentPropsWithoutRef<typeof AvatarPrimit
   className?: string
 }
 
-function Avatar({
+const Avatar = ({
   fullname = '',
   initials = '',
-  src = null,
   className = '',
   size = 'md',
+  src,
   ...props
-}: AvatarProps) {
+}: AvatarProps) => {
   const [backgroundColor, setBackgroundColor] = useState<string>('')
   const [textColor, setTextColor] = useState<string>('')
 
@@ -71,7 +74,7 @@ function Avatar({
   }[size]
 
   useEffect(() => {
-    if (fullname) {
+    if (!src && fullname) {
       // Generate color based on fullname using improved algorithm
       const bgColor = generateColorFromString(fullname)
       setBackgroundColor(bgColor)
@@ -79,11 +82,12 @@ function Avatar({
     }
   }, [fullname])
 
+  console.log(src)
+
   return (
     <div className="rounded-full border border-border" data-testid="avatar-container">
       <AvatarRoot
         className={cn('rounded-full border-2 border-transparent', avatarSizeClass, className)}
-        data-testid="avatar"
         {...props}
       >
         <AvatarImage src={src ?? undefined} alt={fullname} />

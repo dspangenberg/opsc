@@ -7,10 +7,10 @@ import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
 import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
+import { Avatar } from '@/Components/ui/twc-ui/avatar'
 import { Icon } from '@/Components/ui/twc-ui/icon'
 import { minutesToHoursExtended, minutesUntilNow, parseAndFormatDate } from '@/Lib/DateHelper'
 import { cn } from '@/Lib/utils'
-import { Avatar } from '@dspangenberg/twcui'
 import {
   Delete03Icon,
   Edit03Icon,

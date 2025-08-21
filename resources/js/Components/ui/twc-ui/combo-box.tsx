@@ -181,6 +181,7 @@ function ComboBoxCore<T extends object, V extends ComboBoxValue = number>({
     <BaseComboBox
       onSelectionChange={handleSelectionChange}
       selectedKey={selectedKey}
+      autoFocus={autoFocus}
       items={filteredItems}
       onInputChange={setFilterValue}
       className={composeRenderProps(className, className =>

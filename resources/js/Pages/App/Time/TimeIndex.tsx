@@ -4,6 +4,7 @@ import { Pagination } from '@/Components/Pagination'
 import type { PageProps } from '@/Types'
 import { useQueryBuilder } from '@cgarciagarcia/react-query-builder'
 
+import { PdfViewer } from '@/Components/PdfViewer'
 import { Toggle } from '@/Components/twcui/toggle'
 import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/twc-ui/button'
@@ -53,7 +54,7 @@ const TimeIndex: React.FC = () => {
   const grouped_times = usePage<TimeIndexProps>().props.groupedByDate
   const projects = usePage<TimeIndexProps>().props.projects
   const currentFilters = usePage<TimeIndexProps>().props.currentFilters
-
+  const [showPdfViewer, setShowPdfViewer] = useState(false)
   const [selectedRows, setSelectedRows] = useState<App.Data.TimeData[]>([])
   const [showFilter, setShowFilter] = useState<boolean>(false)
 
@@ -73,6 +74,10 @@ const TimeIndex: React.FC = () => {
       })
     )
   }, [])
+
+  const handlePdfReportClicked = () => {
+    router.visit(route('app.time.pdf'))
+  }
 
   const builder = useQueryBuilder()
 
@@ -94,7 +99,12 @@ const TimeIndex: React.FC = () => {
           title="Neue Rechnung"
           onPress={handleTimeCreateClicked}
         />
-        <Button variant="toolbar" icon={PrinterIcon} title="Drucken" disabled={true} />
+        <Button
+          variant="toolbar"
+          icon={PrinterIcon}
+          title="Drucken"
+          onClick={() => setShowPdfViewer(true)}
+        />
       </Toolbar>
     ),
     [handleTimeCreateClicked]
@@ -198,6 +208,12 @@ const TimeIndex: React.FC = () => {
         footer={footer}
         header={header}
         itemName="Zeiten"
+      />
+      <PdfViewer
+        open={showPdfViewer}
+        filename={'proof.pdf'}
+        onOpenChange={setShowPdfViewer}
+        document={route('app.time.pdf')}
       />
     </PageContainer>
   )

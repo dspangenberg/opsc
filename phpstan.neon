@@ -6,15 +6,6 @@ parameters:
 
     paths:
         - app/
-        - bootstrap/
-        - routes/
-
-
-    checkModelProperties: true
-    checkModelAppends: true
-    noEnvCallsOutsideOfConfig: true
-    inferPrivatePropertyTypeFromConstructor: true
-
     # Level 10 is the highest level
     level: 4
 

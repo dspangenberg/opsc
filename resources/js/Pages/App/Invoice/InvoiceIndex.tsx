@@ -71,7 +71,8 @@ const InvoiceIndex: React.FC = () => {
 
   const currencyFormatter = new Intl.NumberFormat('de-DE', {
     style: 'decimal',
-    minimumFractionDigits: 2
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
   })
 
   const handlePreviousYear = useCallback(() => {
@@ -135,10 +136,19 @@ const InvoiceIndex: React.FC = () => {
     []
   )
 
+  const handleInvoiceCreateClicked = useCallback(() => {
+    router.visit(route('app.invoice.create'))
+  }, [])
+
   const toolbar = useMemo(
     () => (
       <Toolbar>
-        <Button variant="toolbar-default" icon={Add01Icon} title="Neue Rechnung" />
+        <Button
+          variant="toolbar-default"
+          icon={Add01Icon}
+          title="Neue Rechnung"
+          onClick={handleInvoiceCreateClicked}
+        />
         <Button variant="toolbar" icon={PrinterIcon} title="Drucken" disabled={true} />
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} title="Weitere Optionen">
           <MenuItem icon={Add01Icon} title="Rechnung hinzufügen" ellipsis separator />
@@ -146,7 +156,7 @@ const InvoiceIndex: React.FC = () => {
         </DropdownButton>
       </Toolbar>
     ),
-    []
+    [handleInvoiceCreateClicked]
   )
 
   const actionBar = useMemo(() => {

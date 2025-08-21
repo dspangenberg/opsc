@@ -235,6 +235,7 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
                   icon={Delete02Icon}
                   title="Rechnung löschen"
                   separator
+                  variant="destructive"
                   disabled={!invoice.is_draft}
                   onAction={handleDelete}
                 />
