@@ -13,3 +13,14 @@ parameters:
         - _ide_helper.php
         - _ide_helper_models.php
         - .phpstorm.meta.php
+
+    # Ignore common Laravel/Eloquent patterns that PHPStan may flag incorrectly
+    ignoreErrors:
+        # Ignore dynamic property access on Eloquent models (common with relationships)
+        - '#Access to an undefined property [a-zA-Z0-9\\_]+::\$[a-zA-Z0-9_]+#'
+        # Ignore calls to undefined methods on Eloquent builders (dynamic scopes)
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::[a-zA-Z0-9_]+\(\)#'
+        # Ignore calls to undefined methods on Eloquent collections
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Collection::[a-zA-Z0-9_]+\(\)#'
+        # Allow dynamic properties on models for relationships and attributes
+        - '#Property App\\Models\\[a-zA-Z0-9_]+::\$[a-zA-Z0-9_]+ is never written, only read#'

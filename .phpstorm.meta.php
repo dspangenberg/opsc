@@ -3461,11 +3461,11 @@ namespace PHPSTORM_META {
 'app.time.index','app.time.my-week','app.time.edit','app.time.update','app.time.pdf',
 'app.times.delete','app.contact.details','app.contact.edit.address','app.contact.create.address','app.contact.toggle-favorite',
 'app.contact.address.update','app.contact.address.store','app.invoice.create','app.invoice.index','app.invoice.details',
-'app.invoice.history','app.invoice.store','app.invoice.delete','app.invoice.base-edit','app.invoice.lines-edit',
-'app.invoice.unrelease','app.invoice.release','app.invoice.mark-as-sent','app.invoice.line-duplicate','app.invoice.line-edit',
-'app.invoice.line-update','app.invoice.line-delete','app.invoice.base-update','app.invoice.duplicate','app.invoice.pdf',
-'app.onboarding','app.logout','tenant.impersonate','login','login.store',
-'password.request','password.email','password.reset','password.store',);
+'app.invoice.history','app.invoice.store','app.invoice.delete','app.invoice.base-edit','app.invoice.unrelease',
+'app.invoice.release','app.invoice.mark-as-sent','app.invoice.line-duplicate','app.invoice.line-edit','app.invoice.line-update',
+'app.invoice.line-delete','app.invoice.base-update','app.invoice.duplicate','app.invoice.pdf','app.onboarding',
+'app.logout','tenant.impersonate','login','login.store','password.request',
+'password.email','password.reset','password.store',);
         registerArgumentsSet('views', 
 'app','components.footer','components.layout','generated.emails.verify-email','pdf.invoice.index',
 'pdf.proof-of-activity.index','laradumps::output','laradumps::summary','laravel-exceptions-renderer::components.card','laravel-exceptions-renderer::components.context',

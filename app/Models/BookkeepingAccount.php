@@ -9,29 +9,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
- * 
- *
- * @property int $id
- * @property int $account_number
- * @property string $name
- * @property string $type
- * @property int $is_default
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property int $tax_id
- * @method static Builder|BookkeepingAccount newModelQuery()
- * @method static Builder|BookkeepingAccount newQuery()
- * @method static Builder|BookkeepingAccount query()
- * @method static Builder|BookkeepingAccount whereAccountNumber($value)
- * @method static Builder|BookkeepingAccount whereCreatedAt($value)
- * @method static Builder|BookkeepingAccount whereId($value)
- * @method static Builder|BookkeepingAccount whereIsDefault($value)
- * @method static Builder|BookkeepingAccount whereName($value)
- * @method static Builder|BookkeepingAccount whereTaxId($value)
- * @method static Builder|BookkeepingAccount whereType($value)
- * @method static Builder|BookkeepingAccount whereUpdatedAt($value)
  * @property-read string $label
  * @property-read \App\Models\Tax|null $tax
+ * @method static Builder<static>|BookkeepingAccount newModelQuery()
+ * @method static Builder<static>|BookkeepingAccount newQuery()
+ * @method static Builder<static>|BookkeepingAccount query()
  * @mixin Eloquent
  */
 class BookkeepingAccount extends Model

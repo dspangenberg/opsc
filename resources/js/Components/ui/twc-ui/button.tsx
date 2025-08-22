@@ -145,7 +145,7 @@ export const Button = ({
       {...props}
     >
       {composeRenderProps(children, children => (
-        <div className={cn('flex gap-2', size === 'icon' ? 'mx-auto' : '')}>
+        <div className={cn('flex items-center gap-2', size === 'icon' ? 'mx-auto' : '')}>
           {!isLoading ? (
             icon && (
               <Icon

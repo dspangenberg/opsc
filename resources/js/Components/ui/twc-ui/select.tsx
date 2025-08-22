@@ -1,4 +1,3 @@
-import { cn } from '@/Lib/utils'
 import { ChevronsUpDown } from 'lucide-react'
 import type React from 'react'
 import {
@@ -12,10 +11,11 @@ import {
   SelectValue as AriaSelectValue,
   type SelectValueProps as AriaSelectValueProps,
   type ValidationResult as AriaValidationResult,
+  composeRenderProps,
   type Key,
-  Text,
-  composeRenderProps
+  Text
 } from 'react-aria-components'
+import { cn } from '@/Lib/utils'
 import { BaseFieldError, FieldError, Label } from './field'
 import { useFormContext } from './form'
 import { ListBoxCollection, ListBoxHeader, ListBoxItem, ListBoxSection } from './list-box'
@@ -35,7 +35,7 @@ const SelectValue = <T extends object>({ className, ...props }: AriaSelectValueP
   <AriaSelectValue
     className={composeRenderProps(className, className =>
       cn(
-        'line-clamp-1 data-[placeholder]:text-muted-foreground ',
+        'line-clamp-1 data-[placeholder]:text-muted-foreground',
         'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20',
         /* Description */
         '[&>[slot=description]]:hidden',

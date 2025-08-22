@@ -37,10 +37,14 @@ class InvoiceLineEditController extends Controller
             ->loadSum('lines', 'amount')
             ->loadSum('lines', 'tax');
 
-        return Inertia::render('App/Invoice/InvoiceDetailsEditLine', [
-            'invoice' => InvoiceData::from($invoice),
-            'invoiceLine' => InvoiceLineData::from($invoiceLine),
-        ]);
+        return Inertia::modal('App/Invoice/InvoiceDetailsEditLine')
+            ->with([
+                'invoice' => InvoiceData::from($invoice),
+                'invoiceLine' => InvoiceLineData::from($invoiceLine),
+            ])->baseRoute('app.invoice.details', [
+                'invoice' => $invoice->id,
+            ]);
+
 
     }
 }

@@ -1,16 +1,3 @@
-import { DataTable } from '@/Components/DataTable'
-import { PageContainer } from '@/Components/PageContainer'
-import { Pagination } from '@/Components/Pagination'
-import type { PageProps } from '@/Types'
-import { useQueryBuilder } from '@cgarciagarcia/react-query-builder'
-
-import { PdfViewer } from '@/Components/PdfViewer'
-import { Toggle } from '@/Components/twcui/toggle'
-import { Badge } from '@/Components/ui/badge'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { FormlessCombobox } from '@/Components/ui/twc-ui/combo-box'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
-import { minutesToHoursExtended } from '@/Lib/DateHelper'
 import {
   Add01Icon,
   FileDownloadIcon,
@@ -22,7 +9,18 @@ import {
 import { router, usePage } from '@inertiajs/react'
 import { sumBy } from 'lodash'
 import type * as React from 'react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { DataTable } from '@/Components/DataTable'
+import { PageContainer } from '@/Components/PageContainer'
+import { Pagination } from '@/Components/Pagination'
+import { PdfViewer } from '@/Components/PdfViewer'
+import { Toggle } from '@/Components/twcui/toggle'
+import { Badge } from '@/Components/ui/badge'
+import { Button } from '@/Components/ui/twc-ui/button'
+import { FormlessCombobox } from '@/Components/ui/twc-ui/combo-box'
+import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
+import { minutesToHoursExtended } from '@/Lib/DateHelper'
+import type { PageProps } from '@/Types'
 import { columns } from './TimeIndexColumns'
 
 export interface TimeGroupedEntries {
@@ -78,13 +76,6 @@ const TimeIndex: React.FC = () => {
   const handlePdfReportClicked = () => {
     router.visit(route('app.time.pdf'))
   }
-
-  const builder = useQueryBuilder()
-
-  useEffect(() => {
-    console.log(selectedProject)
-    builder.clearFilters().filter('project_id', selectedProject)
-  }, [selectedProject, builder])
 
   const handleProjectChange = useCallback((value: unknown) => {
     setSelectedProject(Number(value))
@@ -143,7 +134,7 @@ const TimeIndex: React.FC = () => {
         />
       </Toolbar>
     )
-  }, [showFilter, selectedProject, handleProjectChange, projects])
+  }, [showFilter, selectedProject, handleProjectChange, projects, handleFilterApplyClicked])
 
   const header = useMemo(
     () => (

@@ -11,13 +11,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent withoutTrashed()
  * @mixin \Eloquent
  */

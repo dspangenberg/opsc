@@ -21,86 +21,42 @@ use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
 use Spatie\Holidays\Holidays;
 use Spatie\Holidays\Countries\Germany;
 /**
- *
- *
- * @property int $id
- * @property int $contact_id
- * @property int $project_id
- * @property int $invoice_number
- * @property Carbon $issued_on
- * @property Carbon $due_on
- * @property int $dunning_block
- * @property int $is_draft
- * @property int $type_id
- * @property string $service_provision
- * @property string $vat_id
- * @property string $address
- * @property int $payment_deadline_id
- * @property Carbon|null $sent_at
- * @property int $legacy_id
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property int|null $number_range_document_numbers_id
- * @property string|null $service_period_begin
- * @property string|null $service_period_end
- * @property int $invoice_contact_id
- * @property-read Contact|null $contact
+ * @property-read \App\Models\Contact|null $contact
+ * @property-read float $amount_gross
+ * @property-read float $amount_net
+ * @property-read float $amount_open
+ * @property-read float $amount_paid
+ * @property-read float $amount_tax
  * @property-read string $document_number
  * @property-read string $filename
  * @property-read string $formated_invoice_number
+ * @property-read array $invoice_address
  * @property-read string $qr_code
- * @property-read Collection<int, InvoiceLine> $lines
+ * @property-read \App\Models\Contact|null $invoice_contact
+ * @property-read Collection<int, \App\Models\InvoiceLine> $lines
  * @property-read int|null $lines_count
+ * @property-read \App\Models\Contact|null $linked_invoice
  * @property-read Collection<int, Media> $media
  * @property-read int|null $media_count
- * @property-read Collection<int, Payment> $payable
+ * @property-read Collection<int, \App\Models\Payment> $payable
  * @property-read int|null $payable_count
- * @property-read PaymentDeadline|null $payment_deadline
- * @property-read Project|null $project
- * @property-read NumberRangeDocumentNumber|null $range_document_number
- * @method static MediableCollection<int, static> all($columns = ['*'])
- * @method static MediableCollection<int, static> get($columns = ['*'])
- * @method static Builder|Invoice newModelQuery()
- * @method static Builder|Invoice newQuery()
- * @method static Builder|Invoice query()
- * @method static Builder|Invoice whereAddress($value)
- * @method static Builder|Invoice whereContactId($value)
- * @method static Builder|Invoice whereCreatedAt($value)
- * @method static Builder|Invoice whereDueOn($value)
- * @method static Builder|Invoice whereDunningBlock($value)
- * @method static Builder|Invoice whereHasMedia($tags = [], bool $matchAll = false)
- * @method static Builder|Invoice whereHasMediaMatchAll($tags)
- * @method static Builder|Invoice whereId($value)
- * @method static Builder|Invoice whereInvoiceContactId($value)
- * @method static Builder|Invoice whereInvoiceNumber($value)
- * @method static Builder|Invoice whereIsDraft($value)
- * @method static Builder|Invoice whereIssuedOn($value)
- * @method static Builder|Invoice whereLegacyId($value)
- * @method static Builder|Invoice whereNumberRangeDocumentNumbersId($value)
- * @method static Builder|Invoice wherePaymentDeadlineId($value)
- * @method static Builder|Invoice whereProjectId($value)
- * @method static Builder|Invoice whereSentAt($value)
- * @method static Builder|Invoice whereServicePeriodBegin($value)
- * @method static Builder|Invoice whereServicePeriodEnd($value)
- * @method static Builder|Invoice whereServiceProvision($value)
- * @method static Builder|Invoice whereTypeId($value)
- * @method static Builder|Invoice whereUpdatedAt($value)
- * @method static Builder|Invoice whereVatId($value)
- * @method static Builder|Invoice withMedia($tags = [], bool $matchAll = false, bool $withVariants = false)
- * @method static Builder|Invoice withMediaAndVariants($tags = [], bool $matchAll = false)
- * @method static Builder|Invoice withMediaAndVariantsMatchAll($tags = [])
- * @method static Builder|Invoice withMediaMatchAll(bool $tags = [], bool $withVariants = false)
- * @property-read float $lines_sum_gross
- * @property-read InvoiceType|null $type
- * @property-read float $amount_gross
- * @property-read float $amount_net
- * @property-read float $amount_tax
- * @property-read float $amount_paid
- * @property-read float $amount_open
- * @property-read array $invoice_address
- * @property-read Contact|null $invoice_contact
- * @method static Builder<static>|Invoice byYear(int $year)
+ * @property-read \App\Models\PaymentDeadline|null $payment_deadline
+ * @property-read \App\Models\Project|null $project
+ * @property-read \App\Models\NumberRangeDocumentNumber|null $range_document_number
  * @property-read \App\Models\Tax|null $tax
+ * @property-read \App\Models\InvoiceType|null $type
+ * @method static MediableCollection<int, static> all($columns = ['*'])
+ * @method static Builder<static>|Invoice byYear(int $year)
+ * @method static MediableCollection<int, static> get($columns = ['*'])
+ * @method static Builder<static>|Invoice newModelQuery()
+ * @method static Builder<static>|Invoice newQuery()
+ * @method static Builder<static>|Invoice query()
+ * @method static Builder<static>|Invoice whereHasMedia($tags = [], bool $matchAll = false)
+ * @method static Builder<static>|Invoice whereHasMediaMatchAll($tags)
+ * @method static Builder<static>|Invoice withMedia($tags = [], bool $matchAll = false, bool $withVariants = false)
+ * @method static Builder<static>|Invoice withMediaAndVariants($tags = [], bool $matchAll = false)
+ * @method static Builder<static>|Invoice withMediaAndVariantsMatchAll($tags = [])
+ * @method static Builder<static>|Invoice withMediaMatchAll(bool $tags = [], bool $withVariants = false)
  * @mixin Eloquent
  */
 class Invoice extends Model implements MediableInterface

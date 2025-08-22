@@ -69,7 +69,7 @@ const InvoiceCreate: React.FC<Props> = ({
       <Form form={form} onSubmitted={handleSubmit}>
         <FormGroup>
           <div className="col-span-24">
-            <ComboBox<App.Data.ContactData>
+            <ComboBox<App.Data.ContactData, number>
               label="Kunde"
               {...form.register('contact_id')}
               autoFocus

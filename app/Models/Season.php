@@ -14,16 +14,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
- *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SeasonPeriod> $periods
+ * @property-read int|null $periods_count
  * @method static Builder<static>|Season newModelQuery()
  * @method static Builder<static>|Season newQuery()
  * @method static Builder<static>|Season onlyTrashed()
  * @method static Builder<static>|Season query()
- * @method static Builder<static>|Season withTrashed()
+ * @method static Builder<static>|Season withTrashed(bool $withTrashed = true)
  * @method static Builder<static>|Season withoutTrashed()
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SeasonPeriod> $periods
- * @property-read int|null $periods_count
  * @mixin Eloquent
  */
 class Season extends Model

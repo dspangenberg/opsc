@@ -1,6 +1,7 @@
 'use client'
 
 import { ChevronRightIcon, MoreHorizontal } from 'lucide-react'
+import type React from 'react'
 import {
   Breadcrumb as AriaBreadcrumb,
   type BreadcrumbProps as AriaBreadcrumbProps,
@@ -10,9 +11,7 @@ import {
   type LinkProps as AriaLinkProps,
   composeRenderProps
 } from 'react-aria-components'
-
 import { cn } from '@/Lib/utils'
-import type React from 'react'
 
 const Breadcrumbs = <T extends object>({ className, ...props }: AriaBreadcrumbsProps<T>) => (
   <AriaBreadcrumbs
@@ -77,7 +76,7 @@ interface BreadcrumbPageProps extends Omit<AriaLinkProps, 'href'> {}
 const BreadcrumbPage = ({ className, ...props }: BreadcrumbPageProps) => (
   <AriaLink
     className={composeRenderProps(className, className =>
-      cn('font-normal text-foreground/80', className)
+      cn('font-medium text-foreground/80', className)
     )}
     {...props}
   />

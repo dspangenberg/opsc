@@ -16,94 +16,17 @@ use Illuminate\Support\Collection;
 
 #[ObservedBy([TransactionObserver::class])]
 /**
- * 
- *
- * @property int $id
- * @property string $mm_ref
- * @property int $contact_id
- * @property int $bank_account_id
- * @property Carbon $valued_on
- * @property Carbon|null $booked_on
- * @property string|null $comment
- * @property string $currency
- * @property string|null $booking_key
- * @property string|null $bank_code
- * @property string|null $account_number
- * @property string $name
- * @property string|null $purpose
- * @property float $amount
- * @property float $amount_EUR
- * @property int $is_private
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property string $prefix
- * @property int|null $document_number
- * @property int $year
- * @property-read BankAccount|null $bank_account
- * @property-read string $real_document_number
- * @method static Builder|Transaction newModelQuery()
- * @method static Builder|Transaction newQuery()
- * @method static Builder|Transaction query()
- * @method static Builder|Transaction whereAccountNumber($value)
- * @method static Builder|Transaction whereAmount($value)
- * @method static Builder|Transaction whereAmountEUR($value)
- * @method static Builder|Transaction whereBankAccountId($value)
- * @method static Builder|Transaction whereBankCode($value)
- * @method static Builder|Transaction whereBookedOn($value)
- * @method static Builder|Transaction whereBookingKey($value)
- * @method static Builder|Transaction whereComment($value)
- * @method static Builder|Transaction whereContactId($value)
- * @method static Builder|Transaction whereCreatedAt($value)
- * @method static Builder|Transaction whereCurrency($value)
- * @method static Builder|Transaction whereDocumentNumber($value)
- * @method static Builder|Transaction whereId($value)
- * @method static Builder|Transaction whereIsPrivate($value)
- * @method static Builder|Transaction whereMmRef($value)
- * @method static Builder|Transaction whereName($value)
- * @method static Builder|Transaction wherePrefix($value)
- * @method static Builder|Transaction wherePurpose($value)
- * @method static Builder|Transaction whereUpdatedAt($value)
- * @method static Builder|Transaction whereValuedOn($value)
- * @method static Builder|Transaction whereYear($value)
- * @property string|null $booking_text
- * @property string|null $type
- * @property string|null $return_reason
- * @property string|null $transaction_code
- * @property string|null $end_to_end_reference
- * @property string|null $mandate_reference
- * @property string|null $batch_reference
- * @property string|null $primanota_number
- * @method static Builder|Transaction whereBatchReference($value)
- * @method static Builder|Transaction whereBookingText($value)
- * @method static Builder|Transaction whereEndToEndReference($value)
- * @method static Builder|Transaction whereMandateReference($value)
- * @method static Builder|Transaction wherePrimanotaNumber($value)
- * @method static Builder|Transaction whereReturnReason($value)
- * @method static Builder|Transaction whereTransactionCode($value)
- * @method static Builder|Transaction whereType($value)
- * @property-read Contact|null $contact
- * @property int $is_transit
- * @property int|null $booking_id
- * @method static Builder|Transaction whereBookingId($value)
- * @method static Builder|Transaction whereIsTransit($value)
- * @property string|null $org_category
+ * @property-read \App\Models\BankAccount|null $bank_account
+ * @property-read \App\Models\BookkeepingBooking|null $booking
+ * @property-read \App\Models\Contact|null $contact
  * @property-read string $bookkeeping_text
- * @method static Builder|Transaction whereOrgCategory($value)
- * @property float $amount_in_foreign_currency
- * @method static Builder|Transaction whereAmountInForeignCurrency($value)
- * @property int $number_range_document_numbers_id
- * @method static Builder|Transaction whereNumberRangeDocumentNumbersId($value)
- * @property string|null $foreign_currency
- * @method static Builder|Transaction whereForeignCurrency($value)
- * @method static Builder|Transaction rulesAnd(Collection $conditions)
- * @property-read BookkeepingBooking|null $booking
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Payment> $payments
+ * @property-read string $document_number
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Payment> $payments
  * @property-read int|null $payments_count
- * @property-read NumberRangeDocumentNumber|null $range_document_number
- * @property int $counter_account_id
- * @property int $is_locked
- * @method static Builder|Transaction whereCounterAccountId($value)
- * @method static Builder|Transaction whereIsLocked($value)
+ * @property-read \App\Models\NumberRangeDocumentNumber|null $range_document_number
+ * @method static Builder<static>|Transaction newModelQuery()
+ * @method static Builder<static>|Transaction newQuery()
+ * @method static Builder<static>|Transaction query()
  * @mixin Eloquent
  */
 class Transaction extends Model

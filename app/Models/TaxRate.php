@@ -11,14 +11,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
- *
  * @property-read \App\Models\Tax|null $tax
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaxRate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaxRate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaxRate onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaxRate query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|TaxRate withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TaxRate withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaxRate withoutTrashed()
  * @mixin \Eloquent
  */

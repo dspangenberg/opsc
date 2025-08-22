@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * 
- *
  * @property int $id
  * @property string $name
  * @property string $iso_code
@@ -17,16 +15,16 @@ use Illuminate\Support\Carbon;
  * @property string $country_code
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @method static Builder|Country newModelQuery()
- * @method static Builder|Country newQuery()
- * @method static Builder|Country query()
- * @method static Builder|Country whereCountryCode($value)
- * @method static Builder|Country whereCreatedAt($value)
- * @method static Builder|Country whereId($value)
- * @method static Builder|Country whereIsoCode($value)
- * @method static Builder|Country whereName($value)
- * @method static Builder|Country whereUpdatedAt($value)
- * @method static Builder|Country whereVehicleCode($value)
+ * @method static Builder<static>|Country newModelQuery()
+ * @method static Builder<static>|Country newQuery()
+ * @method static Builder<static>|Country query()
+ * @method static Builder<static>|Country whereCountryCode($value)
+ * @method static Builder<static>|Country whereCreatedAt($value)
+ * @method static Builder<static>|Country whereId($value)
+ * @method static Builder<static>|Country whereIsoCode($value)
+ * @method static Builder<static>|Country whereName($value)
+ * @method static Builder<static>|Country whereUpdatedAt($value)
+ * @method static Builder<static>|Country whereVehicleCode($value)
  * @mixin Eloquent
  */
 class Country extends Model

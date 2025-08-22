@@ -16,8 +16,6 @@ class InvoiceLineUpdateController extends Controller
 {
     public function __invoke(InvoiceLineUpdateRequest $request, Invoice $invoice, InvoiceLine $invoiceLine)
     {
-
-
         $invoiceLine->update($request->validated());
         $invoiceLine->load('rate');
 
@@ -30,6 +28,5 @@ class InvoiceLineUpdateController extends Controller
         $invoiceLine->save();
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id, 'line' => $invoiceLine->id]);
-
     }
 }

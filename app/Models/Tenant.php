@@ -22,15 +22,13 @@ use Stancl\Tenancy\Database\TenantCollection;
 use Torann\Hashids\Facade\Hashids;
 
 /**
- * 
- *
  * @property string $id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property array|null $data
+ * @property array<array-key, mixed>|null $data
  * @property string $last_name
  * @property string $first_name
- * @property string $company_house_name
+ * @property string $organisation
  * @property string|null $address
  * @property string $zip
  * @property string $city
@@ -45,20 +43,20 @@ use Torann\Hashids\Facade\Hashids;
  * @property string|null $setuped
  * @property int $is_suspended
  * @property string|null $note
+ * @property string|null $prefix
  * @property-read Collection<int, Domain> $domains
  * @property-read int|null $domains_count
+ * @property-read string $formated_prefix
  * @property-read string $full_name
  * @property-read string $initials
  * @property-read string $reverse_full_name
  * @method static TenantCollection<int, static> all($columns = ['*'])
- * @method static Builder<static>|Tenant findSimilarSlugs(string $attribute, array $config, string $slug)
  * @method static TenantCollection<int, static> get($columns = ['*'])
  * @method static Builder<static>|Tenant newModelQuery()
  * @method static Builder<static>|Tenant newQuery()
  * @method static Builder<static>|Tenant query()
  * @method static Builder<static>|Tenant whereAddress($value)
  * @method static Builder<static>|Tenant whereCity($value)
- * @method static Builder<static>|Tenant whereCompanyHouseName($value)
  * @method static Builder<static>|Tenant whereCountryId($value)
  * @method static Builder<static>|Tenant whereCreatedAt($value)
  * @method static Builder<static>|Tenant whereData($value)
@@ -69,7 +67,9 @@ use Torann\Hashids\Facade\Hashids;
  * @method static Builder<static>|Tenant whereIsSuspended($value)
  * @method static Builder<static>|Tenant whereLastName($value)
  * @method static Builder<static>|Tenant whereNote($value)
+ * @method static Builder<static>|Tenant whereOrganisation($value)
  * @method static Builder<static>|Tenant whereOtp($value)
+ * @method static Builder<static>|Tenant wherePrefix($value)
  * @method static Builder<static>|Tenant whereSalutationId($value)
  * @method static Builder<static>|Tenant whereSetuped($value)
  * @method static Builder<static>|Tenant whereSubdomain($value)
@@ -77,13 +77,6 @@ use Torann\Hashids\Facade\Hashids;
  * @method static Builder<static>|Tenant whereUpdatedAt($value)
  * @method static Builder<static>|Tenant whereWebsite($value)
  * @method static Builder<static>|Tenant whereZip($value)
- * @method static Builder<static>|Tenant withUniqueSlugConstraints(Model $model, string $attribute, array $config, string $slug)
- * @mixin IdeHelperTenant
- * @property string|null $prefix
- * @property-read string $formated_prefix
- * @method static Builder<static>|Tenant wherePrefix($value)
- * @property string $organisation
- * @method static Builder<static>|Tenant whereOrganisation($value)
  * @mixin Eloquent
  */
 class Tenant extends BaseTenant implements TenantWithDatabase

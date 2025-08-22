@@ -11,46 +11,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
- * 
- *
- * @property int $id
- * @property string $payable_type
- * @property int $payable_id
- * @property int $booking_id
- * @property int $transaction_id
- * @property float $amount
- * @property int $is_private
- * @property Carbon $issued_on
- * @property int $is_confirmed
- * @property int $rank
- * @property Carbon|null $deleted_at
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @method static Builder|Payment newModelQuery()
- * @method static Builder|Payment newQuery()
- * @method static Builder|Payment onlyTrashed()
- * @method static Builder|Payment query()
- * @method static Builder|Payment whereAmount($value)
- * @method static Builder|Payment whereBookingId($value)
- * @method static Builder|Payment whereCreatedAt($value)
- * @method static Builder|Payment whereDeletedAt($value)
- * @method static Builder|Payment whereId($value)
- * @method static Builder|Payment whereIsConfirmed($value)
- * @method static Builder|Payment whereIsPrivate($value)
- * @method static Builder|Payment whereIssuedOn($value)
- * @method static Builder|Payment wherePayableId($value)
- * @method static Builder|Payment wherePayableType($value)
- * @method static Builder|Payment whereRank($value)
- * @method static Builder|Payment whereTransactionId($value)
- * @method static Builder|Payment whereUpdatedAt($value)
- * @method static Builder|Payment withTrashed()
- * @method static Builder|Payment withoutTrashed()
  * @property-read Model|\Eloquent $payable
  * @property-read \App\Models\Transaction|null $transaction
- * @property int $is_currency_difference
- * @method static Builder|Payment whereIsCurrencyDifference($value)
- * @property int $is_ignored
- * @method static Builder|Payment whereIsIgnored($value)
+ * @method static Builder<static>|Payment newModelQuery()
+ * @method static Builder<static>|Payment newQuery()
+ * @method static Builder<static>|Payment onlyTrashed()
+ * @method static Builder<static>|Payment query()
+ * @method static Builder<static>|Payment withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|Payment withoutTrashed()
  * @mixin Eloquent
  */
 class Payment extends Model

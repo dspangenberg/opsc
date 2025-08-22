@@ -120,7 +120,7 @@ const MenuItem = ({
 
           <span className="flex-1">
             {title}
-            {!!ellipsis && <span>&hellip;</span>}
+            {!!ellipsis && <span> &hellip;</span>}
           </span>
 
           {!!shortcut && <MenuKeyboard>{shortcut}</MenuKeyboard>}
@@ -169,6 +169,8 @@ interface DropdownMenuProps<T>
     Omit<AriaMenuTriggerProps, 'children'> {
   title?: string
   icon?: IconType
+  className?: string
+  iconClassName?: string
   placement?: PopoverProps['placement']
   selectionMode?: AriaMenuProps<T>['selectionMode']
   selectedKeys?: AriaMenuProps<T>['selectedKeys']
@@ -181,12 +183,21 @@ function DropdownButton<T extends object>({
   placement = 'bottom right',
   selectionMode = undefined,
   selectedKeys = undefined,
+  iconClassName = undefined,
+  className = undefined,
   onSelectionChange,
   ...props
 }: DropdownMenuProps<T>) {
   return (
     <MenuTrigger {...props}>
-      <Button variant={variant} size={props.size} icon={props.icon} title={title} />
+      <Button
+        variant={variant}
+        className={className}
+        size={props.size}
+        iconClassName={iconClassName}
+        icon={props.icon}
+        title={title}
+      />
       <MenuPopover className="min-w-[--trigger-width]" placement={placement}>
         <Menu
           selectionMode={selectionMode}

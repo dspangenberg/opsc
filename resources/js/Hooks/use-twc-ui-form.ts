@@ -1,4 +1,4 @@
-import type { FormDataConvertible, FormDataKeys, FormDataValues } from '@inertiajs/core'
+import type { FormDataConvertible } from '@inertiajs/core'
 import type { RangeValue } from '@react-types/shared'
 import { format, isValid, parse, parseISO } from 'date-fns'
 import type { RequestMethod, ValidationConfig } from 'laravel-precognition'
@@ -23,56 +23,66 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
   const form = useInertiaForm<T>(method, url, data, config)
   const isDirty = !isEqual(initialDataRef.current, form.data)
 
-  const updateAndValidateWithoutEvent = <K extends FormDataKeys<T>>(
-    name: K,
-    value: FormDataValues<T, K>
-  ) => {
-    form.setData(name, value)
-    form.validate(name)
+  // Create a type-safe wrapper that bypasses Inertia's complex types
+  const setFormData = (name: string, value: any) => {
+    ;(form as any).setData(name, value)
   }
 
-  function register<K extends FormDataKeys<T>>(name: K) {
+  const validateFormField = (name: string) => {
+    ;(form as any).validate(name)
+  }
+
+  const touchFormField = (name: string) => {
+    ;(form as any).touched(name)
+  }
+
+  const updateAndValidateWithoutEvent = (name: string, value: any) => {
+    setFormData(name, value)
+    validateFormField(name)
+  }
+
+  function register(name: string) {
     return {
       name,
-      value: form.data[name],
-      error: form.errors[name],
-      onChange: (value: FormDataValues<T, K> | null) => {
-        form.setData(name, value as FormDataValues<T, K>)
-        form.validate(name)
+      value: (form.data as any)[name],
+      error: (form.errors as any)[name],
+      onChange: (value: any) => {
+        setFormData(name, value)
+        validateFormField(name)
       },
       onBlur: () => {
-        form.validate(name)
+        validateFormField(name)
       }
     } as const
   }
 
-  function registerEvent<K extends FormDataKeys<T>>(name: K) {
+  function registerEvent(name: string) {
     return {
       name,
-      value: form.data[name],
-      error: form.errors[name],
+      value: (form.data as any)[name],
+      error: (form.errors as any)[name],
       onChange: (e: ChangeEvent<InputElements>) => {
-        form.setData(name, e.currentTarget.value as FormDataValues<T, K>)
-        form.validate(name)
+        setFormData(name, e.currentTarget.value)
+        validateFormField(name)
       },
       onBlur: () => {
-        form.validate(name)
+        validateFormField(name)
       }
     } as const
   }
 
-  const registerCheckbox = <K extends FormDataKeys<T>>(name: K) => {
+  const registerCheckbox = (name: string) => {
     return {
       name,
-      checked: Boolean(form.data[name]),
-      hasError: !!form.errors[name],
-      isSelected: Boolean(form.data[name]),
+      checked: Boolean((form.data as any)[name]),
+      hasError: !!(form.errors as any)[name],
+      isSelected: Boolean((form.data as any)[name]),
       onChange: (checked: boolean) => {
-        form.setData(name, checked as FormDataValues<T, K>)
-        form.validate(name)
+        setFormData(name, checked)
+        validateFormField(name)
       },
       onBlur: () => {
-        form.validate(name)
+        validateFormField(name)
       }
     } as const
   }
@@ -82,9 +92,9 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
   ) => {
     const { name, value, type } = e.target
     const newValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
-    form.touched(name)
-    form.setData(name as FormDataKeys<T>, newValue as FormDataValues<T, FormDataKeys<T>>)
-    form.validate(name as FormDataKeys<T>)
+    touchFormField(name)
+    setFormData(name, newValue)
+    validateFormField(name)
   }
 
   // Hilfsfunktion: Konvertiert Datum vom konfigurierten Format zu ISO (yyyy-MM-dd) mit date-fns
@@ -136,14 +146,11 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
   }
 
   // Neue registerDateRange Funktion für separate start/end Felder
-  const registerDateRange = <KStart extends FormDataKeys<T>, KEnd extends FormDataKeys<T>>(
-    startFieldName: KStart,
-    endFieldName: KEnd
-  ) => {
+  const registerDateRange = (startFieldName: string, endFieldName: string) => {
     // Konvertiere die gespeicherten Werte zu RangeValue für DateRangePicker
     const convertToRangeValue = (): RangeValue<string> | null => {
-      const startValue = form.data[startFieldName] as string
-      const endValue = form.data[endFieldName] as string
+      const startValue = (form.data as any)[startFieldName] as string
+      const endValue = (form.data as any)[endFieldName] as string
 
       if (!startValue || !endValue) return null
 
@@ -170,10 +177,10 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
     }
 
     const value = convertToRangeValue()
-    const error = form.errors[startFieldName] || form.errors[endFieldName]
+    const error = (form.errors as any)[startFieldName] || (form.errors as any)[endFieldName]
 
     return {
-      name: `${String(startFieldName)}_${String(endFieldName)}`,
+      name: `${startFieldName}_${endFieldName}`,
       value,
       error,
       onChange: (rangeValue: RangeValue<string> | null) => {
@@ -190,25 +197,26 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
             endFormatted
           )
 
-          form.setData(startFieldName, startFormatted as FormDataValues<T, KStart>)
-          form.setData(endFieldName, endFormatted as FormDataValues<T, KEnd>)
-          form.validate(startFieldName)
-          form.validate(endFieldName)
+          setFormData(startFieldName, startFormatted)
+          setFormData(endFieldName, endFormatted)
+          validateFormField(startFieldName)
+          validateFormField(endFieldName)
         } else {
-          form.setData(startFieldName, null as FormDataValues<T, KStart>)
-          form.setData(endFieldName, null as FormDataValues<T, KEnd>)
-          form.validate(startFieldName)
-          form.validate(endFieldName)
+          setFormData(startFieldName, null)
+          setFormData(endFieldName, null)
+          validateFormField(startFieldName)
+          validateFormField(endFieldName)
         }
       },
       onBlur: () => {
-        form.validate(startFieldName)
-        form.validate(endFieldName)
+        validateFormField(startFieldName)
+        validateFormField(endFieldName)
       }
     } as const
   }
 
-  form.isDirty = isDirty
+  // Add isDirty to the form object
+  ;(form as any).isDirty = isDirty
 
   return {
     ...form,

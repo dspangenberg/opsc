@@ -160,9 +160,6 @@ Route::middleware([
     Route::get('invoicing/invoices/{invoice}/base-edit',
         InvoiceDetailsEditBaseController::class)->name('app.invoice.base-edit');
 
-    Route::get('invoicing/invoices/{invoice}/lines-edit',
-        InvoiceDetailsEditLinesController::class)->name('app.invoice.lines-edit');
-
     Route::get('invoicing/invoices/{invoice}/unrelease',
         InvoiceUnreleaseController::class)->name('app.invoice.unrelease');
 

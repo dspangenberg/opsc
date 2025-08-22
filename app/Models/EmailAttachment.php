@@ -11,8 +11,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * 
- *
  * @property-read \App\Models\Email|null $email
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailAttachment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailAttachment newQuery()

@@ -10,68 +10,15 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
 
 /**
- * 
- *
- * @property int $id
- * @property int $transaction_id
- * @property int $receipt_id
- * @property int $payment_id
- * @property int $account_id_credit
- * @property string $account_id_debit
- * @property float $amount
- * @property Carbon $date
- * @property int $tax_id
- * @property int $is_split
- * @property int $split_id
- * @property string $booking_text
- * @property string $document_number
- * @property string|null $note
- * @property float $tax_credit
- * @property float $tax_debit
- * @property int $is_locked
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @method static Builder|BookkeepingBooking newModelQuery()
- * @method static Builder|BookkeepingBooking newQuery()
- * @method static Builder|BookkeepingBooking query()
- * @method static Builder|BookkeepingBooking whereAccountIdCredit($value)
- * @method static Builder|BookkeepingBooking whereAccountIdDebit($value)
- * @method static Builder|BookkeepingBooking whereAmount($value)
- * @method static Builder|BookkeepingBooking whereBookingText($value)
- * @method static Builder|BookkeepingBooking whereCreatedAt($value)
- * @method static Builder|BookkeepingBooking whereDate($value)
- * @method static Builder|BookkeepingBooking whereDocumentNumber($value)
- * @method static Builder|BookkeepingBooking whereId($value)
- * @method static Builder|BookkeepingBooking whereIsLocked($value)
- * @method static Builder|BookkeepingBooking whereIsSplit($value)
- * @method static Builder|BookkeepingBooking whereNote($value)
- * @method static Builder|BookkeepingBooking wherePaymentId($value)
- * @method static Builder|BookkeepingBooking whereReceiptId($value)
- * @method static Builder|BookkeepingBooking whereSplitId($value)
- * @method static Builder|BookkeepingBooking whereTaxCredit($value)
- * @method static Builder|BookkeepingBooking whereTaxDebit($value)
- * @method static Builder|BookkeepingBooking whereTaxId($value)
- * @method static Builder|BookkeepingBooking whereTransactionId($value)
- * @method static Builder|BookkeepingBooking whereUpdatedAt($value)
- * @property-read BookkeepingAccount|null $account_credit
- * @property-read BookkeepingAccount|null $account_debit
- * @property-read Tax|null $tax
- * @property string $bookable_type
- * @property int $bookable_id
- * @property int $is_marked
- * @property-read Model|Eloquent $bookable
- * @method static Builder|BookkeepingBooking whereBookableId($value)
- * @method static Builder|BookkeepingBooking whereBookableType($value)
- * @method static Builder|BookkeepingBooking whereIsMarked($value)
- * @property string $document_number_prefix
- * @property int $document_number_counter
- * @method static Builder|BookkeepingBooking whereDocumentNumberCounter($value)
- * @method static Builder|BookkeepingBooking whereDocumentNumberPrefix($value)
- * @property string $document_number_year
- * @method static Builder|BookkeepingBooking whereDocumentNumberYear($value)
- * @property int $number_range_document_numbers_id
- * @method static Builder|BookkeepingBooking whereNumberRangeDocumentNumbersId($value)
+ * @property-read \App\Models\BookkeepingAccount|null $account_credit
+ * @property-read \App\Models\BookkeepingAccount|null $account_debit
+ * @property-read Model|\Eloquent $bookable
+ * @property-read string $document_number
  * @property-read \App\Models\NumberRangeDocumentNumber|null $range_document_number
+ * @property-read \App\Models\Tax|null $tax
+ * @method static Builder<static>|BookkeepingBooking newModelQuery()
+ * @method static Builder<static>|BookkeepingBooking newQuery()
+ * @method static Builder<static>|BookkeepingBooking query()
  * @mixin Eloquent
  */
 class BookkeepingBooking extends Model

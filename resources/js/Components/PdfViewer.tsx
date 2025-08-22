@@ -15,9 +15,12 @@ import 'react-pdf/dist/Page/AnnotationLayer.css'
 import { LogoSpinner } from '@dspangenberg/twcui'
 
 // Import the worker setup
-import '@/utils/pdf-worker'
 
+import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
+import { Button } from '@/Components/ui/twc-ui/button'
+import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { useFileDownload } from '@/Hooks/useFileDownload'
+import { cn } from '@/Lib/utils'
 import {
   ArrowDown01Icon,
   ArrowUp01Icon,
@@ -27,12 +30,13 @@ import {
   SearchMinusIcon,
   SquareArrowDiagonal02Icon
 } from '@hugeicons/core-free-icons'
+import { pdfjs } from 'react-pdf'
 import { useFullscreen, useToggle } from 'react-use'
 
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
-import { cn } from '@/Lib/utils'
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url
+).toString()
 
 interface Props {
   document: string

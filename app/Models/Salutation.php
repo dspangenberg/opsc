@@ -8,23 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * 
- *
  * @property int $id
  * @property string $name
  * @property string $gender
  * @property int $is_hidden
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @method static Builder|Salutation newModelQuery()
- * @method static Builder|Salutation newQuery()
- * @method static Builder|Salutation query()
- * @method static Builder|Salutation whereCreatedAt($value)
- * @method static Builder|Salutation whereGender($value)
- * @method static Builder|Salutation whereId($value)
- * @method static Builder|Salutation whereIsHidden($value)
- * @method static Builder|Salutation whereName($value)
- * @method static Builder|Salutation whereUpdatedAt($value)
+ * @method static Builder<static>|Salutation newModelQuery()
+ * @method static Builder<static>|Salutation newQuery()
+ * @method static Builder<static>|Salutation query()
+ * @method static Builder<static>|Salutation whereCreatedAt($value)
+ * @method static Builder<static>|Salutation whereGender($value)
+ * @method static Builder<static>|Salutation whereId($value)
+ * @method static Builder<static>|Salutation whereIsHidden($value)
+ * @method static Builder<static>|Salutation whereName($value)
+ * @method static Builder<static>|Salutation whereUpdatedAt($value)
  * @mixin Eloquent
  */
 class Salutation extends Model

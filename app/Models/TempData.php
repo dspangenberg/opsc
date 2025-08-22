@@ -10,14 +10,13 @@ use Mtvs\EloquentHashids\HasHashid;
 use Mtvs\EloquentHashids\HashidRouting;
 
 /**
- *
- *
  * @property int $id
  * @property string $parent_type
  * @property string $parent_id
- * @property array $data
+ * @property array<array-key, mixed> $data
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read mixed $hashid
  * @property-read string $hid
  * @method static Builder<static>|TempData newModelQuery()
  * @method static Builder<static>|TempData newQuery()
@@ -28,7 +27,6 @@ use Mtvs\EloquentHashids\HashidRouting;
  * @method static Builder<static>|TempData whereParentId($value)
  * @method static Builder<static>|TempData whereParentType($value)
  * @method static Builder<static>|TempData whereUpdatedAt($value)
- * @mixin IdeHelperTempData
  * @mixin Eloquent
  */
 class TempData extends Model

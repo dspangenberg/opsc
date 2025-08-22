@@ -16,8 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\QueryBuilder;
+
 
 class TimeIndexController extends Controller
 {
@@ -25,14 +24,79 @@ class TimeIndexController extends Controller
     {
         // filter[starts_between]=01.01.2024,31.01.2024&filter[project_id]=7
 
-        $times = QueryBuilder::for(Time::class)
-            ->allowedFilters([
-                AllowedFilter::exact('project_id'),
-                AllowedFilter::exact('contact_id'),
-                AllowedFilter::exact('category_id'),
-                AllowedFilter::scope('starts_after'),
-                AllowedFilter::scope('starts_between'),
-            ])
+
+        // ?filter[begin_at]=between,01.01.2024,31.01.2024
+
+        ds($request->query);
+
+        $filterBool = $request->query('filter_bool', 'AND');
+        if ($filterBool != 'AND' && $filterBool != 'OR') {
+            $filterBool = 'AND';
+        }
+
+        $filterQuery = [];
+        if ($request->query('filter')) {
+            $filter = $request->query('filter');
+            foreach ($filter as $key => $value) {
+                $values = explode(',', $value);
+                if (count($values) > 1) {
+                    $operator = $values[0];
+                    unset($values[0]);
+
+                    $queryValue = '';
+                    switch ($operator) {
+                        case 'between':
+                            $queryValue = [Carbon::parse($values[1])->startOfDay(), Carbon::parse($values[2])->endOfDay()];
+                            break;
+                        case 'in':
+                            $queryValue = $values;
+                            break;
+                    }
+
+
+
+
+                    $filterQuery[] = [
+                        'column' => $key,
+                        'operator' => $operator,
+                        'value' => $queryValue,
+                        'boolean' => $filterBool,
+                    ];
+                } else {
+                    $filterQuery[] = [
+                        'column' => $key,
+                        'operator' => '=',
+                        'value' => $value,
+                        'boolean' => $filterBool,
+                    ];
+                }
+
+            }
+        }
+
+        ds($filterQuery);
+
+        $times = Time::query()->when($filterQuery, function ($query) use ($filterQuery) {
+            foreach ($filterQuery as $filter) {
+                switch ($filter['operator']) {
+                    case 'between':
+                        $query->whereBetween($filter['column'], $filter['value']);
+                        break;
+                    case 'in':
+                        $query->whereIn($filter['column'], $filter['value']);
+                        break;
+                    case 'not_between':
+                        $query->whereNotBetween($filter['column'], $filter['value']);
+                        break;
+                    default:
+                        $query->where($filter['column'], $filter['operator'], $filter['value'], $filter['boolean']);
+                        break;
+                }
+            }
+        })->get();
+
+        $times = Time::query()
+            ->applyDynamicFilters($request)
             ->with('project')
             ->withMinutes()
             ->with('category')
@@ -40,6 +104,7 @@ class TimeIndexController extends Controller
             ->whereNotNull('begin_at')
             ->orderBy('begin_at', 'desc')
             ->paginate();
+
 
         $projectIds = Time::query()->distinct()->pluck('project_id');
         $projects = Project::query()->whereIn('id', $projectIds)->orderBy('name')->get();

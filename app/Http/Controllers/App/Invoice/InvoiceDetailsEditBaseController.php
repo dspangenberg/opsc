@@ -41,18 +41,23 @@ class InvoiceDetailsEditBaseController extends Controller
             ->loadSum('lines', 'amount')
             ->loadSum('lines', 'tax');
 
-        $invoiceTypes = InvoiceType::orderBy('display_name')->get();
+        $invoiceTypes = InvoiceType::query()->orderBy('display_name')->get();
         $projects = Project::where('is_archived', false)->orderBy('name')->get();
         $taxes = Tax::with('rates')->orderBy('name')->get();
         $paymentDeadlines = PaymentDeadline::orderBy('name')->get();
 
-        return Inertia::render('App/Invoice/InvoiceDetailsEditBaseData', [
-            'invoice' => InvoiceData::from($invoice),
-            'invoice_types' => InvoiceTypeData::collect($invoiceTypes),
-            'projects' => ProjectData::collect($projects),
-            'taxes' => TaxData::collect($taxes),
-            'payment_deadlines' => PaymentDeadlineData::collect($paymentDeadlines),
-        ]);
+
+        return Inertia::modal('App/Invoice/InvoiceDetailsEditBaseData')
+            ->with([
+                'invoice' => InvoiceData::from($invoice),
+                'invoice_types' => InvoiceTypeData::collect($invoiceTypes),
+                'projects' => ProjectData::collect($projects),
+                'taxes' => TaxData::collect($taxes),
+                'payment_deadlines' => PaymentDeadlineData::collect($paymentDeadlines),
+            ])->baseRoute('app.invoice.details', [
+                'invoice' => $invoice->id,
+            ]);
+
 
     }
 }
