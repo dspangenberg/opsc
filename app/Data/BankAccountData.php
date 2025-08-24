@@ -11,15 +11,16 @@ use Spatie\LaravelData\Data;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
 #[TypeScript]
-class CalendarData extends Data
+class BankAccountData extends Data
 {
     public function __construct(
         public readonly ?int $id,
         public readonly string $name,
-        public readonly string $icon,
-        public readonly string $color,
-        public readonly bool $is_default,
-        /** @var CalendarEventData[] */
-        public readonly ?array $events,
+        public readonly string $iban,
+        public readonly string $bic,
+        public readonly string $bank_code,
+        public readonly string $prefix,
+        public readonly string $bookkeeping_account_id,
+        public readonly int $pos,
     ) {}
 }

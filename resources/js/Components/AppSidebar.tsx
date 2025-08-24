@@ -3,11 +3,6 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import logo from '@/Assets/Images/tw.svg' // Make sure to adjust the import path
-import { NavMain } from '@/Components/nav-main'
-import { NavSecondary } from '@/Components/nav-secondary'
-import { Sidebar, SidebarContent, SidebarHeader } from '@/Components/ui/sidebar'
-
 import {
   AbacusIcon,
   ContactBookIcon,
@@ -17,8 +12,11 @@ import {
   KanbanIcon,
   TimeScheduleIcon
 } from '@hugeicons/core-free-icons'
-
 import type * as React from 'react'
+import logo from '@/Assets/Images/tw.svg' // Make sure to adjust the import path
+import { NavMain } from '@/Components/nav-main'
+import { NavSecondary } from '@/Components/nav-secondary'
+import { Sidebar, SidebarContent, SidebarHeader } from '@/Components/ui/sidebar'
 
 const data = {
   navGlobalTop: [],
@@ -94,20 +92,25 @@ const data = {
     },
     {
       title: 'Buchhaltung',
-      url: route('app.invoice.index', {}, false),
+      url: route('app.bookkeeping.transactions.index', {}, false),
       icon: AbacusIcon,
       activePath: '/app/bookkeeping',
       items: [
         {
-          title: 'Transaktionen',
+          title: 'Buchungen',
           url: route('app.invoice.index', {}, false)
+        },
+        {
+          title: 'Transaktionen',
+          url: route('app.bookkeeping.transactions.index', {}, false),
+          activePath: '/app/bookkeeping/transactions'
         },
         {
           title: 'Belege',
           url: route('app.invoice.index', {}, false)
         },
         {
-          title: 'Buchungen',
+          title: 'Regeln',
           url: route('app.invoice.index', {}, false)
         }
       ],

@@ -7,6 +7,8 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionIndexController;
+use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionMoneyMoneyImportController;
 use App\Http\Controllers\App\Contact\ContactAddressCreateController;
 use App\Http\Controllers\App\Contact\ContactAddressStoreController;
 use App\Http\Controllers\App\Contact\ContactAddressUpdateController;
@@ -18,7 +20,6 @@ use App\Http\Controllers\App\Invoice\InvoiceCreateController;
 use App\Http\Controllers\App\Invoice\InvoiceDeleteController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsEditBaseController;
-use App\Http\Controllers\App\Invoice\InvoiceDetailsEditLinesController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsUpdateBaseController;
 use App\Http\Controllers\App\Invoice\InvoiceDuplicateController;
 use App\Http\Controllers\App\Invoice\InvoiceHistoryController;
@@ -79,17 +80,15 @@ Route::middleware([
     Route::get('contacts',
         ContactIndexController::class)->name('app.contact.index');
 
-    Route::get('times/create',TimeCreateController::class)->name('app.time.create');
-    Route::post('times',TimeStoreController::class)
+    Route::get('times/create', TimeCreateController::class)->name('app.time.create');
+    Route::post('times', TimeStoreController::class)
         ->middleware([HandlePrecognitiveRequests::class])
         ->name('app.time.store');
-
 
     Route::get('times/all',
         TimeIndexController::class)->name('app.time.index');
     Route::get('times/my-week',
         TimeMyWeekIndexController::class)->name('app.time.my-week');
-
 
     Route::get('times/{time}/edit', TimeEditController::class)->name('app.time.edit');
 
@@ -100,14 +99,19 @@ Route::middleware([
     Route::get('times/pdf',
         TimePdfReportController::class)->name('app.time.pdf');
 
-
     Route::delete('times/{time}',
         TimeDeleteController::class)->name('app.times.delete');
 
+    Route::get('bookkeeping/transactions',
+        TransactionIndexController::class)->name('app.bookkeeping.transactions.index');
+
+    Route::post('bookkeeping/transactions/money-money-import',
+        TransactionMoneyMoneyImportController::class)
+        ->middleware([HandlePrecognitiveRequests::class])
+        ->name('app.bookkeeping.transactions.money-money-import');
 
     Route::get('contacts/{contact}',
         ContactDetailsController::class)->name('app.contact.details');
-
 
     Route::get('contacts/{contact}/{address}/edit',
         ContactEditAddressController::class)->name('app.contact.edit.address');
@@ -123,11 +127,41 @@ Route::middleware([
         ->middleware([HandlePrecognitiveRequests::class])
         ->name('app.contact.address.update');
 
+    // Fügen Sie diese Test-Route hinzu
+    Route::post('test-upload', function(\Illuminate\Http\Request $request) {
+        \Log::info('Test upload reached', [
+            'has_file' => $request->hasFile('file'),
+            'bank_account_id' => $request->input('bank_account_id'),
+            'all_input' => $request->all()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Test upload successful',
+            'data' => $request->all()
+        ]);
+    })->name('test.upload');
+
+
+// Sehr einfache Test-Route ohne Datei-Upload
+    Route::post('simple-test', function(\Illuminate\Http\Request $request) {
+        \Log::info('Simple test reached', [
+            'input' => $request->all(),
+            'method' => $request->method(),
+            'url' => $request->url()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Simple test successful',
+            'input' => $request->all()
+        ]);
+    })->name('simple.test');
+
     Route::post('contacts/{contact}/address',
         ContactAddressStoreController::class)
         ->middleware([HandlePrecognitiveRequests::class])
         ->name('app.contact.address.store');
-
 
     Route::get('invoicing/invoices/create',
         InvoiceCreateController::class)->name('app.invoice.create');
@@ -135,24 +169,16 @@ Route::middleware([
     Route::get('invoicing/invoices',
         InvoiceIndexController::class)->name('app.invoice.index');
 
-
-
-
-
-
     Route::get('invoicing/invoices/{invoice}',
         InvoiceDetailsController::class)->name('app.invoice.details');
 
     Route::get('invoicing/invoices/{invoice}/history',
         InvoiceHistoryController::class)->name('app.invoice.history');
 
-
     Route::post('invoicing/invoices',
         InvoiceStoreController::class)
         ->middleware([HandlePrecognitiveRequests::class])
         ->name('app.invoice.store');
-
-
 
     Route::delete('invoicing/invoices/{invoice}',
         InvoiceDeleteController::class)->name('app.invoice.delete');
@@ -172,10 +198,8 @@ Route::middleware([
     Route::get('invoicing/invoices/{invoice}/line-duplicate/{invoiceLine}',
         InvoiceLineDuplicateController::class)->name('app.invoice.line-duplicate')->middleware([HandlePrecognitiveRequests::class]);
 
-
     Route::get('invoicing/invoices/{invoice}/line-edit/{invoiceLine}',
         InvoiceLineEditController::class)->name('app.invoice.line-edit')->middleware([HandlePrecognitiveRequests::class]);
-
 
     Route::put('invoicing/invoices/{invoice}/line-update/{invoiceLine}',
         InvoiceLineUpdateController::class)->name('app.invoice.line-update')->middleware([HandlePrecognitiveRequests::class]);

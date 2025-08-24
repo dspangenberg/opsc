@@ -13,104 +13,42 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Time;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
-
+use Inertia\Response;
 
 class TimeIndexController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): Response
     {
-        // filter[starts_between]=01.01.2024,31.01.2024&filter[project_id]=7
-
-
-        // ?filter[begin_at]=between,01.01.2024,31.01.2024
-
-        ds($request->query);
-
-        $filterBool = $request->query('filter_bool', 'AND');
-        if ($filterBool != 'AND' && $filterBool != 'OR') {
-            $filterBool = 'AND';
-        }
-
-        $filterQuery = [];
-        if ($request->query('filter')) {
-            $filter = $request->query('filter');
-            foreach ($filter as $key => $value) {
-                $values = explode(',', $value);
-                if (count($values) > 1) {
-                    $operator = $values[0];
-                    unset($values[0]);
-
-                    $queryValue = '';
-                    switch ($operator) {
-                        case 'between':
-                            $queryValue = [Carbon::parse($values[1])->startOfDay(), Carbon::parse($values[2])->endOfDay()];
-                            break;
-                        case 'in':
-                            $queryValue = $values;
-                            break;
-                    }
-
-
-
-
-                    $filterQuery[] = [
-                        'column' => $key,
-                        'operator' => $operator,
-                        'value' => $queryValue,
-                        'boolean' => $filterBool,
-                    ];
-                } else {
-                    $filterQuery[] = [
-                        'column' => $key,
-                        'operator' => '=',
-                        'value' => $value,
-                        'boolean' => $filterBool,
-                    ];
-                }
-
-            }
-        }
-
-        ds($filterQuery);
-
-        $times = Time::query()->when($filterQuery, function ($query) use ($filterQuery) {
-            foreach ($filterQuery as $filter) {
-                switch ($filter['operator']) {
-                    case 'between':
-                        $query->whereBetween($filter['column'], $filter['value']);
-                        break;
-                    case 'in':
-                        $query->whereIn($filter['column'], $filter['value']);
-                        break;
-                    case 'not_between':
-                        $query->whereNotBetween($filter['column'], $filter['value']);
-                        break;
-                    default:
-                        $query->where($filter['column'], $filter['operator'], $filter['value'], $filter['boolean']);
-                        break;
-                }
-            }
-        })->get();
-
-        $times = Time::query()
-            ->applyDynamicFilters($request)
+        $query = Time::query()
+            ->applyDynamicFilters($request, [
+                'allowed_filters' => ['project_id', 'begin_at', 'time_category_id', 'user_id', 'note', 'is_locked', 'is_billable'],
+            ])
             ->with('project')
             ->withMinutes()
             ->with('category')
             ->with('user')
-            ->whereNotNull('begin_at')
-            ->orderBy('begin_at', 'desc')
-            ->paginate();
+            ->whereNotNull('begin_at');
 
+        /** @var LengthAwarePaginator $times */
+        $times = $query->orderBy('begin_at', 'desc')->paginate();
 
-        $projectIds = Time::query()->distinct()->pluck('project_id');
-        $projects = Project::query()->whereIn('id', $projectIds)->orderBy('name')->get();
+        /** @var Collection<int, int> $projectIds */
+        $projectIds = Time::query()
+            ->select('project_id')
+            ->distinct()
+            ->pluck('project_id');
 
-        $groupedByDate = self::groupByDate(collect($times->items()));
-        $times->appends($_GET)->links();
+        $projects = Project::whereIn('id', $projectIds)->orderBy('name')->get();
+
+        /** @var Collection<int, Time> $timeItems */
+        $timeItems = collect($times->items());
+        $groupedByDate = self::groupByDate($timeItems);
+
+        $times->appends($request->query())->links();
 
         // Aktuelle Filter extrahieren
         $currentFilters = [
@@ -121,21 +59,27 @@ class TimeIndexController extends Controller
             'times' => TimeData::collect($times),
             'groupedByDate' => $groupedByDate,
             'projects' => ProjectData::collect($projects),
-            'currentFilters' => $currentFilters, // Aktuelle Filter hinzufügen
+            'currentFilters' => $currentFilters,
         ]);
     }
 
-    public static function groupByDate(Collection $times, $withSum = false): array
+    public static function groupByDate(Collection $times, bool $withSum = false): array
     {
+        /** @var array<string, array<string, mixed>> $groupedEntries */
         $groupedEntries = [];
         $sum = 0;
-        foreach ($times->groupBy('ts') as $key => $value) {
+
+        /** @var Collection<string, Collection<int, Time>> $timesByDate */
+        $timesByDate = $times->groupBy('ts');
+
+        foreach ($timesByDate as $key => $value) {
             $groupedEntries[$key]['entries'] = $value->sortBy(['begin_at', 'asc']);
             $groupedEntries[$key]['date'] = Carbon::parse($key);
             $groupedEntries[$key]['formatedDate'] = Carbon::parse($key)->settings(['locale' => 'de'])->isoFormat('dddd, DD. MMMM YYYY');
             $groupedEntries[$key]['sum'] = $value->sum('mins');
             $sum = $sum + $groupedEntries[$key]['sum'];
         }
+
         if ($withSum) {
             return ['entries' => $groupedEntries, 'sum' => $sum];
         }
@@ -143,13 +87,22 @@ class TimeIndexController extends Controller
         return $groupedEntries;
     }
 
+    /**
+     * @param  Collection<int, Time>  $times
+     * @return array<int, array<string, mixed>>
+     */
     public static function groupByProjectsAndDate(Collection $times): array
     {
-
+        /** @var Collection<int, string|null> $projects */
         $projects = $times->pluck('project.name', 'project.id');
 
+        /** @var array<int, array<string, mixed>> $groupedEntries */
         $groupedEntries = [];
-        foreach ($times->groupBy('project.id') as $key => $value) {
+
+        /** @var Collection<int, Collection<int, Time>> $timesByProject */
+        $timesByProject = $times->groupBy('project.id');
+
+        foreach ($timesByProject as $key => $value) {
             $groupedByDate = self::groupByDate($value, true);
             $groupedEntries[$key]['entries'] = collect($groupedByDate['entries'])->sortBy(['date', 'asc']);
             $groupedEntries[$key]['sum'] = $groupedByDate['sum'];

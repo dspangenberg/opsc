@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasDynamicFilters;
 use DateTimeInterface;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -9,13 +10,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use App\Traits\HasDynamicFilters;
 
 /**
  * @property-read TimeCategory|null $category
  * @property-read string $date
  * @property-read Project|null $project
  * @property-read User|null $user
+ *
  * @method static Builder<static>|Time byWeekOfYear(int $week, int $year)
  * @method static Builder<static>|Time endsBefore($date)
  * @method static Builder<static>|Time maxDuration($date)
@@ -26,6 +27,8 @@ use App\Traits\HasDynamicFilters;
  * @method static Builder<static>|Time startsBetween($from, $to)
  * @method static Builder<static>|Time view($view)
  * @method static Builder<static>|Time withMinutes()
+ * @method static Builder<static>|Time applyDynamicFilters(\Illuminate\Http\Request $request, array $options = [])
+ *
  * @mixin Eloquent
  */
 class Time extends Model
@@ -142,6 +145,7 @@ class Time extends Model
     public function scopeStartsAfter(Builder $query, $date): Builder
     {
         dump(Carbon::parse($date));
+
         return $query->where('begin_at', '>=', Carbon::parse($date));
     }
 
@@ -154,7 +158,6 @@ class Time extends Model
     {
         return $query->where('end_at', '=>=', Carbon::parse($date));
     }
-
 
     protected function casts(): array
     {

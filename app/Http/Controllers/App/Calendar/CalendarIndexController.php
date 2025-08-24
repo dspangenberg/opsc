@@ -7,7 +7,7 @@
 
 namespace App\Http\Controllers\App\Calendar;
 
-use App\Data\CalendarData;
+use App\Data\BankAccountData;
 use App\Http\Controllers\Controller;
 use App\Models\Calendar;
 use Inertia\Inertia;
@@ -20,7 +20,7 @@ class CalendarIndexController extends Controller
         $calendar = $calendar->load('events');
 
         return Inertia::render('App/Calendar/CalendarIndex', [
-            'calendar' => CalendarData::from($calendar),
+            'calendar' => BankAccountData::from($calendar),
         ]);
 
     }

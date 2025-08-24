@@ -7,7 +7,7 @@ parameters:
     paths:
         - app/
     # Level 10 is the highest level
-    level: 4
+    level: 3
 
     scanFiles:
         - _ide_helper.php

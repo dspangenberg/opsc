@@ -7,7 +7,7 @@
 
 namespace App\Http\Controllers\App\Calendar;
 
-use App\Data\CalendarData;
+use App\Data\BankAccountData;
 use App\Http\Controllers\Controller;
 use App\Models\Calendar;
 use Inertia\Inertia;
@@ -22,7 +22,7 @@ class CalendarCreateController extends Controller
         $calendar->is_default = $calendarCount === 0;
 
         return Inertia::modal('App/Calendar/CalendarEdit', [
-            'calendar' => CalendarData::from($calendar),
+            'calendar' => BankAccountData::from($calendar),
         ])->baseRoute('app.dashboard');
     }
 }

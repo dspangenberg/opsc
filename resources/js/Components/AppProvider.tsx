@@ -3,16 +3,16 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { BreadcrumbProvider } from '@/Components/BreadcrumbProvider'
-import { ThemeContainerProvider } from '@/Components/theme-container-provider'
-import { ThemeProvider } from '@/Components/theme-provider'
-import { TooltipProvider } from '@/Components/ui/tooltip'
 import { router } from '@inertiajs/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type * as React from 'react'
 import { useCallback } from 'react'
 import { RouterProvider } from 'react-aria-components'
-
+import { BreadcrumbProvider } from '@/Components/BreadcrumbProvider'
+import { ThemeContainerProvider } from '@/Components/theme-container-provider'
+import { ThemeProvider } from '@/Components/theme-provider'
+import { TooltipProvider } from '@/Components/ui/tooltip'
+import { NuqsAdapter } from '@/Lib/nuqs-inertia-adapter'
 export function AppProvider(props: React.PropsWithChildren) {
   const queryClient = new QueryClient()
 
@@ -23,17 +23,19 @@ export function AppProvider(props: React.PropsWithChildren) {
   return (
     <RouterProvider navigate={navigate}>
       <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-        <ThemeContainerProvider width="7xl">
-          <BreadcrumbProvider>
-            <QueryClientProvider client={queryClient}>
-              <TooltipProvider delayDuration={0}>
-                <div vaul-drawer-wrapper="" className="bg-background">
-                  {props.children}
-                </div>
-              </TooltipProvider>
-            </QueryClientProvider>
-          </BreadcrumbProvider>
-        </ThemeContainerProvider>
+        <NuqsAdapter>
+          <ThemeContainerProvider width="7xl">
+            <BreadcrumbProvider>
+              <QueryClientProvider client={queryClient}>
+                <TooltipProvider delayDuration={0}>
+                  <div vaul-drawer-wrapper="" className="bg-background">
+                    {props.children}
+                  </div>
+                </TooltipProvider>
+              </QueryClientProvider>
+            </BreadcrumbProvider>
+          </ThemeContainerProvider>
+        </NuqsAdapter>
       </ThemeProvider>
     </RouterProvider>
   )
