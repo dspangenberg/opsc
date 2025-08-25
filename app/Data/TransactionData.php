@@ -49,6 +49,8 @@ class TransactionData extends Data
         public readonly ?string $foreign_currency,
         public readonly int $counter_account_id,
         public readonly bool $is_locked,
-        public readonly bool $bookkeeping_text,
+        public readonly string $bookkeeping_text,
+        /** @var ContactData */
+        public readonly ?object $contact,
     ) {}
 }

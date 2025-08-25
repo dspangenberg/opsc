@@ -153,20 +153,17 @@ class Transaction extends Model
     public function getContact(): void
     {
         if ($this->account_number || $this->name || $this->purpose) {
-            $contact = Contact::where('iban', $this->account_number)
-                ->orWhere('paypal_email', $this->account_number)
-                ->orWhere('cc_name', $this->name)
-                ->orWhere('cc_name', $this->purpose)
-                ->first();
-
-            if ($contact) {
-                $this->contact_id = $contact->id;
+            if ($this->account_number) {
+                $contact = Contact::where('iban', $this->account_number)->first();
+                if ($contact) {
+                    $this->contact_id = $contact->id;
+                    $this->save();
+                }
             }
         }
-
     }
 
-    public function contact(): BelongsTo
+        public function contact(): BelongsTo
     {
         return $this->belongsTo(Contact::class);
     }

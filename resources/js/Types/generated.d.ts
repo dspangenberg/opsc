@@ -341,7 +341,8 @@ number_range_document_numbers_id: number | null;
 foreign_currency: string | null;
 counter_account_id: number;
 is_locked: boolean;
-bookkeeping_text: boolean;
+bookkeeping_text: string;
+contact: App.Data.ContactData | null;
 };
 export type UserData = {
 id: number | null;

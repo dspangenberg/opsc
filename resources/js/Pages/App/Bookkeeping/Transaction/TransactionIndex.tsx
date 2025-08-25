@@ -95,6 +95,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
   }, [selectedRows.length])
 
   const currentRoute = route().current()
+  console.log(currentRoute)
   const footer = useMemo(() => <Pagination data={transactions} />, [transactions])
 
   return (

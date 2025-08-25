@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BookkeepingRuleService
 {
-    public static function run(string $table, Model $model, ?array $ids)
+    public function run(string $table, Model $model, array $ids)
     {
 
         $rules = BookkeepingRule::where('table', $table)
@@ -19,7 +19,6 @@ class BookkeepingRuleService
             ->with('actions')
             ->get();
 
-        dump($rules);
 
         foreach ($rules as $rule) {
             self::runRule($rule, $model, $ids);
@@ -27,28 +26,33 @@ class BookkeepingRuleService
 
     }
 
-    protected static function runRule($rule, $model, ?array $ids): void
+    protected static function runRule($rule, $model, $ids): void
     {
-        $mainQuery = [];
-        foreach ($rule->conditions as $condition) {
-            $mainQuery[] =
-                [
-                    'column' => $condition->field,
-                    'operator' => $condition->logical_condition,
-                    'value' => $condition->value,
-                    'boolean' => $rule->logical_operator,
-                    'is_locked' => 0,
-                ];
-        }
-        dump($mainQuery);
-        $records = $model::query()
+        $query = $model::query()
             ->when($ids, function ($query, $ids) {
                 return $query->whereIn('id', $ids);
-            })
-            ->where($mainQuery)->get();
+            });
 
-        dump($records);
+        // Baue die WHERE-Bedingungen dynamisch auf
+        foreach ($rule->conditions as $index => $condition) {
+            if ($index === 0) {
+                // Erste Bedingung immer mit where()
+                $query->where($condition->field, $condition->logical_condition, $condition->value);
+            } else {
+                // Weitere Bedingungen je nach logical_operator
+                if ($rule->logical_operator === 'and') {
+                    $query->where($condition->field, $condition->logical_condition, $condition->value);
+                } else {
+                    $query->orWhere($condition->field, $condition->logical_condition, $condition->value);
+                }
+            }
+        }
+
+        $records = $query->get();
+        // ds($records);
+
         $records->each(function ($record) use ($rule) {
+            ds($record->id, $rule->name);
             foreach ($rule->actions as $action) {
                 $record[$action->field] = $action->value;
             }

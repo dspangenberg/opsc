@@ -3,36 +3,25 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
+import { Delete03Icon, Edit03Icon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
+import { Link, router } from '@inertiajs/react'
+import type { ColumnDef, Row } from '@tanstack/react-table'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
 import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
-import { Avatar } from '@/Components/ui/twc-ui/avatar'
-import { Icon } from '@/Components/ui/twc-ui/icon'
-import { minutesToHoursExtended, minutesUntilNow, parseAndFormatDate } from '@/Lib/DateHelper'
-import { cn } from '@/Lib/utils'
-import {
-  Delete03Icon,
-  Edit03Icon,
-  EuroIcon,
-  MoreVerticalCircle01Icon
-} from '@hugeicons/core-free-icons'
-import { Link, router } from '@inertiajs/react'
-import type { ColumnDef, Row } from '@tanstack/react-table'
-import { useEffect, useState } from 'react'
 
-const editUrl = (row: App.Data.TimeData) => {
+const currencyFormatter = new Intl.NumberFormat('de-DE', {
+  style: 'currency',
+  currency: 'EUR',
+  minimumFractionDigits: 2
+})
+
+const editUrl = (row: App.Data.TransactionData) => {
   return row.id ? route('app.time.edit', { id: row.id }) : '#'
 }
 
-const durationInMinutes = (row: App.Data.TimeData) => {
-  if (row.end_at) {
-    return minutesToHoursExtended(row.mins as number)
-  }
-  return minutesUntilNow(row.begin_at)
-}
-
-const handleDeleteClicked = async (row: App.Data.TimeData) => {
+const handleDeleteClicked = async (row: App.Data.TransactionData) => {
   const promise = await AlertDialog.call({
     title: 'Löschen bestätigen',
     message: 'Möchtest Du den Eintrag wirklich löschen?',
@@ -44,7 +33,7 @@ const handleDeleteClicked = async (row: App.Data.TimeData) => {
   }
 }
 
-const RowActions = ({ row }: { row: Row<App.Data.TimeData> }) => {
+const RowActions = ({ row }: { row: Row<App.Data.TransactionData> }) => {
   return (
     <div className="mx-auto">
       <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
@@ -69,56 +58,7 @@ const RowActions = ({ row }: { row: Row<App.Data.TimeData> }) => {
   )
 }
 
-// Live Duration Cell Component mit intelligentem Blink-Effekt
-const DurationCell = ({ row }: { row: Row<App.Data.TimeData> }) => {
-  const [duration, setDuration] = useState(() => durationInMinutes(row.original))
-  const [isBlinking, setIsBlinking] = useState(false)
-  const isRunning = !row.original.end_at
-
-  useEffect(() => {
-    // Nur für laufende Einträge (ohne end_at) einen Timer setzen
-    if (isRunning) {
-      const interval = setInterval(() => {
-        const newDuration = durationInMinutes(row.original)
-
-        // Nur blinken, wenn sich der Wert tatsächlich geändert hat
-        if (newDuration !== duration) {
-          setIsBlinking(true)
-          setDuration(newDuration)
-
-          // Blinken nach 300ms stoppen
-          setTimeout(() => setIsBlinking(false), 300)
-        }
-      }, 60000) // Update alle 30 Sekunden
-
-      return () => clearInterval(interval)
-    }
-  }, [row.original, isRunning, duration])
-
-  return (
-    <div
-      className={cn(
-        'text-right transition-all duration-300',
-        // Blink-Effekt nur bei tatsächlicher Änderung
-        isBlinking && 'animate-pulse rounded bg-green-100 px-1 shadow-sm dark:bg-green-900/30',
-        // Permanent subtiler Glow-Effekt für laufende Einträge
-        isRunning && 'relative font-medium text-blue-600 dark:text-blue-400',
-        isRunning &&
-          "before:-inset-1 before:absolute before:animate-pulse before:rounded before:bg-blue-500/10 before:content-['']"
-      )}
-    >
-      {duration}
-      {isRunning && (
-        <span
-          className="ml-1 inline-block size-2 animate-pulse rounded-full bg-green-500"
-          title="Läuft gerade..."
-        />
-      )}
-    </div>
-  )
-}
-
-export const columns: ColumnDef<App.Data.TimeData>[] = [
+export const columns: ColumnDef<App.Data.TransactionData>[] = [
   {
     id: 'select',
     size: 20,
@@ -144,71 +84,48 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
     )
   },
   {
-    accessorKey: 'user.initials',
-    header: '',
-    size: 20,
-    cell: ({ row }) => (
-      <div className="relative flex items-center">
-        <Avatar
-          initials={row.original.user?.initials}
-          fullname={row.original.user?.full_name}
-          src={row.original.user?.avatar_url as unknown as string}
-          size="md"
-        />
-        {row.original.is_billable && (
-          <div className="-bottom-1 -right-1 absolute flex size-5 items-center justify-center rounded-full border-2 border-background bg-blue-300 ">
-            <Icon icon={EuroIcon} className="size-3 text-blue-800" strokeWidth={2} />
+    accessorKey: 'booked_on',
+    header: 'Buchung',
+    size: 30,
+    cell: ({ row, getValue }) => <span>{getValue() as string}</span>
+  },
+  {
+    accessorKey: 'valued_on',
+    header: 'Wertstellung',
+    size: 30,
+    cell: ({ row, getValue }) => <span>{getValue() as string}</span>
+  },
+  {
+    accessorKey: 'bookkeeping_text',
+    header: 'Buchung',
+    cell: ({ row, getValue }) => {
+      console.log(row.original.bookkeeping_text)
+      const [bookingType, name, purpose] = row.original.bookkeeping_text.split('|')
+      console.log(bookingType, name, purpose)
+      return (
+        <div>
+          <div className="flex items-center gap-2 text-xs">
+            {bookingType}
+            {row.original.is_private && <Badge variant="light-blue">privat</Badge>}
+            {row.original.is_transit && <Badge variant="secondary">Transit</Badge>}
+            {row.original.contact_id != 0 && <Badge>{row.original.contact.full_name}</Badge>}
           </div>
-        )}
-      </div>
+          <div className="font-medium">{name}</div>
+          <div className="truncate">{purpose}</div>
+          {row.original.account_number && (
+            <div className="text-muted-foreground text-xs">{row.original.account_number}</div>
+          )}
+        </div>
+      )
+    }
+  },
+  {
+    accessorKey: 'amount_tax',
+    header: () => <div className="text-right">USt.</div>,
+    size: 110,
+    cell: ({ row }) => (
+      <div className="text-right">{currencyFormatter.format(row.original.amount)}</div>
     )
-  },
-  {
-    accessorKey: 'date',
-    header: 'Datum',
-    size: 40,
-    cell: ({ row, getValue }) => (
-      <Link
-        className="truncate align-middle font-medium hover:underline"
-        href={editUrl(row.original)}
-      >
-        {getValue() as string}
-      </Link>
-    )
-  },
-  {
-    accessorKey: 'begin_at',
-    header: 'Start',
-    size: 30,
-    cell: ({ row, getValue }) => <span>{parseAndFormatDate(getValue() as string, 'HH:mm')}</span>
-  },
-  {
-    accessorKey: 'end_at',
-    header: 'Ende',
-    size: 30,
-    cell: ({ row, getValue }) => <span>{parseAndFormatDate(getValue() as string, 'HH:mm')}</span>
-  },
-  {
-    accessorKey: 'project_id',
-    header: 'Projekt / Notizen',
-    size: 300,
-    cell: ({ getValue, row }) => (
-      <>
-        <Link href="#" className="truncate align-middle hover:underline">
-          {row.original.project?.name}
-        </Link>{' '}
-        <Badge variant="outline" className="ml-1">
-          {row.original.category?.short_name}
-        </Badge>
-        <div className="line-clamp-1 pt-0.5 font-xs text-foreground/60">{row.original.note}</div>
-      </>
-    )
-  },
-  {
-    accessorKey: 'mins',
-    header: 'Dauer',
-    size: 30,
-    cell: ({ row }) => <DurationCell row={row} />
   },
   {
     id: 'actions',
