@@ -1,9 +1,0 @@
-@page {
-  margin: 4.5cm 4.5cm 2.0cm 2.5cm;
-}
-
-@page :first {
-  margin-top: 4.8cm;
-  margin-bottom: 2cm;
-}
-
