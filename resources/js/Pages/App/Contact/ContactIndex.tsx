@@ -1,3 +1,8 @@
+import { Add01Icon, MoreVerticalCircle01Icon, PrinterIcon } from '@hugeicons/core-free-icons'
+import { router } from '@inertiajs/core'
+import { usePage } from '@inertiajs/react'
+import type * as React from 'react'
+import { useCallback, useId, useMemo } from 'react'
 import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
@@ -5,10 +10,6 @@ import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import type { PageProps } from '@/Types'
-import { Add01Icon, MoreVerticalCircle01Icon, PrinterIcon } from '@hugeicons/core-free-icons'
-import { usePage } from '@inertiajs/react'
-import type * as React from 'react'
-import { useCallback, useId, useMemo } from 'react'
 import { columns } from './ContactIndexColumns'
 import { ContactIndexFilterPopover } from './ContactIndexFilterPopover'
 
@@ -21,7 +22,7 @@ const ContactIndex: React.FC = () => {
   const id = useId()
 
   const handleAdd = useCallback(() => {
-    console.log('Add contact clicked - modal functionality temporarily disabled')
+    router.visit(route('app.contact.create'))
   }, [])
 
   const breadcrumbs = useMemo(
@@ -37,7 +38,12 @@ const ContactIndex: React.FC = () => {
   const toolbar = useMemo(
     () => (
       <Toolbar>
-        <Button variant="toolbar-default" icon={Add01Icon} title="Kontakt hinzufügen" />
+        <Button
+          variant="toolbar-default"
+          icon={Add01Icon}
+          title="Kontakt hinzufügen"
+          onClick={handleAdd}
+        />
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} title="Weitere Optionen">
           <MenuItem icon={Add01Icon} title="Rechnung hinzufügen" ellipsis separator />
           <MenuItem icon={PrinterIcon} title="Auswertung drucken" ellipsis />

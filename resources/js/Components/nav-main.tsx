@@ -3,6 +3,10 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
+import { HugeiconsIcon, type HugeiconsProps } from '@hugeicons/react'
+import { Link } from '@inertiajs/react'
+import type { LucideIcon } from 'lucide-react'
+import type * as React from 'react'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/Components/ui/collapsible'
 import {
   SidebarGroup,
@@ -15,10 +19,6 @@ import {
   SidebarMenuSubItem
 } from '@/Components/ui/sidebar'
 import { usePathActive } from '@/Hooks/usePathActive'
-import { HugeiconsIcon, type HugeiconsProps } from '@hugeicons/react'
-import { Link } from '@inertiajs/react'
-import type { LucideIcon } from 'lucide-react'
-import type * as React from 'react'
 export type CombinedIcon = LucideIcon | React.FC<HugeiconsProps>
 
 export interface NavMainItem {
@@ -37,15 +37,11 @@ export interface NavMainItemChildren {
   url: string
   activePath?: string
   isActive?: boolean
+  hasSep?: boolean
   exact?: boolean
 }
 
-export function NavMain({
-  items,
-  ...props
-}: {
-  items: NavMainItem[]
-}) {
+export function NavMain({ items, ...props }: { items: NavMainItem[] }) {
   const isPathActive = usePathActive()
 
   return (
@@ -77,7 +73,10 @@ export function NavMain({
                       <CollapsibleContent>
                         <SidebarMenuSub className="block">
                           {item.items.map(subItem => (
-                            <SidebarMenuSubItem key={subItem.title}>
+                            <SidebarMenuSubItem
+                              key={subItem.title}
+                              className={subItem.hasSep ? 'mb-3' : ''}
+                            >
                               <SidebarMenuSubButton
                                 asChild
                                 className="ml-1"

@@ -48,6 +48,7 @@ class InvoiceIndexController extends Controller
             ->with(['invoice_contact', 'contact', 'project', 'payment_deadline', 'type'])
             ->withSum('lines', 'amount')
             ->withSum('lines', 'tax')
+            ->withSum('payable', 'amount')
             ->byYear($year)
             ->orderBy('issued_on', 'desc')
             ->orderBy('invoice_number', 'desc')

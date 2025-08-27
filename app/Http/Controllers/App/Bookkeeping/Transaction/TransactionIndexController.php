@@ -30,7 +30,7 @@ class TransactionIndexController extends Controller
             ->with('bank_account')
             ->with('contact')
             ->orderBy('booked_on', 'DESC')
-            ->paginate();
+            ->paginate(10);
 
         $transactions->appends($_GET)->links();
 

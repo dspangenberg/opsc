@@ -1,7 +1,7 @@
-import { Badge } from '@/Components/ui/badge'
-import { Checkbox } from '@/Components/ui/checkbox'
 import { Link } from '@inertiajs/react'
 import type { ColumnDef } from '@tanstack/react-table'
+import { Badge } from '@/Components/ui/badge'
+import { Checkbox } from '@/Components/ui/checkbox'
 
 const editUrl = (id: number | null) => (id ? route('app.invoice.details', { id }) : '#')
 const contactUrl = (id: number | null) => (id ? route('app.contact.details', { id }) : '#')
@@ -12,8 +12,6 @@ const currencyFormatter = new Intl.NumberFormat('de-DE', {
   minimumFractionDigits: 2
 })
 const mailLink = (mail: string) => `mailto:${mail}`
-
-
 
 export const columns: ColumnDef<App.Data.InvoiceData>[] = [
   {
@@ -62,11 +60,6 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
         >
           <span>{getValue() as string}</span>
         </Link>
-        {row.original.is_loss_of_receivables && (
-          <Badge variant="destructive" className="cursor-help">
-            FV
-          </Badge>
-        )}
       </div>
     )
   },
@@ -119,5 +112,29 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
     cell: ({ row }) => (
       <div className="text-right">{currencyFormatter.format(row.original.amount_gross)}</div>
     )
+  },
+  {
+    accessorKey: 'payable_sum_amount',
+    header: () => <div className="text-right">offen</div>,
+    size: 110,
+    cell: ({ row }) => {
+      if (row.original.is_loss_of_receivables) {
+        return (
+          <div className="flex justify-end">
+            <Badge variant="destructive">FV</Badge>
+          </div>
+        )
+      }
+      if (row.original.is_draft || row.original.amount_open === 0) {
+        return <span />
+      }
+      return (
+        <div className="text-right">
+          {currencyFormatter.format(
+            row.original.amount_gross - (row.original.payable_sum_amount || 0)
+          )}
+        </div>
+      )
+    }
   }
 ]

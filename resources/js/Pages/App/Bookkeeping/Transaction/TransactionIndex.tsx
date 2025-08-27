@@ -11,11 +11,12 @@ import {
   FileRemoveIcon,
   FileScriptIcon,
   MoreVerticalCircle01Icon,
-  PrinterIcon,
   RepeatIcon,
   Sent02Icon,
+  Tick01Icon,
   UnavailableIcon
 } from '@hugeicons/core-free-icons'
+import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useMemo, useState } from 'react'
 import { DataTable } from '@/Components/DataTable'
@@ -46,11 +47,17 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
   bank_account,
   bank_accounts
 }) => {
-  const [selectedRows, setSelectedRows] = useState<App.Data.TimeData[]>([])
+  const [selectedRows, setSelectedRows] = useState<App.Data.TransactionData[]>([])
   const [showMoneyMoneyImport, setShowMoneyMoneyImport] = useState(false)
-  // Verwende currentFilters als Ausgangswert
 
   const breadcrumbs = useMemo(() => [{ title: 'Buchhaltung' }], [])
+
+  const handleBulkConfirmationClicked = () => {
+    const ids = selectedRows.map(row => row.id).join(',')
+    router.get(route('app.bookkeeping.transactions.confirm', { _query: { ids } }), {
+      preserveScroll: true
+    })
+  }
 
   const toolbar = useMemo(
     () => (
@@ -72,7 +79,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
             </MenuPopover>
           </MenuSubTrigger>
           <MenuItem icon={FileExportIcon} title="CSV-Export" separator />
-          <MenuItem title="Regeln anwenden" ellipsis />
+          <MenuItem title="Regeln auf unbestägite Transaktionen anwenden" ellipsis />
         </DropdownButton>
       </Toolbar>
     ),
@@ -88,7 +95,13 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
           </Badge>
           ausgewählte Datensätze
         </div>
-        <Button variant="ghost" size="auto" icon={FileDownloadIcon} title="Herunterladen" />
+        <Button
+          variant="ghost"
+          size="auto"
+          icon={Tick01Icon}
+          title="bestätigen"
+          onClick={handleBulkConfirmationClicked}
+        />
         <div className="flex-1 text-right font-medium text-sm">x</div>
       </Toolbar>
     )
@@ -113,13 +126,13 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
       className="flex overflow-hidden"
       toolbar={toolbar}
     >
-      <DataTable
+      <DataTable<App.Data.TransactionData, unknown>
         columns={columns}
         actionBar={actionBar}
         onSelectedRowsChange={setSelectedRows}
         data={transactions.data}
         footer={footer}
-        itemName="Zeiten"
+        itemName="Transaktionen"
       />
       <TransactionMoneyMoneyImport
         isOpen={showMoneyMoneyImport}

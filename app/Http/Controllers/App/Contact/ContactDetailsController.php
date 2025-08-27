@@ -38,6 +38,9 @@ class ContactDetailsController extends Controller
             'addresses' => function ($query) {
                 $query->with(['category', 'country']);
             },
+            'contacts' => function ($query) {
+                $query->with('contacts');
+            }
         ]);
 
         if ($contact->debtor_number) {

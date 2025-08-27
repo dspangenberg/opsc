@@ -23,7 +23,6 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $actions_count
  * @property-read Collection<int, BookkeepingRuleCondition> $conditions
  * @property-read int|null $conditions_count
- *
  * @method static Builder|BookkeepingRule newModelQuery()
  * @method static Builder|BookkeepingRule newQuery()
  * @method static Builder|BookkeepingRule onlyTrashed()
@@ -39,7 +38,6 @@ use Illuminate\Support\Carbon;
  * @method static Builder|BookkeepingRule whereUpdatedAt($value)
  * @method static Builder|BookkeepingRule withTrashed()
  * @method static Builder|BookkeepingRule withoutTrashed()
- *
  * @mixin Eloquent
  */
 class BookkeepingRule extends Model

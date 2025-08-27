@@ -1,12 +1,13 @@
+import { Edit03Icon } from '@hugeicons/core-free-icons'
+import { Link } from '@inertiajs/react'
+import type * as React from 'react'
+import { useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
+import { Badge } from '@/Components/ui/badge'
+import { Avatar } from '@/Components/ui/twc-ui/avatar'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
-import { Avatar } from '@/Components/ui/twc-ui/avatar'
-import { Edit03Icon } from '@hugeicons/core-free-icons'
-import { Link } from '@inertiajs/react'
-import { useMemo } from 'react'
-import type * as React from 'react'
 
 interface Props {
   contact: App.Data.ContactData
@@ -36,10 +37,26 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
     () => (
       <Tabs variant="underlined" defaultSelectedKey={currentRoute}>
         <TabList aria-label="Ansicht">
+          {/** biome-ignore lint/correctness/useUniqueElementIds: <explanation>ID kommt von Route</explanation> */}
           <Tab id="app.invoice.details" href={route('app.contact.details', { contact }, false)}>
             Übersicht
           </Tab>
-          <Tab id="app.invoice.history">Ansprechpersonen</Tab>
+
+          {contact.is_org && (
+            // biome-ignore lint/correctness/useUniqueElementIds: <explanation>Routepath ist die ID</explanation>
+            <Tab
+              id="app.contact.details.persons"
+              href={route('app.contact.details.persons', { id: contact.id })}
+              className="flex items-center gap-1"
+            >
+              Ansprechpersonen
+              {contact.contacts && contact.contacts.length > 0 && (
+                <Badge variant="secondary" className="h-fit border border-border">
+                  {contact.contacts.length}
+                </Badge>
+              )}
+            </Tab>
+          )}
         </TabList>
       </Tabs>
     ),
@@ -58,7 +75,9 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
           <Avatar initials={contact.initials} fullname={contact.full_name} size="lg" />
         </div>
         <div className="flex flex-1 flex-col">
-          <div className="max-w-lg flex-1 truncate font-bold text-xl">{contact.full_name}</div>
+          <div className="max-w-lg flex-1 truncate font-bold text-xl">
+            {contact.short_name || contact.full_name}
+          </div>
           {!!contact.company_id && (
             <div className="text-base text-foreground">
               <Link href={companyRoute} className="hover:underline">
@@ -69,7 +88,14 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
         </div>
       </div>
     ),
-    [contact.initials, contact.full_name, contact.company_id, contact.company?.name, companyRoute]
+    [
+      contact.initials,
+      contact.full_name,
+      contact.company_id,
+      contact.company?.name,
+      companyRoute,
+      contact.short_name
+    ]
   )
 
   return (

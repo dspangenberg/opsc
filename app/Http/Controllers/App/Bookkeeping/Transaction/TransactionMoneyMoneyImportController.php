@@ -26,7 +26,7 @@ class TransactionMoneyMoneyImportController extends Controller
         MoneyMoneyService::importJsonFile($fullPath);
         unlink($fullPath);
 
-        return redirect()->route('app.bookkeeping.transaction.index');
+        return redirect()->route('app.bookkeeping.transactions.index');
     }
 
 }

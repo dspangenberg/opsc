@@ -1,3 +1,5 @@
+import { Link } from '@inertiajs/react'
+import { type FC, useMemo } from 'react'
 import { ArrayTextField } from '@/Components/ArrayTextField'
 import {
   DataCard,
@@ -8,8 +10,6 @@ import {
 } from '@/Components/DataCard'
 import { StatsField } from '@/Components/StatsField'
 import { cn } from '@/Lib/utils'
-import { Link } from '@inertiajs/react'
-import { type FC, useMemo } from 'react'
 
 interface ContactDetailsOrgInfoBoxProps {
   invoice: App.Data.InvoiceData
@@ -44,11 +44,13 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
         <StatsField label="netto" value={currencyFormatter.format(invoice.amount_net)} />
         <StatsField label="USt." value={currencyFormatter.format(invoice.amount_tax)} />
         <StatsField label="brutto" value={currencyFormatter.format(invoice.amount_gross)} />
-        {!invoice.is_draft && <StatsField label="offen" value={currencyFormatter.format(0)} />}
+        {!invoice.is_draft && (
+          <StatsField label="offen" value={currencyFormatter.format(invoice.amount_open || 0)} />
+        )}
       </DataCardHeader>
       <DataCardContent>
         <DataCardSection
-          className={cn('grid space-y-0', invoice.is_draft ? 'grid-cols-2' : 'grid-cols-3 ')}
+          className={cn('grid space-y-0', invoice.is_draft ? 'grid-cols-2' : 'grid-cols-3')}
           title="Rechnungsdetails"
         >
           <DataCardField variant="vertical" label="Datum" value={invoice.issued_on} />

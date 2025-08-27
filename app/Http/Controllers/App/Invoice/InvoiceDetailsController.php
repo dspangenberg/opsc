@@ -32,7 +32,12 @@ class InvoiceDetailsController extends Controller
             ->load('tax')
             ->load('tax.rates')
             ->loadSum('lines', 'amount')
-            ->loadSum('lines', 'tax');
+            ->loadSum('lines', 'tax')
+            ->loadSum('payable', 'amount');
+
+        ds($invoice->toArray());
+
+        $invoice->amount_open = $invoice->amount_gross - $invoice->payable_sum_amount;
 
         return Inertia::render('App/Invoice/InvoiceDetails', [
             'invoice' => InvoiceData::from($invoice),

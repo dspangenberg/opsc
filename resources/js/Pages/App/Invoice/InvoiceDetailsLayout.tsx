@@ -1,17 +1,3 @@
-import { PageContainer } from '@/Components/PageContainer'
-import { PdfViewer } from '@/Components/PdfViewer'
-import {
-  DropdownButton,
-  Menu,
-  MenuItem,
-  MenuPopover,
-  MenuSubTrigger
-} from '@/Components/twcui/dropdown-button'
-import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
-import { useFileDownload } from '@/Hooks/useFileDownload'
 import {
   Delete02Icon,
   DocumentValidationIcon,
@@ -32,6 +18,20 @@ import { router } from '@inertiajs/react'
 import print from 'print-js'
 import type * as React from 'react'
 import { useCallback, useMemo, useState } from 'react'
+import { PageContainer } from '@/Components/PageContainer'
+import { PdfViewer } from '@/Components/PdfViewer'
+import {
+  DropdownButton,
+  Menu,
+  MenuItem,
+  MenuPopover,
+  MenuSubTrigger
+} from '@/Components/twcui/dropdown-button'
+import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
+import { Button } from '@/Components/ui/twc-ui/button'
+import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
+import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
+import { useFileDownload } from '@/Hooks/useFileDownload'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -61,7 +61,7 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
         title: invoice.formated_invoice_number
       }
     ],
-    [invoice.formated_invoice_number, invoice.id]
+    [invoice.formated_invoice_number]
   )
 
   const title = `RG-${invoice.formated_invoice_number}`
@@ -74,6 +74,10 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
 
   const handleDuplicate = () => {
     router.get(route('app.invoice.duplicate', { id: invoice.id }))
+  }
+
+  const handlePaymentCreateClicked = () => {
+    router.visit(route('app.invoice.create.payment', { id: invoice.id }))
   }
 
   const handleRelease = useCallback(async () => {
@@ -131,7 +135,12 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
     () => (
       <Toolbar>
         {!invoice.is_draft && invoice.sent_at && (
-          <Button variant="toolbar-default" icon={EuroReceiveIcon} title="Zahlung zuordnen" />
+          <Button
+            variant="toolbar-default"
+            icon={EuroReceiveIcon}
+            title="Zahlung zuordnen"
+            onClick={handlePaymentCreateClicked}
+          />
         )}
         {!invoice.is_draft && !invoice.sent_at && (
           <Button
@@ -204,7 +213,13 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
           />
           <MenuItem icon={Sent02Icon} title="Rechnung per E-Mail versenden" ellipsis separator />
 
-          <MenuItem icon={EuroReceiveIcon} title="Zahlung zuordnen" ellipsis separator />
+          <MenuItem
+            icon={EuroReceiveIcon}
+            title="Zahlung zuordnen"
+            ellipsis
+            separator
+            onClick={handlePaymentCreateClicked}
+          />
           <MenuSubTrigger>
             <MenuItem title="Erweitert" />
             <MenuPopover>

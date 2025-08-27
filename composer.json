@@ -20,6 +20,7 @@
     "mtvs/eloquent-hashids": "^3.6",
     "plank/laravel-mediable": "^6.3.1",
     "ploi/ploi-php-sdk": "^1.9.5",
+    "predis/predis": "^3.2",
     "rikudou/euqrpayment": "^1.4",
     "spatie/enum": "^3.13",
     "spatie/holidays": "^1.17",

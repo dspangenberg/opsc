@@ -1,5 +1,4 @@
-import { cn } from '@/Lib/utils'
-import { type VariantProps, cva } from 'class-variance-authority'
+import { cva, type VariantProps } from 'class-variance-authority'
 import { X } from 'lucide-react'
 import type React from 'react'
 import { type ReactNode, useEffect, useState } from 'react'
@@ -15,6 +14,7 @@ import {
   type ModalOverlayProps as AriaModalOverlayProps,
   composeRenderProps
 } from 'react-aria-components'
+import { cn } from '@/Lib/utils'
 
 import { AlertDialog } from './alert-dialog'
 import { Button } from './button'
@@ -54,7 +54,7 @@ export const DialogOverlay = ({
     isDismissable={isDismissable}
     className={composeRenderProps(className, className =>
       cn(
-        'fixed inset-0 z-50 bg-black/80 ',
+        'fixed inset-0 z-50 bg-black/80',
         /* Exiting */
         'data-[exiting]:fade-out-0 data-[exiting]:animate-out data-[exiting]:duration-300',
         /* Entering */
@@ -96,7 +96,7 @@ export const DialogContent = ({
     )}
     {...props}
   >
-    <AriaDialog role={role} className={cn(!side && 'grid h-full ', 'h-full outline-none')}>
+    <AriaDialog role={role} className={cn(!side && 'grid h-full', 'h-full outline-none')}>
       {composeRenderProps(children, (children, renderProps) => (
         <>
           {children}
@@ -178,7 +178,7 @@ interface DialogProps {
   footerClassName?: string
   className?: string
   bodyPadding?: boolean
-  width?: 'default' | '4xl' | '5xl' | '6xl'
+  width?: 'default' | '2xl' | '4xl' | '5xl' | '6xl'
   hideHeader?: boolean
   background?: 'accent' | 'sidebar' | 'background' | 'page'
   onOpenChange?: (open: boolean) => void
@@ -226,6 +226,7 @@ export const Dialog: React.FC<DialogProps> = ({
 
   const widthClass = {
     default: 'max-w-xl',
+    '2xl': 'max-w-2xl',
     '4xl': 'max-w-4xl',
     '5xl': 'max-w-6xl',
     '6xl': 'max-w-5xl'

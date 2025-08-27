@@ -15,7 +15,7 @@ class MoneyMoneyService
     {
     }
 
-    public function importJsonFile(string $file) {
+    public function importJsonFile(string $file): void {
         $fileContent = file_get_contents($file);
         $account = json_decode($fileContent)->account;
 
@@ -37,6 +37,9 @@ class MoneyMoneyService
                 $item->save();
                 $transactionIds[] = $item->id;
                 $transaction = Transaction::firstOrNew(['mm_ref' => $item->mm_ref]);
+                if (!$transaction->is_locked) {
+
+
                 $transaction->fill($item->toArray());
 
                 /*
@@ -64,14 +67,19 @@ class MoneyMoneyService
                     $transaction->is_private = true;
                 }
 
-                $transaction->getContact();
 
                 if (in_array($transaction->account_number, $ownBankAccounts)) {
                     $transaction->is_transit = true;
                     $transaction->contact_id = 0;
                 }
 
-                $transaction->save();            }
+                if (!$transaction->is_transit && !$transaction->is_private) {
+                    $transaction->getContact();
+                }
+
+                $transaction->save();
+                }
+            }
         });
 
 

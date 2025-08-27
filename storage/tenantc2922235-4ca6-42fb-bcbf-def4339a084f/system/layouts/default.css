@@ -1,0 +1,21 @@
+@page {
+  footer: html_footer;
+}
+
+table.pdf-footer {
+  width: 100%;
+  font: 8pt;
+}
+
+table.pdf-footer tr td {
+  text-align: left;
+  width: 33%;
+}
+
+table.pdf-footer tr td.center {
+  text-align: center;
+}
+
+table.pdf-footer tr td.right {
+  text-align: right;
+}

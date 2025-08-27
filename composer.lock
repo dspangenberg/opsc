@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6e3e0a80eab25f0e00585b3dfaab8a08",
+    "content-hash": "61e85a269cb6f2a82214582103a2820a",
     "packages": [
         {
             "name": "amphp/amp",
@@ -870,16 +870,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.356.3",
+            "version": "3.356.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "9c61b26408664c76d51101381bb64feda9bcfe2e"
+                "reference": "5872ccb5100c4afb0dae3db0bd46636f63ae8147"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9c61b26408664c76d51101381bb64feda9bcfe2e",
-                "reference": "9c61b26408664c76d51101381bb64feda9bcfe2e",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5872ccb5100c4afb0dae3db0bd46636f63ae8147",
+                "reference": "5872ccb5100c4afb0dae3db0bd46636f63ae8147",
                 "shasum": ""
             },
             "require": {
@@ -961,9 +961,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.356.3"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.356.5"
             },
-            "time": "2025-08-22T18:13:45+00:00"
+            "time": "2025-08-26T18:05:04+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -2539,16 +2539,16 @@
         },
         {
             "name": "inertiajs/inertia-laravel",
-            "version": "v2.0.5",
+            "version": "v2.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/inertiajs/inertia-laravel.git",
-                "reference": "aa103fded86dd32e1b1d94b701a314cd22cecc8e"
+                "reference": "6d0afc3237c370036de4a703927b17a4e7b83298"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/inertiajs/inertia-laravel/zipball/aa103fded86dd32e1b1d94b701a314cd22cecc8e",
-                "reference": "aa103fded86dd32e1b1d94b701a314cd22cecc8e",
+                "url": "https://api.github.com/repos/inertiajs/inertia-laravel/zipball/6d0afc3237c370036de4a703927b17a4e7b83298",
+                "reference": "6d0afc3237c370036de4a703927b17a4e7b83298",
                 "shasum": ""
             },
             "require": {
@@ -2603,9 +2603,9 @@
             ],
             "support": {
                 "issues": "https://github.com/inertiajs/inertia-laravel/issues",
-                "source": "https://github.com/inertiajs/inertia-laravel/tree/v2.0.5"
+                "source": "https://github.com/inertiajs/inertia-laravel/tree/v2.0.6"
             },
-            "time": "2025-08-12T15:57:22+00:00"
+            "time": "2025-08-26T06:17:48+00:00"
         },
         {
             "name": "intervention/gif",
@@ -2811,16 +2811,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v12.25.0",
+            "version": "v12.26.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "2ee2ba94ae60efd24c7a787cbb1a2f82f714bb20"
+                "reference": "1a8e961a1801794c36c243bb610210d0a2bd61cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/2ee2ba94ae60efd24c7a787cbb1a2f82f714bb20",
-                "reference": "2ee2ba94ae60efd24c7a787cbb1a2f82f714bb20",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/1a8e961a1801794c36c243bb610210d0a2bd61cb",
+                "reference": "1a8e961a1801794c36c243bb610210d0a2bd61cb",
                 "shasum": ""
             },
             "require": {
@@ -2860,9 +2860,9 @@
                 "symfony/http-kernel": "^7.2.0",
                 "symfony/mailer": "^7.2.0",
                 "symfony/mime": "^7.2.0",
-                "symfony/polyfill-php83": "^1.31",
-                "symfony/polyfill-php84": "^1.31",
-                "symfony/polyfill-php85": "^1.31",
+                "symfony/polyfill-php83": "^1.33",
+                "symfony/polyfill-php84": "^1.33",
+                "symfony/polyfill-php85": "^1.33",
                 "symfony/process": "^7.2.0",
                 "symfony/routing": "^7.2.0",
                 "symfony/uid": "^7.2.0",
@@ -3024,7 +3024,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-08-18T22:20:52+00:00"
+            "time": "2025-08-27T13:51:06+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -5436,6 +5436,69 @@
             "time": "2025-05-18T05:48:27+00:00"
         },
         {
+            "name": "predis/predis",
+            "version": "v3.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/predis/predis.git",
+                "reference": "9e9deec4dfd3ebf65d32eb368f498c646ba2ecd8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/predis/predis/zipball/9e9deec4dfd3ebf65d32eb368f498c646ba2ecd8",
+                "reference": "9e9deec4dfd3ebf65d32eb368f498c646ba2ecd8",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2 || ^8.0",
+                "psr/http-message": "^1.0|^2.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.3",
+                "phpstan/phpstan": "^1.9",
+                "phpunit/phpcov": "^6.0 || ^8.0",
+                "phpunit/phpunit": "^8.0 || ~9.4.4"
+            },
+            "suggest": {
+                "ext-relay": "Faster connection with in-memory caching (>=0.6.2)"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Predis\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Till Krüss",
+                    "homepage": "https://till.im",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "A flexible and feature-complete Redis/Valkey client for PHP.",
+            "homepage": "http://github.com/predis/predis",
+            "keywords": [
+                "nosql",
+                "predis",
+                "redis"
+            ],
+            "support": {
+                "issues": "https://github.com/predis/predis/issues",
+                "source": "https://github.com/predis/predis/tree/v3.2.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/tillkruss",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-08-06T06:41:24+00:00"
+        },
+        {
             "name": "psr/clock",
             "version": "1.0.0",
             "source": {
@@ -7384,12 +7447,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/archtechx/tenancy.git",
-                "reference": "413da36c4a1b10fc78f887b283659e1df9b43d1b"
+                "reference": "99d854ed8e87affed8f527791ab923d1e8e31f9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/archtechx/tenancy/zipball/413da36c4a1b10fc78f887b283659e1df9b43d1b",
-                "reference": "413da36c4a1b10fc78f887b283659e1df9b43d1b",
+                "url": "https://api.github.com/repos/archtechx/tenancy/zipball/99d854ed8e87affed8f527791ab923d1e8e31f9a",
+                "reference": "99d854ed8e87affed8f527791ab923d1e8e31f9a",
                 "shasum": ""
             },
             "require": {
@@ -7465,7 +7528,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-08-12T11:12:43+00:00"
+            "time": "2025-08-25T15:27:59+00:00"
         },
         {
             "name": "stancl/virtualcolumn",
@@ -11757,16 +11820,16 @@
         },
         {
             "name": "laradumps/laradumps-core",
-            "version": "v3.2.5",
+            "version": "v3.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laradumps/laradumps-core.git",
-                "reference": "0abde00a6627d90315c9bcf04fd73ac665960ff8"
+                "reference": "b5df14006570d16409f271db938a850f67ac78d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laradumps/laradumps-core/zipball/0abde00a6627d90315c9bcf04fd73ac665960ff8",
-                "reference": "0abde00a6627d90315c9bcf04fd73ac665960ff8",
+                "url": "https://api.github.com/repos/laradumps/laradumps-core/zipball/b5df14006570d16409f271db938a850f67ac78d7",
+                "reference": "b5df14006570d16409f271db938a850f67ac78d7",
                 "shasum": ""
             },
             "require": {
@@ -11814,7 +11877,7 @@
             "homepage": "https://github.com/laradumps/laradumps-core",
             "support": {
                 "issues": "https://github.com/laradumps/laradumps-core/issues",
-                "source": "https://github.com/laradumps/laradumps-core/tree/v3.2.5"
+                "source": "https://github.com/laradumps/laradumps-core/tree/v3.2.6"
             },
             "funding": [
                 {
@@ -11822,7 +11885,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-08-23T16:11:51+00:00"
+            "time": "2025-08-25T22:45:46+00:00"
         },
         {
             "name": "larastan/larastan",
@@ -12893,16 +12956,16 @@
         },
         {
             "name": "laravel/roster",
-            "version": "v0.2.3",
+            "version": "v0.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/roster.git",
-                "reference": "caeed7609b02c00c3f1efec52812d8d87c5d4096"
+                "reference": "d5b04fafd28bbab1f4cedd48f83c7abbddca4d76"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/roster/zipball/caeed7609b02c00c3f1efec52812d8d87c5d4096",
-                "reference": "caeed7609b02c00c3f1efec52812d8d87c5d4096",
+                "url": "https://api.github.com/repos/laravel/roster/zipball/d5b04fafd28bbab1f4cedd48f83c7abbddca4d76",
+                "reference": "d5b04fafd28bbab1f4cedd48f83c7abbddca4d76",
                 "shasum": ""
             },
             "require": {
@@ -12950,7 +13013,7 @@
                 "issues": "https://github.com/laravel/roster/issues",
                 "source": "https://github.com/laravel/roster"
             },
-            "time": "2025-08-13T15:00:25+00:00"
+            "time": "2025-08-27T09:45:13+00:00"
         },
         {
             "name": "laravel/sail",
@@ -13772,16 +13835,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "11.0.10",
+            "version": "11.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "1a800a7446add2d79cc6b3c01c45381810367d76"
+                "reference": "4f7722aa9a7b76aa775e2d9d4e95d1ea16eeeef4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/1a800a7446add2d79cc6b3c01c45381810367d76",
-                "reference": "1a800a7446add2d79cc6b3c01c45381810367d76",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/4f7722aa9a7b76aa775e2d9d4e95d1ea16eeeef4",
+                "reference": "4f7722aa9a7b76aa775e2d9d4e95d1ea16eeeef4",
                 "shasum": ""
             },
             "require": {
@@ -13838,7 +13901,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
                 "security": "https://github.com/sebastianbergmann/php-code-coverage/security/policy",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/show"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/11.0.11"
             },
             "funding": [
                 {
@@ -13858,7 +13921,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-06-18T08:56:18+00:00"
+            "time": "2025-08-27T14:37:49+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -15383,16 +15446,16 @@
         },
         {
             "name": "spatie/backtrace",
-            "version": "1.7.4",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/backtrace.git",
-                "reference": "cd37a49fce7137359ac30ecc44ef3e16404cccbe"
+                "reference": "8c0f16a59ae35ec8c62d85c3c17585158f430110"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/backtrace/zipball/cd37a49fce7137359ac30ecc44ef3e16404cccbe",
-                "reference": "cd37a49fce7137359ac30ecc44ef3e16404cccbe",
+                "url": "https://api.github.com/repos/spatie/backtrace/zipball/8c0f16a59ae35ec8c62d85c3c17585158f430110",
+                "reference": "8c0f16a59ae35ec8c62d85c3c17585158f430110",
                 "shasum": ""
             },
             "require": {
@@ -15430,7 +15493,8 @@
                 "spatie"
             ],
             "support": {
-                "source": "https://github.com/spatie/backtrace/tree/1.7.4"
+                "issues": "https://github.com/spatie/backtrace/issues",
+                "source": "https://github.com/spatie/backtrace/tree/1.8.1"
             },
             "funding": [
                 {
@@ -15442,7 +15506,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2025-05-08T15:41:09+00:00"
+            "time": "2025-08-26T08:22:30+00:00"
         },
         {
             "name": "staabm/side-effects-detector",

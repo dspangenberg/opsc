@@ -7,14 +7,18 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionConfirmController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionIndexController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionMoneyMoneyImportController;
 use App\Http\Controllers\App\Contact\ContactAddressCreateController;
 use App\Http\Controllers\App\Contact\ContactAddressStoreController;
 use App\Http\Controllers\App\Contact\ContactAddressUpdateController;
+use App\Http\Controllers\App\Contact\ContactCreateController;
 use App\Http\Controllers\App\Contact\ContactDetailsController;
+use App\Http\Controllers\App\Contact\ContactDetailsPersonsController;
 use App\Http\Controllers\App\Contact\ContactEditAddressController;
 use App\Http\Controllers\App\Contact\ContactIndexController;
+use App\Http\Controllers\App\Contact\ContactStoreController;
 use App\Http\Controllers\App\Contact\ContactToggleFavoriteController;
 use App\Http\Controllers\App\Invoice\InvoiceCreateController;
 use App\Http\Controllers\App\Invoice\InvoiceDeleteController;
@@ -29,6 +33,8 @@ use App\Http\Controllers\App\Invoice\InvoiceLineDuplicateController;
 use App\Http\Controllers\App\Invoice\InvoiceLineEditController;
 use App\Http\Controllers\App\Invoice\InvoiceLineUpdateController;
 use App\Http\Controllers\App\Invoice\InvoiceMarkAsSentController;
+use App\Http\Controllers\App\Invoice\InvoicePaymentCreateController;
+use App\Http\Controllers\App\Invoice\InvoicePaymentStoreController;
 use App\Http\Controllers\App\Invoice\InvoicePdfDownloadController;
 use App\Http\Controllers\App\Invoice\InvoiceReleaseController;
 use App\Http\Controllers\App\Invoice\InvoiceStoreController;
@@ -110,8 +116,23 @@ Route::middleware([
         ->middleware([HandlePrecognitiveRequests::class])
         ->name('app.bookkeeping.transactions.money-money-import');
 
+
+    Route::get('bookkeeping/transactions/confirm/',
+        TransactionConfirmController::class)
+        ->name('app.bookkeeping.transactions.confirm');
+
+    Route::get('contacts/create',
+        ContactCreateController::class)->name('app.contact.create');
+
+    Route::post('contacts/store',
+        ContactStoreController::class)->name('app.contact.store');
+
+
     Route::get('contacts/{contact}',
         ContactDetailsController::class)->name('app.contact.details');
+
+    Route::get('contacts/{contact}/persons',
+        ContactDetailsPersonsController::class)->name('app.contact.details.persons');
 
     Route::get('contacts/{contact}/{address}/edit',
         ContactEditAddressController::class)->name('app.contact.edit.address');
@@ -127,36 +148,7 @@ Route::middleware([
         ->middleware([HandlePrecognitiveRequests::class])
         ->name('app.contact.address.update');
 
-    // Fügen Sie diese Test-Route hinzu
-    Route::post('test-upload', function(\Illuminate\Http\Request $request) {
-        \Log::info('Test upload reached', [
-            'has_file' => $request->hasFile('file'),
-            'bank_account_id' => $request->input('bank_account_id'),
-            'all_input' => $request->all()
-        ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Test upload successful',
-            'data' => $request->all()
-        ]);
-    })->name('test.upload');
-
-
-// Sehr einfache Test-Route ohne Datei-Upload
-    Route::post('simple-test', function(\Illuminate\Http\Request $request) {
-        \Log::info('Simple test reached', [
-            'input' => $request->all(),
-            'method' => $request->method(),
-            'url' => $request->url()
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Simple test successful',
-            'input' => $request->all()
-        ]);
-    })->name('simple.test');
 
     Route::post('contacts/{contact}/address',
         ContactAddressStoreController::class)
@@ -172,8 +164,18 @@ Route::middleware([
     Route::get('invoicing/invoices/{invoice}',
         InvoiceDetailsController::class)->name('app.invoice.details');
 
+    Route::get('invoicing/invoices/{invoice}/payments',
+        InvoicePaymentCreateController::class)->name('app.invoice.create.payment');
+
+    Route::get('invoicing/invoices/{invoice}/payments/store',
+        InvoicePaymentStoreController::class)
+        ->middleware([HandlePrecognitiveRequests::class])
+        ->name('app.invoice.store.payment');
+
+
     Route::get('invoicing/invoices/{invoice}/history',
         InvoiceHistoryController::class)->name('app.invoice.history');
+
 
     Route::post('invoicing/invoices',
         InvoiceStoreController::class)

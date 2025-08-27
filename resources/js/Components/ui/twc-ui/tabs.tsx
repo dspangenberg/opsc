@@ -29,7 +29,7 @@ const tabsVariants = cva('', {
 const tabListVariants = cva('flex', {
   variants: {
     variant: {
-      underlined: 'flex gap-4',
+      underlined: 'flex gap-4 h-fit flex items-center',
       default: 'flex bg-muted rounded-lg p-1 w-fit',
       classic: 'w-full p-0 justify-start rounded-none border-b'
     }

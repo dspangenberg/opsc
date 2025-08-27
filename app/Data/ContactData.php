@@ -30,6 +30,7 @@ class ContactData extends Data
         public readonly ?string $debtor_number,
         public readonly ?string $primary_mail,
         public readonly ?string $vat_id,
+        public readonly ?string $short_name,
         public readonly ?string $register_court,
         public readonly ?string $register_number,
         public readonly ?string $department,
@@ -40,6 +41,9 @@ class ContactData extends Data
 
         /** @var ContactData */
         public readonly ?object $company,
+
+        /** @var ContactData[] */
+        public readonly ?array $contacts,
 
         /** @var TitleData */
         public readonly ?object $title,

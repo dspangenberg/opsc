@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\DB;
  * @property-read string $date
  * @property-read Project|null $project
  * @property-read User|null $user
- *
  * @method static Builder<static>|Time byWeekOfYear(int $week, int $year)
  * @method static Builder<static>|Time endsBefore($date)
  * @method static Builder<static>|Time maxDuration($date)
@@ -28,7 +27,6 @@ use Illuminate\Support\Facades\DB;
  * @method static Builder<static>|Time view($view)
  * @method static Builder<static>|Time withMinutes()
  * @method static Builder<static>|Time applyDynamicFilters(\Illuminate\Http\Request $request, array $options = [])
- *
  * @mixin Eloquent
  */
 class Time extends Model

@@ -55,6 +55,8 @@ class InvoiceData extends Data
         public readonly float $amount_net,
         public readonly float $amount_tax,
         public readonly float $amount_gross,
+        public readonly ?float $payable_sum_amount,
+        public readonly ?float $amount_open,
 
         public readonly bool $is_recurring,
         public readonly int $recurring_interval_days,

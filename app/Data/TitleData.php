@@ -16,7 +16,6 @@ class TitleData extends Data
     public function __construct(
         public readonly ?int $id,
         public readonly string $name,
-        public readonly bool $is_default,
         public readonly string $correspondence_salutation_male,
         public readonly string $correspondence_salutation_female,
         public readonly string $correspondence_salutation_other
