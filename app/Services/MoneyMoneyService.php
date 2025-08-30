@@ -2,20 +2,18 @@
 
 namespace App\Services;
 
+use App\Facades\BookeepingRuleService;
 use App\Models\BankAccount;
 use App\Models\NumberRange;
 use App\Models\Transaction;
 use App\SushiModels\MoneyMoneyTransaction;
-use App\Facades\BookeepingRuleService;
-use Str;
 
 class MoneyMoneyService
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
-    public function importJsonFile(string $file): void {
+    public function importJsonFile(string $file): void
+    {
         $fileContent = file_get_contents($file);
         $account = json_decode($fileContent)->account;
 
@@ -30,60 +28,52 @@ class MoneyMoneyService
         $ownBankAccounts = BankAccount::get()->pluck('iban')->toArray();
         $transactions = MoneyMoneyTransaction::orderBy('booked_on', 'asc')->get();
 
-        $transactions->each(function ($item) use ($bankAccount, $ownBankAccounts, $transactions) {
+        $transactions->each(function ($item) use ($bankAccount) {
             $item->bank_account_id = $bankAccount->id;
 
             if ($item->booking_text !== 'Currency conversion') {
                 $item->save();
                 $transactionIds[] = $item->id;
-                $transaction = Transaction::firstOrNew(['mm_ref' => $item->mm_ref]);
-                if (!$transaction->is_locked) {
+                $transaction = Transaction::firstOrNew(['mm_ref' => 'mm-'.$item->mm_ref]);
+                if (! $transaction->is_locked) {
 
+                    $transaction->is_transit = false;
+                    $transaction->is_private = false;
+                    $transaction->counter_account_id = 0;
+                    $transaction->fill($item->toArray());
+                    $transaction->mm_ref = 'mm-'.$item->mm_ref;
 
-                $transaction->fill($item->toArray());
-
-                /*
-                if (! $transaction->number_range_document_numbers_id) {
-                    $transaction->number_range_document_numbers_id = NumberRange::createDocumentNumber($transaction, 'booked_on', $bankAccount->prefix);
-                }
-                */
-
-                if ($bankAccount->bank_code === 'PP' && $transaction->currency !== 'EUR') {
-                    $conversionRecords = MoneyMoneyTransaction::where('booking_text', 'Currency conversion')->where('booked_on', $transaction->booked_on->format('Y-m-d'))->get();
-                    if ($conversionRecords->count() === 2) {
-                        $conversion = $conversionRecords->where('currency', 'EUR')->first();
-
-                        if ($conversion) {
-                            $transaction->foreign_currency = $item->currency;
-                            $transaction->amount_in_foreign_currency = $transaction->amount;
-                            $transaction->currency = 'EUR';
-                            $transaction->amount = $conversion->amount;
-                        }
-
+                    /*
+                    if (! $transaction->number_range_document_numbers_id) {
+                        $transaction->number_range_document_numbers_id = NumberRange::createDocumentNumber($transaction, 'booked_on', $bankAccount->prefix);
                     }
-                }
+                    */
 
-                if (Str::contains($item->org_category, 'privat')) {
-                    $transaction->is_private = true;
-                }
+                    if ($bankAccount->bank_code === 'PP' && $transaction->currency !== 'EUR') {
+                        $conversionRecords = MoneyMoneyTransaction::where('booking_text',
+                            'Currency conversion')->where('booked_on', $transaction->booked_on->format('Y-m-d'))->get();
+                        if ($conversionRecords->count() === 2) {
+                            $conversion = $conversionRecords->where('currency', 'EUR')->first();
 
+                            if ($conversion) {
+                                $transaction->foreign_currency = $item->currency;
+                                $transaction->amount_in_foreign_currency = $transaction->amount;
+                                $transaction->currency = 'EUR';
+                                $transaction->amount = $conversion->amount;
+                            }
 
-                if (in_array($transaction->account_number, $ownBankAccounts)) {
-                    $transaction->is_transit = true;
-                    $transaction->contact_id = 0;
-                }
+                        }
+                    }
 
-                if (!$transaction->is_transit && !$transaction->is_private) {
-                    $transaction->getContact();
-                }
+                    if (! $transaction->counter_account_id) {
+                        $transaction->getContact();
+                    }
 
-                $transaction->save();
+                    $transaction->save();
                 }
             }
         });
 
-
-        BookeepingRuleService::run('transactions', new Transaction(),$transactionIds);
+        BookeepingRuleService::run('transactions', new Transaction, $transactionIds);
     }
-
 }

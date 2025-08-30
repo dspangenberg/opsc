@@ -98,7 +98,8 @@ const data = {
       items: [
         {
           title: 'Buchungen',
-          url: route('app.invoice.index', {}, false)
+          url: route('app.bookkeeping.bookings.index', {}, false),
+          activePath: '/app/bookkeeping/bookings'
         },
         {
           title: 'Transaktionen',

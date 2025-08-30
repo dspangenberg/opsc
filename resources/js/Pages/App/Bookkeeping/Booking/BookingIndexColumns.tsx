@@ -14,59 +14,36 @@ import { Icon } from '@/Components/ui/twc-ui/icon'
 import { cn } from '@/Lib/utils'
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
-  style: 'currency',
-  currency: 'EUR',
+  style: 'decimal',
   minimumFractionDigits: 2
 })
 
-const editUrl = (row: App.Data.TransactionData) => {
-  return row.id ? route('app.time.edit', { id: row.id }) : '#'
-}
-
-const handleConfirmClicked = async (row: App.Data.TransactionData) => {
+const handleConfirmClicked = async (row: App.Data.BookkeepingBookingData) => {
   router.get(route('app.bookkeeping.transactions.confirm', { _query: { ids: row.id } }), {
     preserveScroll: true
   })
 }
 
-const handleDeleteClicked = async (row: App.Data.TransactionData) => {
-  const promise = await AlertDialog.call({
-    title: 'Löschen bestätigen',
-    message: 'Möchtest Du den Eintrag wirklich löschen?',
-    buttonTitle: 'Eintrag löschen',
-    variant: 'destructive'
-  })
-  if (promise) {
-    router.delete(route('app.times.delete', { id: row.id }))
-  }
-}
-
-const RowActions = ({ row }: { row: Row<App.Data.TransactionData> }) => {
+const RowActions = ({ row }: { row: Row<App.Data.BookkeepingBookingData> }) => {
   return (
     <div className="mx-auto">
       <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
         <MenuItem
           icon={Tick01Icon}
-          title="Transaktion als bestätigt markieren"
+          title="Buchung als bestätigt markieren"
           isDisabled={row.original.is_locked}
           separator
           onAction={() => handleConfirmClicked(row.original)}
-        />
-        <MenuItem
-          icon={WebValidationIcon}
-          title="Bestätigungsdialog "
-          ellipsis
-          isDisabled={row.original.is_locked}
         />
       </DropdownButton>
     </div>
   )
 }
 
-export const columns: ColumnDef<App.Data.TransactionData>[] = [
+export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
   {
     id: 'select',
-    size: 20,
+    size: 30,
     header: ({ table }) => (
       <Checkbox
         checked={
@@ -89,9 +66,9 @@ export const columns: ColumnDef<App.Data.TransactionData>[] = [
     )
   },
   {
-    accessorKey: 'booked_on',
-    header: 'Buchung',
-    size: 50,
+    accessorKey: 'date',
+    header: 'Datum',
+    size: 60,
     cell: ({ row, getValue }) => (
       <div>
         <span>{getValue() as string}</span>
@@ -99,10 +76,10 @@ export const columns: ColumnDef<App.Data.TransactionData>[] = [
     )
   },
   {
-    accessorKey: 'valued_on',
-    header: 'Wertstellung',
-    size: 50,
-    cell: ({ row, getValue }) => <span>{getValue() as string}</span>
+    accessorKey: 'document_number',
+    header: '',
+    size: 80,
+    cell: ({ row, getValue }) => <Badge variant="outline">{getValue() as string}</Badge>
   },
   {
     accessorKey: 'is_locked',
@@ -119,58 +96,60 @@ export const columns: ColumnDef<App.Data.TransactionData>[] = [
     }
   },
   {
-    accessorKey: 'bookkeeping_text',
-    header: 'Buchung',
-    size: 400,
+    accessorKey: 'booking_text',
+    header: 'Buchungstext',
+    size: 300,
     cell: ({ row, getValue }) => {
-      const [bookingType, name, purpose] = row.original.bookkeeping_text.split('|')
-      let variant: BadgeVariant
-
-      switch (row.original.account?.type) {
-        case 'd':
-          variant = 'light-green'
-          break
-        case 'c':
-          variant = 'light-blue'
-          break
-        default:
-          variant = 'secondary'
-          break
-      }
-
+      const [bookingType, name, purpose] = row.original.booking_text.split('|')
       return (
         <div>
-          <div className="flex items-center gap-2 text-xs">
-            {row.original.document_number && (
-              <Badge variant="outline">{row.original.document_number}</Badge>
-            )}
-            <div>
-              #{row.original.id} &mdash; {bookingType} &nbsp;
-              {row.original.account?.label && (
-                <Badge variant={variant}>{row.original.account?.label}</Badge>
-              )}
-              {!row.original.counter_account_id && (
-                <Badge variant="light-red">kein Gegenkonto</Badge>
-              )}
-            </div>
-          </div>
-          <div className="font-medium">{name}</div>
+          <div>{bookingType}</div>
+          <div className="truncate font-medium">{name}</div>
           <div className="truncate">{purpose}</div>
-          {row.original.account_number && (
-            <div className="text-muted-foreground text-xs">{row.original.account_number}</div>
-          )}
         </div>
       )
     }
   },
   {
-    accessorKey: 'amount_tax',
-    header: () => <div className="text-right">Betrag</div>,
-    size: 110,
+    accessorKey: 'amount',
+    header: () => <div className="text-right">Brutto</div>,
+    size: 70,
     cell: ({ row }) => (
-      <div className={cn(row.original.amount < 0 ? 'text-red-500' : '', 'text-right')}>
-        {currencyFormatter.format(row.original.amount)}
-      </div>
+      <div className="text-right">{currencyFormatter.format(row.original.amount)}</div>
+    )
+  },
+  {
+    accessorKey: 'tax',
+    header: () => <div className="text-right">USt.</div>,
+    size: 40,
+    cell: ({ row, getValue }) => <div className="text-right">{row.original.tax?.value || 0} %</div>
+  },
+  {
+    accessorKey: 'account_id_debit',
+    header: 'Sollkonto',
+    size: 70,
+    cell: ({ row, getValue }) => <span>{row.original.account_debit?.label}</span>
+  },
+  {
+    accessorKey: 'account_id_credit',
+    header: 'Habenkonto',
+    size: 70,
+    cell: ({ row, getValue }) => <span>{row.original.account_credit?.label}</span>
+  },
+  {
+    accessorKey: 'tax_debit',
+    header: () => <div className="text-right">USt. S</div>,
+    size: 50,
+    cell: ({ row }) => (
+      <div className="text-right">{currencyFormatter.format(row.original.tax_debit)}</div>
+    )
+  },
+  {
+    accessorKey: 'tax_credit',
+    header: () => <div className="text-right">USt. H</div>,
+    size: 50,
+    cell: ({ row }) => (
+      <div className="text-right">{currencyFormatter.format(row.original.tax_credit)}</div>
     )
   },
   {

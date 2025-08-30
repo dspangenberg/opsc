@@ -11,8 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 
 #[ObservedBy([TransactionObserver::class])]
 /**
@@ -24,9 +22,13 @@ use Illuminate\Support\Collection;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Payment> $payments
  * @property-read int|null $payments_count
  * @property-read \App\Models\NumberRangeDocumentNumber|null $range_document_number
+ *
  * @method static Builder<static>|Transaction newModelQuery()
  * @method static Builder<static>|Transaction newQuery()
  * @method static Builder<static>|Transaction query()
+ *
+ * @property-read \App\Models\BookkeepingAccount|null $account
+ *
  * @mixin Eloquent
  */
 class Transaction extends Model
@@ -85,6 +87,10 @@ class Transaction extends Model
             'debitId' => '',
         ];
 
+        $accounts['creditId'] = $transaction->counter_account_id;
+        $accounts['debitId'] = $transaction->bank_account->bookkeeping_account_id;
+
+        /*
         if ($transaction->is_private) {
             $accounts['creditId'] = $transaction->amount < 0 ? 1800 : 1890;
             $accounts['debitId'] = $transaction->bank_account->bookkeeping_account_id;
@@ -104,12 +110,13 @@ class Transaction extends Model
                 }
             }
         }
+      */
 
         $accountDebit = BookkeepingAccount::where('account_number', $accounts['debitId'])->first();
         $accountCredit = BookkeepingAccount::where('account_number', $accounts['creditId'])->first();
 
         if (! $accounts['creditId']) {
-            $accounts = Contact::getAccounts($transaction->contact_id);
+            $accounts = Contact::getAccounts(false, $transaction->contact_id);
 
             if ($accounts['subledgerAccount']) {
                 $accountCredit = $accounts['subledgerAccount'];
@@ -150,20 +157,35 @@ class Transaction extends Model
         return [];
     }
 
-    public function getContact(): void
+    public function getContact(): bool
     {
         if ($this->account_number || $this->name || $this->purpose) {
             if ($this->account_number) {
-                $contact = Contact::where('iban', $this->account_number)->first();
+                $contact = Contact::query()
+                    ->where('iban', $this->account_number)
+                    ->orWhere('paypal_email', $this->account_number)
+                    ->first();
                 if ($contact) {
+                    if ($contact->creditor_number) {
+                        $this->counter_account_id = $contact->creditor_number;
+                    }
+
+                    if ($contact->debtor_number) {
+                        $this->counter_account_id = $contact->debtor_number;
+                    }
+
                     $this->contact_id = $contact->id;
                     $this->save();
+
+                    return true;
                 }
             }
         }
+
+        return false;
     }
 
-        public function contact(): BelongsTo
+    public function contact(): BelongsTo
     {
         return $this->belongsTo(Contact::class);
     }
@@ -201,9 +223,8 @@ class Transaction extends Model
             }
         }
 
-        if ($this->booking_text) {
-            $private = $this->is_private ? ' (privat)' : '';
-            $lines[] = $this->booking_text.$private;
+        if ($this->counter_account_id === 1800 || $this->counter_account_id === 1890) {
+            $lines[] = $this->booking_text . ' (privat)';
         }
 
         $lines[] = $this->name;
@@ -218,6 +239,11 @@ class Transaction extends Model
     public function bank_account(): BelongsTo
     {
         return $this->belongsTo(BankAccount::class);
+    }
+
+    public function account(): BelongsTo
+    {
+        return $this->belongsTo(BookkeepingAccount::class, 'counter_account_id', 'account_number');
     }
 
     public function payments(): HasMany

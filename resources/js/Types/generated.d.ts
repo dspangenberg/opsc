@@ -1,21 +1,4 @@
 declare namespace App.Data {
-export type AccommodationData = {
-id: number | null;
-type_id: number;
-place_id: string;
-name: string;
-street: string;
-zip: string;
-city: string;
-coordinates: any | null;
-country_id: number;
-region_id: number;
-latitude: number | null;
-longitude: number | null;
-website: string;
-phone: string;
-email: string;
-};
 export type AccommodationTypeData = {
 id: number;
 description: string;
@@ -47,6 +30,38 @@ stay_min: number | null;
 stay_max: number | null;
 checkin: string | null;
 checkout: string | null;
+};
+export type BookkeepingAccountData = {
+id: number | null;
+account_number: number;
+name: string;
+label: string;
+type: string;
+};
+export type BookkeepingBookingData = {
+id: number | null;
+account_id_credit: number;
+account_id_debit: number;
+amount: number;
+date: string | null;
+tax_id: number;
+is_split: boolean;
+split_id: number;
+booking_text: string;
+note: string | null;
+tax_credit: number;
+tax_debit: number;
+is_locked: boolean;
+is_marked: boolean;
+bookable_type: string;
+bookable_id: number;
+number_range_document_numbers_id: number;
+document_number: string | null;
+created_at: string | null;
+updated_at: string | null;
+account_credit: App.Data.BookkeepingAccountData | null;
+account_debit: App.Data.BookkeepingAccountData | null;
+tax: App.Data.TaxData | null;
 };
 export type CalendarEventData = {
 id: number | null;
@@ -250,6 +265,7 @@ name: string;
 invoice_text: string;
 needs_vat_id: boolean;
 is_default: boolean;
+value: number;
 rates: Array<App.Data.TaxRateData> | null;
 };
 export type TaxRateData = {
@@ -341,11 +357,13 @@ booking_id: number | null;
 org_category: string | null;
 amount_in_foreign_currency: number;
 number_range_document_numbers_id: number | null;
+document_number: string | null;
 foreign_currency: string | null;
 counter_account_id: number;
 is_locked: boolean;
 bookkeeping_text: string;
 contact: App.Data.ContactData | null;
+account: App.Data.BookkeepingAccountData | null;
 };
 export type UserData = {
 id: number | null;

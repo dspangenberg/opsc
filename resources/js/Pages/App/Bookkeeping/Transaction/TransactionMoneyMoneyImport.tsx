@@ -83,7 +83,6 @@ export const TransactionMoneyMoneyImport: React.FC<Props> = ({
       },
       onSuccess: response => {
         console.log('Upload successful:', response)
-        alert('Import erfolgreich abgeschlossen!')
         handleOnClosed()
       },
       onError: errors => {

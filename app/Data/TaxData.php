@@ -23,6 +23,7 @@ class TaxData extends Data
         public readonly string $invoice_text,
         public readonly bool $needs_vat_id,
         public readonly bool $is_default,
+        public readonly float $value,
 
         /** @var TaxRateData[] */
         public readonly ?array $rates,
