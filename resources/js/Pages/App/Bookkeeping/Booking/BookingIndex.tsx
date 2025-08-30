@@ -32,23 +32,15 @@ import {
 import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
-import { TransactionMoneyMoneyImport } from '@/Pages/App/Bookkeeping/Transaction/TransactionMoneyMoneyImport'
 import type { PageProps } from '@/Types'
-import { columns } from './TransactionIndexColumns'
+import { columns } from './BookingIndexColumns'
 
 interface TransactionsPageProps extends PageProps {
-  transactions: App.Data.Paginated.PaginationMeta<App.Data.TransactionData[]>
-  bank_accounts: App.Data.BankAccountData[]
-  bank_account: App.Data.BankAccountData
+  bookings: App.Data.Paginated.PaginationMeta<App.Data.BookkeepingBookingData[]>
 }
 
-const TransactionIndex: React.FC<TransactionsPageProps> = ({
-  transactions,
-  bank_account,
-  bank_accounts
-}) => {
-  const [selectedRows, setSelectedRows] = useState<App.Data.TransactionData[]>([])
-  const [showMoneyMoneyImport, setShowMoneyMoneyImport] = useState(false)
+const BookingIndex: React.FC<TransactionsPageProps> = ({ bookings }) => {
+  const [selectedRows, setSelectedRows] = useState<App.Data.BookkeepingBookingData[]>([])
 
   const breadcrumbs = useMemo(() => [{ title: 'Buchhaltung' }], [])
 
@@ -72,7 +64,6 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
                   title="MoneyMoney JSON-Datei importieren"
                   ellipsis
                   separator
-                  onClick={() => setShowMoneyMoneyImport(true)}
                 />
                 <MenuItem icon={Csv02Icon} title="CSV-Datei importieren" ellipsis />
               </Menu>
@@ -109,38 +100,26 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
 
   const currentRoute = route().current()
   console.log(currentRoute)
-  const footer = useMemo(() => <Pagination data={transactions} />, [transactions])
+  const footer = useMemo(() => <Pagination data={bookings} />, [bookings])
 
   return (
     <PageContainer
-      header={
-        <div className="flex flex-1 items-center gap-2">
-          <div className="flex flex-none flex-col items-start gap-1">
-            <h1 className="font-bold text-xl">{bank_account.name}</h1>
-            <div className="text-muted-foreground text-sm">{bank_account.iban}</div>
-          </div>
-        </div>
-      }
+      title="Buchungen"
       width="7xl"
       breadcrumbs={breadcrumbs}
       className="flex overflow-hidden"
       toolbar={toolbar}
     >
-      <DataTable<App.Data.TransactionData, unknown>
+      <DataTable<App.Data.BookkeepingBookingData, unknown>
         columns={columns}
         actionBar={actionBar}
         onSelectedRowsChange={setSelectedRows}
-        data={transactions.data}
+        data={bookings.data}
         footer={footer}
-        itemName="Transaktionen"
-      />
-      <TransactionMoneyMoneyImport
-        isOpen={showMoneyMoneyImport}
-        onClosed={() => setShowMoneyMoneyImport(false)}
-        bank_account={bank_account}
+        itemName="Buchungen"
       />
     </PageContainer>
   )
 }
 
-export default TransactionIndex
+export default BookingIndex

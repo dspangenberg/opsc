@@ -7,18 +7,19 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Support\Carbon;
 
 /**
- * @property-read \App\Models\BookkeepingAccount|null $account_credit
- * @property-read \App\Models\BookkeepingAccount|null $account_debit
- * @property-read Model|\Eloquent $bookable
+ * @property-read BookkeepingAccount|null $account_credit
+ * @property-read BookkeepingAccount|null $account_debit
+ * @property-read Model|Eloquent $bookable
  * @property-read string $document_number
- * @property-read \App\Models\NumberRangeDocumentNumber|null $range_document_number
- * @property-read \App\Models\Tax|null $tax
+ * @property-read NumberRangeDocumentNumber|null $range_document_number
+ * @property-read Tax|null $tax
+ *
  * @method static Builder<static>|BookkeepingBooking newModelQuery()
  * @method static Builder<static>|BookkeepingBooking newQuery()
  * @method static Builder<static>|BookkeepingBooking query()
+ *
  * @mixin Eloquent
  */
 class BookkeepingBooking extends Model
@@ -63,7 +64,7 @@ class BookkeepingBooking extends Model
         }
 
         if ($bookingId) {
-            $booking = BookkeepingBooking::firstOrNew(['id' => $bookingId]);
+            $booking = BookkeepingBooking::find($bookingId);
             if ($booking->is_locked) {
                 return null;
             }
@@ -101,8 +102,6 @@ class BookkeepingBooking extends Model
     {
         return $this->morphTo();
     }
-
-    public function initBooking(MorphTo $parent, $date, $amount, $credit_account, $debit_account, $text, $document_number, $note): void {}
 
     public function account_credit(): HasOne
     {

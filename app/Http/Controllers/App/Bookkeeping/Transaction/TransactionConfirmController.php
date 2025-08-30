@@ -8,9 +8,10 @@
 namespace App\Http\Controllers\App\Bookkeeping\Transaction;
 
 use App\Http\Controllers\Controller;
+use App\Models\NumberRange;
 use App\Models\Transaction;
-use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TransactionConfirmController extends Controller
 {
@@ -19,12 +20,20 @@ class TransactionConfirmController extends Controller
 
         $ids = $request->query('ids');
         $transactionIds = explode(',', $ids);
-        $transactions = Transaction::whereIn('id', $transactionIds)->get();
+        $transactions = Transaction::whereIn('id', $transactionIds)->with('bank_account')->get();
 
         $transactions->each(function ($transaction) {
-            if (!$transaction->is_locked) {
+            if (! $transaction->is_locked) {
                 $transaction->is_locked = true;
+
+                if (! $transaction->number_range_document_numbers_id) {
+                    $transaction->number_range_document_numbers_id = NumberRange::createDocumentNumber($transaction,
+                        'booked_on', $transaction->bank_account->prefix);
+                }
+
                 $transaction->save();
+
+                Transaction::createBooking($transaction);
             }
         });
 

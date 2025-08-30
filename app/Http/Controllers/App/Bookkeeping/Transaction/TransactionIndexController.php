@@ -17,26 +17,31 @@ use Inertia\Inertia;
 
 class TransactionIndexController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, ?BankAccount $bank_account = null)
     {
 
-        $bankAccount = $request->query('bank_account_id');
-        $bankAccount = $bankAccount ? BankAccount::find($bankAccount) : BankAccount::query()->orderBy('pos')->first();
+        if (! $bank_account) {
+            $bank_account = BankAccount::query()->orderBy('pos')->first();
+        }
 
         $bank_accounts = BankAccount::orderBy('pos')->get();
 
         $transactions = Transaction::query()
-            ->where('bank_account_id', $bankAccount->id)
+            ->where('bank_account_id', $bank_account->id)
             ->with('bank_account')
             ->with('contact')
+            ->with('account')
+            ->with('range_document_number')
+            ->with('booking')
             ->orderBy('booked_on', 'DESC')
+            ->orderBy('id', 'DESC')
             ->paginate(10);
 
         $transactions->appends($_GET)->links();
 
         return Inertia::render('App/Bookkeeping/Transaction/TransactionIndex', [
             'transactions' => TransactionData::collect($transactions),
-            'bank_account' => BankAccountData::from($bankAccount),
+            'bank_account' => BankAccountData::from($bank_account),
             'bank_accounts' => BankAccountData::collect($bank_accounts),
         ]);
     }

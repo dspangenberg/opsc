@@ -14,7 +14,7 @@ class BookkeepingRuleService
             ->has('conditions')
             ->has('actions')
             ->where('is_active', 1)
-            ->orderBy('priority', 'DESC')
+            ->orderBy('priority')
             ->with(['conditions', 'actions'])
             ->get();
 
@@ -25,10 +25,18 @@ class BookkeepingRuleService
 
     protected static function runRule($rule, $model, $ids): void
     {
+
         $query = $model::query()
             ->when($ids, function ($query, $ids) {
                 return $query->whereIn('id', $ids);
             })
+            ->when($rule->type === 'debit', function ($query) {
+                return $query->where('amount', '<', 0);
+            })
+            ->when($rule->type === 'credit', function ($query) {
+                return $query->where('amount', '>=', 0);
+            })
+            ->where('is_locked', false)
             ->where(function ($query) use ($rule) {
                 // Build WHERE conditions dynamically within a grouped closure
                 foreach ($rule->conditions as $index => $condition) {
@@ -46,21 +54,14 @@ class BookkeepingRuleService
                 }
             });
 
-        ds($ids);
-
         // Process records in chunks to handle large datasets efficiently
         // Using chunkById for reliable results when updating records during iteration
-        $query->chunkById(100, function ($records) use ($ids, $rule) {
+        $query->chunkById(100, function ($records) use ($rule) {
             $updates = [];
             $recordIds = [];
 
             foreach ($records as $record) {
                 $recordIds[] = $record->id;
-
-                if (!in_array($record->id, $ids)) {
-                    ds('not in');
-                }
-
                 // Prepare bulk update data
                 if (empty($updates)) {
                     foreach ($rule->actions as $action) {

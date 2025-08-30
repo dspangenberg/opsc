@@ -7,6 +7,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\App\Bookkeeping\Booking\BookingIndexController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionConfirmController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionIndexController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionMoneyMoneyImportController;
@@ -108,7 +109,16 @@ Route::middleware([
     Route::delete('times/{time}',
         TimeDeleteController::class)->name('app.times.delete');
 
-    Route::get('bookkeeping/transactions',
+    Route::get('bookkeeping/transactions/confirm/',
+        TransactionConfirmController::class)
+        ->name('app.bookkeeping.transactions.confirm');
+
+
+
+    Route::get('bookkeeping/bookings',
+        BookingIndexController::class)->name('app.bookkeeping.bookings.index');
+
+    Route::get('bookkeeping/transactions/{bank_account?}',
         TransactionIndexController::class)->name('app.bookkeeping.transactions.index');
 
     Route::post('bookkeeping/transactions/money-money-import',
@@ -116,17 +126,11 @@ Route::middleware([
         ->middleware([HandlePrecognitiveRequests::class])
         ->name('app.bookkeeping.transactions.money-money-import');
 
-
-    Route::get('bookkeeping/transactions/confirm/',
-        TransactionConfirmController::class)
-        ->name('app.bookkeeping.transactions.confirm');
-
     Route::get('contacts/create',
         ContactCreateController::class)->name('app.contact.create');
 
     Route::post('contacts/store',
         ContactStoreController::class)->name('app.contact.store');
-
 
     Route::get('contacts/{contact}',
         ContactDetailsController::class)->name('app.contact.details');
@@ -147,8 +151,6 @@ Route::middleware([
         ContactAddressUpdateController::class)
         ->middleware([HandlePrecognitiveRequests::class])
         ->name('app.contact.address.update');
-
-
 
     Route::post('contacts/{contact}/address',
         ContactAddressStoreController::class)
@@ -172,10 +174,8 @@ Route::middleware([
         ->middleware([HandlePrecognitiveRequests::class])
         ->name('app.invoice.store.payment');
 
-
     Route::get('invoicing/invoices/{invoice}/history',
         InvoiceHistoryController::class)->name('app.invoice.history');
-
 
     Route::post('invoicing/invoices',
         InvoiceStoreController::class)

@@ -17,6 +17,9 @@ class InvoiceMarkAsSentController extends Controller
         if (! $invoice->sent_at) {
             $invoice->sent_at = now();
             $invoice->save();
+
+            Invoice::createBooking($invoice);
+
         }
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);

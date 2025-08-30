@@ -10,18 +10,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Support\Carbon;
 use Mpdf\MpdfException;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
 use Plank\Mediable\MediableInterface;
 use rikudou\EuQrPayment\QrPayment;
-use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
-use Spatie\Holidays\Holidays;
 use Spatie\Holidays\Countries\Germany;
+use Spatie\Holidays\Holidays;
+use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
+
 /**
- * @property-read \App\Models\Contact|null $contact
+ * @property-read Contact|null $contact
  * @property-read float $amount_gross
  * @property-read float $amount_net
  * @property-read float $amount_open
@@ -32,19 +32,20 @@ use Spatie\Holidays\Countries\Germany;
  * @property-read string $formated_invoice_number
  * @property-read array $invoice_address
  * @property-read string $qr_code
- * @property-read \App\Models\Contact|null $invoice_contact
- * @property-read Collection<int, \App\Models\InvoiceLine> $lines
+ * @property-read Contact|null $invoice_contact
+ * @property-read Collection<int, InvoiceLine> $lines
  * @property-read int|null $lines_count
- * @property-read \App\Models\Contact|null $linked_invoice
+ * @property-read Contact|null $linked_invoice
  * @property-read Collection<int, Media> $media
  * @property-read int|null $media_count
- * @property-read Collection<int, \App\Models\Payment> $payable
+ * @property-read Collection<int, Payment> $payable
  * @property-read int|null $payable_count
- * @property-read \App\Models\PaymentDeadline|null $payment_deadline
- * @property-read \App\Models\Project|null $project
- * @property-read \App\Models\NumberRangeDocumentNumber|null $range_document_number
- * @property-read \App\Models\Tax|null $tax
- * @property-read \App\Models\InvoiceType|null $type
+ * @property-read PaymentDeadline|null $payment_deadline
+ * @property-read Project|null $project
+ * @property-read NumberRangeDocumentNumber|null $range_document_number
+ * @property-read Tax|null $tax
+ * @property-read InvoiceType|null $type
+ *
  * @method static MediableCollection<int, static> all($columns = ['*'])
  * @method static Builder<static>|Invoice byYear(int $year)
  * @method static MediableCollection<int, static> get($columns = ['*'])
@@ -57,6 +58,7 @@ use Spatie\Holidays\Countries\Germany;
  * @method static Builder<static>|Invoice withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static Builder<static>|Invoice withMediaAndVariantsMatchAll($tags = [])
  * @method static Builder<static>|Invoice withMediaMatchAll(bool $tags = [], bool $withVariants = false)
+ *
  * @mixin Eloquent
  */
 class Invoice extends Model implements MediableInterface
@@ -141,7 +143,7 @@ class Invoice extends Model implements MediableInterface
         ];
 
         $pdfConfig = [];
-        $pdfConfig['pdfA'] = !$invoice->is_draft;
+        $pdfConfig['pdfA'] = ! $invoice->is_draft;
         $pdfConfig['hide'] = true;
         $pdfConfig['watermark'] = $invoice->is_draft ? 'ENTWURF' : '';
 
@@ -158,6 +160,7 @@ class Invoice extends Model implements MediableInterface
             $groupedEntries[$key]['sum'] = $value->sum('tax');
             $groupedEntries[$key]['amount'] = $value->sum('amount');
             $groupedEntries[$key]['tax_rate'] = $value->first()->toArray()['rate'];
+            $groupedEntries[$key]['tax_rate_id'] = $value->first()->toArray()['id'];
             // $sum = $sum + $groupedEntries[$key]['sum'];
         }
 
@@ -192,7 +195,7 @@ class Invoice extends Model implements MediableInterface
      */
     public function release(): void
     {
-        if (!$this->invoice_number) {
+        if (! $this->invoice_number) {
             $counter = Invoice::whereYear('issued_on', $this->issued_on->year)->max('invoice_number');
             if ($counter == 0) {
                 $counter = $this->issued_on->year * 100000;
@@ -236,20 +239,26 @@ class Invoice extends Model implements MediableInterface
         // return $releasedInvoice;
     }
 
-    /*
-
     public static function createBooking($invoice): BookkeepingBooking
     {
+
+        if (! $invoice->number_range_document_numbers_id) {
+            $invoice->number_range_document_numbers_id = NumberRange::createDocumentNumber($invoice,
+                'issued_on');
+        }
 
         $booking = BookkeepingBooking::whereMorphedTo('bookable', Invoice::class)->where('bookable_id',
             $invoice->id)->first();
 
         $invoice->load('lines');
+        $invoice->load('tax');
         $invoice->amount = $invoice->lines->sum('amount') + $invoice->lines->sum('tax');
 
-        $accounts = Contact::getAccounts($invoice->contact_id, true, true);
+        $outturnAccount = BookkeepingAccount::where('account_number', $invoice->tax->outturn_account_id)->first();
+
+        $accounts = Contact::getAccounts(true, $invoice->contact_id, true, true);
         $booking = BookkeepingBooking::createBooking($invoice, 'issued_on', 'amount', $accounts['subledgerAccount'],
-            $accounts['outturnAccount'], 'A', $booking ? $booking->id : null);
+            $outturnAccount, 'A', $booking ? $booking->id : null);
 
         if ($booking) {
             $name = strtoupper($accounts['name']);
@@ -259,7 +268,6 @@ class Invoice extends Model implements MediableInterface
 
         return $booking;
     }
-    */
 
     public function getFormatedInvoiceNumberAttribute(): string
     {
@@ -327,10 +335,9 @@ class Invoice extends Model implements MediableInterface
         return $this->hasOne(NumberRangeDocumentNumber::class, 'id', 'number_range_document_numbers_id');
     }
 
-
     public function getQrCodeAttribute(): string
     {
-        if (!$this->contact) {
+        if (! $this->contact) {
             return '';
         }
 

@@ -6,14 +6,15 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Carbon;
 
 /**
  * @property-read string $label
  * @property-read \App\Models\Tax|null $tax
+ *
  * @method static Builder<static>|BookkeepingAccount newModelQuery()
  * @method static Builder<static>|BookkeepingAccount newQuery()
  * @method static Builder<static>|BookkeepingAccount query()
+ *
  * @mixin Eloquent
  */
 class BookkeepingAccount extends Model
@@ -47,6 +48,21 @@ class BookkeepingAccount extends Model
         $bookingKeepingAccount = $account?->tax_id ? $account : $debit;
 
         $tax = Tax::find($bookingKeepingAccount->tax_id);
+
+        /*
+        if (!$tax) {
+            $contact = ($bookingKeepingAccount->type === 'c')
+                ? Contact::where('creditor_number', $bookingKeepingAccount->account_number)->first()
+                : Contact::where('debtor_number', $bookingKeepingAccount->account_number)->first();
+            if ($contact && $contact->tax_id) {
+                $tax = Tax::find($contact->tax_id);
+            }
+        }
+
+        if (!$tax) {
+            $tax = Tax::where('is_default', 1)->first();
+        }
+        */
 
         if ($tax && $tax->value > 0) {
             $return['tax_id'] = $tax->id;

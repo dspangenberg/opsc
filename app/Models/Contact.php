@@ -7,14 +7,14 @@
 
 namespace App\Models;
 
+use App\Exceptions\ContactNotFoundException;
+use App\Exceptions\ContactWithoutAccountException;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Carbon;
-use Maize\Markable\Mark;
 use Maize\Markable\Markable;
 use Maize\Markable\Models\Favorite;
 
@@ -45,11 +45,13 @@ use Maize\Markable\Models\Favorite;
  * @property-read \App\Models\Salutation|null $salutation
  * @property-read \App\Models\Tax|null $tax
  * @property-read \App\Models\Title|null $title
+ *
  * @method static Builder<static>|Contact newModelQuery()
  * @method static Builder<static>|Contact newQuery()
  * @method static Builder<static>|Contact query()
  * @method static Builder<static>|Contact view($view)
  * @method static Builder<static>|Contact whereHasMark(\Maize\Markable\Mark $mark, \Illuminate\Database\Eloquent\Model $user, ?string $value = null)
+ *
  * @mixin Eloquent
  */
 class Contact extends Model
@@ -298,9 +300,67 @@ class Contact extends Model
         ];
     }
 
+    public static function getAccounts(bool $is_invoice, int $id, bool $createAccountIfNotExists = true, bool $getDefaultOutturnAccount = false): array
+    {
+        $contact = static::find($id);
+
+        if ($contact === null) {
+            return [
+                'subledgerAccount' => null,
+                'outturnAccount' => null,
+                'name' => null,
+            ];
+        }
+
+        if ($contact->company_id) {
+            $contact = static::find($contact->company_id);
+        }
+
+        if (! $contact) {
+            throw new ContactNotFoundException;
+        }
+
+        if ($contact->is_debtor && ! $contact->debtor_number) {
+            throw new ContactWithoutAccountException;
+        }
+
+        $accountNumber = $is_invoice ? $contact->debtor_number : $contact->creditor_number;
+        $bookkeepingAccount = BookkeepingAccount::where('account_number', $accountNumber)->first();
+
+        if (! $bookkeepingAccount || ! $accountNumber) {
+            if (! $createAccountIfNotExists) {
+                throw new ContactWithoutAccountException;
+            } else {
+                if ($accountNumber) {
+                    $bookkeepingAccount = new BookkeepingAccount;
+                    $bookkeepingAccount->account_number = $accountNumber;
+                    $bookkeepingAccount->name = $contact->full_name;
+                    $bookkeepingAccount->type = $contact->is_creditor ? 'c' : 'd';
+                    $bookkeepingAccount->save();
+                }
+            }
+        }
+
+        $outturnAccount = null;
+
+        if ($contact->outturn_account_id === 0 && $getDefaultOutturnAccount === true) {
+            $outturnAccount = BookkeepingAccount::query()->where('type', $is_invoice ? 'r' : 'e')->where('is_default', true)->first();
+        }
+
+        $outturnAccount = $contact->outturn_account_id
+            ? BookkeepingAccount::query()->where('account_number', $contact->outturn_account_id)->first()
+            : $outturnAccount; //
+
+        return [
+            'subledgerAccount' => $bookkeepingAccount,
+            'outturnAccount' => $outturnAccount,
+            'name' => $contact->short_name ? $contact->short_name : $contact->full_name,
+        ];
+    }
+
     public function getSalesAttribute(): array
     {
-        if (!$this->debtor_number) {
+        if (! $this->debtor_number) {
             return ['currentYear' => 0, 'allTime' => 0];
         }
 
