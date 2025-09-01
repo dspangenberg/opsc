@@ -6,14 +6,15 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Carbon;
 
 /**
- * @property-read \App\Models\Invoice|null $linked_invoice
- * @property-read \App\Models\TaxRate|null $rate
+ * @property-read Invoice|null $linked_invoice
+ * @property-read TaxRate|null $rate
+ *
  * @method static Builder<static>|InvoiceLine newModelQuery()
  * @method static Builder<static>|InvoiceLine newQuery()
  * @method static Builder<static>|InvoiceLine query()
+ *
  * @mixin Eloquent
  */
 class InvoiceLine extends Model

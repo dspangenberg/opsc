@@ -130,10 +130,10 @@ export const columns: ColumnDef<App.Data.TransactionData>[] = [
   {
     accessorKey: 'amount_tax',
     header: () => <div className="text-right">Betrag</div>,
-    size: 110,
+    size: 130,
     cell: ({ row }) => (
       <div className={cn(row.original.amount < 0 ? 'text-red-500' : '', 'text-right')}>
-        {currencyFormatter.format(row.original.amount)}
+        <div className="font-medium">{currencyFormatter.format(row.original.remaining_amount)}</div>
       </div>
     )
   }

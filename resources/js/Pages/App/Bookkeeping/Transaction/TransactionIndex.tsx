@@ -31,26 +31,45 @@ import {
 } from '@/Components/twcui/dropdown-button'
 import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/twc-ui/button'
+import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { TransactionMoneyMoneyImport } from '@/Pages/App/Bookkeeping/Transaction/TransactionMoneyMoneyImport'
 import type { PageProps } from '@/Types'
-import { columns } from './TransactionIndexColumns'
+import { createColumns } from './TransactionIndexColumns'
 
 interface TransactionsPageProps extends PageProps {
   transactions: App.Data.Paginated.PaginationMeta<App.Data.TransactionData[]>
   bank_accounts: App.Data.BankAccountData[]
   bank_account: App.Data.BankAccountData
+  bookkeeping_accounts: App.Data.BookkeepingAccountData[]
 }
 
 const TransactionIndex: React.FC<TransactionsPageProps> = ({
   transactions,
   bank_account,
-  bank_accounts
+  bank_accounts,
+  bookkeeping_accounts
 }) => {
   const [selectedRows, setSelectedRows] = useState<App.Data.TransactionData[]>([])
   const [showMoneyMoneyImport, setShowMoneyMoneyImport] = useState(false)
+  const [transaction, setTransaction] = useState<App.Data.TransactionData | null>(null)
 
   const breadcrumbs = useMemo(() => [{ title: 'Buchhaltung' }], [])
+
+  const handeSetCounterAccountAction = (transaction: App.Data.TransactionData) => {}
+
+  const handlePaymentAction = (transaction: App.Data.TransactionData) => {
+    router.get(route('app.bookkeeping.transactions.pay-invoice', { id: transaction.id }))
+  }
+
+  const columns = useMemo(
+    () =>
+      createColumns({
+        onPaymentAction: handlePaymentAction,
+        onSetCounterAccountAction: handeSetCounterAccountAction
+      }),
+    [bookkeeping_accounts]
+  )
 
   const handleBulkConfirmationClicked = () => {
     const ids = selectedRows.map(row => row.id).join(',')
@@ -85,7 +104,36 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
     ),
     []
   )
+  const currentRoute = route().params.bank_account
+  const selectedKey = currentRoute
+    ? String(currentRoute)
+    : bank_accounts[0]?.id
+      ? String(bank_accounts[0].id)
+      : undefined
 
+  // Debug logging
+  const tabs = useMemo(
+    () => (
+      <Tabs variant="underlined" selectedKey={selectedKey}>
+        <TabList aria-label="Ansicht">
+          {bank_accounts.map(account => (
+            <Tab
+              key={String(account.id)}
+              id={String(account.id)}
+              href={route(
+                'app.bookkeeping.transactions.index',
+                { bank_account: account.id },
+                false
+              )}
+            >
+              {account.name}
+            </Tab>
+          ))}
+        </TabList>
+      </Tabs>
+    ),
+    [bank_accounts]
+  )
   const actionBar = useMemo(() => {
     return (
       <Toolbar variant="secondary" className="px-4 pt-2">
@@ -107,8 +155,6 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
     )
   }, [selectedRows.length])
 
-  const currentRoute = route().current()
-  console.log(currentRoute)
   const footer = useMemo(() => <Pagination data={transactions} />, [transactions])
 
   return (
@@ -121,6 +167,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
           </div>
         </div>
       }
+      tabs={tabs}
       width="7xl"
       breadcrumbs={breadcrumbs}
       className="flex overflow-hidden"

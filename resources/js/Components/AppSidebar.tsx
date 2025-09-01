@@ -69,20 +69,20 @@ const data = {
     },
     {
       title: 'Fakturierung',
-      url: route('app.invoice.index', {}, false),
+      url: route('app.invoice.index', { _query: { view: 'all' } }, false),
       icon: FileEuroIcon,
-      activePath: '/app/invoicing',
+      activePath: '/app/invoicing/invoices',
       hasSep: true,
       items: [
         {
           title: 'Rechnungen',
-          url: route('app.invoice.index', {}, false),
-          activePath: '/app/invoicing/invoices'
+          url: route('app.invoice.index', { _query: { view: 'all' } }, false),
+          activePath: '/app/invoicing/invoices?view=all'
         },
         {
           title: 'Offene Posten',
-          url: route('app.invoice.index', {}, false),
-          activePath: '/app/invoicing/invoices'
+          url: route('app.invoice.index', { _query: { view: 'unpaid' } }, false),
+          activePath: '/app/invoicing/invoices?view=unpaid'
         },
         {
           title: 'Angebote',

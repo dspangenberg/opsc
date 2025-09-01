@@ -340,6 +340,7 @@ account_number: string | null;
 name: string;
 purpose: string | null;
 amount: number;
+remaining_amount: number;
 is_private: boolean;
 created_at: string | null;
 updated_at: string | null;

@@ -86,13 +86,7 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({ bookings }) => {
           </Badge>
           ausgewählte Datensätze
         </div>
-        <Button
-          variant="ghost"
-          size="auto"
-          icon={Tick01Icon}
-          title="als bestätigt markieren"
-          onClick={handleBulkConfirmationClicked}
-        />
+        <Button variant="ghost" size="auto" icon={Tick01Icon} title="als bestätigt markieren" />
         <div className="flex-1 text-right font-medium text-sm">x</div>
       </Toolbar>
     )

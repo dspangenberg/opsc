@@ -8,9 +8,11 @@
 namespace App\Http\Controllers\App\Bookkeeping\Transaction;
 
 use App\Data\BankAccountData;
+use App\Data\BookkeepingAccountData;
 use App\Data\TransactionData;
 use App\Http\Controllers\Controller;
 use App\Models\BankAccount;
+use App\Models\BookkeepingAccount;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -39,10 +41,13 @@ class TransactionIndexController extends Controller
 
         $transactions->appends($_GET)->links();
 
+        $booḱkeeping_accounts = BookkeepingAccount::query()->orderBy('account_number')->get();
+
         return Inertia::render('App/Bookkeeping/Transaction/TransactionIndex', [
             'transactions' => TransactionData::collect($transactions),
             'bank_account' => BankAccountData::from($bank_account),
             'bank_accounts' => BankAccountData::collect($bank_accounts),
+            'bookkeeping_accounts' => BookkeepingAccountData::collect($booḱkeeping_accounts),
         ]);
     }
 }

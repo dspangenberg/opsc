@@ -11,6 +11,7 @@ use App\Http\Controllers\App\Bookkeeping\Booking\BookingIndexController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionConfirmController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionIndexController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionMoneyMoneyImportController;
+use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionPayInvoiceCreateController;
 use App\Http\Controllers\App\Contact\ContactAddressCreateController;
 use App\Http\Controllers\App\Contact\ContactAddressStoreController;
 use App\Http\Controllers\App\Contact\ContactAddressUpdateController;
@@ -113,8 +114,6 @@ Route::middleware([
         TransactionConfirmController::class)
         ->name('app.bookkeeping.transactions.confirm');
 
-
-
     Route::get('bookkeeping/bookings',
         BookingIndexController::class)->name('app.bookkeeping.bookings.index');
 
@@ -125,6 +124,9 @@ Route::middleware([
         TransactionMoneyMoneyImportController::class)
         ->middleware([HandlePrecognitiveRequests::class])
         ->name('app.bookkeeping.transactions.money-money-import');
+
+    Route::get('bookkeeping/transactions/{transaction}/pay-invoice',
+        TransactionPayInvoiceCreateController::class)->name('app.bookkeeping.transactions.pay-invoice');
 
     Route::get('contacts/create',
         ContactCreateController::class)->name('app.contact.create');

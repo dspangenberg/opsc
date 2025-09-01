@@ -3,14 +3,24 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { MoreVerticalCircle01Icon, Tick01Icon, WebValidationIcon } from '@hugeicons/core-free-icons'
+import {
+  FileEuroIcon,
+  MoreVerticalCircle01Icon,
+  ProfileIcon,
+  Tick01Icon,
+  WebValidationIcon
+} from '@hugeicons/core-free-icons'
 import { Link, router } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
+import { Autocomplete, Menu, SubmenuTrigger, useFilter } from 'react-aria-components'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 import { Badge, type BadgeVariant } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
 import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
 import { Icon } from '@/Components/ui/twc-ui/icon'
+import { MySearchField } from '@/Components/ui/twc-ui/MySearchField'
+import { Popover } from '@/Components/ui/twc-ui/popover'
+import { TextField } from '@/Components/ui/twc-ui/text-field'
 import { cn } from '@/Lib/utils'
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
@@ -41,7 +51,20 @@ const handleDeleteClicked = async (row: App.Data.TransactionData) => {
   }
 }
 
-const RowActions = ({ row }: { row: Row<App.Data.TransactionData> }) => {
+interface ColumnOptions {
+  onSetCounterAccountAction?: (row: App.Data.TransactionData) => void
+  onPaymentAction?: (row: App.Data.TransactionData) => void
+}
+
+const RowActions = ({
+  row,
+  options
+}: {
+  row: Row<App.Data.TransactionData>
+  options?: ColumnOptions
+}) => {
+  const { contains } = useFilter({ sensitivity: 'base' })
+
   return (
     <div className="mx-auto">
       <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
@@ -52,18 +75,30 @@ const RowActions = ({ row }: { row: Row<App.Data.TransactionData> }) => {
           separator
           onAction={() => handleConfirmClicked(row.original)}
         />
+
         <MenuItem
-          icon={WebValidationIcon}
-          title="Bestätigungsdialog "
+          icon={ProfileIcon}
+          title="Gegenkonto"
           ellipsis
+          separator
           isDisabled={row.original.is_locked}
+          onAction={() => options?.onSetCounterAccountAction?.(row.original)}
+        />
+
+        <MenuItem
+          icon={FileEuroIcon}
+          title="Zahlung auf Ausgangsrechnung anwenden"
+          ellipsis
+          separator
+          isDisabled={row.original.account?.type !== 'd'}
+          onAction={() => options?.onPaymentAction?.(row.original)}
         />
       </DropdownButton>
     </div>
   )
 }
 
-export const columns: ColumnDef<App.Data.TransactionData>[] = [
+export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.TransactionData>[] => [
   {
     id: 'select',
     size: 20,
@@ -177,7 +212,10 @@ export const columns: ColumnDef<App.Data.TransactionData>[] = [
     id: 'actions',
     size: 30,
     header: () => <span className="sr-only">Actions</span>,
-    cell: ({ row }) => <RowActions row={row} />,
+    cell: ({ row }) => <RowActions row={row} options={options} />,
     enableHiding: false
   }
 ]
+
+// Für Rückwärtskompatibilität
+export const columns = createColumns()

@@ -29,6 +29,8 @@ class InvoiceIndexController extends Controller
             $years->push($year);
         }
 
+        $view = $request->query('view', 'all');
+
         // Optimize stats query by combining both calculations in a single query
         $stats = Invoice::query()
             ->selectRaw('
@@ -42,10 +44,38 @@ class InvoiceIndexController extends Controller
             ->byYear($year)
             ->first();
 
+        // Calculate sum of open amounts for unpaid invoices
+        $openAmountsStats = Invoice::query()
+            ->selectRaw('
+                SUM(
+                    (SELECT COALESCE(SUM(amount), 0) + COALESCE(SUM(tax), 0) FROM invoice_lines WHERE invoice_id = invoices.id) - 
+                    COALESCE((SELECT SUM(amount) FROM payments WHERE payable_type = ? AND payable_id = invoices.id), 0)
+                ) as total_open_amount
+            ')
+            ->whereRaw('(
+                SELECT COALESCE(SUM(amount), 0) + COALESCE(SUM(tax), 0) 
+                FROM invoice_lines 
+                WHERE invoice_id = invoices.id
+            ) - COALESCE((
+                SELECT SUM(amount) 
+                FROM payments 
+                WHERE payable_type = ? AND payable_id = invoices.id
+            ), 0) > 0.01', [Invoice::class, Invoice::class])
+            ->where('is_draft', false)
+            ->byYear($year)
+            ->first();
+
+        // Merge the stats
+        if ($stats && $openAmountsStats) {
+            $stats->total_open_amount = $openAmountsStats->total_open_amount ?: 0;
+        } elseif ($stats) {
+            $stats->total_open_amount = 0;
+        }
 
         // Optimize by combining related data and reducing N+1 queries
         $invoices = Invoice::query()
             ->with(['invoice_contact', 'contact', 'project', 'payment_deadline', 'type'])
+            ->view($view)
             ->withSum('lines', 'amount')
             ->withSum('lines', 'tax')
             ->withSum('payable', 'amount')

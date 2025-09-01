@@ -29,6 +29,7 @@ class TransactionData extends Data
         public readonly string $name,
         public readonly ?string $purpose,
         public readonly float $amount,
+        public readonly float $remaining_amount,
         public readonly bool $is_private,
         public readonly ?Carbon $created_at,
         public readonly ?Carbon $updated_at,

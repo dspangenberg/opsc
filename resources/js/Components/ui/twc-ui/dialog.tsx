@@ -304,7 +304,7 @@ export const Dialog: React.FC<DialogProps> = ({
     >
       <DialogContent
         closeButton={false}
-        className={cn('relative gap-0 space-y-0 rounded-lg', widthClass, className)}
+        className={cn('relative flex w-full gap-0 space-y-0 rounded-lg', widthClass, className)}
         role={role}
       >
         {composeRenderProps(children, (children, _providedRenderProps) => {
@@ -319,7 +319,12 @@ export const Dialog: React.FC<DialogProps> = ({
           return (
             <>
               {!hideHeader && (
-                <DialogHeader className={cn('my-0 flex flex-1 flex-col gap-0 px-3 py-0', bgClass)}>
+                <DialogHeader
+                  className={cn(
+                    'my-0 flex w-full flex-col justify-stretch gap-0 border-4 px-3 py-0',
+                    bgClass
+                  )}
+                >
                   <DialogTitle className="!py-1.5 !leading-0 flex w-full items-center justify-between text-left text-base md:text-center">
                     <span className="flex-1 text-base">{title}</span>
                     <Button
@@ -339,8 +344,8 @@ export const Dialog: React.FC<DialogProps> = ({
 
               <DialogBody
                 className={cn(
-                  'mx-0 my-0 flex w-full flex-col px-0',
-                  'bg-background',
+                  'mx-0 my-0 flex max-h-[calc(100vh-10rem)] w-full flex-1 flex-col px-0',
+                  'overflow-y-auto bg-background',
                   hideHeader ? 'rounded-lg' : '',
                   bodyClass
                 )}
@@ -350,7 +355,7 @@ export const Dialog: React.FC<DialogProps> = ({
               {!!footer && (
                 <DialogFooter
                   className={cn(
-                    'flex items-center justify-end space-x-2 px-4 py-3',
+                    'flex flex-justify-end flex-none items-center space-x-2 px-4 py-3',
                     footerClassName,
                     bgClass
                   )}

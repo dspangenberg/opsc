@@ -1,16 +1,3 @@
-import { DataTable } from '@/Components/DataTable'
-import { PageContainer } from '@/Components/PageContainer'
-import { Pagination } from '@/Components/Pagination'
-import { StatsField } from '@/Components/StatsField'
-import { BorderedBox } from '@/Components/twcui/bordered-box'
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
-import { Separator } from '@/Components/twcui/separator'
-import { Toggle } from '@/Components/twcui/toggle'
-import { Badge } from '@/Components/ui/badge'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { FormlessSelect } from '@/Components/ui/twc-ui/select'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
-import type { PageProps } from '@/Types'
 import {
   Add01Icon,
   ArrowLeft01Icon,
@@ -28,6 +15,19 @@ import { getYear } from 'date-fns'
 import { debounce, sumBy } from 'lodash'
 import * as React from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { DataTable } from '@/Components/DataTable'
+import { PageContainer } from '@/Components/PageContainer'
+import { Pagination } from '@/Components/Pagination'
+import { StatsField } from '@/Components/StatsField'
+import { BorderedBox } from '@/Components/twcui/bordered-box'
+import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
+import { Separator } from '@/Components/twcui/separator'
+import { Toggle } from '@/Components/twcui/toggle'
+import { Badge } from '@/Components/ui/badge'
+import { Button } from '@/Components/ui/twc-ui/button'
+import { FormlessSelect } from '@/Components/ui/twc-ui/select'
+import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
+import type { PageProps } from '@/Types'
 import { columns } from './InvoiceIndexColumns'
 
 interface ContactIndexProps extends PageProps {
@@ -38,6 +38,7 @@ interface ContactIndexProps extends PageProps {
     total_tax: number
     total_net: number
     total_loss_of_receivables: number
+    total_open_amount: number
   }
   years: number[]
   currentYear: number
@@ -197,7 +198,10 @@ const InvoiceIndex: React.FC = () => {
             <StatsField label="netto" value={currencyFormatter.format(stats.total_net)} />
             <StatsField label="USt." value={currencyFormatter.format(stats.total_tax)} />
             <StatsField label="brutto" value={currencyFormatter.format(stats.total_gross)} />
-            <StatsField label="Offene Posten" value={currencyFormatter.format(0)} />
+            <StatsField
+              label="Offene Posten"
+              value={currencyFormatter.format(stats.total_open_amount)}
+            />
             {stats.total_loss_of_receivables > 0 && (
               <StatsField
                 label="Forderungsverluste"

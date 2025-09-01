@@ -14,20 +14,20 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 #[ObservedBy([TransactionObserver::class])]
 /**
- * @property-read \App\Models\BankAccount|null $bank_account
- * @property-read \App\Models\BookkeepingBooking|null $booking
- * @property-read \App\Models\Contact|null $contact
+ * @property-read BankAccount|null $bank_account
+ * @property-read BookkeepingBooking|null $booking
+ * @property-read Contact|null $contact
  * @property-read string $bookkeeping_text
  * @property-read string $document_number
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Payment> $payments
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Payment> $payments
  * @property-read int|null $payments_count
- * @property-read \App\Models\NumberRangeDocumentNumber|null $range_document_number
+ * @property-read NumberRangeDocumentNumber|null $range_document_number
  *
  * @method static Builder<static>|Transaction newModelQuery()
  * @method static Builder<static>|Transaction newQuery()
  * @method static Builder<static>|Transaction query()
  *
- * @property-read \App\Models\BookkeepingAccount|null $account
+ * @property-read BookkeepingAccount|null $account
  *
  * @mixin Eloquent
  */
@@ -210,7 +210,7 @@ class Transaction extends Model
         $lines = [];
 
         if (! $this->booking_text && $this->booking_key === 'MSC') {
-            if ($this->is_transit) {
+            if ($this->counter_account_id !== 1360) {
                 $this->booking_text = $this->amount < 0 ? 'Überweisung' : 'Gutschrift';
             } else {
                 if ($this->booking_text === 'Bank transfer') {
@@ -224,7 +224,9 @@ class Transaction extends Model
         }
 
         if ($this->counter_account_id === 1800 || $this->counter_account_id === 1890) {
-            $lines[] = $this->booking_text . ' (privat)';
+            $lines[] = $this->booking_text.' (privat)';
+        } else {
+            $lines[] = $this->booking_text;
         }
 
         $lines[] = $this->name;
@@ -249,6 +251,13 @@ class Transaction extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class, 'transaction_id', 'id');
+    }
+
+    public function getRemainingAmountAttribute(): float
+    {
+        $totalPayments = $this->payments()->sum('amount');
+
+        return round($this->amount - $totalPayments, 2);
     }
 
     protected function casts(): array
