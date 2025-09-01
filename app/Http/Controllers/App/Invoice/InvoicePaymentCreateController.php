@@ -19,9 +19,9 @@ class InvoicePaymentCreateController extends Controller
     public function __invoke(Invoice $invoice)
     {
         $transactions = Transaction::query()
-            ->where('contact_id', $invoice->contact_id)
-            ->whereDoesntHave('payments')
-            ->where('is_locked', true)
+            ->where('counter_account_id', $invoice->contact->debtor_number)
+            ->whereRaw('amount - COALESCE((SELECT SUM(amount) FROM payments WHERE transaction_id = transactions.id), 0) > 0.01')
+            // ->where('is_locked', true)
             ->get();
 
         $invoice
@@ -44,7 +44,7 @@ class InvoicePaymentCreateController extends Controller
         return Inertia::modal('App/Invoice/InvoiceDetailsCreatePayment')
             ->with([
                 'invoice' => InvoiceData::from($invoice),
-                'transactions' => TransactionData::collect($transactions)
+                'transactions' => TransactionData::collect($transactions),
             ])->baseRoute('app.invoice.details', [
                 'invoice' => $invoice->id,
             ]);

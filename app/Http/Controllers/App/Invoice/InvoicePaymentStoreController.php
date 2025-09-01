@@ -20,7 +20,10 @@ class InvoicePaymentStoreController extends Controller
 
         $ids = $request->query('ids');
         $ids = $ids ? explode(',', $ids) : [];
-
+        $invoice
+            ->loadSum('lines', 'amount')
+            ->loadSum('lines', 'tax');
+        
         $transactions = Transaction::whereIn('id', $ids)->get();
         $transactions->each(function ($transaction) use ($invoice) {
             $payment = new Payment;
@@ -28,8 +31,16 @@ class InvoicePaymentStoreController extends Controller
             $payment->transaction_id = $transaction->id;
             $payment->issued_on = $transaction->booked_on;
             $payment->is_currency_difference = false;
-            $payment->amount = $transaction->amount;
-            $payment->save();
+
+            if ($transaction->remaining_amount > $invoice->amount_gross) {
+                $payment->amount = $invoice->amount_gross;
+            } else {
+                $payment->amount = $transaction->remaining_amount;
+            }
+
+            if ($transaction->remaining_amount > 0) {
+                $payment->save();
+            }
         });
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);

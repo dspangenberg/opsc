@@ -58,6 +58,8 @@ use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
  * @method static Builder<static>|Invoice withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static Builder<static>|Invoice withMediaAndVariantsMatchAll($tags = [])
  * @method static Builder<static>|Invoice withMediaMatchAll(bool $tags = [], bool $withVariants = false)
+ * @method static Builder<static>|Invoice unpaid()
+ * @method static Builder<static>|Invoice view($view)
  *
  * @mixin Eloquent
  */
@@ -403,9 +405,33 @@ class Invoice extends Model implements MediableInterface
         return $this->hasOne(Project::class, 'id', 'project_id');
     }
 
+    public function scopeUnpaid(Builder $query): Builder
+    {
+        $query
+            ->whereRaw('(
+                SELECT COALESCE(SUM(amount), 0) + COALESCE(SUM(tax), 0) 
+                FROM invoice_lines 
+                WHERE invoice_id = invoices.id
+            ) - COALESCE((
+                SELECT SUM(amount) 
+                FROM payments 
+                WHERE payable_type = ? AND payable_id = invoices.id
+            ), 0) > 0.01', [Invoice::class]);
+
+        return $query;
+    }
+
     public function payment_deadline(): HasOne
     {
         return $this->hasOne(PaymentDeadline::class, 'id', 'payment_deadline_id');
+    }
+
+    public function scopeView(Builder $query, $view): Builder
+    {
+        return match ($view) {
+            'unpaid' => $query->unpaid(),
+            default => $query,
+        };
     }
 
     protected function casts(): array

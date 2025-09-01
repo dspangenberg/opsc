@@ -11,34 +11,24 @@ import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 import { NumberField } from '@/Components/ui/twc-ui/number-field'
 import { Select } from '@/Components/ui/twc-ui/select'
 import { TextField } from '@/Components/ui/twc-ui/text-field'
-import { columns } from './InvoiceDetailsTransactionColumns'
+import { columns } from '@/Pages/App/Invoice/InvoiceIndexColumns'
 
 interface Props {
-  invoice: App.Data.InvoiceData
-  transactions: App.Data.TransactionData[]
+  invoices: App.Data.Paginated.PaginationMeta<App.Data.InvoiceData[]>
+  transaction: App.Data.TransactionData | null
 }
 
-export const InvoiceDetailsCreatePayment: React.FC<Props> = ({ invoice, transactions }) => {
+export const TransactionPayInvoice: React.FC<Props> = ({ invoices, transaction }) => {
   const [isOpen, setIsOpen] = useState(true)
   const [selectedRows, setSelectedRows] = useState<App.Data.TransactionData[]>([])
 
   const handleOnClosed = () => {
     setIsOpen(false)
-    router.get(route('app.invoice.details', { invoice: invoice.id }))
   }
 
-  const handleSaveClicked = () => {
-    const ids = selectedRows.map(row => row.id).join(',')
-    setIsOpen(false)
-    router.get(
-      route('app.invoice.store.payment', {
-        invoice: invoice.id,
-        _query: {
-          ids
-        }
-      })
-    )
-  }
+  console.log(invoices)
+
+  const handleSaveClicked = () => {}
 
   return (
     <Dialog
@@ -54,27 +44,20 @@ export const InvoiceDetailsCreatePayment: React.FC<Props> = ({ invoice, transact
           <Button id="dialog-cancel-button" variant="outline" onClick={() => renderProps.close()}>
             Abbrechen
           </Button>
-          {selectedRows.length === 1 && (
-            <Button type="button" variant="outline">
-              Teilbetrag
-            </Button>
-          )}
           <Button type="button" onClick={handleSaveClicked}>
             Speichern
           </Button>
         </>
       )}
     >
-      <div className="overflow-hidden">
-        <DataTable<App.Data.TransactionData, unknown>
-          columns={columns}
-          onSelectedRowsChange={setSelectedRows}
-          data={transactions}
-          itemName="Transaktionen"
-        />
-      </div>
+      {transaction?.purpose}
+      <DataTable<App.Data.InvoiceData, unknown>
+        columns={columns}
+        data={invoices.data}
+        itemName="Transaktionen"
+      />
     </Dialog>
   )
 }
 
-export default InvoiceDetailsCreatePayment
+export default TransactionPayInvoice

@@ -61,7 +61,6 @@ class MoneyMoneyService
                                 $transaction->currency = 'EUR';
                                 $transaction->amount = $conversion->amount;
                             }
-
                         }
                     }
 

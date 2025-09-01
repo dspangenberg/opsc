@@ -78,7 +78,7 @@ export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
   {
     accessorKey: 'document_number',
     header: '',
-    size: 80,
+    size: 80  ,
     cell: ({ row, getValue }) => <Badge variant="outline">{getValue() as string}</Badge>
   },
   {
