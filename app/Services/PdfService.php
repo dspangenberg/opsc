@@ -41,7 +41,7 @@ public static function createPdf(string $layoutName, string $view, array $data, 
         ]
     ]);
 
-    
+
     $layouts = Storage::disk('system')->json('layouts/layouts.json');
     $letterheads = Storage::disk('system')->json('letterheads/letterheads.json');
     $fonts = Storage::disk('system')->json('fonts/fonts.json');

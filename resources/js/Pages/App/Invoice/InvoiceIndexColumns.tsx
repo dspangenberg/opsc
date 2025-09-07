@@ -66,7 +66,7 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
   {
     accessorKey: 'contact.full_name',
     header: 'Debitor',
-    size: 250,
+    size: 200,
     cell: ({ getValue, row }) => (
       <Link
         href={contactUrl(row.original.contact_id)}

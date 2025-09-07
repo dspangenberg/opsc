@@ -20,7 +20,7 @@ class TimeMyWeekIndexController extends Controller
 
         // Optimize query with eager loading and proper ordering
         $times = Time::query()
-            ->with(['project:id,name', 'category:id,name', 'user:id,first_name,last_name,avatar_url'])
+            ->with(['project:id,name', 'user:id,first_name,last_name,avatar_url', 'category:id,name,short_name'])
             ->withMinutes()
             ->whereNotNull('begin_at')
             ->whereBetween('begin_at', [$dateRange['start'], $dateRange['end']])
