@@ -22,12 +22,7 @@ export const ContactDetailsPhoneField: FC<Props> = ({ phone }: Props) => {
   return (
     <DataCardField variant="vertical" label={phone.category?.name || 'E-Mail'} value={phone.phone}>
       <div className="group/mail flex items-center gap-0.5">
-        <a
-          href={`phone:${phone.phone}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:underline"
-        >
+        <a href={`tel:${phone.phone}`} rel="noopener noreferrer" className="hover:underline">
           {phone.phone}
         </a>
       </div>

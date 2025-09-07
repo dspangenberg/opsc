@@ -140,7 +140,7 @@ Route::middleware([
         ContactCreateController::class)->name('app.contact.create');
 
     Route::post('contacts/store',
-        ContactStoreController::class)->name('app.contact.store');
+        ContactStoreController::class)->name('app.contact.store')->middleware([HandlePrecognitiveRequests::class]);
 
     Route::get('contacts/{contact}',
         ContactDetailsController::class)->name('app.contact.details');

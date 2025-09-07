@@ -227,7 +227,7 @@ function ComboBoxCore<T extends object, V extends ComboBoxValue = number>({
     >
       <Label value={label} />
       <FieldGroup className="p-0">
-        <ComboBoxInput className="border-transparent focus:ring-0" />
+        <ComboBoxInput className="truncate border-transparent focus:ring-0" />
         <Button variant="ghost" size="icon" className="mr-1.5 size-6 p-1">
           <ChevronsUpDown aria-hidden="true" className="size-4 opacity-50" />
         </Button>

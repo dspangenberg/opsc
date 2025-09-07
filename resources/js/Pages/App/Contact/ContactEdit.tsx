@@ -1,7 +1,10 @@
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useState } from 'react'
+import { Alert } from '@/Components/ui/twc-ui/alert'
 import { Button } from '@/Components/ui/twc-ui/button'
+import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
+import { ComboBox } from '@/Components/ui/twc-ui/combo-box'
 import { Dialog } from '@/Components/ui/twc-ui/dialog'
 import { Form, useForm } from '@/Components/ui/twc-ui/form'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
@@ -19,12 +22,22 @@ interface Props {
   titles: App.Data.TitleData[]
   mail_categories: App.Data.EmailCategoryData[]
   phone_categories: App.Data.PhoneCategoryData[]
+  bookkeeping_accounts: App.Data.BookkeepingAccountData[]
 }
 
 // Typisierung für Formular ohne zirkuläre Referenzen
 type FormData = Omit<
   App.Data.ContactData,
-  'company' | 'contacts' | 'title' | 'salutation' | 'payment_deadline' | 'sales' | 'addresses'
+  | 'company'
+  | 'contacts'
+  | 'title'
+  | 'salutation'
+  | 'payment_deadline'
+  | 'sales'
+  | 'addresses'
+  | 'outturn_account'
+  | 'primary_phone'
+  | 'primary_mail'
 > & {
   mails: App.Data.ContactMailData[]
   phones: App.Data.ContactPhoneData[]
@@ -37,6 +50,7 @@ export const ContactEdit: React.FC<Props> = ({
   mail_categories,
   phone_categories,
   payment_deadlines,
+  bookkeeping_accounts,
   taxes
 }) => {
   // Form-Daten vorbereiten
@@ -55,7 +69,6 @@ export const ContactEdit: React.FC<Props> = ({
     is_favorite: contact.is_favorite,
     is_org: contact.is_org,
     debtor_number: contact.debtor_number,
-    primary_mail: contact.primary_mail,
     vat_id: contact.vat_id,
     short_name: contact.short_name,
     register_court: contact.register_court,
@@ -66,9 +79,17 @@ export const ContactEdit: React.FC<Props> = ({
     formated_debtor_number: contact.formated_debtor_number,
     formated_creditor_number: contact.formated_creditor_number,
     payment_deadline_id: contact.payment_deadline_id,
+    cc_name: contact.cc_name,
+    paypal_email: contact.paypal_email,
     tax_id: contact.tax_id,
     mails: contact.mails || [],
-    phones: contact.phones || []
+    phones: contact.phones || [],
+    iban: contact.iban,
+    outturn_account_id: contact.outturn_account_id,
+    website: contact.website,
+    is_primary: contact.is_primary,
+    is_creditor: contact.is_creditor,
+    is_debtor: contact.is_debtor
   }
 
   const form = useForm<FormData>(
@@ -188,18 +209,21 @@ export const ContactEdit: React.FC<Props> = ({
           defaultSelectedKey="base"
           className="bg-accent"
           tabClassName="data-[selected]:bg-white"
-          panelClassName="bg-white p-0"
+          panelClassName="my-0 border border-transparent py-0 bg-white"
         >
           <TabList aria-label="Ansicht" className="px-4">
             <Tab id="base">Stammdaten</Tab>
-            <Tab key="addresses" isDisabled={!isOrganization}>
+            <Tab id="addresses" isDisabled={!isOrganization && form.data.company_id !== 0}>
               Anschriften
             </Tab>
-            <Tab isDisabled={!isOrganization} key="fiance">
-              Finanz- und Firmendaten
+            <Tab isDisabled={!form.data.is_creditor && !form.data.is_debtor} id="finances">
+              Account
+            </Tab>
+            <Tab isDisabled={!isOrganization && form.data.company_id !== 0} id="payments">
+              Register-/Steuerdaten
             </Tab>
           </TabList>
-          <TabPanel id="base" className="my-0 border border-transparent py-0">
+          <TabPanel id="base">
             <FormGroup>
               {isOrganization ? (
                 <div className="col-span-24">
@@ -238,6 +262,12 @@ export const ContactEdit: React.FC<Props> = ({
                   </div>
                 </>
               )}
+              {(isOrganization || !form.data.company_id) && (
+                <div className="col-span-24 flex gap-4">
+                  <Checkbox {...form.registerCheckbox('is_debtor')}>Debitor</Checkbox>
+                  <Checkbox {...form.registerCheckbox('is_creditor')}>Kreditor</Checkbox>
+                </div>
+              )}
             </FormGroup>
 
             <ContactEditEmailAddressesSection
@@ -257,6 +287,109 @@ export const ContactEdit: React.FC<Props> = ({
               onRemovePhone={removePhone}
               onUpdatePhone={updatePhone}
             />
+          </TabPanel>
+          <TabPanel id="addresses">
+            <FormGroup>addresses</FormGroup>
+          </TabPanel>
+          <TabPanel id="finances">
+            {form.data.is_debtor && (
+              <FormGroup title="Debitordaten">
+                {!form.data.debtor_number && (
+                  <div className="col-span-24">
+                    <Alert>
+                      Die Debitorennummer wird nach dem Speichern automatisch generiert.
+                    </Alert>
+                  </div>
+                )}
+                <div className="col-span-6">
+                  <TextField
+                    label="Debitor-Nr."
+                    isReadOnly
+                    {...form.register('formated_debtor_number')}
+                  />
+                </div>
+                <div className="col-span-9">
+                  <Select<App.Data.TaxData>
+                    {...form.register('tax_id')}
+                    label="Umsatzsteuer"
+                    items={taxes}
+                  />
+                </div>
+                <div className="col-span-9">
+                  <Select<App.Data.PaymentDeadlineData>
+                    {...form.register('payment_deadline_id')}
+                    label="Zahlungsziel"
+                    items={payment_deadlines}
+                  />
+                  <Checkbox {...form.registerCheckbox('has_dunning_block')} className="pt-1.5">
+                    Mahnsperre
+                  </Checkbox>
+                </div>
+              </FormGroup>
+            )}
+            {form.data.is_creditor && (
+              <FormGroup title="Kreditordaten">
+                {!form.data.creditor_number && (
+                  <div className="col-span-24">
+                    <Alert>
+                      Die Kreditorennummer wird nach dem Speichern automatisch generiert.
+                    </Alert>
+                  </div>
+                )}
+                <div className="col-span-6">
+                  <TextField
+                    label="Kreditor-Nr."
+                    isReadOnly
+                    {...form.register('formated_creditor_number')}
+                  />
+                </div>
+              </FormGroup>
+            )}
+            {(form.data.is_creditor || form.data.is_debtor) && (
+              <FormGroup title="Buchhaltung">
+                <div className="col-span-12">
+                  <ComboBox<App.Data.BookkeepingAccountData>
+                    label="Erfolgskonto"
+                    items={bookkeeping_accounts}
+                    itemName="label"
+                    itemValue="account_number"
+                    {...form.register('outturn_account_id')}
+                  />
+                  <Checkbox {...form.registerCheckbox('is_primary')} className="pt-1.5">
+                    Bei Buchung primär verwenden
+                  </Checkbox>
+                </div>
+              </FormGroup>
+            )}
+          </TabPanel>
+          <TabPanel id="payments">
+            <FormGroup title="Steuerdaten">
+              <div className="col-span-12">
+                <TextField label="Umsatzsteuer-ID" {...form.register('vat_id')} />
+              </div>
+              <div className="col-span-12">
+                <TextField label="Steuernummer" {...form.register('tax_number')} />
+              </div>
+            </FormGroup>
+            <FormGroup title="Registerdaten">
+              <div className="col-span-12">
+                <TextField label="Registergericht" {...form.register('register_court')} />
+              </div>
+              <div className="col-span-12">
+                <TextField label="Registernummer" {...form.register('register_number')} />
+              </div>
+            </FormGroup>
+            <FormGroup title="Zahlungsverkehr">
+              <div className="col-span-12">
+                <TextField label="IBAN" {...form.register('iban')} />
+              </div>
+              <div className="col-span-12">
+                <TextField label="Paypal" {...form.register('paypal_email')} />
+              </div>
+              <div className="col-span-12">
+                <TextField label="Name auf Kreditkartenabrechnung" {...form.register('cc_name')} />
+              </div>
+            </FormGroup>
           </TabPanel>
         </Tabs>
       </Form>

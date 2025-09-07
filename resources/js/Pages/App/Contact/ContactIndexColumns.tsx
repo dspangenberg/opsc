@@ -3,13 +3,12 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Checkbox } from '@/Components/ui/checkbox'
-import { Avatar } from '@/Components/ui/twc-ui/avatar'
 import { StarIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { Link } from '@inertiajs/react'
-import { router } from '@inertiajs/react'
+import { Link, router } from '@inertiajs/react'
 import type { ColumnDef } from '@tanstack/react-table'
+import { Checkbox } from '@/Components/ui/checkbox'
+import { Avatar } from '@/Components/ui/twc-ui/avatar'
 
 const editUrl = (id: number | null) => (id ? route('app.contact.details', { id }) : '#')
 const onFavoriteToggle = (id: number | null) => {
@@ -19,6 +18,7 @@ const onFavoriteToggle = (id: number | null) => {
 }
 
 const mailLink = (mail: string) => `mailto:${mail}`
+const telLink = (phone: string) => `tel:${phone}`
 
 export const columns: ColumnDef<App.Data.ContactData>[] = [
   {
@@ -86,9 +86,19 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
   {
     accessorKey: 'primary_mail',
     header: 'E-Mail',
-    size: 300,
+    size: 200,
     cell: ({ getValue }) => (
       <a href={mailLink(getValue() as string)} className="hover:underline">
+        {getValue() as string}
+      </a>
+    )
+  },
+  {
+    accessorKey: 'primary_phone',
+    header: 'Telefon',
+    size: 150,
+    cell: ({ getValue }) => (
+      <a href={telLink(getValue() as string)} className="hover:underline">
         {getValue() as string}
       </a>
     )
