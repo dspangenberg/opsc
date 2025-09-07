@@ -27,6 +27,9 @@ class ContactDetailsController extends Controller
                     'mails' => function ($query) {
                         $query->orderBy('pos')->with('category');
                     },
+                    'phones' => function ($query) {
+                        $query->orderBy('pos')->with('category');
+                    },
                     'addresses' => function ($query) {
                         $query->with(['category', 'country']);
                     },
@@ -37,6 +40,9 @@ class ContactDetailsController extends Controller
             },
             'addresses' => function ($query) {
                 $query->with(['category', 'country']);
+            },
+            'phones' => function ($query) {
+                $query->orderBy('pos')->with(['category']);
             },
             'contacts' => function ($query) {
                 $query->with('contacts');

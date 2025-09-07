@@ -44,7 +44,8 @@
         "useExhaustiveDependencies": "off",
         "useHookAtTopLevel": "error",
         "noUnusedImports": "error",
-        "noChildrenProp": "off"
+        "noChildrenProp": "off",
+        "useUniqueElementIds": "off"
       },
       "nursery": {
         "useSortedClasses": {

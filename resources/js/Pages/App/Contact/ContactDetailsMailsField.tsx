@@ -3,14 +3,15 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
+import { Button } from '@dspangenberg/twcui'
+import { Copy02Icon } from '@hugeicons/core-free-icons'
+import { Check } from 'lucide-react'
 import type * as React from 'react'
 import { type FC, useState } from 'react'
 import { DataCardField } from '@/Components/DataCard'
-import { Copy02Icon } from '@hugeicons/core-free-icons'
-import { Button } from '@dspangenberg/twcui'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/Components/ui/tooltip'
 import { cn } from '@/Lib/utils'
-import { Check } from 'lucide-react'
+
 interface Props {
   mail: App.Data.ContactMailData
 }
@@ -26,7 +27,7 @@ export const ContactDetailsMailField: FC<Props> = ({ mail }: Props) => {
 
   return (
     <DataCardField variant="vertical" label={mail.category?.name || 'E-Mail'} value={mail.email}>
-      <div className="flex items-center gap-0.5 group/mail">
+      <div className="group/mail flex items-center gap-0.5">
         <a
           href={`mailto:${mail.email}`}
           target="_blank"

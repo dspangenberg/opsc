@@ -1,20 +1,9 @@
 import {
-  Add01Icon,
   Csv02Icon,
-  Delete02Icon,
-  DocumentValidationIcon,
-  Edit03Icon,
-  EuroReceiveIcon,
-  FileDownloadIcon,
-  FileEditIcon,
   FileExportIcon,
-  FileRemoveIcon,
   FileScriptIcon,
   MoreVerticalCircle01Icon,
-  RepeatIcon,
-  Sent02Icon,
-  Tick01Icon,
-  UnavailableIcon
+  Tick01Icon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
@@ -34,6 +23,7 @@ import { Button } from '@/Components/ui/twc-ui/button'
 import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { TransactionMoneyMoneyImport } from '@/Pages/App/Bookkeeping/Transaction/TransactionMoneyMoneyImport'
+import { TransactionSelectCounterAccountDialog } from '@/Pages/App/Bookkeeping/Transaction/TransactionSelectCounterAccount'
 import type { PageProps } from '@/Types'
 import { createColumns } from './TransactionIndexColumns'
 
@@ -52,11 +42,25 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
 }) => {
   const [selectedRows, setSelectedRows] = useState<App.Data.TransactionData[]>([])
   const [showMoneyMoneyImport, setShowMoneyMoneyImport] = useState(false)
-  const [transaction, setTransaction] = useState<App.Data.TransactionData | null>(null)
 
   const breadcrumbs = useMemo(() => [{ title: 'Buchhaltung' }], [])
 
-  const handeSetCounterAccountAction = (transaction: App.Data.TransactionData) => {}
+  const handeSetCounterAccountAction = async (transaction: App.Data.TransactionData) => {
+    const promise = await TransactionSelectCounterAccountDialog.call({
+      transaction,
+      accounts: bookkeeping_accounts
+    })
+    if (promise !== false) {
+      router.get(
+        route('app.bookkeeping.transactions.set-counter-account', {
+          _query: { ids: transaction.id, counter_account: promise }
+        }),
+        {
+          preserveScroll: true
+        }
+      )
+    }
+  }
 
   const handlePaymentAction = (transaction: App.Data.TransactionData) => {
     router.get(route('app.bookkeeping.transactions.pay-invoice', { id: transaction.id }))
@@ -68,7 +72,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
         onPaymentAction: handlePaymentAction,
         onSetCounterAccountAction: handeSetCounterAccountAction
       }),
-    [bookkeeping_accounts]
+    []
   )
 
   const handleBulkConfirmationClicked = () => {

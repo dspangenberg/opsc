@@ -146,7 +146,6 @@ function SelectCore<T extends object, V extends SelectValue = number>({
       ]
     : Array.from(items)
 
-  console.log('itemsWithNothing', itemsWithNothing)
   const handleSelectionChange = (key: Key | null) => {
     if (key === null) {
       onChange(nullValue)

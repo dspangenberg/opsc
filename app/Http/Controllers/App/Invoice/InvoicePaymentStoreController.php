@@ -23,7 +23,7 @@ class InvoicePaymentStoreController extends Controller
         $invoice
             ->loadSum('lines', 'amount')
             ->loadSum('lines', 'tax');
-        
+
         $transactions = Transaction::whereIn('id', $ids)->get();
         $transactions->each(function ($transaction) use ($invoice) {
             $payment = new Payment;

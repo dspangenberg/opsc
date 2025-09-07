@@ -10,6 +10,7 @@ interface FormGroupProps {
   title?: string
   className?: string
   titleClass?: string
+  action?: React.ReactNode
   children?: React.ReactNode
 }
 
@@ -18,6 +19,7 @@ export const FormGroup: React.FC<FormGroupProps> = ({
   cols = 24,
   fullWidth = true,
   grid = true,
+  action = null,
   margin = true,
   title = '',
   className = '',
@@ -31,13 +33,19 @@ export const FormGroup: React.FC<FormGroupProps> = ({
   }[cols]
 
   return (
-    <div className="flex-1 border-accent">
-      {title !== '' && <div className={cn('px-4', titleClass)}>{title}</div>}
+    <div className="flex-1">
+      {title !== '' && (
+        <div className={cn('flex items-center px-4', titleClass)}>
+          <div className="flex-1">{title}</div>
+          <div className="flex-none">{action}</div>
+        </div>
+      )}
+
       <div
         className={cn(
           'mb-1 flex-1 px-4 last:mb-3',
-          border || title !== '' ? 'mx-0 border-accent border-t pt-4' : '',
-          grid ? 'm-0 grid gap-x-3 gap-y-6 px-4 py-2' : '',
+          border || title !== '' ? 'mx-0 pt-4' : '',
+          grid ? 'm-0 grid gap-x-3 gap-y-2 px-4 py-2' : '',
           margin ? 'mt-3' : 'not-first:mt-2',
           grid ? gridCols : '',
           fullWidth ? 'w-full' : '',

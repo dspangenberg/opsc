@@ -14,17 +14,14 @@ import { useFormContext } from './form'
 
 const BaseTextField = AriaTextField
 
-const Input = ({
-  className,
-  ...props
-}: AriaInputProps) => {
+const Input = ({ className, ...props }: AriaInputProps) => {
   return (
     <AriaInput
       className={composeRenderProps(className, className =>
         cn(
           'flex h-9 w-full rounded-sm border border-input bg-transparent px-3 py-1 font-medium text-sm shadow-none outline-0 transition-colors file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground',
           /* Disabled */
-          'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 ',
+          'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
           /* Focused */
           /* Resets */
           'focus:border-primary focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/20',
@@ -42,11 +39,7 @@ interface TextAreaProps extends AriaTextAreaProps {
   autoSize?: boolean
 }
 
-const TextArea = ({
-  className,
-  autoSize = false,
-  ...props
-}: TextAreaProps) => {
+const TextArea = ({ className, autoSize = false, ...props }: TextAreaProps) => {
   return (
     <AriaTextArea
       className={composeRenderProps(className, className =>
@@ -82,7 +75,7 @@ interface TextFieldProps extends Omit<AriaTextFieldProps, 'value' | 'onChange'> 
   autoComplete?: string
 }
 
-function TextField ({
+function TextField({
   label,
   description,
   textArea,
@@ -120,9 +113,12 @@ function TextField ({
       onChange={handleChange}
       {...props}
     >
-      <Label isRequired={isRequired} value={label} />
-      {textArea ? <TextArea rows={rows} autoSize={autoSize} autoComplete={autoComplete} /> :
-        <Input autoComplete={autoComplete} />}
+      {label && <Label isRequired={isRequired} value={label} />}
+      {textArea ? (
+        <TextArea rows={rows} autoSize={autoSize} autoComplete={autoComplete} />
+      ) : (
+        <Input autoComplete={autoComplete} />
+      )}
       {description && (
         <Text className="text-muted-foreground text-sm" slot="description">
           {description}

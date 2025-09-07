@@ -164,6 +164,9 @@ class Transaction extends Model
                 $contact = Contact::query()
                     ->where('iban', $this->account_number)
                     ->orWhere('paypal_email', $this->account_number)
+                    ->when($this->name, function ($query) {
+                        $query->orWhere('cc_name', $this->name);
+                    })
                     ->first();
                 if ($contact) {
                     if ($contact->creditor_number) {

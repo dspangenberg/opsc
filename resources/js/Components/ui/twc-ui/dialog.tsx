@@ -178,7 +178,7 @@ interface DialogProps {
   footerClassName?: string
   className?: string
   bodyPadding?: boolean
-  width?: 'default' | '2xl' | '4xl' | '5xl' | '6xl'
+  width?: 'default' | '2xl' | '4xl' | '5xl' | '6xl' | 'md' | 'lg'
   hideHeader?: boolean
   background?: 'accent' | 'sidebar' | 'background' | 'page'
   onOpenChange?: (open: boolean) => void
@@ -226,6 +226,8 @@ export const Dialog: React.FC<DialogProps> = ({
 
   const widthClass = {
     default: 'max-w-xl',
+    md: 'max-w-md',
+    lg: 'max-w-lg',
     '2xl': 'max-w-2xl',
     '4xl': 'max-w-4xl',
     '5xl': 'max-w-6xl',
@@ -304,7 +306,11 @@ export const Dialog: React.FC<DialogProps> = ({
     >
       <DialogContent
         closeButton={false}
-        className={cn('relative flex w-full gap-0 space-y-0 rounded-lg', widthClass, className)}
+        className={cn(
+          'relative flex w-full flex-col gap-0 space-y-0 rounded-lg',
+          widthClass,
+          className
+        )}
         role={role}
       >
         {composeRenderProps(children, (children, _providedRenderProps) => {
@@ -321,21 +327,20 @@ export const Dialog: React.FC<DialogProps> = ({
               {!hideHeader && (
                 <DialogHeader
                   className={cn(
-                    'my-0 flex w-full flex-col justify-stretch gap-0 border-4 px-3 py-0',
-                    bgClass
+                    'relative my-0 flex w-full flex-1 flex-col justify-stretch gap-0 px-0 py-0'
                   )}
                 >
-                  <DialogTitle className="!py-1.5 !leading-0 flex w-full items-center justify-between text-left text-base md:text-center">
-                    <span className="flex-1 text-base">{title}</span>
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      icon={X}
-                      aria-label="Close"
-                      onClick={() => renderProps.close()}
-                    />
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    className="absolute top-0.5 right-1.5 flex-1"
+                    icon={X}
+                    aria-label="Close"
+                    onClick={() => renderProps.close()}
+                  />
+                  <DialogTitle className="!py-1.5 !leading-0 flex flex-1 items-center justify-between text-left text-base md:text-center">
+                    <span className="text-base">{title}</span>
                   </DialogTitle>
-
                   <DialogDescription className={cn('', !showDescription ? 'sr-only py-0' : '')}>
                     {description}
                   </DialogDescription>
@@ -344,7 +349,7 @@ export const Dialog: React.FC<DialogProps> = ({
 
               <DialogBody
                 className={cn(
-                  'mx-0 my-0 flex max-h-[calc(100vh-10rem)] w-full flex-1 flex-col px-0',
+                  'mx-0 my-0 flex max-h-[calc(100vh-10rem)] flex-1 flex-col px-0',
                   'overflow-y-auto bg-background',
                   hideHeader ? 'rounded-lg' : '',
                   bodyClass

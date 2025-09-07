@@ -1,9 +1,11 @@
+import { Add01Icon, Edit02Icon } from '@hugeicons/core-free-icons'
+import type * as React from 'react'
+import type { FC } from 'react'
 import { DataCard, DataCardContent, DataCardField, DataCardSection } from '@/Components/DataCard'
 import { StatsField } from '@/Components/StatsField'
 import { ContactDetailsAddresses } from '@/Pages/App/Contact/ContactDetailsAddresses'
 import { ContactDetailsMail } from '@/Pages/App/Contact/ContactDetailsMails'
-import { Add01Icon, Edit02Icon } from '@hugeicons/core-free-icons'
-import type { FC } from 'react'
+import { ContactDetailsPhone } from '@/Pages/App/Contact/ContactDetailsPhones'
 
 interface ContactDetailsOrgInfoBoxProps {
   contact: App.Data.ContactData
@@ -74,7 +76,15 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
             value={contact.formated_creditor_number}
           />
         </DataCardSection>
-
+        <DataCardSection
+          secondary
+          title="Telefonnummern"
+          icon={Add01Icon}
+          forceChildren={(contact.phones?.length ?? 0) > 0}
+          emptyText="Keine Telefonnummern vorhanden"
+        >
+          <ContactDetailsPhone phones={contact.phones || []} />
+        </DataCardSection>
         <DataCardSection
           secondary
           title="E-Mail-Adressen"

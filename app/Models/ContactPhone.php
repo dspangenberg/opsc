@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Data\PhoneCategoryData;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
@@ -21,4 +23,9 @@ class ContactPhone extends Model
         'pos',
         'phone',
     ];
+
+    public function category(): HasOne
+    {
+        return $this->hasOne(PhoneCategory::class, 'id', 'phone_category_id');
+    }
 }

@@ -110,12 +110,15 @@ position: string | null;
 tax_number: string | null;
 formated_debtor_number: string | null;
 formated_creditor_number: string | null;
+payment_deadline_id: string | null;
+tax_id: string | null;
 company: App.Data.ContactData | null;
 contacts: Array<App.Data.ContactData> | null;
 title: App.Data.TitleData | null;
 salutation: App.Data.SalutationData | null;
 payment_deadline: App.Data.PaymentDeadlineData | null;
 mails: Array<App.Data.ContactMailData> | null;
+phones: Array<App.Data.ContactPhoneData> | null;
 sales: App.Data.SalesData | null;
 addresses: Array<App.Data.ContactAddressData> | null;
 };
@@ -124,7 +127,16 @@ id: number | null;
 contact_id: number;
 email: string;
 pos: number;
+email_category_id: number;
 category: App.Data.EmailCategoryData | null;
+};
+export type ContactPhoneData = {
+id: number | null;
+contact_id: number;
+phone: string;
+pos: number;
+phone_category_id: number;
+category: App.Data.PhoneCategoryData | null;
 };
 export type CountryData = {
 id: number;
@@ -222,6 +234,11 @@ name: string;
 days: number | null;
 is_immediately: boolean | null;
 is_default: boolean | null;
+};
+export type PhoneCategoryData = {
+id: number | null;
+name: string;
+type: number | null;
 };
 export type ProjectData = {
 id: number | null;
