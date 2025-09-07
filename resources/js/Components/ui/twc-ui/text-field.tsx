@@ -24,7 +24,7 @@ const Input = ({ className, ...props }: AriaInputProps) => {
           'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
           /* Focused */
           /* Resets */
-          'focus:border-primary focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/20',
+          'focus-visible:border focus-visible:border-primary focus-visible:outline-0 focus-visible:ring-[2px] focus-visible:ring-primary/20',
           'data-[invalid]:border-destructive data-[invalid]:focus-visible:border-destructive data-[invalid]:focus-visible:ring-destructive/20',
           className
         )

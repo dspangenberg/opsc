@@ -1,5 +1,4 @@
-import { cn } from '@/Lib/utils'
-import { type VariantProps, cva } from 'class-variance-authority'
+import { cva, type VariantProps } from 'class-variance-authority'
 import {
   FieldError as AriaFieldError,
   type FieldErrorProps as AriaFieldErrorProps,
@@ -11,6 +10,7 @@ import {
   type TextProps as AriaTextProps,
   composeRenderProps
 } from 'react-aria-components'
+import { cn } from '@/Lib/utils'
 import { useFormContext } from './form'
 
 const labelVariants = cva([
@@ -73,9 +73,9 @@ const fieldGroupVariants = cva('', {
   variants: {
     variant: {
       default: [
-        'relative flex h-9 w-full items-center overflow-hidden rounded-sm border border-input bg-background px-3 py-1 text-base font-medium shadow-none transition-colors',
+        'relative flex h-9 w-full outline-0 items-center overflow-hidden rounded-sm border border-input bg-background px-3 py-1 text-base font-medium shadow-none transition-colors',
         /* Focus Within */
-        'focus:border-primary focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/20',
+        'focus-visible:border-primary focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/20',
         'data-[invalid]:focus-within:ring-destructive/20  data-[invalid]:focus-within:border-destructive  data-[invalid]:border-destructive',
         /* Disabled */
         'data-[disabled]:opacity-50'

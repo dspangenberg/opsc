@@ -40,6 +40,18 @@ class ContactData extends Data
         public readonly ?string $formated_creditor_number,
         public readonly ?string $payment_deadline_id,
         public readonly ?string $tax_id,
+        public readonly ?string $iban,
+        public readonly ?string $paypal_email,
+        public readonly ?string $cc_name,
+        public readonly ?int $outturn_account_id,
+        public readonly ?string $website,
+        public readonly ?bool $is_primary,
+        public readonly ?bool $is_debtor,
+        public readonly ?bool $is_creditor,
+        public readonly ?string $primary_phone,
+
+        /** @var BookkeepingAccountData */
+        public readonly ?object $outturn_account,
 
         /** @var ContactData */
         public readonly ?object $company,

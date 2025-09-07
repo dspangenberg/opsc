@@ -13,6 +13,7 @@ use App\Http\Requests\ContactUpdateRequest;
 use App\Models\Contact;
 use App\Models\ContactMail;
 use App\Models\ContactPhone;
+use App\Models\Invoice;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -41,6 +42,18 @@ class ContactUpdateController extends Controller
 
         // Kontakt mit aktuellen Relationen neu laden
         $contact->load(['mails', 'title', 'salutation', 'addresses', 'phones']);
+
+        if ($contact->is_creditor && !$contact->creditor_number) {
+            $contact->creditor_number = Contact::max('creditor_number') + 1;
+            $contact->save();
+            $contact->createBookkeepingAccount(false);
+        }
+
+        if ($contact->is_debtor && !$contact->debtor_number) {
+            $contact->debtor_number = Contact::max('debtor_number') + 1;
+            $contact->save();
+            $contact->createBookkeepingAccount(true);
+        }
 
         return Inertia::render('App/Contact/ContactDetails', [
             'contact' => ContactData::from($contact)

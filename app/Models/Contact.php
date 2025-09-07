@@ -19,7 +19,7 @@ use Maize\Markable\Markable;
 use Maize\Markable\Models\Favorite;
 
 /**
- * @property-read Collection<int, \App\Models\ContactAddress> $addresses
+ * @property-read Collection<int, ContactAddress> $addresses
  * @property-read int|null $addresses_count
  * @property-read Contact|null $company
  * @property-read Collection<int, Contact> $contacts
@@ -33,24 +33,24 @@ use Maize\Markable\Models\Favorite;
  * @property-read string $primary_mail
  * @property-read string $reverse_full_name
  * @property-read array $sales
- * @property-read \Plank\Mediable\MediableCollection<int, \App\Models\Invoice> $invoices
+ * @property-read \Plank\Mediable\MediableCollection<int, Invoice> $invoices
  * @property-read int|null $invoices_count
- * @property-read Collection<int, \App\Models\ContactMail> $mails
+ * @property-read Collection<int, ContactMail> $mails
  * @property-read int|null $mails_count
- * @property-read \App\Models\PaymentDeadline|null $payment_deadline
- * @property-read Collection<int, \App\Models\ContactPhone> $phones
+ * @property-read PaymentDeadline|null $payment_deadline
+ * @property-read Collection<int, ContactPhone> $phones
  * @property-read int|null $phones_count
- * @property-read Collection<int, \App\Models\Project> $projects
+ * @property-read Collection<int, Project> $projects
  * @property-read int|null $projects_count
- * @property-read \App\Models\Salutation|null $salutation
- * @property-read \App\Models\Tax|null $tax
- * @property-read \App\Models\Title|null $title
+ * @property-read Salutation|null $salutation
+ * @property-read Tax|null $tax
+ * @property-read Title|null $title
  *
  * @method static Builder<static>|Contact newModelQuery()
  * @method static Builder<static>|Contact newQuery()
  * @method static Builder<static>|Contact query()
  * @method static Builder<static>|Contact view($view)
- * @method static Builder<static>|Contact whereHasMark(\Maize\Markable\Mark $mark, \Illuminate\Database\Eloquent\Model $user, ?string $value = null)
+ * @method static Builder<static>|Contact whereHasMark(\Maize\Markable\Mark $mark, Model $user, ?string $value = null)
  *
  * @mixin Eloquent
  */
@@ -70,6 +70,7 @@ class Contact extends Model
         'formated_debtor_number',
         'formated_creditor_number',
         'primary_mail',
+        'primary_phone',
         'company_name',
         'sales',
     ];
@@ -188,6 +189,15 @@ class Contact extends Model
         return '';
     }
 
+    public function getPrimaryPhoneAttribute(): string
+    {
+        if (count($this->phones)) {
+            return $this->phones[0]['phone'];
+        }
+
+        return '';
+    }
+
     public function getInitialsAttribute(): string
     {
         if ($this->first_name) {
@@ -298,6 +308,22 @@ class Contact extends Model
             'has_dunning_block' => 'boolean',
             'dob' => 'datetime',
         ];
+    }
+
+    public function createBookkeepingAccount($isDebtor = true) {
+
+        $accountNumber = $isDebtor ? $this->debtor_number : $this->creditor_number;
+        $account = BookkeepingAccount::where('account_number', $accountNumber)->first();
+        if ($account) {
+            return $account;
+        }
+
+        $bookkeepingAccount = new BookkeepingAccount;
+        $bookkeepingAccount->account_number = $accountNumber;
+        $bookkeepingAccount->name = $this->full_name;
+        $bookkeepingAccount->type = $isDebtor ? 'd' : 'c';
+        $bookkeepingAccount->save();
+        return $bookkeepingAccount;
     }
 
     public static function getAccounts(bool $is_invoice, int $id, bool $createAccountIfNotExists = true, bool $getDefaultOutturnAccount = false): array

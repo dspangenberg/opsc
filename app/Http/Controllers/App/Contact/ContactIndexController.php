@@ -35,6 +35,9 @@ class ContactIndexController extends Controller
             ->with('mails', function ($query) {
                 $query->orderBy('pos');
             })
+            ->with('phones', function ($query) {
+                $query->orderBy('pos');
+            })
             /*
             ->whereHasFavorite(
                 auth()->user()

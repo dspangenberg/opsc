@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\App\Contact;
 
 use App\Data\AddressCategoryData;
+use App\Data\BookkeepingAccountData;
 use App\Data\ContactAddressData;
 use App\Data\ContactData;
 use App\Data\CountryData;
@@ -19,6 +20,7 @@ use App\Data\TaxData;
 use App\Data\TitleData;
 use App\Http\Controllers\Controller;
 use App\Models\AddressCategory;
+use App\Models\BookkeepingAccount;
 use App\Models\Contact;
 use App\Models\ContactAddress;
 use App\Models\Country;
@@ -46,7 +48,7 @@ class ContactEditController extends Controller
         $salutations = Salutation::query()->whereNot('is_hidden', true)->orderBy('name')->get();
         $titles = Title::query()->orderBy('name')->get();
         $phone_categories = PhoneCategory::orderBy('name')->get();
-
+        $bookkeeping_accounts = BookkeepingAccount::orderBy('account_number')->get();
 
         // Korrektur: EmailCategory statt EMailCategory
         $mail_categories = EmailCategory::orderBy('name')->get();
@@ -60,6 +62,7 @@ class ContactEditController extends Controller
             'titles' => TitleData::collect($titles),
             'mail_categories' => EmailCategoryData::collect($mail_categories),
             'phone_categories' => PhoneCategoryData::collect($phone_categories),
+            'bookkeeping_accounts' => BookkeepingAccountData::collect($bookkeeping_accounts),
         ])->baseRoute('app.contact.details', ['contact' => $contact->id]);
     }
 }

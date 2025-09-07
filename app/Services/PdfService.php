@@ -23,16 +23,56 @@ class PdfService
      */
     public static function createPdf(string $layoutName, string $view, array $data, array $config = []): string
     {
-
         $layouts = Storage::disk('system')->json('layouts/layouts.json');
         $letterheads = Storage::disk('system')->json('letterheads/letterheads.json');
         $fonts = Storage::disk('system')->json('fonts/fonts.json');
+
+        // Debugging-Logs
+        \Log::info('Layouts loaded:', ['layouts' => $layouts]);
+        \Log::info('Letterheads loaded:', ['letterheads' => $letterheads]);
+        \Log::info('Fonts loaded:', ['fonts' => $fonts]);
+        \Log::info('Looking for layout:', ['layoutName' => $layoutName]);
+
+        // Null-Checks für JSON-Dateien
+        if (!$layouts || !isset($layouts['layouts'])) {
+            throw new \Exception('Layout-Konfiguration konnte nicht geladen werden oder ist ungültig.');
+        }
+
+        if (!$letterheads || !isset($letterheads['letterheads'])) {
+            throw new \Exception('Letterhead-Konfiguration konnte nicht geladen werden oder ist ungültig.');
+        }
+
+        if (!$fonts || !isset($fonts['fonts'])) {
+            throw new \Exception('Font-Konfiguration konnte nicht geladen werden oder ist ungültig.');
+        }
 
         $layoutsCollection = collect($layouts['layouts']);
         $letterheadsCollection = collect($letterheads['letterheads']);
 
         $layout = $layoutsCollection->where('name', $layoutName)->first();
+
+        if (!$layout) {
+            throw new \Exception("Layout '{$layoutName}' wurde nicht gefunden.");
+        }
+
+        if (!isset($layout['letterhead'])) {
+            throw new \Exception("Layout '{$layoutName}' hat keine Letterhead-Konfiguration.");
+        }
+
         $letterhead = $letterheadsCollection->where('name', $layout['letterhead'])->first();
+
+        if (!$letterhead) {
+            throw new \Exception("Letterhead '{$layout['letterhead']}' wurde nicht gefunden.");
+        }
+
+        // Sicherstellen, dass erforderliche Felder vorhanden sind
+        if (!isset($layout['css-file'])) {
+            throw new \Exception("Layout '{$layoutName}' hat keine CSS-Datei konfiguriert.");
+        }
+
+        if (!isset($letterhead['css-file']) || !isset($letterhead['pdf-file'])) {
+            throw new \Exception("Letterhead '{$layout['letterhead']}' hat keine CSS- oder PDF-Datei konfiguriert.");
+        }
 
         $defaultLayoutCss = Storage::disk('system')->get('layouts/default.css');
         $layoutCss = Storage::disk('system')->get('layouts/'.$layout['css-file']);
@@ -65,8 +105,12 @@ class PdfService
         $html = View::make($view, $data)->render();
 
         $customFontData = [];
-        foreach ($fonts['fonts'] as $value) {
-            $customFontData[$value['alias']] = $value['filenames'];
+        if (isset($fonts['fonts']) && is_array($fonts['fonts'])) {
+            foreach ($fonts['fonts'] as $value) {
+                if (isset($value['alias']) && isset($value['filenames'])) {
+                    $customFontData[$value['alias']] = $value['filenames'];
+                }
+            }
         }
 
         $tmpDir = storage_path('system/tmp');

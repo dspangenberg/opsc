@@ -22,6 +22,15 @@ class ContactUpdateRequest extends FormRequest
             'department' => ['nullable', 'string'],
             'name' => ['required', 'string'],
 
+            'vat_id' => ['nullable', 'string'],
+            'iban' => ['nullable', 'string'],
+            'cc_name' => ['nullable', 'string'],
+            'paypal_email' => ['nullable', 'string'],
+            'register_court' => ['nullable', 'string'],
+            'register_number' => ['nullable', 'string'],
+            'outturn_account_id' => 'nullable', 'exists:bookkeeping_accounts,account_number',
+            'is_primary' => ['nullable', 'boolean'],
+
             // E-Mail-Validierung hinzufügen
             'mails' => ['nullable', 'array'],
             'mails.*.id' => ['nullable', 'integer'],
