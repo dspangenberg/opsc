@@ -37,12 +37,13 @@ const tabListVariants = cva('flex', {
 })
 
 const tabVariants = cva(
-  'cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:text-muted-foreground data-[selected]:font-medium text-sm',
+  'cursor-pointer data-[disabled]:opacity-50 data-[disabled]:text-muted-foreground data-[disabled]:cursor-not-allowed' +
+    'data-[selected]:font-medium text-sm',
   {
     variants: {
       variant: {
         underlined:
-          'border-b-2 py-1 border-transparent data-[selected]:border-primary data-[selected]:text-foreground data-[hovered]:text-foreground',
+          'border-b-2 py-1 border-transparent  data-[selected]:font-medium data-[selected]:border-primary data-[selected]:text-foreground data-[hovered]:text-foreground',
         default:
           'rounded-md px-3 py-1 data-[selected]:bg-background data-[selected]:text-foreground data-[selected]:shadow',
         classic:
@@ -140,5 +141,5 @@ export interface TabPanelProps extends AriaTabPanelProps {
 
 export const TabPanel = ({ className, ...props }: TabPanelProps) => {
   const { panelClassName } = useTabsContext()
-  return <AriaTabPanel className={cn('my-2', panelClassName, className)} {...props} />
+  return <AriaTabPanel className={cn('', panelClassName, className)} {...props} />
 }

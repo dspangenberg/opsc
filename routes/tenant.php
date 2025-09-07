@@ -12,6 +12,7 @@ use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionConfirmControlle
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionIndexController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionMoneyMoneyImportController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionPayInvoiceCreateController;
+use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionSetCounterAccountController;
 use App\Http\Controllers\App\Contact\ContactAddressCreateController;
 use App\Http\Controllers\App\Contact\ContactAddressStoreController;
 use App\Http\Controllers\App\Contact\ContactAddressUpdateController;
@@ -19,9 +20,11 @@ use App\Http\Controllers\App\Contact\ContactCreateController;
 use App\Http\Controllers\App\Contact\ContactDetailsController;
 use App\Http\Controllers\App\Contact\ContactDetailsPersonsController;
 use App\Http\Controllers\App\Contact\ContactEditAddressController;
+use App\Http\Controllers\App\Contact\ContactEditController;
 use App\Http\Controllers\App\Contact\ContactIndexController;
 use App\Http\Controllers\App\Contact\ContactStoreController;
 use App\Http\Controllers\App\Contact\ContactToggleFavoriteController;
+use App\Http\Controllers\App\Contact\ContactUpdateController;
 use App\Http\Controllers\App\Invoice\InvoiceCreateController;
 use App\Http\Controllers\App\Invoice\InvoiceDeleteController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsController;
@@ -114,6 +117,11 @@ Route::middleware([
         TransactionConfirmController::class)
         ->name('app.bookkeeping.transactions.confirm');
 
+    Route::get('bookkeeping/transactions/set-counter-account/',
+        TransactionSetCounterAccountController::class)
+        ->name('app.bookkeeping.transactions.set-counter-account');
+
+
     Route::get('bookkeeping/bookings',
         BookingIndexController::class)->name('app.bookkeeping.bookings.index');
 
@@ -136,6 +144,15 @@ Route::middleware([
 
     Route::get('contacts/{contact}',
         ContactDetailsController::class)->name('app.contact.details');
+
+    Route::get('contacts/{contact}/edit',
+        ContactEditController::class)->name('app.contact.edit');
+
+    Route::put('contacts/{contact}/edit',
+        ContactUpdateController::class)
+        ->middleware([HandlePrecognitiveRequests::class])
+        ->name('app.contact.update');
+
 
     Route::get('contacts/{contact}/persons',
         ContactDetailsPersonsController::class)->name('app.contact.details.persons');

@@ -408,6 +408,7 @@ class Invoice extends Model implements MediableInterface
     public function scopeUnpaid(Builder $query): Builder
     {
         $query
+            ->where('is_draft', false)
             ->whereRaw('(
                 SELECT COALESCE(SUM(amount), 0) + COALESCE(SUM(tax), 0) 
                 FROM invoice_lines 

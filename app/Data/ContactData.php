@@ -38,6 +38,8 @@ class ContactData extends Data
         public readonly ?string $tax_number,
         public readonly ?string $formated_debtor_number,
         public readonly ?string $formated_creditor_number,
+        public readonly ?string $payment_deadline_id,
+        public readonly ?string $tax_id,
 
         /** @var ContactData */
         public readonly ?object $company,
@@ -56,6 +58,9 @@ class ContactData extends Data
 
         /** @var ContactMailData[] */
         public readonly ?array $mails,
+
+        /** @var ContactPhoneData[] */
+        public readonly ?array $phones,
 
         /** @var SalesData */
         public readonly ?SalesData $sales,

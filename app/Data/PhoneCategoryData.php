@@ -11,15 +11,11 @@ use Spatie\LaravelData\Data;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
 #[TypeScript]
-class ContactMailData extends Data
+class PhoneCategoryData extends Data
 {
     public function __construct(
         public readonly ?int $id,
-        public readonly int $contact_id,
-        public readonly string $email,
-        public readonly int $pos,
-        public readonly int $email_category_id,
-        /** @var EmailCategoryData */
-        public readonly ?object $category,
+        public readonly string $name,
+        public readonly ?int $type,
     ) {}
 }

@@ -1,13 +1,13 @@
-import { cn } from '@/Lib/utils'
-import { type VariantProps, cva } from 'class-variance-authority'
+import { cva, type VariantProps } from 'class-variance-authority'
 import { LoaderCircleIcon } from 'lucide-react'
 import type { JSX } from 'react'
 import {
   Button as AriaButton,
   type ButtonProps as AriaButtonProps,
-  type TooltipProps,
-  composeRenderProps
+  composeRenderProps,
+  type TooltipProps
 } from 'react-aria-components'
+import { cn } from '@/Lib/utils'
 import { Icon, type IconType } from './icon'
 import { Tooltip, TooltipTrigger } from './tooltip'
 
@@ -15,10 +15,9 @@ const buttonVariants = cva(
   [
     'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors active:border-ring',
     /* Disabled */
-    'data-[disabled]:pointer-events-none data-[disabled]:opacity-50 ',
+    'data-[disabled]:pointer-events-none data-[disabled]:opacity-50 outline-none',
     /* Focus Visible */
     'focus-visible:border-ring focus-visible:ring-ring/20 focus-visible:ring-[3px]',
-    'active:ring-[3px]',
     /* Resets */
     'focus-visible:outline-none ring-offset-1'
   ],
@@ -30,7 +29,7 @@ const buttonVariants = cva(
         destructive:
           'bg-destructive text-destructive-foreground text-white data-[hovered]:bg-destructive/90 border pressed:ring-destructive/50 focus-visible:ring-destructive/20 focus-visible:border-destructive/20 ',
         outline:
-          'border border-input bg-background  data-[hovered]:bg-accent data-[hovered]:text-accent-foreground focus-visible:ring-ring/20 pressed:ring-ring/50',
+          'border border-input bg-background  data-[hovered]:bg-accent  active:ring-ring/50  pressed:ring-primary/50 active:ring-ring/50 data-[hovered]:text-accent-foreground focus-visible:ring-ring/20 outline-0',
         secondary:
           'bg-secondary/90 text-secondary-foreground border-transparent border focus-visible:border-input focus-visible:border data-[hovered]:bg-secondary/20 pressed:ring-ring/50',
         ghost:

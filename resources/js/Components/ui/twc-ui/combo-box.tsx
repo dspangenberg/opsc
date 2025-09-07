@@ -1,7 +1,6 @@
-import { cn } from '@/Lib/utils'
 import { ChevronsUpDown } from 'lucide-react'
 import type React from 'react'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useFilter } from 'react-aria'
 import type { Key } from 'react-aria-components'
 import {
@@ -12,9 +11,10 @@ import {
   type ListBoxProps as AriaListBoxProps,
   type PopoverProps as AriaPopoverProps,
   type ValidationResult as AriaValidationResult,
-  Text,
-  composeRenderProps
+  composeRenderProps,
+  Text
 } from 'react-aria-components'
+import { cn } from '@/Lib/utils'
 import { Button } from './button'
 import { BaseFieldError, FieldError, FieldGroup, Label } from './field'
 import { useFormContext } from './form'
@@ -149,8 +149,12 @@ function ComboBoxCore<T extends object, V extends ComboBoxValue = number>({
       }
 
       onChange(convertedValue)
+
+      // Nach Auswahl den Input-Wert zurücksetzen, damit der vollständige Name angezeigt wird
+      setFilterValue('')
+      setHasUserInteracted(false)
     },
-    [onChange, valueType]
+    [onChange, valueType, effectiveNullValue]
   )
 
   const itemsWithPlaceholder = useMemo(
@@ -164,18 +168,47 @@ function ComboBoxCore<T extends object, V extends ComboBoxValue = number>({
             } as T
           ]
         : Array.from(items),
-    [isOptional, itemValue, itemName, optionalValue, items]
+    [isOptional, itemValue, itemName, optionalValue, items, effectiveNullValue]
   )
 
   const { contains } = useFilter({ sensitivity: 'base' })
   const [filterValue, setFilterValue] = useState('')
+  const [hasUserInteracted, setHasUserInteracted] = useState(false)
+
   const filteredItems: T[] = useMemo(
     () => itemsWithPlaceholder.filter(item => contains(String(item[itemName]), filterValue)),
     [itemsWithPlaceholder, itemName, contains, filterValue]
   )
 
-  // Konvertiere value zu selectedKey für React Aria - analog zu Select
+  // Konvertiere value zu selectedKey für React Aria
   const selectedKey = value !== null && value !== undefined ? String(value) : null
+
+  // Finde das ausgewählte Item
+  const selectedItem = useMemo(() => {
+    if (selectedKey === null) return null
+    return itemsWithPlaceholder.find(item => String(item[itemValue]) === selectedKey)
+  }, [selectedKey, itemsWithPlaceholder, itemValue])
+
+  // Bestimme den Input-Wert basierend auf Zustand
+  const inputValue = useMemo(() => {
+    // Wenn der Benutzer gerade tippt/filtert, verwende den Filterwert
+    if (hasUserInteracted && filterValue !== '') {
+      return filterValue
+    }
+
+    // Wenn ein Item ausgewählt ist, zeige dessen Namen
+    if (selectedItem) {
+      return String(selectedItem[itemName])
+    }
+
+    // Sonst leer
+    return ''
+  }, [hasUserInteracted, filterValue, selectedItem, itemName])
+
+  const handleInputChange = useCallback((value: string) => {
+    setHasUserInteracted(true)
+    setFilterValue(value)
+  }, [])
 
   return (
     <BaseComboBox
@@ -183,7 +216,8 @@ function ComboBoxCore<T extends object, V extends ComboBoxValue = number>({
       selectedKey={selectedKey}
       autoFocus={autoFocus}
       items={filteredItems}
-      onInputChange={setFilterValue}
+      inputValue={inputValue}
+      onInputChange={handleInputChange}
       className={composeRenderProps(className, className =>
         cn('group flex flex-col gap-2', className)
       )}

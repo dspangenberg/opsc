@@ -1,4 +1,5 @@
 import { Edit03Icon } from '@hugeicons/core-free-icons'
+import { router } from '@inertiajs/core'
 import { Link } from '@inertiajs/react'
 import type * as React from 'react'
 import { useMemo } from 'react'
@@ -23,10 +24,19 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
     [contact.full_name, contact.id]
   )
 
+  const handleContactEditClicked = () => {
+    router.visit(route('app.contact.edit', { id: contact.id }))
+  }
+
   const toolbar = useMemo(
     () => (
       <Toolbar>
-        <Button variant="toolbar-default" icon={Edit03Icon} title="Bearbeiten" />
+        <Button
+          variant="toolbar-default"
+          icon={Edit03Icon}
+          title="Bearbeiten"
+          onClick={handleContactEditClicked}
+        />
       </Toolbar>
     ),
     []
@@ -36,14 +46,12 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
   const tabs = useMemo(
     () => (
       <Tabs variant="underlined" defaultSelectedKey={currentRoute}>
-        <TabList aria-label="Ansicht">
-          {/** biome-ignore lint/correctness/useUniqueElementIds: <explanation>ID kommt von Route</explanation> */}
+        <TabList aria-label="Tabs">
           <Tab id="app.invoice.details" href={route('app.contact.details', { contact }, false)}>
             Übersicht
           </Tab>
 
           {contact.is_org && (
-            // biome-ignore lint/correctness/useUniqueElementIds: <explanation>Routepath ist die ID</explanation>
             <Tab
               id="app.contact.details.persons"
               href={route('app.contact.details.persons', { id: contact.id })}

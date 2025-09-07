@@ -3,24 +3,19 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Separator } from '@/Components/twcui/separator'
-import { Dialog } from '@/Components/ui/twc-ui/dialog'
 import type { PDFDocumentProxy } from 'pdfjs-dist'
 import print from 'print-js'
 import type React from 'react'
 import { useMemo, useRef, useState } from 'react'
 import { Document, Page } from 'react-pdf'
+import { Separator } from '@/Components/twcui/separator'
+import { Dialog } from '@/Components/ui/twc-ui/dialog'
 import 'react-pdf/dist/Page/TextLayer.css'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import { LogoSpinner } from '@dspangenberg/twcui'
 
 // Import the worker setup
 
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
-import { useFileDownload } from '@/Hooks/useFileDownload'
-import { cn } from '@/Lib/utils'
 import {
   ArrowDown01Icon,
   ArrowUp01Icon,
@@ -32,6 +27,11 @@ import {
 } from '@hugeicons/core-free-icons'
 import { pdfjs } from 'react-pdf'
 import { useFullscreen, useToggle } from 'react-use'
+import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
+import { Button } from '@/Components/ui/twc-ui/button'
+import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
+import { useFileDownload } from '@/Hooks/useFileDownload'
+import { cn } from '@/Lib/utils'
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -164,14 +164,14 @@ export const PdfViewer: React.FC<Props> = ({
   )
 
   return (
-    <Dialog isOpen={open} onOpenChange={handleOpenChange} title={filename}>
+    <Dialog isOpen={open} onOpenChange={handleOpenChange} title={filename} width="6xl">
       <div
         ref={divRef}
         className="flex aspect-[210/297] max-h-[90%] w-3xl flex-col items-center justify-center overflow-auto bg-white"
       >
         <div
           className={cn(
-            ' py-1',
+            'py-1',
             isFullscreen ? 'self-center' : 'w-full self-start bg-page-content px-4'
           )}
         >
@@ -196,7 +196,7 @@ export const PdfViewer: React.FC<Props> = ({
           <Page
             pageNumber={pageNumber}
             scale={scale}
-            className="z-10 flex-1 border"
+            className="z-10 mx-auto flex-1 border"
             loading={
               <div className="mx-auto my-auto flex-1">
                 <LogoSpinner />

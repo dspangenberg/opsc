@@ -16,6 +16,8 @@ declare namespace App.Data.Paginated {
     from: number
     last_page: number
     last_page_url: string
+    next_page_url: string
+    prev_page_url: string
     links: PaginationMetaLink[]
     path: string
     per_page: number
