@@ -55,7 +55,7 @@ class ContactUpdateController extends Controller
             $contact->createBookkeepingAccount(true);
         }
 
-        return Inertia::render('App/Contact/ContactDetails', [
+    return Inertia::render('App/Contact/ContactDetails', [
             'contact' => ContactData::from($contact)
         ]);
     }

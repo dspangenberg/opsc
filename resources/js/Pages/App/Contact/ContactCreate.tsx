@@ -1,4 +1,3 @@
-import { Clock05Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useState } from 'react'
@@ -7,7 +6,6 @@ import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
 import { Dialog } from '@/Components/ui/twc-ui/dialog'
 import { Form, useForm } from '@/Components/ui/twc-ui/form'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { RadioGroup } from '@/Components/ui/twc-ui/radio-group'
 import { Select } from '@/Components/ui/twc-ui/select'
 import { TextField } from '@/Components/ui/twc-ui/text-field'
 import type { PageProps } from '@/Types'
@@ -17,12 +15,6 @@ interface Props extends PageProps {
   salutations: App.Data.SalutationData[]
   titles: App.Data.TitleData[]
 }
-
-interface TypeOptionsInterface extends Record<string, unknown> {
-  id: string
-  name: string
-}
-
 const ContactCreate: React.FC<Props> = ({ contact, salutations, titles }) => {
   const [isOpen, setIsOpen] = useState(true)
 

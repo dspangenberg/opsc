@@ -3,14 +3,6 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
-import { Badge } from '@/Components/ui/badge'
-import { Checkbox } from '@/Components/ui/checkbox'
-import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
-import { Avatar } from '@/Components/ui/twc-ui/avatar'
-import { Icon } from '@/Components/ui/twc-ui/icon'
-import { minutesToHoursExtended, minutesUntilNow, parseAndFormatDate } from '@/Lib/DateHelper'
-import { cn } from '@/Lib/utils'
 import {
   Delete03Icon,
   Edit03Icon,
@@ -20,6 +12,14 @@ import {
 import { Link, router } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
+import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
+import { Badge } from '@/Components/ui/badge'
+import { Checkbox } from '@/Components/ui/checkbox'
+import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
+import { Avatar } from '@/Components/ui/twc-ui/avatar'
+import { Icon } from '@/Components/ui/twc-ui/icon'
+import { minutesToHoursExtended, minutesUntilNow, parseAndFormatDate } from '@/Lib/DateHelper'
+import { cn } from '@/Lib/utils'
 
 const editUrl = (row: App.Data.TimeData) => {
   return row.id ? route('app.time.edit', { id: row.id }) : '#'
@@ -156,7 +156,7 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
           size="md"
         />
         {row.original.is_billable && (
-          <div className="-bottom-1 -right-1 absolute flex size-5 items-center justify-center rounded-full border-2 border-background bg-blue-300 ">
+          <div className="-bottom-1 -right-1 absolute flex size-5 items-center justify-center rounded-full border-2 border-background bg-blue-300">
             <Icon icon={EuroIcon} className="size-3 text-blue-800" strokeWidth={2} />
           </div>
         )}
