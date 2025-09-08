@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Observers\TransactionObserver;
+use App\Traits\HasDynamicFilters;
 use Eloquent;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -33,6 +34,8 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  */
 class Transaction extends Model
 {
+    use HasDynamicFilters;
+
     protected $fillable = [
         'mm_ref',
         'contact_id',
@@ -75,6 +78,20 @@ class Transaction extends Model
         'valued_on' => null,
         'booking_text' => '',
     ];
+
+
+    public function scopeSearch(Builder $query, $searchText): Builder
+    {
+        if ($searchText) {
+            $searchText = '%'.$searchText.'%';
+            return $query
+                ->whereLike('name',$searchText)
+                ->orWhereLike('purpose',$searchText)
+                ->orWhereLike('account_number',$searchText);
+        }
+
+        return $query;
+    }
 
     public static function createBooking(Transaction $transaction, $dryRun = false): array
     {

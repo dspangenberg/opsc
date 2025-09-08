@@ -6,9 +6,11 @@ import {
   Tick01Icon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
+import { parseAsString, throttle, useQueryState } from 'nuqs'
 import type * as React from 'react'
 import { useMemo, useState } from 'react'
 import { DataTable } from '@/Components/DataTable'
+import { JollySearchField } from '@/Components/jolly-ui/search-field'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
 import {
@@ -33,6 +35,10 @@ interface TransactionsPageProps extends PageProps {
   bank_account: App.Data.BankAccountData
   bookkeeping_accounts: App.Data.BookkeepingAccountData[]
 }
+type FilterConfig = {
+  filters: Record<string, { operator: string; value: any }>
+  boolean?: 'AND' | 'OR'
+}
 
 const TransactionIndex: React.FC<TransactionsPageProps> = ({
   transactions,
@@ -42,6 +48,44 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
 }) => {
   const [selectedRows, setSelectedRows] = useState<App.Data.TransactionData[]>([])
   const [showMoneyMoneyImport, setShowMoneyMoneyImport] = useState(false)
+
+  // Search mit Debounce und shallow: false
+  const [search, setSearch] = useQueryState(
+    'search',
+    parseAsString.withDefault('').withOptions({
+      limitUrlUpdates: throttle(250),
+      clearOnDefault: true,
+      shallow: false
+    })
+  )
+
+  // Filters als JSON String mit throttle und shallow: false
+  const [filtersString, setFiltersString] = useQueryState(
+    'filters',
+    parseAsString.withDefault('{}').withOptions({
+      limitUrlUpdates: throttle(250),
+      clearOnDefault: true,
+      shallow: false
+    })
+  )
+
+  // Parse JSON filters
+  const filters = useMemo<FilterConfig>(() => {
+    try {
+      const parsed = JSON.parse(filtersString)
+      return {
+        filters: parsed.filters || {},
+        boolean: parsed.boolean || 'AND'
+      }
+    } catch {
+      return { filters: {}, boolean: 'AND' }
+    }
+  }, [filtersString])
+
+  // Function to update filters
+  const updateFilters = (newFilters: FilterConfig) => {
+    setFiltersString(JSON.stringify(newFilters))
+  }
 
   const breadcrumbs = useMemo(() => [{ title: 'Buchhaltung' }], [])
 
@@ -161,6 +205,20 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
 
   const footer = useMemo(() => <Pagination data={transactions} />, [transactions])
 
+  const filterBar = useMemo(
+    () => (
+      <JollySearchField
+        aria-label="Suchen"
+        placeholder="Nach Namen, Verwendungszweck oder IBAN suchen"
+        value={search}
+        onChange={value => {
+          setSearch(value)
+        }}
+      />
+    ),
+    [search, setSearch]
+  )
+
   return (
     <PageContainer
       header={
@@ -181,6 +239,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
         columns={columns}
         actionBar={actionBar}
         onSelectedRowsChange={setSelectedRows}
+        filterBar={filterBar}
         data={transactions.data}
         footer={footer}
         itemName="Transaktionen"

@@ -101,7 +101,7 @@ const RowActions = ({
 export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.TransactionData>[] => [
   {
     id: 'select',
-    size: 20,
+    size: 30,
     header: ({ table }) => (
       <Checkbox
         checked={
