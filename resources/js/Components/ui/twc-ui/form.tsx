@@ -19,6 +19,7 @@ type ExtendedForm<T extends FormSchema> = {
   action: string
   config: ValidationConfig
   isDirty: boolean
+  reset: UseFormReturn<T>['reset']
   register: UseFormReturn<T>['register']
   registerEvent: UseFormReturn<T>['registerEvent']
   registerDateRange: UseFormReturn<T>['registerDateRange']
@@ -153,6 +154,7 @@ export const useForm = <T extends FormSchema>(
     processing: internalForm.processing,
     submit: internalForm.submit,
     setData: internalForm.setData,
+    reset: internalForm.reset,
     setErrors: internalForm.setErrors,
     validate: internalForm.validate,
     touched: internalForm.touched,
