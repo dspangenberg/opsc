@@ -43,12 +43,6 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
     cell: ({ row, getValue }) => <span>{getValue() as string}</span>
   },
   {
-    accessorKey: 'type.abbreviation',
-    header: '',
-    size: 36,
-    cell: ({ row, getValue }) => <span>{getValue() as string}</span>
-  },
-  {
     accessorKey: 'formated_invoice_number',
     header: 'Rechnungsnr.',
     size: 140,
@@ -58,7 +52,9 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
           href={editUrl(row.original.id)}
           className="truncate align-middle font-medium hover:underline"
         >
-          <span>{getValue() as string}</span>
+          <span>
+            {row.original.type?.abbreviation}-{getValue() as string}
+          </span>
         </Link>
       </div>
     )
@@ -92,7 +88,7 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
   {
     accessorKey: 'amount_net',
     header: () => <div className="text-right">netto</div>,
-    size: 110,
+    size: 90,
     cell: ({ row }) => (
       <div className="text-right">{currencyFormatter.format(row.original.amount_net)}</div>
     )
@@ -100,7 +96,7 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
   {
     accessorKey: 'amount_tax',
     header: () => <div className="text-right">USt.</div>,
-    size: 110,
+    size: 90,
     cell: ({ row }) => (
       <div className="text-right">{currencyFormatter.format(row.original.amount_tax)}</div>
     )
@@ -108,7 +104,7 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
   {
     accessorKey: 'amount_gross',
     header: () => <div className="text-right">brutto</div>,
-    size: 110,
+    size: 90,
     cell: ({ row }) => (
       <div className="text-right">{currencyFormatter.format(row.original.amount_gross)}</div>
     )
@@ -116,7 +112,7 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
   {
     accessorKey: 'payable_sum_amount',
     header: () => <div className="text-right">offen</div>,
-    size: 110,
+    size: 90,
     cell: ({ row }) => {
       if (row.original.is_loss_of_receivables) {
         return (

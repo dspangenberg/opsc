@@ -28,8 +28,15 @@ class TransactionIndexController extends Controller
 
         $bank_accounts = BankAccount::orderBy('pos')->get();
 
+        $filterString = ''; //'{"filters":{"is_locked":{"operator":"=","value":false}},"boolean":"AND"}';
+
+
         $transactions = Transaction::query()
             ->where('bank_account_id', $bank_account->id)
+            ->applyFiltersFromObject($filterString, [
+                'allowed_filters' => ['is_locked', 'counter_account_id'],
+            ])
+            ->search($request->query('search'))
             ->with('bank_account')
             ->with('contact')
             ->with('account')

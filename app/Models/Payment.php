@@ -8,11 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Carbon;
 
 /**
- * @property-read Model|\Eloquent $payable
- * @property-read \App\Models\Transaction|null $transaction
+ * @property-read Model|Eloquent $payable
+ * @property-read Transaction|null $transaction
  * @method static Builder<static>|Payment newModelQuery()
  * @method static Builder<static>|Payment newQuery()
  * @method static Builder<static>|Payment onlyTrashed()
