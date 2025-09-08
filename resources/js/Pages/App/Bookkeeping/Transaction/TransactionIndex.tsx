@@ -28,6 +28,7 @@ import { TransactionMoneyMoneyImport } from '@/Pages/App/Bookkeeping/Transaction
 import { TransactionSelectCounterAccountDialog } from '@/Pages/App/Bookkeeping/Transaction/TransactionSelectCounterAccount'
 import type { PageProps } from '@/Types'
 import { createColumns } from './TransactionIndexColumns'
+import { TransactionIndexFilterForm } from './TransactionIndexFilterForm'
 
 interface TransactionsPageProps extends PageProps {
   transactions: App.Data.Paginated.PaginationMeta<App.Data.TransactionData[]>
@@ -87,6 +88,18 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
     setFiltersString(JSON.stringify(newFilters))
   }
 
+  const handleFilter = () => {
+    updateFilters({
+      filters: {
+        ...filters.filters,
+        is_locked: {
+          operator: '=',
+          value: 0
+        }
+      }
+    })
+  }
+
   const breadcrumbs = useMemo(() => [{ title: 'Buchhaltung' }], [])
 
   const handeSetCounterAccountAction = async (transaction: App.Data.TransactionData) => {
@@ -130,6 +143,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
     () => (
       <Toolbar>
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon}>
+          <MenuItem title="Filter" onClick={handleFilter} />
           <MenuSubTrigger>
             <MenuItem title="Daten importieren" />
             <MenuPopover>
@@ -207,16 +221,24 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
 
   const filterBar = useMemo(
     () => (
-      <JollySearchField
-        aria-label="Suchen"
-        placeholder="Nach Namen, Verwendungszweck oder IBAN suchen"
-        value={search}
-        onChange={value => {
-          setSearch(value)
-        }}
-      />
+      <div className="flex">
+        <JollySearchField
+          aria-label="Suchen"
+          placeholder="Nach Namen, Verwendungszweck oder IBAN suchen"
+          value={search}
+          onChange={value => {
+            setSearch(value)
+          }}
+          className="w-sm"
+        />
+        <TransactionIndexFilterForm
+          accounts={bookkeeping_accounts}
+          filters={filters}
+          onFiltersChange={updateFilters}
+        />
+      </div>
     ),
-    [search, setSearch]
+    [search, setSearch, bookkeeping_accounts, filters]
   )
 
   return (

@@ -1,5 +1,4 @@
-import { router, useForm } from '@inertiajs/react'
-import axios from 'axios'
+import { useForm } from '@inertiajs/react'
 import type * as React from 'react'
 import { type FormEvent, useState } from 'react'
 import { Button } from '@/Components/ui/twc-ui/button'
@@ -9,41 +8,6 @@ interface Props {
   isOpen: boolean
   bank_account: App.Data.BankAccountData
   onClosed: () => void
-}
-
-// Helper function to get cookie value
-const getCookie = (name: string): string | null => {
-  const value = `; ${document.cookie}`
-  const parts = value.split(`; ${name}=`)
-  if (parts.length === 2) {
-    return parts.pop()?.split(';').shift() || null
-  }
-  return null
-}
-
-// Helper function to get CSRF token from various sources
-const getCSRFToken = (): string | null => {
-  // 1. Try meta tag first
-  const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-  if (metaToken) return metaToken
-
-  // 2. Try cookies (common Laravel cookie names)
-  const cookieToken =
-    getCookie('XSRF-TOKEN') || getCookie('laravel_token') || getCookie('csrf_token')
-  if (cookieToken) {
-    // XSRF-TOKEN is usually URL-encoded
-    try {
-      return decodeURIComponent(cookieToken)
-    } catch {
-      return cookieToken
-    }
-  }
-
-  // 3. Try localStorage/sessionStorage
-  const storageToken = localStorage.getItem('csrf_token') || sessionStorage.getItem('csrf_token')
-  if (storageToken) return storageToken
-
-  return null
 }
 
 export const TransactionMoneyMoneyImport: React.FC<Props> = ({
@@ -87,7 +51,6 @@ export const TransactionMoneyMoneyImport: React.FC<Props> = ({
       },
       onError: errors => {
         console.error('Upload errors:', errors)
-        alert('Fehler: ' + JSON.stringify(errors))
       },
       onProgress: progress => {
         console.log('Upload progress:', progress)
