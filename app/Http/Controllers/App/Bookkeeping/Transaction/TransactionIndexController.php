@@ -28,12 +28,11 @@ class TransactionIndexController extends Controller
 
         $bank_accounts = BankAccount::orderBy('pos')->get();
 
-        $filterString = ''; //'{"filters":{"is_locked":{"operator":"=","value":false}},"boolean":"AND"}';
-
+        $filterString = ''; // '{"filters":{"is_locked":{"operator":"=","value":false}},"boolean":"AND"}';
 
         $transactions = Transaction::query()
             ->where('bank_account_id', $bank_account->id)
-            ->applyFiltersFromObject($filterString, [
+            ->applyDynamicFilters($request, [
                 'allowed_filters' => ['is_locked', 'counter_account_id'],
             ])
             ->search($request->query('search'))
@@ -48,13 +47,13 @@ class TransactionIndexController extends Controller
 
         $transactions->appends($_GET)->links();
 
-        $booḱkeeping_accounts = BookkeepingAccount::query()->orderBy('account_number')->get();
+        $bookkeeping_accounts = BookkeepingAccount::query()->orderBy('account_number')->get();
 
         return Inertia::render('App/Bookkeeping/Transaction/TransactionIndex', [
             'transactions' => TransactionData::collect($transactions),
             'bank_account' => BankAccountData::from($bank_account),
             'bank_accounts' => BankAccountData::collect($bank_accounts),
-            'bookkeeping_accounts' => BookkeepingAccountData::collect($booḱkeeping_accounts),
+            'bookkeeping_accounts' => BookkeepingAccountData::collect($bookkeeping_accounts),
         ]);
     }
 }

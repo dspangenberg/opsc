@@ -114,6 +114,7 @@ trait HasDynamicFilters
      */
     protected function parseDynamicFilters(Request $request, array $options = []): array
     {
+
         // Try JSON format from query parameter
         if ($request->has('filters')) {
             $filtersInput = $request->input('filters');
@@ -121,6 +122,7 @@ trait HasDynamicFilters
             // If it's a JSON string (from query parameter)
             if (is_string($filtersInput)) {
                 $filtersData = json_decode($filtersInput, true);
+
                 if (json_last_error() === JSON_ERROR_NONE && is_array($filtersData)) {
                     return $this->parseFilters($filtersData, $options);
                 }
@@ -145,8 +147,25 @@ trait HasDynamicFilters
      */
     protected function parseFilters(array $filtersData, array $options = []): array
     {
-        if (!isset($filtersData['filters']) || !is_array($filtersData['filters'])) {
-            return [];
+
+        // Accept both wrapped and unwrapped filter payloads
+        if (! isset($filtersData['filters']) || ! is_array($filtersData['filters'])) {
+            // If the payload itself looks like the inner "filters" map, wrap it
+            $looksLikeFiltersMap = true;
+            foreach ($filtersData as $k => $v) {
+                if (! is_string($k) || ! is_array($v) || ! isset($v['operator'])) {
+                    $looksLikeFiltersMap = false;
+                    break;
+                }
+            }
+            if ($looksLikeFiltersMap) {
+                $filtersData = [
+                    'filters' => $filtersData,
+                    'boolean' => 'AND',
+                ];
+            } else {
+                return [];
+            }
         }
 
         $allowedFilters = $options['allowed_filters'] ?? $this->getAllowedFilters();
@@ -157,15 +176,26 @@ trait HasDynamicFilters
         $filterQuery = [];
 
         foreach ($filtersData['filters'] as $column => $filterConfig) {
-            if (!is_array($filterConfig)) {
+            if (! is_array($filterConfig)) {
                 continue;
             }
 
             $operator = $filterConfig['operator'] ?? '=';
+            // Normalize common operator aliases (e.g., eq -> =, ne -> !=)
+            $operator = match (strtolower((string) $operator)) {
+                'eq' => '=',
+                'ne', 'neq' => '!=',
+                'lt' => '<',
+                'lte', 'le' => '<=',
+                'gt' => '>',
+                'gte', 'ge' => '>=',
+                'nin' => 'not_in',
+                default => $operator,
+            };
             $value = $filterConfig['value'] ?? null;
 
             // Skip if operator is not allowed
-            if (!in_array($operator, $allowedOperators)) {
+            if (! in_array($operator, $allowedOperators)) {
                 continue;
             }
 
@@ -175,11 +205,12 @@ trait HasDynamicFilters
                 if ($filter) {
                     $filterQuery[] = $filter;
                 }
+
                 continue;
             }
 
             // Skip if column is not in allowed filters (for non-scope operators)
-            if (!empty($allowedFilters) && !in_array($column, $allowedFilters)) {
+            if (! empty($allowedFilters) && ! in_array($column, $allowedFilters)) {
                 continue;
             }
 
@@ -243,7 +274,7 @@ trait HasDynamicFilters
         $scopeParams = $filterConfig['params'] ?? [];
 
         // Check if scope is allowed
-        if (!empty($allowedScopes) && !in_array($scopeName, $allowedScopes)) {
+        if (! empty($allowedScopes) && ! in_array($scopeName, $allowedScopes)) {
             return null;
         }
 
@@ -277,7 +308,7 @@ trait HasDynamicFilters
      */
     protected function prepareDateRange(mixed $value): array
     {
-        if (!is_array($value) || count($value) < 2) {
+        if (! is_array($value) || count($value) < 2) {
             return [];
         }
 
@@ -307,7 +338,7 @@ trait HasDynamicFilters
             $operator = $values[0];
 
             // Skip if operator is not allowed
-            if (!in_array($operator, $allowedOperators)) {
+            if (! in_array($operator, $allowedOperators)) {
                 return [];
             }
 
@@ -316,7 +347,7 @@ trait HasDynamicFilters
                 $scopeName = $values[1];
 
                 // Check if scope is allowed
-                if (!empty($allowedScopes) && !in_array($scopeName, $allowedScopes)) {
+                if (! empty($allowedScopes) && ! in_array($scopeName, $allowedScopes)) {
                     return [];
                 }
 
@@ -336,7 +367,7 @@ trait HasDynamicFilters
             }
 
             // Skip if column is not in allowed filters (for non-scope operators)
-            if (!empty($allowedFilters) && !in_array($key, $allowedFilters)) {
+            if (! empty($allowedFilters) && ! in_array($key, $allowedFilters)) {
                 return [];
             }
 
@@ -351,7 +382,7 @@ trait HasDynamicFilters
             ];
         } else {
             // Skip if column is not in allowed filters
-            if (!empty($allowedFilters) && !in_array($key, $allowedFilters)) {
+            if (! empty($allowedFilters) && ! in_array($key, $allowedFilters)) {
                 return [];
             }
 
