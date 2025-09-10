@@ -40,7 +40,7 @@ class InvoiceLineData extends Data
         public readonly ?DateTime $service_period_end,
 
         /** @var InvoiceData */
-        public readonly ?object $linked_invoice,
+        public readonly ?InvoiceData $linked_invoice,
 
     ) {
     }

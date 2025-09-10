@@ -16,9 +16,6 @@ interface PathActiveItem {
 export function usePathActive() {
   const url = usePage().url
 
-  console.log(route().current())
-  console.log(route().queryParams)
-
   const checkIsActive = useCallback(
     (item: PathActiveItem | string) => {
       if (typeof item === 'string') {

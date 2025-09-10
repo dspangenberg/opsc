@@ -27,8 +27,10 @@ use App\Http\Controllers\App\Contact\ContactToggleFavoriteController;
 use App\Http\Controllers\App\Contact\ContactUpdateController;
 use App\Http\Controllers\App\Invoice\InvoiceCreateController;
 use App\Http\Controllers\App\Invoice\InvoiceDeleteController;
+use App\Http\Controllers\App\Invoice\InvoiceDetailsAddOnAccountInvoiceController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsEditBaseController;
+use App\Http\Controllers\App\Invoice\InvoiceDetailsStoreOnAccountInvoiceController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsUpdateBaseController;
 use App\Http\Controllers\App\Invoice\InvoiceDuplicateController;
 use App\Http\Controllers\App\Invoice\InvoiceHistoryController;
@@ -184,6 +186,12 @@ Route::middleware([
 
     Route::get('invoicing/invoices/{invoice}',
         InvoiceDetailsController::class)->name('app.invoice.details');
+
+    Route::get('invoicing/invoices/{invoice}/link-on-account-invoice',
+        InvoiceDetailsAddOnAccountInvoiceController::class)->name('app.invoice.link-on-account-invoice');
+
+    Route::post('invoicing/invoices/{invoice}/store-on-account-invoice',
+        InvoiceDetailsStoreOnAccountInvoiceController::class)->name('app.invoice.link-on-account-store');
 
     Route::get('invoicing/invoices/{invoice}/payments',
         InvoicePaymentCreateController::class)->name('app.invoice.create.payment');

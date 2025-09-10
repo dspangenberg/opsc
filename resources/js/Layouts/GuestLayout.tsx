@@ -1,6 +1,7 @@
 import type React from 'react'
-import { useAppInitializer } from '@/Hooks/useAppInitializer'
 import { BubbleBackground } from '@/Components/animate-ui/backgrounds/bubble'
+import { SvgBlobAnimation } from '@/Components/animated-blur-blob-background'
+import { useAppInitializer } from '@/Hooks/useAppInitializer'
 
 interface AuthLayoutProps {
   children: React.ReactNode
@@ -11,18 +12,10 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
 
   return (
     <>
-
-
-
-      <div className="h-screen w-screen flex">
-        <BubbleBackground colors={{ first: '18,113,255', second: '221,74,255', third: '0,220,255', fourth: '200,50,50', fifth: '180,180,50', sixth: '140,100,255', }}
-        >
-        <div className="">
-          {children}
-        </div>
-        </BubbleBackground>
+      <SvgBlobAnimation />
+      <div className="absolute inset-0 z-40 flex h-screen w-screen items-center justify-center bg-transparent">
+        <div className="">{children}</div>
       </div>
-
     </>
   )
 }

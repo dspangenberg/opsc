@@ -1,9 +1,11 @@
-import { cn } from '@/Lib/utils'
 import { Button } from '@dspangenberg/twcui'
 import { Copy01Icon, Delete04Icon, Edit03Icon, MoreVerticalIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { useCallback, useEffect, useRef } from 'react'
-
+import Markdown from 'react-markdown'
+import remarkBreaks from 'remark-breaks'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,10 +22,7 @@ import {
   TableHeader as ShadcnTableHeader,
   TableRow as ShadcnTableRow
 } from '@/Components/ui/table'
-import { HugeiconsIcon } from '@hugeicons/react'
-import { usePage } from '@inertiajs/react'
-import Markdown from 'react-markdown'
-import remarkBreaks from 'remark-breaks'
+import { cn } from '@/Lib/utils'
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
   style: 'decimal',
@@ -210,7 +209,7 @@ export const InvoicingTableDefaultRow: React.FC<InvoicingTableDefaultRowProps> =
   conditional = false,
   onLineCommand
 }) => {
-  // @ts-ignore
+  // @ts-expect-error
   const { invoice } = usePage<App.Data.InvoiceData>().props as unknown as App.Data.InvoiceData
 
   const handleDelete = useCallback(() => {
@@ -285,7 +284,7 @@ export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowPr
   conditional = false,
   onLineCommand
 }) => {
-  // @ts-ignore
+  // @ts-expect-error
   const { invoice } = usePage<App.Data.InvoiceData>().props as unknown as App.Data.InvoiceData
 
   const handleDelete = useCallback(() => {
@@ -298,23 +297,20 @@ export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowPr
     onLineCommand({ command: 'duplicate', lineId: line.id || 0 })
   }, [onLineCommand, line])
 
-  if (line.type_id === 9) {
-    return null
-  }
-
   return (
     <TableRow>
       <TableCell align="right" className="align-baseline">
         {index}
       </TableCell>
-      <TableNumberCell value={line.quantity || 0} />
-      <TableCell align="center">{line.unit}</TableCell>
-      <TableMarkdownCell value="">
-        abzüglich geleisteter Akontozahlung
-        <br />
-        RG-{line.linked_invoice?.formated_invoice_number} vom {line.linked_invoice?.issued_on}
-      </TableMarkdownCell>
-      <TableNumberCell conditional={conditional} value={line.price || 0} />
+      <TableCell />
+      <TableCell />
+      <TableCell>
+        abzüglich&nbsp;
+        <strong>
+          AR-{line.linked_invoice?.formated_invoice_number} vom {line.linked_invoice?.issued_on}
+        </strong>
+      </TableCell>
+      <TableCell />
       <TableNumberCell value={line.amount || 0} />
       <TableCell align="center">({line.tax_rate_id})</TableCell>
       {invoice.is_draft && (
@@ -379,6 +375,7 @@ export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
   }
 
   if (line.type_id === 9) {
+    console.log(line)
     return (
       <InvoicingTableLinkedInvoiceRow
         line={line}
