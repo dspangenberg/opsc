@@ -3,13 +3,12 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
+import { TwicewareSolution } from '@dspangenberg/twcui'
 import { Head } from '@inertiajs/react'
 import type React from 'react'
-import { cn } from '@/Lib/utils'
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card'
 import { useApplicationProvider } from '@/Components/ApplicationProvider'
-import { TwicewareSolution } from '@dspangenberg/twcui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card'
+import { cn } from '@/Lib/utils'
 
 interface AuthContainerProps {
   title: string
@@ -41,13 +40,14 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
   return (
     <>
       <Head title={title} />
-      <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
+      <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-transparent p-6 md:p-10">
         <div className={cn('flex w-full max-w-sm flex-col gap-6', containerSize)}>
-
-          <Card className='z-50 bg-white'>
+          <Card className="z-50 bg-white">
             <CardHeader className="text-center">
-              <div className='flex flex-col items-center justify-center gap-1'>
-                <a href={appWebsite} target="_blank" className="text-center" rel="noreferrer">{logo}</a>
+              <div className="flex flex-col items-center justify-center gap-1">
+                <a href={appWebsite} target="_blank" className="text-center" rel="noreferrer">
+                  {logo}
+                </a>
                 {appWithVersion}
               </div>
               <CardTitle className="text-xl">{cardTitle}</CardTitle>
@@ -56,7 +56,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
             <CardContent>{children}</CardContent>
           </Card>
 
-          <div className='z-50 text-balance text-center text-muted-foreground text-xs [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary '>
+          <div className="z-50 text-balance text-center text-muted-foreground text-xs [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
             <TwicewareSolution
               appName={appName}
               appWebsite={appWebsite}

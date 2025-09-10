@@ -83,7 +83,13 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
             <MenuItem icon={HeadingIcon} title="Überschrift" ellipsis />
             <MenuItem icon={TextAlignJustifyLeftIcon} title="Text" ellipsis />
             <MenuItem icon={TextVerticalAlignmentIcon} title="Seitenumbruch" ellipsis separator />
-            <MenuItem icon={CashbackEuroIcon} title="Mit Akonto-Zahlung verrechnen" ellipsis />
+            <MenuItem
+              icon={CashbackEuroIcon}
+              title="Mit Akonto-Zahlung verrechnen"
+              isDisabled={invoice.type_id !== 3}
+              href={route('app.invoice.link-on-account-invoice', { invoice: invoice.id })}
+              ellipsis
+            />
           </DropdownButton>
         </div>
       </div>

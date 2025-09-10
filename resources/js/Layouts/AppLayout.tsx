@@ -4,22 +4,22 @@
  *
  */
 
+import { Button } from '@dspangenberg/twcui'
+import { SidebarLeftIcon } from '@hugeicons/core-free-icons'
+import { usePage } from '@inertiajs/react'
+import type React from 'react'
+import type { PropsWithChildren, ReactNode } from 'react'
 import { AppProvider } from '@/Components/AppProvider'
 import { AppSidebar } from '@/Components/AppSidebar'
 import { LayoutContainer } from '@/Components/LayoutContainer'
+import { Modal } from '@/Components/momentum-modal-react'
 import { NavUser } from '@/Components/NavUser'
 import { PageBreadcrumbs } from '@/Components/PageBreadcrumbs'
-import { Modal } from '@/Components/momentum-modal-react'
 import { useThemeContainer } from '@/Components/theme-container-provider'
 import { SidebarInset, SidebarProvider, useSidebar } from '@/Components/ui/sidebar'
 import { Toaster } from '@/Components/ui/sonner'
 import { useAppInitializer } from '@/Hooks/useAppInitializer'
 import { cn } from '@/Lib/utils'
-import { Button } from '@dspangenberg/twcui'
-import { SidebarLeftIcon } from '@hugeicons/core-free-icons'
-import { usePage } from '@inertiajs/react'
-import type { PropsWithChildren, ReactNode } from 'react'
-import type React from 'react'
 
 const SidebarContent: React.FC<PropsWithChildren> = ({ children }) => {
   const { toggleSidebar } = useSidebar()
@@ -39,7 +39,7 @@ const SidebarContent: React.FC<PropsWithChildren> = ({ children }) => {
           <span className="hidden lg:inline xl:hidden">lg</span>
           <span className="hidden xl:inline 2xl:hidden">xl</span>
           <span className="3xl:hidden hidden 2xl:inline">2xl</span>
-          <span className="3xl:inline hidden ">3xl</span>
+          <span className="3xl:inline hidden">3xl</span>
         </div>
       )}
       <SidebarInset className="relative border-0">

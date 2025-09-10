@@ -3,6 +3,9 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
+import { Head } from '@inertiajs/react'
+import type React from 'react'
+import { useEffect, useMemo } from 'react'
 import { useBreadcrumb } from '@/Components/BreadcrumbProvider'
 import { LayoutContainer } from '@/Components/LayoutContainer'
 import type { BreadcrumbProp } from '@/Components/PageBreadcrumbs'
@@ -12,9 +15,6 @@ import {
   useThemeContainer
 } from '@/Components/theme-container-provider'
 import { cn } from '@/Lib/utils'
-import { Head } from '@inertiajs/react'
-import type React from 'react'
-import { useEffect, useMemo } from 'react'
 
 interface PageContainerProps {
   title?: string
@@ -42,7 +42,6 @@ export const PageContainer: React.FC<PageContainerProps> = ({
   hideHeader = false,
   containerBackground = 'bg-page-content',
   className = '',
-  bgClassName = '',
   headerClassname = '',
   footer,
   children
@@ -77,7 +76,7 @@ export const PageContainer: React.FC<PageContainerProps> = ({
         <div className="z-10 flex-none rounded-t-xl border-border/50 border-y bg-background">
           <LayoutContainer className={cn('px-4', tabs ? 'py-0' : '', headerClassname)}>
             <div className="flex flex-1 flex-col">
-              <div className={cn('flex flex-1 justify-between ')}>
+              <div className={cn('flex flex-1 justify-between')}>
                 <div
                   className={cn('flex flex-1 items-center justify-stretch', tabs ? 'py-3' : 'py-6')}
                 >

@@ -13,7 +13,7 @@ import {
   TimeScheduleIcon
 } from '@hugeicons/core-free-icons'
 import type * as React from 'react'
-import logo from '@/Assets/Images/tw.svg' // Make sure to adjust the import path
+import logo from '@/Assets/Images/tw.svg'
 import { NavMain } from '@/Components/nav-main'
 import { NavSecondary } from '@/Components/nav-secondary'
 import { Sidebar, SidebarContent, SidebarHeader } from '@/Components/ui/sidebar'
