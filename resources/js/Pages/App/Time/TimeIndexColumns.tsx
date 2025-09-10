@@ -22,7 +22,12 @@ import { minutesToHoursExtended, minutesUntilNow, parseAndFormatDate } from '@/L
 import { cn } from '@/Lib/utils'
 
 const editUrl = (row: App.Data.TimeData) => {
-  return row.id ? route('app.time.edit', { id: row.id }) : '#'
+  if (!row.id) return '#'
+
+  const currentView = route().queryParams.view
+  const baseUrl = `${route('app.time.edit', { id: row.id, _query: { view: currentView } })}?view=${currentView}`
+  console.log(baseUrl)
+  return baseUrl
 }
 
 const durationInMinutes = (row: App.Data.TimeData) => {

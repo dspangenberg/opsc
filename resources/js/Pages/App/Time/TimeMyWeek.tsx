@@ -1,13 +1,3 @@
-import { DataTable } from '@/Components/DataTable'
-import { PageContainer } from '@/Components/PageContainer'
-import { StatsField } from '@/Components/StatsField'
-import { BorderedBox } from '@/Components/twcui/bordered-box'
-import { Badge } from '@/Components/ui/badge'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
-import { getNextWeek, getPrevWeek, minutesToHoursExtended } from '@/Lib/DateHelper'
-import type { PageProps } from '@/Types'
-
 import {
   Add01Icon,
   ArrowLeft01Icon,
@@ -20,6 +10,15 @@ import { router, usePage } from '@inertiajs/react'
 import { sumBy } from 'lodash'
 import type * as React from 'react'
 import { useMemo, useState } from 'react'
+import { DataTable } from '@/Components/DataTable'
+import { PageContainer } from '@/Components/PageContainer'
+import { StatsField } from '@/Components/StatsField'
+import { BorderedBox } from '@/Components/twcui/bordered-box'
+import { Badge } from '@/Components/ui/badge'
+import { Button } from '@/Components/ui/twc-ui/button'
+import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
+import { getNextWeek, getPrevWeek, minutesToHoursExtended } from '@/Lib/DateHelper'
+import type { PageProps } from '@/Types'
 import { columns } from './TimeIndexColumns'
 export interface TimeGroupedEntries {
   entries: {
@@ -73,7 +72,7 @@ const TimeIndex: React.FC = () => {
     router.visit(
       route('app.time.create', {
         _query: {
-          view: 'week'
+          view: 'my-week'
         }
       })
     )

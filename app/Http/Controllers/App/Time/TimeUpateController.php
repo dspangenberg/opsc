@@ -19,6 +19,8 @@ class TimeUpateController extends Controller
 
         $time->update($validatedData);
 
-        return redirect()->route('app.time.index');
+        $baseRoute = $request->query('view', 'my-week') === 'my-week' ? 'app.time.my-week' : 'app.time.index';
+
+        return redirect()->route($baseRoute);
     }
 }
