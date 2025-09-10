@@ -1,3 +1,7 @@
+import { Clock05Icon } from '@hugeicons/core-free-icons'
+import { router } from '@inertiajs/react'
+import type * as React from 'react'
+import { useState } from 'react'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
 import { ComboBox } from '@/Components/ui/twc-ui/combo-box'
@@ -9,10 +13,6 @@ import { Select } from '@/Components/ui/twc-ui/select'
 import { TextField } from '@/Components/ui/twc-ui/text-field'
 import { formatDate } from '@/Lib/DateHelper'
 import type { PageProps } from '@/Types'
-import { Clock05Icon } from '@hugeicons/core-free-icons'
-import { router } from '@inertiajs/react'
-import type * as React from 'react'
-import { useState } from 'react'
 
 interface Props extends PageProps {
   time: App.Data.TimeData
@@ -29,18 +29,31 @@ const TimeCreate: React.FC<Props> = ({ time, projects, categories, users }) => {
     'form-contact-edit-address',
     time.id ? 'put' : 'post',
     route(time.id ? 'app.time.update' : 'app.time.store', {
-      id: time.id
+      id: time.id,
+      _query: {
+        view: route().queryParams.view
+      }
     }),
     time
   )
 
   const handleClose = () => {
     setIsOpen(false)
-    if (route().queryParams.view === 'week') {
-      router.visit(route('app.time.my-week'))
+    if (route().queryParams.view === 'my-week') {
+      router.visit(
+        route('app.time.my-week', {
+          _query: {
+            view: 'my-week'
+          }
+        })
+      )
+    } else {
+      router.visit(route('app.time.index'))
     }
+  }
 
-    router.visit(route('app.time.index'))
+  const handleSubmit = () => {
+    setIsOpen(false)
   }
 
   const handleClockClicked = (field: keyof App.Data.TimeData) => {
@@ -68,7 +81,7 @@ const TimeCreate: React.FC<Props> = ({ time, projects, categories, users }) => {
         </div>
       )}
     >
-      <Form form={form} onSubmitted={handleClose}>
+      <Form form={form} onSubmitted={handleSubmit}>
         <FormGroup>
           <div className="col-span-10 flex items-end gap-2">
             <DateTimeField autoFocus label="Start" {...form.register('begin_at')} />

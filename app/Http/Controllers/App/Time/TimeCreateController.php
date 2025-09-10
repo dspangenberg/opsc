@@ -52,7 +52,7 @@ class TimeCreateController extends Controller
             $time->is_locked = $lastEntry->is_locked;
         }
 
-        $baseRoute = $request->query('view', 'week') === 'week' ? 'app.time.my-week' : 'app.time.index';
+        $baseRoute = $request->query('view', 'my-week') === 'my-week' ? 'app.time.my-week' : 'app.time.index';
 
         return Inertia::modal('App/Time/TimeCreate')
             ->with([

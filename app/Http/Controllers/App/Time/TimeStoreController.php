@@ -18,7 +18,8 @@ class TimeStoreController extends Controller
         $validatedData = $request->validated();
 
         Time::create($validatedData);
+        $baseRoute = $request->query('view', 'my-week') === 'my-week' ? 'app.time.my-week' : 'app.time.index';
 
-        return redirect()->route('app.time.index');
+        return redirect()->route($baseRoute);
     }
 }
