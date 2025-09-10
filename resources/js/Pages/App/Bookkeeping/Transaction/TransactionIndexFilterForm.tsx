@@ -42,7 +42,7 @@ export const TransactionIndexFilterForm: React.FC<Props> = ({
       without_counter_account:
         filters.filters.counter_account_id && filters.filters.counter_account_id.value === 0 ? 1 : 0
     }),
-    [filters]
+    [filters.filters.counter_account_id, filters.filters.is_locked]
   )
 
   const form = useForm<FormData>('transaction-filter-form', 'post', '', currentFilters)
@@ -50,7 +50,7 @@ export const TransactionIndexFilterForm: React.FC<Props> = ({
   // Anzahl der aktiven Filter berechnen
   const activeFiltersCount = useMemo(() => {
     return Object.keys(filters.filters).length
-  }, [filters])
+  }, [filters.filters])
 
   const handleFilterChange = (field: keyof FormData, value: any) => {
     const newFilters = { ...filters.filters }
