@@ -194,6 +194,7 @@ payable_sum_amount: number | null;
 amount_open: number | null;
 is_recurring: boolean;
 recurring_interval_days: number;
+additional_text: string | null;
 parent_id: number | null;
 tax_id: number | null;
 parent_invoice: App.Data.InvoiceData | null;

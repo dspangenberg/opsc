@@ -29,7 +29,7 @@ class InvoiceDetailsStoreOnAccountInvoiceController extends Controller
 
             $invoiceLine = new InvoiceLine;
             $invoiceLine->type_id = 9;
-            $invoiceLine->pos = 0;
+            $invoiceLine->pos = 999;
             $invoiceLine->invoice_id = $invoice->id;
             $invoiceLine->text = '';
             $invoiceLine->amount = 0 - $linkedInvoice->amount_net;

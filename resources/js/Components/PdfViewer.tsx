@@ -157,11 +157,11 @@ export const PdfViewer: React.FC<Props> = ({
         />
       </Toolbar>
     ),
-    [numPages, handleDownload, scale, isFullscreen]
+    [numPages, handleDownload, scale, isFullscreen, pageNumber, toggle]
   )
 
   return (
-    <Dialog isOpen={open} onOpenChange={handleOpenChange} title={filename} width="6xl">
+    <Dialog isOpen={open} onOpenChange={handleOpenChange} title={filename} width="3xl">
       <div
         ref={divRef}
         className="flex aspect-[210/297] max-h-[90%] w-3xl flex-col items-center justify-center overflow-auto bg-white"
