@@ -178,7 +178,7 @@ interface DialogProps {
   footerClassName?: string
   className?: string
   bodyPadding?: boolean
-  width?: 'default' | '2xl' | '4xl' | '5xl' | '6xl' | 'md' | 'lg'
+  width?: 'default' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | 'md' | 'lg'
   hideHeader?: boolean
   background?: 'accent' | 'sidebar' | 'background' | 'page'
   onOpenChange?: (open: boolean) => void
@@ -229,6 +229,7 @@ export const Dialog: React.FC<DialogProps> = ({
     md: 'max-w-md',
     lg: 'max-w-lg',
     '2xl': 'max-w-2xl',
+    '3xl': 'max-w-3xl',
     '4xl': 'max-w-4xl',
     '5xl': 'max-w-6xl',
     '6xl': 'max-w-5xl'

@@ -60,6 +60,7 @@ class InvoiceData extends Data
 
         public readonly bool $is_recurring,
         public readonly int $recurring_interval_days,
+        public readonly ?string $additional_text,
 
         public readonly ?int $parent_id,
         public readonly ?int $tax_id,

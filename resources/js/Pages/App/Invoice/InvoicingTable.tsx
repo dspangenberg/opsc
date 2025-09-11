@@ -1,11 +1,27 @@
 import { Button } from '@dspangenberg/twcui'
-import { Copy01Icon, Delete04Icon, Edit03Icon, MoreVerticalIcon } from '@hugeicons/core-free-icons'
+import {
+  CalculatorIcon,
+  Copy01Icon,
+  Delete03Icon,
+  Delete04Icon,
+  Edit03Icon,
+  MoreVerticalCircle01Icon,
+  MoreVerticalIcon,
+  Sent02Icon
+} from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { useCallback, useEffect, useRef } from 'react'
 import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
+import {
+  DropdownButton,
+  Menu,
+  MenuItem,
+  MenuPopover,
+  MenuSubTrigger
+} from '@/Components/twcui/dropdown-button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -248,29 +264,27 @@ export const InvoicingTableDefaultRow: React.FC<InvoicingTableDefaultRowProps> =
               variant="ghost"
               onClick={() => onLineCommand({ command: 'edit', lineId: line.id || 0 })}
             />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  iconClassName="text-primary"
-                  size="icon-sm"
-                  icon={MoreVerticalIcon}
-                />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={handleDuplicate}>
-                    <HugeiconsIcon icon={Copy01Icon} />
-                    Duplizieren
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleDelete} variant="destructive">
-                    <HugeiconsIcon icon={Delete04Icon} />
-                    Position löschen
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <DropdownButton
+              variant="ghost"
+              size="icon-sm"
+              icon={MoreVerticalCircle01Icon}
+              iconClassName="text-primary"
+            >
+              <MenuItem
+                icon={Copy01Icon}
+                title="Duplizieren"
+                ellipsis
+                separator
+                onClick={() => onLineCommand({ command: 'duplicate', lineId: line.id || 0 })}
+              />
+              <MenuItem
+                icon={Delete03Icon}
+                variant="destructive"
+                title="Löschen"
+                ellipsis
+                onClick={handleDelete}
+              />
+            </DropdownButton>
           </div>
         </TableCell>
       )}
@@ -316,36 +330,20 @@ export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowPr
       {invoice.is_draft && (
         <TableCell align="right">
           <div className="flex items-center justify-end space-x-1">
-            <Button
-              size="icon-sm"
-              icon={Edit03Icon}
-              iconClassName="text-primary"
+            <DropdownButton
               variant="ghost"
-              onClick={() => onLineCommand({ command: 'edit', lineId: line.id || 0 })}
-            />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  iconClassName="text-primary"
-                  size="icon-sm"
-                  icon={MoreVerticalIcon}
-                />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={handleDuplicate}>
-                    <HugeiconsIcon icon={Copy01Icon} />
-                    Duplizieren
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleDelete} variant="destructive">
-                    <HugeiconsIcon icon={Delete04Icon} />
-                    Position löschen
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              size="icon-sm"
+              icon={MoreVerticalCircle01Icon}
+              iconClassName="text-primary"
+            >
+              <MenuItem
+                icon={Delete03Icon}
+                variant="destructive"
+                title="Löschen"
+                ellipsis
+                onClick={handleDelete}
+              />
+            </DropdownButton>
           </div>
         </TableCell>
       )}

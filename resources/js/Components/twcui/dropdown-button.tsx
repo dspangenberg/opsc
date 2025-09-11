@@ -1,9 +1,5 @@
-import { ListBoxCollection, ListBoxSection } from '@/Components/jolly-ui/list-box'
-import { SelectPopover } from '@/Components/jolly-ui/select'
-import { Button, type buttonVariants } from '@/Components/ui/twc-ui/button'
-import { cn } from '@/Lib/utils'
 import { CheckIcon, ChevronRightIcon, DotFilledIcon } from '@radix-ui/react-icons'
-import { type VariantProps, cva } from 'class-variance-authority'
+import { cva, type VariantProps } from 'class-variance-authority'
 import type * as React from 'react'
 import {
   Header as AriaHeader,
@@ -17,9 +13,13 @@ import {
   Separator as AriaSeparator,
   type SeparatorProps as AriaSeparatorProps,
   SubmenuTrigger as AriaSubmenuTrigger,
-  type PopoverProps,
-  composeRenderProps
+  composeRenderProps,
+  type PopoverProps
 } from 'react-aria-components'
+import { ListBoxCollection, ListBoxSection } from '@/Components/jolly-ui/list-box'
+import { SelectPopover } from '@/Components/jolly-ui/select'
+import { Button, type buttonVariants } from '@/Components/ui/twc-ui/button'
+import { cn } from '@/Lib/utils'
 import { Icon, type IconType } from './icon'
 
 const MenuTrigger = AriaMenuTrigger
@@ -125,7 +125,7 @@ const MenuItem = ({
 
           {!!shortcut && <MenuKeyboard>{shortcut}</MenuKeyboard>}
 
-          {renderProps.hasSubmenu && <ChevronRightIcon className="ml-auto size-4" />}
+          {renderProps.hasSubmenu && <ChevronRightIcon className="size-4" />}
         </div>
       ))}
     </AriaMenuItem>

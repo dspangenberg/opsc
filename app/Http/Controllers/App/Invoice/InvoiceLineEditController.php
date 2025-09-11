@@ -31,7 +31,7 @@ class InvoiceLineEditController extends Controller
             ->load('type')
             ->load([
                 'lines' => function ($query) {
-                    $query->orderBy('pos');
+                    $query->with('linked_invoice')->orderBy('pos')->orderBy('id');
                 },
             ])
             ->loadSum('lines', 'amount')
