@@ -77,12 +77,24 @@ const data = {
         {
           title: 'Rechnungen',
           url: route('app.invoice.index', { _query: { view: 'all' } }, false),
-          activePath: '/app/invoicing/invoices?view=all'
-        },
-        {
-          title: 'Offene Posten',
-          url: route('app.invoice.index', { _query: { view: 'unpaid' } }, false),
-          activePath: '/app/invoicing/invoices?view=unpaid'
+          activePath: '/app/invoicing/invoices',
+          items: [
+            {
+              title: 'Alle Rechnungen',
+              url: route('app.invoice.index', { _query: { view: 'all' } }, false),
+              activePath: '/app/invoicing/invoices?view=all'
+            },
+            {
+              title: 'Offene Posten',
+              url: route('app.invoice.index', { _query: { view: 'unpaid' } }, false),
+              activePath: '/app/invoicing/invoices?view=unpaid'
+            },
+            {
+              title: 'Entwürfe',
+              url: route('app.invoice.index', { _query: { view: 'drafts' } }, false),
+              activePath: '/app/invoicing/invoices?view=drafts'
+            }
+          ]
         },
         {
           title: 'Angebote',

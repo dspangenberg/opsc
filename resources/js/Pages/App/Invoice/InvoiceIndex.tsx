@@ -92,7 +92,7 @@ const InvoiceIndex: React.FC = () => {
   useEffect(() => {
     const debouncedNavigate = debounce(() => {
       if (year !== currentYear) {
-        router.get(route('app.invoice.index', { _query: { year } }))
+        router.get(route('app.invoice.index', { _query: { view: route().queryParams.view, year } }))
       }
     }, 300) // 300ms delay
 

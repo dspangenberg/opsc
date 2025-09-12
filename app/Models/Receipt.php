@@ -12,7 +12,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Carbon;
+use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
+use Plank\Mediable\MediableCollection;
 use Plank\Mediable\MediableInterface;
 
 /**
@@ -94,25 +96,17 @@ use Plank\Mediable\MediableInterface;
  * @property-read Collection<int, Payment> $payable
  * @property-read int|null $payable_count
  * @property-read NumberRangeDocumentNumber|null $range_document_number
- * @property-read Collection<int, \Plank\Mediable\Media> $media
+ * @property-read Collection<int, Media> $media
  * @property-read int|null $media_count
  *
- * @method static \Plank\Mediable\MediableCollection<int, static> all($columns = ['*'])
- * @method static \Plank\Mediable\MediableCollection<int, static> get($columns = ['*'])
+ * @method static MediableCollection<int, static> all($columns = ['*'])
+ * @method static MediableCollection<int, static> get($columns = ['*'])
  * @method static Builder|Receipt whereHasMedia($tags = [], bool $matchAll = false)
  * @method static Builder|Receipt whereHasMediaMatchAll($tags)
  * @method static Builder|Receipt withMedia($tags = [], bool $matchAll = false, bool $withVariants = false)
  * @method static Builder|Receipt withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static Builder|Receipt withMediaAndVariantsMatchAll($tags = [])
  * @method static Builder|Receipt withMediaMatchAll(bool $tags = [], bool $withVariants = false)
- * @method static \Plank\Mediable\MediableCollection<int, static> all($columns = ['*'])
- * @method static \Plank\Mediable\MediableCollection<int, static> get($columns = ['*'])
- * @method static \Plank\Mediable\MediableCollection<int, static> all($columns = ['*'])
- * @method static \Plank\Mediable\MediableCollection<int, static> get($columns = ['*'])
- * @method static \Plank\Mediable\MediableCollection<int, static> all($columns = ['*'])
- * @method static \Plank\Mediable\MediableCollection<int, static> get($columns = ['*'])
- * @method static \Plank\Mediable\MediableCollection<int, static> all($columns = ['*'])
- * @method static \Plank\Mediable\MediableCollection<int, static> get($columns = ['*'])
  *
  * @mixin Eloquent
  */

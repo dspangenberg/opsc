@@ -113,7 +113,6 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
   }
 
   const currentRoute = route().current()
-  console.log(currentRoute)
 
   const tabs = useMemo(
     () => (

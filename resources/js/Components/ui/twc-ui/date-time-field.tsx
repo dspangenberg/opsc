@@ -1,4 +1,3 @@
-import { cn } from '@/Lib/utils'
 import { CalendarDateTime, type DateValue } from '@internationalized/date'
 import type { VariantProps } from 'class-variance-authority'
 import { format, parse } from 'date-fns'
@@ -11,10 +10,11 @@ import {
   DateSegment as AriaDateSegment,
   type DateSegmentProps as AriaDateSegmentProps,
   type ValidationResult as AriaValidationResult,
-  Text,
-  composeRenderProps
+  composeRenderProps,
+  Text
 } from 'react-aria-components'
-import { FieldError, Label, fieldGroupVariants } from './field'
+import { cn } from '@/Lib/utils'
+import { FieldError, fieldGroupVariants, Label } from './field'
 import { useFormContext } from './form'
 
 const BaseDateField = AriaDateField
@@ -25,7 +25,7 @@ const DateSegment = ({ className, ...props }: AriaDateSegmentProps) => (
       cn(
         'inline rounded p-0.5 type-literal:px-0 caret-transparent outline-0',
         /* Placeholder */
-        'data-[placeholder]:text-muted-foreground ',
+        'data-[placeholder]:text-muted-foreground',
         /* Disabled */
         'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
         /* Focused */

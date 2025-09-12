@@ -39,6 +39,7 @@ export interface NavMainItemChildren {
   isActive?: boolean
   hasSep?: boolean
   exact?: boolean
+  items?: NavMainItemChildren[]
 }
 
 export function NavMain({ items, ...props }: { items: NavMainItem[] }) {
@@ -69,10 +70,52 @@ export function NavMain({ items, ...props }: { items: NavMainItem[] }) {
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   {item.items?.length ? (
-                    <>
-                      <CollapsibleContent>
-                        <SidebarMenuSub className="block">
-                          {item.items.map(subItem => (
+                    <CollapsibleContent>
+                      <SidebarMenuSub className="block">
+                        {item.items.map(subItem => {
+                          const isSubOrChildActive = isPathActive(subItem, false, subItem.items)
+
+                          if (subItem.items?.length) {
+                            return (
+                              <Collapsible key={subItem.title} asChild open={isSubOrChildActive}>
+                                <SidebarMenuSubItem className={subItem.hasSep ? 'mb-3' : ''}>
+                                  <CollapsibleTrigger asChild>
+                                    <SidebarMenuSubButton
+                                      asChild
+                                      className="ml-1"
+                                      isActive={isPathActive(subItem)}
+                                    >
+                                      <Link href={subItem.url}>
+                                        <span>{subItem.title}</span>
+                                      </Link>
+                                    </SidebarMenuSubButton>
+                                  </CollapsibleTrigger>
+                                  <CollapsibleContent>
+                                    <SidebarMenuSub className="ml-3 block">
+                                      {subItem.items.map(child => (
+                                        <SidebarMenuSubItem
+                                          key={child.title}
+                                          className={child.hasSep ? 'mb-3' : ''}
+                                        >
+                                          <SidebarMenuSubButton
+                                            asChild
+                                            className="ml-1"
+                                            isActive={isPathActive(child)}
+                                          >
+                                            <Link href={child.url}>
+                                              <span>{child.title}</span>
+                                            </Link>
+                                          </SidebarMenuSubButton>
+                                        </SidebarMenuSubItem>
+                                      ))}
+                                    </SidebarMenuSub>
+                                  </CollapsibleContent>
+                                </SidebarMenuSubItem>
+                              </Collapsible>
+                            )
+                          }
+
+                          return (
                             <SidebarMenuSubItem
                               key={subItem.title}
                               className={subItem.hasSep ? 'mb-3' : ''}
@@ -87,10 +130,10 @@ export function NavMain({ items, ...props }: { items: NavMainItem[] }) {
                                 </Link>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
-                          ))}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </>
+                          )
+                        })}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
                   ) : null}
                 </SidebarMenuItem>
               </Collapsible>
