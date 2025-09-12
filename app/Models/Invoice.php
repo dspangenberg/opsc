@@ -431,7 +431,8 @@ class Invoice extends Model implements MediableInterface
     {
         return match ($view) {
             'unpaid' => $query->unpaid(),
-            default => $query,
+            'drafts' => $query->where('is_draft', true),
+            default => $query->where('is_draft', false)
         };
     }
 

@@ -229,12 +229,10 @@ export const InvoicingTableDefaultRow: React.FC<InvoicingTableDefaultRowProps> =
   const { invoice } = usePage<App.Data.InvoiceData>().props as unknown as App.Data.InvoiceData
 
   const handleDelete = useCallback(() => {
-    console.log('Delete line:', line)
     onLineCommand({ command: 'delete', lineId: line.id || 0 })
   }, [onLineCommand, line])
 
   const handleDuplicate = useCallback(() => {
-    console.log('Duplicate line:', line)
     onLineCommand({ command: 'duplicate', lineId: line.id || 0 })
   }, [onLineCommand, line])
 
@@ -260,16 +258,10 @@ export const InvoicingTableDefaultRow: React.FC<InvoicingTableDefaultRowProps> =
             <Button
               size="icon-sm"
               icon={Edit03Icon}
-              iconClassName="text-primary"
               variant="ghost"
               onClick={() => onLineCommand({ command: 'edit', lineId: line.id || 0 })}
             />
-            <DropdownButton
-              variant="ghost"
-              size="icon-sm"
-              icon={MoreVerticalCircle01Icon}
-              iconClassName="text-primary"
-            >
+            <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
               <MenuItem
                 icon={Copy01Icon}
                 title="Duplizieren"
@@ -302,12 +294,10 @@ export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowPr
   const { invoice } = usePage<App.Data.InvoiceData>().props as unknown as App.Data.InvoiceData
 
   const handleDelete = useCallback(() => {
-    console.log('Delete line:', line)
     onLineCommand({ command: 'delete', lineId: line.id || 0 })
   }, [onLineCommand, line])
 
   const handleDuplicate = useCallback(() => {
-    console.log('Duplicate line:', line)
     onLineCommand({ command: 'duplicate', lineId: line.id || 0 })
   }, [onLineCommand, line])
 
@@ -330,12 +320,7 @@ export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowPr
       {invoice.is_draft && (
         <TableCell align="right">
           <div className="flex items-center justify-end space-x-1">
-            <DropdownButton
-              variant="ghost"
-              size="icon-sm"
-              icon={MoreVerticalCircle01Icon}
-              iconClassName="text-primary"
-            >
+            <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
               <MenuItem
                 icon={Delete03Icon}
                 variant="destructive"
@@ -373,7 +358,6 @@ export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
   }
 
   if (line.type_id === 9) {
-    console.log(line)
     return (
       <InvoicingTableLinkedInvoiceRow
         line={line}

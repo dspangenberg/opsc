@@ -26,7 +26,6 @@ const editUrl = (row: App.Data.TimeData) => {
 
   const currentView = route().queryParams.view
   const baseUrl = `${route('app.time.edit', { id: row.id, _query: { view: currentView } })}?view=${currentView}`
-  console.log(baseUrl)
   return baseUrl
 }
 

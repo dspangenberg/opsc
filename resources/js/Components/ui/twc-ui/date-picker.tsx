@@ -18,7 +18,7 @@ import {
   Text
 } from 'react-aria-components'
 import { cn } from '@/Lib/utils'
-import { Button } from "./button"
+import { Button } from './button'
 import {
   Calendar,
   CalendarCell,
@@ -149,22 +149,25 @@ const DatePicker = ({
   }, [value])
 
   // Convert DateValue to string (same logic as DateField)
-  const handleChange = React.useCallback((newValue: DateValue | null) => {
-    if (!onChange) return
+  const handleChange = React.useCallback(
+    (newValue: DateValue | null) => {
+      if (!onChange) return
 
-    if (!newValue) {
-      onChange(null)
-      return
-    }
+      if (!newValue) {
+        onChange(null)
+        return
+      }
 
-    try {
-      const jsDate = dateValueToDate(newValue)
-      const formattedDate = format(jsDate, DATE_FORMAT)
-      onChange(formattedDate)
-    } catch {
-      onChange(null)
-    }
-  }, [onChange])
+      try {
+        const jsDate = dateValueToDate(newValue)
+        const formattedDate = format(jsDate, DATE_FORMAT)
+        onChange(formattedDate)
+      } catch {
+        onChange(null)
+      }
+    },
+    [onChange]
+  )
 
   return (
     <BaseDatePicker
@@ -178,9 +181,7 @@ const DatePicker = ({
       {...props}
     >
       <Label value={label} />
-      <FieldGroup
-        className="!pr-1 gap-0 px-3 data-[invalid]:focus-visible:border-destructive data-[invalid]:focus-visible:ring-destructive/20"
-      >
+      <FieldGroup className="!pr-1 gap-0 px-3 data-[invalid]:focus-visible:border-destructive data-[invalid]:focus-visible:ring-destructive/20">
         <DateInput variant="ghost" className="flex-1" />
         <DatePickerClearButton />
         <Button
@@ -213,7 +214,8 @@ const DatePicker = ({
 }
 
 // DateRangePicker - vereinfacht
-interface DateRangePickerProps extends Omit<AriaDateRangePickerProps<DateValue>, 'value' | 'onChange'> {
+interface DateRangePickerProps
+  extends Omit<AriaDateRangePickerProps<DateValue>, 'value' | 'onChange'> {
   label?: string
   description?: string
   value?: RangeValue<string> | null
@@ -235,21 +237,14 @@ const DateRangePicker = ({
   const error = form?.errors?.[props.name as string] || props.error
   const hasError = !!error
 
-  console.log('DateRangePicker value:', value)
-
   const parsedDate = React.useMemo((): RangeValue<DateValue> | null => {
     if (!value?.start || !value.end) {
-      console.log('DateRangePicker: Keine vollständigen Werte vorhanden')
       return null
     }
-
-    console.log('DateRangePicker: Parse', value.start, 'bis', value.end)
 
     try {
       const startDateValue = parseToDateValue(value.start)
       const endDateValue = parseToDateValue(value.end)
-
-      console.log('DateRangePicker: Parsed zu DateValue:', startDateValue, endDateValue)
 
       if (!startDateValue || !endDateValue) return null
 
@@ -264,33 +259,33 @@ const DateRangePicker = ({
   }, [value?.start, value?.end])
 
   // Convert RangeValue<DateValue> to RangeValue<string>
-  const handleChange = React.useCallback((newValue: RangeValue<DateValue> | null) => {
-    console.log('DateRangePicker onChange:', newValue)
+  const handleChange = React.useCallback(
+    (newValue: RangeValue<DateValue> | null) => {
+      if (!onChange) return
 
-    if (!onChange) return
-
-    if (!newValue?.start || !newValue.end) {
-      onChange(null)
-      return
-    }
-
-    try {
-      const startDate = dateValueToDate(newValue.start)
-      const endDate = dateValueToDate(newValue.end)
-
-      // Formatiere immer zu yyyy-MM-dd für die registerDateRange-Funktion
-      const formattedRange = {
-        start: format(startDate, 'yyyy-MM-dd'),
-        end: format(endDate, 'yyyy-MM-dd')
+      if (!newValue?.start || !newValue.end) {
+        onChange(null)
+        return
       }
 
-      console.log('DateRangePicker: Formatierte Range:', formattedRange)
-      onChange(formattedRange)
-    } catch (error) {
-      console.warn('DateRangePicker: Fehler beim Formatieren:', error)
-      onChange(null)
-    }
-  }, [onChange])
+      try {
+        const startDate = dateValueToDate(newValue.start)
+        const endDate = dateValueToDate(newValue.end)
+
+        // Formatiere immer zu yyyy-MM-dd für die registerDateRange-Funktion
+        const formattedRange = {
+          start: format(startDate, 'yyyy-MM-dd'),
+          end: format(endDate, 'yyyy-MM-dd')
+        }
+
+        onChange(formattedRange)
+      } catch (error) {
+        console.warn('DateRangePicker: Fehler beim Formatieren:', error)
+        onChange(null)
+      }
+    },
+    [onChange]
+  )
 
   return (
     <BaseDateRangePicker
@@ -315,11 +310,7 @@ const DateRangePicker = ({
 
         <div className="flex flex-none items-center justify-end gap-1">
           <DateRangePickerClearButton />
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-6 data-[focus-visible]:ring-offset-0"
-          >
+          <Button variant="ghost" size="icon" className="size-6 data-[focus-visible]:ring-offset-0">
             <Icon icon={Calendar04Icon} className="size-4" />
           </Button>
         </div>
@@ -377,10 +368,5 @@ export const createDateRangeChangeHandler = (
   }
 }
 
-export {
-  DatePicker,
-  DateRangePicker,
-  BaseDatePicker,
-  BaseDateRangePicker,
-}
+export { DatePicker, DateRangePicker, BaseDatePicker, BaseDateRangePicker }
 export type { DatePickerProps, DateRangePickerProps }
