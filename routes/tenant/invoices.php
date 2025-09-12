@@ -6,15 +6,17 @@ use App\Http\Controllers\App\Invoice\InvoiceCreateController;
 use App\Http\Controllers\App\Invoice\InvoiceDeleteController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsAddOnAccountInvoiceController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsController;
-use App\Http\Controllers\App\Invoice\InvoiceDetailsEditBaseController;
+use App\Http\Controllers\App\Invoice\InvoiceEditBaseDataController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsStoreOnAccountInvoiceController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsUpdateBaseController;
 use App\Http\Controllers\App\Invoice\InvoiceDuplicateController;
 use App\Http\Controllers\App\Invoice\InvoiceHistoryController;
 use App\Http\Controllers\App\Invoice\InvoiceIndexController;
+use App\Http\Controllers\App\Invoice\InvoiceLineCreateController;
 use App\Http\Controllers\App\Invoice\InvoiceLineDeleteController;
 use App\Http\Controllers\App\Invoice\InvoiceLineDuplicateController;
 use App\Http\Controllers\App\Invoice\InvoiceLineEditController;
+use App\Http\Controllers\App\Invoice\InvoiceLineStoreController;
 use App\Http\Controllers\App\Invoice\InvoiceLineUpdateController;
 use App\Http\Controllers\App\Invoice\InvoiceMarkAsSentController;
 use App\Http\Controllers\App\Invoice\InvoicePaymentCreateController;
@@ -59,7 +61,7 @@ Route::post('invoicing/invoices', InvoiceStoreController::class)
 Route::delete('invoicing/invoices/{invoice}', InvoiceDeleteController::class)
     ->name('app.invoice.delete');
 
-Route::get('invoicing/invoices/{invoice}/base-edit', InvoiceDetailsEditBaseController::class)
+Route::get('invoicing/invoices/{invoice}/base-edit', InvoiceEditBaseDataController::class)
     ->name('app.invoice.base-edit');
 
 Route::get('invoicing/invoices/{invoice}/unrelease', InvoiceUnreleaseController::class)
@@ -75,6 +77,10 @@ Route::get('invoicing/invoices/{invoice}/line-duplicate/{invoiceLine}', InvoiceL
     ->name('app.invoice.line-duplicate')
     ->middleware([HandlePrecognitiveRequests::class]);
 
+Route::get('invoicing/invoices/{invoice}/line-create', InvoiceLineCreateController::class)
+    ->name('app.invoice.line-create')
+    ->middleware([HandlePrecognitiveRequests::class]);
+
 Route::get('invoicing/invoices/{invoice}/line-edit/{invoiceLine}', InvoiceLineEditController::class)
     ->name('app.invoice.line-edit')
     ->middleware([HandlePrecognitiveRequests::class]);
@@ -82,6 +88,15 @@ Route::get('invoicing/invoices/{invoice}/line-edit/{invoiceLine}', InvoiceLineEd
 Route::put('invoicing/invoices/{invoice}/line-update/{invoiceLine}', InvoiceLineUpdateController::class)
     ->name('app.invoice.line-update')
     ->middleware([HandlePrecognitiveRequests::class]);
+
+Route::post('invoicing/invoices/{invoice}/line-update/store', InvoiceLineStoreController::class)
+    ->name('app.invoice.line-store')
+    ->middleware([HandlePrecognitiveRequests::class]);
+
+
+
+
+
 
 Route::delete('invoicing/invoices/{invoice}/line-delete/{invoiceLine}', InvoiceLineDeleteController::class)
     ->name('app.invoice.line-delete')

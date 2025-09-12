@@ -339,7 +339,7 @@ class Invoice extends Model implements MediableInterface
 
     public function getQrCodeAttribute(): string
     {
-        if (! $this->contact) {
+        if (! $this->contact || $this->amount_gross <= 0) {
             return '';
         }
 
