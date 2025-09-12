@@ -21,7 +21,7 @@ use App\Models\Tax;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 
-class InvoiceDetailsEditBaseController extends Controller
+class InvoiceEditBaseDataController extends Controller
 {
     public function __invoke(Request $request, Invoice $invoice)
     {

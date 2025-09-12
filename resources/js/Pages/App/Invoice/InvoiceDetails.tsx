@@ -53,6 +53,11 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
     }
   }
 
+  const handleAddNewLinkClicked = (type: number) => {
+    console.log(type)
+    router.visit(route('app.invoice.line-create', { invoice: invoice.id, _query: { type } }))
+  }
+
   return (
     <InvoiceDetailsLayout invoice={invoice}>
       <div className="flex-1">
@@ -64,6 +69,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
             className="!rounded-r-none"
             title="Rechnungsposition hinzufügen"
             icon={RowInsertIcon}
+            onClick={() => handleAddNewLinkClicked(1)}
           />
           <DropdownButton
             variant="outline"
@@ -72,17 +78,29 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
             icon={ChevronDown}
             className="!rounded-l-none !border-l-0 p-1"
           >
-            <MenuItem icon={CalculatorIcon} title="Standard-Rechnungsposition" ellipsis separator />
+            <MenuItem
+              icon={CalculatorIcon}
+              title="Standard-Rechnungsposition"
+              ellipsis
+              onClick={() => handleAddNewLinkClicked(1)}
+            />
             <MenuItem
               icon={FirstBracketIcon}
               title="Überschreibarer Gesamtpreis"
               ellipsis
               separator
+              onClick={() => handleAddNewLinkClicked(3)}
             />
 
-            <MenuItem icon={HeadingIcon} title="Überschrift" ellipsis />
-            <MenuItem icon={TextAlignJustifyLeftIcon} title="Text" ellipsis />
-            <MenuItem icon={TextVerticalAlignmentIcon} title="Seitenumbruch" ellipsis separator />
+            <MenuItem icon={HeadingIcon} title="Überschrift" ellipsis isDisabled />
+            <MenuItem icon={TextAlignJustifyLeftIcon} title="Text" ellipsis isDisabled />
+            <MenuItem
+              icon={TextVerticalAlignmentIcon}
+              title="Seitenumbruch"
+              ellipsis
+              separator
+              isDisabled
+            />
             <MenuItem
               icon={CashbackEuroIcon}
               title="Mit Akonto-Zahlung verrechnen"

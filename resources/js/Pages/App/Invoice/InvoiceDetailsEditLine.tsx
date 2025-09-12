@@ -1,16 +1,14 @@
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useEffect, useState } from 'react'
-
 import { Button } from '@/Components/ui/twc-ui/button'
 import { DateRangePicker } from '@/Components/ui/twc-ui/date-picker'
+import { Dialog } from '@/Components/ui/twc-ui/dialog'
 import { Form, useForm } from '@/Components/ui/twc-ui/form'
+import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 import { NumberField } from '@/Components/ui/twc-ui/number-field'
 import { Select } from '@/Components/ui/twc-ui/select'
 import { TextField } from '@/Components/ui/twc-ui/text-field'
-
-import { Dialog } from '@/Components/ui/twc-ui/dialog'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -20,11 +18,15 @@ interface Props {
 export const InvoiceDetailsEditLine: React.FC<Props> = ({ invoice, invoiceLine }) => {
   const form = useForm<App.Data.InvoiceLineData>(
     'invoice-line-edit-form',
-    'put',
-    route('app.invoice.line-update', {
-      invoice: invoice.id,
-      invoiceLine: invoiceLine.id
-    }),
+    invoiceLine.id ? 'put' : 'post',
+    invoiceLine.id
+      ? route('app.invoice.line-update', {
+          invoice: invoice.id,
+          invoiceLine: invoiceLine.id
+        })
+      : route('app.invoice.line-store', {
+          invoice: invoice.id
+        }),
     invoiceLine
   )
 

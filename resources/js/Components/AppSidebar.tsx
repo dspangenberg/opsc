@@ -120,19 +120,23 @@ const data = {
         },
         {
           title: 'Belege',
+          url: route('app.invoice.index', {}, false)
+        },
+        {
+          title: 'Vorgaben',
           url: route('app.invoice.index', {}, false),
-          hasSep: true
-        },
-        {
-          title: 'Buchhaltungskonten',
-          url: route('app.invoice.index', {}, false)
-        },
-        {
-          title: 'Regeln',
-          url: route('app.invoice.index', {}, false)
+          items: [
+            {
+              title: 'Buchhaltungskonten',
+              url: route('app.invoice.index', {}, false)
+            },
+            {
+              title: 'Regeln',
+              url: route('app.invoice.index', {}, false)
+            }
+          ]
         }
-      ],
-      hasSep: true
+      ]
     }
   ],
   navSecondary: []
