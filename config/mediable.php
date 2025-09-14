@@ -31,7 +31,7 @@ return [
      * Uploader will throw an exception if a disk not in this list is selected
      */
     'allowed_disks' => [
-        'public',
+        'public','s3','s3_private'
     ],
 
     /*

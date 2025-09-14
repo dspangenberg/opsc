@@ -45,13 +45,12 @@ use Maize\Markable\Models\Favorite;
  * @property-read Salutation|null $salutation
  * @property-read Tax|null $tax
  * @property-read Title|null $title
- *
  * @method static Builder<static>|Contact newModelQuery()
  * @method static Builder<static>|Contact newQuery()
  * @method static Builder<static>|Contact query()
  * @method static Builder<static>|Contact view($view)
  * @method static Builder<static>|Contact whereHasMark(\Maize\Markable\Mark $mark, Model $user, ?string $value = null)
- *
+ * @property-read string $primary_phone
  * @mixin Eloquent
  */
 class Contact extends Model

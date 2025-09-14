@@ -29,6 +29,13 @@ return [
         'backup_profile_id' => env('PLOI_BACKUP_PROFILE_ID'),
         'base_url' => env('PLOI_API_BASE_URL'),
     ],
+    'gotenberg' => [
+        'url' => env('GOTENBERG_URL'),
+    ],
+    'vat_currency_rates' => [
+        'host' => 'https://umsatzsteuer-umrechnungskurse.org/api/',
+        'key' => env('CONVERSION_RATED_API_KEY'),
+    ],
 
     'resend' => [
         'key' => env('RESEND_KEY'),

@@ -299,6 +299,7 @@ return [
             'local',
             'public',
             's3',
+            's3_private'
         ],
 
         /**

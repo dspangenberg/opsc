@@ -10,11 +10,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TaxRate> $rates
  * @property-read int|null $rates_count
- *
  * @method static Builder<static>|Tax newModelQuery()
  * @method static Builder<static>|Tax newQuery()
  * @method static Builder<static>|Tax query()
- *
  * @mixin Eloquent
  */
 class Tax extends Model

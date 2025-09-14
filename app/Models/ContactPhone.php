@@ -13,6 +13,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|ContactPhone newModelQuery()
  * @method static Builder<static>|ContactPhone newQuery()
  * @method static Builder<static>|ContactPhone query()
+ * @property-read \App\Models\PhoneCategory|null $category
  * @mixin Eloquent
  */
 class ContactPhone extends Model

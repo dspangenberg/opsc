@@ -252,7 +252,8 @@ const InvoiceIndex: React.FC = () => {
       stats.total_gross,
       stats.total_loss_of_receivables,
       setView,
-      setShowFilter
+      setShowFilter,
+      stats.total_open_amount
     ]
   )
 

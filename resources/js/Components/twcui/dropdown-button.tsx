@@ -171,6 +171,7 @@ interface DropdownMenuProps<T>
   icon?: IconType
   className?: string
   iconClassName?: string
+  isDisabled?: boolean
   placement?: PopoverProps['placement']
   selectionMode?: AriaMenuProps<T>['selectionMode']
   selectedKeys?: AriaMenuProps<T>['selectedKeys']
@@ -183,6 +184,7 @@ function DropdownButton<T extends object>({
   placement = 'bottom right',
   selectionMode = undefined,
   selectedKeys = undefined,
+  isDisabled,
   iconClassName = undefined,
   className = undefined,
   onSelectionChange,
@@ -194,6 +196,7 @@ function DropdownButton<T extends object>({
         variant={variant}
         className={className}
         size={props.size}
+        isDisabled={isDisabled}
         iconClassName={iconClassName}
         icon={props.icon}
         title={title}

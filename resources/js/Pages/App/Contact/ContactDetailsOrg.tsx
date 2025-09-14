@@ -8,7 +8,7 @@ import { ContactDetailsMail } from '@/Pages/App/Contact/ContactDetailsMails'
 import { ContactDetailsPhone } from '@/Pages/App/Contact/ContactDetailsPhones'
 
 interface ContactDetailsOrgInfoBoxProps {
-  contact: App.Data.ContactData
+  contact: App.Data.ContactData | App.Data.CompanyData
   showSecondary?: boolean
 }
 
@@ -48,8 +48,8 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
       <DataCardContent showSecondary={showSecondary}>
         <DataCardSection
           title="Debitorinfos"
+          suppressEmptyText
           icon={Edit02Icon}
-          onClick={onDebtorDataClicked}
           buttonTooltip="Debitorinfos bearbeiten"
         >
           <DataCardField
@@ -64,11 +64,10 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
           />
         </DataCardSection>
         <DataCardSection
-          secondary
+          suppressEmptyText
           className="grid grid-cols-2"
           title="Kreditorinfos"
           icon={Edit02Icon}
-          onClick={onDebtorDataClicked}
         >
           <DataCardField
             variant="vertical"
@@ -77,7 +76,6 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
           />
         </DataCardSection>
         <DataCardSection
-          secondary
           title="Telefonnummern"
           icon={Add01Icon}
           forceChildren={(contact.phones?.length ?? 0) > 0}
