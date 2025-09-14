@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\DB;
  * @method static Builder<static>|Time view($view)
  * @method static Builder<static>|Time withMinutes()
  * @method static Builder<static>|Time applyDynamicFilters(\Illuminate\Http\Request $request, array $options = [])
+ * @method static Builder<static>|Time applyFiltersFromObject(array|string $filters, array $options = [])
  * @mixin Eloquent
  */
 class Time extends Model

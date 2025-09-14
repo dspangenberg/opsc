@@ -10,11 +10,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 /**
  * @property-read Invoice|null $linked_invoice
  * @property-read TaxRate|null $rate
- *
  * @method static Builder<static>|InvoiceLine newModelQuery()
  * @method static Builder<static>|InvoiceLine newQuery()
  * @method static Builder<static>|InvoiceLine query()
- *
  * @mixin Eloquent
  */
 class InvoiceLine extends Model

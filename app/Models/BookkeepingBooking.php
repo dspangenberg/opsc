@@ -15,11 +15,9 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property-read string $document_number
  * @property-read NumberRangeDocumentNumber|null $range_document_number
  * @property-read Tax|null $tax
- *
  * @method static Builder<static>|BookkeepingBooking newModelQuery()
  * @method static Builder<static>|BookkeepingBooking newQuery()
  * @method static Builder<static>|BookkeepingBooking query()
- *
  * @mixin Eloquent
  */
 class BookkeepingBooking extends Model

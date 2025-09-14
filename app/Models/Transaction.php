@@ -23,13 +23,14 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Payment> $payments
  * @property-read int|null $payments_count
  * @property-read NumberRangeDocumentNumber|null $range_document_number
- *
  * @method static Builder<static>|Transaction newModelQuery()
  * @method static Builder<static>|Transaction newQuery()
  * @method static Builder<static>|Transaction query()
- *
  * @property-read BookkeepingAccount|null $account
- *
+ * @property-read float $remaining_amount
+ * @method static Builder<static>|Transaction applyDynamicFilters(\Illuminate\Http\Request $request, array $options = [])
+ * @method static Builder<static>|Transaction applyFiltersFromObject(array|string $filters, array $options = [])
+ * @method static Builder<static>|Transaction search($searchText)
  * @mixin Eloquent
  */
 class Transaction extends Model

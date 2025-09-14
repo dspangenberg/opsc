@@ -104,7 +104,7 @@ const data = {
     },
     {
       title: 'Buchhaltung',
-      url: route('app.bookkeeping.transactions.index', {}, false),
+      url: route('app.bookkeeping.bookings.index', {}, false),
       icon: AbacusIcon,
       activePath: '/app/bookkeeping',
       items: [
@@ -120,15 +120,29 @@ const data = {
         },
         {
           title: 'Belege',
-          url: route('app.invoice.index', {}, false)
+          url: route('app.bookkeeping.receipts.index', {}, false),
+          activePath: '/app/bookkeeping/receipts',
+          items: [
+            {
+              title: 'Belege bestätigen',
+              url: route('app.bookkeeping.receipts.confirm-first', {}, false),
+              activePath: '/app/bookkeeping/receipts/confirm'
+            }
+          ]
         },
         {
           title: 'Vorgaben',
-          url: route('app.invoice.index', {}, false),
+          url: route('app.bookkeeping.cost-centers.index', {}, false),
+          activePath: '/app/bookkeeping/preferences',
           items: [
             {
               title: 'Buchhaltungskonten',
               url: route('app.invoice.index', {}, false)
+            },
+            {
+              title: 'Kostenstellen',
+              url: route('app.bookkeeping.cost-centers.index', {}, false),
+              activePath: '/app/bookkeeping/preferences/cost-centers'
             },
             {
               title: 'Regeln',

@@ -45,7 +45,6 @@ use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
  * @property-read NumberRangeDocumentNumber|null $range_document_number
  * @property-read Tax|null $tax
  * @property-read InvoiceType|null $type
- *
  * @method static MediableCollection<int, static> all($columns = ['*'])
  * @method static Builder<static>|Invoice byYear(int $year)
  * @method static MediableCollection<int, static> get($columns = ['*'])
@@ -60,7 +59,6 @@ use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
  * @method static Builder<static>|Invoice withMediaMatchAll(bool $tags = [], bool $withVariants = false)
  * @method static Builder<static>|Invoice unpaid()
  * @method static Builder<static>|Invoice view($view)
- *
  * @mixin Eloquent
  */
 class Invoice extends Model implements MediableInterface

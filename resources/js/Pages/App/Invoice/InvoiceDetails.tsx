@@ -61,12 +61,11 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
   return (
     <InvoiceDetailsLayout invoice={invoice}>
       <div className="flex-1">
-        {children}
-        <InvoicingTable invoice={invoice} onLineCommand={handeLineCommand} />
         <div className="flex items-center p-4">
           <Button
             variant="outline"
             className="!rounded-r-none"
+            isDisabled={!invoice.is_draft}
             title="Rechnungsposition hinzufügen"
             icon={RowInsertIcon}
             onClick={() => handleAddNewLinkClicked(1)}
@@ -76,6 +75,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
             size="icon"
             iconClassName="size-4"
             icon={ChevronDown}
+            isDisabled={!invoice.is_draft}
             className="!rounded-l-none !border-l-0 p-1"
           >
             <MenuItem
@@ -110,6 +110,8 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
             />
           </DropdownButton>
         </div>
+        {children}
+        <InvoicingTable invoice={invoice} onLineCommand={handeLineCommand} />
       </div>
       <div className="h-fit w-sm flex-none space-y-6 px-1">
         <InvoiceDetailsSide invoice={invoice} />
