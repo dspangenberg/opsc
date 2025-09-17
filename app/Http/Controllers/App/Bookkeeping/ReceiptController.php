@@ -248,9 +248,6 @@ class ReceiptController extends Controller
                         }
 
                         $receipt->pages = $metadata[$file->getClientOriginalName()]['PageCount'] || 1;
-
-
-                        ds('PDF Metadaten:', $metadata);
                     } else {
                         $receipt->issued_on = Carbon::createFromTimestamp($file->getCTime());
                         \Log::warning('Gotenberg Metadaten-Extraktion fehlgeschlagen: '.$response->body());
