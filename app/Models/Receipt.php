@@ -71,7 +71,8 @@ class Receipt extends Model
 
     public function getDocumentNumberAttribute(): string
     {
-        return $this->range_document_number ? $this->range_document_number->document_number : '';
+
+        return $this->number_range_document_number_id ? $this->range_document_number->document_number : '';
     }
 
 
@@ -90,9 +91,9 @@ class Receipt extends Model
         return $this->belongsTo(BookkeepingAccount::class);
     }
 
-    public function numberRangeDocumentNumber(): BelongsTo
+    public function range_document_number(): BelongsTo
     {
-        return $this->belongsTo(NumberRangeDocumentNumber::class);
+        return $this->belongsTo(NumberRangeDocumentNumber::class, 'number_range_document_number_id', 'id');
     }
 
     protected function casts(): array
