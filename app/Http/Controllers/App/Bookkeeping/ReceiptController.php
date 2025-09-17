@@ -121,8 +121,6 @@ class ReceiptController extends Controller
     public function update(ReceiptUpdateRequest $request, Receipt $receipt)
     {
 
-        ds($request->validated());
-
         if ($request->validated('org_currency') === 'EUR') {
             $receipt->amount = $request->validated('amount');
         } else {
@@ -143,7 +141,6 @@ class ReceiptController extends Controller
             $receipt->is_confirmed = true;
             if (!$receipt->number_range_document_number_id) {
                 $receipt->number_range_document_number_id = NumberRange::createDocumentNumber($receipt, 'issued_on');
-                ds($receipt->toArray());
                 $receipt->save();
                 // $receipt->load('range_document_number');
 
