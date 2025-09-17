@@ -35,7 +35,7 @@ class ReceiptData extends Data
 
         public readonly ?string $org_currency,
         public readonly ?float $org_amount,
-        public readonly ?float $amount,
+        public readonly float $amount,
         public readonly ?float $exchange_rate,
         public readonly ?string $document_number,
 
