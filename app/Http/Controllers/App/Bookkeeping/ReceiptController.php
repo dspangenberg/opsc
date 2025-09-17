@@ -247,7 +247,7 @@ class ReceiptController extends Controller
                             $receipt->issued_on = Carbon::createFromTimestamp($file->getCTime());
                         }
 
-                        $receipt->pages = $metadata[$file->getClientOriginalName()]['PageCount'];
+                        $receipt->pages = $metadata[$file->getClientOriginalName()]['PageCount'] || 1;
 
 
                         ds('PDF Metadaten:', $metadata);
