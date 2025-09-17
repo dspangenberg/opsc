@@ -21,6 +21,7 @@ class ReceiptUpdateRequest extends FormRequest
             'amount' => ['required', 'numeric'],
             'contact_id' => ['required', 'exists:contacts,id'],
             'cost_center_id' => ['required', 'exists:cost_centers,id'],
+            'is_confirmed' => ['nullable', 'boolean'],
         ];
     }
 }

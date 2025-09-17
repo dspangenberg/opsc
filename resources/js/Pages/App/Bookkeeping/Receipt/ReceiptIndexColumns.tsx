@@ -7,10 +7,17 @@ import { Delete03Icon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-ico
 import { Link } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
+import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
 
 const editUrl = (id: number | null) =>
   id ? route('app.bookkeeping.cost-centers.edit', { id }) : '#'
+
+const currencyFormatter = new Intl.NumberFormat('de-DE', {
+  style: 'currency',
+  currency: 'EUR',
+  minimumFractionDigits: 2
+})
 
 const RowActions = ({ row }: { row: Row<App.Data.ReceiptData> }) => {
   return (
@@ -54,16 +61,27 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
     cell: ({ row, getValue }) => <span>{getValue() as string}</span>
   },
   {
-    accessorKey: 'org_filename',
-    header: 'Kostenstelle',
+    accessorKey: 'contact.full_name',
+    header: 'Kreditor ',
     size: 300,
     cell: ({ row, getValue }) => (
-      <Link
-        href={editUrl(row.original.id)}
-        className="truncate align-middle font-medium hover:underline"
-      >
-        {getValue() as string}
-      </Link>
+      <>
+        <Link
+          href={editUrl(row.original.id)}
+          className="truncate align-middle font-medium hover:underline"
+        >
+          {getValue() as string}
+        </Link>
+        <Badge variant="outline">{row.original.document_number}</Badge>
+      </>
+    )
+  },
+  {
+    accessorKey: 'amount',
+    header: () => <div className="text-right">Brutto</div>,
+    size: 90,
+    cell: ({ row }) => (
+      <div className="text-right">{currencyFormatter.format(row.original.amount ?? 0)}</div>
     )
   },
   {

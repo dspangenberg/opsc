@@ -324,7 +324,7 @@ org_currency: string | null;
 org_amount: number | null;
 amount: number | null;
 exchange_rate: number | null;
-is_confirmed: boolean;
+document_number: string | null;
 iban: string | null;
 number_range_document_number_id: number | null;
 account: App.Data.BookkeepingAccountData | null;

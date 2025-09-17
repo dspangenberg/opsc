@@ -37,7 +37,7 @@ class ReceiptData extends Data
         public readonly ?float $org_amount,
         public readonly ?float $amount,
         public readonly ?float $exchange_rate,
-        public readonly bool $is_confirmed,
+        public readonly ?string $document_number,
 
         public readonly ?string $iban,
         public readonly ?int $number_range_document_number_id,

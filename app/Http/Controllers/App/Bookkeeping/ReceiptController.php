@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use Log;
+use Plank\Mediable\Exceptions\MediaMoveException;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
 use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
 use Plank\Mediable\Exceptions\MediaUpload\FileNotFoundException;
@@ -72,14 +73,16 @@ class ReceiptController extends Controller
         try {
             return Carbon::parse($createDate);
         } catch (\Exception $e) {
-            \Log::warning('Konnte CreateDate nicht parsen: ' . $createDate);
+            \Log::warning('Konnte CreateDate nicht parsen: '.$createDate);
             return null;
         }
     }
 
     public function index()
     {
-        $receipts = Receipt::query()->with(['account', 'numberRangeDocumentNumber', 'contact'])->orderBy('issued_on')->paginate();
+        $receipts = Receipt::query()->with([
+            'account', 'range_document_number', 'contact'
+        ])->orderBy('issued_on')->paginate();
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptIndex', [
             'receipts' => ReceiptData::collect($receipts),
         ]);
@@ -88,12 +91,13 @@ class ReceiptController extends Controller
     /**
      */
 
-    public function streamPdf(Receipt $receipt) {
+    public function streamPdf(Receipt $receipt)
+    {
         $media = $receipt->firstMedia('file');
         return response()->streamDownload(
-            function() use ($media) {
+            function () use ($media) {
                 $stream = $media->stream();
-                while($bytes = $stream->read(1024)) {
+                while ($bytes = $stream->read(1024)) {
                     echo $bytes;
                 }
             },
@@ -105,12 +109,17 @@ class ReceiptController extends Controller
         );
     }
 
-    public function confirmFirst() {
+    public function confirmFirst()
+    {
         $receipts = Receipt::query()->where('is_confirmed', false)->orderBy('id')->first();
         return redirect()->route('app.bookkeeping.receipts.confirm', ['receipt' => $receipts->id]);
     }
 
-    public function update(ReceiptUpdateRequest $request, Receipt $receipt) {
+    /**
+     * @throws MediaMoveException
+     */
+    public function update(ReceiptUpdateRequest $request, Receipt $receipt)
+    {
 
         ds($request->validated());
 
@@ -122,22 +131,33 @@ class ReceiptController extends Controller
         $receipt->reference = $request->validated('reference');
         $receipt->contact_id = $request->validated('contact_id');
         $receipt->cost_center_id = $request->validated('cost_center_id');
+        $receipt->issued_on = $request->validated('issued_on');
 
         $shouldConfirm = $request->query('confirm', false);
         $shouldLoadNext = $request->query('load_next', true);
 
-        ds($shouldConfirm);
 
         $receipt->save();
 
-        ds($receipt->toArray());
-
-        if ($shouldConfirm && !$receipt->is_confirmed) {
+        if ($request->validated('is_confirmed') === true && !$receipt->is_confirmed) {
             $receipt->is_confirmed = true;
             if (!$receipt->number_range_document_number_id) {
                 $receipt->number_range_document_number_id = NumberRange::createDocumentNumber($receipt, 'issued_on');
+                ds($receipt->toArray());
+                $receipt->save();
+                // $receipt->load('range_document_number');
+
             }
-            $receipt->save();
+
+            $media = $receipt->firstMedia('file');
+            $folder = '/bookkeeping/receipts/'.$receipt->issued_on->year.'/';
+            $filename = $receipt->issued_on->format('Y-m-d').'-'.$media->filename;
+
+
+            $media->move($folder, $filename);
+
+
+
         }
 
         $receipts = Receipt::query()->where('is_confirmed', false)->orderBy('id')->get();
@@ -148,11 +168,11 @@ class ReceiptController extends Controller
 
         $nextReceipt = $currentIndex < $receipts->count() - 1 ? $receipts[$currentIndex + 1] : null;
 
-        if ($shouldLoadNext && $nextReceipt) {
-            return redirect()->route('app.bookkeeping.receipts.confirm', ['receipt' => $nextReceipt->id]);
-        } else {
-            return redirect()->route('app.bookkeeping.receipts.index');
-        }
+        Inertia::render('App/Bookkeeping/Receipt/ReceiptConfirm', [
+            'receipt' => ReceiptData::from($receipt),
+            'nextReceipt' => $nextReceipt ? route('app.bookkeeping.receipts.confirm',
+                ['receipt' => $nextReceipt->id]) : null,
+        ]);
     }
 
     /**
@@ -160,13 +180,10 @@ class ReceiptController extends Controller
      */
     public function confirm(Receipt $receipt)
     {
-        $receipt->load(['account', 'numberRangeDocumentNumber', 'contact']);
-
-        ds($receipt->toArray());
+        $receipt->load(['account', 'range_document_number', 'contact']);
 
         $receipts = Receipt::query()->where('is_confirmed', false)->orderBy('id')->get();
         $currencies = Currency::query()->orderBy('name')->get();
-
 
         $currentIndex = $receipts->search(function ($item) use ($receipt) {
             return $item->id === $receipt->id;
@@ -178,16 +195,12 @@ class ReceiptController extends Controller
         $contacts = Contact::where('is_creditor', true)->orderBy('name')->get();
         $costCenters = CostCenter::query()->orderBy('name')->get();
 
-
-        $media = $receipt->firstMedia('file');
-
-        $pdfFile = $media->getTemporaryUrl(Carbon::now()->addMinutes(5));
-
-
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptConfirm', [
             'receipt' => ReceiptData::from($receipt),
-            'nextReceipt' => $nextReceipt ? route('app.bookkeeping.receipts.confirm', ['receipt' => $nextReceipt->id]) : null,
-            'prevReceipt' => $prevReceipt? route('app.bookkeeping.receipts.confirm', ['receipt' => $prevReceipt->id]) : null,
+            'nextReceipt' => $nextReceipt ? route('app.bookkeeping.receipts.confirm',
+                ['receipt' => $nextReceipt->id]) : null,
+            'prevReceipt' => $prevReceipt ? route('app.bookkeeping.receipts.confirm',
+                ['receipt' => $prevReceipt->id]) : null,
             'contacts' => CompanyData::collect($contacts),
             'cost_centers' => CostCenterData::collect($costCenters),
             'currencies' => CurrencyData::collect($currencies),
@@ -204,7 +217,8 @@ class ReceiptController extends Controller
      * @throws ConfigurationException
      * @throws Throwable
      */
-    public function upload(ReceiptUploadRequest $request) {
+    public function upload(ReceiptUploadRequest $request)
+    {
         $files = $request->file('files'); // Array von Dateien
         $uploadedReceipts = [];
 
@@ -220,7 +234,7 @@ class ReceiptController extends Controller
                         'files',
                         file_get_contents($file->getRealPath()),
                         $file->getClientOriginalName()
-                    )->post($gotenbergUrl . '/forms/pdfengines/metadata/read');
+                    )->post($gotenbergUrl.'/forms/pdfengines/metadata/read');
 
                     if ($response->successful()) {
                         $metadata = $response->json();
@@ -233,17 +247,17 @@ class ReceiptController extends Controller
                             $receipt->issued_on = Carbon::createFromTimestamp($file->getCTime());
                         }
 
-                        $receipt->pages =  $metadata[$file->getClientOriginalName()]['PageCount'];
+                        $receipt->pages = $metadata[$file->getClientOriginalName()]['PageCount'];
 
 
                         ds('PDF Metadaten:', $metadata);
                     } else {
                         $receipt->issued_on = Carbon::createFromTimestamp($file->getCTime());
-                        \Log::warning('Gotenberg Metadaten-Extraktion fehlgeschlagen: ' . $response->body());
+                        \Log::warning('Gotenberg Metadaten-Extraktion fehlgeschlagen: '.$response->body());
                     }
                 } catch (\Exception $e) {
                     $receipt->issued_on = Carbon::createFromTimestamp($file->getCTime());
-                    \Log::error('Fehler beim Lesen der PDF-Metadaten: ' . $e->getMessage());
+                    \Log::error('Fehler beim Lesen der PDF-Metadaten: '.$e->getMessage());
                 }
 
 

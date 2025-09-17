@@ -1,22 +1,17 @@
-import { LogoSpinner } from '@dspangenberg/twcui'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
-import { useState } from 'react'
-import { Document, Page, pdfjs } from 'react-pdf'
 import { PageContainer } from '@/Components/PageContainer'
 import { PdfViewerContainer } from '@/Components/PdfViewerContainer'
 import { Button } from '@/Components/ui/twc-ui/button'
+import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
 import { ComboBox } from '@/Components/ui/twc-ui/combo-box'
 import { DatePicker } from '@/Components/ui/twc-ui/date-picker'
-import { Dialog } from '@/Components/ui/twc-ui/dialog'
 import { Form, useForm } from '@/Components/ui/twc-ui/form'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 import { NumberField } from '@/Components/ui/twc-ui/number-field'
 import { Select } from '@/Components/ui/twc-ui/select'
 import { TextField } from '@/Components/ui/twc-ui/text-field'
 import type { PageProps } from '@/Types'
-
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
 interface Props extends PageProps {
   receipt: App.Data.ReceiptData
@@ -48,7 +43,7 @@ const ReceiptConfirm: React.FC<Props> = ({
   console.log(receipt)
 
   const handleSubmitted = () => {
-    form.reset()
+    ;(form.reset as unknown as () => void)()
   }
 
   const handleNextReceipt = () => {
@@ -65,7 +60,7 @@ const ReceiptConfirm: React.FC<Props> = ({
         document={route('app.bookkeeping.receipts.pdf', { receipt: receipt.id })}
         filename={receipt.org_filename}
       />
-      <Form form={form} className="flex-1" onSubmitted={handleSubmitted}>
+      <Form form={form} className="flex-1">
         <FormGroup>
           <div className="col-span-8">
             <DatePicker label="Rechnungsdatum" {...form.register('issued_on')} />
@@ -99,6 +94,9 @@ const ReceiptConfirm: React.FC<Props> = ({
               label="Kostenstelle"
               items={cost_centers}
             />
+            <Checkbox {...form.registerCheckbox('is_confirmed')} className="pt-1.5">
+              Beleg bestätigen und buchen
+            </Checkbox>
           </div>
         </FormGroup>
 
