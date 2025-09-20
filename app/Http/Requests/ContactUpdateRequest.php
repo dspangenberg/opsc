@@ -29,6 +29,7 @@ class ContactUpdateRequest extends FormRequest
             'register_court' => ['nullable', 'string'],
             'register_number' => ['nullable', 'string'],
             'outturn_account_id' => 'nullable', 'exists:bookkeeping_accounts,account_number',
+            'cost_center_id' => 'nullable', 'exists:cost_centers,id',
             'is_primary' => ['nullable', 'boolean'],
 
             // E-Mail-Validierung hinzufügen

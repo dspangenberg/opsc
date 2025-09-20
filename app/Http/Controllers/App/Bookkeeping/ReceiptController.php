@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\App\Bookkeeping;
 
 use App\Data\CompanyData;
-use App\Data\ContactData;
 use App\Data\CostCenterData;
 use App\Data\CurrencyData;
 use App\Data\ReceiptData;
@@ -16,12 +15,8 @@ use App\Models\Currency;
 use App\Models\NumberRange;
 use App\Models\Receipt;
 use Exception;
-use Gotenberg\Gotenberg;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
-use Log;
 use Plank\Mediable\Exceptions\MediaMoveException;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
 use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
@@ -30,53 +25,12 @@ use Plank\Mediable\Exceptions\MediaUpload\FileNotSupportedException;
 use Plank\Mediable\Exceptions\MediaUpload\FileSizeException;
 use Plank\Mediable\Exceptions\MediaUpload\ForbiddenException;
 use Plank\Mediable\Exceptions\MediaUpload\InvalidHashException;
-use Plank\Mediable\Exceptions\MediaUrlException;
 use Plank\Mediable\Facades\MediaUploader;
-use Spatie\PdfToText\Pdf;
+use Smalot\PdfParser\Parser;
 use Throwable;
 
 class ReceiptController extends Controller
 {
-    private function extractDateFromMetadata($metadata, $fileName)
-    {
-        // Verschiedene Wege versuchen, die Metadaten zu finden
-        $fileMetadata = null;
-
-        if (isset($metadata[$fileName])) {
-            $fileMetadata = $metadata[$fileName];
-        } elseif (is_array($metadata) && count($metadata) > 0) {
-            $fileMetadata = reset($metadata); // Erstes Element nehmen
-        }
-
-        if (!$fileMetadata || !isset($fileMetadata['CreateDate'])) {
-            return null;
-        }
-
-        $createDate = $fileMetadata['CreateDate'];
-
-        // Verschiedene Datumsformate unterstützen
-        $dateFormats = [
-            'Y:m:d H:i:sP',  // 2025:05:12 09:42:02Z
-            'Y:m:d H:i:s',   // 2025:05:12 09:42:02
-            'Y-m-d H:i:s',   // 2025-05-12 09:42:02
-        ];
-
-        foreach ($dateFormats as $format) {
-            try {
-                return Carbon::createFromFormat($format, $createDate);
-            } catch (\Exception $e) {
-                continue;
-            }
-        }
-
-        // Fallback: Versuche automatisches Parsen
-        try {
-            return Carbon::parse($createDate);
-        } catch (\Exception $e) {
-            \Log::warning('Konnte CreateDate nicht parsen: '.$createDate);
-            return null;
-        }
-    }
 
     public function index()
     {
@@ -173,7 +127,6 @@ class ReceiptController extends Controller
     }
 
     /**
-     * @throws MediaUrlException
      */
     public function confirm(Receipt $receipt)
     {
@@ -216,7 +169,7 @@ class ReceiptController extends Controller
      */
     public function upload(ReceiptUploadRequest $request)
     {
-        $files = $request->file('files'); // Array von Dateien
+        $files = $request->file('files');
         $uploadedReceipts = [];
 
         DB::transaction(function () use ($files, &$uploadedReceipts) {
@@ -225,39 +178,52 @@ class ReceiptController extends Controller
                 $receipt->org_filename = $file->getClientOriginalName();
                 $receipt->file_size = $file->getSize();
 
-                $gotenbergUrl = config('services.gotenberg.url');
                 try {
-                    $response = Http::attach(
-                        'files',
-                        file_get_contents($file->getRealPath()),
-                        $file->getClientOriginalName()
-                    )->post($gotenbergUrl.'/forms/pdfengines/metadata/read');
+                    $parser = new Parser();
+                    $pdf = $parser->parseFile($file);
+                    $metadata = $pdf->getDetails();
 
-                    if ($response->successful()) {
-                        $metadata = $response->json();
-
-                        // Datum aus Metadaten extrahieren
-                        $extractedDate = $this->extractDateFromMetadata($metadata, $file->getClientOriginalName());
-                        if ($extractedDate) {
-                            $receipt->issued_on = $extractedDate;
-                        } else {
-                            $receipt->issued_on = Carbon::createFromTimestamp($file->getCTime());
-                        }
-
-                        $receipt->pages = $metadata[$file->getClientOriginalName()]['PageCount'] || 1;
-                    } else {
-                        $receipt->issued_on = Carbon::createFromTimestamp($file->getCTime());
-                        \Log::warning('Gotenberg Metadaten-Extraktion fehlgeschlagen: '.$response->body());
-                    }
-                } catch (\Exception $e) {
-                    $receipt->issued_on = Carbon::createFromTimestamp($file->getCTime());
-                    \Log::error('Fehler beim Lesen der PDF-Metadaten: '.$e->getMessage());
+                    $receipt->file_created_at = $metadata['CreationDate'] ?? $file->getMTime();
+                    $receipt->pages = $metadata['Pages'] ?? 1;
+                    $receipt->text = $pdf->getText();
+                } catch (Exception) {
+                    $receipt->file_created_at = $file->getMTime();
+                    $receipt->pages = 1;
+                    $receipt->text = '';
                 }
 
-
-                $receipt->file_created_at = $file->getMTime();
                 $receipt->checksum = hash_file('sha256', $file->getRealPath());
-                $receipt->text = Pdf::getText($file);
+                $receipt->issued_on = $receipt->file_created_at;
+
+                if ($receipt->text) {
+                    // IBAN Pattern für deutsche/europäische IBANs
+                    $ibanPattern = '/\bDE\s?[0-9]{2}(?:\s?[A-Z0-9]{4}){4}\s?[A-Z0-9]{2}\b/';
+                    preg_match($ibanPattern, $receipt->text, $matches);
+                    if (!empty($matches)) {
+                        foreach ($matches as $match) {
+                            $cleanIban = preg_replace('/\s/', '', $match);
+                            $contact = Contact::query()->where('iban', $cleanIban);
+                            if ($contact) {
+                                $receipt->contact_id = $contact->first()->id;
+                            }
+
+
+                        }
+                        // Optional: IBAN in der Datenbank speichern
+                        // $receipt->iban = $matches[0][0];
+                    }
+                    $vatIdPattern = '/\b(DE\d{9}|AT[A-Z]\d{8}|BE0\d{9}|FR[A-Z0-9]{2}\d{9}|NL\d{9}B\d{2})\b/i';
+                    preg_match($vatIdPattern, $receipt->text, $vatMatches);
+                    if (!empty($vatMatches)) {
+                        foreach ($vatMatches as $vatMatch) {
+                            $cleanVatId = trim($vatMatch);
+                            // VAT ID gefunden: z.B. DE240386270
+                            // ds('VAT ID gefunden: ' . $cleanVatId);
+                        }
+                    }
+
+                }
+
                 $receipt->save();
 
                 $media = MediaUploader::fromSource($file)
@@ -266,7 +232,6 @@ class ReceiptController extends Controller
 
                 $receipt->attachMedia($media, 'file');
 
-                // Prüfung auf Duplikate
                 $duplicatedReceipt = Receipt::query()
                     ->where('id', '!=', $receipt->id)
                     ->where('checksum', $receipt->checksum)

@@ -23,6 +23,8 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
   const form = useInertiaForm<T>(method, url, data, config)
   const isDirty = !isEqual(initialDataRef.current, form.data)
 
+  console.log(url)
+
   // Create a type-safe wrapper that bypasses Inertia's complex types
   const setFormData = (name: string, value: any) => {
     ;(form as any).setData(name, value)

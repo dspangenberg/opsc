@@ -132,6 +132,7 @@ class Contact extends Model
         'register_number',
         'vat_id',
         'tax_number',
+        'cost_center_id',
         'website',
         'dob',
     ];
@@ -237,6 +238,11 @@ class Contact extends Model
     public function title(): HasOne
     {
         return $this->hasOne(Title::class, 'id', 'title_id');
+    }
+
+    public function cost_center(): HasOne
+    {
+        return $this->hasOne(CostCenter::class, 'id', 'cost_center_id');;
     }
 
     public function salutation(): HasOne
