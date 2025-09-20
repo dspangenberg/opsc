@@ -131,7 +131,6 @@ export const ReceiptUpload = () => {
       forceFormData: true,
       onSuccess: () => {
         fileActions.clearFiles()
-        alert('Upload erfolgreich!')
       },
       onError: errors => {
         console.error('Upload-Fehler:', errors)

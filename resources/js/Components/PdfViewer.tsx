@@ -27,13 +27,12 @@ import {
 } from '@hugeicons/core-free-icons'
 import { pdfjs } from 'react-pdf'
 import { useFullscreen, useToggle } from 'react-use'
+import { PdfViewerContainer } from '@/Components/PdfViewerContainer'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { useFileDownload } from '@/Hooks/useFileDownload'
 import { cn } from '@/Lib/utils'
-
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
 interface Props {
   document: string
@@ -101,107 +100,9 @@ export const PdfViewer: React.FC<Props> = ({
     filename: filename
   })
 
-  const toolbar = useMemo(
-    () => (
-      <Toolbar>
-        <Button
-          variant="toolbar"
-          icon={ArrowUp01Icon}
-          title="Seite zurück"
-          disabled={pageNumber === 1}
-        />
-        <Button
-          variant="toolbar"
-          icon={ArrowDown01Icon}
-          title="Seite vor"
-          disabled={numPages === 1}
-        />
-        <Separator orientation="vertical" />
-        <Button
-          variant="toolbar"
-          icon={SearchMinusIcon}
-          title="Verkleinern"
-          onClick={handleScaleOut}
-        />
-        {!isFullscreen && (
-          <DropdownButton
-            variant="outline"
-            size="auto"
-            placement="bottom start"
-            title={`${Math.round(scale * 100)} %`}
-            className="isolate z-[100]"
-            onSelectionChange={() => setScale}
-            selectedKeys={`scale-${Math.round(scale * 100)}`}
-          >
-            <MenuItem id="scale-100" title="Originalgröße" separator />
-            <MenuItem id="scale-120" title="120 %" onAction={() => setScale(1.2)} />
-            <MenuItem id="scale-130" title="130 %" onAction={() => setScale(1.3)} />
-            <MenuItem icon={PrinterIcon} title="Auswertung drucken" ellipsis />
-          </DropdownButton>
-        )}
-        <Button variant="toolbar" icon={SearchAddIcon} title="Vergrößern" onClick={handleScaleIn} />
-        <Separator orientation="vertical" />
-        <Button variant="toolbar" icon={PrinterIcon} title="Drucken" onClick={handlePrint} />
-        <Button
-          variant="toolbar"
-          icon={FileDownloadIcon}
-          title="Download"
-          onClick={handleDownload}
-        />
-        <Separator orientation="vertical" />
-        <Button
-          variant="toolbar"
-          icon={SquareArrowDiagonal02Icon}
-          title="Vollbildmodus"
-          onClick={toggle}
-        />
-      </Toolbar>
-    ),
-    [numPages, handleDownload, scale, isFullscreen, pageNumber, toggle]
-  )
-
   return (
     <Dialog isOpen={open} onOpenChange={handleOpenChange} title={filename} width="3xl">
-      <div
-        ref={divRef}
-        className="flex aspect-[210/297] max-h-[90%] w-3xl flex-col items-center justify-center overflow-auto bg-white"
-      >
-        <div
-          className={cn(
-            'py-1',
-            isFullscreen ? 'self-center' : 'w-full self-start bg-page-content px-4'
-          )}
-        >
-          {toolbar}
-        </div>
-
-        {isLoading && (
-          <div className="mx-auto my-auto flex-1">
-            <LogoSpinner />
-          </div>
-        )}
-        <Document
-          file={document}
-          loading={
-            <div className="mx-auto my-auto flex-1">
-              <LogoSpinner />
-            </div>
-          }
-          className="mx-auto my-auto overflow-auto bg-white"
-          onLoadSuccess={onDocumentLoadSuccess}
-        >
-          <Page
-            pageNumber={pageNumber}
-            scale={scale}
-            className="z-10 mx-auto flex-1 border"
-            loading={
-              <div className="mx-auto my-auto flex-1">
-                <LogoSpinner />
-              </div>
-            }
-          />
-        </Document>
-      </div>
+      <PdfViewerContainer document={document} filename={filename} showFileName={false} />
     </Dialog>
   )
 }

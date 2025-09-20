@@ -1,3 +1,4 @@
+import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { PageContainer } from '@/Components/PageContainer'
@@ -27,24 +28,22 @@ const ReceiptConfirm: React.FC<Props> = ({
   receipt,
   contacts,
   nextReceipt,
+  prevReceipt,
   cost_centers,
   currencies
 }) => {
-  const form = useForm<App.Data.ReceiptData>(
-    'update-receipt',
-    'put',
-    route('app.bookkeeping.receipts.update', {
-      id: receipt.id,
-      _query: { confirm: true, load_next: true }
-    }),
-    receipt
+  const actionUrl = route(
+    'app.bookkeeping.receipts.update',
+    {
+      receipt: receipt.id,
+      _query: { confirm: 1, load_next: 1 }
+    },
+    false
   )
 
-  console.log(receipt)
+  console.log('Debug URL:', actionUrl)
 
-  const handleSubmitted = () => {
-    ;(form.reset as unknown as () => void)()
-  }
+  const form = useForm<App.Data.ReceiptData>('update-receipt', 'put', actionUrl, receipt, {})
 
   const handleNextReceipt = () => {
     if (nextReceipt) {
@@ -54,13 +53,31 @@ const ReceiptConfirm: React.FC<Props> = ({
     }
   }
 
+  const handlePrevReceipt = () => {
+    if (prevReceipt) {
+      router.visit(prevReceipt)
+    } else {
+      router.visit(route('app.bookkeeping.receipts.index'))
+    }
+  }
+
+  const handleContactChange = (contactId: number) => {
+    const contact = contacts.find(contact => contact.id === contactId)
+    form.updateAndValidateWithoutEvent('contact_id', contactId)
+
+    if (contact?.cost_center_id) {
+      form.updateAndValidateWithoutEvent('cost_center_id', contact.cost_center_id)
+    }
+  }
+
   return (
     <PageContainer title="Beleg bestätigen" width="7xl" className="flex overflow-hidden">
       <PdfViewerContainer
         document={route('app.bookkeeping.receipts.pdf', { receipt: receipt.id })}
         filename={receipt.org_filename}
+        showFileName
       />
-      <Form form={form} className="flex-1">
+      <Form form={form} className="flex-1" onSubmitted={handleNextReceipt}>
         <FormGroup>
           <div className="col-span-8">
             <DatePicker label="Rechnungsdatum" {...form.register('issued_on')} />
@@ -86,6 +103,7 @@ const ReceiptConfirm: React.FC<Props> = ({
               label="Kreditor"
               itemName="full_name"
               items={contacts}
+              onChange={handleContactChange}
             />
           </div>
           <div className="col-span-24">
@@ -98,14 +116,34 @@ const ReceiptConfirm: React.FC<Props> = ({
               Beleg bestätigen und buchen
             </Checkbox>
           </div>
+          <div className="col-span-24 flex justify-between gap-2">
+            <div className="flex flex-1 justify-start gap-1">
+              <Button
+                variant="outline"
+                size="icon"
+                disabled={!prevReceipt}
+                icon={ArrowLeft01Icon}
+                onClick={handlePrevReceipt}
+                tooltip="Vorheriger Beleg"
+              />
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleNextReceipt}
+                disabled={!nextReceipt}
+                icon={ArrowRight01Icon}
+                tooltip="Nächster Beleg"
+              />
+            </div>
+            <Button
+              variant="default"
+              form={form.id}
+              type="submit"
+              isLoading={form.processing}
+              title="Speichern"
+            />
+          </div>
         </FormGroup>
-
-        <Button variant="outline" onClick={handleNextReceipt}>
-          Überspringen
-        </Button>
-        <Button variant="default" form={form.id} type="submit" isLoading={form.processing}>
-          Speichern + Bestätigen
-        </Button>
       </Form>
     </PageContainer>
   )

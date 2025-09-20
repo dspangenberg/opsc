@@ -23,6 +23,7 @@ interface Props {
   mail_categories: App.Data.EmailCategoryData[]
   phone_categories: App.Data.PhoneCategoryData[]
   bookkeeping_accounts: App.Data.BookkeepingAccountData[]
+  cost_centers: App.Data.CostCenterData[]
 }
 
 // Typisierung für Formular ohne zirkuläre Referenzen
@@ -36,6 +37,7 @@ type FormData = Omit<
   | 'sales'
   | 'addresses'
   | 'outturn_account'
+  | 'cost_center'
   | 'primary_phone'
   | 'primary_mail'
 > & {
@@ -50,6 +52,7 @@ export const ContactEdit: React.FC<Props> = ({
   mail_categories,
   phone_categories,
   payment_deadlines,
+  cost_centers,
   bookkeeping_accounts,
   taxes
 }) => {
@@ -81,6 +84,7 @@ export const ContactEdit: React.FC<Props> = ({
     payment_deadline_id: contact.payment_deadline_id,
     cc_name: contact.cc_name,
     paypal_email: contact.paypal_email,
+    cost_center_id: contact.cost_center_id,
     tax_id: contact.tax_id,
     mails: contact.mails || [],
     phones: contact.phones || [],
@@ -343,6 +347,13 @@ export const ContactEdit: React.FC<Props> = ({
                     {...form.register('formated_creditor_number')}
                   />
                 </div>
+                <div className="col-span-18">
+                  <ComboBox<App.Data.CostCenterData>
+                    label="Kostenstelle"
+                    items={cost_centers}
+                    {...form.register('cost_center_id')}
+                  />
+                </div>
               </FormGroup>
             )}
             {(form.data.is_creditor || form.data.is_debtor) && (
@@ -351,6 +362,7 @@ export const ContactEdit: React.FC<Props> = ({
                   <ComboBox<App.Data.BookkeepingAccountData>
                     label="Erfolgskonto"
                     items={bookkeeping_accounts}
+                    isOptional
                     itemName="label"
                     itemValue="account_number"
                     {...form.register('outturn_account_id')}

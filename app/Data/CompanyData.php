@@ -47,7 +47,8 @@ class CompanyData extends Data
         public readonly ?bool $is_debtor,
         public readonly ?bool $is_creditor,
         public readonly ?string $primary_phone,
-
+        public readonly ?int $cost_center_id,
+        public readonly ?CostCenterData $cost_center,
         /** @var BookkeepingAccountData */
         public readonly ?object $outturn_account,
 

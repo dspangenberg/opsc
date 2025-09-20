@@ -38,9 +38,14 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 interface Props {
   document: string
   filename?: string
+  showFileName?: boolean
 }
 
-export const PdfViewerContainer: React.FC<Props> = ({ document, filename = 'unbekannt.pdf' }) => {
+export const PdfViewerContainer: React.FC<Props> = ({
+  document,
+  filename = 'unbekannt.pdf',
+  showFileName = false
+}) => {
   const divRef = useRef<HTMLDivElement>(null)
   const [show, toggle] = useToggle(false)
   const isFullscreen = useFullscreen(divRef as React.RefObject<Element>, show, {
@@ -49,7 +54,7 @@ export const PdfViewerContainer: React.FC<Props> = ({ document, filename = 'unbe
 
   // const [savedScale, setSaveScale] = useLocalStorage('pdf-scale', 1.3) || 1.3
   const pdfRef = useRef<PDFDocumentProxy | null>(null)
-  const [numPages, setNumPages] = useState<number | null>(null)
+  const [numPages, setNumPages] = useState<number>(1)
   const [pageNumber, setPageNumber] = useState<number>(1)
   const [scale, setScale] = useState<number>(1.3)
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -81,6 +86,18 @@ export const PdfViewerContainer: React.FC<Props> = ({ document, filename = 'unbe
     setScale(1)
   }
 
+  const handleNextPage = () => {
+    if (pageNumber < numPages) {
+      setPageNumber(prevPageNumber => prevPageNumber + 1)
+    }
+  }
+
+  const handlePrevPage = () => {
+    if (pageNumber > 1) {
+      setPageNumber(prevPageNumber => prevPageNumber - 1)
+    }
+  }
+
   const handlePrint = () => {
     print(document)
   }
@@ -98,12 +115,14 @@ export const PdfViewerContainer: React.FC<Props> = ({ document, filename = 'unbe
           icon={ArrowUp01Icon}
           title="Seite zurück"
           disabled={pageNumber === 1}
+          onClick={handlePrevPage}
         />
         <Button
           variant="toolbar"
           icon={ArrowDown01Icon}
           title="Seite vor"
-          disabled={numPages === 1}
+          disabled={pageNumber === numPages}
+          onClick={handleNextPage}
         />
         <Separator orientation="vertical" />
         <Button
@@ -122,10 +141,9 @@ export const PdfViewerContainer: React.FC<Props> = ({ document, filename = 'unbe
             onSelectionChange={() => setScale}
             selectedKeys={`scale-${Math.round(scale * 100)}`}
           >
-            <MenuItem id="scale-100" title="Originalgröße" separator />
+            <MenuItem id="scale-100" title="Originalgröße" separator onAction={() => setScale(1)} />
             <MenuItem id="scale-120" title="120 %" onAction={() => setScale(1.2)} />
             <MenuItem id="scale-130" title="130 %" onAction={() => setScale(1.3)} />
-            <MenuItem icon={PrinterIcon} title="Auswertung drucken" ellipsis />
           </DropdownButton>
         )}
         <Button variant="toolbar" icon={SearchAddIcon} title="Vergrößern" onClick={handleScaleIn} />
@@ -160,7 +178,12 @@ export const PdfViewerContainer: React.FC<Props> = ({ document, filename = 'unbe
           isFullscreen ? 'self-center' : 'w-full self-start bg-page-content px-4'
         )}
       >
-        {filename} {toolbar}
+        {showFileName && (
+          <div className="my-2 text-center font-medium text-base">
+            {filename} &mdash; Seite {pageNumber}/{numPages}
+          </div>
+        )}
+        {toolbar}
       </div>
 
       {isLoading && (

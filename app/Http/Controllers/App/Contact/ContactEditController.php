@@ -11,6 +11,7 @@ use App\Data\AddressCategoryData;
 use App\Data\BookkeepingAccountData;
 use App\Data\ContactAddressData;
 use App\Data\ContactData;
+use App\Data\CostCenterData;
 use App\Data\CountryData;
 use App\Data\EmailCategoryData;
 use App\Data\PaymentDeadlineData;
@@ -23,6 +24,7 @@ use App\Models\AddressCategory;
 use App\Models\BookkeepingAccount;
 use App\Models\Contact;
 use App\Models\ContactAddress;
+use App\Models\CostCenter;
 use App\Models\Country;
 use App\Models\EmailCategory;
 use App\Models\PaymentDeadline;
@@ -38,7 +40,7 @@ class ContactEditController extends Controller
     public function __invoke(Request $request, Contact $contact)
     {
         // Laden der E-Mail-Daten mit Kategorie-Relation
-        $contact->load(['mails.category', 'salutation', 'title', 'payment_deadline','phones.category']);
+        $contact->load(['mails.category', 'salutation', 'title', 'payment_deadline','phones.category', 'cost_center']);
 
         $countries = Country::orderBy('name')->get();
         $categories = AddressCategory::all();
@@ -49,6 +51,7 @@ class ContactEditController extends Controller
         $titles = Title::query()->orderBy('name')->get();
         $phone_categories = PhoneCategory::orderBy('name')->get();
         $bookkeeping_accounts = BookkeepingAccount::orderBy('account_number')->get();
+        $cost_centers = CostCenter::orderBy('name')->get();
 
         // Korrektur: EmailCategory statt EMailCategory
         $mail_categories = EmailCategory::orderBy('name')->get();
@@ -63,6 +66,7 @@ class ContactEditController extends Controller
             'mail_categories' => EmailCategoryData::collect($mail_categories),
             'phone_categories' => PhoneCategoryData::collect($phone_categories),
             'bookkeeping_accounts' => BookkeepingAccountData::collect($bookkeeping_accounts),
+            'cost_centers' => CostCenterData::collect($cost_centers),
         ])->baseRoute('app.contact.details', ['contact' => $contact->id]);
     }
 }
