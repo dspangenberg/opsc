@@ -51,7 +51,7 @@ const SelectTrigger = ({ className, children, ...props }: AriaButtonProps) => (
     type="button"
     className={composeRenderProps(className, className =>
       cn(
-        'flex h-9 w-full items-center justify-between whitespace-nowrap rounded-sm border border-input bg-transparent px-3 py-2 font-medium text-sm shadow-none outline-0 ring-offset-0',
+        'flex h-9 w-full items-center justify-between whitespace-nowrap rounded-sm border border-input bg-white px-3 py-2 font-medium text-sm shadow-none outline-0 ring-offset-0',
         /* Disabled */
         'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
         'focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/20',
@@ -142,9 +142,9 @@ function SelectCore<T extends object, V extends SelectValue = number>({
           [itemValue]: nullValue,
           [itemName]: optionalValue
         } as T,
-        ...Array.from(items)
+        ...Array.from(items || []) // Sichere Behandlung von undefined/null
       ]
-    : Array.from(items)
+    : Array.from(items || []) // Sichere Behandlung von undefined/null
 
   const handleSelectionChange = (key: Key | null) => {
     if (key === null) {

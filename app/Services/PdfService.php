@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use Exception;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
+use Log;
 use Mpdf\Config\FontVariables;
 use Mpdf\Mpdf;
 use Mpdf\MpdfException;
@@ -20,13 +22,14 @@ class PdfService
 
     /**
      * @throws MpdfException|PathAlreadyExists
+     * @throws Exception
      */
 public static function createPdf(string $layoutName, string $view, array $data, array $config = []): string
 {
     $systemDisk = Storage::disk('system');
 
     // Kompaktes Debug-Logging
-    \Log::info('PdfService Debug Info:', [
+    Log::info('PdfService Debug Info:', [
         'requested_layout' => $layoutName,
         'system_disk_path' => $systemDisk->path(''),
         'json_files_exist' => [
@@ -48,15 +51,15 @@ public static function createPdf(string $layoutName, string $view, array $data, 
 
     // Null-Checks für JSON-Dateien
     if (!$layouts || !isset($layouts['layouts'])) {
-        throw new \Exception('Layout-Konfiguration konnte nicht geladen werden oder ist ungültig.');
+        throw new Exception('Layout-Konfiguration konnte nicht geladen werden oder ist ungültig.');
     }
 
     if (!$letterheads || !isset($letterheads['letterheads'])) {
-        throw new \Exception('Letterhead-Konfiguration konnte nicht geladen werden oder ist ungültig.');
+        throw new Exception('Letterhead-Konfiguration konnte nicht geladen werden oder ist ungültig.');
     }
 
     if (!$fonts || !isset($fonts['fonts'])) {
-        throw new \Exception('Font-Konfiguration konnte nicht geladen werden oder ist ungültig.');
+        throw new Exception('Font-Konfiguration konnte nicht geladen werden oder ist ungültig.');
     }
 
     // Collections erst NACH den Null-Checks erstellen
@@ -66,26 +69,26 @@ public static function createPdf(string $layoutName, string $view, array $data, 
     $layout = $layoutsCollection->where('name', $layoutName)->first();
 
     if (!$layout) {
-        throw new \Exception("Layout '{$layoutName}' wurde nicht gefunden.");
+        throw new Exception("Layout '$layoutName' wurde nicht gefunden.");
     }
 
     if (!isset($layout['letterhead'])) {
-        throw new \Exception("Layout '{$layoutName}' hat keine Letterhead-Konfiguration.");
+        throw new Exception("Layout '$layoutName' hat keine Letterhead-Konfiguration.");
     }
 
     $letterhead = $letterheadsCollection->where('name', $layout['letterhead'])->first();
 
     if (!$letterhead) {
-        throw new \Exception("Letterhead '{$layout['letterhead']}' wurde nicht gefunden.");
+        throw new Exception("Letterhead '{$layout['letterhead']}' wurde nicht gefunden.");
     }
 
     // Sicherstellen, dass erforderliche Felder vorhanden sind
     if (!isset($layout['css-file'])) {
-        throw new \Exception("Layout '{$layoutName}' hat keine CSS-Datei konfiguriert.");
+        throw new Exception("Layout $layoutName hat keine CSS-Datei konfiguriert.");
     }
 
     if (!isset($letterhead['css-file']) || !isset($letterhead['pdf-file'])) {
-        throw new \Exception("Letterhead '{$layout['letterhead']}' hat keine CSS- oder PDF-Datei konfiguriert.");
+        throw new Exception("Letterhead '{$layout['letterhead']}' hat keine CSS- oder PDF-Datei konfiguriert.");
     }
 
     $defaultLayoutCss = Storage::disk('system')->get('layouts/default.css');
@@ -117,7 +120,7 @@ public static function createPdf(string $layoutName, string $view, array $data, 
     $html = View::make($view, $data)->render();
 
     $customFontData = [];
-    if (isset($fonts['fonts']) && is_array($fonts['fonts'])) {
+    if (is_array($fonts['fonts'])) {
         foreach ($fonts['fonts'] as $value) {
             if (isset($value['alias']) && isset($value['filenames'])) {
                 $customFontData[$value['alias']] = $value['filenames'];
@@ -141,7 +144,7 @@ public static function createPdf(string $layoutName, string $view, array $data, 
     $temporaryDirectory = (new TemporaryDirectory)
         ->create();
 
-    $pdfFile = $temporaryDirectory->path(Str::random(16).'.pdf');
+    $pdfFile = $temporaryDirectory->path(Str::random().'.pdf');
 
     $mpdf->AddFontDirectory(storage_path('system/fonts'));
     $mpdf->SetDocTemplate($letterheadPdfFile, true);

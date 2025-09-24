@@ -1,14 +1,13 @@
 import {
-  Add01Icon,
   Csv02Icon,
   FileExportIcon,
   FileScriptIcon,
   MoreVerticalCircle01Icon,
   Tick01Icon
 } from '@hugeicons/core-free-icons'
-import { router, useForm } from '@inertiajs/react'
+import { useForm } from '@inertiajs/react'
 import type * as React from 'react'
-import { type FormEvent, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
@@ -84,18 +83,20 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({ receipts }) => {
       title="Belege"
       width="7xl"
       breadcrumbs={breadcrumbs}
-      className="flex overflow-hidden"
+      className="flex flex-col overflow-hidden"
       toolbar={toolbar}
     >
-      <ReceiptUpload />
-      <DataTable
-        columns={columns}
-        actionBar={actionBar}
-        onSelectedRowsChange={setSelectedRows}
-        data={receipts.data}
-        footer={footer}
-        itemName="Belege"
-      />
+      <div>
+        <ReceiptUpload />
+        <DataTable
+          columns={columns}
+          actionBar={actionBar}
+          onSelectedRowsChange={setSelectedRows}
+          data={receipts.data}
+          footer={footer}
+          itemName="Belege"
+        />
+      </div>
     </PageContainer>
   )
 }

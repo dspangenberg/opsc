@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ReceiptUpdateRequest;
 use App\Http\Requests\ReceiptUploadRequest;
 use App\Models\Contact;
+use App\Models\ConversionRate;
 use App\Models\CostCenter;
 use App\Models\Currency;
 use App\Models\NumberRange;
@@ -35,15 +36,20 @@ class ReceiptController extends Controller
     public function index()
     {
         $receipts = Receipt::query()->with([
-            'account', 'range_document_number', 'contact'
+            'account', 'range_document_number', 'contact','cost_center'
         ])->orderBy('issued_on')->paginate();
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptIndex', [
             'receipts' => ReceiptData::collect($receipts),
         ]);
     }
 
-    /**
-     */
+    public function destroy(Receipt $receipt)
+    {
+
+        $media = $receipt->firstMedia('file');
+        $media->delete();
+        $receipt->delete();
+    }
 
     public function streamPdf(Receipt $receipt)
     {
@@ -65,8 +71,16 @@ class ReceiptController extends Controller
 
     public function confirmFirst()
     {
-        $receipts = Receipt::query()->where('is_confirmed', false)->orderBy('id')->first();
-        return redirect()->route('app.bookkeeping.receipts.confirm', ['receipt' => $receipts->id]);
+        $receipt = Receipt::query()->where('is_confirmed', false)->orderBy('issued_on')->first();
+
+        // Prüfung, ob unbestätigte Receipts existieren
+        if (!$receipt) {
+            // Redirect zur Hauptseite oder zeige eine Nachricht an, wenn keine Receipts zu bestätigen sind
+            return redirect()->route('app.bookkeeping.receipts.index')
+                ->with('message', 'Alle Belege sind bereits bestätigt.');
+        }
+
+        return redirect()->route('app.bookkeeping.receipts.confirm', ['receipt' => $receipt->id]);
     }
 
     /**
@@ -75,55 +89,49 @@ class ReceiptController extends Controller
     public function update(ReceiptUpdateRequest $request, Receipt $receipt)
     {
 
-        if ($request->validated('org_currency') === 'EUR') {
-            $receipt->amount = $request->validated('amount');
-        } else {
-            $receipt->org_currency = $request->validated('org_currency');
+        $receipt->issued_on = $request->validated('issued_on');
+        $receipt->amount = $request->validated('amount');
+        $receipt->org_currency = $request->validated('org_currency');
+
+        if ($receipt->org_currency !== 'EUR' && (is_null($receipt->org_amount) || $receipt->org_amount == 0)) {
+            $receipt->org_amount = $request->validated('amount');
+            $conversion = ConversionRate::convertAmount($receipt->amount, $request->validated('org_currency'), $receipt->issued_on);
+            if ($conversion) {
+                $receipt->amount = $conversion['amount'];
+                $receipt->exchange_rate = $conversion['rate'];
+            }
         }
+
         $receipt->reference = $request->validated('reference');
         $receipt->contact_id = $request->validated('contact_id');
         $receipt->cost_center_id = $request->validated('cost_center_id');
-        $receipt->issued_on = $request->validated('issued_on');
+
 
         $shouldConfirm = $request->query('confirm', false);
         $shouldLoadNext = $request->query('load_next', true);
 
-
         $receipt->save();
 
-        if ($request->validated('is_confirmed') === true && !$receipt->is_confirmed) {
+        if ($request->validated('is_confirmed') && $receipt->is_confirmed === false) {
             $receipt->is_confirmed = true;
-            if (!$receipt->number_range_document_number_id) {
-                $receipt->number_range_document_number_id = NumberRange::createDocumentNumber($receipt, 'issued_on');
+            if (!$receipt->number_range_document_numbers_id) {
+                $receipt->number_range_document_numbers_id = NumberRange::createDocumentNumber($receipt, 'issued_on');
                 $receipt->save();
-                // $receipt->load('range_document_number');
+
+                $receipt->load('range_document_number');
+                Receipt::createBooking($receipt);
 
             }
 
             $media = $receipt->firstMedia('file');
-            $folder = '/bookkeeping/receipts/'.$receipt->issued_on->year.'/';
+            $folder = '/bookkeeping/receipts/'.$receipt->issued_on->format('Y/m/');
             $filename = $receipt->issued_on->format('Y-m-d').'-'.$media->filename;
 
 
             $media->move($folder, $filename);
-
-
-
         }
 
-        $receipts = Receipt::query()->where('is_confirmed', false)->orderBy('id')->get();
-
-        $currentIndex = $receipts->search(function ($item) use ($receipt) {
-            return $item->id === $receipt->id;
-        });
-
-        $nextReceipt = $currentIndex < $receipts->count() - 1 ? $receipts[$currentIndex + 1] : null;
-
-        Inertia::render('App/Bookkeeping/Receipt/ReceiptConfirm', [
-            'receipt' => ReceiptData::from($receipt),
-            'nextReceipt' => $nextReceipt ? route('app.bookkeeping.receipts.confirm',
-                ['receipt' => $nextReceipt->id]) : null,
-        ]);
+        return redirect()->route('app.bookkeeping.receipts.confirm', ['receipt' => $receipt->id]);
     }
 
     /**
@@ -132,8 +140,8 @@ class ReceiptController extends Controller
     {
         $receipt->load(['account', 'range_document_number', 'contact']);
 
-        $receipts = Receipt::query()->where('is_confirmed', false)->orderBy('id')->get();
-        $currencies = Currency::query()->orderBy('name')->get();
+        $receipts = Receipt::query()->where('is_confirmed', false)->orderBy('issued_on')->get();
+
 
         $currentIndex = $receipts->search(function ($item) use ($receipt) {
             return $item->id === $receipt->id;
@@ -143,6 +151,7 @@ class ReceiptController extends Controller
         $prevReceipt = $currentIndex > 0 ? $receipts[$currentIndex - 1] : null;
 
         $contacts = Contact::where('is_creditor', true)->orderBy('name')->get();
+        $currencies = Currency::query()->orderBy('name')->get();
         $costCenters = CostCenter::query()->orderBy('name')->get();
 
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptConfirm', [
@@ -202,15 +211,14 @@ class ReceiptController extends Controller
                     if (!empty($matches)) {
                         foreach ($matches as $match) {
                             $cleanIban = preg_replace('/\s/', '', $match);
-                            $contact = Contact::query()->where('iban', $cleanIban);
+                            $contact = Contact::query()->where('iban', $cleanIban)->first();
                             if ($contact) {
-                                $receipt->contact_id = $contact->first()->id;
+                                $receipt->contact_id = $contact->id;
+                                if ($contact->cost_center_id) {
+                                    $receipt->cost_center_id = $contact->cost_center_id;
+                                }
                             }
-
-
                         }
-                        // Optional: IBAN in der Datenbank speichern
-                        // $receipt->iban = $matches[0][0];
                     }
                     $vatIdPattern = '/\b(DE\d{9}|AT[A-Z]\d{8}|BE0\d{9}|FR[A-Z0-9]{2}\d{9}|NL\d{9}B\d{2})\b/i';
                     preg_match($vatIdPattern, $receipt->text, $vatMatches);
@@ -227,7 +235,7 @@ class ReceiptController extends Controller
                 $receipt->save();
 
                 $media = MediaUploader::fromSource($file)
-                    ->toDestination('s3_private', 'uploads/2025')
+                    ->toDestination('s3_private', 'uploads/'.$receipt->issued_on->format('Y/m/'))
                     ->upload();
 
                 $receipt->attachMedia($media, 'file');

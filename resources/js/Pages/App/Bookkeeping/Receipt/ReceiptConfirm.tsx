@@ -1,8 +1,11 @@
-import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons'
+import { ArrowLeft01Icon, ArrowRight01Icon, Delete02Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
+import { useCallback } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { PdfViewerContainer } from '@/Components/PdfViewerContainer'
+import { Alert } from '@/Components/ui/twc-ui/alert'
+import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
 import { ComboBox } from '@/Components/ui/twc-ui/combo-box'
@@ -70,6 +73,20 @@ const ReceiptConfirm: React.FC<Props> = ({
     }
   }
 
+  const handleDelete = useCallback(async () => {
+    const promise = await AlertDialog.call({
+      title: 'Beleg löschen',
+      message: 'Möchtest Du den Beleg wirklich löschen?',
+      buttonTitle: 'Beleg löschen',
+      variant: 'destructive'
+    })
+
+    if (promise) {
+      router.delete(route('app.bookkeeping.receipts.destroy', { receipt: receipt.id }))
+      handleNextReceipt()
+    }
+  }, [receipt.id])
+
   return (
     <PageContainer title="Beleg bestätigen" width="7xl" className="flex overflow-hidden">
       <PdfViewerContainer
@@ -77,26 +94,37 @@ const ReceiptConfirm: React.FC<Props> = ({
         filename={receipt.org_filename}
         showFileName
       />
-      <Form form={form} className="flex-1" onSubmitted={handleNextReceipt}>
+      <Form form={form} className="flex-1">
+        {receipt.duplicate_of && <Alert variant="info">Mögliches Duplikat.</Alert>}
         <FormGroup>
           <div className="col-span-8">
-            <DatePicker label="Rechnungsdatum" {...form.register('issued_on')} />
+            <DatePicker label="Rechnungsdatum" {...form.register('issued_on')} autoFocus />
           </div>
+
           <div className="col-span-8">
-            <Select<App.Data.CurrencyData>
-              {...form.register('org_currency')}
-              label="Währung"
-              itemValue="code"
-              itemName="code"
-              items={currencies}
+            <NumberField
+              label="Bruttobetrag"
+              {...form.register('amount')}
+              formatOptions={{
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              }}
             />
           </div>
           <div className="col-span-8">
-            <NumberField label="Bruttobetrag" {...form.register('amount')} />
+            <Select<App.Data.CurrencyData, string>
+              label="Währung"
+              itemValue="code"
+              itemName="code"
+              items={currencies || []} // Sichere Behandlung
+              valueType="string"
+              {...form.register('org_currency')}
+            />
           </div>
           <div className="col-span-24">
             <TextField label="Referenz" {...form.register('reference')} />
           </div>
+
           <div className="col-span-24">
             <ComboBox<App.Data.ContactData>
               {...form.register('contact_id')}
@@ -119,7 +147,7 @@ const ReceiptConfirm: React.FC<Props> = ({
           <div className="col-span-24 flex justify-between gap-2">
             <div className="flex flex-1 justify-start gap-1">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="icon"
                 disabled={!prevReceipt}
                 icon={ArrowLeft01Icon}
@@ -127,12 +155,19 @@ const ReceiptConfirm: React.FC<Props> = ({
                 tooltip="Vorheriger Beleg"
               />
               <Button
-                variant="outline"
+                variant="ghost"
                 size="icon"
                 onClick={handleNextReceipt}
                 disabled={!nextReceipt}
                 icon={ArrowRight01Icon}
                 tooltip="Nächster Beleg"
+              />
+              <Button
+                variant="ghost-destructive"
+                size="icon"
+                icon={Delete02Icon}
+                tooltip="Beleg löschen"
+                onClick={handleDelete}
               />
             </div>
             <Button
