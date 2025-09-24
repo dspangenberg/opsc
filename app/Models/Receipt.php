@@ -2,31 +2,35 @@
 
 namespace App\Models;
 
+use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
-use Plank\Mediable\MediableInterface;
+use Plank\Mediable\MediableCollection;
 
 /**
- * @property-read \App\Models\BookkeepingAccount|null $account
- * @property-read \App\Models\Contact|null $contact
- * @property-read \App\Models\CostCenter|null $costCenter
+ * @property-read BookkeepingAccount|null $account
+ * @property-read Contact|null $contact
+ * @property-read CostCenter|null $costCenter
  * @property-read string $document_number
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Plank\Mediable\Media> $media
+ * @property-read Collection<int, Media> $media
  * @property-read int|null $media_count
- * @property-read \App\Models\NumberRangeDocumentNumber|null $numberRangeDocumentNumber
- * @method static \Plank\Mediable\MediableCollection<int, static> all($columns = ['*'])
- * @method static \Plank\Mediable\MediableCollection<int, static> get($columns = ['*'])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Receipt newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Receipt newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Receipt query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Receipt whereHasMedia($tags = [], bool $matchAll = false)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Receipt whereHasMediaMatchAll($tags)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Receipt withMedia($tags = [], bool $matchAll = false, bool $withVariants = false)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Receipt withMediaAndVariants($tags = [], bool $matchAll = false)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Receipt withMediaAndVariantsMatchAll($tags = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Receipt withMediaMatchAll(bool $tags = [], bool $withVariants = false)
- * @mixin \Eloquent
+ * @property-read NumberRangeDocumentNumber|null $numberRangeDocumentNumber
+ * @method static MediableCollection<int, static> all($columns = ['*'])
+ * @method static MediableCollection<int, static> get($columns = ['*'])
+ * @method static Builder<static>|Receipt newModelQuery()
+ * @method static Builder<static>|Receipt newQuery()
+ * @method static Builder<static>|Receipt query()
+ * @method static Builder<static>|Receipt whereHasMedia($tags = [], bool $matchAll = false)
+ * @method static Builder<static>|Receipt whereHasMediaMatchAll($tags)
+ * @method static Builder<static>|Receipt withMedia($tags = [], bool $matchAll = false, bool $withVariants = false)
+ * @method static Builder<static>|Receipt withMediaAndVariants($tags = [], bool $matchAll = false)
+ * @method static Builder<static>|Receipt withMediaAndVariantsMatchAll($tags = [])
+ * @method static Builder<static>|Receipt withMediaMatchAll(bool $tags = [], bool $withVariants = false)
+ * @mixin Eloquent
  */
 class Receipt extends Model
 {
@@ -46,7 +50,7 @@ class Receipt extends Model
         'amount' => 0,
         'is_confirmed' => false,
         'iban' => '',
-        'number_range_document_number_id' => null,
+        'number_range_document_numbers_id' => null,
         'checksum' => '',
         'text' => '',
         'data' => '[]',
@@ -71,17 +75,15 @@ class Receipt extends Model
 
     public function getDocumentNumberAttribute(): string
     {
-
-        return $this->number_range_document_number_id ? $this->range_document_number->document_number : '';
+        return $this->number_range_document_numbers_id ? $this->range_document_number->document_number : '';
     }
-
 
     public function contact(): BelongsTo
     {
         return $this->belongsTo(Contact::class);
     }
 
-    public function costCenter(): BelongsTo
+    public function cost_center(): BelongsTo
     {
         return $this->belongsTo(CostCenter::class);
     }
@@ -93,7 +95,7 @@ class Receipt extends Model
 
     public function range_document_number(): BelongsTo
     {
-        return $this->belongsTo(NumberRangeDocumentNumber::class, 'number_range_document_number_id', 'id');
+        return $this->belongsTo(NumberRangeDocumentNumber::class, 'number_range_document_numbers_id', 'id');
     }
 
     protected function casts(): array
@@ -104,5 +106,27 @@ class Receipt extends Model
             'is_confirmed' => 'boolean',
             'data' => 'array',
         ];
+    }
+
+    public static function createBooking($receipt): void
+    {
+        $accounts = Contact::getAccounts(false, $receipt->contact_id);
+
+        $booking = BookkeepingBooking::whereMorphedTo('bookable', Receipt::class)->where('bookable_id',
+            $receipt->id)->first();
+        $booking = BookkeepingBooking::createBooking(
+            $receipt, 'issued_on',
+            'amount',
+            $accounts['outturnAccount'],
+            $accounts['subledgerAccount'],
+            'E',
+            $booking ? $booking->id : null
+        );
+        $name = strtoupper($accounts['name']);
+        $bookingTextSuffix = $receipt->org_currency !== 'EUR' ? '(originär '.number_format($receipt->org_amount, 2, ',',
+                '.').' '.$receipt->org_currency.')' : '';
+
+        $booking->booking_text = "Rechnungseingang|$name|$receipt->reference|$bookingTextSuffix";
+        $booking->save();
     }
 }

@@ -78,7 +78,7 @@ export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
   {
     accessorKey: 'document_number',
     header: '',
-    size: 80  ,
+    size: 80,
     cell: ({ row, getValue }) => <Badge variant="outline">{getValue() as string}</Badge>
   },
   {
@@ -100,12 +100,13 @@ export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
     header: 'Buchungstext',
     size: 300,
     cell: ({ row, getValue }) => {
-      const [bookingType, name, purpose] = row.original.booking_text.split('|')
+      const [bookingType, name, purpose, conversion] = row.original.booking_text.split('|')
       return (
         <div>
           <div>{bookingType}</div>
           <div className="truncate font-medium">{name}</div>
           <div className="truncate">{purpose}</div>
+          {conversion && <div className="text-foreground/80 text-xs">{conversion}</div>}
         </div>
       )
     }

@@ -65,7 +65,7 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
     header: 'Kreditor ',
     size: 300,
     cell: ({ row, getValue }) => (
-      <>
+      <div className="flex items-center gap-3">
         <Link
           href={editUrl(row.original.id)}
           className="truncate align-middle font-medium hover:underline"
@@ -73,8 +73,14 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
           {getValue() as string}
         </Link>
         <Badge variant="outline">{row.original.document_number}</Badge>
-      </>
+      </div>
     )
+  },
+  {
+    accessorKey: 'contact.cost_center_id',
+    header: 'Kostenstelle ',
+    size: 300,
+    cell: ({ row }) => <div>{row.original.cost_center?.name as string}</div>
   },
   {
     accessorKey: 'amount',

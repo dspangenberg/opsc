@@ -329,6 +329,7 @@ org_amount: number | null;
 amount: number;
 exchange_rate: number | null;
 document_number: string | null;
+duplicate_of: string | null;
 iban: string | null;
 number_range_document_number_id: number | null;
 account: App.Data.BookkeepingAccountData | null;

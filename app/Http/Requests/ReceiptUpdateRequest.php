@@ -17,8 +17,8 @@ class ReceiptUpdateRequest extends FormRequest
         return [
             'reference' => 'required|string',
             'issued_on' => ['required', 'date', 'date_format:d.m.Y'],
-            'org_currency' => 'required|exists:currencies,code',
-            'amount' => ['required', 'numeric'],
+            'org_currency' => 'required',
+            'amount' => ['required', 'numeric', 'gt:0'],
             'contact_id' => ['required', 'exists:contacts,id'],
             'cost_center_id' => ['required', 'exists:cost_centers,id'],
             'is_confirmed' => ['nullable', 'boolean'],

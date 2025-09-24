@@ -242,7 +242,7 @@ class Contact extends Model
 
     public function cost_center(): HasOne
     {
-        return $this->hasOne(CostCenter::class, 'id', 'cost_center_id');;
+        return $this->hasOne(CostCenter::class, 'id', 'cost_center_id');
     }
 
     public function salutation(): HasOne
@@ -335,6 +335,8 @@ class Contact extends Model
     {
         $contact = static::find($id);
 
+
+
         if ($contact === null) {
             return [
                 'subledgerAccount' => null,
@@ -374,13 +376,26 @@ class Contact extends Model
 
         $outturnAccount = null;
 
-        if ($contact->outturn_account_id === 0 && $getDefaultOutturnAccount === true) {
-            $outturnAccount = BookkeepingAccount::query()->where('type', $is_invoice ? 'r' : 'e')->where('is_default', true)->first();
+        if (!$is_invoice) {
+            $contact->load('cost_center');
+            if ($contact->cost_center_id && !$contact->is_primary) {
+                $outturnAccount = BookkeepingAccount::where('id', $contact->cost_center->bookkeeping_account_id)->first();
+            } else {
+                if ($contact->outturn_account_id) {
+                    $outturnAccount = BookkeepingAccount::where('account_number', $contact->outturn_account_id)->first();
+                }
+            }
+        } else {
+            if ($contact->outturn_account_id === 0 && $getDefaultOutturnAccount === true) {
+                $outturnAccount = BookkeepingAccount::query()->where('type', 'r')->where('is_default', true)->first();
+            }
+
+            $outturnAccount = $contact->outturn_account_id
+                ? BookkeepingAccount::query()->where('account_number', $contact->outturn_account_id)->first()
+                : $outturnAccount; //
+
         }
 
-        $outturnAccount = $contact->outturn_account_id
-            ? BookkeepingAccount::query()->where('account_number', $contact->outturn_account_id)->first()
-            : $outturnAccount; //
 
         return [
             'subledgerAccount' => $bookkeepingAccount,

@@ -5,6 +5,7 @@ namespace App\Models;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
@@ -37,6 +38,9 @@ class ConversionRate extends Model
         'rate',
     ];
 
+    /**
+     * @throws ConnectionException
+     */
     public static function convertAmount($amount, $currencyCode, $date): array
     {
 
