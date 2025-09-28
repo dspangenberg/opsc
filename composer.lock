@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1359df936388d8b26958587994b0efe4",
+    "content-hash": "0e65e7e5f3bdf9b9198f11908330add9",
     "packages": [
         {
             "name": "amphp/amp",
@@ -1714,6 +1714,79 @@
                 }
             ],
             "time": "2024-10-09T13:47:03+00:00"
+        },
+        {
+            "name": "eg-mohamed/notable",
+            "version": "v1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/EG-Mohamed/Notable.git",
+                "reference": "f8ded6476c4abf7a80fb99aca22ee5edbc94e5d3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/EG-Mohamed/Notable/zipball/f8ded6476c4abf7a80fb99aca22ee5edbc94e5d3",
+                "reference": "f8ded6476c4abf7a80fb99aca22ee5edbc94e5d3",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^10.0||^11.0||^12.0",
+                "php": "^8.3",
+                "spatie/laravel-package-tools": "^1.92.7"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.24",
+                "nunomaduro/collision": "^8.8.2||^7.10.0",
+                "orchestra/testbench": "^10.6.0||^9.0.0||^8.22.0",
+                "pestphp/pest": "^2.0||^3.8.4",
+                "pestphp/pest-plugin-arch": "^2.5||^3.1.1",
+                "pestphp/pest-plugin-laravel": "^2.0||^3.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Notable": "MohamedSaid\\Notable\\Facades\\Notable"
+                    },
+                    "providers": [
+                        "MohamedSaid\\Notable\\NotableServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MohamedSaid\\Notable\\": "src/",
+                    "MohamedSaid\\Notable\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mohamed Said",
+                    "email": "me@msaied.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This is my package notable",
+            "homepage": "https://github.com/eg-mohamed/notable",
+            "keywords": [
+                "laravel",
+                "notable"
+            ],
+            "support": {
+                "issues": "https://github.com/EG-Mohamed/Notable/issues",
+                "source": "https://github.com/EG-Mohamed/Notable/tree/v1.4"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Mohamed Said",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-08-23T02:22:08+00:00"
         },
         {
             "name": "egulias/email-validator",

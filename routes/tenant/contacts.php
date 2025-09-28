@@ -12,6 +12,7 @@ use App\Http\Controllers\App\Contact\ContactEditAddressController;
 use App\Http\Controllers\App\Contact\ContactEditController;
 use App\Http\Controllers\App\Contact\ContactIndexController;
 use App\Http\Controllers\App\Contact\ContactStoreController;
+use App\Http\Controllers\App\Contact\ContactStoreNote;
 use App\Http\Controllers\App\Contact\ContactToggleFavoriteController;
 use App\Http\Controllers\App\Contact\ContactUpdateController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
@@ -53,3 +54,7 @@ Route::put('contacts/{contact}/{contact_address}', ContactAddressUpdateControlle
 Route::post('contacts/{contact}/address', ContactAddressStoreController::class)
     ->middleware([HandlePrecognitiveRequests::class])
     ->name('app.contact.address.store');
+
+Route::post('contacts/{contact}/note-store', ContactStoreNote::class)
+    ->middleware([HandlePrecognitiveRequests::class])
+    ->name('app.contact.note-store');

@@ -15,8 +15,11 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Maize\Markable\Mark;
 use Maize\Markable\Markable;
 use Maize\Markable\Models\Favorite;
+use MohamedSaid\Notable\Traits\HasNotables;
+use Plank\Mediable\MediableCollection;
 
 /**
  * @property-read Collection<int, ContactAddress> $addresses
@@ -33,7 +36,7 @@ use Maize\Markable\Models\Favorite;
  * @property-read string $primary_mail
  * @property-read string $reverse_full_name
  * @property-read array $sales
- * @property-read \Plank\Mediable\MediableCollection<int, Invoice> $invoices
+ * @property-read MediableCollection<int, Invoice> $invoices
  * @property-read int|null $invoices_count
  * @property-read Collection<int, ContactMail> $mails
  * @property-read int|null $mails_count
@@ -49,13 +52,13 @@ use Maize\Markable\Models\Favorite;
  * @method static Builder<static>|Contact newQuery()
  * @method static Builder<static>|Contact query()
  * @method static Builder<static>|Contact view($view)
- * @method static Builder<static>|Contact whereHasMark(\Maize\Markable\Mark $mark, Model $user, ?string $value = null)
+ * @method static Builder<static>|Contact whereHasMark(Mark $mark, Model $user, ?string $value = null)
  * @property-read string $primary_phone
  * @mixin Eloquent
  */
 class Contact extends Model
 {
-    use Markable;
+    use Markable, HasNotables;
 
     protected static array $marks = [
         Favorite::class,

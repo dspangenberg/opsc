@@ -83,6 +83,9 @@ class ContactData extends Data
 
         /** @var ContactAddressData[] */
         public readonly ?array $addresses,
+
+        /** @var NoteableData[] */
+        public readonly ?array $notables
     ) {}
 
     public function defaultWrap(): string

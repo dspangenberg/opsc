@@ -181,6 +181,7 @@ mails: Array<App.Data.ContactMailData> | null;
 phones: Array<App.Data.ContactPhoneData> | null;
 sales: App.Data.SalesData | null;
 addresses: Array<App.Data.ContactAddressData> | null;
+notables: Array<App.Data.NoteableData> | null;
 };
 export type ContactMailData = {
 id: number | null;
@@ -300,6 +301,13 @@ export type LoginData = {
 email: string;
 password: string;
 remember: boolean | null;
+};
+export type NoteableData = {
+notable_id: number;
+note: string;
+creator: App.Data.UserData;
+created_at: string;
+updated_at: string;
 };
 export type PaymentDeadlineData = {
 id: number | null;

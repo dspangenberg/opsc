@@ -9,7 +9,6 @@ import { useRef } from 'react'
 
 type InputElements = HTMLInputElement | HTMLSelectElement
 
-console.log('!', import.meta.env.VITE_APP_DATE_FORMAT)
 const DATE_FORMAT = import.meta.env.VITE_APP_DATE_FORMAT || 'yyyy-MM-dd'
 
 export function useForm<T extends Record<string, FormDataConvertible>>(
@@ -22,8 +21,6 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
   const initialDataRef = useRef({ ...data })
   const form = useInertiaForm<T>(method, url, data, config)
   const isDirty = !isEqual(initialDataRef.current, form.data)
-
-  console.log(url)
 
   // Create a type-safe wrapper that bypasses Inertia's complex types
   const setFormData = (name: string, value: any) => {
@@ -156,20 +153,9 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
 
       if (!startValue || !endValue) return null
 
-      console.log(
-        'Konvertiere Datum-Range von',
-        DATE_FORMAT,
-        'zu ISO:',
-        startValue,
-        'bis',
-        endValue
-      )
-
       // Konvertiere beide Werte mit date-fns zu ISO-Format
       const startISO = convertToISO(startValue)
       const endISO = convertToISO(endValue)
-
-      console.log('ISO-Konvertierung:', startISO, endISO)
 
       if (startISO && endISO) {
         return { start: startISO, end: endISO }
@@ -190,14 +176,6 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
           // Konvertiere von yyyy-MM-dd zurück zum konfigurierten Format mit date-fns
           const startFormatted = convertFromISO(rangeValue.start)
           const endFormatted = convertFromISO(rangeValue.end)
-
-          console.log(
-            'Rückkonvertierung von ISO zu',
-            DATE_FORMAT,
-            ':',
-            startFormatted,
-            endFormatted
-          )
 
           setFormData(startFieldName, startFormatted)
           setFormData(endFieldName, endFormatted)
