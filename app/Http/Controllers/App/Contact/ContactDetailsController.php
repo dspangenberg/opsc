@@ -69,9 +69,6 @@ class ContactDetailsController extends Controller
 
         $contact->sales = $sales ?? null;
 
-        ds($contact->toArray());
-
-
         return Inertia::render('App/Contact/ContactDetails', [
             'contact' => ContactData::from($contact)
         ]);
