@@ -5,7 +5,6 @@ import { useMemo } from 'react'
 import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
-import { Form, useForm } from '@/Components/ui/twc-ui/form'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 import { Popover, PopoverDialog, PopoverTrigger } from '@/Components/ui/twc-ui/popover'
 
@@ -13,6 +12,8 @@ interface Props {
   accounts: App.Data.BookkeepingAccountData[]
   filters: FilterConfig
   onFiltersChange: (filters: FilterConfig) => void
+  bankAccountId: number
+  currentSearch?: string
 }
 
 type FilterConfig = {
@@ -20,84 +21,73 @@ type FilterConfig = {
   boolean?: 'AND' | 'OR'
 }
 
-type FormData = {
-  counter_account_id: number | null
-  is_locked: number
-  without_counter_account: number
-}
-
 export const TransactionIndexFilterForm: React.FC<Props> = ({
   accounts,
   filters,
-  onFiltersChange
+  onFiltersChange,
+  bankAccountId,
+  currentSearch = ''
 }) => {
-  // Aktuelle Filterwerte aus dem filters-Objekt extrahieren
+  // Aktuelle Filterwerte extrahieren mit defensiver Programmierung
   const currentFilters = useMemo(
     () => ({
-      counter_account_id:
-        filters.filters.counter_account_id && filters.filters.counter_account_id.operator !== 'null'
-          ? filters.filters.counter_account_id.value
-          : null,
-      is_locked: filters.filters.is_locked ? 1 : 0,
+      is_locked: !!filters?.filters?.is_locked,
       without_counter_account:
-        filters.filters.counter_account_id && filters.filters.counter_account_id.value === 0 ? 1 : 0
+        filters?.filters?.counter_account_id?.operator === '=' &&
+        filters?.filters?.counter_account_id?.value === 0,
+      hide_private: !!filters?.filters?.hide_private
     }),
-    [filters.filters.counter_account_id, filters.filters.is_locked]
+    [filters?.filters]
   )
-
-  const form = useForm<FormData>('transaction-filter-form', 'post', '', currentFilters)
 
   // Anzahl der aktiven Filter berechnen
   const activeFiltersCount = useMemo(() => {
-    return Object.keys(filters.filters).length
-  }, [filters.filters])
+    return Object.keys(filters?.filters || {}).length
+  }, [filters?.filters])
 
-  const handleFilterChange = (field: keyof FormData, value: any) => {
-    const newFilters = { ...filters.filters }
+  const handleFilterChange = (field: string, value: boolean) => {
+    const newFilters = { ...(filters?.filters || {}) }
 
-    if (field === 'counter_account_id') {
-      if (value) {
-        newFilters.counter_account_id = {
-          operator: '=',
-          value: value
+    switch (field) {
+      case 'is_locked':
+        if (value) {
+          newFilters.is_locked = { operator: '=', value: 0 }
+        } else {
+          delete newFilters.is_locked
         }
-      } else {
-        // Remove any counter_account_id filter (either specific or null)
-        delete newFilters.counter_account_id
-      }
-    } else if (field === 'is_locked') {
-      if (value) {
-        newFilters.is_locked = {
-          operator: '=',
-          value: 0
+        break
+
+      case 'without_counter_account':
+        if (value) {
+          newFilters.counter_account_id = { operator: '=', value: 0 }
+        } else {
+          delete newFilters.counter_account_id
         }
-      } else {
-        delete newFilters.is_locked
-      }
-    } else if (field === 'without_counter_account') {
-      if (value) {
-        newFilters.counter_account_id = {
-          operator: '=',
-          value: 0
+        break
+
+      case 'hide_private':
+        if (value) {
+          newFilters.hide_private = { operator: 'scope', value: true }
+        } else {
+          delete newFilters.hide_private
         }
-      } else {
-        // On uncheck, always remove counter_account_id filter (it was set to '= 0')
-        delete newFilters.counter_account_id
-      }
+        break
     }
 
-    onFiltersChange({
-      ...filters,
-      filters: newFilters
-    })
+    const updatedFilterConfig = {
+      filters: newFilters,
+      boolean: filters?.boolean || 'AND'
+    }
+
+    onFiltersChange(updatedFilterConfig)
   }
 
   const handleClearFilters = () => {
-    onFiltersChange({
+    const emptyFilters = {
       filters: {},
-      boolean: 'AND'
-    })
-    form.reset()
+      boolean: 'AND' as const
+    }
+    onFiltersChange(emptyFilters)
   }
 
   return (
@@ -122,29 +112,35 @@ export const TransactionIndexFilterForm: React.FC<Props> = ({
               )}
             </div>
 
-            <Form form={form}>
-              <FormGroup>
-                {/* Status Filter */}
-                <div className="col-span-24 space-y-2">
-                  <div className="space-y-2">
-                    <Checkbox
-                      isSelected={currentFilters.is_locked === 1}
-                      label="Nur unbestätigte Transaktionen"
-                      name="is_locked"
-                      onChange={checked => handleFilterChange('is_locked', Number(checked))}
-                    />
-                    <Checkbox
-                      label="nur Transaktionen ohne Gegenkonto"
-                      name="without_counter_account"
-                      isSelected={currentFilters.without_counter_account === 1}
-                      onChange={checked =>
-                        handleFilterChange('without_counter_account', Number(checked))
-                      }
-                    />
-                  </div>
+            <FormGroup>
+              <div className="col-span-24 space-y-2">
+                <div className="space-y-2">
+                  <Checkbox
+                    isSelected={currentFilters.is_locked}
+                    name="is_locked"
+                    onChange={checked => handleFilterChange('is_locked', checked)}
+                  >
+                    Nur unbestätigte Transaktionen
+                  </Checkbox>
+
+                  <Checkbox
+                    isSelected={currentFilters.without_counter_account}
+                    name="without_counter_account"
+                    onChange={checked => handleFilterChange('without_counter_account', checked)}
+                  >
+                    Nur Transaktionen ohne Gegenkonto
+                  </Checkbox>
+
+                  <Checkbox
+                    isSelected={currentFilters.hide_private}
+                    name="hide_private"
+                    onChange={checked => handleFilterChange('hide_private', checked)}
+                  >
+                    Private Transaktionen ausblenden
+                  </Checkbox>
                 </div>
-              </FormGroup>
-            </Form>
+              </div>
+            </FormGroup>
 
             {/* Aktive Filter anzeigen */}
             {activeFiltersCount > 0 && (
@@ -153,17 +149,12 @@ export const TransactionIndexFilterForm: React.FC<Props> = ({
                   Aktive Filter ({activeFiltersCount})
                 </div>
                 <div className="flex flex-wrap gap-1">
-                  {Object.entries(filters.filters).map(([key, filter]) => (
+                  {Object.entries(filters?.filters || {}).map(([key, filter]) => (
                     <Badge key={key} variant="secondary" className="text-xs">
                       {key === 'counter_account_id' &&
-                        filter.operator !== 'null' &&
-                        (Number(filter.value) === 0
-                          ? 'ohne Gegenkonto'
-                          : `Konto: ${accounts.find(a => a.id === filter.value)?.account_number || filter.value}`)}
-                      {key === 'counter_account_id' &&
-                        filter.operator === 'null' &&
-                        'ohne Gegenkonto'}
+                        (Number(filter.value) === 0 ? 'ohne Gegenkonto' : `Konto: ${filter.value}`)}
                       {key === 'is_locked' && 'nur unbestätigt'}
+                      {key === 'hide_private' && 'private Transaktionen ausblenden'}
                     </Badge>
                   ))}
                 </div>

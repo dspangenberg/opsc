@@ -23,6 +23,8 @@ trait HasDynamicFilters
      *   "boolean": "AND"
      * }
      *
+     * // ?filters={"filters":{"hide_private":{"operator":"scope","hide_private":1}},"boolean":"AND"}
+     *
      * URL Format (existing):
      * ?filter[scope][]=scope,startsBetween,01.01.2024,31.01.2024&filter[scope][]=scope,view,billable&filter[project_id]=in,7,8,9
      */
@@ -270,7 +272,8 @@ trait HasDynamicFilters
      */
     protected function buildScopeFilter(string $column, array $filterConfig, array $allowedScopes, string $filterBool): ?array
     {
-        $scopeName = $filterConfig['value'];
+        // Use the column name as the scope name for JSON format
+        $scopeName = $column;
         $scopeParams = $filterConfig['params'] ?? [];
 
         // Check if scope is allowed
@@ -475,12 +478,27 @@ trait HasDynamicFilters
         $scopeName = $filter['scope_name'];
         $scopeParams = $filter['scope_params'] ?? [];
 
+        // Convert snake_case to camelCase for scope methods
+        $scopeMethodName = $this->convertScopeNameToCamelCase($scopeName);
+
+        // Debug-Output
+        ds('applyScopeFilter called', $scopeName, $scopeMethodName, $scopeParams, $method);
+
         if ($method === 'or') {
-            $query->orWhere(function ($subQuery) use ($scopeName, $scopeParams) {
-                $subQuery->{$scopeName}(...$scopeParams);
+            $query->orWhere(function ($subQuery) use ($scopeMethodName, $scopeParams) {
+                $subQuery->{$scopeMethodName}(...$scopeParams);
             });
         } else {
-            $query->{$scopeName}(...$scopeParams);
+            $query->{$scopeMethodName}(...$scopeParams);
         }
+    }
+
+    /**
+     * Convert snake_case scope name to camelCase method name
+     */
+    protected function convertScopeNameToCamelCase(string $scopeName): string
+    {
+        // Convert snake_case to camelCase (e.g., hide_private -> hidePrivate)
+        return lcfirst(str_replace('_', '', ucwords($scopeName, '_')));
     }
 }

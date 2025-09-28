@@ -36,6 +36,8 @@ type FormData = Omit<
   | 'payment_deadline'
   | 'sales'
   | 'addresses'
+  | 'tax'
+  | 'bookkeeping_account'
   | 'outturn_account'
   | 'cost_center'
   | 'primary_phone'

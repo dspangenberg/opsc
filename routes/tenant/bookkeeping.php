@@ -23,8 +23,9 @@ Route::get('bookkeeping/transactions/set-counter-account/', TransactionSetCounte
 Route::get('bookkeeping/bookings', BookingIndexController::class)
     ->name('app.bookkeeping.bookings.index');
 
-Route::get('bookkeeping/transactions/{bank_account?}', TransactionIndexController::class)
+Route::match(['GET', 'POST'], 'bookkeeping/transactions/{bank_account?}', TransactionIndexController::class)
     ->name('app.bookkeeping.transactions.index');
+
 
 Route::post('bookkeeping/transactions/money-money-import', TransactionMoneyMoneyImportController::class)
     ->middleware([HandlePrecognitiveRequests::class])
