@@ -11,7 +11,6 @@ use App\Data\ContactData;
 use App\Http\Controllers\Controller;
 use App\Models\Contact;
 use App\Models\Invoice;
-use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 
 class ContactDetailsController extends Controller
@@ -51,7 +50,8 @@ class ContactDetailsController extends Controller
             },
             'contacts' => function ($query) {
                 $query->with('contacts');
-            }
+            },
+            'notables.creator'
         ]);
 
         if ($contact->debtor_number) {
@@ -68,6 +68,8 @@ class ContactDetailsController extends Controller
         }
 
         $contact->sales = $sales ?? null;
+
+        ds($contact->toArray());
 
 
         return Inertia::render('App/Contact/ContactDetails', [

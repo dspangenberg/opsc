@@ -8,6 +8,7 @@
     "php": "^8.4",
     "based/momentum-modal": "dev-master",
     "calebporzio/sushi": "^2.5",
+    "eg-mohamed/notable": "^1.4",
     "endroid/qr-code": "^6.0.8",
     "inertiajs/inertia-laravel": "^2.0",
     "laravel/framework": "^12",

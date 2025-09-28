@@ -23533,6 +23533,4021 @@ namespace Barryvdh\Debugbar\Facades {
             }
     }
 
+namespace MohamedSaid\Notable\Facades {
+    /**
+     * @see \MohamedSaid\Notable\Notable
+     */
+    class Notable extends \Illuminate\Database\Eloquent\Model {
+        /**
+         * @static
+         */
+        public static function getTable()
+        {
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getTable();
+        }
+
+        /**
+         * @static
+         */
+        public static function notable()
+        {
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->notable();
+        }
+
+        /**
+         * @static
+         */
+        public static function creator()
+        {
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->creator();
+        }
+
+        /**
+         * @static
+         */
+        public static function scopeByCreator($query, $creator)
+        {
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->scopeByCreator($query, $creator);
+        }
+
+        /**
+         * @static
+         */
+        public static function scopeWithoutCreator($query)
+        {
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->scopeWithoutCreator($query);
+        }
+
+        /**
+         * @static
+         */
+        public static function scopeRecent($query, $days = 7)
+        {
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->scopeRecent($query, $days);
+        }
+
+        /**
+         * @static
+         */
+        public static function scopeOlderThan($query, $days = 30)
+        {
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->scopeOlderThan($query, $days);
+        }
+
+        /**
+         * @static
+         */
+        public static function scopeToday($query)
+        {
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->scopeToday($query);
+        }
+
+        /**
+         * @static
+         */
+        public static function scopeThisWeek($query)
+        {
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->scopeThisWeek($query);
+        }
+
+        /**
+         * @static
+         */
+        public static function scopeThisMonth($query)
+        {
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->scopeThisMonth($query);
+        }
+
+        /**
+         * @static
+         */
+        public static function scopeThisYear($query)
+        {
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->scopeThisYear($query);
+        }
+
+        /**
+         * @static
+         */
+        public static function scopeBetweenDates($query, $startDate, $endDate)
+        {
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->scopeBetweenDates($query, $startDate, $endDate);
+        }
+
+        /**
+         * @static
+         */
+        public static function scopeContainingText($query, $text)
+        {
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->scopeContainingText($query, $text);
+        }
+
+        /**
+         * @static
+         */
+        public static function scopeSearch($query, $searchTerm)
+        {
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->scopeSearch($query, $searchTerm);
+        }
+
+        /**
+         * Clear the list of booted models so they will be re-booted.
+         *
+         * @return void
+         * @static
+         */
+        public static function clearBootedModels()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::clearBootedModels();
+        }
+
+        /**
+         * Disables relationship model touching for the current class during given callback scope.
+         *
+         * @param callable $callback
+         * @return void
+         * @static
+         */
+        public static function withoutTouching($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::withoutTouching($callback);
+        }
+
+        /**
+         * Disables relationship model touching for the given model classes during given callback scope.
+         *
+         * @param array $models
+         * @param callable $callback
+         * @return void
+         * @static
+         */
+        public static function withoutTouchingOn($models, $callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::withoutTouchingOn($models, $callback);
+        }
+
+        /**
+         * Determine if the given model is ignoring touches.
+         *
+         * @param string|null $class
+         * @return bool
+         * @static
+         */
+        public static function isIgnoringTouch($class = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::isIgnoringTouch($class);
+        }
+
+        /**
+         * Indicate that models should prevent lazy loading, silently discarding attributes, and accessing missing attributes.
+         *
+         * @param bool $shouldBeStrict
+         * @return void
+         * @static
+         */
+        public static function shouldBeStrict($shouldBeStrict = true)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::shouldBeStrict($shouldBeStrict);
+        }
+
+        /**
+         * Prevent model relationships from being lazy loaded.
+         *
+         * @param bool $value
+         * @return void
+         * @static
+         */
+        public static function preventLazyLoading($value = true)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::preventLazyLoading($value);
+        }
+
+        /**
+         * Determine if model relationships should be automatically eager loaded when accessed.
+         *
+         * @param bool $value
+         * @return void
+         * @static
+         */
+        public static function automaticallyEagerLoadRelationships($value = true)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::automaticallyEagerLoadRelationships($value);
+        }
+
+        /**
+         * Register a callback that is responsible for handling lazy loading violations.
+         *
+         * @param callable|null $callback
+         * @return void
+         * @static
+         */
+        public static function handleLazyLoadingViolationUsing($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::handleLazyLoadingViolationUsing($callback);
+        }
+
+        /**
+         * Prevent non-fillable attributes from being silently discarded.
+         *
+         * @param bool $value
+         * @return void
+         * @static
+         */
+        public static function preventSilentlyDiscardingAttributes($value = true)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::preventSilentlyDiscardingAttributes($value);
+        }
+
+        /**
+         * Register a callback that is responsible for handling discarded attribute violations.
+         *
+         * @param callable|null $callback
+         * @return void
+         * @static
+         */
+        public static function handleDiscardedAttributeViolationUsing($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::handleDiscardedAttributeViolationUsing($callback);
+        }
+
+        /**
+         * Prevent accessing missing attributes on retrieved models.
+         *
+         * @param bool $value
+         * @return void
+         * @static
+         */
+        public static function preventAccessingMissingAttributes($value = true)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::preventAccessingMissingAttributes($value);
+        }
+
+        /**
+         * Register a callback that is responsible for handling missing attribute violations.
+         *
+         * @param callable|null $callback
+         * @return void
+         * @static
+         */
+        public static function handleMissingAttributeViolationUsing($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::handleMissingAttributeViolationUsing($callback);
+        }
+
+        /**
+         * Execute a callback without broadcasting any model events for all model types.
+         *
+         * @param callable $callback
+         * @return mixed
+         * @static
+         */
+        public static function withoutBroadcasting($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::withoutBroadcasting($callback);
+        }
+
+        /**
+         * Fill the model with an array of attributes.
+         *
+         * @param array<string, mixed> $attributes
+         * @return \MohamedSaid\Notable\Notable
+         * @throws \Illuminate\Database\Eloquent\MassAssignmentException
+         * @static
+         */
+        public static function fill($attributes)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->fill($attributes);
+        }
+
+        /**
+         * Fill the model with an array of attributes. Force mass assignment.
+         *
+         * @param array<string, mixed> $attributes
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function forceFill($attributes)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->forceFill($attributes);
+        }
+
+        /**
+         * Qualify the given column name by the model's table.
+         *
+         * @param string $column
+         * @return string
+         * @static
+         */
+        public static function qualifyColumn($column)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->qualifyColumn($column);
+        }
+
+        /**
+         * Qualify the given columns with the model's table.
+         *
+         * @param array $columns
+         * @return array
+         * @static
+         */
+        public static function qualifyColumns($columns)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->qualifyColumns($columns);
+        }
+
+        /**
+         * Create a new instance of the given model.
+         *
+         * @param array<string, mixed> $attributes
+         * @param bool $exists
+         * @return static
+         * @static
+         */
+        public static function newInstance($attributes = [], $exists = false)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->newInstance($attributes, $exists);
+        }
+
+        /**
+         * Create a new model instance that is existing.
+         *
+         * @param array<string, mixed> $attributes
+         * @param \UnitEnum|string|null $connection
+         * @return static
+         * @static
+         */
+        public static function newFromBuilder($attributes = [], $connection = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->newFromBuilder($attributes, $connection);
+        }
+
+        /**
+         * Begin querying the model on a given connection.
+         *
+         * @param \UnitEnum|string|null $connection
+         * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @static
+         */
+        public static function on($connection = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::on($connection);
+        }
+
+        /**
+         * Begin querying the model on the write connection.
+         *
+         * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @static
+         */
+        public static function onWriteConnection()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::onWriteConnection();
+        }
+
+        /**
+         * Get all of the models from the database.
+         *
+         * @param array|string $columns
+         * @return \Illuminate\Database\Eloquent\Collection<int, static>
+         * @static
+         */
+        public static function all($columns = [])
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::all($columns);
+        }
+
+        /**
+         * Begin querying a model with eager loading.
+         *
+         * @param array|string $relations
+         * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @static
+         */
+        public static function with($relations)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::with($relations);
+        }
+
+        /**
+         * Eager load relations on the model.
+         *
+         * @param array|string $relations
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function load($relations)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->load($relations);
+        }
+
+        /**
+         * Eager load relationships on the polymorphic relation of a model.
+         *
+         * @param string $relation
+         * @param array $relations
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function loadMorph($relation, $relations)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->loadMorph($relation, $relations);
+        }
+
+        /**
+         * Eager load relations on the model if they are not already eager loaded.
+         *
+         * @param array|string $relations
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function loadMissing($relations)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->loadMissing($relations);
+        }
+
+        /**
+         * Eager load relation's column aggregations on the model.
+         *
+         * @param array|string $relations
+         * @param string $column
+         * @param string|null $function
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function loadAggregate($relations, $column, $function = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->loadAggregate($relations, $column, $function);
+        }
+
+        /**
+         * Eager load relation counts on the model.
+         *
+         * @param array|string $relations
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function loadCount($relations)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->loadCount($relations);
+        }
+
+        /**
+         * Eager load relation max column values on the model.
+         *
+         * @param array|string $relations
+         * @param string $column
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function loadMax($relations, $column)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->loadMax($relations, $column);
+        }
+
+        /**
+         * Eager load relation min column values on the model.
+         *
+         * @param array|string $relations
+         * @param string $column
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function loadMin($relations, $column)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->loadMin($relations, $column);
+        }
+
+        /**
+         * Eager load relation's column summations on the model.
+         *
+         * @param array|string $relations
+         * @param string $column
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function loadSum($relations, $column)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->loadSum($relations, $column);
+        }
+
+        /**
+         * Eager load relation average column values on the model.
+         *
+         * @param array|string $relations
+         * @param string $column
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function loadAvg($relations, $column)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->loadAvg($relations, $column);
+        }
+
+        /**
+         * Eager load related model existence values on the model.
+         *
+         * @param array|string $relations
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function loadExists($relations)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->loadExists($relations);
+        }
+
+        /**
+         * Eager load relationship column aggregation on the polymorphic relation of a model.
+         *
+         * @param string $relation
+         * @param array $relations
+         * @param string $column
+         * @param string|null $function
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function loadMorphAggregate($relation, $relations, $column, $function = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->loadMorphAggregate($relation, $relations, $column, $function);
+        }
+
+        /**
+         * Eager load relationship counts on the polymorphic relation of a model.
+         *
+         * @param string $relation
+         * @param array $relations
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function loadMorphCount($relation, $relations)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->loadMorphCount($relation, $relations);
+        }
+
+        /**
+         * Eager load relationship max column values on the polymorphic relation of a model.
+         *
+         * @param string $relation
+         * @param array $relations
+         * @param string $column
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function loadMorphMax($relation, $relations, $column)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->loadMorphMax($relation, $relations, $column);
+        }
+
+        /**
+         * Eager load relationship min column values on the polymorphic relation of a model.
+         *
+         * @param string $relation
+         * @param array $relations
+         * @param string $column
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function loadMorphMin($relation, $relations, $column)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->loadMorphMin($relation, $relations, $column);
+        }
+
+        /**
+         * Eager load relationship column summations on the polymorphic relation of a model.
+         *
+         * @param string $relation
+         * @param array $relations
+         * @param string $column
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function loadMorphSum($relation, $relations, $column)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->loadMorphSum($relation, $relations, $column);
+        }
+
+        /**
+         * Eager load relationship average column values on the polymorphic relation of a model.
+         *
+         * @param string $relation
+         * @param array $relations
+         * @param string $column
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function loadMorphAvg($relation, $relations, $column)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->loadMorphAvg($relation, $relations, $column);
+        }
+
+        /**
+         * Update the model in the database.
+         *
+         * @param array<string, mixed> $attributes
+         * @param array<string, mixed> $options
+         * @return bool
+         * @static
+         */
+        public static function update($attributes = [], $options = [])
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->update($attributes, $options);
+        }
+
+        /**
+         * Update the model in the database within a transaction.
+         *
+         * @param array<string, mixed> $attributes
+         * @param array<string, mixed> $options
+         * @return bool
+         * @throws \Throwable
+         * @static
+         */
+        public static function updateOrFail($attributes = [], $options = [])
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->updateOrFail($attributes, $options);
+        }
+
+        /**
+         * Update the model in the database without raising any events.
+         *
+         * @param array<string, mixed> $attributes
+         * @param array<string, mixed> $options
+         * @return bool
+         * @static
+         */
+        public static function updateQuietly($attributes = [], $options = [])
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->updateQuietly($attributes, $options);
+        }
+
+        /**
+         * Save the model and all of its relationships.
+         *
+         * @return bool
+         * @static
+         */
+        public static function push()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->push();
+        }
+
+        /**
+         * Save the model and all of its relationships without raising any events to the parent model.
+         *
+         * @return bool
+         * @static
+         */
+        public static function pushQuietly()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->pushQuietly();
+        }
+
+        /**
+         * Save the model to the database without raising any events.
+         *
+         * @param array $options
+         * @return bool
+         * @static
+         */
+        public static function saveQuietly($options = [])
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->saveQuietly($options);
+        }
+
+        /**
+         * Save the model to the database.
+         *
+         * @param array $options
+         * @return bool
+         * @static
+         */
+        public static function save($options = [])
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->save($options);
+        }
+
+        /**
+         * Save the model to the database within a transaction.
+         *
+         * @param array $options
+         * @return bool
+         * @throws \Throwable
+         * @static
+         */
+        public static function saveOrFail($options = [])
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->saveOrFail($options);
+        }
+
+        /**
+         * Destroy the models for the given IDs.
+         *
+         * @param \Illuminate\Support\Collection|array|int|string $ids
+         * @return int
+         * @static
+         */
+        public static function destroy($ids)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::destroy($ids);
+        }
+
+        /**
+         * Delete the model from the database.
+         *
+         * @return bool|null
+         * @throws \LogicException
+         * @static
+         */
+        public static function delete()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->delete();
+        }
+
+        /**
+         * Delete the model from the database without raising any events.
+         *
+         * @return bool
+         * @static
+         */
+        public static function deleteQuietly()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->deleteQuietly();
+        }
+
+        /**
+         * Delete the model from the database within a transaction.
+         *
+         * @return bool|null
+         * @throws \Throwable
+         * @static
+         */
+        public static function deleteOrFail()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->deleteOrFail();
+        }
+
+        /**
+         * Force a hard delete on a soft deleted model.
+         * 
+         * This method protects developers from running forceDelete when the trait is missing.
+         *
+         * @return bool|null
+         * @static
+         */
+        public static function forceDelete()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->forceDelete();
+        }
+
+        /**
+         * Force a hard destroy on a soft deleted model.
+         * 
+         * This method protects developers from running forceDestroy when the trait is missing.
+         *
+         * @param \Illuminate\Support\Collection|array|int|string $ids
+         * @return bool|null
+         * @static
+         */
+        public static function forceDestroy($ids)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::forceDestroy($ids);
+        }
+
+        /**
+         * Begin querying the model.
+         *
+         * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @static
+         */
+        public static function query()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::query();
+        }
+
+        /**
+         * Get a new query builder for the model's table.
+         *
+         * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @static
+         */
+        public static function newQuery()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->newQuery();
+        }
+
+        /**
+         * Get a new query builder that doesn't have any global scopes or eager loading.
+         *
+         * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @static
+         */
+        public static function newModelQuery()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->newModelQuery();
+        }
+
+        /**
+         * Get a new query builder with no relationships loaded.
+         *
+         * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @static
+         */
+        public static function newQueryWithoutRelationships()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->newQueryWithoutRelationships();
+        }
+
+        /**
+         * Register the global scopes for this builder instance.
+         *
+         * @param \Illuminate\Database\Eloquent\Builder<static> $builder
+         * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @static
+         */
+        public static function registerGlobalScopes($builder)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->registerGlobalScopes($builder);
+        }
+
+        /**
+         * Get a new query builder that doesn't have any global scopes.
+         *
+         * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @static
+         */
+        public static function newQueryWithoutScopes()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->newQueryWithoutScopes();
+        }
+
+        /**
+         * Get a new query instance without a given scope.
+         *
+         * @param \Illuminate\Database\Eloquent\Scope|string $scope
+         * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @static
+         */
+        public static function newQueryWithoutScope($scope)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->newQueryWithoutScope($scope);
+        }
+
+        /**
+         * Get a new query to restore one or more models by their queueable IDs.
+         *
+         * @param array|int $ids
+         * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @static
+         */
+        public static function newQueryForRestoration($ids)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->newQueryForRestoration($ids);
+        }
+
+        /**
+         * Create a new Eloquent query builder for the model.
+         *
+         * @param \Illuminate\Database\Query\Builder $query
+         * @return \Illuminate\Database\Eloquent\Builder<*>
+         * @static
+         */
+        public static function newEloquentBuilder($query)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->newEloquentBuilder($query);
+        }
+
+        /**
+         * Create a new pivot model instance.
+         *
+         * @param \Illuminate\Database\Eloquent\Model $parent
+         * @param array<string, mixed> $attributes
+         * @param string $table
+         * @param bool $exists
+         * @param string|null $using
+         * @return \Illuminate\Database\Eloquent\Relations\Pivot
+         * @static
+         */
+        public static function newPivot($parent, $attributes, $table, $exists, $using = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->newPivot($parent, $attributes, $table, $exists, $using);
+        }
+
+        /**
+         * Determine if the model has a given scope.
+         *
+         * @param string $scope
+         * @return bool
+         * @static
+         */
+        public static function hasNamedScope($scope)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->hasNamedScope($scope);
+        }
+
+        /**
+         * Apply the given named scope if possible.
+         *
+         * @param string $scope
+         * @param array $parameters
+         * @return mixed
+         * @static
+         */
+        public static function callNamedScope($scope, $parameters = [])
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->callNamedScope($scope, $parameters);
+        }
+
+        /**
+         * Convert the model instance to an array.
+         *
+         * @return array
+         * @static
+         */
+        public static function toArray()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->toArray();
+        }
+
+        /**
+         * Convert the model instance to JSON.
+         *
+         * @param int $options
+         * @return string
+         * @throws \Illuminate\Database\Eloquent\JsonEncodingException
+         * @static
+         */
+        public static function toJson($options = 0)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->toJson($options);
+        }
+
+        /**
+         * Convert the model instance to pretty print formatted JSON.
+         *
+         * @param int $options
+         * @return string
+         * @throws \Illuminate\Database\Eloquent\JsonEncodingException
+         * @static
+         */
+        public static function toPrettyJson($options = 0)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->toPrettyJson($options);
+        }
+
+        /**
+         * Convert the object into something JSON serializable.
+         *
+         * @return mixed
+         * @static
+         */
+        public static function jsonSerialize()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->jsonSerialize();
+        }
+
+        /**
+         * Reload a fresh model instance from the database.
+         *
+         * @param array|string $with
+         * @return static|null
+         * @static
+         */
+        public static function fresh($with = [])
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->fresh($with);
+        }
+
+        /**
+         * Reload the current model instance with fresh attributes from the database.
+         *
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function refresh()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->refresh();
+        }
+
+        /**
+         * Clone the model into a new, non-existing instance.
+         *
+         * @param array|null $except
+         * @return static
+         * @static
+         */
+        public static function replicate($except = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->replicate($except);
+        }
+
+        /**
+         * Clone the model into a new, non-existing instance without raising any events.
+         *
+         * @param array|null $except
+         * @return static
+         * @static
+         */
+        public static function replicateQuietly($except = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->replicateQuietly($except);
+        }
+
+        /**
+         * Determine if two models have the same ID and belong to the same table.
+         *
+         * @param \Illuminate\Database\Eloquent\Model|null $model
+         * @return bool
+         * @static
+         */
+        public static function is($model)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->is($model);
+        }
+
+        /**
+         * Determine if two models are not the same.
+         *
+         * @param \Illuminate\Database\Eloquent\Model|null $model
+         * @return bool
+         * @static
+         */
+        public static function isNot($model)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->isNot($model);
+        }
+
+        /**
+         * Get the database connection for the model.
+         *
+         * @return \Illuminate\Database\Connection
+         * @static
+         */
+        public static function getConnection()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getConnection();
+        }
+
+        /**
+         * Get the current connection name for the model.
+         *
+         * @return string|null
+         * @static
+         */
+        public static function getConnectionName()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getConnectionName();
+        }
+
+        /**
+         * Set the connection associated with the model.
+         *
+         * @param \UnitEnum|string|null $name
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setConnection($name)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setConnection($name);
+        }
+
+        /**
+         * Resolve a connection instance.
+         *
+         * @param \UnitEnum|string|null $connection
+         * @return \Illuminate\Database\Connection
+         * @static
+         */
+        public static function resolveConnection($connection = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::resolveConnection($connection);
+        }
+
+        /**
+         * Get the connection resolver instance.
+         *
+         * @return \Illuminate\Database\ConnectionResolverInterface|null
+         * @static
+         */
+        public static function getConnectionResolver()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::getConnectionResolver();
+        }
+
+        /**
+         * Set the connection resolver instance.
+         *
+         * @param \Illuminate\Database\ConnectionResolverInterface $resolver
+         * @return void
+         * @static
+         */
+        public static function setConnectionResolver($resolver)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::setConnectionResolver($resolver);
+        }
+
+        /**
+         * Unset the connection resolver for models.
+         *
+         * @return void
+         * @static
+         */
+        public static function unsetConnectionResolver()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::unsetConnectionResolver();
+        }
+
+        /**
+         * Set the table associated with the model.
+         *
+         * @param string $table
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setTable($table)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setTable($table);
+        }
+
+        /**
+         * Get the primary key for the model.
+         *
+         * @return string
+         * @static
+         */
+        public static function getKeyName()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getKeyName();
+        }
+
+        /**
+         * Set the primary key for the model.
+         *
+         * @param string $key
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setKeyName($key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setKeyName($key);
+        }
+
+        /**
+         * Get the table qualified key name.
+         *
+         * @return string
+         * @static
+         */
+        public static function getQualifiedKeyName()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getQualifiedKeyName();
+        }
+
+        /**
+         * Get the auto-incrementing key type.
+         *
+         * @return string
+         * @static
+         */
+        public static function getKeyType()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getKeyType();
+        }
+
+        /**
+         * Set the data type for the primary key.
+         *
+         * @param string $type
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setKeyType($type)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setKeyType($type);
+        }
+
+        /**
+         * Get the value indicating whether the IDs are incrementing.
+         *
+         * @return bool
+         * @static
+         */
+        public static function getIncrementing()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getIncrementing();
+        }
+
+        /**
+         * Set whether IDs are incrementing.
+         *
+         * @param bool $value
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setIncrementing($value)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setIncrementing($value);
+        }
+
+        /**
+         * Get the value of the model's primary key.
+         *
+         * @return mixed
+         * @static
+         */
+        public static function getKey()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getKey();
+        }
+
+        /**
+         * Get the queueable identity for the entity.
+         *
+         * @return mixed
+         * @static
+         */
+        public static function getQueueableId()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getQueueableId();
+        }
+
+        /**
+         * Get the queueable relationships for the entity.
+         *
+         * @return array
+         * @static
+         */
+        public static function getQueueableRelations()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getQueueableRelations();
+        }
+
+        /**
+         * Get the queueable connection for the entity.
+         *
+         * @return string|null
+         * @static
+         */
+        public static function getQueueableConnection()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getQueueableConnection();
+        }
+
+        /**
+         * Get the value of the model's route key.
+         *
+         * @return mixed
+         * @static
+         */
+        public static function getRouteKey()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getRouteKey();
+        }
+
+        /**
+         * Get the route key for the model.
+         *
+         * @return string
+         * @static
+         */
+        public static function getRouteKeyName()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getRouteKeyName();
+        }
+
+        /**
+         * Retrieve the model for a bound value.
+         *
+         * @param mixed $value
+         * @param string|null $field
+         * @return \Illuminate\Database\Eloquent\Model|null
+         * @static
+         */
+        public static function resolveRouteBinding($value, $field = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->resolveRouteBinding($value, $field);
+        }
+
+        /**
+         * Retrieve the model for a bound value.
+         *
+         * @param mixed $value
+         * @param string|null $field
+         * @return \Illuminate\Database\Eloquent\Model|null
+         * @static
+         */
+        public static function resolveSoftDeletableRouteBinding($value, $field = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->resolveSoftDeletableRouteBinding($value, $field);
+        }
+
+        /**
+         * Retrieve the child model for a bound value.
+         *
+         * @param string $childType
+         * @param mixed $value
+         * @param string|null $field
+         * @return \Illuminate\Database\Eloquent\Model|null
+         * @static
+         */
+        public static function resolveChildRouteBinding($childType, $value, $field)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->resolveChildRouteBinding($childType, $value, $field);
+        }
+
+        /**
+         * Retrieve the child model for a bound value.
+         *
+         * @param string $childType
+         * @param mixed $value
+         * @param string|null $field
+         * @return \Illuminate\Database\Eloquent\Model|null
+         * @static
+         */
+        public static function resolveSoftDeletableChildRouteBinding($childType, $value, $field)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->resolveSoftDeletableChildRouteBinding($childType, $value, $field);
+        }
+
+        /**
+         * Retrieve the model for a bound value.
+         *
+         * @param \Illuminate\Database\Eloquent\Model|\Illuminate\Contracts\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\Relation $query
+         * @param mixed $value
+         * @param string|null $field
+         * @return \Illuminate\Contracts\Database\Eloquent\Builder
+         * @static
+         */
+        public static function resolveRouteBindingQuery($query, $value, $field = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->resolveRouteBindingQuery($query, $value, $field);
+        }
+
+        /**
+         * Get the default foreign key name for the model.
+         *
+         * @return string
+         * @static
+         */
+        public static function getForeignKey()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getForeignKey();
+        }
+
+        /**
+         * Get the number of models to return per page.
+         *
+         * @return int
+         * @static
+         */
+        public static function getPerPage()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getPerPage();
+        }
+
+        /**
+         * Set the number of models to return per page.
+         *
+         * @param int $perPage
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setPerPage($perPage)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setPerPage($perPage);
+        }
+
+        /**
+         * Determine if the model is soft deletable.
+         *
+         * @static
+         */
+        public static function isSoftDeletable()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::isSoftDeletable();
+        }
+
+        /**
+         * Determine if lazy loading is disabled.
+         *
+         * @return bool
+         * @static
+         */
+        public static function preventsLazyLoading()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::preventsLazyLoading();
+        }
+
+        /**
+         * Determine if relationships are being automatically eager loaded when accessed.
+         *
+         * @return bool
+         * @static
+         */
+        public static function isAutomaticallyEagerLoadingRelationships()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::isAutomaticallyEagerLoadingRelationships();
+        }
+
+        /**
+         * Determine if discarding guarded attribute fills is disabled.
+         *
+         * @return bool
+         * @static
+         */
+        public static function preventsSilentlyDiscardingAttributes()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::preventsSilentlyDiscardingAttributes();
+        }
+
+        /**
+         * Determine if accessing missing attributes is disabled.
+         *
+         * @return bool
+         * @static
+         */
+        public static function preventsAccessingMissingAttributes()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::preventsAccessingMissingAttributes();
+        }
+
+        /**
+         * Get the broadcast channel route definition that is associated with the given entity.
+         *
+         * @return string
+         * @static
+         */
+        public static function broadcastChannelRoute()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->broadcastChannelRoute();
+        }
+
+        /**
+         * Get the broadcast channel name that is associated with the given entity.
+         *
+         * @return string
+         * @static
+         */
+        public static function broadcastChannel()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->broadcastChannel();
+        }
+
+        /**
+         * Determine if the given attribute exists.
+         *
+         * @param mixed $offset
+         * @return bool
+         * @static
+         */
+        public static function offsetExists($offset)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->offsetExists($offset);
+        }
+
+        /**
+         * Get the value for a given offset.
+         *
+         * @param mixed $offset
+         * @return mixed
+         * @static
+         */
+        public static function offsetGet($offset)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->offsetGet($offset);
+        }
+
+        /**
+         * Set the value for a given offset.
+         *
+         * @param mixed $offset
+         * @param mixed $value
+         * @return void
+         * @static
+         */
+        public static function offsetSet($offset, $value)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            $instance->offsetSet($offset, $value);
+        }
+
+        /**
+         * Unset the value for a given offset.
+         *
+         * @param mixed $offset
+         * @return void
+         * @static
+         */
+        public static function offsetUnset($offset)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            $instance->offsetUnset($offset);
+        }
+
+        /**
+         * Indicate that the object's string representation should be escaped when __toString is invoked.
+         *
+         * @param bool $escape
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function escapeWhenCastingToString($escape = true)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->escapeWhenCastingToString($escape);
+        }
+
+        /**
+         * Convert the model's attributes to an array.
+         *
+         * @return array<string, mixed>
+         * @static
+         */
+        public static function attributesToArray()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->attributesToArray();
+        }
+
+        /**
+         * Get the model's relationships in array form.
+         *
+         * @return array
+         * @static
+         */
+        public static function relationsToArray()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->relationsToArray();
+        }
+
+        /**
+         * Determine whether an attribute exists on the model.
+         *
+         * @param string $key
+         * @return bool
+         * @static
+         */
+        public static function hasAttribute($key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->hasAttribute($key);
+        }
+
+        /**
+         * Get an attribute from the model.
+         *
+         * @param string $key
+         * @return mixed
+         * @static
+         */
+        public static function getAttribute($key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getAttribute($key);
+        }
+
+        /**
+         * Get a plain attribute (not a relationship).
+         *
+         * @param string $key
+         * @return mixed
+         * @static
+         */
+        public static function getAttributeValue($key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getAttributeValue($key);
+        }
+
+        /**
+         * Get a relationship.
+         *
+         * @param string $key
+         * @return mixed
+         * @static
+         */
+        public static function getRelationValue($key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getRelationValue($key);
+        }
+
+        /**
+         * Determine if the given key is a relationship method on the model.
+         *
+         * @param string $key
+         * @return bool
+         * @static
+         */
+        public static function isRelation($key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->isRelation($key);
+        }
+
+        /**
+         * Determine if a get mutator exists for an attribute.
+         *
+         * @param string $key
+         * @return bool
+         * @static
+         */
+        public static function hasGetMutator($key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->hasGetMutator($key);
+        }
+
+        /**
+         * Determine if a "Attribute" return type marked mutator exists for an attribute.
+         *
+         * @param string $key
+         * @return bool
+         * @static
+         */
+        public static function hasAttributeMutator($key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->hasAttributeMutator($key);
+        }
+
+        /**
+         * Determine if a "Attribute" return type marked get mutator exists for an attribute.
+         *
+         * @param string $key
+         * @return bool
+         * @static
+         */
+        public static function hasAttributeGetMutator($key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->hasAttributeGetMutator($key);
+        }
+
+        /**
+         * Determine if any get mutator exists for an attribute.
+         *
+         * @param string $key
+         * @return bool
+         * @static
+         */
+        public static function hasAnyGetMutator($key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->hasAnyGetMutator($key);
+        }
+
+        /**
+         * Merge new casts with existing casts on the model.
+         *
+         * @param array $casts
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function mergeCasts($casts)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->mergeCasts($casts);
+        }
+
+        /**
+         * Set a given attribute on the model.
+         *
+         * @param string $key
+         * @param mixed $value
+         * @return mixed
+         * @static
+         */
+        public static function setAttribute($key, $value)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setAttribute($key, $value);
+        }
+
+        /**
+         * Determine if a set mutator exists for an attribute.
+         *
+         * @param string $key
+         * @return bool
+         * @static
+         */
+        public static function hasSetMutator($key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->hasSetMutator($key);
+        }
+
+        /**
+         * Determine if an "Attribute" return type marked set mutator exists for an attribute.
+         *
+         * @param string $key
+         * @return bool
+         * @static
+         */
+        public static function hasAttributeSetMutator($key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->hasAttributeSetMutator($key);
+        }
+
+        /**
+         * Set a given JSON attribute on the model.
+         *
+         * @param string $key
+         * @param mixed $value
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function fillJsonAttribute($key, $value)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->fillJsonAttribute($key, $value);
+        }
+
+        /**
+         * Decode the given JSON back into an array or object.
+         *
+         * @param string|null $value
+         * @param bool $asObject
+         * @return mixed
+         * @static
+         */
+        public static function fromJson($value, $asObject = false)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->fromJson($value, $asObject);
+        }
+
+        /**
+         * Decrypt the given encrypted string.
+         *
+         * @param string $value
+         * @return mixed
+         * @static
+         */
+        public static function fromEncryptedString($value)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->fromEncryptedString($value);
+        }
+
+        /**
+         * Set the encrypter instance that will be used to encrypt attributes.
+         *
+         * @param \Illuminate\Contracts\Encryption\Encrypter|null $encrypter
+         * @return void
+         * @static
+         */
+        public static function encryptUsing($encrypter)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::encryptUsing($encrypter);
+        }
+
+        /**
+         * Get the current encrypter being used by the model.
+         *
+         * @return \Illuminate\Contracts\Encryption\Encrypter
+         * @static
+         */
+        public static function currentEncrypter()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::currentEncrypter();
+        }
+
+        /**
+         * Decode the given float.
+         *
+         * @param mixed $value
+         * @return mixed
+         * @static
+         */
+        public static function fromFloat($value)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->fromFloat($value);
+        }
+
+        /**
+         * Convert a DateTime to a storable string.
+         *
+         * @param mixed $value
+         * @return string|null
+         * @static
+         */
+        public static function fromDateTime($value)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->fromDateTime($value);
+        }
+
+        /**
+         * Get the attributes that should be converted to dates.
+         *
+         * @return array
+         * @static
+         */
+        public static function getDates()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getDates();
+        }
+
+        /**
+         * Get the format for database stored dates.
+         *
+         * @return string
+         * @static
+         */
+        public static function getDateFormat()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getDateFormat();
+        }
+
+        /**
+         * Set the date format used by the model.
+         *
+         * @param string $format
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setDateFormat($format)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setDateFormat($format);
+        }
+
+        /**
+         * Determine whether an attribute should be cast to a native type.
+         *
+         * @param string $key
+         * @param array|string|null $types
+         * @return bool
+         * @static
+         */
+        public static function hasCast($key, $types = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->hasCast($key, $types);
+        }
+
+        /**
+         * Get the attributes that should be cast.
+         *
+         * @return array
+         * @static
+         */
+        public static function getCasts()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getCasts();
+        }
+
+        /**
+         * Get all of the current attributes on the model.
+         *
+         * @return array<string, mixed>
+         * @static
+         */
+        public static function getAttributes()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getAttributes();
+        }
+
+        /**
+         * Set the array of model attributes. No checking is done.
+         *
+         * @param array $attributes
+         * @param bool $sync
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setRawAttributes($attributes, $sync = false)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setRawAttributes($attributes, $sync);
+        }
+
+        /**
+         * Get the model's original attribute values.
+         *
+         * @param string|null $key
+         * @param mixed $default
+         * @return ($key is null ? array<string, mixed> : mixed)
+         * @static
+         */
+        public static function getOriginal($key = null, $default = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getOriginal($key, $default);
+        }
+
+        /**
+         * Get the model's raw original attribute values.
+         *
+         * @param string|null $key
+         * @param mixed $default
+         * @return ($key is null ? array<string, mixed> : mixed)
+         * @static
+         */
+        public static function getRawOriginal($key = null, $default = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getRawOriginal($key, $default);
+        }
+
+        /**
+         * Get a subset of the model's attributes.
+         *
+         * @param array<string>|mixed $attributes
+         * @return array<string, mixed>
+         * @static
+         */
+        public static function only($attributes)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->only($attributes);
+        }
+
+        /**
+         * Get all attributes except the given ones.
+         *
+         * @param array<string>|mixed $attributes
+         * @return array
+         * @static
+         */
+        public static function except($attributes)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->except($attributes);
+        }
+
+        /**
+         * Sync the original attributes with the current.
+         *
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function syncOriginal()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->syncOriginal();
+        }
+
+        /**
+         * Sync a single original attribute with its current value.
+         *
+         * @param string $attribute
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function syncOriginalAttribute($attribute)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->syncOriginalAttribute($attribute);
+        }
+
+        /**
+         * Sync multiple original attribute with their current values.
+         *
+         * @param array<string>|string $attributes
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function syncOriginalAttributes($attributes)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->syncOriginalAttributes($attributes);
+        }
+
+        /**
+         * Sync the changed attributes.
+         *
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function syncChanges()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->syncChanges();
+        }
+
+        /**
+         * Determine if the model or any of the given attribute(s) have been modified.
+         *
+         * @param array<string>|string|null $attributes
+         * @return bool
+         * @static
+         */
+        public static function isDirty($attributes = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->isDirty($attributes);
+        }
+
+        /**
+         * Determine if the model or all the given attribute(s) have remained the same.
+         *
+         * @param array<string>|string|null $attributes
+         * @return bool
+         * @static
+         */
+        public static function isClean($attributes = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->isClean($attributes);
+        }
+
+        /**
+         * Discard attribute changes and reset the attributes to their original state.
+         *
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function discardChanges()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->discardChanges();
+        }
+
+        /**
+         * Determine if the model or any of the given attribute(s) were changed when the model was last saved.
+         *
+         * @param array<string>|string|null $attributes
+         * @return bool
+         * @static
+         */
+        public static function wasChanged($attributes = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->wasChanged($attributes);
+        }
+
+        /**
+         * Get the attributes that have been changed since the last sync.
+         *
+         * @return array<string, mixed>
+         * @static
+         */
+        public static function getDirty()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getDirty();
+        }
+
+        /**
+         * Get the attributes that were changed when the model was last saved.
+         *
+         * @return array<string, mixed>
+         * @static
+         */
+        public static function getChanges()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getChanges();
+        }
+
+        /**
+         * Get the attributes that were previously original before the model was last saved.
+         *
+         * @return array<string, mixed>
+         * @static
+         */
+        public static function getPrevious()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getPrevious();
+        }
+
+        /**
+         * Determine if the new and old values for a given key are equivalent.
+         *
+         * @param string $key
+         * @return bool
+         * @static
+         */
+        public static function originalIsEquivalent($key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->originalIsEquivalent($key);
+        }
+
+        /**
+         * Append attributes to query when building a query.
+         *
+         * @param array<string>|string $attributes
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function append($attributes)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->append($attributes);
+        }
+
+        /**
+         * Get the accessors that are being appended to model arrays.
+         *
+         * @return array
+         * @static
+         */
+        public static function getAppends()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getAppends();
+        }
+
+        /**
+         * Set the accessors to append to model arrays.
+         *
+         * @param array $appends
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setAppends($appends)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setAppends($appends);
+        }
+
+        /**
+         * Merge new appended attributes with existing appended attributes on the model.
+         *
+         * @param array<string> $appends
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function mergeAppends($appends)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->mergeAppends($appends);
+        }
+
+        /**
+         * Return whether the accessor attribute has been appended.
+         *
+         * @param string $attribute
+         * @return bool
+         * @static
+         */
+        public static function hasAppended($attribute)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->hasAppended($attribute);
+        }
+
+        /**
+         * Get the mutated attributes for a given instance.
+         *
+         * @return array
+         * @static
+         */
+        public static function getMutatedAttributes()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getMutatedAttributes();
+        }
+
+        /**
+         * Extract and cache all the mutated attributes of a class.
+         *
+         * @param object|string $classOrInstance
+         * @return void
+         * @static
+         */
+        public static function cacheMutatedAttributes($classOrInstance)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::cacheMutatedAttributes($classOrInstance);
+        }
+
+        /**
+         * Boot the has event trait for a model.
+         *
+         * @return void
+         * @static
+         */
+        public static function bootHasEvents()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::bootHasEvents();
+        }
+
+        /**
+         * Resolve the observe class names from the attributes.
+         *
+         * @return array
+         * @static
+         */
+        public static function resolveObserveAttributes()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::resolveObserveAttributes();
+        }
+
+        /**
+         * Register observers with the model.
+         *
+         * @param object|array|string $classes
+         * @return void
+         * @throws \RuntimeException
+         * @static
+         */
+        public static function observe($classes)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::observe($classes);
+        }
+
+        /**
+         * Get the observable event names.
+         *
+         * @return array
+         * @static
+         */
+        public static function getObservableEvents()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getObservableEvents();
+        }
+
+        /**
+         * Set the observable event names.
+         *
+         * @param array $observables
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setObservableEvents($observables)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setObservableEvents($observables);
+        }
+
+        /**
+         * Add an observable event name.
+         *
+         * @param mixed $observables
+         * @return void
+         * @static
+         */
+        public static function addObservableEvents($observables)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            $instance->addObservableEvents($observables);
+        }
+
+        /**
+         * Remove an observable event name.
+         *
+         * @param mixed $observables
+         * @return void
+         * @static
+         */
+        public static function removeObservableEvents($observables)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            $instance->removeObservableEvents($observables);
+        }
+
+        /**
+         * Register a retrieved model event with the dispatcher.
+         *
+         * @param \Illuminate\Events\Queued\Closure|callable|array|class-string $callback
+         * @return void
+         * @static
+         */
+        public static function retrieved($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::retrieved($callback);
+        }
+
+        /**
+         * Register a saving model event with the dispatcher.
+         *
+         * @param \Illuminate\Events\Queued\Closure|callable|array|class-string $callback
+         * @return void
+         * @static
+         */
+        public static function saving($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::saving($callback);
+        }
+
+        /**
+         * Register a saved model event with the dispatcher.
+         *
+         * @param \Illuminate\Events\Queued\Closure|callable|array|class-string $callback
+         * @return void
+         * @static
+         */
+        public static function saved($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::saved($callback);
+        }
+
+        /**
+         * Register an updating model event with the dispatcher.
+         *
+         * @param \Illuminate\Events\Queued\Closure|callable|array|class-string $callback
+         * @return void
+         * @static
+         */
+        public static function updating($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::updating($callback);
+        }
+
+        /**
+         * Register an updated model event with the dispatcher.
+         *
+         * @param \Illuminate\Events\Queued\Closure|callable|array|class-string $callback
+         * @return void
+         * @static
+         */
+        public static function updated($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::updated($callback);
+        }
+
+        /**
+         * Register a creating model event with the dispatcher.
+         *
+         * @param \Illuminate\Events\Queued\Closure|callable|array|class-string $callback
+         * @return void
+         * @static
+         */
+        public static function creating($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::creating($callback);
+        }
+
+        /**
+         * Register a created model event with the dispatcher.
+         *
+         * @param \Illuminate\Events\Queued\Closure|callable|array|class-string $callback
+         * @return void
+         * @static
+         */
+        public static function created($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::created($callback);
+        }
+
+        /**
+         * Register a replicating model event with the dispatcher.
+         *
+         * @param \Illuminate\Events\Queued\Closure|callable|array|class-string $callback
+         * @return void
+         * @static
+         */
+        public static function replicating($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::replicating($callback);
+        }
+
+        /**
+         * Register a deleting model event with the dispatcher.
+         *
+         * @param \Illuminate\Events\Queued\Closure|callable|array|class-string $callback
+         * @return void
+         * @static
+         */
+        public static function deleting($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::deleting($callback);
+        }
+
+        /**
+         * Register a deleted model event with the dispatcher.
+         *
+         * @param \Illuminate\Events\Queued\Closure|callable|array|class-string $callback
+         * @return void
+         * @static
+         */
+        public static function deleted($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::deleted($callback);
+        }
+
+        /**
+         * Remove all the event listeners for the model.
+         *
+         * @return void
+         * @static
+         */
+        public static function flushEventListeners()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::flushEventListeners();
+        }
+
+        /**
+         * Get the event map for the model.
+         *
+         * @return array
+         * @static
+         */
+        public static function dispatchesEvents()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->dispatchesEvents();
+        }
+
+        /**
+         * Get the event dispatcher instance.
+         *
+         * @return \Illuminate\Contracts\Events\Dispatcher|null
+         * @static
+         */
+        public static function getEventDispatcher()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::getEventDispatcher();
+        }
+
+        /**
+         * Set the event dispatcher instance.
+         *
+         * @param \Illuminate\Contracts\Events\Dispatcher $dispatcher
+         * @return void
+         * @static
+         */
+        public static function setEventDispatcher($dispatcher)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::setEventDispatcher($dispatcher);
+        }
+
+        /**
+         * Unset the event dispatcher for models.
+         *
+         * @return void
+         * @static
+         */
+        public static function unsetEventDispatcher()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::unsetEventDispatcher();
+        }
+
+        /**
+         * Execute a callback without firing any model events for any model type.
+         *
+         * @param callable $callback
+         * @return mixed
+         * @static
+         */
+        public static function withoutEvents($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::withoutEvents($callback);
+        }
+
+        /**
+         * Boot the has global scopes trait for a model.
+         *
+         * @return void
+         * @static
+         */
+        public static function bootHasGlobalScopes()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::bootHasGlobalScopes();
+        }
+
+        /**
+         * Resolve the global scope class names from the attributes.
+         *
+         * @return array
+         * @static
+         */
+        public static function resolveGlobalScopeAttributes()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::resolveGlobalScopeAttributes();
+        }
+
+        /**
+         * Register a new global scope on the model.
+         *
+         * @param \Illuminate\Database\Eloquent\Scope|(\Closure(\Illuminate\Database\Eloquent\Builder<static>): mixed)|string $scope
+         * @param \Illuminate\Database\Eloquent\Scope|(\Closure(\Illuminate\Database\Eloquent\Builder<static>): mixed)|null $implementation
+         * @return mixed
+         * @throws \InvalidArgumentException
+         * @static
+         */
+        public static function addGlobalScope($scope, $implementation = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::addGlobalScope($scope, $implementation);
+        }
+
+        /**
+         * Register multiple global scopes on the model.
+         *
+         * @param array $scopes
+         * @return void
+         * @static
+         */
+        public static function addGlobalScopes($scopes)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::addGlobalScopes($scopes);
+        }
+
+        /**
+         * Determine if a model has a global scope.
+         *
+         * @param \Illuminate\Database\Eloquent\Scope|string $scope
+         * @return bool
+         * @static
+         */
+        public static function hasGlobalScope($scope)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::hasGlobalScope($scope);
+        }
+
+        /**
+         * Get a global scope registered with the model.
+         *
+         * @param \Illuminate\Database\Eloquent\Scope|string $scope
+         * @return \Illuminate\Database\Eloquent\Scope|(\Closure(\Illuminate\Database\Eloquent\Builder<static>): mixed)|null
+         * @static
+         */
+        public static function getGlobalScope($scope)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::getGlobalScope($scope);
+        }
+
+        /**
+         * Get all of the global scopes that are currently registered.
+         *
+         * @return array
+         * @static
+         */
+        public static function getAllGlobalScopes()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::getAllGlobalScopes();
+        }
+
+        /**
+         * Set the current global scopes.
+         *
+         * @param array $scopes
+         * @return void
+         * @static
+         */
+        public static function setAllGlobalScopes($scopes)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::setAllGlobalScopes($scopes);
+        }
+
+        /**
+         * Get the global scopes for this class instance.
+         *
+         * @return array
+         * @static
+         */
+        public static function getGlobalScopes()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getGlobalScopes();
+        }
+
+        /**
+         * Get the dynamic relation resolver if defined or inherited, or return null.
+         *
+         * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+         * @param class-string<TRelatedModel> $class
+         * @param string $key
+         * @return \Closure|null
+         * @static
+         */
+        public static function relationResolver($class, $key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->relationResolver($class, $key);
+        }
+
+        /**
+         * Define a dynamic relation resolver.
+         *
+         * @param string $name
+         * @param \Closure $callback
+         * @return void
+         * @static
+         */
+        public static function resolveRelationUsing($name, $callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::resolveRelationUsing($name, $callback);
+        }
+
+        /**
+         * Determine if a relationship autoloader callback has been defined.
+         *
+         * @return bool
+         * @static
+         */
+        public static function hasRelationAutoloadCallback()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->hasRelationAutoloadCallback();
+        }
+
+        /**
+         * Define an automatic relationship autoloader callback for this model and its relations.
+         *
+         * @param \Closure $callback
+         * @param mixed $context
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function autoloadRelationsUsing($callback, $context = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->autoloadRelationsUsing($callback, $context);
+        }
+
+        /**
+         * Define a one-to-one relationship.
+         *
+         * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+         * @param class-string<TRelatedModel> $related
+         * @param string|null $foreignKey
+         * @param string|null $localKey
+         * @return \Illuminate\Database\Eloquent\Relations\HasOne<TRelatedModel, $this>
+         * @static
+         */
+        public static function hasOne($related, $foreignKey = null, $localKey = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->hasOne($related, $foreignKey, $localKey);
+        }
+
+        /**
+         * Define a has-one-through relationship.
+         *
+         * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+         * @template TIntermediateModel of \Illuminate\Database\Eloquent\Model
+         * @param class-string<TRelatedModel> $related
+         * @param class-string<TIntermediateModel> $through
+         * @param string|null $firstKey
+         * @param string|null $secondKey
+         * @param string|null $localKey
+         * @param string|null $secondLocalKey
+         * @return \Illuminate\Database\Eloquent\Relations\HasOneThrough<TRelatedModel, TIntermediateModel, $this>
+         * @static
+         */
+        public static function hasOneThrough($related, $through, $firstKey = null, $secondKey = null, $localKey = null, $secondLocalKey = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->hasOneThrough($related, $through, $firstKey, $secondKey, $localKey, $secondLocalKey);
+        }
+
+        /**
+         * Define a polymorphic one-to-one relationship.
+         *
+         * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+         * @param class-string<TRelatedModel> $related
+         * @param string $name
+         * @param string|null $type
+         * @param string|null $id
+         * @param string|null $localKey
+         * @return \Illuminate\Database\Eloquent\Relations\MorphOne<TRelatedModel, $this>
+         * @static
+         */
+        public static function morphOne($related, $name, $type = null, $id = null, $localKey = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->morphOne($related, $name, $type, $id, $localKey);
+        }
+
+        /**
+         * Define an inverse one-to-one or many relationship.
+         *
+         * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+         * @param class-string<TRelatedModel> $related
+         * @param string|null $foreignKey
+         * @param string|null $ownerKey
+         * @param string|null $relation
+         * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<TRelatedModel, $this>
+         * @static
+         */
+        public static function belongsTo($related, $foreignKey = null, $ownerKey = null, $relation = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->belongsTo($related, $foreignKey, $ownerKey, $relation);
+        }
+
+        /**
+         * Define a polymorphic, inverse one-to-one or many relationship.
+         *
+         * @param string|null $name
+         * @param string|null $type
+         * @param string|null $id
+         * @param string|null $ownerKey
+         * @return \Illuminate\Database\Eloquent\Relations\MorphTo<\Illuminate\Database\Eloquent\Model, $this>
+         * @static
+         */
+        public static function morphTo($name = null, $type = null, $id = null, $ownerKey = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->morphTo($name, $type, $id, $ownerKey);
+        }
+
+        /**
+         * Retrieve the actual class name for a given morph class.
+         *
+         * @param string $class
+         * @return string
+         * @static
+         */
+        public static function getActualClassNameForMorph($class)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::getActualClassNameForMorph($class);
+        }
+
+        /**
+         * Create a pending has-many-through or has-one-through relationship.
+         *
+         * @template TIntermediateModel of \Illuminate\Database\Eloquent\Model
+         * @param string|\Illuminate\Database\Eloquent\Relations\HasMany<TIntermediateModel, covariant $this>|\Illuminate\Database\Eloquent\Relations\HasOne<TIntermediateModel, covariant $this> $relationship
+         * @return ( $relationship is string
+         *     ? \Illuminate\Database\Eloquent\PendingHasThroughRelationship<\Illuminate\Database\Eloquent\Model, $this>
+         *     : (
+         *          $relationship is \Illuminate\Database\Eloquent\Relations\HasMany<TIntermediateModel, $this>
+         *          ? \Illuminate\Database\Eloquent\PendingHasThroughRelationship<TIntermediateModel, $this, \Illuminate\Database\Eloquent\Relations\HasMany<TIntermediateModel, $this>>
+         *          : \Illuminate\Database\Eloquent\PendingHasThroughRelationship<TIntermediateModel, $this, \Illuminate\Database\Eloquent\Relations\HasOne<TIntermediateModel, $this>>
+         *     )
+         * )
+         * @static
+         */
+        public static function through($relationship)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->through($relationship);
+        }
+
+        /**
+         * Define a one-to-many relationship.
+         *
+         * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+         * @param class-string<TRelatedModel> $related
+         * @param string|null $foreignKey
+         * @param string|null $localKey
+         * @return \Illuminate\Database\Eloquent\Relations\HasMany<TRelatedModel, $this>
+         * @static
+         */
+        public static function hasMany($related, $foreignKey = null, $localKey = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->hasMany($related, $foreignKey, $localKey);
+        }
+
+        /**
+         * Define a has-many-through relationship.
+         *
+         * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+         * @template TIntermediateModel of \Illuminate\Database\Eloquent\Model
+         * @param class-string<TRelatedModel> $related
+         * @param class-string<TIntermediateModel> $through
+         * @param string|null $firstKey
+         * @param string|null $secondKey
+         * @param string|null $localKey
+         * @param string|null $secondLocalKey
+         * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough<TRelatedModel, TIntermediateModel, $this>
+         * @static
+         */
+        public static function hasManyThrough($related, $through, $firstKey = null, $secondKey = null, $localKey = null, $secondLocalKey = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->hasManyThrough($related, $through, $firstKey, $secondKey, $localKey, $secondLocalKey);
+        }
+
+        /**
+         * Define a polymorphic one-to-many relationship.
+         *
+         * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+         * @param class-string<TRelatedModel> $related
+         * @param string $name
+         * @param string|null $type
+         * @param string|null $id
+         * @param string|null $localKey
+         * @return \Illuminate\Database\Eloquent\Relations\MorphMany<TRelatedModel, $this>
+         * @static
+         */
+        public static function morphMany($related, $name, $type = null, $id = null, $localKey = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->morphMany($related, $name, $type, $id, $localKey);
+        }
+
+        /**
+         * Define a many-to-many relationship.
+         *
+         * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+         * @param class-string<TRelatedModel> $related
+         * @param string|class-string<\Illuminate\Database\Eloquent\Model>|null $table
+         * @param string|null $foreignPivotKey
+         * @param string|null $relatedPivotKey
+         * @param string|null $parentKey
+         * @param string|null $relatedKey
+         * @param string|null $relation
+         * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<TRelatedModel, $this, \Illuminate\Database\Eloquent\Relations\Pivot>
+         * @static
+         */
+        public static function belongsToMany($related, $table = null, $foreignPivotKey = null, $relatedPivotKey = null, $parentKey = null, $relatedKey = null, $relation = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->belongsToMany($related, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relation);
+        }
+
+        /**
+         * Define a polymorphic many-to-many relationship.
+         *
+         * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+         * @param class-string<TRelatedModel> $related
+         * @param string $name
+         * @param string|null $table
+         * @param string|null $foreignPivotKey
+         * @param string|null $relatedPivotKey
+         * @param string|null $parentKey
+         * @param string|null $relatedKey
+         * @param string|null $relation
+         * @param bool $inverse
+         * @return \Illuminate\Database\Eloquent\Relations\MorphToMany<TRelatedModel, $this>
+         * @static
+         */
+        public static function morphToMany($related, $name, $table = null, $foreignPivotKey = null, $relatedPivotKey = null, $parentKey = null, $relatedKey = null, $relation = null, $inverse = false)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->morphToMany($related, $name, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relation, $inverse);
+        }
+
+        /**
+         * Define a polymorphic, inverse many-to-many relationship.
+         *
+         * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+         * @param class-string<TRelatedModel> $related
+         * @param string $name
+         * @param string|null $table
+         * @param string|null $foreignPivotKey
+         * @param string|null $relatedPivotKey
+         * @param string|null $parentKey
+         * @param string|null $relatedKey
+         * @param string|null $relation
+         * @return \Illuminate\Database\Eloquent\Relations\MorphToMany<TRelatedModel, $this>
+         * @static
+         */
+        public static function morphedByMany($related, $name, $table = null, $foreignPivotKey = null, $relatedPivotKey = null, $parentKey = null, $relatedKey = null, $relation = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->morphedByMany($related, $name, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relation);
+        }
+
+        /**
+         * Get the joining table name for a many-to-many relation.
+         *
+         * @param string $related
+         * @param \Illuminate\Database\Eloquent\Model|null $instance
+         * @return string
+         * @static
+         */
+        public static function joiningTable($related, $instance = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->joiningTable($related, $instance);
+        }
+
+        /**
+         * Get this model's half of the intermediate table name for belongsToMany relationships.
+         *
+         * @return string
+         * @static
+         */
+        public static function joiningTableSegment()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->joiningTableSegment();
+        }
+
+        /**
+         * Determine if the model touches a given relation.
+         *
+         * @param string $relation
+         * @return bool
+         * @static
+         */
+        public static function touches($relation)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->touches($relation);
+        }
+
+        /**
+         * Touch the owning relations of the model.
+         *
+         * @return void
+         * @static
+         */
+        public static function touchOwners()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            $instance->touchOwners();
+        }
+
+        /**
+         * Get the class name for polymorphic relations.
+         *
+         * @return string
+         * @static
+         */
+        public static function getMorphClass()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getMorphClass();
+        }
+
+        /**
+         * Get all the loaded relations for the instance.
+         *
+         * @return array
+         * @static
+         */
+        public static function getRelations()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getRelations();
+        }
+
+        /**
+         * Get a specified relationship.
+         *
+         * @param string $relation
+         * @return mixed
+         * @static
+         */
+        public static function getRelation($relation)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getRelation($relation);
+        }
+
+        /**
+         * Determine if the given relation is loaded.
+         *
+         * @param string $key
+         * @return bool
+         * @static
+         */
+        public static function relationLoaded($key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->relationLoaded($key);
+        }
+
+        /**
+         * Set the given relationship on the model.
+         *
+         * @param string $relation
+         * @param mixed $value
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setRelation($relation, $value)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setRelation($relation, $value);
+        }
+
+        /**
+         * Unset a loaded relationship.
+         *
+         * @param string $relation
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function unsetRelation($relation)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->unsetRelation($relation);
+        }
+
+        /**
+         * Set the entire relations array on the model.
+         *
+         * @param array $relations
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setRelations($relations)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setRelations($relations);
+        }
+
+        /**
+         * Enable relationship autoloading for this model.
+         *
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function withRelationshipAutoloading()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->withRelationshipAutoloading();
+        }
+
+        /**
+         * Duplicate the instance and unset all the loaded relations.
+         *
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function withoutRelations()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->withoutRelations();
+        }
+
+        /**
+         * Unset all the loaded relations for the instance.
+         *
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function unsetRelations()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->unsetRelations();
+        }
+
+        /**
+         * Get the relationships that are touched on save.
+         *
+         * @return array
+         * @static
+         */
+        public static function getTouchedRelations()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getTouchedRelations();
+        }
+
+        /**
+         * Set the relationships that are touched on save.
+         *
+         * @param array $touches
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setTouchedRelations($touches)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setTouchedRelations($touches);
+        }
+
+        /**
+         * Update the model's update timestamp.
+         *
+         * @param string|null $attribute
+         * @return bool
+         * @static
+         */
+        public static function touch($attribute = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->touch($attribute);
+        }
+
+        /**
+         * Update the model's update timestamp without raising any events.
+         *
+         * @param string|null $attribute
+         * @return bool
+         * @static
+         */
+        public static function touchQuietly($attribute = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->touchQuietly($attribute);
+        }
+
+        /**
+         * Update the creation and update timestamps.
+         *
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function updateTimestamps()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->updateTimestamps();
+        }
+
+        /**
+         * Set the value of the "created at" attribute.
+         *
+         * @param mixed $value
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setCreatedAt($value)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setCreatedAt($value);
+        }
+
+        /**
+         * Set the value of the "updated at" attribute.
+         *
+         * @param mixed $value
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setUpdatedAt($value)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setUpdatedAt($value);
+        }
+
+        /**
+         * Get a fresh timestamp for the model.
+         *
+         * @return \Illuminate\Support\Carbon
+         * @static
+         */
+        public static function freshTimestamp()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->freshTimestamp();
+        }
+
+        /**
+         * Get a fresh timestamp for the model.
+         *
+         * @return string
+         * @static
+         */
+        public static function freshTimestampString()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->freshTimestampString();
+        }
+
+        /**
+         * Determine if the model uses timestamps.
+         *
+         * @return bool
+         * @static
+         */
+        public static function usesTimestamps()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->usesTimestamps();
+        }
+
+        /**
+         * Get the name of the "created at" column.
+         *
+         * @return string|null
+         * @static
+         */
+        public static function getCreatedAtColumn()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getCreatedAtColumn();
+        }
+
+        /**
+         * Get the name of the "updated at" column.
+         *
+         * @return string|null
+         * @static
+         */
+        public static function getUpdatedAtColumn()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getUpdatedAtColumn();
+        }
+
+        /**
+         * Get the fully qualified "created at" column.
+         *
+         * @return string|null
+         * @static
+         */
+        public static function getQualifiedCreatedAtColumn()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getQualifiedCreatedAtColumn();
+        }
+
+        /**
+         * Get the fully qualified "updated at" column.
+         *
+         * @return string|null
+         * @static
+         */
+        public static function getQualifiedUpdatedAtColumn()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getQualifiedUpdatedAtColumn();
+        }
+
+        /**
+         * Disable timestamps for the current class during the given callback scope.
+         *
+         * @param callable $callback
+         * @return mixed
+         * @static
+         */
+        public static function withoutTimestamps($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::withoutTimestamps($callback);
+        }
+
+        /**
+         * Disable timestamps for the given model classes during the given callback scope.
+         *
+         * @param array $models
+         * @param callable $callback
+         * @return mixed
+         * @static
+         */
+        public static function withoutTimestampsOn($models, $callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::withoutTimestampsOn($models, $callback);
+        }
+
+        /**
+         * Determine if the given model is ignoring timestamps / touches.
+         *
+         * @param string|null $class
+         * @return bool
+         * @static
+         */
+        public static function isIgnoringTimestamps($class = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::isIgnoringTimestamps($class);
+        }
+
+        /**
+         * Determine if the model uses unique ids.
+         *
+         * @return bool
+         * @static
+         */
+        public static function usesUniqueIds()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->usesUniqueIds();
+        }
+
+        /**
+         * Generate unique keys for the model.
+         *
+         * @return void
+         * @static
+         */
+        public static function setUniqueIds()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            $instance->setUniqueIds();
+        }
+
+        /**
+         * Generate a new key for the model.
+         *
+         * @return string
+         * @static
+         */
+        public static function newUniqueId()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->newUniqueId();
+        }
+
+        /**
+         * Get the columns that should receive a unique identifier.
+         *
+         * @return array
+         * @static
+         */
+        public static function uniqueIds()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->uniqueIds();
+        }
+
+        /**
+         * Get the hidden attributes for the model.
+         *
+         * @return array<string>
+         * @static
+         */
+        public static function getHidden()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getHidden();
+        }
+
+        /**
+         * Set the hidden attributes for the model.
+         *
+         * @param array<string> $hidden
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setHidden($hidden)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setHidden($hidden);
+        }
+
+        /**
+         * Merge new hidden attributes with existing hidden attributes on the model.
+         *
+         * @param array<string> $hidden
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function mergeHidden($hidden)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->mergeHidden($hidden);
+        }
+
+        /**
+         * Get the visible attributes for the model.
+         *
+         * @return array<string>
+         * @static
+         */
+        public static function getVisible()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getVisible();
+        }
+
+        /**
+         * Set the visible attributes for the model.
+         *
+         * @param array<string> $visible
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function setVisible($visible)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->setVisible($visible);
+        }
+
+        /**
+         * Merge new visible attributes with existing visible attributes on the model.
+         *
+         * @param array<string> $visible
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function mergeVisible($visible)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->mergeVisible($visible);
+        }
+
+        /**
+         * Make the given, typically hidden, attributes visible.
+         *
+         * @param array<string>|string|null $attributes
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function makeVisible($attributes)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->makeVisible($attributes);
+        }
+
+        /**
+         * Make the given, typically hidden, attributes visible if the given truth test passes.
+         *
+         * @param bool|\Closure $condition
+         * @param array<string>|string|null $attributes
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function makeVisibleIf($condition, $attributes)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->makeVisibleIf($condition, $attributes);
+        }
+
+        /**
+         * Make the given, typically visible, attributes hidden.
+         *
+         * @param array<string>|string|null $attributes
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function makeHidden($attributes)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->makeHidden($attributes);
+        }
+
+        /**
+         * Make the given, typically visible, attributes hidden if the given truth test passes.
+         *
+         * @param bool|\Closure $condition
+         * @param array<string>|string|null $attributes
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function makeHiddenIf($condition, $attributes)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->makeHiddenIf($condition, $attributes);
+        }
+
+        /**
+         * Get the fillable attributes for the model.
+         *
+         * @return array<string>
+         * @static
+         */
+        public static function getFillable()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getFillable();
+        }
+
+        /**
+         * Set the fillable attributes for the model.
+         *
+         * @param array<string> $fillable
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function fillable($fillable)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->fillable($fillable);
+        }
+
+        /**
+         * Merge new fillable attributes with existing fillable attributes on the model.
+         *
+         * @param array<string> $fillable
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function mergeFillable($fillable)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->mergeFillable($fillable);
+        }
+
+        /**
+         * Get the guarded attributes for the model.
+         *
+         * @return array<string>
+         * @static
+         */
+        public static function getGuarded()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->getGuarded();
+        }
+
+        /**
+         * Set the guarded attributes for the model.
+         *
+         * @param array<string> $guarded
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function guard($guarded)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->guard($guarded);
+        }
+
+        /**
+         * Merge new guarded attributes with existing guarded attributes on the model.
+         *
+         * @param array<string> $guarded
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function mergeGuarded($guarded)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->mergeGuarded($guarded);
+        }
+
+        /**
+         * Disable all mass assignable restrictions.
+         *
+         * @param bool $state
+         * @return void
+         * @static
+         */
+        public static function unguard($state = true)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::unguard($state);
+        }
+
+        /**
+         * Enable the mass assignment restrictions.
+         *
+         * @return void
+         * @static
+         */
+        public static function reguard()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            \MohamedSaid\Notable\Notable::reguard();
+        }
+
+        /**
+         * Determine if the current state is "unguarded".
+         *
+         * @return bool
+         * @static
+         */
+        public static function isUnguarded()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::isUnguarded();
+        }
+
+        /**
+         * Run the given callable while being unguarded.
+         *
+         * @template TReturn
+         * @param callable():  TReturn  $callback
+         * @return TReturn
+         * @static
+         */
+        public static function unguarded($callback)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::unguarded($callback);
+        }
+
+        /**
+         * Determine if the given attribute may be mass assigned.
+         *
+         * @param string $key
+         * @return bool
+         * @static
+         */
+        public static function isFillable($key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->isFillable($key);
+        }
+
+        /**
+         * Determine if the given key is guarded.
+         *
+         * @param string $key
+         * @return bool
+         * @static
+         */
+        public static function isGuarded($key)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->isGuarded($key);
+        }
+
+        /**
+         * Determine if the model is totally guarded.
+         *
+         * @return bool
+         * @static
+         */
+        public static function totallyGuarded()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->totallyGuarded();
+        }
+
+        /**
+         * Create a new resource object for the given resource.
+         *
+         * @param class-string<\Illuminate\Http\Resources\Json\JsonResource>|null $resourceClass
+         * @return \Illuminate\Http\Resources\Json\JsonResource
+         * @static
+         */
+        public static function toResource($resourceClass = null)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->toResource($resourceClass);
+        }
+
+        /**
+         * Guess the resource class name for the model.
+         *
+         * @return array{class-string<\Illuminate\Http\Resources\Json\JsonResource>, class-string<\Illuminate\Http\Resources\Json\JsonResource>}
+         * @static
+         */
+        public static function guessResourceName()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            return \MohamedSaid\Notable\Notable::guessResourceName();
+        }
+
+        /**
+         * Create a new Eloquent Collection instance.
+         *
+         * @param array<array-key, \Illuminate\Database\Eloquent\Model> $models
+         * @return \Illuminate\Database\Eloquent\TCollection
+         * @static
+         */
+        public static function newCollection($models = [])
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->newCollection($models);
+        }
+
+        /**
+         * Resolve the collection class name from the CollectedBy attribute.
+         *
+         * @return class-string<TCollection>|null
+         * @static
+         */
+        public static function resolveCollectionFromAttribute()
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->resolveCollectionFromAttribute();
+        }
+
+            }
+    }
+
 namespace Laravel\Mcp\Server\Facades {
     /**
      * @see \Laravel\Mcp\Server\Registrar
@@ -30181,6 +34196,7 @@ namespace  {
     class View extends \Illuminate\Support\Facades\View {}
     class Vite extends \Illuminate\Support\Facades\Vite {}
     class Debugbar extends \Barryvdh\Debugbar\Facades\Debugbar {}
+    class Notable extends \MohamedSaid\Notable\Facades\Notable {}
     class Mcp extends \Laravel\Mcp\Server\Facades\Mcp {}
     class MediaUploader extends \Plank\Mediable\Facades\MediaUploader {}
     class ImageManipulator extends \Plank\Mediable\Facades\ImageManipulator {}

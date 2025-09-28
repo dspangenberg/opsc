@@ -136,8 +136,6 @@ export const useForm = <T extends FormSchema>(
 ): ExtendedForm<T> => {
   const internalForm = internalUseForm(method, action, data, config)
 
-  console.log('useForm', internalForm)
-
   return {
     id,
     className,

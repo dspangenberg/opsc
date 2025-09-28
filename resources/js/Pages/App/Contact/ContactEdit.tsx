@@ -37,6 +37,7 @@ type FormData = Omit<
   | 'sales'
   | 'addresses'
   | 'tax'
+  | 'notables'
   | 'bookkeeping_account'
   | 'outturn_account'
   | 'cost_center'
