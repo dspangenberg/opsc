@@ -37,8 +37,14 @@ const ContactDetails: React.FC = () => {
             <div className="col-span-24">
               <TextField textArea label="Notiz" {...form.register('note')} />
             </div>
-            <div className="col-span-24">
-              <Button type="submit" variant="default" title="Notiz speichern" />
+            <div className="col-span-24 flex justify-end">
+              <Button
+                type="submit"
+                variant="default"
+                title="Notiz speichern"
+                disabled={!form.data.note}
+                loading={form.processing}
+              />
             </div>
           </FormGroup>
         </Form>
