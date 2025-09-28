@@ -96,7 +96,6 @@ class Transaction extends Model
 
     public function scopeHidePrivate(Builder $query): Builder
     {
-        ds('scopeHidePrivate');
         return $query->whereNotIn('counter_account_id', [1890,1800]);
     }
 
