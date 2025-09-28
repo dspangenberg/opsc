@@ -482,7 +482,6 @@ trait HasDynamicFilters
         $scopeMethodName = $this->convertScopeNameToCamelCase($scopeName);
 
         // Debug-Output
-        ds('applyScopeFilter called', $scopeName, $scopeMethodName, $scopeParams, $method);
 
         if ($method === 'or') {
             $query->orWhere(function ($subQuery) use ($scopeMethodName, $scopeParams) {
