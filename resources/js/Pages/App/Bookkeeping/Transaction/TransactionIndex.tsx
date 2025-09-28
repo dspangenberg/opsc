@@ -6,9 +6,8 @@ import {
   Tick01Icon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
-import { parseAsString, throttle, useQueryState } from 'nuqs'
-import type * as React from 'react'
-import { useMemo, useState } from 'react'
+import * as React from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { DataTable } from '@/Components/DataTable'
 import { JollySearchField } from '@/Components/jolly-ui/search-field'
 import { PageContainer } from '@/Components/PageContainer'
@@ -35,7 +34,10 @@ interface TransactionsPageProps extends PageProps {
   bank_accounts: App.Data.BankAccountData[]
   bank_account: App.Data.BankAccountData
   bookkeeping_accounts: App.Data.BookkeepingAccountData[]
+  currentFilters?: FilterConfig
+  currentSearch?: string
 }
+
 type FilterConfig = {
   filters: Record<string, { operator: string; value: any }>
   boolean?: 'AND' | 'OR'
@@ -45,59 +47,96 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
   transactions,
   bank_account,
   bank_accounts,
-  bookkeeping_accounts
+  bookkeeping_accounts,
+  currentFilters = { filters: {}, boolean: 'AND' },
+  currentSearch = ''
 }) => {
   const [selectedRows, setSelectedRows] = useState<App.Data.TransactionData[]>([])
   const [showMoneyMoneyImport, setShowMoneyMoneyImport] = useState(false)
 
-  // Search mit Debounce und shallow: false
-  const [search, setSearch] = useQueryState(
-    'search',
-    parseAsString.withDefault('').withOptions({
-      limitUrlUpdates: throttle(250),
-      clearOnDefault: true,
-      shallow: false
-    })
-  )
+  // Lokale State für Filter und Search
+  const [filters, setFilters] = useState<FilterConfig>(currentFilters)
+  const [search, setSearch] = useState(currentSearch)
 
-  // Filters als JSON String mit throttle und shallow: false
-  const [filtersString, setFiltersString] = useQueryState(
-    'filters',
-    parseAsString.withDefault('{}').withOptions({
-      limitUrlUpdates: throttle(250),
-      clearOnDefault: true,
-      shallow: false
-    })
-  )
+  // Debounce für Search
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Parse JSON filters
-  const filters = useMemo<FilterConfig>(() => {
-    try {
-      const parsed = JSON.parse(filtersString)
-      return {
-        filters: parsed.filters || {},
-        boolean: parsed.boolean || 'AND'
+  // Debounced Search Handler
+  const debouncedSearchChange = useCallback(
+    (newSearch: string) => {
+      // Clear existing timeout
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current)
       }
-    } catch {
-      return { filters: {}, boolean: 'AND' }
-    }
-  }, [filtersString])
 
-  // Function to update filters
-  const updateFilters = (newFilters: FilterConfig) => {
-    setFiltersString(JSON.stringify(newFilters))
+      // Set new timeout
+      searchTimeoutRef.current = setTimeout(() => {
+        router.post(
+          route('app.bookkeeping.transactions.index', { bank_account: bank_account.id }),
+          {
+            filters: filters,
+            search: newSearch
+          },
+          {
+            preserveScroll: true,
+            preserveState: true,
+            only: ['transactions'],
+            onSuccess: () => {
+              // Update wird durch die props vom Controller gemacht
+            }
+          }
+        )
+      }, 500) // 500ms Debounce
+    },
+    [filters, bank_account.id]
+  )
+
+  // Filter ändern via POST (ohne Debounce, da seltener)
+  const handleFiltersChange = (newFilters: FilterConfig) => {
+    router.post(
+      route('app.bookkeeping.transactions.index', { bank_account: bank_account.id }),
+      {
+        filters: newFilters,
+        search: search
+      },
+      {
+        preserveScroll: true,
+        preserveState: true,
+        only: ['transactions'],
+        onSuccess: () => {
+          setFilters(newFilters)
+        }
+      }
+    )
   }
 
+  // Search Input Handler (nur lokaler State, kein Server-Request)
+  const handleSearchInputChange = (newSearch: string) => {
+    setSearch(newSearch)
+    debouncedSearchChange(newSearch)
+  }
+
+  // Cleanup timeout on unmount
+  React.useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current)
+      }
+    }
+  }, [])
+
   const handleFilter = () => {
-    updateFilters({
+    const newFilters = {
       filters: {
         ...filters.filters,
         is_locked: {
           operator: '=',
           value: 0
         }
-      }
-    })
+      },
+      boolean: 'AND' as const
+    }
+    handleFiltersChange(newFilters)
   }
 
   const breadcrumbs = useMemo(() => [{ title: 'Buchhaltung' }], [])
@@ -164,8 +203,9 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
         </DropdownButton>
       </Toolbar>
     ),
-    []
+    [handleFilter]
   )
+
   const currentRoute = route().params.bank_account
   const selectedKey = currentRoute
     ? String(currentRoute)
@@ -173,7 +213,6 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
       ? String(bank_accounts[0].id)
       : undefined
 
-  // Debug logging
   const tabs = useMemo(
     () => (
       <Tabs variant="underlined" selectedKey={selectedKey}>
@@ -196,6 +235,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
     ),
     [bank_accounts]
   )
+
   const actionBar = useMemo(() => {
     return (
       <Toolbar variant="secondary" className="px-4 pt-2">
@@ -226,19 +266,19 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
           aria-label="Suchen"
           placeholder="Nach Namen, Verwendungszweck oder IBAN suchen"
           value={search}
-          onChange={value => {
-            setSearch(value)
-          }}
+          onChange={handleSearchInputChange}
           className="w-sm"
         />
         <TransactionIndexFilterForm
           accounts={bookkeeping_accounts}
           filters={filters}
-          onFiltersChange={updateFilters}
+          onFiltersChange={handleFiltersChange}
+          bankAccountId={bank_account.id as number}
+          currentSearch={search}
         />
       </div>
     ),
-    [search, setSearch, bookkeeping_accounts, filters]
+    [search, bookkeeping_accounts, filters, bank_account.id]
   )
 
   return (
@@ -246,7 +286,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
       header={
         <div className="flex flex-1 items-center gap-2">
           <div className="flex flex-none flex-col items-start gap-1">
-            <h1 className="font-bold text-xl">{bank_account.name}</h1>
+            <h1 className="font-bold text-lg">{bank_account.name}</h1>
             <div className="text-muted-foreground text-sm">{bank_account.iban}</div>
           </div>
         </div>

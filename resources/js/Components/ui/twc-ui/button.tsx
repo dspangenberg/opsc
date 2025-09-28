@@ -18,7 +18,7 @@ const buttonVariants = cva(
     'data-[disabled]:pointer-events-none data-[disabled]:opacity-50 ',
     /* Focus Visible */
     'focus-visible:border-ring focus-visible:ring-ring/20 focus-visible:ring-[3px]',
-    'active:ring-[3px]',
+    'pressed:ring-[3px]',
     /* Resets */
     'focus-visible:outline-none ring-offset-1'
   ],
@@ -26,7 +26,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-primary text-primary-foreground data-[hovered]:bg-primary/90 pressed:ring-primary/50 active:ring-ring/50 focus-visible:ring-primary/20',
+          'bg-primary text-primary-foreground data-[hovered]:bg-primary/90  pressed:ring-primary/50  pressed:ring-ring/50 focus-visible:ring-primary/20',
         destructive:
           'bg-destructive text-destructive-foreground text-white data-[hovered]:bg-destructive/90 border pressed:ring-destructive/50 focus-visible:ring-destructive/20 focus-visible:border-destructive/20 ',
         outline:
@@ -50,7 +50,8 @@ const buttonVariants = cva(
         icon: 'size-9',
         auto: 'h-9 w-auto py-2 px-2',
         'icon-xs': 'size-6',
-        'icon-sm': 'size-7'
+        'icon-sm': 'size-7',
+        full: 'w-full'
       }
     },
     defaultVariants: {
@@ -115,7 +116,8 @@ export const Button = ({
     lg: 'size-5',
     icon: 'size-5',
     'icon-sm': 'size-4',
-    'icon-xs': 'size-3'
+    'icon-xs': 'size-3',
+    full: 'size-5'
   }[size || 'default']
 
   const isToolbar = variant === 'toolbar' || variant === 'toolbar-default'

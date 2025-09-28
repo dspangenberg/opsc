@@ -114,6 +114,7 @@ contacts: Array<App.Data.ContactData> | null;
 title: App.Data.TitleData | null;
 salutation: App.Data.SalutationData | null;
 payment_deadline: App.Data.PaymentDeadlineData | null;
+tax: App.Data.TaxData | null;
 mails: Array<App.Data.ContactMailData> | null;
 phones: Array<App.Data.ContactPhoneData> | null;
 sales: App.Data.SalesData | null;

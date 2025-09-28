@@ -94,6 +94,12 @@ class Transaction extends Model
         return $query;
     }
 
+    public function scopeHidePrivate(Builder $query): Builder
+    {
+        ds('scopeHidePrivate');
+        return $query->whereNotIn('counter_account_id', [1890,1800]);
+    }
+
     public static function createBooking(Transaction $transaction, $dryRun = false): array
     {
 

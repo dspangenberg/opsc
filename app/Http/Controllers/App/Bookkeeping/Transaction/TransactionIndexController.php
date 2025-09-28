@@ -28,14 +28,18 @@ class TransactionIndexController extends Controller
 
         $bank_accounts = BankAccount::orderBy('pos')->get();
 
-        $filterString = ''; // '{"filters":{"is_locked":{"operator":"=","value":false}},"boolean":"AND"}';
+        // POST-Daten für Filter verwenden, mit Fallback auf GET für initiale Seitenaufrufe
+        $filters = $request->input('filters', []);
+        $search = $request->input('search', '');
 
         $transactions = Transaction::query()
             ->where('bank_account_id', $bank_account->id)
-            ->applyDynamicFilters($request, [
+            ->applyFiltersFromObject($filters, [
                 'allowed_filters' => ['is_locked', 'counter_account_id'],
+                'allowed_operators' => ['=', '!=', 'like', 'scope'],
+                'allowed_scopes' => ['hide_private'],
             ])
-            ->search($request->query('search'))
+            ->search($search)
             ->with('bank_account')
             ->with('contact')
             ->with('account')
@@ -45,7 +49,12 @@ class TransactionIndexController extends Controller
             ->orderBy('id', 'DESC')
             ->paginate(10);
 
-        $transactions->appends($_GET)->links();
+        // Bei POST-Requests sollten wir die aktuellen Filter/Search-Parameter für die Paginierung beibehalten
+        if ($request->isMethod('POST')) {
+            $transactions->appends($request->only(['filters', 'search']));
+        } else {
+            $transactions->appends($_GET)->links();
+        }
 
         $bookkeeping_accounts = BookkeepingAccount::query()->orderBy('account_number')->get();
 
@@ -54,6 +63,9 @@ class TransactionIndexController extends Controller
             'bank_account' => BankAccountData::from($bank_account),
             'bank_accounts' => BankAccountData::collect($bank_accounts),
             'bookkeeping_accounts' => BookkeepingAccountData::collect($bookkeeping_accounts),
+            // Aktuelle Filter und Search-Parameter an Frontend zurückgeben
+            'currentFilters' => $filters,
+            'currentSearch' => $search,
         ]);
     }
 }

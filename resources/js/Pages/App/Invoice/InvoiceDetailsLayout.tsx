@@ -227,7 +227,6 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
                   disabled={invoice.is_draft || !!invoice.sent_at}
                   icon={Sent02Icon}
                   title="Als versendet markieren"
-                  shortcut="Cmd+S"
                   separator
                   onAction={handleMarkAsSent}
                 />
@@ -256,7 +255,7 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
                 <MenuItem
                   title="Rechnung buchen"
                   href={route('app.invoice.booking-create', { invoice })}
-                  disabled={!!invoice.booking?.id}
+                  disabled={!invoice.sent_at || !!invoice.booking?.id}
                 />
                 <MenuItem
                   icon={UnavailableIcon}
