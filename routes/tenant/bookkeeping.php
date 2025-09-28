@@ -30,9 +30,6 @@ Route::post('bookkeeping/transactions/money-money-import', TransactionMoneyMoney
     ->middleware([HandlePrecognitiveRequests::class])
     ->name('app.bookkeeping.transactions.money-money-import');
 
-Route::get('bookkeeping/transactions/{transaction}/pay-invoice', TransactionPayInvoiceCreateController::class)
-    ->name('app.bookkeeping.transactions.pay-invoice');
-
 
 Route::get('/bookkeeping/receipts', [ReceiptController::class, 'index'])->name('app.bookkeeping.receipts.index');
 Route::post('/bookkeeping/receipts/upload', [ReceiptController::class, 'upload'])->name('app.bookkeeping.receipts.upload')->middleware([HandlePrecognitiveRequests::class]);

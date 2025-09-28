@@ -15,7 +15,8 @@ import { cn } from '@/Lib/utils'
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
   style: 'decimal',
-  minimumFractionDigits: 2
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
 })
 
 const handleConfirmClicked = async (row: App.Data.BookkeepingBookingData) => {

@@ -69,6 +69,9 @@ class ContactData extends Data
         /** @var PaymentDeadlineData */
         public readonly ?object $payment_deadline,
 
+        /** @var TaxData */
+        public readonly ?object $tax,
+
         /** @var ContactMailData[] */
         public readonly ?array $mails,
 

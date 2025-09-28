@@ -15,9 +15,10 @@ const buttonVariants = cva(
   [
     'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors active:border-ring',
     /* Disabled */
-    'data-[disabled]:pointer-events-none data-[disabled]:opacity-50 outline-none',
+    'data-[disabled]:pointer-events-none data-[disabled]:opacity-50 ',
     /* Focus Visible */
     'focus-visible:border-ring focus-visible:ring-ring/20 focus-visible:ring-[3px]',
+    'active:ring-[3px]',
     /* Resets */
     'focus-visible:outline-none ring-offset-1'
   ],
@@ -29,14 +30,14 @@ const buttonVariants = cva(
         destructive:
           'bg-destructive text-destructive-foreground text-white data-[hovered]:bg-destructive/90 border pressed:ring-destructive/50 focus-visible:ring-destructive/20 focus-visible:border-destructive/20 ',
         outline:
-          'border border-input bg-background  data-[hovered]:bg-accent  active:ring-ring/50  pressed:ring-primary/50 active:ring-ring/50 data-[hovered]:text-accent-foreground focus-visible:ring-ring/20 outline-0',
+          'border border-input bg-background  data-[hovered]:bg-accent data-[hovered]:text-accent-foreground focus-visible:ring-ring/20 pressed:ring-ring/50',
         secondary:
           'bg-secondary/90 text-secondary-foreground border-transparent border focus-visible:border-input focus-visible:border data-[hovered]:bg-secondary/20 pressed:ring-ring/50',
         ghost:
           'data-[hovered]:bg-accent data-[hovered]:text-accent-foreground focus-visible:border border border-transparent focus-visible:border-input focus-visible:ring-ring/20 pressed:ring-ring/50 text-sm',
+        link: 'text-primary underline-offset-4 data-[hovered]:underline',
         'ghost-destructive':
           'data-[hovered]:bg-accent data-[hovered]:text-destructive-foreground focus-visible:border border border-transparent focus-visible:border-input focus-visible:ring-ring/20 pressed:ring-ring/50 text-sm',
-        link: 'text-primary underline-offset-4 data-[hovered]:underline',
         toolbar:
           'data-[hovered]:bg-accent data-[hovered]:text-accent-foreground pressed:ring-ring/50 active:ring-ring/50 focus-visible:border focus-visible:border-primary focus-visible:ring-ring/20  text-sm',
         'toolbar-default':
@@ -47,7 +48,6 @@ const buttonVariants = cva(
         sm: 'h-8 rounded-md px-3 text-xs',
         lg: 'h-10 rounded-md px-8',
         icon: 'size-9',
-        full: 'h-9 w-full px-2',
         auto: 'h-9 w-auto py-2 px-2',
         'icon-xs': 'size-6',
         'icon-sm': 'size-7'
@@ -100,9 +100,7 @@ export const Button = ({
   if (variant === 'toolbar') {
     tooltip = title
     title = ''
-    if (!size) {
-      size = 'icon'
-    }
+    size = 'icon'
   }
 
   if (!forceTitle && title && !tooltip && ['icon', 'icon-sm', 'icon-xs'].includes(size as string)) {
@@ -116,7 +114,6 @@ export const Button = ({
     sm: 'size-5',
     lg: 'size-5',
     icon: 'size-5',
-    full: 'size-5',
     'icon-sm': 'size-4',
     'icon-xs': 'size-3'
   }[size || 'default']
@@ -144,7 +141,7 @@ export const Button = ({
       {...props}
     >
       {composeRenderProps(children, children => (
-        <div className={cn('flex items-center gap-2', size === 'icon' ? 'mx-auto' : '')}>
+        <div className={cn('flex gap-2', size === 'icon' ? 'mx-auto' : '')}>
           {!isLoading ? (
             icon && (
               <Icon

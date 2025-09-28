@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Mpdf\MpdfException;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
@@ -288,6 +289,12 @@ class Invoice extends Model implements MediableInterface
 
         return array_filter($address, 'trim');
     }
+
+    public function booking(): MorphOne
+    {
+        return $this->morphOne(BookkeepingBooking::class, 'bookable');
+    }
+
 
     public function getFilenameAttribute(): string
     {

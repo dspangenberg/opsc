@@ -2,8 +2,10 @@
 
 @plugin 'tailwindcss-animate';
 @plugin "tailwindcss-react-aria-components";
+@plugin 'tailwind-scrollbar';
 
 @source '../views';
+@source '../ressources/js';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -11,7 +13,7 @@
   --font-sans: "Clear Sans";
   --font-mono: "JetBrains Mono Variable";
   --color-ring: var(--ring);
-  --font-weight-medium: 500;
+  --font-weight-medium: 600;
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
@@ -112,11 +114,6 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.87 0 0);
-  --color: pink;
-  --blur-1-size: clamp(400px, 60vw, 60vw);
-  --blur-2-size: clamp(300px, 40vw, 40vw);
-  --blur-3-size: clamp(100px, 10vw, 10vw);
-  --blur-amount: clamp(40px, 5vw, 90px);
 }
 
 .dark {
@@ -161,32 +158,101 @@
   }
 }
 
-::selection {
-  background-color: var(--color-primary);
-  color: var(--color-primary-foreground);
+code {
+  counter-reset: step;
+  counter-increment: step 0;
 }
 
-/*
-  ---break---
-*/
-
-@theme inline {
-  --color: var(----color);
-  --blur-1-size: var(----blur-1-size);
-  --blur-2-size: var(----blur-2-size);
-  --blur-3-size: var(----blur-3-size);
-  --blur-amount: var(----blur-amount);
+code .line::before {
+  content: counter(step);
+  counter-increment: step;
+  width: 1rem;
+  margin-right: 1.5rem;
+  display: inline-block;
+  text-align: right;
+  color: rgba(115, 138, 148, 0.4);
 }
 
-/*
-  ---break---
-*/
+.docs p {
+  @apply hyphens-auto text-left leading-normal py-1 first:pt-0 last:pb-0 w-full;
+}
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply p-0 m-0 pb-3;
+}
+
+.docs a {
+  @apply text-primary;
+}
+
+.docs a:hover {
+  @apply underline;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+h1 {
+  @apply text-3xl font-bold;
+}
+
+h2 {
+  @apply text-2xl font-bold;
+}
+
+h3 {
+  @apply text-xl font-bold;
+}
+
+h4 {
+  @apply text-lg font-bold;
+}
+
+/* TOC Styling */
+.table-of-contents {
+  @apply my-6 rounded-lg border bg-card p-6;
+}
+
+.table-of-contents h2 {
+  @apply mb-4 mt-0 border-0 pb-0 text-lg font-semibold;
+}
+
+.table-of-contents ul {
+  @apply my-0 ml-0 space-y-2;
+}
+
+.table-of-contents li {
+  @apply mt-0;
+}
+
+.table-of-contents a {
+  @apply text-sm text-muted-foreground transition-colors hover:text-foreground;
+}
+
+/* Nested TOC items */
+.table-of-contents ul ul {
+  @apply ml-4 mt-2;
+}
+
+.table-of-contents ul ul ul {
+  @apply ml-4;
+}
+
+.table-of-contents ul ul ul ul {
+  @apply ml-4;
+}
+
+h1[id],
+h2[id],
+h3[id],
+h4[id],
+h5[id],
+h6[id] {
+  scroll-margin-top: 80px;
 }

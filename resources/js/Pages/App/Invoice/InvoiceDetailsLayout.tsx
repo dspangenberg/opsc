@@ -254,6 +254,11 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
                   onAction={handleDelete}
                 />
                 <MenuItem
+                  title="Rechnung buchen"
+                  href={route('app.invoice.booking-create', { invoice })}
+                  disabled={!!invoice.booking?.id}
+                />
+                <MenuItem
                   icon={UnavailableIcon}
                   title="Als Forderungsverlust markieren"
                   disabled={invoice.is_draft}

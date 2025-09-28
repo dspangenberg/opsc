@@ -32,7 +32,6 @@ class TransactionConfirmController extends Controller
                 }
 
                 $transaction->save();
-
                 Transaction::createBooking($transaction);
             }
         });

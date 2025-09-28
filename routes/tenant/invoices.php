@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\App\Invoice\InvoiceCreateBookingController;
 use App\Http\Controllers\App\Invoice\InvoiceCreateController;
 use App\Http\Controllers\App\Invoice\InvoiceDeleteController;
 use App\Http\Controllers\App\Invoice\InvoiceDetailsAddOnAccountInvoiceController;
@@ -92,6 +93,10 @@ Route::put('invoicing/invoices/{invoice}/line-update/{invoiceLine}', InvoiceLine
 Route::post('invoicing/invoices/{invoice}/line-update/store', InvoiceLineStoreController::class)
     ->name('app.invoice.line-store')
     ->middleware([HandlePrecognitiveRequests::class]);
+
+Route::get('invoicing/invoices/{invoice}/create_booking', InvoiceCreateBookingController::class)
+    ->name('app.invoice.booking-create');
+
 
 
 

@@ -49,6 +49,8 @@ class InvoiceData extends Data
         public readonly ?string $address,
         public readonly ?string $filename,
 
+        public readonly ?BookkeepingBookingData $booking,
+
         public readonly array $invoice_address,
         public readonly string $formated_invoice_number,
 
