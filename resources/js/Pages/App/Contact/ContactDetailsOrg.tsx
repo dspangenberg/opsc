@@ -49,6 +49,7 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
         <DataCardSection
           title="Debitorinfos"
           suppressEmptyText
+          className="grid grid-cols-2"
           icon={Edit02Icon}
           buttonTooltip="Debitorinfos bearbeiten"
         >
@@ -62,6 +63,7 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
             label="Zahlungsziel"
             value={contact.payment_deadline?.name}
           />
+          <DataCardField variant="vertical" label="Umsatzsteuer" value={contact.tax?.name} />
         </DataCardSection>
         <DataCardSection
           suppressEmptyText
@@ -73,6 +75,11 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
             variant="vertical"
             label="Kreditornr."
             value={contact.formated_creditor_number}
+          />
+          <DataCardField
+            variant="vertical"
+            label="Kostenstelle"
+            value={contact.cost_center?.name}
           />
         </DataCardSection>
         <DataCardSection

@@ -11,11 +11,15 @@ use App\Data\ContactData;
 use App\Http\Controllers\Controller;
 use App\Models\Contact;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 
 class ContactIndexController extends Controller
 {
-    public function __invoke()
+    public function __invoke(Request $request)
     {
+
+        $view = $request->input('view', 'all');
+        $search = $request->input('search', '');
 
         $contacts = Contact::query()
             ->select([
@@ -32,20 +36,19 @@ class ContactIndexController extends Controller
             ->with('salutation')
             ->with('title')
             ->with('favorites')
-            ->with('mails', function ($query) {
+            ->with(['mails' => function ($query) {
                 $query->orderBy('pos');
-            })
-            ->with('phones', function ($query) {
+            }])
+            ->with(['phones' => function ($query) {
                 $query->orderBy('pos');
-            })
-            /*
-            ->whereHasFavorite(
-                auth()->user()
-            )
-            */
+            }])
+            ->view($view)
+            ->search($search)
             ->orderBy('name')
             ->orderBy('first_name')
             ->paginate(15);
+
+        $contacts->appends($_GET)->links();
 
         return Inertia::render('App/Contact/ContactIndex', [
             'contacts' => ContactData::collect($contacts),

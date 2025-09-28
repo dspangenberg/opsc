@@ -290,14 +290,32 @@ class Contact extends Model
         return $this->hasMany(Project::class, 'owner_contact_id', 'id');
     }
 
+    public function scopeSearch($query, $search): Builder {
+        $search = trim($search);
+        if ($search) {
+            $query
+                ->where('name', 'like', "%$search%")
+                ->orWhere('first_name', 'like', "%$search%")
+                ->orWhereRelation('company', 'name', 'like', "%$search%");
+        }
+        return $query;
+    }
+
     public function scopeView(Builder $query, $view): Builder
     {
+        if ($view != 'archived') {
+            $query->where('is_archived', false);
+        }
+
         return match ($view) {
-            'debtors' => $query->where('is_debtor', true),
+            'debtors' => $query->where('is_debtor', true)->orWhere('debtor_number', '<>', 0),
             'orgs' => $query->where('is_org', true),
-            'creditors' => $query->where('is_creditor', true),
+            'creditors' => $query->where('is_creditor', true)->orWhere('creditor_number', '<>', 0),
             'archived' => $query->where('is_archived', true),
-            'favourites' => $query->whereHas('marks', function ($query) {}),
+            'favorites' => $query->whereHasFavorite(
+                auth()->user()
+            ),
+            'all' => $query->where('is_archived', false),
             default => $query,
         };
     }

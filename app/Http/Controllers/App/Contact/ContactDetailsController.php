@@ -11,16 +11,21 @@ use App\Data\ContactData;
 use App\Http\Controllers\Controller;
 use App\Models\Contact;
 use App\Models\Invoice;
+use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 
 class ContactDetailsController extends Controller
 {
     public function __invoke(Contact $contact)
     {
+
+
         $contact->load([
             'salutation',
             'title',
             'favorites',
+            'cost_center',
+            'tax',
             'payment_deadline',
             'company' => function ($query) {
                 $query->with([

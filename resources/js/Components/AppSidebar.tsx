@@ -31,9 +31,36 @@ const data = {
     },
     {
       title: 'Kontakte',
-      url: route('app.contact.index', {}, false),
+      url: route('app.contact.index', { view: 'all' }, false),
       icon: ContactBookIcon,
-      activePath: '/app/contacts'
+      activePath: '/app/contacts',
+      items: [
+        {
+          title: 'Alle',
+          url: route('app.contact.index', { view: 'all' }, false),
+          activePath: '/app/contacts?view=all'
+        },
+        {
+          title: 'Favoriten',
+          url: route('app.contact.index', { view: 'favorites' }, false),
+          activePath: '/app/contacts?view=favorites'
+        },
+        {
+          title: 'Debitoren',
+          url: route('app.contact.index', { view: 'debtors' }, false),
+          activePath: '/app/contacts?view=debtors'
+        },
+        {
+          title: 'Kreditoren',
+          url: route('app.contact.index', { view: 'creditors' }, false),
+          activePath: '/app/contacts?view=creditors'
+        },
+        {
+          title: 'Archiviert',
+          url: route('app.contact.index', { view: 'archived' }, false),
+          activePath: '/app/contacts?view=archived'
+        }
+      ]
     },
     {
       title: 'Dokumente',

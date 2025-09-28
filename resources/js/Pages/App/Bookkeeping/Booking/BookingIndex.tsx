@@ -55,21 +55,7 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({ bookings }) => {
     () => (
       <Toolbar>
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon}>
-          <MenuSubTrigger>
-            <MenuItem title="Daten importieren" />
-            <MenuPopover>
-              <Menu>
-                <MenuItem
-                  icon={FileScriptIcon}
-                  title="MoneyMoney JSON-Datei importieren"
-                  ellipsis
-                  separator
-                />
-                <MenuItem icon={Csv02Icon} title="CSV-Datei importieren" ellipsis />
-              </Menu>
-            </MenuPopover>
-          </MenuSubTrigger>
-          <MenuItem icon={FileExportIcon} title="CSV-Export" separator />
+          <MenuItem icon={FileExportIcon} title="Taxpool CSV-Export" ellipsis separator />
           <MenuItem title="Regeln auf unbestägite Transaktionen anwenden" ellipsis />
         </DropdownButton>
       </Toolbar>
@@ -92,8 +78,6 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({ bookings }) => {
     )
   }, [selectedRows.length])
 
-  const currentRoute = route().current()
-  console.log(currentRoute)
   const footer = useMemo(() => <Pagination data={bookings} />, [bookings])
 
   return (
