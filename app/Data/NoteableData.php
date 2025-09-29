@@ -17,6 +17,7 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 class NoteableData extends Data
 {
     public function __construct(
+        public readonly int $id,
         public readonly int $notable_id,
         public readonly string $note,
 

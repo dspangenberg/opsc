@@ -111,7 +111,7 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
       title={contact.full_name}
       width="7xl"
       breadcrumbs={breadcrumbs}
-      className="flex gap-4 overflow-hidden"
+      className="flex gap-4 overflow-y-auto"
       toolbar={toolbar}
       tabs={tabs}
       header={headerContent}
