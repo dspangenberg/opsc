@@ -303,6 +303,7 @@ password: string;
 remember: boolean | null;
 };
 export type NoteableData = {
+id: number;
 notable_id: number;
 note: string;
 creator: App.Data.UserData;
