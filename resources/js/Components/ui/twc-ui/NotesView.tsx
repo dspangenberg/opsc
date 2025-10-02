@@ -1,4 +1,6 @@
 import type React from 'react'
+import Markdown from 'react-markdown'
+import remarkBreaks from 'remark-breaks'
 import { Avatar } from '@/Components/ui/twc-ui/avatar'
 
 interface NotesViewProps {
@@ -18,7 +20,7 @@ export const NotesView: React.FC<NotesViewProps> = ({ notes }) => {
               src={note.creator.avatar_url}
             />
             <div className="flex-1 rounded-lg bg-muted p-4 text-base">
-              <p>{note.note}</p>
+              <Markdown remarkPlugins={[remarkBreaks]}>{note.note}</Markdown>
             </div>
           </div>
           <div className="ml-16 text-muted-foreground text-sm">{note.created_at}</div>
