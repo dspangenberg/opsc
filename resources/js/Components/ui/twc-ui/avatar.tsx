@@ -1,8 +1,8 @@
-import { generateColorFromString, getIdealTextColor } from '@/Lib/color-utils'
-import { cn } from '@/Lib/utils'
 import * as AvatarPrimitive from '@radix-ui/react-avatar'
 import type * as React from 'react'
 import { useEffect, useState } from 'react'
+import { generateColorFromString, getIdealTextColor } from '@/Lib/color-utils'
+import { cn } from '@/Lib/utils'
 
 // Basic Avatar components (original shadcn/ui implementation)
 const AvatarRoot = ({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Root>) => {
@@ -81,8 +81,6 @@ const Avatar = ({
       setTextColor(getIdealTextColor(bgColor))
     }
   }, [fullname])
-
-  console.log(src)
 
   return (
     <div className="rounded-full border border-border" data-testid="avatar-container">

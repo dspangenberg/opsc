@@ -34,6 +34,7 @@
     "spatie/temporary-directory": "^2.3",
     "stancl/jobpipeline": "^2.0@RC",
     "stancl/tenancy": "dev-master",
+    "stevebauman/purify": "^6.3",
     "tightenco/ziggy": "^2.5.3"
   },
   "require-dev": {

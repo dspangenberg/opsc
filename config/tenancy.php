@@ -298,6 +298,7 @@ return [
         'disks' => [
             'local',
             'public',
+            'system',
             's3',
             's3_private'
         ],

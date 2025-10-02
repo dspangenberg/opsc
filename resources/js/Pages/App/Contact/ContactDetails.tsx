@@ -32,7 +32,7 @@ const ContactDetails: React.FC = () => {
   return (
     <ContactDetailsLayout contact={contact}>
       <div className="flex-1">
-        <Form form={form}>
+        <Form form={form} onSubmitted={() => form.reset()}>
           <FormGroup>
             <div className="col-span-24">
               <TextField textArea label="Notiz" {...form.register('note')} />
