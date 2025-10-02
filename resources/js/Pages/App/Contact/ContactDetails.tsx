@@ -50,7 +50,7 @@ const ContactDetails: React.FC = () => {
         </Form>
         <NotesView notes={contact.notables || []} />
       </div>
-      <div className="!space-y-6 h-fit w-sm flex-none overflow-hidden px-1 py-6">
+      <div className="!space-y-6 h-fit w-sm max-w-sm flex-none overflow-hidden px-1 py-6">
         {contact.company_id !== 0 && <ContactDetailsPerson contact={contact} />}
         <ContactDetailsOrg
           contact={contact.company || contact}
