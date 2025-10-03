@@ -44,6 +44,7 @@ Route::delete('/bookkeeping/receipts/{receipt}/delete', [ReceiptController::clas
 
 
 Route::get('/bookkeeping/receipts/confirm/{receipt}', [ReceiptController::class, 'confirm'])->name('app.bookkeeping.receipts.confirm');
+Route::get('/bookkeeping/receipts/{receipt}/edit', [ReceiptController::class, 'edit'])->name('app.bookkeeping.receipts.edit');
 
 
 

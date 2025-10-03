@@ -23,7 +23,7 @@ export const FormGroup: React.FC<FormGroupProps> = ({
   margin = true,
   title = '',
   className = '',
-  titleClass = 'font-medium text-base text-black mt-4 pb-3 border-b',
+  titleClass = 'font-medium text-base text-foreground mt-4 pb-3 border-b',
   children
 }) => {
   const gridCols = {

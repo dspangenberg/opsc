@@ -194,7 +194,7 @@ const InvoiceIndex: React.FC = () => {
     () => (
       <div className="flex flex-col">
         <BorderedBox className="mx-auto mb-3 flex-none">
-          <div className="mx-auto flex justify-center gap-4 divide-y bg-white px-2 py-2.5 lg:divide-x lg:divide-y-0">
+          <div className="mx-auto flex justify-center gap-4 divide-y bg-background px-2 py-2.5 lg:divide-x lg:divide-y-0">
             <StatsField label="netto" value={currencyFormatter.format(stats.total_net)} />
             <StatsField label="USt." value={currencyFormatter.format(stats.total_tax)} />
             <StatsField label="brutto" value={currencyFormatter.format(stats.total_gross)} />

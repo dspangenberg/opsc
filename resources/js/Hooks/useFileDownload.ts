@@ -12,8 +12,7 @@ interface FileDownloadProps {
 
 export const useFileDownload = ({ route, filename }: FileDownloadProps) => {
   const handleDownload = useCallback(() => {
-    console.log(route)
-    fetch(route as unknown as string)
+     fetch(route as unknown as string)
       .then(res => res.blob())
       .then(blob => {
         const file = window.URL.createObjectURL(blob);

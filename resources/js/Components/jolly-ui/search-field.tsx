@@ -107,7 +107,11 @@ function JollySearchField({
       <Label>{label}</Label>
       <FieldGroup>
         <SearchIcon aria-hidden className="size-4 text-muted-foreground" />
-        <SearchFieldInput placeholder={placeholder} />
+        <SearchFieldInput
+          placeholder={placeholder}
+          type="text"
+          className="pressed:ring-0 focus:ring-0"
+        />
         <SearchFieldClear>
           <XIcon aria-hidden className="size-4" />
         </SearchFieldClear>

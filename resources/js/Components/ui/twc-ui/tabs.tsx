@@ -141,5 +141,5 @@ export interface TabPanelProps extends AriaTabPanelProps {
 
 export const TabPanel = ({ className, ...props }: TabPanelProps) => {
   const { panelClassName } = useTabsContext()
-  return <AriaTabPanel className={cn('', panelClassName, className)} {...props} />
+  return <AriaTabPanel className={cn('bg-background', panelClassName, className)} {...props} />
 }

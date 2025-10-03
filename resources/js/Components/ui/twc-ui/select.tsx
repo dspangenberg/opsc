@@ -35,7 +35,7 @@ const SelectValue = <T extends object>({ className, ...props }: AriaSelectValueP
   <AriaSelectValue
     className={composeRenderProps(className, className =>
       cn(
-        'line-clamp-1 data-[placeholder]:text-muted-foreground',
+        'line-clamp-1 bg-background data-[placeholder]:text-muted-foreground',
         'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20',
         /* Description */
         '[&>[slot=description]]:hidden',
@@ -51,7 +51,7 @@ const SelectTrigger = ({ className, children, ...props }: AriaButtonProps) => (
     type="button"
     className={composeRenderProps(className, className =>
       cn(
-        'flex h-9 w-full items-center justify-between whitespace-nowrap rounded-sm border border-input bg-white px-3 py-2 font-medium text-sm shadow-none outline-0 ring-offset-0',
+        'flex h-9 w-full items-center justify-between whitespace-nowrap rounded-sm border border-input bg-background px-3 py-2 font-medium text-sm shadow-none outline-0 ring-offset-0',
         /* Disabled */
         'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
         'focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/20',
@@ -94,7 +94,7 @@ const SelectListBox = <T extends object>({ className, ...props }: AriaListBoxPro
 type SelectValue = string | number | null
 
 interface SelectProps<T extends object, V extends SelectValue = SelectValue>
-  extends Omit<AriaSelectProps<T>, 'children'> {
+  extends Omit<AriaSelectProps<T>, 'children' | 'onSelectionChange' | 'onChange'> {
   label?: string
   description?: string
   error?: string | ((validation: AriaValidationResult) => string)
