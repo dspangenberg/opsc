@@ -136,6 +136,22 @@ class ReceiptController extends Controller
 
     /**
      */
+    public function edit(Receipt $receipt)
+    {
+        $receipt->load(['account', 'range_document_number', 'contact']);
+
+
+        $contacts = Contact::where('is_creditor', true)->orderBy('name')->get();
+        $currencies = Currency::query()->orderBy('name')->get();
+        $costCenters = CostCenter::query()->orderBy('name')->get();
+
+        return Inertia::render('App/Bookkeeping/Receipt/ReceiptEdit', [
+            'receipt' => ReceiptData::from($receipt),
+            'contacts' => CompanyData::collect($contacts),
+            'cost_centers' => CostCenterData::collect($costCenters),
+            'currencies' => CurrencyData::collect($currencies),
+        ]);
+    }
     public function confirm(Receipt $receipt)
     {
         $receipt->load(['account', 'range_document_number', 'contact']);
@@ -146,6 +162,20 @@ class ReceiptController extends Controller
         $currentIndex = $receipts->search(function ($item) use ($receipt) {
             return $item->id === $receipt->id;
         });
+
+        // Prüfung, ob der Receipt in der Collection gefunden wurde
+        if ($currentIndex === false) {
+            // Falls der Receipt bereits bestätigt ist oder nicht in der Liste steht,
+            // redirect zum ersten unbestätigten Receipt oder zur Hauptseite
+            $firstUnconfirmed = $receipts->first();
+
+            if ($firstUnconfirmed) {
+                return redirect()->route('app.bookkeeping.receipts.confirm', ['receipt' => $firstUnconfirmed->id]);
+            } else {
+                return redirect()->route('app.bookkeeping.receipts.index')
+                    ->with('message', 'Alle Belege sind bereits bestätigt.');
+            }
+        }
 
         $nextReceipt = $currentIndex < $receipts->count() - 1 ? $receipts[$currentIndex + 1] : null;
         $prevReceipt = $currentIndex > 0 ? $receipts[$currentIndex - 1] : null;

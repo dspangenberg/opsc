@@ -215,8 +215,8 @@ export const ContactEdit: React.FC<Props> = ({
           variant="classic"
           defaultSelectedKey="base"
           className="bg-accent"
-          tabClassName="data-[selected]:bg-white"
-          panelClassName="my-0 border border-transparent py-0 bg-white"
+          tabClassName="data-[selected]:bg-background data-[selected]:border-b-transparent"
+          panelClassName="my-0 border border-transparent py-0 bg-background"
         >
           <TabList aria-label="Ansicht" className="px-4">
             <Tab id="base">Stammdaten</Tab>

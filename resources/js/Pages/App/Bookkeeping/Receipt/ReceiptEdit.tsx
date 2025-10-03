@@ -109,25 +109,29 @@ const ReceiptConfirm: React.FC<Props> = ({
               label="Bruttobetrag"
               {...form.register('amount')}
               formatOptions={{
+                style: 'currency',
+                currency: 'EUR',
+                currencyDisplay: 'code',
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
               }}
             />
-            {form.data.org_currency !== 'EUR' && (
-              <div>
-                {currencyFormatter.format(form.data.org_amount || 0)} {form.data.org_currency}
-              </div>
-            )}
           </div>
           <div className="col-span-8">
-            <Select<App.Data.CurrencyData, string>
-              label="Währung"
-              itemValue="code"
-              itemName="code"
-              items={currencies || []} // Sichere Behandlung
-              valueType="string"
-              {...form.register('org_currency')}
-            />
+            {form.data.org_currency !== 'EUR' && (
+              <NumberField
+                label="Ursprungsbetrag"
+                isDisabled
+                {...form.register('org_amount')}
+                formatOptions={{
+                  style: 'currency',
+                  currency: form.data.org_currency as string,
+                  currencyDisplay: 'code',
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                }}
+              />
+            )}
           </div>
           <div className="col-span-24">
             <TextField label="Referenz" {...form.register('reference')} />
@@ -154,22 +158,6 @@ const ReceiptConfirm: React.FC<Props> = ({
           </div>
           <div className="col-span-24 flex justify-between gap-2">
             <div className="flex flex-1 justify-start gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                disabled={!prevReceipt}
-                icon={ArrowLeft01Icon}
-                onClick={handlePrevReceipt}
-                tooltip="Vorheriger Beleg"
-              />
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleNextReceipt}
-                disabled={!nextReceipt}
-                icon={ArrowRight01Icon}
-                tooltip="Nächster Beleg"
-              />
               <Button
                 variant="ghost-destructive"
                 size="icon"

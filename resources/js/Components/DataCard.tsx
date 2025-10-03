@@ -3,10 +3,9 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { cn } from '@/Lib/utils'
 import { Button } from '@dspangenberg/twcui'
-import { Children, type FC, type ReactElement, type ReactNode } from 'react'
-import React from 'react'
+import React, { Children, type FC, type ReactElement, type ReactNode } from 'react'
+import { cn } from '@/Lib/utils'
 import { BorderedBox } from './twcui/bordered-box'
 
 export interface DataCardProps {
@@ -23,7 +22,7 @@ export const DataCard: FC<DataCardProps> = ({
 }: DataCardProps) => {
   return (
     <BorderedBox className="flex flex-1 overflow-y-hidden" innerClassName="overflow-y-hidden">
-      <div className={cn('flex w-full max-w-sm flex-1 flex-col rounded-lg ', className)}>
+      <div className={cn('flex w-full max-w-sm flex-1 flex-col rounded-lg', className)}>
         {title && <DataCardHeader title={title} />}
         <div className="flex-1 overflow-y-auto rounded-lg p-2">{children}</div>
       </div>
@@ -45,7 +44,7 @@ export const DataCardHeader: FC<DataCardHeaderProps> = ({
   return (
     <div
       className={cn(
-        'flex-none overflow-x-hidden text-wrap hyphens-auto bg-sidebar px-4 py-2.5 font-medium text-base text-foreground',
+        'flex-none overflow-x-hidden hyphens-auto text-wrap bg-sidebar px-4 py-2.5 font-medium text-base text-foreground',
         className
       )}
     >
@@ -222,19 +221,6 @@ export const DataCardSectionHeader: FC<DataCardSectionHeaderProps> = ({
           <span className="ml-2 font-normal text-foreground/40 text-sm">{addonText}</span>
         )}
       </div>
-      {icon && (
-        <div className="flex items-center">
-          <Button
-            variant="outline"
-            size="icon-xs"
-            iconClassName="text-primary"
-            className="opacity-0 group-focus-within:opacity-100 group-hover:opacity-100 group-focus:opacity-100"
-            tooltip={buttonTooltip}
-            icon={icon}
-            onClick={onClick}
-          />
-        </div>
-      )}
     </div>
   )
 }

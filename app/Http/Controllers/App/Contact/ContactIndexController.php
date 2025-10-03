@@ -32,6 +32,8 @@ class ContactIndexController extends Controller
                 'debtor_number',
                 'creditor_number',
             ])
+            ->search($search)
+            ->view($view)
             ->with('company')
             ->with('salutation')
             ->with('title')
@@ -42,8 +44,7 @@ class ContactIndexController extends Controller
             ->with(['phones' => function ($query) {
                 $query->orderBy('pos');
             }])
-            ->view($view)
-            ->search($search)
+
             ->orderBy('name')
             ->orderBy('first_name')
             ->paginate(15);

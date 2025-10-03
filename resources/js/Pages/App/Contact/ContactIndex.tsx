@@ -2,24 +2,27 @@ import { Add01Icon, MoreVerticalCircle01Icon, PrinterIcon } from '@hugeicons/cor
 import { router } from '@inertiajs/core'
 import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
-import { useCallback, useId, useMemo } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { DataTable } from '@/Components/DataTable'
+import { JollySearchField } from '@/Components/jolly-ui/search-field'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
+import { TransactionIndexFilterForm } from '@/Pages/App/Bookkeeping/Transaction/TransactionIndexFilterForm'
 import type { PageProps } from '@/Types'
 import { columns } from './ContactIndexColumns'
 import { ContactIndexFilterPopover } from './ContactIndexFilterPopover'
 
 interface ContactIndexProps extends PageProps {
   contacts: App.Data.Paginated.Contact & App.Data.Paginated.PaginationMeta<App.Data.ContactData[]>
+  currentSearch?: string
 }
 
-const ContactIndex: React.FC = () => {
+const ContactIndex: React.FC<ContactIndexProps> = ({ currentSearch }) => {
   const { contacts } = usePage<ContactIndexProps>().props
-  const id = useId()
+  const [search, setSearch] = useState(currentSearch)
 
   const handleAdd = useCallback(() => {
     router.visit(route('app.contact.create'))
@@ -65,6 +68,53 @@ const ContactIndex: React.FC = () => {
     []
   )
 
+  const handleSearchInputChange = (newSearch: string) => {
+    setSearch(newSearch)
+    debouncedSearchChange(newSearch)
+  }
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  const debouncedSearchChange = useCallback((newSearch: string) => {
+    // Clear existing timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current)
+    }
+
+    // Set new timeout
+    searchTimeoutRef.current = setTimeout(() => {
+      router.get(
+        route('app.contact.index'),
+        {
+          search: newSearch,
+          view: route().queryParams.view
+        },
+        {
+          preserveScroll: true,
+          preserveState: true,
+          only: ['contacts'],
+          onSuccess: () => {
+            // Update wird durch die props vom Controller gemacht
+          }
+        }
+      )
+    }, 500) // 500ms Debounce
+  }, [])
+
+  const filterBar = useMemo(
+    () => (
+      <div className="flex p-2 pt-0">
+        <JollySearchField
+          aria-label="Suchen"
+          placeholder="Nach Vor- oder Nachnamen suchen"
+          value={search}
+          onChange={handleSearchInputChange}
+          className="w-sm"
+        />
+      </div>
+    ),
+    [search]
+  )
+
   return (
     <PageContainer
       title="Kontakte"
@@ -72,7 +122,13 @@ const ContactIndex: React.FC = () => {
       className="flex overflow-hidden"
       toolbar={toolbar}
     >
-      <DataTable columns={columns} data={contacts.data} footer={footer} header={header} />
+      <DataTable
+        columns={columns}
+        data={contacts.data}
+        footer={footer}
+        filterBar={filterBar}
+        header={header}
+      />
     </PageContainer>
   )
 }

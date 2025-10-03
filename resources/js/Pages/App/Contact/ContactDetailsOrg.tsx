@@ -33,7 +33,7 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
     <DataCard title={contact.full_name}>
       {contact.debtor_number && (
         <DataCardContent>
-          <div className="grid w-full grid-cols-2 divide-x divide-border/50 rounded-md border border-border/50 border-b bg-white p-1.5">
+          <div className="grid w-full grid-cols-2 divide-x divide-border/50 rounded-md border border-border/50 border-b bg-background p-1.5">
             <StatsField
               label={salesCurrentYearTitle}
               value={currencyFormatter.format(contact.sales?.currentYear || 0)}

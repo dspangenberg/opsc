@@ -10,8 +10,7 @@ import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
 
-const editUrl = (id: number | null) =>
-  id ? route('app.bookkeeping.cost-centers.edit', { id }) : '#'
+const editUrl = (id: number | null) => (id ? route('app.bookkeeping.receipts.edit', { id }) : '#')
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
   style: 'currency',

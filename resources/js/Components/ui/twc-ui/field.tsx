@@ -14,7 +14,7 @@ import { cn } from '@/Lib/utils'
 import { useFormContext } from './form'
 
 const labelVariants = cva([
-  'text-sm font-normal leading-none',
+  'text-sm font-normal leading-none text-foreground',
   /* Disabled */
   'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70',
   /* Invalid */

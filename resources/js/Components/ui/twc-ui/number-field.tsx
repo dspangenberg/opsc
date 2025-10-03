@@ -36,14 +36,18 @@ const NumberFieldInput = ({ className, ...props }: AriaInputProps) => {
   )
 }
 
-const NumberFieldSteppers = ({ className, ...props }: React.ComponentProps<'div'>) => {
+const NumberFieldSteppers = ({
+  className,
+  isDisabled,
+  ...props
+}: React.ComponentProps<'div'> & { isDisabled?: boolean }) => {
   return (
     <div className={cn('absolute right-0 flex h-full flex-col border-l', className)} {...props}>
-      <NumberFieldStepper slot="increment">
+      <NumberFieldStepper slot="increment" isDisabled={isDisabled}>
         <ChevronUp aria-hidden className="size-4" />
       </NumberFieldStepper>
       <div className="border-b" />
-      <NumberFieldStepper slot="decrement">
+      <NumberFieldStepper slot="decrement" isDisabled={isDisabled}>
         <ChevronDown aria-hidden className="size-4" />
       </NumberFieldStepper>
     </div>
@@ -56,6 +60,7 @@ const NumberFieldStepper = ({ className, ...props }: AriaButtonProps) => {
       className={composeRenderProps(className, className =>
         cn('w-auto grow rounded-none px-0.5 text-muted-foreground', className)
       )}
+      disabled={props.isDisabled}
       variant={'ghost'}
       size={'icon'}
       {...props}
@@ -68,6 +73,8 @@ interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'value' | 'onChang
   description?: string
   onChange?: ((value: number | null) => void) | ((value: number) => void)
   value?: number | null | undefined
+  isReadonly?: boolean
+  isDisabled?: boolean // Neue isDisabled Prop
   error?: string | undefined
   name?: string
 }
@@ -78,6 +85,8 @@ const NumberField = ({
   className,
   formatOptions,
   isRequired = false,
+  isReadonly = false,
+  isDisabled = false, // Neue isDisabled Prop mit Standardwert
   isInvalid = false,
   onChange,
   value,
@@ -109,6 +118,8 @@ const NumberField = ({
         cn('group flex flex-col gap-1.5', className)
       )}
       isInvalid={hasError}
+      isReadOnly={isReadonly}
+      isDisabled={isDisabled} // isDisabled an BaseNumberField weiterleiten
       formatOptions={formatOptions}
       value={value ?? undefined}
       onChange={handleChange}
@@ -117,7 +128,7 @@ const NumberField = ({
       <Label value={label} isRequired={isRequired} />
       <FieldGroup isInvalid={hasError}>
         <NumberFieldInput className="outline:0 focus:ring-0" />
-        <NumberFieldSteppers />
+        <NumberFieldSteppers isDisabled={isDisabled || isReadonly} />
       </FieldGroup>
       {description && (
         <Text className="text-muted-foreground text-sm" slot="description">
