@@ -8,7 +8,6 @@ use App\Http\Controllers\App\Bookkeeping\ReceiptController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionConfirmController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionIndexController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionMoneyMoneyImportController;
-use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionPayInvoiceCreateController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionSetCounterAccountController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
@@ -41,7 +40,8 @@ Route::get('/bookkeeping/receipts/confirm/', [ReceiptController::class, 'confirm
 Route::put('/bookkeeping/receipts/confirm/{receipt}/update', [ReceiptController::class, 'update'])->name('app.bookkeeping.receipts.update')->middleware([HandlePrecognitiveRequests::class]);;
 Route::get('/bookkeeping/receipts/{receipt}/pdf', [ReceiptController::class, 'streamPdf'])->name('app.bookkeeping.receipts.pdf');
 Route::delete('/bookkeeping/receipts/{receipt}/delete', [ReceiptController::class, 'destroy'])->name('app.bookkeeping.receipts.destroy');
-
+Route::get('/bookkeeping/receipts/{receipt}/payments', [ReceiptController::class, 'createPayments'])->name('app.bookkeeping.receipts.payments');
+Route::get('/bookkeeping/receipts/{receipt}/payments-store', [ReceiptController::class, 'storePayments'])->name('app.bookkeeping.receipts.payments-store');
 
 Route::get('/bookkeeping/receipts/confirm/{receipt}', [ReceiptController::class, 'confirm'])->name('app.bookkeeping.receipts.confirm');
 Route::get('/bookkeeping/receipts/{receipt}/edit', [ReceiptController::class, 'edit'])->name('app.bookkeeping.receipts.edit');

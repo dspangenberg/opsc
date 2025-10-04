@@ -21,7 +21,7 @@ class InvoicePaymentCreateController extends Controller
         $transactions = Transaction::query()
             ->where('counter_account_id', $invoice->contact->debtor_number)
             ->whereRaw('amount - COALESCE((SELECT SUM(amount) FROM payments WHERE transaction_id = transactions.id), 0) > 0.01')
-            // ->where('is_locked', true)
+            ->where('is_locked', true)
             ->get();
 
         $invoice

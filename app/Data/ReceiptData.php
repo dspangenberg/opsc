@@ -28,6 +28,7 @@ class ReceiptData extends Data
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i:s')]
         public readonly DateTime $file_created_at,
+        public readonly float $open_amount,
 
         public readonly ?int $contact_id,
         public readonly ?int $cost_center_id,
@@ -39,6 +40,8 @@ class ReceiptData extends Data
         public readonly ?float $exchange_rate,
         public readonly ?string $document_number,
         public readonly ?int $duplicate_of,
+        public readonly ?bool $is_foreign_currency,
+        public readonly ?bool $is_confirmed,
 
         public readonly ?string $iban,
         public readonly ?int $number_range_document_number_id,

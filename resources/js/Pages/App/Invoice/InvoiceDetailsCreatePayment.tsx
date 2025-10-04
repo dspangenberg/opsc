@@ -34,7 +34,8 @@ export const InvoiceDetailsCreatePayment: React.FC<Props> = ({ invoice, transact
       route('app.invoice.store.payment', {
         invoice: invoice.id,
         _query: {
-          ids
+          ids,
+          remaining_amount_is_currency_difference: false
         }
       })
     )

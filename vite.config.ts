@@ -7,16 +7,12 @@ import { run } from 'vite-plugin-run'
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   // @ts-ignore
-  const tlsDomain = URL.parse(env.VITE_APP_URL).host
-
-  console.log(`[Vite] APP_URL: ${tlsDomain} `)
 
   return {
     plugins: [
       laravel({
         input: 'resources/js/app.tsx',
-        refresh: true,
-        detectTls: tlsDomain
+        refresh: true
       }),
       tailwindcss(),
       react(),
