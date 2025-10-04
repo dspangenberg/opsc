@@ -35,7 +35,32 @@ class Payment extends Model
         'is_private',
         'rank',
     ];
+    public static function createCurrencyDifferenceBookings(Payment $payment): void
+    {
+        $payment->load('transaction');
+        $accountDebit = BookkeepingAccount::where('account_number', $payment->amount > 0 ? '2660' : '2150')->first();
+        $accountCredit = BookkeepingAccount::where('account_number', $payment->transaction->counter_account_id )->first();
 
+        $payment->amount = $payment->amount < 0 ? $payment->amount * -1 : $payment->amount;
+        $bookingText = [];
+
+        $bookingText[] = 'Währungsdifferenz';
+        $bookingText[] = strtoupper($payment->payable->contact->full_name);
+
+        $transaction = Transaction::find($payment->transaction_id);
+
+        if ($accountCredit) {
+            $existingBooking = BookkeepingBooking::where('number_range_document_numbers_id', $transaction->number_range_document_numbers_id)->whereIn('account_id_debit', [2150, 2660])->first();
+
+            $booking = BookkeepingBooking::createBooking($payment, 'issued_on', 'amount', $accountDebit,
+                $accountCredit, 'WUM',
+                $existingBooking ? $existingBooking->id : null
+            );
+            $booking->booking_text = implode('|', $bookingText);
+            $booking->number_range_document_numbers_id = $payment->transaction->number_range_document_numbers_id;
+            $booking->save();
+        }
+    }
     public static function createBookingIncoming($payment): void
     {
 

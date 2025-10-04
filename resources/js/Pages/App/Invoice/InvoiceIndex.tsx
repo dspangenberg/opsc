@@ -62,7 +62,7 @@ const InvoiceIndex: React.FC = () => {
   const years = usePage<ContactIndexProps>().props.years as unknown as number[]
   const [selectedAmount, setSelectedAmount] = useState<number>(0)
   const minYear = Math.min(...years)
-
+  console.log(selectedAmount)
   const [year, setYear] = React.useState<number>(currentYear)
   const [view, setView] = React.useState<number>(1)
   const [selectedRows, setSelectedRows] = React.useState<App.Data.InvoiceData[]>([])
@@ -161,6 +161,7 @@ const InvoiceIndex: React.FC = () => {
   )
 
   const actionBar = useMemo(() => {
+    console.log(selectedRows)
     const sum = sumBy(selectedRows, 'amount_net')
     setSelectedAmount(sum)
     return (
@@ -172,7 +173,7 @@ const InvoiceIndex: React.FC = () => {
           ausgewählte Datensätze
         </div>
         <Button variant="ghost" size="auto" icon={FileDownloadIcon} title="Herunterladen" />
-        <div className="flex-1 text-right font-medium text-sm">
+        <div className="w-32 flex-1 text-right font-medium text-sm">
           {currencyFormatter.format(selectedAmount)} €
         </div>
       </Toolbar>

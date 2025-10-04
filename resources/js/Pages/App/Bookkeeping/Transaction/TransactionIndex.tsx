@@ -6,6 +6,7 @@ import {
   Tick01Icon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
+import { sumBy } from 'lodash'
 import * as React from 'react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { DataTable } from '@/Components/DataTable'
@@ -53,7 +54,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
 }) => {
   const [selectedRows, setSelectedRows] = useState<App.Data.TransactionData[]>([])
   const [showMoneyMoneyImport, setShowMoneyMoneyImport] = useState(false)
-
+  const [selectedAmount, setSelectedAmount] = useState<number>(0)
   // Lokale State für Filter und Search
   const [filters, setFilters] = useState<FilterConfig>(currentFilters)
   const [search, setSearch] = useState(currentSearch)
@@ -203,7 +204,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
         </DropdownButton>
       </Toolbar>
     ),
-    [handleFilter]
+    []
   )
 
   const currentRoute = route().params.bank_account
@@ -237,6 +238,8 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
   )
 
   const actionBar = useMemo(() => {
+    const sum = sumBy(selectedRows, 'amount')
+    setSelectedAmount(sum)
     return (
       <Toolbar variant="secondary" className="px-4 pt-2">
         <div className="self-center text-sm">
@@ -252,10 +255,10 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
           title="als bestätigt markieren"
           onClick={handleBulkConfirmationClicked}
         />
-        <div className="flex-1 text-right font-medium text-sm">x</div>
+        <div className="flex-1 text-right font-medium text-sm">{selectedAmount}</div>
       </Toolbar>
     )
-  }, [selectedRows.length])
+  }, [selectedRows, selectedAmount])
 
   const footer = useMemo(() => <Pagination data={transactions} />, [transactions])
 

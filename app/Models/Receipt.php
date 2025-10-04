@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
@@ -38,6 +39,7 @@ class Receipt extends Model
 
     protected $appends = [
         'document_number',
+        'open_amount'
     ];
 
     protected $attributes = [
@@ -83,6 +85,12 @@ class Receipt extends Model
         return $this->belongsTo(Contact::class);
     }
 
+    public function getOpenAmountAttribute(): string
+    {
+        return ($this->amount + $this->payable_sum_amount );
+    }
+
+
     public function cost_center(): BelongsTo
     {
         return $this->belongsTo(CostCenter::class);
@@ -106,6 +114,11 @@ class Receipt extends Model
             'is_confirmed' => 'boolean',
             'data' => 'array',
         ];
+    }
+
+    public function payable(): MorphMany
+    {
+        return $this->morphMany(Payment::class, 'payable');
     }
 
     public static function createBooking($receipt): void

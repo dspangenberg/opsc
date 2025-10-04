@@ -1,4 +1,9 @@
-import { ArrowLeft01Icon, ArrowRight01Icon, Delete02Icon } from '@hugeicons/core-free-icons'
+import {
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  Delete02Icon,
+  EuroSendIcon
+} from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useCallback } from 'react'
@@ -43,6 +48,10 @@ const ReceiptConfirm: React.FC<Props> = ({
     },
     false
   )
+
+  const handleLinkPayments = () => {
+    router.visit(route('app.bookkeeping.receipts.payments', { id: receipt.id }))
+  }
 
   const currencyFormatter = new Intl.NumberFormat('de-DE', {
     style: 'currency',
@@ -164,6 +173,13 @@ const ReceiptConfirm: React.FC<Props> = ({
                 icon={Delete02Icon}
                 tooltip="Beleg löschen"
                 onClick={handleDelete}
+              />
+              <Button
+                icon={EuroSendIcon}
+                tooltip="Mit Transaktionen verknüpfen"
+                size="icon"
+                variant="ghost"
+                onClick={handleLinkPayments}
               />
             </div>
             <Button

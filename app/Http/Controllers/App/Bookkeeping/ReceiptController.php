@@ -6,6 +6,7 @@ use App\Data\CompanyData;
 use App\Data\CostCenterData;
 use App\Data\CurrencyData;
 use App\Data\ReceiptData;
+use App\Data\TransactionData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReceiptUpdateRequest;
 use App\Http\Requests\ReceiptUploadRequest;
@@ -14,8 +15,12 @@ use App\Models\ConversionRate;
 use App\Models\CostCenter;
 use App\Models\Currency;
 use App\Models\NumberRange;
+use App\Models\Payment;
 use App\Models\Receipt;
+use App\Models\Transaction;
 use Exception;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Plank\Mediable\Exceptions\MediaMoveException;
@@ -35,9 +40,13 @@ class ReceiptController extends Controller
 
     public function index()
     {
-        $receipts = Receipt::query()->with([
+        $receipts = Receipt::query()
+            ->with([
             'account', 'range_document_number', 'contact','cost_center'
-        ])->orderBy('issued_on')->paginate();
+            ])
+            ->withSum('payable', 'amount')
+            ->orderBy('issued_on')->paginate();
+
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptIndex', [
             'receipts' => ReceiptData::collect($receipts),
         ]);
@@ -85,6 +94,7 @@ class ReceiptController extends Controller
 
     /**
      * @throws MediaMoveException
+     * @throws ConnectionException
      */
     public function update(ReceiptUpdateRequest $request, Receipt $receipt)
     {
@@ -95,6 +105,7 @@ class ReceiptController extends Controller
 
         if ($receipt->org_currency !== 'EUR' && (is_null($receipt->org_amount) || $receipt->org_amount == 0)) {
             $receipt->org_amount = $request->validated('amount');
+            $receipt->is_foreign_currency = $receipt->org_currency !== 'EUR';
             $conversion = ConversionRate::convertAmount($receipt->amount, $request->validated('org_currency'), $receipt->issued_on);
             if ($conversion) {
                 $receipt->amount = $conversion['amount'];
@@ -114,14 +125,14 @@ class ReceiptController extends Controller
 
         if ($request->validated('is_confirmed') && $receipt->is_confirmed === false) {
             $receipt->is_confirmed = true;
+            $receipt->save();
             if (!$receipt->number_range_document_numbers_id) {
                 $receipt->number_range_document_numbers_id = NumberRange::createDocumentNumber($receipt, 'issued_on');
                 $receipt->save();
 
                 $receipt->load('range_document_number');
-                Receipt::createBooking($receipt);
-
             }
+            Receipt::createBooking($receipt);
 
             $media = $receipt->firstMedia('file');
             $folder = '/bookkeeping/receipts/'.$receipt->issued_on->format('Y/m/');
@@ -136,6 +147,60 @@ class ReceiptController extends Controller
 
     /**
      */
+
+    public function createPayments(Receipt $receipt) {
+        $receipt->load(['account', 'range_document_number', 'contact']);
+
+        $transactions = null;
+        if ($receipt->contact_id) {
+            $transactions = Transaction::query()
+                ->where('counter_account_id', $receipt->contact->creditor_number)
+                ->whereRaw('amount - COALESCE((SELECT SUM(amount) FROM payments WHERE transaction_id = transactions.id), 0) < 0.00')
+                ->where('is_locked', true)
+                ->get();
+        }
+
+        return Inertia::modal('App/Bookkeeping/Receipt/ReceiptLinkTransactions', [])
+            ->with([
+                'receipt' => ReceiptData::from($receipt),
+                'transactions' => $transactions ? transactionData::collect($transactions) : null
+            ])->baseRoute('app.bookkeeping.receipts.confirm', ['receipt' => $receipt->id]);
+    }
+
+    public function storePayments(Request $request, Receipt $receipt)
+    {
+
+        $ids = $request->query('ids');
+        $ids = $ids ? explode(',', $ids) : [];
+        $isCurrencyDifference = $request->query('remaining_amount_is_currency_difference');
+
+        $transactions = Transaction::whereIn('id', $ids)->get();
+        $transactions->each(function ($transaction) use ($receipt) {
+            $payment = new Payment;
+            $payment->payable()->associate($receipt);
+            $payment->transaction_id = $transaction->id;
+            $payment->issued_on = $transaction->booked_on;
+            $payment->is_currency_difference = false;
+
+            $payment->amount = $transaction->amount;
+            $payment->save();
+        });
+
+        if ($isCurrencyDifference && $transactions->sum('amount') !== $receipt->amount) {
+            $payment = new Payment;
+            $payment->payable()->associate($receipt);
+            $payment->issued_on = $receipt->issued_on;
+            $payment->is_currency_difference = true;
+            $payment->transaction_id = $ids[0];
+            $payment->amount = $transactions->sum('amount') * -1 - ($receipt->amount);
+            $payment->save();
+            Payment::createCurrencyDifferenceBookings($payment);
+        }
+
+        return redirect()->route('app.bookkeeping.receipts.confirm', ['receipt' => $receipt->id]);
+
+    }
+
     public function edit(Receipt $receipt)
     {
         $receipt->load(['account', 'range_document_number', 'contact']);
@@ -157,8 +222,6 @@ class ReceiptController extends Controller
         $receipt->load(['account', 'range_document_number', 'contact']);
 
         $receipts = Receipt::query()->where('is_confirmed', false)->orderBy('issued_on')->get();
-
-
         $currentIndex = $receipts->search(function ($item) use ($receipt) {
             return $item->id === $receipt->id;
         });

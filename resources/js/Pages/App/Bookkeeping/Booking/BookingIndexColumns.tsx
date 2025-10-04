@@ -80,7 +80,11 @@ export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
     accessorKey: 'document_number',
     header: '',
     size: 80,
-    cell: ({ row, getValue }) => <Badge variant="outline">{getValue() as string}</Badge>
+    cell: ({ row, getValue }) => (
+      <div className="text-xs">
+        <Badge variant="outline">{getValue() as string}</Badge>
+      </div>
+    )
   },
   {
     accessorKey: 'is_locked',
@@ -104,7 +108,9 @@ export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
       const [bookingType, name, purpose, conversion] = row.original.booking_text.split('|')
       return (
         <div>
-          <div>{bookingType}</div>
+          <div className="text-foreground/80 text-xs">
+            #{row.original.id} &mdash; {bookingType}
+          </div>
           <div className="truncate font-medium">{name}</div>
           <div className="truncate">{purpose}</div>
           {conversion && <div className="text-foreground/80 text-xs">{conversion}</div>}

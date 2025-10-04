@@ -1,4 +1,9 @@
-import { ArrowLeft01Icon, ArrowRight01Icon, Delete02Icon } from '@hugeicons/core-free-icons'
+import {
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  Delete02Icon,
+  EuroSendIcon
+} from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useCallback } from 'react'
@@ -39,7 +44,10 @@ const ReceiptConfirm: React.FC<Props> = ({
     'app.bookkeeping.receipts.update',
     {
       receipt: receipt.id,
-      _query: { confirm: 1, load_next: 1 }
+      _query: {
+        confirm: 1,
+        load_next: 1
+      }
     },
     false
   )
@@ -65,6 +73,10 @@ const ReceiptConfirm: React.FC<Props> = ({
     } else {
       router.visit(route('app.bookkeeping.receipts.index'))
     }
+  }
+
+  const handleLinkPayments = () => {
+    router.visit(route('app.bookkeeping.receipts.payments', { id: receipt.id }))
   }
 
   const handleContactChange = (contactId: number) => {
@@ -102,33 +114,49 @@ const ReceiptConfirm: React.FC<Props> = ({
         <FormGroup>
           <div className="col-span-8">
             <DatePicker label="Rechnungsdatum" {...form.register('issued_on')} autoFocus />
+            <Checkbox {...form.registerCheckbox('is_foreign_currency')} className="pt-1.5">
+              Fremdwährung
+            </Checkbox>
           </div>
+          <div className="col-span-16" />
 
           <div className="col-span-8">
             <NumberField
               label="Bruttobetrag"
               {...form.register('amount')}
               formatOptions={{
+                style: 'currency',
+                currency: 'EUR',
+                currencyDisplay: 'code',
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
               }}
             />
-            {form.data.org_currency !== 'EUR' && (
-              <div>
-                {currencyFormatter.format(form.data.org_amount || 0)} {form.data.org_currency}
+          </div>
+          {form.data.is_foreign_currency && (
+            <>
+              <div className="col-span-8">
+                <NumberField
+                  label="Ursprungsbetrag"
+                  {...form.register('org_amount')}
+                  formatOptions={{
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  }}
+                />
               </div>
-            )}
-          </div>
-          <div className="col-span-8">
-            <Select<App.Data.CurrencyData, string>
-              label="Währung"
-              itemValue="code"
-              itemName="code"
-              items={currencies || []} // Sichere Behandlung
-              valueType="string"
-              {...form.register('org_currency')}
-            />
-          </div>
+              <div className="col-span-8">
+                <Select<App.Data.CurrencyData, string>
+                  label="Währung"
+                  itemValue="code"
+                  itemName="code"
+                  items={currencies || []} // Sichere Behandlung
+                  valueType="string"
+                  {...form.register('org_currency')}
+                />
+              </div>
+            </>
+          )}
           <div className="col-span-24">
             <TextField label="Referenz" {...form.register('reference')} />
           </div>
@@ -176,6 +204,13 @@ const ReceiptConfirm: React.FC<Props> = ({
                 icon={Delete02Icon}
                 tooltip="Beleg löschen"
                 onClick={handleDelete}
+              />
+              <Button
+                icon={EuroSendIcon}
+                tooltip="Mit Transaktionen verknüpfen"
+                size="icon"
+                variant="ghost"
+                onClick={handleLinkPayments}
               />
             </div>
             <Button

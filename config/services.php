@@ -34,7 +34,7 @@ return [
     ],
     'vat_currency_rates' => [
         'host' => 'https://umsatzsteuer-umrechnungskurse.org/api/',
-        'key' => env('CONVERSION_RATED_API_KEY'),
+        'key' => env('CONVERSION_RATES_API_KEY'),
     ],
 
     'resend' => [
