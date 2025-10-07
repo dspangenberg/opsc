@@ -2,10 +2,14 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\App\Bookkeeping\Booking\BookingExportCSV;
 use App\Http\Controllers\App\Bookkeeping\Booking\BookingIndexController;
+use App\Http\Controllers\App\Bookkeeping\BookkeepingAcountsController;
+use App\Http\Controllers\App\Bookkeeping\BookkeepingRulesController;
 use App\Http\Controllers\App\Bookkeeping\CostCenterController;
 use App\Http\Controllers\App\Bookkeeping\ReceiptController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionConfirmController;
+use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionHolviImportController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionIndexController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionMoneyMoneyImportController;
 use App\Http\Controllers\App\Bookkeeping\Transaction\TransactionSetCounterAccountController;
@@ -22,11 +26,17 @@ Route::get('bookkeeping/transactions/set-counter-account/', TransactionSetCounte
 Route::get('bookkeeping/bookings', BookingIndexController::class)
     ->name('app.bookkeeping.bookings.index');
 
+Route::get('bookkeeping/bookings/export', BookingExportCSV::class)
+    ->name('app.bookkeeping.bookings.export');
+
 
 Route::post('bookkeeping/transactions/money-money-import', TransactionMoneyMoneyImportController::class)
     ->middleware([HandlePrecognitiveRequests::class])
     ->name('app.bookkeeping.transactions.money-money-import');
 
+Route::post('bookkeeping/transactions/holvi-import', TransactionHolviImportController::class)
+    ->middleware([HandlePrecognitiveRequests::class])
+    ->name('app.bookkeeping.transactions.holvi-import');
 
 Route::match(['GET', 'POST'], 'bookkeeping/transactions/{bank_account?}', TransactionIndexController::class)
     ->name('app.bookkeeping.transactions.index');
@@ -37,7 +47,7 @@ Route::get('/bookkeeping/receipts', [ReceiptController::class, 'index'])->name('
 Route::post('/bookkeeping/receipts/upload', [ReceiptController::class, 'upload'])->name('app.bookkeeping.receipts.upload')->middleware([HandlePrecognitiveRequests::class]);
 
 Route::get('/bookkeeping/receipts/confirm/', [ReceiptController::class, 'confirmFirst'])->name('app.bookkeeping.receipts.confirm-first');
-Route::put('/bookkeeping/receipts/confirm/{receipt}/update', [ReceiptController::class, 'update'])->name('app.bookkeeping.receipts.update')->middleware([HandlePrecognitiveRequests::class]);;
+Route::put('/bookkeeping/receipts/confirm/{receipt}/update', [ReceiptController::class, 'update'])->name('app.bookkeeping.receipts.update')->middleware([HandlePrecognitiveRequests::class]);
 Route::get('/bookkeeping/receipts/{receipt}/pdf', [ReceiptController::class, 'streamPdf'])->name('app.bookkeeping.receipts.pdf');
 Route::delete('/bookkeeping/receipts/{receipt}/delete', [ReceiptController::class, 'destroy'])->name('app.bookkeeping.receipts.destroy');
 Route::get('/bookkeeping/receipts/{receipt}/payments', [ReceiptController::class, 'createPayments'])->name('app.bookkeeping.receipts.payments');
@@ -47,6 +57,15 @@ Route::get('/bookkeeping/receipts/confirm/{receipt}', [ReceiptController::class,
 Route::get('/bookkeeping/receipts/{receipt}/edit', [ReceiptController::class, 'edit'])->name('app.bookkeeping.receipts.edit');
 
 
+Route::get('/bookkeeping/preferences/accounts', [BookkeepingAcountsController::class, 'index'])->name('app.bookkeeping.accounts.index');
+
+
+Route::get('/bookkeeping/preferences/rules', [BookkeepingRulesController::class, 'index'])->name('app.bookkeeping.rules.index');
+Route::get('/bookkeeping/preferences/rules/{rule}/edit', [BookkeepingRulesController::class, 'edit'])->name('app.bookkeeping.rules.edit');
+
+Route::put('/bookkeeping/preferences/rules/{rule}/update', [BookkeepingRulesController::class, 'update'])->name('app.bookkeeping.rules.update');
+Route::delete('/bookkeeping/preferences/rules/{rule}', [BookkeepingRulesController::class, 'destroy'])->name('app.bookkeeping.rules.destroy');
+Route::post('/bookkeeping/preferences/rules/store', [BookkeepingRulesController::class, 'store'])->name('app.bookkeeping.rules.store');
 
 
 Route::get('/bookkeeping/preferences/cost-centers', [CostCenterController::class, 'index'])->name('app.bookkeeping.cost-centers.index');

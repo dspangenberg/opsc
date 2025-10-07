@@ -183,15 +183,19 @@ class Transaction extends Model
     public function getContact(): bool
     {
         if ($this->account_number || $this->name || $this->purpose) {
-            if ($this->account_number) {
+            if ($this->account_number || $this->name) {
                 $contact = Contact::query()
-                    ->where('iban', $this->account_number)
-                    ->orWhere('paypal_email', $this->account_number)
+                    ->when($this->account_number, function ($query) {
+                        $query
+                            ->where('iban', $this->account_number)
+                            ->orWhere('paypal_email', $this->account_number);
+                    })
                     ->when($this->name, function ($query) {
                         $query->orWhere('cc_name', $this->name);
                     })
                     ->first();
                 if ($contact) {
+                    ds($contact->toArray());
                     if ($contact->creditor_number) {
                         $this->counter_account_id = $contact->creditor_number;
                     }

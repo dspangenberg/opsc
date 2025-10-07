@@ -19,9 +19,11 @@ class BookingIndexController extends Controller
 {
     public function __invoke(Request $request)
     {
+        $search = $request->input('search', '');
 
         $bookings = BookkeepingBooking::query()
             ->with('account_credit')
+            ->search($search)
             ->with('account_debit')
             ->with('tax')
             ->with('range_document_number')
@@ -33,6 +35,7 @@ class BookingIndexController extends Controller
 
         return Inertia::render('App/Bookkeeping/Booking/BookingIndex', [
             'bookings' => BookkeepingBookingData::collect($bookings),
+            'currentSearch' => $search,
         ]);
     }
 }

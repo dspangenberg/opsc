@@ -53,6 +53,7 @@ class ContactIndexController extends Controller
 
         return Inertia::render('App/Contact/ContactIndex', [
             'contacts' => ContactData::collect($contacts),
+            'currentSearch' => $search,
         ]);
     }
 }

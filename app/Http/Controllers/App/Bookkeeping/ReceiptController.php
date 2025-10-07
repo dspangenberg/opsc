@@ -42,7 +42,7 @@ class ReceiptController extends Controller
     {
         $receipts = Receipt::query()
             ->with([
-            'account', 'range_document_number', 'contact','cost_center'
+                'account', 'range_document_number', 'contact','cost_center'
             ])
             ->withSum('payable', 'amount')
             ->orderBy('issued_on')->paginate();
@@ -136,7 +136,7 @@ class ReceiptController extends Controller
 
             $media = $receipt->firstMedia('file');
             $folder = '/bookkeeping/receipts/'.$receipt->issued_on->format('Y/m/');
-            $filename = $receipt->issued_on->format('Y-m-d').'-'.$media->filename;
+            $filename = $receipt->issued_on->format('Y-m-d').'-'.$receipt->range_document_number->document_number.'.pdf';
 
 
             $media->move($folder, $filename);
@@ -313,16 +313,6 @@ class ReceiptController extends Controller
                             }
                         }
                     }
-                    $vatIdPattern = '/\b(DE\d{9}|AT[A-Z]\d{8}|BE0\d{9}|FR[A-Z0-9]{2}\d{9}|NL\d{9}B\d{2})\b/i';
-                    preg_match($vatIdPattern, $receipt->text, $vatMatches);
-                    if (!empty($vatMatches)) {
-                        foreach ($vatMatches as $vatMatch) {
-                            $cleanVatId = trim($vatMatch);
-                            // VAT ID gefunden: z.B. DE240386270
-                            // ds('VAT ID gefunden: ' . $cleanVatId);
-                        }
-                    }
-
                 }
 
                 $receipt->save();

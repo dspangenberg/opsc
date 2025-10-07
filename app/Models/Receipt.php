@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
@@ -120,7 +121,11 @@ class Receipt extends Model
     {
         return $this->morphMany(Payment::class, 'payable');
     }
-
+    public function booking(): MorphOne
+    {
+        return $this->morphOne(BookkeepingBooking::class, 'bookable');
+    }
+    
     public static function createBooking($receipt): void
     {
         $accounts = Contact::getAccounts(false, $receipt->contact_id);

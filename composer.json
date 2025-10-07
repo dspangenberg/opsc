@@ -14,6 +14,7 @@
     "laravel/framework": "^12",
     "laravel/sanctum": "^4.1.1",
     "laravel/tinker": "^2.10.1",
+    "league/csv": "^9.24.1",
     "league/flysystem-aws-s3-v3": "^3.29",
     "maize-tech/laravel-markable": "^2.3.1",
     "mpdf/mpdf": "^8.2.5",
@@ -35,7 +36,8 @@
     "stancl/jobpipeline": "^2.0@RC",
     "stancl/tenancy": "dev-master",
     "stevebauman/purify": "^6.3",
-    "tightenco/ziggy": "^2.5.3"
+    "tightenco/ziggy": "^2.5.3",
+    "usmanhalalit/laracsv": "^2.1"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "^3.15.4",

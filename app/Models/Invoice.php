@@ -415,7 +415,7 @@ class Invoice extends Model implements MediableInterface
         $query
             ->where('is_draft', false)
             ->whereRaw('(
-                SELECT COALESCE(SUM(amount), 0) + COALESCE(SUM(tax), 0) 
+                SELECT COALESCE(SUM(amount), 0) 
                 FROM invoice_lines 
                 WHERE invoice_id = invoices.id
             ) - COALESCE((

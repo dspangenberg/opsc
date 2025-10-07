@@ -49,17 +49,34 @@ class BookkeepingBooking extends Model
         'document_number',
     ];
 
-    public static function createBooking($parent, $dateField, $amountField, $debit_account, $credit_account, $documentNumberPrefix = '', $bookingId = null): ?BookkeepingBooking
+    public function scopeSearch($query, $search): Builder
     {
-        if (! $debit_account || ! $credit_account) {
+        $search = trim($search);
+        if ($search) {
+            $query
+                ->where('booking_text', 'like', "%$search%");
+        }
+        return $query;
+    }
+
+    public static function createBooking(
+        $parent,
+        $dateField,
+        $amountField,
+        $debit_account,
+        $credit_account,
+        $documentNumberPrefix = '',
+        $bookingId = null
+    ): ?BookkeepingBooking {
+        if (!$debit_account || !$credit_account) {
             BookkeepingLog::create([
                 'parent_model' => $parent::class,
                 'parent_id' => $parent->id,
-                'text' => ! $debit_account ? 'Sollkonto nicht gefunden' : 'Habenkonto nicht gefunden',
+                'text' => !$debit_account ? 'Sollkonto nicht gefunden' : 'Habenkonto nicht gefunden',
             ]);
 
             return null;
-        }
+        };
 
         if ($bookingId) {
             $booking = BookkeepingBooking::find($bookingId);
@@ -72,7 +89,7 @@ class BookkeepingBooking extends Model
             $booking->date = $parent[$dateField];
         }
 
-        if (! $booking->number_range_document_numbers_id) {
+        if (!$booking->number_range_document_numbers_id) {
             $booking->number_range_document_numbers_id = $parent->number_range_document_numbers_id;
         }
 
