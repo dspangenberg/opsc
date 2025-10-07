@@ -24,6 +24,7 @@ import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
+import { TransactionHolviImport } from '@/Pages/App/Bookkeeping/Transaction/TransactionHolviImport'
 import { TransactionMoneyMoneyImport } from '@/Pages/App/Bookkeeping/Transaction/TransactionMoneyMoneyImport'
 import { TransactionSelectCounterAccountDialog } from '@/Pages/App/Bookkeeping/Transaction/TransactionSelectCounterAccount'
 import type { PageProps } from '@/Types'
@@ -54,6 +55,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
 }) => {
   const [selectedRows, setSelectedRows] = useState<App.Data.TransactionData[]>([])
   const [showMoneyMoneyImport, setShowMoneyMoneyImport] = useState(false)
+  const [showHolviImport, setShowHolviImport] = useState(false)
   const [selectedAmount, setSelectedAmount] = useState<number>(0)
   // Lokale State für Filter und Search
   const [filters, setFilters] = useState<FilterConfig>(currentFilters)
@@ -195,7 +197,12 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
                   separator
                   onClick={() => setShowMoneyMoneyImport(true)}
                 />
-                <MenuItem icon={Csv02Icon} title="CSV-Datei importieren" ellipsis />
+                <MenuItem
+                  icon={Csv02Icon}
+                  title="Holvi-CSV-Datei importieren"
+                  ellipsis
+                  onClick={() => setShowHolviImport(true)}
+                />
               </Menu>
             </MenuPopover>
           </MenuSubTrigger>
@@ -308,6 +315,12 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
         data={transactions.data}
         footer={footer}
         itemName="Transaktionen"
+      />
+
+      <TransactionHolviImport
+        isOpen={showHolviImport}
+        onClosed={() => setShowHolviImport(false)}
+        bank_account={bank_account}
       />
       <TransactionMoneyMoneyImport
         isOpen={showMoneyMoneyImport}

@@ -20,7 +20,7 @@ class TransactionConfirmController extends Controller
 
         $ids = $request->query('ids');
         $transactionIds = explode(',', $ids);
-        $transactions = Transaction::whereIn('id', $transactionIds)->with('bank_account')->get();
+        $transactions = Transaction::whereIn('id', $transactionIds)->with('bank_account')->orderBy('booked_on')->get();
 
         $transactions->each(function ($transaction) {
             if (! $transaction->is_locked) {

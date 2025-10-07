@@ -18,6 +18,8 @@ class BookkeepingAccountData extends Data
         public readonly int $account_number,
         public readonly string $name,
         public readonly string $label,
-        public readonly string $type
+        public readonly string $type,
+        public readonly ?TaxData $tax
+
     ) {}
 }

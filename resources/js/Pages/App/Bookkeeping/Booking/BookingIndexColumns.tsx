@@ -6,11 +6,13 @@
 import { MoreVerticalCircle01Icon, Tick01Icon, WebValidationIcon } from '@hugeicons/core-free-icons'
 import { Link, router } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
+import { Focusable } from 'react-aria-components'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 import { Badge, type BadgeVariant } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
 import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
 import { Icon } from '@/Components/ui/twc-ui/icon'
+import { Tooltip, TooltipTrigger } from '@/Components/ui/twc-ui/tooltip'
 import { cn } from '@/Lib/utils'
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
@@ -136,13 +138,27 @@ export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
     accessorKey: 'account_id_debit',
     header: 'Sollkonto',
     size: 70,
-    cell: ({ row, getValue }) => <span>{row.original.account_debit?.label}</span>
+    cell: ({ row, getValue }) => (
+      <TooltipTrigger>
+        <Focusable aria-role="label">
+          <a className="truncate">{row.original.account_debit?.label}</a>
+        </Focusable>
+        <Tooltip>{row.original.account_debit?.label}</Tooltip>
+      </TooltipTrigger>
+    )
   },
   {
     accessorKey: 'account_id_credit',
     header: 'Habenkonto',
     size: 70,
-    cell: ({ row, getValue }) => <span>{row.original.account_credit?.label}</span>
+    cell: ({ row, getValue }) => (
+      <TooltipTrigger>
+        <Focusable>
+          <a className="truncate">{row.original.account_credit?.label}</a>
+        </Focusable>
+        <Tooltip>{row.original.account_credit?.label}</Tooltip>
+      </TooltipTrigger>
+    )
   },
   {
     accessorKey: 'tax_debit',

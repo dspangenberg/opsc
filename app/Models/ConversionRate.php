@@ -61,7 +61,7 @@ class ConversionRate extends Model
             $response = Http::get($url);
             $y = collect($response->json())->get($year);
             $r = collect($y)->get(strtoupper($currencyCode));
-            
+
             if ($r[$month]) {
                 $rate = ConversionRate::create([
                     'currency_code' => strtoupper($currencyCode),

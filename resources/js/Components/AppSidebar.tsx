@@ -164,7 +164,8 @@ const data = {
           items: [
             {
               title: 'Buchhaltungskonten',
-              url: route('app.invoice.index', {}, false)
+              url: route('app.bookkeeping.accounts.index', {}, false),
+              activePath: '/app/bookkeeping/preferences/accounts'
             },
             {
               title: 'Kostenstellen',
@@ -173,7 +174,8 @@ const data = {
             },
             {
               title: 'Regeln',
-              url: route('app.invoice.index', {}, false)
+              url: route('app.bookkeeping.rules.index', {}, false),
+              activePath: '/app/bookkeeping/preferences/rules'
             }
           ]
         }

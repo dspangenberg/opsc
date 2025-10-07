@@ -37,6 +37,7 @@ account_number: number;
 name: string;
 label: string;
 type: string;
+tax: App.Data.TaxData | null;
 };
 export type BookkeepingBookingData = {
 id: number | null;
@@ -62,6 +63,35 @@ updated_at: string | null;
 account_credit: App.Data.BookkeepingAccountData | null;
 account_debit: App.Data.BookkeepingAccountData | null;
 tax: App.Data.TaxData | null;
+};
+export type BookkeepingRuleActionData = {
+id: number | null;
+bookkeeping_rule_id: number;
+priority: number;
+table: string;
+field: string;
+value: string;
+};
+export type BookkeepingRuleConditionData = {
+id: number | null;
+bookkeeping_rule_id: number;
+priority: number;
+table: string;
+field: string;
+logical_condition: string;
+value: string;
+};
+export type BookkeepingRuleData = {
+id: number | null;
+name: string;
+priority: number;
+is_active: boolean;
+table: string;
+logical_operator: string;
+action_type: string;
+type: string;
+conditions: Array<App.Data.BookkeepingRuleConditionData> | null;
+actions: Array<App.Data.BookkeepingRuleActionData> | null;
 };
 export type CalendarEventData = {
 id: number | null;
