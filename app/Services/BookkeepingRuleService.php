@@ -9,6 +9,10 @@ class BookkeepingRuleService
 {
     public function run(string $table, Model $model, array $ids)
     {
+
+        $lockfield = $table === 'receipts' ? 'is_confirmed' : 'is_locked';
+
+
         // Optimize eager loading by combining with() calls
         $rules = BookkeepingRule::where('table', $table)
             ->has('conditions')
@@ -19,11 +23,11 @@ class BookkeepingRuleService
             ->get();
 
         foreach ($rules as $rule) {
-            self::runRule($rule, $model, $ids);
+            self::runRule($rule, $model, $ids, $lockfield);
         }
     }
 
-    protected static function runRule($rule, $model, $ids): void
+    protected static function runRule($rule, $model, $ids, $lockfield): void
     {
 
         $query = $model::query()
@@ -36,7 +40,7 @@ class BookkeepingRuleService
             ->when($rule->type === 'credit', function ($query) {
                 return $query->where('amount', '>=', 0);
             })
-            ->where('is_locked', false)
+            ->where($lockfield, false)
             ->where(function ($query) use ($rule) {
                 // Build WHERE conditions dynamically within a grouped closure
                 foreach ($rule->conditions as $index => $condition) {

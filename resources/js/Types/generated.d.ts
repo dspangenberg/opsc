@@ -67,16 +67,12 @@ tax: App.Data.TaxData | null;
 export type BookkeepingRuleActionData = {
 id: number | null;
 bookkeeping_rule_id: number;
-priority: number;
-table: string;
 field: string;
 value: string;
 };
 export type BookkeepingRuleConditionData = {
 id: number | null;
 bookkeeping_rule_id: number;
-priority: number;
-table: string;
 field: string;
 logical_condition: string;
 value: string;
@@ -355,37 +351,6 @@ type: number | null;
 export type ProjectData = {
 id: number | null;
 name: string;
-};
-export type ReceiptData = {
-id: number | null;
-reference: string;
-issued_on: string;
-org_filename: string;
-file_size: number;
-file_created_at: string;
-open_amount: number;
-contact_id: number | null;
-cost_center_id: number | null;
-bookkeeping_account_id: number | null;
-org_currency: string | null;
-org_amount: number | null;
-amount: number;
-exchange_rate: number | null;
-document_number: string | null;
-duplicate_of: number | null;
-is_foreign_currency: boolean | null;
-is_confirmed: boolean | null;
-iban: string | null;
-number_range_document_number_id: number | null;
-account: App.Data.BookkeepingAccountData | null;
-contact: App.Data.ContactData | null;
-cost_center: App.Data.CostCenterData | null;
-number_range_document_number: any | null;
-checksum: string;
-text: string | null;
-data: Array<any> | null;
-created_at: string;
-updated_at: string;
 };
 export type RegionData = {
 id: number;

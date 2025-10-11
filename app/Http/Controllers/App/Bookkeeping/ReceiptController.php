@@ -7,6 +7,7 @@ use App\Data\CostCenterData;
 use App\Data\CurrencyData;
 use App\Data\ReceiptData;
 use App\Data\TransactionData;
+use App\Facades\BookeepingRuleService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReceiptUpdateRequest;
 use App\Http\Requests\ReceiptUploadRequest;
@@ -123,9 +124,11 @@ class ReceiptController extends Controller
 
         $receipt->save();
 
-        if ($request->validated('is_confirmed') && $receipt->is_confirmed === false) {
+        if (!$receipt->is_confirmed) {
             $receipt->is_confirmed = true;
+            $receipt->duplicate_of = null;
             $receipt->save();
+            /*
             if (!$receipt->number_range_document_numbers_id) {
                 $receipt->number_range_document_numbers_id = NumberRange::createDocumentNumber($receipt, 'issued_on');
                 $receipt->save();
@@ -133,12 +136,11 @@ class ReceiptController extends Controller
                 $receipt->load('range_document_number');
             }
             Receipt::createBooking($receipt);
-
+            */
             $media = $receipt->firstMedia('file');
             $folder = '/bookkeeping/receipts/'.$receipt->issued_on->format('Y/m/');
-            $filename = $receipt->issued_on->format('Y-m-d').'-'.$receipt->range_document_number->document_number.'.pdf';
-
-
+            $filename = $receipt->issued_on->format('Y-m-d').'-'.$media->filename;
+            $receipt->org_filename = $media->filename;
             $media->move($folder, $filename);
         }
 
@@ -210,6 +212,8 @@ class ReceiptController extends Controller
         $currencies = Currency::query()->orderBy('name')->get();
         $costCenters = CostCenter::query()->orderBy('name')->get();
 
+        $receipt->org_filename = $receipt->getMedia('file')->first()->filename;
+
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptEdit', [
             'receipt' => ReceiptData::from($receipt),
             'contacts' => CompanyData::collect($contacts),
@@ -247,6 +251,7 @@ class ReceiptController extends Controller
         $currencies = Currency::query()->orderBy('name')->get();
         $costCenters = CostCenter::query()->orderBy('name')->get();
 
+
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptConfirm', [
             'receipt' => ReceiptData::from($receipt),
             'nextReceipt' => $nextReceipt ? route('app.bookkeeping.receipts.confirm',
@@ -256,6 +261,39 @@ class ReceiptController extends Controller
             'contacts' => CompanyData::collect($contacts),
             'cost_centers' => CostCenterData::collect($costCenters),
             'currencies' => CurrencyData::collect($currencies),
+        ]);
+    }
+
+    public function uploadForm()
+    {
+        return Inertia::render('App/Bookkeeping/Receipt/ReceiptUpload');
+    }
+
+
+    public function lock(Request $request)
+    {
+
+        $ids = $request->query('ids');
+        $receiptIds = explode(',', $ids);
+        $receipts = Receipt::whereIn('id', $receiptIds)->orderBy('issued_on')->get();
+
+        $receipts->each(function ($receipt) {
+            if (! $receipt->is_locked) {
+                $receipt->is_locked = true;
+
+                if (! $receipt->number_range_document_numbers_id) {
+                    $receipt->number_range_document_numbers_id = NumberRange::createDocumentNumber($receipt,
+                        'issued_on');
+                }
+
+                $receipt->save();
+                Receipt::createBooking($receipt);
+            }
+        });
+
+        $receipts = Receipt::whereIn('id', $receiptIds)->get();
+        Inertia::render('App/Bookkeeping/Receipt/ReceiptIndex', [
+            'receipts' => Inertia::deepMerge($receipts)->matchOn('id'),
         ]);
     }
 
@@ -317,6 +355,14 @@ class ReceiptController extends Controller
 
                 $receipt->save();
 
+                BookeepingRuleService::run('receipts', new Receipt, [$receipt->id]);
+
+                $receipt->refresh();
+                if ($receipt->contact_id && !$receipt->cost_center_id) {
+                    $receipt->cost_center_id = Contact::find($receipt->contact_id)->cost_center_id;
+                    $receipt->save();
+                }
+
                 $media = MediaUploader::fromSource($file)
                     ->toDestination('s3_private', 'uploads/'.$receipt->issued_on->format('Y/m/'))
                     ->upload();
@@ -339,8 +385,6 @@ class ReceiptController extends Controller
             }
         });
 
-        Inertia::render('App/Bookkeeping/Receipt/ReceiptIndex', [
-            'receipts' => Inertia::deepMerge($uploadedReceipts)->matchOn('id'),
-        ]);
+        return redirect()->route('app.bookkeeping.receipts.confirm-first');
     }
 }

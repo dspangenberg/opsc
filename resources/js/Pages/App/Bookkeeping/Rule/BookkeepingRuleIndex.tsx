@@ -34,8 +34,8 @@ const BookkeepingRuleIndex: React.FC<BookkeepingRuleIndexPageProps> = ({ rules }
 
   const breadcrumbs = useMemo(() => [{ title: 'Buchhaltung' }, { title: 'Kostenstellen' }], [])
 
-  const handleCostCenterAddClicked = () => {
-    router.get(route('app.bookkeeping.cost-centers.create'))
+  const handleRuleAddClicked = () => {
+    router.get(route('app.bookkeeping.rules.create'))
   }
 
   const toolbar = useMemo(
@@ -44,8 +44,8 @@ const BookkeepingRuleIndex: React.FC<BookkeepingRuleIndexPageProps> = ({ rules }
         <Button
           variant="toolbar-default"
           icon={Add01Icon}
-          title="Neue Regel"
-          onClick={handleCostCenterAddClicked}
+          title="Neue Regel erstellen"
+          onClick={handleRuleAddClicked}
         />
       </Toolbar>
     ),

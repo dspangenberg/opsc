@@ -2,6 +2,7 @@
 
 namespace App\Facades;
 
+use App\Services\BookkeepingRuleService;
 use Illuminate\Support\Facades\Facade;
 
 /**
@@ -11,6 +12,6 @@ class BookeepingRuleService extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return \App\Services\BookkeepingRuleService::class;
+        return BookkeepingRuleService::class;
     }
 }

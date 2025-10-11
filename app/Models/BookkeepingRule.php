@@ -54,6 +54,8 @@ class BookkeepingRule extends Model
         'priority' => 100,
         'logical_operator' => 'or',
         'is_active' => true,
+        'table' => 'receipts',
+        'type' => 'all',
         'action_type' => 'update',
     ];
 

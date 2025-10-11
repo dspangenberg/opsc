@@ -7,6 +7,7 @@
 
 namespace App\Data;
 use DateTime;
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Attributes\WithTransformer;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Transformers\DateTimeInterfaceTransformer;
@@ -23,7 +24,7 @@ class BookkeepingRuleData extends Data
         public readonly string $table,
         public readonly string $logical_operator,
         public readonly string $action_type,
-        public readonly string $type,
+        public readonly string $type,       
         /** @var BookkeepingRuleConditionData[] */
         #[DataCollectionOf(BookkeepingRuleConditionData::class)]
         public readonly ?array $conditions,

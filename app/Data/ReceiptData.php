@@ -42,6 +42,7 @@ class ReceiptData extends Data
         public readonly ?int $duplicate_of,
         public readonly ?bool $is_foreign_currency,
         public readonly ?bool $is_confirmed,
+        public readonly ?bool $is_locked,w
 
         public readonly ?string $iban,
         public readonly ?int $number_range_document_number_id,

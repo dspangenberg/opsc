@@ -246,7 +246,7 @@
             <tr>
                 <td colspan="3">&nbsp;</td>
                 <td colspan="2" style="border-bottom: 1px solid #aaa;">
-                    <strong>abzüglich geleisteter Akontozahlungen:</strong>
+                    <strong>abzüglich Akontorechnungen:</strong>
                 </td>
                 <td colspan="1" class="right" style="border-bottom: 1px solid #aaa;">
                     <strong>USt.</strong>
