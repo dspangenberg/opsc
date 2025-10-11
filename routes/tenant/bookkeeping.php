@@ -43,9 +43,14 @@ Route::match(['GET', 'POST'], 'bookkeeping/transactions/{bank_account?}', Transa
 
 
 
-Route::get('/bookkeeping/receipts', [ReceiptController::class, 'index'])->name('app.bookkeeping.receipts.index');
-Route::post('/bookkeeping/receipts/upload', [ReceiptController::class, 'upload'])->name('app.bookkeeping.receipts.upload')->middleware([HandlePrecognitiveRequests::class]);
 
+
+
+Route::post('/bookkeeping/receipts/upload', [ReceiptController::class, 'upload'])->name('app.bookkeeping.receipts.upload')->middleware([HandlePrecognitiveRequests::class]);
+Route::get('/bookkeeping/receipts/upload-form', [ReceiptController::class,'uploadForm'])->name('app.bookkeeping.receipts.upload-form');
+Route::get('/bookkeeping/receipts', [ReceiptController::class, 'index'])->name('app.bookkeeping.receipts.index');
+
+Route::get('/bookkeeping/receipts/lock/', [ReceiptController::class, 'lock'])->name('app.bookkeeping.receipts.lock');
 Route::get('/bookkeeping/receipts/confirm/', [ReceiptController::class, 'confirmFirst'])->name('app.bookkeeping.receipts.confirm-first');
 Route::put('/bookkeeping/receipts/confirm/{receipt}/update', [ReceiptController::class, 'update'])->name('app.bookkeeping.receipts.update')->middleware([HandlePrecognitiveRequests::class]);
 Route::get('/bookkeeping/receipts/{receipt}/pdf', [ReceiptController::class, 'streamPdf'])->name('app.bookkeeping.receipts.pdf');
@@ -63,8 +68,9 @@ Route::get('/bookkeeping/preferences/accounts', [BookkeepingAcountsController::c
 Route::get('/bookkeeping/preferences/rules', [BookkeepingRulesController::class, 'index'])->name('app.bookkeeping.rules.index');
 Route::get('/bookkeeping/preferences/rules/{rule}/edit', [BookkeepingRulesController::class, 'edit'])->name('app.bookkeeping.rules.edit');
 
-Route::put('/bookkeeping/preferences/rules/{rule}/update', [BookkeepingRulesController::class, 'update'])->name('app.bookkeeping.rules.update');
+Route::put('/bookkeeping/preferences/rules/{rule}/update', [BookkeepingRulesController::class, 'update'])->name('app.bookkeeping.rules.update')->middleware([HandlePrecognitiveRequests::class]);
 Route::delete('/bookkeeping/preferences/rules/{rule}', [BookkeepingRulesController::class, 'destroy'])->name('app.bookkeeping.rules.destroy');
+Route::get('/bookkeeping/preferences/rules/create', [BookkeepingRulesController::class, 'create'])->name('app.bookkeeping.rules.create');
 Route::post('/bookkeeping/preferences/rules/store', [BookkeepingRulesController::class, 'store'])->name('app.bookkeeping.rules.store');
 
 

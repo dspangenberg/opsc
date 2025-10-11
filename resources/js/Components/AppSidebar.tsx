@@ -151,6 +151,11 @@ const data = {
           activePath: '/app/bookkeeping/receipts',
           items: [
             {
+              title: 'Upload',
+              url: route('app.bookkeeping.receipts.upload-form', {}, false),
+              activePath: '/app/bookkeeping/receipts/upload'
+            },
+            {
               title: 'Belege bestätigen',
               url: route('app.bookkeeping.receipts.confirm-first', {}, false),
               activePath: '/app/bookkeeping/receipts/confirm'

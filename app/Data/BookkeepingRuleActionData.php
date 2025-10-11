@@ -18,8 +18,6 @@ class BookkeepingRuleActionData extends Data
     public function __construct(
         public readonly ?int $id,
         public readonly int $bookkeeping_rule_id,
-        public readonly int $priority,
-        public readonly string $table,
         public readonly string $field,
         public readonly string $value,
     ) {}

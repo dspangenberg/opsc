@@ -4,19 +4,39 @@
  */
 
 import { Delete03Icon, MoreVerticalCircle01Icon, Tick01Icon } from '@hugeicons/core-free-icons'
+import { router } from '@inertiajs/core'
 import { Link } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 import { Checkbox } from '@/Components/ui/checkbox'
+import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
 import { Icon } from '@/Components/ui/twc-ui/icon'
 
 const editUrl = (id: number | null) => (id ? route('app.bookkeeping.rules.edit', { id }) : '#')
+
+const handleDeleteClicked = async (row: App.Data.BookkeepingRuleData) => {
+  console.log('handleDeleteClicked', row)
+  const promise = await AlertDialog.call({
+    title: 'Löschen bestätigen',
+    message: `Möchtest Du die Regel ${row.name} Eintrag wirklich löschen?`,
+    buttonTitle: 'Regel löschen',
+    variant: 'destructive'
+  })
+  if (promise) {
+    router.delete(route('app.bookkeeping.rules.destroy', { id: row.id }))
+  }
+}
 
 const RowActions = ({ row }: { row: Row<App.Data.BookkeepingRuleData> }) => {
   return (
     <div className="mx-auto">
       <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
-        <MenuItem icon={Delete03Icon} title="Löschen" variant="destructive" />
+        <MenuItem
+          icon={Delete03Icon}
+          title="Löschen"
+          variant="destructive"
+          onAction={() => handleDeleteClicked(row.original)}
+        />
       </DropdownButton>
     </div>
   )

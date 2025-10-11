@@ -103,10 +103,9 @@ const ReceiptConfirm: React.FC<Props> = ({
   }, [receipt.id])
 
   return (
-    <PageContainer title="Beleg bestätigen" width="7xl" className="flex overflow-hidden">
+    <PageContainer title="Beleg-Upload bestätigen" width="7xl" className="flex overflow-hidden">
       <PdfViewerContainer
         document={route('app.bookkeeping.receipts.pdf', { receipt: receipt.id })}
-        filename={receipt.org_filename}
         showFileName
       />
       <Form form={form} className="flex-1">
@@ -114,49 +113,31 @@ const ReceiptConfirm: React.FC<Props> = ({
         <FormGroup>
           <div className="col-span-8">
             <DatePicker label="Rechnungsdatum" {...form.register('issued_on')} autoFocus />
-            <Checkbox {...form.registerCheckbox('is_foreign_currency')} className="pt-1.5">
-              Fremdwährung
-            </Checkbox>
           </div>
-          <div className="col-span-16" />
 
           <div className="col-span-8">
             <NumberField
               label="Bruttobetrag"
               {...form.register('amount')}
               formatOptions={{
-                style: 'currency',
-                currency: 'EUR',
-                currencyDisplay: 'code',
+                style: 'decimal',
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
               }}
             />
           </div>
-          {form.data.is_foreign_currency && (
-            <>
-              <div className="col-span-8">
-                <NumberField
-                  label="Ursprungsbetrag"
-                  {...form.register('org_amount')}
-                  formatOptions={{
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  }}
-                />
-              </div>
-              <div className="col-span-8">
-                <Select<App.Data.CurrencyData, string>
-                  label="Währung"
-                  itemValue="code"
-                  itemName="code"
-                  items={currencies || []} // Sichere Behandlung
-                  valueType="string"
-                  {...form.register('org_currency')}
-                />
-              </div>
-            </>
-          )}
+
+          <div className="col-span-8">
+            <Select<App.Data.CurrencyData, string>
+              label="Währung"
+              itemValue="code"
+              itemName="code"
+              items={currencies || []} // Sichere Behandlung
+              valueType="string"
+              {...form.register('org_currency')}
+            />
+          </div>
+
           <div className="col-span-24">
             <TextField label="Referenz" {...form.register('reference')} />
           </div>
@@ -176,9 +157,6 @@ const ReceiptConfirm: React.FC<Props> = ({
               label="Kostenstelle"
               items={cost_centers}
             />
-            <Checkbox {...form.registerCheckbox('is_confirmed')} className="pt-1.5">
-              Beleg bestätigen und buchen
-            </Checkbox>
           </div>
           <div className="col-span-24 flex justify-between gap-2">
             <div className="flex flex-1 justify-start gap-1">
@@ -204,13 +182,6 @@ const ReceiptConfirm: React.FC<Props> = ({
                 icon={Delete02Icon}
                 tooltip="Beleg löschen"
                 onClick={handleDelete}
-              />
-              <Button
-                icon={EuroSendIcon}
-                tooltip="Mit Transaktionen verknüpfen"
-                size="icon"
-                variant="ghost"
-                onClick={handleLinkPayments}
               />
             </div>
             <Button

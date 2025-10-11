@@ -55,7 +55,7 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
     )
   },
   {
-    accessorKey: 'is_confirmed',
+    accessorKey: 'is_locked',
     header: '',
     size: 30,
     cell: ({ row, getValue }) => {

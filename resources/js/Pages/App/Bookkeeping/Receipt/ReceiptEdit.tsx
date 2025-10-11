@@ -2,7 +2,8 @@ import {
   ArrowLeft01Icon,
   ArrowRight01Icon,
   Delete02Icon,
-  EuroSendIcon
+  EuroSendIcon,
+  FileDownloadIcon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
@@ -20,6 +21,7 @@ import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 import { NumberField } from '@/Components/ui/twc-ui/number-field'
 import { Select } from '@/Components/ui/twc-ui/select'
 import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { useFileDownload } from '@/Hooks/useFileDownload'
 import type { PageProps } from '@/Types'
 
 interface Props extends PageProps {
@@ -99,8 +101,12 @@ const ReceiptConfirm: React.FC<Props> = ({
     }
   }, [receipt.id])
 
+  const { handleDownload } = useFileDownload({
+    route: route('app.bookkeeping.receipts.pdf', { receipt: receipt.id })
+  })
+
   return (
-    <PageContainer title="Beleg bestätigen" width="7xl" className="flex overflow-hidden">
+    <PageContainer title="Beleg bearbeiten" width="7xl" className="flex overflow-hidden">
       <PdfViewerContainer
         document={route('app.bookkeeping.receipts.pdf', { receipt: receipt.id })}
         filename={receipt.org_filename}
@@ -180,6 +186,13 @@ const ReceiptConfirm: React.FC<Props> = ({
                 size="icon"
                 variant="ghost"
                 onClick={handleLinkPayments}
+              />
+              <Button
+                icon={FileDownloadIcon}
+                tooltip="Download"
+                size="icon"
+                variant="ghost"
+                onClick={handleDownload}
               />
             </div>
             <Button
