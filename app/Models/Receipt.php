@@ -125,7 +125,7 @@ class Receipt extends Model
     {
         return $this->morphOne(BookkeepingBooking::class, 'bookable');
     }
-    
+
     public static function createBooking($receipt): void
     {
         $accounts = Contact::getAccounts(false, $receipt->contact_id);
