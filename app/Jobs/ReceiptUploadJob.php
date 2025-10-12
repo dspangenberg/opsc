@@ -26,7 +26,6 @@ class ReceiptUploadJob implements ShouldQueue
      */
     public function handle(ReceiptService $service): void
     {
-        ds($this->file);
         $service->processZipArchive($this->file);
     }
 }

@@ -385,8 +385,6 @@ class ReceiptController extends Controller
                     $fullPath = storage_path('app/' . $tempPath);
 
 
-                    ds($fullPath);
-
                     ReceiptUploadJob::dispatch($fullPath);
                     return redirect()->route('app.bookkeeping.receipts.confirm-first');
                 }
@@ -399,7 +397,6 @@ class ReceiptController extends Controller
                     $receipt->file_created_at = $metadata['CreationDate'] ?? $file->getMTime();
                     $receipt->pages = $metadata['Pages'] ?? 1;
                     $receipt->text = $pdf->getText();
-                    ds($receipt);
                 } catch (Exception) {
                     $receipt->file_created_at = $file->getMTime();
                     $receipt->pages = 1;

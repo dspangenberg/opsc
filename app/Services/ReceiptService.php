@@ -21,7 +21,6 @@ class ReceiptService
      * @throws Exception
      */
     public function processZipArchive(string $file) {
-        ds($file);
         $zip = Zip::open($file);
 
         $files = [];
