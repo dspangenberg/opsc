@@ -29118,6 +29118,295 @@ namespace Vinkla\Hashids\Facades {
             }
     }
 
+namespace ZanySoft\Zip\Facades {
+    /**
+     */
+    class Zip {
+        /**
+         * Open a zip archive
+         *
+         * @param string $zip_file ZIP file name
+         * @return \Zip
+         * @static
+         */
+        public static function open($zip_file)
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->open($zip_file);
+        }
+
+        /**
+         * Check a zip archive
+         *
+         * @param string $zip_file ZIP file name
+         * @return bool
+         * @static
+         */
+        public static function check($zip_file)
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->check($zip_file);
+        }
+
+        /**
+         * Create a new zip archive
+         *
+         * @param string $zip_file ZIP file name
+         * @param bool $overwrite overwrite existing file (if any)
+         * @return \Zip
+         * @static
+         */
+        public static function create($zip_file, $overwrite = false)
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->create($zip_file, $overwrite);
+        }
+
+        /**
+         * Set files to skip
+         *
+         * @param string $mode [HIDDEN, ZANYSOFT, ALL, NONE]
+         * @return \Zip
+         * @static
+         */
+        public static function setSkipped($mode)
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->setSkipped($mode);
+        }
+
+        /**
+         * Get current skip mode (HIDDEN, ZANYSOFT, ALL, NONE)
+         *
+         * @return string
+         * @static
+         */
+        public static function getSkipped()
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->getSkipped();
+        }
+
+        /**
+         * Set extraction password
+         *
+         * @param string $password
+         * @return \Zip
+         * @static
+         */
+        public static function setPassword($password)
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->setPassword($password);
+        }
+
+        /**
+         * Get current extraction password
+         *
+         * @return string
+         * @static
+         */
+        public static function getPassword()
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->getPassword();
+        }
+
+        /**
+         * Set current base path (just to add relative files to zip archive)
+         *
+         * @param string $path
+         * @return \Zip
+         * @static
+         */
+        public static function setPath($path)
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->setPath($path);
+        }
+
+        /**
+         * Get current base path
+         *
+         * @return string
+         * @static
+         */
+        public static function getPath()
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->getPath();
+        }
+
+        /**
+         * Set extraction folder mask
+         *
+         * @param int $mask
+         * @return \Zip
+         * @static
+         */
+        public static function setMask($mask)
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->setMask($mask);
+        }
+
+        /**
+         * Get current extraction folder mask
+         *
+         * @return int
+         * @static
+         */
+        public static function getMask()
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->getMask();
+        }
+
+        /**
+         * Set the current ZipArchive object
+         *
+         * @param \ZipArchive $zip
+         * @return \Zip
+         * @static
+         */
+        public static function setArchive($zip)
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->setArchive($zip);
+        }
+
+        /**
+         * Get current ZipArchive object
+         *
+         * @return \ZipArchive
+         * @static
+         */
+        public static function getArchive()
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->getArchive();
+        }
+
+        /**
+         * Get current zip file
+         *
+         * @return string
+         * @static
+         */
+        public static function getZipFile()
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->getZipFile();
+        }
+
+        /**
+         * Get an SplFileObject for the zip file
+         *
+         * @return \SplFileObject
+         * @static
+         */
+        public static function getFileObject()
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->getFileObject();
+        }
+
+        /**
+         * Get a list of files in archive (array)
+         *
+         * @return array
+         * @static
+         */
+        public static function listFiles()
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->listFiles();
+        }
+
+        /**
+         * Check if zip archive has a file
+         *
+         * @param string $file File
+         * @param int $flags (optional) ZipArchive::FL_NOCASE, ZipArchive::FL_NODIR seperated by bitwise OR
+         * @return bool
+         * @static
+         */
+        public static function has($file, $flags = 0)
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->has($file, $flags);
+        }
+
+        /**
+         * Extract files from zip archive
+         *
+         * @param string $destination Destination path
+         * @param mixed $files (optional) a filename or an array of filenames
+         * @return bool
+         * @static
+         */
+        public static function extract($destination, $files = null)
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->extract($destination, $files);
+        }
+
+        /**
+         * Create file form content and add to zip archive
+         *
+         * @param string $name File name with extension
+         * @param string $string File content
+         * @return void
+         * @static
+         */
+        public static function addFromString($name, $string)
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            $instance->addFromString($name, $string);
+        }
+
+        /**
+         * Add files to zip archive
+         *
+         * @param mixed $file_path file path to add or an array of files path
+         * @param bool $flatroot in case of directory, specify if root folder should be flatten or not
+         * @return \Zip
+         * @static
+         */
+        public static function add($file_path, $flatroot = false)
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->add($file_path, $flatroot);
+        }
+
+        /**
+         * Delete files from zip archive
+         *
+         * @param mixed $filename filename to delete or an array of filenames
+         * @return \Zip
+         * @static
+         */
+        public static function delete($filename)
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->delete($filename);
+        }
+
+        /**
+         * Close the zip archive
+         *
+         * @return bool
+         * @static
+         */
+        public static function close()
+        {
+            /** @var \ZanySoft\Zip\Zip $instance */
+            return $instance->close();
+        }
+
+            }
+    }
+
 namespace Illuminate\Support {
     /**
      * @template TKey of array-key
@@ -34277,6 +34566,7 @@ namespace  {
     class GlobalCache extends \Stancl\Tenancy\Facades\GlobalCache {}
     class Purify extends \Stevebauman\Purify\Facades\Purify {}
     class Hashids extends \Vinkla\Hashids\Facades\Hashids {}
+    class Zip extends \ZanySoft\Zip\Facades\Zip {}
 }
 
 

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('project_id');
             $table->integer('invoice_number')->nullable()->default(0)->unique();
             $table->date('issued_on');
-            $table->date('due_on');
+            $table->date('due_on')->nullable();
             $table->boolean('dunning_block')->default(false);
             $table->boolean('is_draft')->default(false);
             $table->integer('type_id')->default(1);

@@ -2,6 +2,7 @@ import {
   Csv02Icon,
   FileExportIcon,
   FileScriptIcon,
+  MagicWand01Icon,
   MoreVerticalCircle01Icon,
   Tick01Icon
 } from '@hugeicons/core-free-icons'
@@ -22,7 +23,6 @@ import {
 import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
-import { useFileUpload } from '@/Hooks/use-file-upload'
 import type { PageProps } from '@/Types'
 import { columns } from './ReceiptIndexColumns'
 
@@ -39,6 +39,13 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({ receipts }) => {
   const handleBulkConfirmationClicked = () => {
     const ids = selectedRows.map(row => row.id).join(',')
     router.get(route('app.bookkeeping.receipts.lock', { _query: { ids } }), {
+      preserveScroll: true
+    })
+  }
+  //
+  const handleBulkRuleClicked = () => {
+    const ids = selectedRows.map(row => row.id).join(',')
+    router.get(route('app.bookkeeping.receipts.rule', { _query: { ids } }), {
       preserveScroll: true
     })
   }
@@ -87,6 +94,13 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({ receipts }) => {
           title="als bestätigt markieren"
           onClick={handleBulkConfirmationClicked}
         />
+        <Button
+          variant="ghost"
+          size="auto"
+          icon={MagicWand01Icon}
+          title="Regeln anwenden"
+          onClick={handleBulkRuleClicked}
+        />
         <div className="flex-1 text-right font-medium text-sm">{selectedAmount}</div>
       </Toolbar>
     )
@@ -98,13 +112,7 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({ receipts }) => {
   }, [receipts])
 
   return (
-    <PageContainer
-      title="Belege"
-      width="7xl"
-      breadcrumbs={breadcrumbs}
-      className="flex flex-col overflow-hidden"
-      toolbar={toolbar}
-    >
+    <PageContainer title="Belege" width="7xl" breadcrumbs={breadcrumbs} toolbar={toolbar}>
       <div>
         <DataTable
           columns={columns}

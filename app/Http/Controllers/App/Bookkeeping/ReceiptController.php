@@ -8,9 +8,11 @@ use App\Data\CurrencyData;
 use App\Data\ReceiptData;
 use App\Data\TransactionData;
 use App\Facades\BookeepingRuleService;
+use App\Facades\FileHelperService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReceiptUpdateRequest;
 use App\Http\Requests\ReceiptUploadRequest;
+use App\Jobs\ReceiptUploadJob;
 use App\Models\Contact;
 use App\Models\ConversionRate;
 use App\Models\CostCenter;
@@ -21,6 +23,7 @@ use App\Models\Receipt;
 use App\Models\Transaction;
 use App\Services\BookingService;
 use App\Services\PaymentService;
+use App\Services\ReceiptService;
 use Exception;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
@@ -341,7 +344,21 @@ class ReceiptController extends Controller
             'receipts' => Inertia::deepMerge($receipts)->matchOn('id'),
         ]);
     }
+    public function runRules(Request $request)
+    {
 
+        $ids = $request->query('ids');
+        $receiptIds = explode(',', $ids);
+
+
+        BookeepingRuleService::run('receipts', new Receipt, $receiptIds);
+        $receipts = Receipt::whereIn('id', $receiptIds)->get();
+        Inertia::render('App/Bookkeeping/Receipt/ReceiptIndex', [
+            'receipts' => Inertia::deepMerge($receipts)->matchOn('id'),
+        ]);
+    }
+
+// Die Datei existiert bereits und kann direkt verwendet werden
     /**
      * @throws FileNotSupportedException
      * @throws FileExistsException
@@ -357,11 +374,22 @@ class ReceiptController extends Controller
         $files = $request->file('files');
         $uploadedReceipts = [];
 
-        DB::transaction(function () use ($files, &$uploadedReceipts) {
+
             foreach ($files as $file) {
                 $receipt = new Receipt;
                 $receipt->org_filename = $file->getClientOriginalName();
                 $receipt->file_size = $file->getSize();
+
+                if ($file->getMimeType() === 'application/zip') {
+                    $tempPath = $file->store('temp/zip-uploads');
+                    $fullPath = storage_path('app/' . $tempPath);
+
+
+                    ds($fullPath);
+
+                    ReceiptUploadJob::dispatch($fullPath);
+                    return redirect()->route('app.bookkeeping.receipts.confirm-first');
+                }
 
                 try {
                     $parser = new Parser();
@@ -371,6 +399,7 @@ class ReceiptController extends Controller
                     $receipt->file_created_at = $metadata['CreationDate'] ?? $file->getMTime();
                     $receipt->pages = $metadata['Pages'] ?? 1;
                     $receipt->text = $pdf->getText();
+                    ds($receipt);
                 } catch (Exception) {
                     $receipt->file_created_at = $file->getMTime();
                     $receipt->pages = 1;
@@ -428,7 +457,6 @@ class ReceiptController extends Controller
 
                 $uploadedReceipts[] = $receipt;
             }
-        });
 
         return redirect()->route('app.bookkeeping.receipts.confirm-first');
     }
