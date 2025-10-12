@@ -21,7 +21,6 @@ export const ReceiptLinkTransactions: React.FC<Props> = ({ receipt, transactions
     useState<boolean>(false)
   const handleOnClosed = () => {
     setIsOpen(false)
-    router.get(route('app.bookkeeping.receipts.confirm', { receipt: receipt.id }))
   }
 
   const handleSaveClicked = () => {

@@ -102,7 +102,17 @@ class Transaction extends Model
     public static function createBooking(Transaction $transaction, $dryRun = false): array
     {
 
+
+
         $transaction->load('bank_account');
+
+        if (! $transaction->number_range_document_numbers_id) {
+            $transaction->number_range_document_numbers_id = NumberRange::createDocumentNumber($transaction,
+                'booked_on', $transaction->bank_account->prefix);
+            $transaction->save();           
+        }
+
+
         $booking = BookkeepingBooking::whereMorphedTo('bookable', Transaction::class)->where('bookable_id', $transaction->id)->limit(5)->first();
 
         $accounts = [
@@ -195,7 +205,6 @@ class Transaction extends Model
                     })
                     ->first();
                 if ($contact) {
-                    ds($contact->toArray());
                     if ($contact->creditor_number) {
                         $this->counter_account_id = $contact->creditor_number;
                     }

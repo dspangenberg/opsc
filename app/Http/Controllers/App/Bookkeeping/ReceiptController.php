@@ -19,6 +19,8 @@ use App\Models\NumberRange;
 use App\Models\Payment;
 use App\Models\Receipt;
 use App\Models\Transaction;
+use App\Services\BookingService;
+use App\Services\PaymentService;
 use Exception;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
@@ -43,10 +45,20 @@ class ReceiptController extends Controller
     {
         $receipts = Receipt::query()
             ->with([
-                'account', 'range_document_number', 'contact','cost_center'
+                'account',
+                'range_document_number',
+                'contact',
+                'cost_center'
             ])
-            ->withSum('payable', 'amount')
-            ->orderBy('issued_on')->paginate();
+            ->withAggregate(
+                ['payable' => function ($query) {
+                    $query->where('is_currency_difference', false);
+                }],
+                'amount',
+                'sum'
+            )
+            ->orderBy('issued_on')
+            ->paginate();
 
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptIndex', [
             'receipts' => ReceiptData::collect($receipts),
@@ -100,7 +112,6 @@ class ReceiptController extends Controller
     public function update(ReceiptUpdateRequest $request, Receipt $receipt)
     {
 
-        $receipt->issued_on = $request->validated('issued_on');
         $receipt->amount = $request->validated('amount');
         $receipt->org_currency = $request->validated('org_currency');
 
@@ -113,6 +124,16 @@ class ReceiptController extends Controller
                 $receipt->exchange_rate = $conversion['rate'];
             }
         }
+
+        if ($receipt->issued_on !== $request->validated('issued_on') && $receipt->org_currency !== 'EUR') {
+            $conversion = ConversionRate::convertAmount($receipt->amount, $request->validated('org_currency'), $request->validated('issued_on'));
+            if ($conversion) {
+                $receipt->amount = $conversion['amount'];
+                $receipt->exchange_rate = $conversion['rate'];
+            }
+        }
+
+        $receipt->issued_on = $request->validated('issued_on');
 
         $receipt->reference = $request->validated('reference');
         $receipt->contact_id = $request->validated('contact_id');
@@ -157,8 +178,8 @@ class ReceiptController extends Controller
         if ($receipt->contact_id) {
             $transactions = Transaction::query()
                 ->where('counter_account_id', $receipt->contact->creditor_number)
+                ->orderBy('booked_on')
                 ->whereRaw('amount - COALESCE((SELECT SUM(amount) FROM payments WHERE transaction_id = transactions.id), 0) < 0.00')
-                ->where('is_locked', true)
                 ->get();
         }
 
@@ -174,39 +195,63 @@ class ReceiptController extends Controller
 
         $ids = $request->query('ids');
         $ids = $ids ? explode(',', $ids) : [];
-        $isCurrencyDifference = $request->query('remaining_amount_is_currency_difference');
 
-        $transactions = Transaction::whereIn('id', $ids)->get();
-        $transactions->each(function ($transaction) use ($receipt) {
-            $payment = new Payment;
-            $payment->payable()->associate($receipt);
-            $payment->transaction_id = $transaction->id;
-            $payment->issued_on = $transaction->booked_on;
-            $payment->is_currency_difference = false;
+        $transaction = Transaction::whereIn('id', $ids)->first();
 
-            $payment->amount = $transaction->amount;
-            $payment->save();
-        });
-
-        if ($isCurrencyDifference && $transactions->sum('amount') !== $receipt->amount) {
-            $payment = new Payment;
-            $payment->payable()->associate($receipt);
-            $payment->issued_on = $receipt->issued_on;
-            $payment->is_currency_difference = true;
-            $payment->transaction_id = $ids[0];
-            $payment->amount = $transactions->sum('amount') * -1 - ($receipt->amount);
-            $payment->save();
-            Payment::createCurrencyDifferenceBookings($payment);
+        if (!$transaction->is_locked) {
+            Transaction::createBooking($transaction);
         }
 
-        return redirect()->route('app.bookkeeping.receipts.confirm', ['receipt' => $receipt->id]);
+        $payment = new Payment;
+        $payment->payable()->associate($receipt);
+        $payment->transaction_id = $transaction->id;
+        $payment->issued_on = $transaction->booked_on;
+        $payment->is_currency_difference = false;
+        $payment->amount = 0-$receipt->amount;
+        $payment->save();
 
+        ReceiptController::checkForCurrencyDifference($receipt, $payment, $transaction);
+
+
+
+
+        return redirect()->route('app.bookkeeping.receipts.edit', ['receipt' => $receipt->id]);
+
+    }
+
+    public static function checkForCurrencyDifference(Receipt $receipt, Payment $payment, Transaction $transaction): ?Payment
+    {
+        if ($receipt->amount !== ($payment->amount * -1) && $receipt->org_currency !== 'EUR') {
+
+            $currencyDiffPayment = Payment::where('payable_type', Receipt::class)
+                ->where('payable_id', $receipt->id)
+                ->where('transaction_id', $transaction->id)
+                ->where('is_currency_difference', true)
+                ->first();
+
+            $currencyDiffPaymentId = $currencyDiffPayment ? $currencyDiffPayment->id : null;
+            $differencePayment = Payment::firstOrNew(['id' => $currencyDiffPaymentId]);
+            if (! $differencePayment->id) {
+                $differencePayment->payable()->associate($receipt);
+                $differencePayment->transaction_id = $transaction->id;
+                $differencePayment->issued_on = $transaction->booked_on;
+                $differencePayment->is_currency_difference = true;
+            }
+
+            $differencePayment->amount = $transaction->amount - $payment->amount;
+            $differencePayment->save();
+
+            Payment::createCurrencyDifferenceBookings($differencePayment);
+
+            return $differencePayment;
+        }
+
+        return null;
     }
 
     public function edit(Receipt $receipt)
     {
-        $receipt->load(['account', 'range_document_number', 'contact']);
-
+        $receipt->load(['account', 'range_document_number', 'contact', 'payable.transaction']);
 
         $contacts = Contact::where('is_creditor', true)->orderBy('name')->get();
         $currencies = Currency::query()->orderBy('name')->get();

@@ -10,6 +10,7 @@ import type * as React from 'react'
 import { useCallback } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { PdfViewerContainer } from '@/Components/PdfViewerContainer'
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@/Components/ui/table'
 import { Alert } from '@/Components/ui/twc-ui/alert'
 import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
 import { Button } from '@/Components/ui/twc-ui/button'
@@ -33,7 +34,11 @@ interface Props extends PageProps {
   currencies: App.Data.CurrencyData[]
   file: string
 }
-
+const currencyFormatter = new Intl.NumberFormat('de-DE', {
+  style: 'currency',
+  currency: 'EUR',
+  minimumFractionDigits: 2
+})
 const ReceiptConfirm: React.FC<Props> = ({
   receipt,
   contacts,
@@ -167,9 +172,31 @@ const ReceiptConfirm: React.FC<Props> = ({
               label="Kostenstelle"
               items={cost_centers}
             />
-            <Checkbox {...form.registerCheckbox('is_confirmed')} className="pt-1.5">
-              Beleg bestätigen und buchen
-            </Checkbox>
+          </div>
+          <div className="col-span-24">
+            <Table className="w-full">
+              <TableBody>
+                {receipt.payable?.map(payable =>
+                  payable.is_currency_difference ? (
+                    <TableRow key={payable.id}>
+                      <TableCell>{payable.issued_on}</TableCell>
+                      <TableCell>Währungsdifferenz</TableCell>
+                      <TableCell className="text-right">
+                        {currencyFormatter.format(payable.amount || 0)}
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    <TableRow key={payable.id}>
+                      <TableCell>{payable.transaction.booked_on}</TableCell>
+                      <TableCell>{payable.transaction.purpose}</TableCell>
+                      <TableCell className="text-right">
+                        {currencyFormatter.format(payable.amount || 0)}
+                      </TableCell>
+                    </TableRow>
+                  )
+                )}
+              </TableBody>
+            </Table>
           </div>
           <div className="col-span-24 flex justify-between gap-2">
             <div className="flex flex-1 justify-start gap-1">
