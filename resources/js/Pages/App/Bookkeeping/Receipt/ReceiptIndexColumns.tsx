@@ -97,14 +97,14 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
   {
     accessorKey: 'reference',
     header: 'Referenz ',
-    size: 300,
-    cell: ({ row }) => <div>{row.original.reference as string}</div>
+    size: 200,
+    cell: ({ row }) => <div className="truncate">{row.original.reference as string}</div>
   },
   {
     accessorKey: 'contact.cost_center_id',
     header: 'Kostenstelle ',
-    size: 300,
-    cell: ({ row }) => <div>{row.original.cost_center?.name as string}</div>
+    size: 250,
+    cell: ({ row }) => <div className="truncate">{row.original.cost_center?.name as string}</div>
   },
   {
     accessorKey: 'amount',

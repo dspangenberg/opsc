@@ -109,7 +109,7 @@ class Transaction extends Model
         if (! $transaction->number_range_document_numbers_id) {
             $transaction->number_range_document_numbers_id = NumberRange::createDocumentNumber($transaction,
                 'booked_on', $transaction->bank_account->prefix);
-            $transaction->save();           
+            $transaction->save();
         }
 
 
