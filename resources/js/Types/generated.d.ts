@@ -369,6 +369,7 @@ org_filename: string;
 file_size: number;
 file_created_at: string;
 open_amount: number;
+payable_min_issued_on: string | null;
 contact_id: number | null;
 cost_center_id: number | null;
 bookkeeping_account_id: number | null;
