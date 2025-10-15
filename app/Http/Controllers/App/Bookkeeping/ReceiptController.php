@@ -60,6 +60,15 @@ class ReceiptController extends Controller
                 'amount',
                 'sum'
             )
+            ->withAggregate(
+                ['payable' => function ($query) {
+                    $query->where('is_currency_difference', false);
+                }],
+                'issued_on',
+                'min'
+            )
+            // ->orderBy('payable_min_issued_on', 'asc')  // Sortierung nach Zahlungsdatum
+            //->orderByRaw('payable_min_issued_on IS NULL, payable_min_issued_on ASC')
             ->orderBy('issued_on')
             ->paginate();
 

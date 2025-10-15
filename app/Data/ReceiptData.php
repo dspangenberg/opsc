@@ -8,7 +8,9 @@
 namespace App\Data;
 
 use App\Models\NumberRangeDocumentNumber;
+use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Attributes\WithTransformer;
+use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Transformers\DateTimeInterfaceTransformer;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
@@ -20,16 +22,21 @@ class ReceiptData extends Data
 
         public readonly ?int $id,
         public readonly string $reference,
+        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
         public readonly DateTime $issued_on,
 
         public readonly string $org_filename,
         public readonly float $file_size,
 
+        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d H:i:s')]
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i:s')]
         public readonly DateTime $file_created_at,
         public readonly float $open_amount,
 
+        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
+        #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
+        public readonly ?DateTime $payable_min_issued_on,
         public readonly ?int $contact_id,
         public readonly ?int $cost_center_id,
         public readonly ?int $bookkeeping_account_id,
@@ -58,9 +65,11 @@ class ReceiptData extends Data
         public readonly ?array $payable,
 
 
+        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d H:i:s')]
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i:s')]
         public readonly DateTime $created_at,
 
+        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d H:i:s')]
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i:s')]
         public readonly DateTime $updated_at,
 

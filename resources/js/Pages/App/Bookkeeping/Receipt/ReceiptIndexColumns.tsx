@@ -71,7 +71,7 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
   {
     accessorKey: 'issued_on',
     header: 'Datum',
-    size: 100,
+    size: 90,
     cell: ({ row, getValue }) => (
       <Link
         href={editUrl(row.original.id)}
@@ -84,7 +84,7 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
   {
     accessorKey: 'contact.full_name',
     header: 'Kreditor ',
-    size: 300,
+    size: 250,
     cell: ({ row, getValue }) => (
       <div className="flex items-center gap-3">
         {getValue() as string}
@@ -103,13 +103,13 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
   {
     accessorKey: 'contact.cost_center_id',
     header: 'Kostenstelle ',
-    size: 250,
+    size: 200,
     cell: ({ row }) => <div className="truncate">{row.original.cost_center?.name as string}</div>
   },
   {
     accessorKey: 'amount',
     header: () => <div className="text-right">Brutto</div>,
-    size: 90,
+    size: 80,
     cell: ({ row }) => (
       <div className="text-right">{currencyFormatter.format(row.original.amount ?? 0)}</div>
     )
@@ -117,10 +117,17 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
   {
     accessorKey: 'open_amount',
     header: () => <div className="text-right">Offen</div>,
-    size: 90,
+    size: 80,
     cell: ({ row }) => (
       <div className="text-right">{currencyFormatter.format(row.original.open_amount ?? 0)}</div>
     )
+  },
+
+  {
+    accessorKey: 'payable_min_issued_on',
+    header: 'bezahlt',
+    size: 80,
+    cell: ({ row, getValue }) => <span>{getValue() as string}</span>
   },
   {
     id: 'actions',
