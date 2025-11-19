@@ -40,7 +40,7 @@ class TimePdfReportController extends Controller
             ->with('user')
             ->whereNotNull('begin_at')
             ->orderBy('begin_at', 'desc')
-            ->paginate(1500);
+            ->paginate(500);
 
         $projectIds = Time::query()->distinct()->pluck('project_id');
         $projects = Project::query()->whereIn('id', $projectIds)->orderBy('name')->get();

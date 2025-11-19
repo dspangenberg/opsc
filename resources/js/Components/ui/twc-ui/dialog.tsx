@@ -143,7 +143,7 @@ export const DialogBody = ({ className, ...props }: React.HTMLAttributes<HTMLDiv
 )
 
 export const DialogTitle = ({ className, ...props }: AriaHeadingProps) => (
-  <AriaHeading slot="title" className={cn('font-medium', className)} {...props} />
+  <AriaHeading slot="title" className={cn('py-3 font-medium', className)} {...props} />
 )
 
 export const DialogDescription = ({
