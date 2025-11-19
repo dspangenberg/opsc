@@ -352,17 +352,13 @@ class Invoice extends Model implements MediableInterface
         $purposeText[] = 'RG-'.$this->formated_invoice_number;
         $purposeText[] = 'K-'.number_format($this->contact->debtor_number, 0, ',', '.');
 
-        $bank_account = (object) [
-            'iban' => 'DE39440100460126083465',
-            'bic' => 'PBNKDEFF',
-            'account_owner' => 'twiceware solutions e. K.',
-            'bank_name' => 'Postbank',
-        ];
+        $bankAccount = BankAccount::orderBy('pos')->first();
 
-        $payment = new QrPayment($bank_account->iban);
+
+        $payment = new QrPayment($bankAccount->iban);
         $payment
-            ->setBic($bank_account->bic)
-            ->setBeneficiaryName($bank_account->account_owner)
+            ->setBic($bankAccount->bic)
+            ->setBeneficiaryName($bankAccount->account_owner)
             ->setAmount($this->amount_gross)
             ->setCurrency('EUR')
             ->setRemittanceText(implode(' ', $purposeText));

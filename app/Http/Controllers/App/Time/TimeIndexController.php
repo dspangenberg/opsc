@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -32,6 +33,32 @@ class TimeIndexController extends Controller
             ->with('category')
             ->with('user')
             ->whereNotNull('begin_at');
+
+        $billableTimesPerProject = Time::query()
+            ->where('is_billable', 1)
+            ->where('is_locked', 0)
+            ->where('invoice_id', 0)
+            ->select(
+                'project_id',
+                DB::raw('SUM(TIMESTAMPDIFF(MINUTE, begin_at, end_at)) as total_mins'),
+                DB::raw('MIN(begin_at) as first_entry_at'),
+                DB::raw('MAX(end_at)   as last_entry_at')
+            )
+            ->groupBy('project_id');
+
+        // 2. Projekte + Aggregationswerte joinen
+        $billableProjects = Project::query()
+            ->joinSub($billableTimesPerProject, 't', function ($join) {
+                $join->on('t.project_id', '=', 'projects.id');
+            })
+            ->select(
+                'projects.*',
+                't.total_mins',
+                't.first_entry_at',
+                't.last_entry_at'
+            )
+            ->orderBy('projects.name')
+            ->get();
 
         /** @var LengthAwarePaginator $times */
         $times = $query->orderBy('begin_at', 'desc')->paginate();
@@ -58,6 +85,7 @@ class TimeIndexController extends Controller
         return Inertia::render('App/Time/TimeIndex', [
             'times' => TimeData::collect($times),
             'groupedByDate' => $groupedByDate,
+            'billableProjects' => $billableProjects,
             'projects' => ProjectData::collect($projects),
             'currentFilters' => $currentFilters,
         ]);

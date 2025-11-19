@@ -204,7 +204,13 @@ const TimeIndex: React.FC = () => {
         open={showPdfViewer}
         filename={'proof.pdf'}
         onOpenChange={setShowPdfViewer}
-        document={route('app.time.pdf')}
+        document={route('app.time.pdf', {
+          _query: {
+            filter: {
+              ['project_id']: selectedProject
+            }
+          }
+        })}
       />
     </PageContainer>
   )

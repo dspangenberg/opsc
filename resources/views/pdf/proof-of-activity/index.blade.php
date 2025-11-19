@@ -57,7 +57,10 @@
           <tbody style="page-break-inside: avoid;">
             <tr class="summary">
               <td class="time">
-                {{ $entry['begin_at']->format("H:i") }} - {{ $entry['end_at']->format("H:i") }}
+                {{ $entry['begin_at']?->format("H:i") }} -
+                @if($entry['end_at'])
+                  {{ $entry['end_at']?->format("H:i") }}
+                @endif
               </td>
               <td class="category">
                 {{$entry['category']['name'] }}
