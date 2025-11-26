@@ -28,6 +28,8 @@
         table tr td.center {
             text-align: center;
         }
+
+
     </style>
 
     <htmlpageheader name="first_header">
@@ -391,6 +393,83 @@
             Bitte beachten Sie, dass Sie, ohne dass es einer Mahnung bedarf, spätestens in Verzug kommen, wenn Sie Ihre
             Zahlung nicht innerhalb von 30 Tagen nach Zugang dieser Rechnung leisten (§ 286 Abs. 3 BGB).
         </p>
+    @endif
+
+    @if($groupedByCategoryTimes)
+        <pagebreak>
+            <h1>Leistungsnachweis</h1>
+            <table border-spacing="0" cellspacing="0" style="margin-top: 5mm; margin-bottom: 5mm;">
+                <tbody>
+                @foreach ($groupedByCategoryTimes as $project)
+
+                    <tr class="day">
+                        <td class="date" colspan="2">{{ $project['name'] }}</td>
+                        <td class="duration right">
+                            {{ minutes_to_hours($project['sum']) }}
+                        </td>
+                        <td class="duration right">
+                            &nbsp;
+                        </td>
+                    </tr>
+                @endforeach
+                <tr class="project-sum">
+                    <th colspan="2">Summe</th>
+                    <th class="duration right">
+                        {{ minutes_to_hours($timesSum) }}
+                    </th>
+                    <th class="duration right">
+                        ({{ minutes_to_units($timesSum) }} h)
+                    </th>
+                </tr>
+                </tbody>
+            </table>
+
+
+        @foreach ($groupedByCategoryTimes as $project)
+            <h2>{{ $project['name'] }}</h2>
+            <table border-spacing="0" cellspacing="0">
+                @foreach ($project['entries'] as $entries)
+                    <tbody>
+                    <tr class="day">
+                        <th class="date" colspan="2">{{ $entries['formatedDate'] }}</th>
+                        <th class="duration right">
+                            {{ minutes_to_hours($entries['sum']) }}
+                        </th>
+                    </tr>
+                    </tbody>
+                    @foreach ($entries['entries'] as $entry)
+                        <tbody style="page-break-inside: avoid;">
+                        <tr class="summary">
+                            <td class="time" style="width: 25mm;">
+                                {{ $entry['begin_at']?->format("H:i") }} -
+                                @if($entry['end_at'])
+                                    {{ $entry['end_at']?->format("H:i") }}
+                                @endif
+                            </td>
+                            <td class="category">
+                                &nbsp;
+                            </td>
+                            <td class="duration right">
+                                {{ minutes_to_hours($entry['mins']) }}
+                            </td>
+                        </tr>
+                        @if($entry['note'])
+                            <tr>
+                                <td colspan="3" class="note">
+                                    {!!  md($entry['note']) !!}
+                                </td>
+                            </tr>
+                        @endif
+                        <tr>
+                            <td colspan="3">
+                                <br/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    @endforeach
+                @endforeach
+            </table>
+        @endforeach
     @endif
 
 

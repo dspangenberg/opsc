@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\App\TimeController;
 use App\Services\PdfService;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -127,6 +128,20 @@ class Invoice extends Model implements MediableInterface
             ->where('id', $invoice->id)
             ->first();
 
+        $times = Time::query()
+            ->where('invoice_id', $invoice->id)
+            ->with('project')
+            ->withMinutes()
+            ->with('category')
+            ->with('user')
+            ->whereNotNull('begin_at')
+            ->orderBy('begin_at', 'desc')
+            ->get();
+
+        $groupedTimes = $times ? TimeController::groupByDate($times) : [];
+        $groupedByCategoryTimes = $times ? TimeController::groupByCategoryAndDate($times) : [];
+        $timesSum = $times ? $times->sum('mins') : 0;
+
         $taxes = $invoice->taxBreakdown($invoice->lines);
         $invoice->linked_invoices = $invoice->lines->filter(function ($line) {
             return $line->type_id === 9;
@@ -149,7 +164,14 @@ class Invoice extends Model implements MediableInterface
         $pdfConfig['watermark'] = $invoice->is_draft ? 'ENTWURF' : '';
 
         $pdfFile = PdfService::createPdf('invoice', 'pdf.invoice.index',
-            ['invoice' => $invoice, 'taxes' => $taxes, 'bank_account' => $bank_account], $pdfConfig);
+            [
+                'invoice' => $invoice,
+                'taxes' => $taxes,
+                'bank_account' => $bank_account,
+                'groupedTimes' => $groupedTimes,
+                'groupedByCategoryTimes' => $groupedByCategoryTimes,
+                'timesSum' => $timesSum,
+            ], $pdfConfig);
 
         return $pdfFile;
     }

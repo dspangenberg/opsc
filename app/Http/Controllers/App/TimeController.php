@@ -13,7 +13,9 @@ use App\Data\TimeData;
 use App\Data\UserData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TimeStoreRequest;
+use App\Models\Contact;
 use App\Models\Invoice;
+use App\Models\PaymentDeadline;
 use App\Models\Project;
 use App\Models\Time;
 use App\Models\TimeCategory;
@@ -126,7 +128,6 @@ class TimeController extends Controller
 
     public function storeBill(Request $request) {
 
-        ds($request->all());
         $times = Time::query()
             ->where('project_id', $request->input('project_id'))
             ->with('project')
@@ -139,7 +140,6 @@ class TimeController extends Controller
             ->orderBy('begin_at', 'desc')
             ->get();
 
-        ds($times->toArray());
 
         $timeIds = $times->pluck('id');
         $categoryIds = $times->pluck('time_category_id')->unique();
@@ -159,17 +159,27 @@ class TimeController extends Controller
         })->toArray();
 
         $project = Project::find($request->input('project_id'));
+        $contact = Contact::find($project->owner_contact_id);
 
-        // TODO: Account zu Project-Owner ermitteln
-        // TODO: Rechnungsanschrift generieren
+        $paymentDeadline = $contact->payment_deadline_id
+            ? PaymentDeadline::find($contact->payment_deadline_id)
+            : PaymentDeadline::query()->orderBy('is_default', 'DESC')->first();
+
+        if ($contact->company_id) {
+            $contact = Contact::find($contact->company_id);
+        }
+
+        // TODO: Steuersatz aus Account !
 
         $invoice = Invoice::create([
             'project_id' => $project->id,
-            'contact_id' => $project->owner_contact_id,
+            'contact_id' => $contact->id,
             'invoice_number' => null,
             'issued_on' => now(),
             'type_id' => 1,
             'is_draft' => true,
+            'address' => $contact->getInvoiceAddress()->full_address,
+            'payment_deadline_id' => $paymentDeadline->id,
         ]);
 
         $pos = 0;
@@ -191,9 +201,8 @@ class TimeController extends Controller
             ]);
         });
 
+        Time::whereIn('id', $timeIds)->update(['invoice_id' => $invoice->id]);
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
-
-
     }
 
 
@@ -434,6 +443,31 @@ class TimeController extends Controller
         }
 
         return $groupedEntries;
+    }
+
+    /**
+     * @param  Collection<int, Time>  $times
+     * @return array<int, array<string, mixed>>
+     */
+    public static function groupByCategoryAndDate(Collection $times): array
+    {
+        /** @var Collection<int, string|null> $projects */
+        $categories = $times->pluck('category.name', 'category.id');
+
+        /** @var array<int, array<string, mixed>> $groupedEntries */
+        $groupedEntries = [];
+
+        /** @var Collection<int, Collection<int, Time>> $timesByProject */
+        $timesByProject = $times->groupBy('category.id');
+
+        foreach ($timesByProject as $key => $value) {
+            $groupedByDate = self::groupByDate($value, true);
+            $groupedEntries[$key]['entries'] = collect($groupedByDate['entries'])->sortBy(['date', 'asc']);
+            $groupedEntries[$key]['sum'] = $groupedByDate['sum'];
+            $groupedEntries[$key]['name'] = $categories->get($key);
+        }
+
+        return collect($groupedEntries)->sortBy(['name', 'asc'])->toArray();
     }
 
     /**
