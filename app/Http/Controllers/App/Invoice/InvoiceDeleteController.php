@@ -10,6 +10,7 @@ namespace App\Http\Controllers\App\Invoice;
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
+use App\Models\Time;
 
 class InvoiceDeleteController extends Controller
 {
@@ -19,8 +20,10 @@ class InvoiceDeleteController extends Controller
         if ($invoice->is_draft) {
 
             InvoiceLine::where('invoice_id', $invoice->id)->delete();
-
             $invoice->delete();
+
+            Time::where('invoice_id', $invoice->id)->update(['invoice_id' => 0]);
+
 
             return redirect()->route('app.invoice.index');
         }

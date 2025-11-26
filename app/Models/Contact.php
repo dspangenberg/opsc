@@ -233,6 +233,15 @@ class Contact extends Model
         return $this->name;
     }
 
+    public function getInvoiceAddress(): ContactAddress {
+        $category = AddressCategory::where('is_invoice_address', true)->first();
+        $address = $this->addresses()->where('address_category_id', $category->id)->first();
+        if (!$address) {
+            return $this->addresses()->first();
+        }
+        return $address;
+    }
+
     public function company(): HasOne
     {
         return $this->hasOne(Contact::class, 'id', 'company_id');

@@ -64,6 +64,7 @@ class ContactAddress extends Model
         return $this->hasOne(Country::class, 'id', 'country_id');
     }
 
+
     public function getFullAddressAttribute(): string
     {
         $lines = [];
