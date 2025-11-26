@@ -280,7 +280,7 @@ return [
          *
          * Note: This will implicitly add your configured session store to the list of prefixed stores above.
          */
-        'scope_sessions' => true,
+        'scope_sessions' => false,
 
         'tag_base' => 'tenant',
         // This tag_base, followed by the tenant_id, will form a tag that will be applied on each cache call.
@@ -300,7 +300,7 @@ return [
             'public',
             'system',
             's3',
-            's3_private'
+            's3_private',
         ],
 
         /**
