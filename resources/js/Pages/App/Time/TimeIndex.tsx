@@ -21,12 +21,20 @@ import { FormlessCombobox } from '@/Components/ui/twc-ui/combo-box'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { minutesToHoursExtended } from '@/Lib/DateHelper'
 import type { PageProps } from '@/Types'
+import { columns as billableProjectsColumns } from './TimeIndexBillableProjectColumns'
 import { columns } from './TimeIndexColumns'
-
 export interface TimeGroupedEntries {
   entries: {
     [key: number]: App.Data.TimeData[]
   }
+}
+
+export interface BillableProjects {
+  id: number
+  name: string
+  total_mins: number
+  first_entry_at: string
+  last_entry_at: string
 }
 
 export interface TimeGroupedByDate {
@@ -55,6 +63,9 @@ const TimeIndex: React.FC = () => {
   const [showPdfViewer, setShowPdfViewer] = useState(false)
   const [selectedRows, setSelectedRows] = useState<App.Data.TimeData[]>([])
   const [showFilter, setShowFilter] = useState<boolean>(false)
+
+  const billableProjects = usePage<BillableProjects[]>().props.billableProjects
+  console.log(billableProjects)
 
   // Verwende currentFilters als Ausgangswert
   const [selectedProject, setSelectedProject] = useState<number>(currentFilters.project_id)
@@ -180,7 +191,7 @@ const TimeIndex: React.FC = () => {
       title="Zeiterfassung"
       width="7xl"
       breadcrumbs={breadcrumbs}
-      className="flex overflow-hidden"
+      className="flex flex-1 overflow-hidden"
       toolbar={toolbar}
       header={
         <div className="flex flex-1 items-center gap-2">
@@ -190,16 +201,20 @@ const TimeIndex: React.FC = () => {
         </div>
       }
     >
-      <DataTable
-        columns={columns}
-        filterBar={filterBar}
-        actionBar={actionBar}
-        onSelectedRowsChange={setSelectedRows}
-        data={times.data}
-        footer={footer}
-        header={header}
-        itemName="Zeiten"
-      />
+      <div className="flex w-full flex-1 flex-col border-4">
+        <DataTable columns={billableProjectsColumns} data={billableProjects} itemName="Zeiten" />
+
+        <DataTable
+          columns={columns}
+          filterBar={filterBar}
+          actionBar={actionBar}
+          onSelectedRowsChange={setSelectedRows}
+          data={times.data}
+          footer={footer}
+          header={header}
+          itemName="Zeiten"
+        />
+      </div>
       <PdfViewer
         open={showPdfViewer}
         filename={'proof.pdf'}

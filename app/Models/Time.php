@@ -99,14 +99,22 @@ class Time extends Model
     {
         if ($view === 'billable') {
             return $query
-                ->where('is_billable', true)
-                ->where('is_locked', false)
-                ->where('invoice_id', 0);
+                ->billable();
             // ->whereNotIn('project_id', [1, 7, 8, 9, 12, 13, 14, 15]); // ACHTUNG: Solange noch TN-Einträge ohne InvoiceId enthalten sind
         }
 
         return $query;
     }
+
+    public function scopeBillable(Builder $query): Builder
+    {
+        return $query
+            ->where('is_billable', true)
+            ->where('is_locked', false)
+            ->where('legacy_invoice_id', 0)
+            ->where('invoice_id', 0);
+    }
+
 
     public function scopeByWeekOfYear(Builder $query, int $week, int $year): void
     {

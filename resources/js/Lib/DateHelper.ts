@@ -6,13 +6,23 @@
 import { format, minutesToHours, parse } from 'date-fns'
 
 export const parseAndFormatDate = (date: string, formatString = 'dd.MM.yyyy') => {
+  console.log('date', date.substring(0, 16))
   if (!date) return ''
   let parsedDate: Date
   if (date.length === 10) {
     parsedDate = parse(date, 'dd.MM.yyyy', new Date())
   } else {
-    parsedDate = parse(date, 'dd.MM.yyyy HH:mm', new Date())
+    parsedDate = parse(date.substring(0, 16), 'dd.MM.yyyy HH:mm', new Date())
   }
+
+  return format(parsedDate, formatString)
+}
+
+export const parseAndFormatDateTime = (date: string, formatString = 'dd.MM.yyyy HH:mm') => {
+  console.log('date', date.substring(0, 16))
+  if (!date) return ''
+  let parsedDate: Date
+  parsedDate = parse(date.substring(0, 16), 'yyyy-MM-dd HH:mm', new Date())
 
   return format(parsedDate, formatString)
 }
@@ -49,11 +59,19 @@ export const parseDate = (date: string, formatString = 'dd.MM.yyyy') => {
 
 // Source: https://github.com/orgs/date-fns/discussions/3285#discussioncomment-4344932
 export const minutesToHoursExtended = (minutes: number) => {
-  const hours = minutesToHours(minutes)
-  const minutesLeft = minutes - hours * 60
-  const stringifiedHours = String(hours).length === 1 ? `${hours}` : `${hours}`
-  const stringifiedMinutes = String(minutesLeft).length === 1 ? `0${minutesLeft}` : `${minutesLeft}`
-  return `${stringifiedHours}:${stringifiedMinutes}`
+  try {
+    const hours = minutesToHours(minutes)
+    const minutesLeft = minutes - hours * 60
+    const stringifiedHours = hours >= 1000
+      ? hours.toLocaleString('de-DE')
+      : String(hours)
+    const stringifiedMinutes =
+      String(minutesLeft).length === 1 ? `0${minutesLeft}` : `${minutesLeft}`
+    return `${stringifiedHours}:${stringifiedMinutes}`
+  } catch (error) {
+    console.error('Error converting minutes to hours:', error)
+    return '00:00'
+  }
 }
 
 export const minutesUntilNow = (date: string) => {
