@@ -14,6 +14,7 @@ Route::post('times', [TimeController::class, 'store'])
     ->name('app.time.store');
 
 Route::get('times/all', [TimeController::class, 'index'])->name('app.time.index');
+Route::get('times/billable', [TimeController::class, 'billAbleindex'])->name('app.time.billable');
 
 Route::get('times/my-week', [TimeController::class, 'myWeek'])->name('app.time.my-week');
 Route::get('times/bill', [TimeController::class, 'storeBill'])->name('app.time.bill');

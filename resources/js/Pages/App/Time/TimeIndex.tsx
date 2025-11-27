@@ -21,7 +21,6 @@ import { FormlessCombobox } from '@/Components/ui/twc-ui/combo-box'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { minutesToHoursExtended } from '@/Lib/DateHelper'
 import type { PageProps } from '@/Types'
-import { columns as billableProjectsColumns } from './TimeIndexBillableProjectColumns'
 import { columns } from './TimeIndexColumns'
 export interface TimeGroupedEntries {
   entries: {
@@ -57,16 +56,12 @@ interface TimeIndexProps extends PageProps {
 
 const TimeIndex: React.FC = () => {
   const times = usePage<TimeIndexProps>().props.times
-  const grouped_times = usePage<TimeIndexProps>().props.groupedByDate
   const projects = usePage<TimeIndexProps>().props.projects
   const currentFilters = usePage<TimeIndexProps>().props.currentFilters
   const [showPdfViewer, setShowPdfViewer] = useState(false)
   const [selectedRows, setSelectedRows] = useState<App.Data.TimeData[]>([])
   const [showFilter, setShowFilter] = useState<boolean>(false)
-
-  const billableProjects = usePage<BillableProjects[]>().props.billableProjects
-  console.log(billableProjects)
-
+  
   // Verwende currentFilters als Ausgangswert
   const [selectedProject, setSelectedProject] = useState<number>(currentFilters.project_id)
 
@@ -201,20 +196,16 @@ const TimeIndex: React.FC = () => {
         </div>
       }
     >
-      <div className="flex w-full flex-1 flex-col border-4">
-        <DataTable columns={billableProjectsColumns} data={billableProjects} itemName="Zeiten" />
-
-        <DataTable
-          columns={columns}
-          filterBar={filterBar}
-          actionBar={actionBar}
-          onSelectedRowsChange={setSelectedRows}
-          data={times.data}
-          footer={footer}
-          header={header}
-          itemName="Zeiten"
-        />
-      </div>
+      <DataTable
+        columns={columns}
+        filterBar={filterBar}
+        actionBar={actionBar}
+        onSelectedRowsChange={setSelectedRows}
+        data={times.data}
+        footer={footer}
+        header={header}
+        itemName="Zeiten"
+      />
       <PdfViewer
         open={showPdfViewer}
         filename={'proof.pdf'}

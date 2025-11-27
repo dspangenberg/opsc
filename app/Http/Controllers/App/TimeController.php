@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\App;
 
+use App\Data\BillableProjectData;
 use App\Data\ProjectData;
 use App\Data\TimeCategoryData;
 use App\Data\TimeData;
@@ -45,30 +46,6 @@ class TimeController extends Controller
             ->with('user')
             ->whereNotNull('begin_at');
 
-        $billableTimesPerProject = Time::query()
-            ->billable()
-            ->select(
-                'project_id',
-                DB::raw('SUM(TIMESTAMPDIFF(MINUTE, begin_at, end_at)) as total_mins'),
-                DB::raw('MIN(begin_at) as first_entry_at'),
-                DB::raw('MAX(end_at)   as last_entry_at')
-            )
-            ->groupBy('project_id');
-
-        // 2. Projekte + Aggregationswerte joinen
-        $billableProjects = Project::query()
-            ->joinSub($billableTimesPerProject, 't', function ($join) {
-                $join->on('t.project_id', '=', 'projects.id');
-            })
-            ->select(
-                'projects.*',
-                't.total_mins',
-                't.first_entry_at',
-                't.last_entry_at'
-            )
-            ->orderBy('projects.name')
-            ->get();
-
         /** @var LengthAwarePaginator $times */
         $times = $query->orderBy('begin_at', 'desc')->paginate();
 
@@ -94,9 +71,38 @@ class TimeController extends Controller
         return Inertia::render('App/Time/TimeIndex', [
             'times' => TimeData::collect($times),
             'groupedByDate' => $groupedByDate,
-            'billableProjects' => $billableProjects,
             'projects' => ProjectData::collect($projects),
             'currentFilters' => $currentFilters,
+        ]);
+    }
+
+    public function billAbleindex(): Response
+    {
+        $billableTimesPerProject = Time::query()
+            ->billable()
+            ->select(
+                'project_id',
+                DB::raw('SUM(TIMESTAMPDIFF(MINUTE, begin_at, end_at)) as total_mins'),
+                DB::raw('MIN(begin_at) as first_entry_at'),
+                DB::raw('MAX(end_at)   as last_entry_at')
+            )
+            ->groupBy('project_id');
+
+        $billableProjects = Project::query()
+            ->joinSub($billableTimesPerProject, 't', function ($join) {
+                $join->on('t.project_id', '=', 'projects.id');
+            })
+            ->select(
+                'projects.*',
+                't.total_mins',
+                't.first_entry_at',
+                't.last_entry_at'
+            )
+            ->orderBy('projects.name')
+            ->get();
+
+        return Inertia::render('App/Time/TimeBillableIndex', [
+            'billableProjects' => BillableProjectData::collect($billableProjects),
         ]);
     }
 
@@ -126,7 +132,8 @@ class TimeController extends Controller
         ]);
     }
 
-    public function storeBill(Request $request) {
+    public function storeBill(Request $request)
+    {
 
         $times = Time::query()
             ->where('project_id', $request->input('project_id'))
@@ -139,7 +146,6 @@ class TimeController extends Controller
             ->whereNotNull('end_at')
             ->orderBy('begin_at', 'desc')
             ->get();
-
 
         $timeIds = $times->pluck('id');
         $categoryIds = $times->pluck('time_category_id')->unique();
@@ -197,14 +203,14 @@ class TimeController extends Controller
                 'tax' => $category['quantity'] * $timeCategory['hourly'] * 0.19,
                 'service_period_begin' => $category['start'],
                 'service_period_end' => $category['end'],
-                'text' => $category['name'] . "\ngem. Leistungsnachweis"
+                'text' => $category['name']."\ngem. Leistungsnachweis",
             ]);
         });
 
         Time::whereIn('id', $timeIds)->update(['invoice_id' => $invoice->id]);
+
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
-
 
     public function create(Request $request)
     {

@@ -91,6 +91,11 @@ const data = {
           title: 'Alle Zeiten',
           url: route('app.time.index', {}, false),
           activePath: '/app/times/all'
+        },
+        {
+          title: 'Abrechnung',
+          url: route('app.time.billable', {}, false),
+          activePath: '/app/times/billable'
         }
       ]
     },
