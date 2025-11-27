@@ -6,7 +6,6 @@
 import { format, minutesToHours, parse } from 'date-fns'
 
 export const parseAndFormatDate = (date: string, formatString = 'dd.MM.yyyy') => {
-  console.log('date', date.substring(0, 16))
   if (!date) return ''
   let parsedDate: Date
   if (date.length === 10) {
@@ -19,7 +18,6 @@ export const parseAndFormatDate = (date: string, formatString = 'dd.MM.yyyy') =>
 }
 
 export const parseAndFormatDateTime = (date: string, formatString = 'dd.MM.yyyy HH:mm') => {
-  console.log('date', date.substring(0, 16))
   if (!date) return ''
   let parsedDate: Date
   parsedDate = parse(date.substring(0, 16), 'yyyy-MM-dd HH:mm', new Date())
