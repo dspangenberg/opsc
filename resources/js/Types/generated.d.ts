@@ -19,6 +19,13 @@ prefix: string;
 bookkeeping_account_id: string;
 pos: number;
 };
+export type BillableProjectData = {
+id: number | null;
+name: string;
+total_mins: number;
+first_entry_at: string | null;
+last_entry_at: string | null;
+};
 export type BookingPolicyData = {
 id: number | null;
 name: string;

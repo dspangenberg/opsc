@@ -25,9 +25,8 @@ import {
   parseAndFormatDateTime
 } from '@/Lib/DateHelper'
 import { cn } from '@/Lib/utils'
-import type { BillableProjects } from '@/Pages/App/Time/TimeIndex'
 
-const editUrl = (row: App.Data.TimeData) => {
+const editUrl = (row: App.Data.BillableProjectData) => {
   if (!row.id) return '#'
 
   const currentView = route().queryParams.view
@@ -35,14 +34,14 @@ const editUrl = (row: App.Data.TimeData) => {
   return baseUrl
 }
 
-const billUrl = (row: BillableProjects) => {
+const billUrl = (row: App.Data.BillableProjectData) => {
   if (!row.id) return '#'
 
   const baseUrl = `${route('app.time.bill', { _query: { project_id: row.id } })}`
   return baseUrl
 }
 
-const durationInMinutes = (row: BillableProjects) => {
+const durationInMinutes = (row: App.Data.BillableProjectData) => {
   console.log('durationInMinutes', row.total_mins)
   const value = minutesToHoursExtended(row.total_mins as number)
   try {
@@ -52,7 +51,7 @@ const durationInMinutes = (row: BillableProjects) => {
   }
 }
 
-const handleDeleteClicked = async (row: BillableProjects) => {
+const handleDeleteClicked = async (row: App.Data.BillableProjectData) => {
   const promise = await AlertDialog.call({
     title: 'Löschen bestätigen',
     message: 'Möchtest Du den Eintrag wirklich löschen?',
@@ -64,7 +63,7 @@ const handleDeleteClicked = async (row: BillableProjects) => {
   }
 }
 
-const RowActions = ({ row }: { row: Row<App.Data.BillableProjects> }) => {
+const RowActions = ({ row }: { row: Row<App.Data.BillableProjectData> }) => {
   return (
     <div className="mx-auto">
       <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
@@ -80,56 +79,7 @@ const RowActions = ({ row }: { row: Row<App.Data.BillableProjects> }) => {
   )
 }
 
-// Live Duration Cell Component mit intelligentem Blink-Effekt
-const DurationCell = ({ row }: { row: Row<App.Data.BillableProjects> }) => {
-  const [duration, setDuration] = useState(() => durationInMinutes(row.original))
-  const [isBlinking, setIsBlinking] = useState(false)
-  const isRunning = !row.original.end_at
-
-  useEffect(() => {
-    // Nur für laufende Einträge (ohne end_at) einen Timer setzen
-    if (isRunning) {
-      const interval = setInterval(() => {
-        const newDuration = durationInMinutes(row.original)
-
-        // Nur blinken, wenn sich der Wert tatsächlich geändert hat
-        if (newDuration !== duration) {
-          setIsBlinking(true)
-          setDuration(newDuration)
-
-          // Blinken nach 300ms stoppen
-          setTimeout(() => setIsBlinking(false), 300)
-        }
-      }, 60000) // Update alle 30 Sekunden
-
-      return () => clearInterval(interval)
-    }
-  }, [row.original, isRunning, duration])
-
-  return (
-    <div
-      className={cn(
-        'text-right transition-all duration-300',
-        // Blink-Effekt nur bei tatsächlicher Änderung
-        isBlinking && 'animate-pulse rounded bg-green-100 px-1 shadow-sm dark:bg-green-900/30',
-        // Permanent subtiler Glow-Effekt für laufende Einträge
-        isRunning && 'relative font-medium text-blue-600 dark:text-blue-400',
-        isRunning &&
-          "before:-inset-1 before:absolute before:animate-pulse before:rounded before:bg-blue-500/10 before:content-['']"
-      )}
-    >
-      {duration}
-      {isRunning && (
-        <span
-          className="ml-1 inline-block size-2 animate-pulse rounded-full bg-green-500"
-          title="Läuft gerade..."
-        />
-      )}
-    </div>
-  )
-}
-
-export const columns: ColumnDef<App.Data.BillableProjects>[] = [
+export const columns: ColumnDef<App.Data.BillableProjectData>[] = [
   {
     id: 'select',
     size: 20,
@@ -172,13 +122,13 @@ export const columns: ColumnDef<App.Data.BillableProjects>[] = [
     accessorKey: 'first_entry_at',
     header: 'Ältester Eintrag',
     size: 80,
-    cell: ({ row, getValue }) => <span>{parseAndFormatDateTime(getValue())}</span>
+    cell: ({ row, getValue }) => <span>{getValue() as string}</span>
   },
   {
     accessorKey: 'last_entry_at',
     header: 'Jüngster Eintrag',
     size: 80,
-    cell: ({ row, getValue }) => <span>{parseAndFormatDateTime(getValue())}</span>
+    cell: ({ row, getValue }) => <span>{getValue() as string}</span>
   },
   {
     accessorKey: 'total_mins',
