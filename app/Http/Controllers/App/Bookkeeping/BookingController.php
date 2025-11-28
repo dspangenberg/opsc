@@ -5,11 +5,9 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-namespace App\Http\Controllers\App\Bookkeeping\Booking;
+namespace App\Http\Controllers\App\Bookkeeping;
 
-use App\Data\BankAccountData;
 use App\Data\BookkeepingBookingData;
-use App\Data\TransactionData;
 use App\Http\Controllers\Controller;
 use App\Models\BookkeepingBooking;
 use Illuminate\Http\Request;
@@ -17,14 +15,35 @@ use Inertia\Inertia;
 use Laracsv\Export;
 use League\Csv\CannotInsertRecord;
 
-class BookingExportCSV extends Controller
+class BookingController extends Controller
 {
+    public function index(Request $request)
+    {
+        $search = $request->input('search', '');
+
+        $bookings = BookkeepingBooking::query()
+            ->with('account_credit')
+            ->search($search)
+            ->with('account_debit')
+            ->with('tax')
+            ->with('range_document_number')
+            ->orderBy('date', 'DESC')
+            ->orderBy('id', 'DESC')
+            ->paginate(10);
+
+        $bookings->appends($_GET)->links();
+
+        return Inertia::render('App/Bookkeeping/Booking/BookingIndex', [
+            'bookings' => BookkeepingBookingData::collect($bookings),
+            'currentSearch' => $search,
+        ]);
+    }
+
     /**
      * @throws CannotInsertRecord
      */
-    public function __invoke(Request $request)
+    public function exportCSV(Request $request)
     {
-
         $bookings = BookkeepingBooking::query()
             ->with('account_credit')
             ->with('account_debit')
@@ -34,7 +53,7 @@ class BookingExportCSV extends Controller
             ->orderBy('id', 'DESC')
             ->get();
 
-        $csvExporter = new Export();
+        $csvExporter = new Export;
         $csvExporter->beforeEach(function ($booking) {
             $booking->issuedOn = $booking->date->format('d.m.Y');
             $booking->amount = number_format($booking->amount, 2, ',', '');
@@ -47,13 +66,11 @@ class BookingExportCSV extends Controller
             'account_id_credit' => 'Habenkonto',
             'booking_text' => 'Buchungstext',
             'amount' => 'Betrag',
-            'document_number' => 'Beleg'
+            'document_number' => 'Beleg',
         ]);
 
         return response()->streamDownload(function () use ($csvExporter) {
             echo $csvExporter->getWriter();
         }, 'buchungen.csv', ['Content-Type' => 'text/csv']);
-
-
     }
 }
