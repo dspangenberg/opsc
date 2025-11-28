@@ -61,7 +61,7 @@ const TimeIndex: React.FC = () => {
   const [showPdfViewer, setShowPdfViewer] = useState(false)
   const [selectedRows, setSelectedRows] = useState<App.Data.TimeData[]>([])
   const [showFilter, setShowFilter] = useState<boolean>(false)
-  
+
   // Verwende currentFilters als Ausgangswert
   const [selectedProject, setSelectedProject] = useState<number>(currentFilters.project_id)
 
