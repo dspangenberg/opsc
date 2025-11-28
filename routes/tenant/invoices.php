@@ -2,118 +2,89 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\App\Invoice\InvoiceCreateBookingController;
-use App\Http\Controllers\App\Invoice\InvoiceCreateController;
-use App\Http\Controllers\App\Invoice\InvoiceDeleteController;
-use App\Http\Controllers\App\Invoice\InvoiceDetailsAddOnAccountInvoiceController;
-use App\Http\Controllers\App\Invoice\InvoiceDetailsController;
-use App\Http\Controllers\App\Invoice\InvoiceEditBaseDataController;
-use App\Http\Controllers\App\Invoice\InvoiceDetailsStoreOnAccountInvoiceController;
-use App\Http\Controllers\App\Invoice\InvoiceDetailsUpdateBaseController;
-use App\Http\Controllers\App\Invoice\InvoiceDuplicateController;
-use App\Http\Controllers\App\Invoice\InvoiceHistoryController;
-use App\Http\Controllers\App\Invoice\InvoiceIndexController;
-use App\Http\Controllers\App\Invoice\InvoiceLineCreateController;
-use App\Http\Controllers\App\Invoice\InvoiceLineDeleteController;
-use App\Http\Controllers\App\Invoice\InvoiceLineDuplicateController;
-use App\Http\Controllers\App\Invoice\InvoiceLineEditController;
-use App\Http\Controllers\App\Invoice\InvoiceLineStoreController;
-use App\Http\Controllers\App\Invoice\InvoiceLineUpdateController;
-use App\Http\Controllers\App\Invoice\InvoiceMarkAsSentController;
-use App\Http\Controllers\App\Invoice\InvoicePaymentCreateController;
-use App\Http\Controllers\App\Invoice\InvoicePaymentStoreController;
-use App\Http\Controllers\App\Invoice\InvoicePdfDownloadController;
-use App\Http\Controllers\App\Invoice\InvoiceReleaseController;
-use App\Http\Controllers\App\Invoice\InvoiceStoreController;
-use App\Http\Controllers\App\Invoice\InvoiceUnreleaseController;
+use App\Http\Controllers\App\InvoiceController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 
 // Invoices
-Route::get('invoicing/invoices/create', InvoiceCreateController::class)
+Route::get('invoicing/invoices/create', [InvoiceController::class, 'create'])
     ->name('app.invoice.create');
 
-Route::get('invoicing/invoices', InvoiceIndexController::class)
+Route::get('invoicing/invoices', [InvoiceController::class, 'index'])
     ->name('app.invoice.index');
 
-Route::get('invoicing/invoices/{invoice}', InvoiceDetailsController::class)
+Route::get('invoicing/invoices/{invoice}', [InvoiceController::class, 'show'])
     ->name('app.invoice.details');
 
-Route::get('invoicing/invoices/{invoice}/link-on-account-invoice', InvoiceDetailsAddOnAccountInvoiceController::class)
+Route::get('invoicing/invoices/{invoice}/link-on-account-invoice', [InvoiceController::class, 'addOnAccountInvoice'])
     ->name('app.invoice.link-on-account-invoice');
 
-Route::post('invoicing/invoices/{invoice}/store-on-account-invoice', InvoiceDetailsStoreOnAccountInvoiceController::class)
+Route::post('invoicing/invoices/{invoice}/store-on-account-invoice', [InvoiceController::class, 'storeOnAccountInvoice'])
     ->name('app.invoice.link-on-account-store');
 
-Route::get('invoicing/invoices/{invoice}/payments', InvoicePaymentCreateController::class)
+Route::get('invoicing/invoices/{invoice}/payments', [InvoiceController::class, 'createPayment'])
     ->name('app.invoice.create.payment');
 
-Route::get('invoicing/invoices/{invoice}/payments/store', InvoicePaymentStoreController::class)
+Route::get('invoicing/invoices/{invoice}/payments/store', [InvoiceController::class, 'storePayment'])
     ->middleware([HandlePrecognitiveRequests::class])
     ->name('app.invoice.store.payment');
 
-Route::get('invoicing/invoices/{invoice}/history', InvoiceHistoryController::class)
+Route::get('invoicing/invoices/{invoice}/history', [InvoiceController::class, 'history'])
     ->name('app.invoice.history');
 
-Route::post('invoicing/invoices', InvoiceStoreController::class)
+Route::post('invoicing/invoices', [InvoiceController::class, 'store'])
     ->middleware([HandlePrecognitiveRequests::class])
     ->name('app.invoice.store');
 
-Route::delete('invoicing/invoices/{invoice}', InvoiceDeleteController::class)
+Route::delete('invoicing/invoices/{invoice}', [InvoiceController::class, 'destroy'])
     ->name('app.invoice.delete');
 
-Route::get('invoicing/invoices/{invoice}/base-edit', InvoiceEditBaseDataController::class)
+Route::get('invoicing/invoices/{invoice}/base-edit', [InvoiceController::class, 'edit'])
     ->name('app.invoice.base-edit');
 
-Route::get('invoicing/invoices/{invoice}/unrelease', InvoiceUnreleaseController::class)
+Route::get('invoicing/invoices/{invoice}/unrelease', [InvoiceController::class, 'unrelease'])
     ->name('app.invoice.unrelease');
 
-Route::get('invoicing/invoices/{invoice}/release', InvoiceReleaseController::class)
+Route::get('invoicing/invoices/{invoice}/release', [InvoiceController::class, 'release'])
     ->name('app.invoice.release');
 
-Route::get('invoicing/invoices/{invoice}/mark-as-sent', InvoiceMarkAsSentController::class)
+Route::get('invoicing/invoices/{invoice}/mark-as-sent', [InvoiceController::class, 'markAsSent'])
     ->name('app.invoice.mark-as-sent');
 
-Route::get('invoicing/invoices/{invoice}/line-duplicate/{invoiceLine}', InvoiceLineDuplicateController::class)
+Route::get('invoicing/invoices/{invoice}/line-duplicate/{invoiceLine}', [InvoiceController::class, 'duplicateLine'])
     ->name('app.invoice.line-duplicate')
     ->middleware([HandlePrecognitiveRequests::class]);
 
-Route::get('invoicing/invoices/{invoice}/line-create', InvoiceLineCreateController::class)
+Route::get('invoicing/invoices/{invoice}/line-create', [InvoiceController::class, 'createLine'])
     ->name('app.invoice.line-create')
     ->middleware([HandlePrecognitiveRequests::class]);
 
-Route::get('invoicing/invoices/{invoice}/line-edit/{invoiceLine}', InvoiceLineEditController::class)
+Route::get('invoicing/invoices/{invoice}/line-edit/{invoiceLine}', [InvoiceController::class, 'editLine'])
     ->name('app.invoice.line-edit')
     ->middleware([HandlePrecognitiveRequests::class]);
 
-Route::put('invoicing/invoices/{invoice}/line-update/{invoiceLine}', InvoiceLineUpdateController::class)
+Route::put('invoicing/invoices/{invoice}/line-update/{invoiceLine}', [InvoiceController::class, 'updateLine'])
     ->name('app.invoice.line-update')
     ->middleware([HandlePrecognitiveRequests::class]);
 
-Route::post('invoicing/invoices/{invoice}/line-update/store', InvoiceLineStoreController::class)
+Route::post('invoicing/invoices/{invoice}/line-update/store', [InvoiceController::class, 'storeLine'])
     ->name('app.invoice.line-store')
     ->middleware([HandlePrecognitiveRequests::class]);
 
-Route::get('invoicing/invoices/{invoice}/create_booking', InvoiceCreateBookingController::class)
+Route::get('invoicing/invoices/{invoice}/create_booking', [InvoiceController::class, 'createBooking'])
     ->name('app.invoice.booking-create');
 
-
-
-
-
-
-
-Route::delete('invoicing/invoices/{invoice}/line-delete/{invoiceLine}', InvoiceLineDeleteController::class)
+Route::delete('invoicing/invoices/{invoice}/line-delete/{invoiceLine}', [InvoiceController::class, 'deleteLine'])
     ->name('app.invoice.line-delete')
     ->middleware([HandlePrecognitiveRequests::class]);
 
-Route::put('invoicing/invoices/{invoice}/base-update', InvoiceDetailsUpdateBaseController::class)
+Route::put('invoicing/invoices/{invoice}/base-update', [InvoiceController::class, 'update'])
     ->name('app.invoice.base-update')
     ->middleware([HandlePrecognitiveRequests::class]);
 
-Route::get('invoicing/invoices/{invoice}/duplicate', InvoiceDuplicateController::class)
+Route::get('invoicing/invoices/{invoice}/duplicate', [InvoiceController::class, 'duplicate'])
     ->name('app.invoice.duplicate')
     ->middleware([HandlePrecognitiveRequests::class]);
 
-Route::get('invoicing/invoices/{invoice}/pdf', InvoicePdfDownloadController::class)
+Route::get('invoicing/invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])
     ->name('app.invoice.pdf');
