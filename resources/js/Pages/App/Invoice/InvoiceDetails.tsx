@@ -1,20 +1,12 @@
-import {
-  CalculatorIcon,
-  CashbackEuroIcon,
-  FirstBracketIcon,
-  HeadingIcon,
-  RowInsertIcon,
-  TextAlignJustifyLeftIcon,
-  TextVerticalAlignmentIcon
-} from '@hugeicons/core-free-icons'
 import { router, usePage } from '@inertiajs/react'
-import { ChevronDown } from 'lucide-react'
 import type * as React from 'react'
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
+import { useEffect } from 'react'
+
 import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
-import { Button } from '@/Components/ui/twc-ui/button'
 import { InvoiceDetailsLayout } from '@/Pages/App/Invoice/InvoiceDetailsLayout'
 import { InvoiceDetailsSide } from '@/Pages/App/Invoice/InvoiceDetailsSide'
+import { InvoiceLinesEditor } from '@/Pages/App/Invoice/InvoiceLinesEditor'
+import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 import { InvoicingTable, type LineCommandProps } from '@/Pages/App/Invoice/InvoicingTable'
 import type { PageProps } from '@/Types'
 
@@ -23,8 +15,12 @@ interface InvoiceDetailsProps extends PageProps {
   children?: React.ReactNode
 }
 
-const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
+const InvoiceDetailsContent: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const { invoice } = usePage<InvoiceDetailsProps>().props
+
+  const { setLines, amountNet, amountTax, amountGross, editMode, setEditMode } = useInvoiceTable()
+
+  useEffect(() => setLines(invoice.lines || []), [invoice.lines, setLines])
 
   const handeLineCommand = async (props: LineCommandProps) => {
     if (props.command === 'edit') {
@@ -59,60 +55,27 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
   }
 
   return (
-    <InvoiceDetailsLayout invoice={invoice}>
-      <div className="flex-1">
-        <div className="flex items-center p-4">
-          <Button
-            variant="outline"
-            className="!rounded-r-none"
-            isDisabled={!invoice.is_draft}
-            title="Rechnungsposition hinzufügen"
-            icon={RowInsertIcon}
-            onClick={() => handleAddNewLinkClicked(1)}
-          />
-          <DropdownButton
-            variant="outline"
-            size="icon"
-            iconClassName="size-4"
-            icon={ChevronDown}
-            isDisabled={!invoice.is_draft}
-            className="!rounded-l-none !border-l-0 p-1"
-          >
-            <MenuItem
-              icon={CalculatorIcon}
-              title="Standard-Rechnungsposition"
-              ellipsis
-              onClick={() => handleAddNewLinkClicked(1)}
-            />
-            <MenuItem
-              icon={FirstBracketIcon}
-              title="Überschreibarer Gesamtpreis"
-              ellipsis
-              separator
-              onClick={() => handleAddNewLinkClicked(3)}
-            />
-
-            <MenuItem icon={HeadingIcon} title="Überschrift" ellipsis isDisabled />
-            <MenuItem icon={TextAlignJustifyLeftIcon} title="Text" ellipsis isDisabled />
-            <MenuItem
-              icon={TextVerticalAlignmentIcon}
-              title="Seitenumbruch"
-              ellipsis
-              separator
-              isDisabled
-            />
-            <MenuItem
-              icon={CashbackEuroIcon}
-              title="Mit Akonto-Zahlung verrechnen"
-              isDisabled={invoice.type_id !== 3}
-              href={route('app.invoice.link-on-account-invoice', { invoice: invoice.id })}
-              ellipsis
-            />
-          </DropdownButton>
+    <div className="flex-1 flex-col">
+      {children}
+      {editMode ? (
+        <InvoiceLinesEditor invoice={invoice} />
+      ) : (
+        <div className="space-y-4">
+          <h5>Rechnungspositionen</h5>
+          <InvoicingTable invoice={invoice} onLineCommand={handeLineCommand} />
+          <h5>Verrechnete Akontorechnungen</h5>
         </div>
-        {children}
-        <InvoicingTable invoice={invoice} onLineCommand={handeLineCommand} />
-      </div>
+      )}
+    </div>
+  )
+}
+
+const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
+  const { invoice } = usePage<InvoiceDetailsProps>().props
+
+  return (
+    <InvoiceDetailsLayout invoice={invoice}>
+      <InvoiceDetailsContent>{children}</InvoiceDetailsContent>
       <div className="h-fit w-sm flex-none space-y-6 px-1">
         <InvoiceDetailsSide invoice={invoice} />
       </div>

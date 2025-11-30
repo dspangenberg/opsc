@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import {
   Input as AriaInput,
   type InputProps as AriaInputProps,
@@ -19,13 +20,13 @@ const Input = ({ className, ...props }: AriaInputProps) => {
     <AriaInput
       className={composeRenderProps(className, className =>
         cn(
-          'flex h-9 w-full rounded-sm border border-input bg-background px-3 py-1 font-medium text-sm shadow-none outline-0 transition-colors file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground',
+          'flex h-9 w-full rounded-sm border border-input bg-transparent px-3 py-1 font-medium text-sm shadow-none outline-0 transition-colors file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground',
           /* Disabled */
           'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
           /* Focused */
           /* Resets */
-          'focus-visible:border focus-visible:border-primary focus-visible:outline-0 focus-visible:ring-[2px] focus-visible:ring-primary/20',
-          'data-[invalid]:border-destructive data-[invalid]:focus-visible:border-destructive data-[invalid]:focus-visible:ring-destructive/20',
+          'focus:border-primary focus:ring-[3px] focus:ring-primary/20',
+          'data-[invalid]:border-destructive data-[invalid]:focus:border-destructive data-[invalid]:focus:ring-destructive/20',
           className
         )
       )}
@@ -36,22 +37,46 @@ const Input = ({ className, ...props }: AriaInputProps) => {
 }
 
 interface TextAreaProps extends AriaTextAreaProps {
+  rows?: number
   autoSize?: boolean
 }
 
-const TextArea = ({ className, autoSize = false, ...props }: TextAreaProps) => {
+const TextArea = ({ className, autoSize = false, rows = 2, ...props }: TextAreaProps) => {
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    if (autoSize && textAreaRef.current) {
+      const adjustHeight = () => {
+        const textarea = textAreaRef.current
+        if (textarea) {
+          textarea.style.height = 'auto'
+          textarea.style.height = `${textarea.scrollHeight}px`
+        }
+      }
+
+      adjustHeight()
+
+      const textarea = textAreaRef.current
+      textarea.addEventListener('input', adjustHeight)
+
+      return () => textarea.removeEventListener('input', adjustHeight)
+    }
+  }, [autoSize, props.value])
+
   return (
     <AriaTextArea
+      ref={textAreaRef}
+      rows={rows}
       className={composeRenderProps(className, className =>
         cn(
-          'flex h-9 min-h-[80px] w-full rounded-sm border border-input bg-background px-3 py-1 font-medium text-sm shadow-none outline-0 transition-colors file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground',
+          'flex min-h-[40px] w-full rounded-sm border border-input bg-transparent px-3 py-1 font-medium text-sm shadow-none outline-0 transition-colors file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground',
           /* Disabled */
           'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
           /* Focused */
           /* Resets */
-          'focus-visible:border focus-visible:border-primary focus-visible:outline-0 focus-visible:ring-[2px] focus-visible:ring-primary/20',
-          'data-[invalid]:border-destructive data-[invalid]:focus-visible:border-destructive data-[invalid]:focus-visible:ring-destructive/20',
-          autoSize ? 'field-sizing-content min-h-[80px] resize-none' : 'h-9 min-h-[80px]',
+          'focus:border-primary focus:ring-[3px] focus:ring-primary/20',
+          'data-[invalid]:border-destructive data-[invalid]:focus:border-destructive data-[invalid]:focus:ring-destructive/20',
+          autoSize ? 'resize-none overflow-hidden' : '',
           className
         )
       )}
@@ -68,7 +93,6 @@ interface TextFieldProps extends Omit<AriaTextFieldProps, 'value' | 'onChange'> 
   autoSize?: boolean
   onChange?: ((value: string | null) => void) | ((value: string) => void)
   name?: string
-  placeholder?: string
   value?: string | null | undefined
   error?: string | undefined
   onBlur?: () => void

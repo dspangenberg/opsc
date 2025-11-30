@@ -17,6 +17,8 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+  --width-8xl: 88rem;
+  --max-width-8xl: 88rem;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -212,6 +214,10 @@ h3 {
 
 h4 {
   @apply text-lg font-bold;
+}
+
+h5 {
+  @apply text-base font-medium;
 }
 
 /* TOC Styling */

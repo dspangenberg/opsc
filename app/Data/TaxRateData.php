@@ -16,7 +16,7 @@ class TaxRateData extends Data
     public function __construct(
         public readonly ?int $id,
         public readonly int $tax_id,
-        public readonly int $rate,
+        public readonly float $rate,
         public readonly string $name,
     ) {
     }

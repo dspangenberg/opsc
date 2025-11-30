@@ -2,6 +2,7 @@ import {
   Delete02Icon,
   DocumentValidationIcon,
   Edit03Icon,
+  EditTableIcon,
   EuroReceiveIcon,
   FileDownloadIcon,
   FileEditIcon,
@@ -18,6 +19,7 @@ import { router } from '@inertiajs/react'
 import print from 'print-js'
 import type * as React from 'react'
 import { useCallback, useMemo, useState } from 'react'
+import { Group } from 'react-aria-components'
 import { PageContainer } from '@/Components/PageContainer'
 import { PdfViewer } from '@/Components/PdfViewer'
 import {
@@ -30,18 +32,21 @@ import {
 import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
+import { Toolbar, ToolbarButton } from '@/Components/ui/twc-ui/toolbar'
 import { useFileDownload } from '@/Hooks/useFileDownload'
+import { InvoiceTableProvider, useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 
 interface Props {
   invoice: App.Data.InvoiceData
   children: React.ReactNode
 }
 
-export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => {
+const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => {
   const onPrintPdf = () => {
     print(route('app.invoice.pdf', { id: invoice.id }))
   }
+
+  const { editMode, setEditMode } = useInvoiceTable()
 
   const handleEditBaseDataButtonClick = () => {
     router.visit(
@@ -132,47 +137,52 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
 
   const toolbar = useMemo(
     () => (
-      <Toolbar>
+      <Toolbar isDisabled={editMode}>
         {!invoice.is_draft && invoice.sent_at && (
-          <Button
-            variant="toolbar-default"
+          <ToolbarButton
+            variant="primary"
             icon={EuroReceiveIcon}
             title="Zahlung zuordnen"
             onClick={handlePaymentCreateClicked}
           />
         )}
         {!invoice.is_draft && !invoice.sent_at && (
-          <Button
-            variant="toolbar-default"
+          <ToolbarButton
+            variant="primary"
             icon={Sent02Icon}
             title="Rechnung per E-Mail versenden"
           />
         )}
         {invoice.is_draft && (
-          <Button
-            variant="toolbar-default"
-            icon={Edit03Icon}
-            title="Rechnung bearbeiten"
-            onClick={handleEditBaseDataButtonClick}
-          />
+          <>
+            <ToolbarButton
+              variant="primary"
+              icon={Edit03Icon}
+              title="Stammdaten bearbeiten"
+              onClick={handleEditBaseDataButtonClick}
+            />
+            <ToolbarButton
+              icon={EditTableIcon}
+              title="Positionen bearbeiten"
+              onClick={() => setEditMode(true)}
+            />
+          </>
         )}
         {invoice.is_draft && (
-          <Button
-            variant="toolbar"
+          <ToolbarButton
             icon={DocumentValidationIcon}
             title="Rechnung abschließen"
             onClick={handleRelease}
           />
         )}
 
-        <Button
-          variant="toolbar"
+        <ToolbarButton
           icon={Pdf02Icon}
           title="PDF-Vorschau"
           onClick={() => setShowPdfViewer(true)}
         />
 
-        <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon}>
+        <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} isDisabled={editMode}>
           {invoice.is_draft && (
             <>
               <MenuItem
@@ -268,13 +278,13 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
         </DropdownButton>
       </Toolbar>
     ),
-    [invoice.is_draft, handleDownload, invoice.sent_at, handleRelease]
+    [editMode, handleDownload, invoice.sent_at, handleRelease, setEditMode, invoice]
   )
 
   return (
     <PageContainer
       title={title}
-      width="7xl"
+      width="8xl"
       tabs={tabs}
       breadcrumbs={breadcrumbs}
       className="flex gap-4 overflow-y-auto"
@@ -288,5 +298,13 @@ export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => 
       />
       {children}
     </PageContainer>
+  )
+}
+
+export const InvoiceDetailsLayout: React.FC<Props> = ({ invoice, children }) => {
+  return (
+    <InvoiceTableProvider>
+      <InvoiceDetailsLayoutContent invoice={invoice}>{children}</InvoiceDetailsLayoutContent>
+    </InvoiceTableProvider>
   )
 }

@@ -203,7 +203,7 @@ class TimeController extends Controller
                 'tax' => $category['quantity'] * $timeCategory['hourly'] * 0.19,
                 'service_period_begin' => $category['start'],
                 'service_period_end' => $category['end'],
-                'text' => $category['name']."\ngem. Leistungsnachweis",
+                'text' => "**".$category['name']."**\ngem. Leistungsnachweis",
             ]);
         });
 
