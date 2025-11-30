@@ -30,8 +30,7 @@ class InvoiceLineData extends Data
         public readonly ?float $tax,
         public readonly float $tax_rate_id,
 
-        /** @var TaxRateData */
-        public readonly ?object $rate,
+        public readonly ?TaxRateData $rate,
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
         public readonly ?DateTime $service_period_begin,

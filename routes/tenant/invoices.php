@@ -67,6 +67,10 @@ Route::put('invoicing/invoices/{invoice}/line-update/{invoiceLine}', [InvoiceCon
     ->name('app.invoice.line-update')
     ->middleware([HandlePrecognitiveRequests::class]);
 
+Route::put('invoicing/invoices/lines-update', [InvoiceController::class, 'updateLines'])
+    ->name('app.invoice.lines-update')
+    ->middleware([HandlePrecognitiveRequests::class]);
+
 Route::post('invoicing/invoices/{invoice}/line-update/store', [InvoiceController::class, 'storeLine'])
     ->name('app.invoice.line-store')
     ->middleware([HandlePrecognitiveRequests::class]);

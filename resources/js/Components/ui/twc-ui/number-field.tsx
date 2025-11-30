@@ -125,7 +125,7 @@ const NumberField = ({
       onChange={handleChange}
       {...props}
     >
-      <Label value={label} isRequired={isRequired} />
+      {label && <Label value={label} isRequired={isRequired} />}
       <FieldGroup isInvalid={hasError}>
         <NumberFieldInput className="outline:0 focus:ring-0" />
         <NumberFieldSteppers isDisabled={isDisabled || isReadonly} />

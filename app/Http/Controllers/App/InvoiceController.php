@@ -171,7 +171,7 @@ class InvoiceController extends Controller
             ->load('type')
             ->load([
                 'lines' => function ($query) {
-                    $query->with('linked_invoice')->orderBy('pos')->orderBy('id');
+                    $query->with('linked_invoice')->with('rate')->orderBy('pos')->orderBy('id');
                 },
             ])
             ->load('booking')
@@ -233,6 +233,11 @@ class InvoiceController extends Controller
         $invoice->update($request->validated());
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
+    }
+
+    public function updateLines(Request $request, Invoice $invoice)
+    {
+       ds($request->lines);
     }
 
     public function destroy(Invoice $invoice)
