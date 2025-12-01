@@ -51,18 +51,10 @@ const ContactIndex: React.FC<ContactIndexProps> = ({ currentSearch }) => {
         </DropdownButton>
       </Toolbar>
     ),
-    []
+    [handleAdd]
   )
 
   const footer = useMemo(() => <Pagination data={contacts} itemName="Kontakte" />, [contacts])
-  const header = useMemo(
-    () => (
-      <div className="flex w-7xl flex-col rounded-t-md py-0">
-        <div className="flex flex-none items-center space-x-2 pb-2">x</div>
-      </div>
-    ),
-    []
-  )
 
   const handleSearchInputChange = (newSearch: string) => {
     setSearch(newSearch)
@@ -123,7 +115,6 @@ const ContactIndex: React.FC<ContactIndexProps> = ({ currentSearch }) => {
         data={contacts.data}
         footer={footer}
         filterBar={filterBar}
-        header={header}
       />
     </PageContainer>
   )

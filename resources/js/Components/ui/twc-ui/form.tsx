@@ -34,6 +34,7 @@ type ExtendedForm<T extends FormSchema> = {
   setErrors: UseFormReturn<T>['setErrors']
   validate: UseFormReturn<T>['validate']
   touched: UseFormReturn<T>['touched']
+  transform: UseFormReturn<T>['transform']
   form: UseFormReturn<T> & { id: string }
 }
 
@@ -146,7 +147,7 @@ export const useForm = <T extends FormSchema>(
     register: internalForm.register,
     registerEvent: internalForm.registerEvent,
     registerCheckbox: internalForm.registerCheckbox,
-    registerDateRange: internalForm.registerDateRange, // Diese Zeile hinzufügen
+    registerDateRange: internalForm.registerDateRange,
     updateAndValidate: internalForm.updateAndValidate,
     updateAndValidateWithoutEvent: internalForm.updateAndValidateWithoutEvent,
     data: internalForm.data,
@@ -158,6 +159,7 @@ export const useForm = <T extends FormSchema>(
     setErrors: internalForm.setErrors,
     validate: internalForm.validate,
     touched: internalForm.touched,
+    transform: internalForm.transform,
     form: {
       id,
       ...internalForm

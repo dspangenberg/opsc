@@ -47,6 +47,7 @@ use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
  * @property-read NumberRangeDocumentNumber|null $range_document_number
  * @property-read Tax|null $tax
  * @property-read InvoiceType|null $type
+ *
  * @method static MediableCollection<int, static> all($columns = ['*'])
  * @method static Builder<static>|Invoice byYear(int $year)
  * @method static MediableCollection<int, static> get($columns = ['*'])
@@ -61,6 +62,7 @@ use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
  * @method static Builder<static>|Invoice withMediaMatchAll(bool $tags = [], bool $withVariants = false)
  * @method static Builder<static>|Invoice unpaid()
  * @method static Builder<static>|Invoice view($view)
+ *
  * @mixin Eloquent
  */
 class Invoice extends Model implements MediableInterface
@@ -262,6 +264,54 @@ class Invoice extends Model implements MediableInterface
         // return $releasedInvoice;
     }
 
+    /**
+     * Update invoice positions with validated line data
+     *
+     * @param  array<array<string, mixed>>  $linesData  Array of validated line data
+     */
+    public function updatePositions(array $linesData): void
+    {
+        $incomingIds = collect($linesData)
+            ->pluck('id')
+            ->filter()
+            ->toArray();
+
+        if (! empty($incomingIds)) {
+            $this->lines()
+                ->whereNotIn('id', $incomingIds)
+                ->delete();
+        } else {
+            $this->lines()->delete();
+        }
+
+        foreach ($linesData as $index => $line) {
+            $taxRate = TaxRate::where('id', $line['tax_rate_id'])->first();
+            $amount = $line['type_id'] === 1 ? $line['quantity'] * $line['price'] : $line['amount'];
+
+            $lineAttributes = [
+                'invoice_id' => $this->id,
+                'quantity' => $line['quantity'],
+                'type_id' => $line['type_id'] ?? 1,
+                'unit' => $line['unit'] ?? '',
+                'tax_rate_id' => $line['tax_rate_id'] ?? null,
+                'text' => $line['text'] ?? '',
+                'price' => $line['price'] ?? 0,
+                'amount' => $amount,
+                'tax_rate' => $taxRate->rate ?? 0,
+                'tax' => $amount / 100 * $taxRate->rate,
+                'pos' => $line['type_id'] === 9 ? 999 : $line['pos'] ?? $index,
+            ];
+
+            if ($line['id'] > 0) {
+                InvoiceLine::where('id', $line['id'])
+                    ->where('invoice_id', $this->id)
+                    ->update($lineAttributes);
+            } else {
+                InvoiceLine::create($lineAttributes);
+            }
+        }
+    }
+
     public static function createBooking($invoice): BookkeepingBooking
     {
 
@@ -316,7 +366,6 @@ class Invoice extends Model implements MediableInterface
     {
         return $this->morphOne(BookkeepingBooking::class, 'bookable');
     }
-
 
     public function getFilenameAttribute(): string
     {
@@ -375,7 +424,6 @@ class Invoice extends Model implements MediableInterface
         $purposeText[] = 'K-'.number_format($this->contact->debtor_number, 0, ',', '.');
 
         $bankAccount = BankAccount::orderBy('pos')->first();
-
 
         $payment = new QrPayment($bankAccount->iban);
         $payment

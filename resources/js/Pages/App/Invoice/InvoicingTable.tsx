@@ -280,6 +280,71 @@ export const InvoicingTableDefaultRow: React.FC<InvoicingTableDefaultRowProps> =
   )
 }
 
+export const InvoicingTableDefaultRow2: React.FC<InvoicingTableDefaultRowProps> = ({
+  line,
+  index,
+  conditional = false,
+  onLineCommand
+}) => {
+  // @ts-expect-error
+  const { invoice } = usePage<App.Data.InvoiceData>().props as unknown as App.Data.InvoiceData
+
+  const handleDelete = useCallback(() => {
+    onLineCommand({ command: 'delete', lineId: line.id || 0 })
+  }, [onLineCommand, line])
+
+  const handleDuplicate = useCallback(() => {
+    onLineCommand({ command: 'duplicate', lineId: line.id || 0 })
+  }, [onLineCommand, line])
+
+  return (
+    <TableRow>
+      <TableCell align="right" className="align-baseline">
+        {index}
+      </TableCell>
+      <TableNumberCell value={line.quantity || 0} />
+      <TableCell align="center">{line.unit}</TableCell>
+      <TableMarkdownCell
+        value={line.text}
+        className="gap-0 gap-y-0 space-y-0"
+        service_period_begin={line.service_period_begin as unknown as string}
+        service_period_end={line.service_period_end as unknown as string}
+      />
+      <TableNumberCell conditional={conditional} value={line.price || 0} />
+      <TableNumberCell value={line.amount || 0} />
+      <TableCell align="center">({line.tax_rate_id})</TableCell>
+      {invoice.is_draft && (
+        <TableCell align="right">
+          <div className="flex items-center justify-end space-x-1">
+            <Button
+              size="icon-sm"
+              icon={Edit03Icon}
+              variant="ghost"
+              onClick={() => onLineCommand({ command: 'edit', lineId: line.id || 0 })}
+            />
+            <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
+              <MenuItem
+                icon={Copy01Icon}
+                title="Duplizieren"
+                ellipsis
+                separator
+                onClick={() => onLineCommand({ command: 'duplicate', lineId: line.id || 0 })}
+              />
+              <MenuItem
+                icon={Delete03Icon}
+                variant="destructive"
+                title="Löschen"
+                ellipsis
+                onClick={handleDelete}
+              />
+            </DropdownButton>
+          </div>
+        </TableCell>
+      )}
+    </TableRow>
+  )
+}
+
 export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowProps> = ({
   line,
   index,
@@ -305,14 +370,14 @@ export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowPr
       <TableCell />
       <TableCell />
       <TableCell>
-        abzüglich&nbsp;
         <strong>
-          AR-{line.linked_invoice?.formated_invoice_number} vom {line.linked_invoice?.issued_on}
+          Rechnung Nr. {line.linked_invoice?.formated_invoice_number} vom{' '}
+          {line.linked_invoice?.issued_on}
         </strong>
       </TableCell>
-      <TableCell />
+      <TableNumberCell value={line.tax || 0} />
       <TableNumberCell value={line.amount || 0} />
-      <TableCell align="center">({line.tax_rate_id})</TableCell>
+      <TableCell align="center" />
       {invoice.is_draft && (
         <TableCell align="right">
           <div className="flex items-center justify-end space-x-1">
@@ -354,14 +419,7 @@ export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
   }
 
   if (line.type_id === 9) {
-    return (
-      <InvoicingTableLinkedInvoiceRow
-        line={line}
-        index={rowIndex}
-        conditional={conditional}
-        onLineCommand={onLineCommand}
-      />
-    )
+    return null
   }
 
   return (

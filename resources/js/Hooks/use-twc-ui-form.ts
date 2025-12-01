@@ -206,6 +206,7 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
     registerCheckbox,
     registerDateRange,
     updateAndValidate,
-    updateAndValidateWithoutEvent
+    updateAndValidateWithoutEvent,
+    transform: form.transform
   } as const
 }

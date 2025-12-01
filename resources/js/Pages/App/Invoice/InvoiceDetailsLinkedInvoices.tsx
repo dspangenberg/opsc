@@ -248,6 +248,7 @@ export const InvoicingTableDefaultRow: React.FC<InvoicingTableDefaultRowProps> =
       <TableNumberCell conditional={conditional} value={line.price || 0} />
       <TableNumberCell value={line.amount || 0} />
       <TableCell align="center">({line.tax_rate_id})</TableCell>
+      <TableCell />
       {invoice.is_draft && (
         <TableCell align="right">
           <div className="flex items-center justify-end space-x-1">
@@ -299,20 +300,13 @@ export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowPr
 
   return (
     <TableRow>
-      <TableCell align="right" className="align-baseline">
-        {index}
-      </TableCell>
-      <TableCell />
-      <TableCell />
       <TableCell>
-        abzüglich&nbsp;
-        <strong>
-          AR-{line.linked_invoice?.formated_invoice_number} vom {line.linked_invoice?.issued_on}
-        </strong>
+        Rechnung Nr. {line.linked_invoice?.formated_invoice_number} vom{' '}
+        {line.linked_invoice?.issued_on}
       </TableCell>
-      <TableCell />
+      <TableNumberCell conditional value={line.tax || 0} />
       <TableNumberCell value={line.amount || 0} />
-      <TableCell align="center">({line.tax_rate_id})</TableCell>
+      <TableCell />
       {invoice.is_draft && (
         <TableCell align="right">
           <div className="flex items-center justify-end space-x-1">
@@ -342,17 +336,6 @@ export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
 
   // if (line.type_id === 9) return null
 
-  if (line.type_id === 2) {
-    return (
-      <TableRow>
-        <TableCell colSpan={3} />
-        <TableCell colSpan={3} className="font-medium text-lg">
-          {line.text}
-        </TableCell>
-      </TableRow>
-    )
-  }
-
   if (line.type_id === 9) {
     return (
       <InvoicingTableLinkedInvoiceRow
@@ -364,17 +347,13 @@ export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
     )
   }
 
-  return (
-    <InvoicingTableDefaultRow
-      line={line}
-      conditional={conditional}
-      index={rowIndex}
-      onLineCommand={onLineCommand}
-    />
-  )
+  return null
 }
 
-export const InvoicingTable: React.FC<InvoiceTableProps> = ({ invoice, onLineCommand }) => {
+export const InvoiceDetailsLinkedInvoices: React.FC<InvoiceTableProps> = ({
+  invoice,
+  onLineCommand
+}) => {
   const currentIndexRef = useRef(1)
 
   useEffect(() => {
@@ -395,12 +374,10 @@ export const InvoicingTable: React.FC<InvoiceTableProps> = ({ invoice, onLineCom
       <Table className="border-spacing-0 rounded-lg border bg-background [&_td]:border-border [&_tfoot_td]:border-t [&_th]:border-border [&_th]:border-b [&_tr:not(:last-child)_td]:border-b [&_tr]:border-none">
         <TableHeader className="rounded-t-lg">
           <TableRow>
-            <TableHead align="right">Pos</TableHead>
-            <TableHead colSpan={2}>Menge</TableHead>
-            <TableHead>Beschreibung</TableHead>
-            <TableHead align="right">Einzelpreis</TableHead>
-            <TableHead align="right">Gesamt</TableHead>
-            <TableHead align="center">USt.</TableHead>
+            <TableHead />
+            <TableHead align="right">USt.</TableHead>
+            <TableHead align="right">Netto</TableHead>
+            <TableHead align="center"></TableHead>
             <TableHead />
           </TableRow>
         </TableHeader>

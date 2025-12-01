@@ -1,21 +1,12 @@
-import { DragDropVerticalIcon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
 import { format, parseISO } from 'date-fns'
 import type * as React from 'react'
-import { Focusable, Pressable } from 'react-aria-components'
-import { BorderedBox } from '@/Components/twcui/bordered-box'
-import { Button } from '@/Components/ui/twc-ui/button'
 import { DateRangePicker } from '@/Components/ui/twc-ui/date-picker'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { Icon } from '@/Components/ui/twc-ui/icon'
 import { NumberField } from '@/Components/ui/twc-ui/number-field'
-import { Popover, PopoverDialog, PopoverTrigger } from '@/Components/ui/twc-ui/popover'
-import { RadioGroup } from '@/Components/ui/twc-ui/radio-group'
-import { Select } from '@/Components/ui/twc-ui/select'
 import { TextField } from '@/Components/ui/twc-ui/text-field'
 import { InvoiceLinesEditorLineContainer } from '@/Pages/App/Invoice/InvoiceLinesEditorLineContainer'
 import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
-
-const DATE_FORMAT = 'dd.MM.yyyy'
+import { useEffect } from 'react'
 
 interface InvoiceLinesEditorProps {
   invoiceLine: App.Data.InvoiceLineData
@@ -29,6 +20,13 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
   invoiceLine
 }) => {
   const { updateLine } = useInvoiceTable()
+
+  useEffect(() => {
+    if (invoiceLine.type_id === 1 && invoiceLine.quantity && invoiceLine.price) {
+      const totalPrice = invoiceLine.quantity * invoiceLine.price
+      updateLine(invoiceLine.id as number, { amount: totalPrice ?? 0 })
+    }
+  }, [invoiceLine.type_id, invoiceLine.quantity, invoiceLine.price])
 
   return (
     <InvoiceLinesEditorLineContainer invoiceLine={invoiceLine}>
@@ -63,18 +61,9 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
             value={invoiceLine.text}
             onChange={(value: string) => updateLine(invoiceLine.id as number, { text: value })}
           />
-          <span className="px-3.5 font-medium text-sm">
-            <PopoverTrigger>
-              <Pressable>
-                <span className="cursor-pointer font-medium text-sm underline decoration-dotted">
-                  ({invoiceLine.service_period_begin} - {invoiceLine.service_period_end})
-                </span>
-              </Pressable>
 
-              <Popover>
-                <PopoverDialog>
                   <DateRangePicker
-                    label="Leistungsdatum"
+                    aria-label="Leistungsdatum"
                     value={
                       invoiceLine.service_period_begin && invoiceLine.service_period_end
                         ? {
@@ -97,10 +86,7 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
                       })
                     }}
                   />
-                </PopoverDialog>
-              </Popover>
-            </PopoverTrigger>
-          </span>
+
         </div>
         <div className="col-span-4">
           <NumberField
