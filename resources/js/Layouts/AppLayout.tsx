@@ -4,7 +4,6 @@
  *
  */
 
-import { Button } from '@dspangenberg/twcui'
 import { SidebarLeftIcon } from '@hugeicons/core-free-icons'
 import { usePage } from '@inertiajs/react'
 import type React from 'react'
@@ -18,6 +17,7 @@ import { PageBreadcrumbs } from '@/Components/PageBreadcrumbs'
 import { useThemeContainer } from '@/Components/theme-container-provider'
 import { SidebarInset, SidebarProvider, useSidebar } from '@/Components/ui/sidebar'
 import { Toaster } from '@/Components/ui/sonner'
+import { Button } from '@/Components/ui/twc-ui/button'
 import { useAppInitializer } from '@/Hooks/useAppInitializer'
 import { cn } from '@/Lib/utils'
 
@@ -82,10 +82,8 @@ export default function AppLayout({ children }: PropsWithChildren<{ header?: Rea
     <AppProvider>
       <SidebarProvider>
         <SidebarContent>
-          <>
-            {children}
-            <Modal resolver={globalThis.resolveMomentumModal} />
-          </>
+          {children}
+          <Modal resolver={globalThis.resolveMomentumModal} />
         </SidebarContent>
       </SidebarProvider>
     </AppProvider>

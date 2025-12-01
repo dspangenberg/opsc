@@ -13,7 +13,7 @@ import { Tooltip, TooltipTrigger } from './tooltip'
 
 const buttonVariants = cva(
   [
-    'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors active:border-ring',
+    'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors pressed:ring-offset-2 pressed:ring-1',
     /* Disabled */
     'data-[disabled]:pointer-events-none data-[disabled]:opacity-50 ',
     /* Focus Visible */
@@ -26,7 +26,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-primary text-primary-foreground data-[hovered]:bg-primary/90  pressed:ring-primary/50  pressed:ring-ring/50 focus-visible:ring-primary/20',
+          'bg-primary text-primary-foreground data-[hovered]:bg-primary/90 pressed:ring-primary/50 pressed:ring-primary/50 focus-visible:ring-primary/20',
         destructive:
           'bg-destructive text-destructive-foreground text-white data-[hovered]:bg-destructive/90 border pressed:ring-destructive/50 focus-visible:ring-destructive/20 focus-visible:border-destructive/20 ',
         outline:
@@ -34,7 +34,7 @@ const buttonVariants = cva(
         secondary:
           'bg-secondary/90 text-secondary-foreground border-transparent border focus-visible:border-input focus-visible:border data-[hovered]:bg-secondary/20 pressed:ring-ring/50',
         ghost:
-          'data-[hovered]:bg-accent data-[hovered]:text-accent-foreground focus-visible:border border border-transparent focus-visible:border-input focus-visible:ring-ring/20 pressed:ring-ring/50 text-sm',
+          'data-[hovered]:bg-accent data-[hovered]:text-accent-foreground focus-visible:border border border-transparent focus-visible:border-input focus-visible:ring-ring/20 pressed:ring/50 text-sm',
         link: 'text-primary underline-offset-4 data-[hovered]:underline',
         'ghost-destructive':
           'data-[hovered]:bg-accent data-[hovered]:text-destructive-foreground focus-visible:border border border-transparent focus-visible:border-input focus-visible:ring-ring/20 pressed:ring-ring/50 text-sm',
@@ -50,8 +50,7 @@ const buttonVariants = cva(
         icon: 'size-9',
         auto: 'h-9 w-auto py-2 px-2',
         'icon-xs': 'size-6',
-        'icon-sm': 'size-7',
-        full: 'w-full'
+        'icon-sm': 'size-7'
       }
     },
     defaultVariants: {
@@ -116,8 +115,7 @@ export const Button = ({
     lg: 'size-5',
     icon: 'size-5',
     'icon-sm': 'size-4',
-    'icon-xs': 'size-3',
-    full: 'size-5'
+    'icon-xs': 'size-3'
   }[size || 'default']
 
   const isToolbar = variant === 'toolbar' || variant === 'toolbar-default'

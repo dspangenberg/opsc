@@ -1,4 +1,3 @@
-import { Button } from '@dspangenberg/twcui'
 import {
   CalculatorIcon,
   Copy01Icon,
@@ -22,7 +21,6 @@ import {
   MenuPopover,
   MenuSubTrigger
 } from '@/Components/twcui/dropdown-button'
-
 import {
   Table as ShadcnTable,
   TableBody as ShadcnTableBody,
@@ -31,6 +29,7 @@ import {
   TableHeader as ShadcnTableHeader,
   TableRow as ShadcnTableRow
 } from '@/Components/ui/table'
+import { Button } from '@/Components/ui/twc-ui/button'
 import { cn } from '@/Lib/utils'
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
@@ -130,7 +129,11 @@ export const TableCell: React.FC<TableCellProps> = ({
   return (
     <ShadcnTableCell
       colSpan={colSpan}
-      className={cn('bg-transparent align-baseline hover:bg-transparent', alignClass, className)}
+      className={cn(
+        'bg-transparent align-baseline leading-normal hover:bg-transparent',
+        alignClass,
+        className
+      )}
     >
       {children}
     </ShadcnTableCell>
@@ -175,7 +178,7 @@ export const TableMarkdownCell: React.FC<TableMarkdownCellProps> = ({
     <TableCell className={className} {...props}>
       <Markdown remarkPlugins={[remarkBreaks]}>{value}</Markdown>
       {service_period_begin && (
-        <div className="-mt-2.5">
+        <div>
           ({service_period_begin}-{service_period_end})
         </div>
       )}

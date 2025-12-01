@@ -3,13 +3,13 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Button } from '@dspangenberg/twcui'
 import { Copy02Icon } from '@hugeicons/core-free-icons'
 import { Check } from 'lucide-react'
 import type * as React from 'react'
 import { type FC, useState } from 'react'
 import { DataCardField } from '@/Components/DataCard'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/Components/ui/tooltip'
+import { Button } from '@/Components/ui/twc-ui/button'
 import { cn } from '@/Lib/utils'
 
 interface Props {

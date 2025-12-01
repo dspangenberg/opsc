@@ -1,10 +1,10 @@
-import { FormGroup } from '@dspangenberg/twcui'
 import type * as React from 'react'
 import { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { FormlessCombobox } from '@/Components/ui/twc-ui/combo-box'
 import { Dialog } from '@/Components/ui/twc-ui/dialog'
+import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 
 interface TransactionSelectCounterAccountComponentProps {
   accounts: App.Data.BookkeepingAccountData[]

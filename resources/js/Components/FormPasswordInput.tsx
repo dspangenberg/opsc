@@ -3,12 +3,11 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Input } from '@/Components/ui/input'
 import { Check, Eye, EyeOff, X } from 'lucide-react'
-import { FormLabel } from '@dspangenberg/twcui'
-
-import type React from 'react';
-import { type InputHTMLAttributes, useMemo, useState } from 'react';
+import type React from 'react'
+import { type InputHTMLAttributes, useMemo, useState } from 'react'
+import { Input } from '@/Components/ui/input'
+import { Label } from '@/Components/ui/label'
 
 interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -18,24 +17,24 @@ interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
   required?: boolean
 }
 
-export const FormPasswordInput = (
-  {
-    ref,
-    type = 'text',
-    required = false,
-    className = '',
-    help = '',
-    label,
-    error,
-    passwordRules,
-    ...props
-  }: FormInputProps & {
-    ref?: React.RefObject<HTMLInputElement>;
-  }
-) => {
+export const FormPasswordInput = ({
+  ref,
+  type = 'text',
+  required = false,
+  className = '',
+  help = '',
+  label,
+  error,
+  passwordRules,
+  ...props
+}: FormInputProps & {
+  ref?: React.RefObject<HTMLInputElement>
+}) => {
   const [isVisible, setIsVisible] = useState<boolean>(false)
 
-  const toggleVisibility = () => { setIsVisible(prevState => !prevState); }
+  const toggleVisibility = () => {
+    setIsVisible(prevState => !prevState)
+  }
 
   const checkStrength = (pass: string) => {
     const requirements = [
@@ -77,11 +76,7 @@ export const FormPasswordInput = (
     <div>
       {/* Password input field with toggle visibility button */}
       <div className="space-y-1">
-        {label && (
-          <FormLabel htmlFor={props.name} required={required}>
-            {label}:
-          </FormLabel>
-        )}
+        {label && <Label htmlFor={props.name}>{label}:</Label>}
         <div className="relative">
           <Input
             ref={ref}
@@ -111,7 +106,7 @@ export const FormPasswordInput = (
       {/* Password strength indicator */}
       {/* biome-ignore lint/a11y/useFocusableInteractive: <explanation> */}
       <div
-        className="mb-4 mt-3 h-1 w-full overflow-hidden rounded-full bg-border"
+        className="mt-3 mb-4 h-1 w-full overflow-hidden rounded-full bg-border"
         role="progressbar"
         aria-valuenow={strengthScore}
         aria-valuemin={0}
@@ -125,7 +120,7 @@ export const FormPasswordInput = (
       </div>
 
       {/* Password strength description */}
-      <p id="password-strength" className="mb-2 text-sm font-medium text-foreground">
+      <p id="password-strength" className="mb-2 font-medium text-foreground text-sm">
         {getStrengthText(strengthScore)}. Must contain:
       </p>
 

@@ -1,7 +1,8 @@
-import { Button, FormGroup } from '@dspangenberg/twcui'
 import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
+import { Button } from '@/Components/ui/twc-ui/button'
 import { Form, useForm } from '@/Components/ui/twc-ui/form'
+import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 import { NotesView } from '@/Components/ui/twc-ui/NotesView'
 import { TextField } from '@/Components/ui/twc-ui/text-field'
 import { ContactDetailsLayout } from '@/Pages/App/Contact/ContactDetailsLayout'
@@ -43,7 +44,7 @@ const ContactDetails: React.FC = () => {
                 variant="default"
                 title="Notiz speichern"
                 disabled={!form.data.note}
-                loading={form.processing}
+                isLoading={form.processing}
               />
             </div>
           </FormGroup>

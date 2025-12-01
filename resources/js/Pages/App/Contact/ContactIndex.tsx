@@ -10,10 +10,8 @@ import { Pagination } from '@/Components/Pagination'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
-import { TransactionIndexFilterForm } from '@/Pages/App/Bookkeeping/Transaction/TransactionIndexFilterForm'
 import type { PageProps } from '@/Types'
 import { columns } from './ContactIndexColumns'
-import { ContactIndexFilterPopover } from './ContactIndexFilterPopover'
 
 interface ContactIndexProps extends PageProps {
   contacts: App.Data.Paginated.Contact & App.Data.Paginated.PaginationMeta<App.Data.ContactData[]>
@@ -60,9 +58,7 @@ const ContactIndex: React.FC<ContactIndexProps> = ({ currentSearch }) => {
   const header = useMemo(
     () => (
       <div className="flex w-7xl flex-col rounded-t-md py-0">
-        <div className="flex flex-none items-center space-x-2 pb-2">
-          <ContactIndexFilterPopover />
-        </div>
+        <div className="flex flex-none items-center space-x-2 pb-2">x</div>
       </div>
     ),
     []

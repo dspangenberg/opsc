@@ -3,7 +3,6 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Button } from '@dspangenberg/twcui'
 import React, { Children, type FC, type ReactElement, type ReactNode } from 'react'
 import { cn } from '@/Lib/utils'
 import { BorderedBox } from './twcui/bordered-box'

@@ -3,12 +3,12 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { TwicewareSolution } from '@dspangenberg/twcui'
 import { Head } from '@inertiajs/react'
 import type React from 'react'
 import { useApplicationProvider } from '@/Components/ApplicationProvider'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card'
 import { cn } from '@/Lib/utils'
+import { TwicewareSolution } from './ui/twiceware-solution'
 
 interface AuthContainerProps {
   title: string
