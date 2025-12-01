@@ -1,6 +1,6 @@
 import type React from 'react'
-import { createContext, useContext, useState, useCallback, useMemo } from 'react'
-import { Logo } from '@dspangenberg/twcui'
+import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import { Logo } from '@/Components/ui/logo'
 
 interface ApplicationProviderState {
   title: string

@@ -12,7 +12,7 @@ import { Separator } from '@/Components/twcui/separator'
 import { Dialog } from '@/Components/ui/twc-ui/dialog'
 import 'react-pdf/dist/Page/TextLayer.css'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
-import { LogoSpinner } from '@dspangenberg/twcui'
+import { LogoSpinner } from '@/Components/ui/logo-spinner'
 
 // Import the worker setup
 

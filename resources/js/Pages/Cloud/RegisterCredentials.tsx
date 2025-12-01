@@ -3,14 +3,13 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import AuthContainer from '@/Components/AuthContainer'
-import { Form, type FormSchema, useForm } from '@/Components/ui/twc-ui/form'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { TextField} from '@/Components/ui/twc-ui/text-field'
-import GuestLayout from '@/Layouts/GuestLayout'
-
 import type React from 'react'
+import AuthContainer from '@/Components/AuthContainer'
+import { Button } from '@/Components/ui/twc-ui/button'
+import { Form, type FormSchema, useForm } from '@/Components/ui/twc-ui/form'
+import { FormGroup } from '@/Components/ui/twc-ui/form-group'
+import { TextField } from '@/Components/ui/twc-ui/text-field'
+import GuestLayout from '@/Layouts/GuestLayout'
 
 interface RegisterCredentialsProps {
   registrationData: {
@@ -31,31 +30,29 @@ interface RegisterCredentialsForm {
   hid: string
 }
 const RegisterCredentials: React.FC<RegisterCredentialsProps> = ({ registrationData }) => {
-  const form =
-    useForm<RegisterCredentialsForm & FormSchema>('credentials','post', route('cloud.register.credentials'), {
+  const form = useForm<RegisterCredentialsForm & FormSchema>(
+    'credentials',
+    'post',
+    route('cloud.register.credentials'),
+    {
       domain: registrationData.domain,
       email: registrationData.email,
       password: '',
       password_confirmation: '',
       hid: registrationData.hid
-    })
+    }
+  )
 
   const domain = import.meta.env.VITE_APP_URL.replace('https://', '')
 
   const registerCredentialsContent = (
     <AuthContainer title="Registrierung" maxWidth="md">
-        <Form form={form}>
+      <Form form={form}>
         <FormGroup>
           <div className="col-span-24">
+            <TextField label="Deine Subdomain" autoFocus {...form.register('domain')} />
 
-            <TextField
-              label="Deine Subdomain"
-              placeholder="www.example.com"
-              autoFocus
-              {...form.register('domain')}
-            />
-
-            <span className='inline-flex items-center rounded-r border border-gray-300 border-l-0 px-3 text-gray-500 sm:text-sm'>
+            <span className="inline-flex items-center rounded-r border border-gray-300 border-l-0 px-3 text-gray-500 sm:text-sm">
               {domain}
             </span>
           </div>
@@ -88,8 +85,8 @@ const RegisterCredentials: React.FC<RegisterCredentialsProps> = ({ registrationD
             />
           </div>
 
-          <div className='col-span-24 text-center text-sm'>
-            <p className='my-3 text-center font-medium text-base text-black'>
+          <div className="col-span-24 text-center text-sm">
+            <p className="my-3 text-center font-medium text-base text-black">
               Indem Du mit der Registrierung fortfährst, stimmst Du unseren&nbsp;
               <a href="/terms" className="underline underline-offset-4 hover:text-primary">
                 Nutzungsbedingungen
@@ -103,16 +100,11 @@ const RegisterCredentials: React.FC<RegisterCredentialsProps> = ({ registrationD
             </p>
           </div>
           <div className="col-span-24">
-            <Button
-              isLoading={form.processing}
-              form="credentials"
-              variant="default"
-              type="submit"
-            >
+            <Button isLoading={form.processing} form="credentials" variant="default" type="submit">
               Jetzt registrieren
             </Button>
           </div>
-          <div className='col-span-24 pt-4 text-center text-base'>
+          <div className="col-span-24 pt-4 text-center text-base">
             <span className="font-bold">Du hast bereits ein Konto?</span> Melde Dich auf Deiner
             ooboo-Subdomain an oder
             <a href="/terms" className="underline underline-offset-4 hover:text-primary">
@@ -120,7 +112,7 @@ const RegisterCredentials: React.FC<RegisterCredentialsProps> = ({ registrationD
             </a>
           </div>
         </FormGroup>
-        </Form>
+      </Form>
     </AuthContainer>
   )
 

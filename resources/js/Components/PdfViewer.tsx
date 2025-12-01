@@ -6,33 +6,14 @@
 import type { PDFDocumentProxy } from 'pdfjs-dist'
 import print from 'print-js'
 import type React from 'react'
-import { useMemo, useRef, useState } from 'react'
-import { Document, Page } from 'react-pdf'
-import { Separator } from '@/Components/twcui/separator'
+import { useRef, useState } from 'react'
 import { Dialog } from '@/Components/ui/twc-ui/dialog'
 import 'react-pdf/dist/Page/TextLayer.css'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
-import { LogoSpinner } from '@dspangenberg/twcui'
 
-// Import the worker setup
-
-import {
-  ArrowDown01Icon,
-  ArrowUp01Icon,
-  FileDownloadIcon,
-  PrinterIcon,
-  SearchAddIcon,
-  SearchMinusIcon,
-  SquareArrowDiagonal02Icon
-} from '@hugeicons/core-free-icons'
-import { pdfjs } from 'react-pdf'
 import { useFullscreen, useToggle } from 'react-use'
 import { PdfViewerContainer } from '@/Components/PdfViewerContainer'
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { useFileDownload } from '@/Hooks/useFileDownload'
-import { cn } from '@/Lib/utils'
 
 interface Props {
   document: string

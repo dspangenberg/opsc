@@ -1,4 +1,3 @@
-import { FormSelect } from '@dspangenberg/twcui'
 import React, { useState } from 'react'
 import {
   PaginationContent,
@@ -79,14 +78,6 @@ export const Pagination = <T,>({
             </PaginationItem>
           </PaginationContent>
         </ShadcnPagination>
-      </div>
-      <div className="flex flex-1 justify-end">
-        <FormSelect
-          options={options}
-          value={recordsPerPage}
-          className="w-auto"
-          onValueChange={(value: string) => setRecordsPerPage(value)}
-        />
       </div>
     </div>
   )

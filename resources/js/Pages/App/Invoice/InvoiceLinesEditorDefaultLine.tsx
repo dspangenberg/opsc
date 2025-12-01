@@ -66,7 +66,7 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
           <span className="px-3.5 font-medium text-sm">
             <PopoverTrigger>
               <Pressable>
-                <span className="cursor-pointer font-medium text-sm">
+                <span className="cursor-pointer font-medium text-sm underline decoration-dotted">
                   ({invoiceLine.service_period_begin} - {invoiceLine.service_period_end})
                 </span>
               </Pressable>

@@ -3,17 +3,16 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { AuthContainer } from '@/Components/AuthContainer'
-import GuestLayout from '@/Layouts/GuestLayout'
 import { Link } from '@inertiajs/react'
 import type React from 'react'
-import { Logo } from '@dspangenberg/twcui'
+import { AuthContainer } from '@/Components/AuthContainer'
+import { Logo } from '@/Components/ui/logo'
+import { Button } from '@/Components/ui/twc-ui/button'
+import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
 import { Form, useForm } from '@/Components/ui/twc-ui/form'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 import { TextField } from '@/Components/ui/twc-ui/text-field'
-import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
-import { Button } from '@/Components/ui/twc-ui/button'
-
+import GuestLayout from '@/Layouts/GuestLayout'
 
 interface LoginProps {
   status?: string
@@ -21,16 +20,11 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
-  const form = useForm<App.Data.LoginData>(
-    'auth-login-form',
-    'post',
-    route('login'),
-    {
-      email: '',
-      password: '',
-      remember: false
-    }
-  )
+  const form = useForm<App.Data.LoginData>('auth-login-form', 'post', route('login'), {
+    email: '',
+    password: '',
+    remember: false
+  })
 
   const loginContent = (
     <AuthContainer
@@ -59,10 +53,7 @@ const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
             />
 
             <div className="mt-1">
-              <Checkbox
-                {...form.registerCheckbox('remember')}
-                className="pt-1.5"
-              >
+              <Checkbox {...form.registerCheckbox('remember')} className="pt-1.5">
                 Angemeldet bleiben
               </Checkbox>
             </div>
@@ -72,7 +63,7 @@ const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
             {canResetPassword && (
               <Link
                 href={route('password.request')}
-                className='rounded-xs text-gray-600 text-sm underline hover:text-gray-900 '
+                className="rounded-xs text-gray-600 text-sm underline hover:text-gray-900"
               >
                 Kennwort vergessen?
               </Link>

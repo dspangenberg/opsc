@@ -1,7 +1,5 @@
 import type * as React from 'react'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 import { InvoiceLinesEditorLineContainer } from '@/Pages/App/Invoice/InvoiceLinesEditorLineContainer'
-import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 
 interface InvoiceLinesEditorLinkedInvoiceProps {
   invoiceLine: App.Data.InvoiceLineData

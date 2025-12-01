@@ -1,9 +1,9 @@
-import { DataCardField, DataCardFieldGroup } from '@/Components/DataCard'
-import { Button } from '@dspangenberg/twcui'
 import { Copy01Icon, PencilEdit02Icon } from '@hugeicons/core-free-icons'
 import type { FC } from 'react'
 import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
+import { DataCardField, DataCardFieldGroup } from '@/Components/DataCard'
+import { Button } from '@/Components/ui/twc-ui/button'
 
 interface Props {
   addresses: App.Data.ContactAddressData[]
