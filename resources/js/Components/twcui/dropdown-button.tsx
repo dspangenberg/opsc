@@ -20,7 +20,7 @@ import { ListBoxCollection, ListBoxSection } from '@/Components/jolly-ui/list-bo
 import { SelectPopover } from '@/Components/jolly-ui/select'
 import { Button, type buttonVariants } from '@/Components/ui/twc-ui/button'
 import { cn } from '@/Lib/utils'
-import { Icon, type IconType } from './icon'
+import { Icon, type IconType } from '@/Components/ui/twc-ui/icon'
 
 const MenuTrigger = AriaMenuTrigger
 

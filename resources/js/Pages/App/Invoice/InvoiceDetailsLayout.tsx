@@ -1,4 +1,5 @@
 import {
+  CashbackEuroIcon,
   Delete02Icon,
   DocumentValidationIcon,
   Edit03Icon,
@@ -19,7 +20,6 @@ import { router } from '@inertiajs/react'
 import print from 'print-js'
 import type * as React from 'react'
 import { useCallback, useMemo, useState } from 'react'
-import { Group } from 'react-aria-components'
 import { PageContainer } from '@/Components/PageContainer'
 import { PdfViewer } from '@/Components/PdfViewer'
 import {
@@ -30,7 +30,6 @@ import {
   MenuSubTrigger
 } from '@/Components/twcui/dropdown-button'
 import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
-import { Button } from '@/Components/ui/twc-ui/button'
 import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
 import { Toolbar, ToolbarButton } from '@/Components/ui/twc-ui/toolbar'
 import { useFileDownload } from '@/Hooks/useFileDownload'
@@ -185,13 +184,28 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} isDisabled={editMode}>
           {invoice.is_draft && (
             <>
+
               <MenuItem
                 icon={Edit03Icon}
                 title="Stammdaten bearbeiten"
                 ellipsis
-                separator
                 onAction={handleEditBaseDataButtonClick}
               />
+              <MenuItem
+                icon={EditTableIcon}
+                title="Positionen bearbeiten"
+                ellipsis
+                separator
+                onAction={() => setEditMode(true)}
+              />
+              {invoice.type_id === 3 && <MenuItem
+                icon={CashbackEuroIcon}
+                title="Mit Akonto-Zahlung verrechnen"
+                separator
+                isDisabled={invoice.type_id !== 3}
+                href={route('app.invoice.link-on-account-invoice', { invoice: invoice.id })}
+                ellipsis
+              />}
               <MenuItem
                 icon={DocumentValidationIcon}
                 title="Rechnung abschließen"
@@ -278,7 +292,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
         </DropdownButton>
       </Toolbar>
     ),
-    [editMode, handleDownload, invoice.sent_at, handleRelease, setEditMode, invoice]
+    [editMode, handleDownload, invoice.sent_at, handleRelease, setEditMode, invoice, invoice.type_id, invoice.id]
   )
 
   return (

@@ -34,6 +34,23 @@ export const InvoiceLinesEditor: React.FC<InvoiceLinesEditorProps> = ({ invoice 
     invoice
   )
 
+  const onSubmit = () => {
+    form.transform(data => ({
+      ...data,
+      lines
+    }))
+
+    form.submit({
+      preserveScroll: true,
+      onSuccess: () => {
+        setEditMode(false)
+      },
+      onError: () => {
+        setEditMode(true)
+      }
+    })
+  }
+
   return (
     <div className="flex flex-1 flex-col">
       {amountNet} {amountTax} {amountGross} Edit: {(editMode as boolean) ? 'true' : 'false'}{' '}
@@ -51,14 +68,7 @@ export const InvoiceLinesEditor: React.FC<InvoiceLinesEditorProps> = ({ invoice 
             {lines.map((line, index: number) => {
               switch (line.type_id) {
                 case 9:
-                  return (
-                    <InvoiceLinesEditorLinkedInvoice
-                      key={line.id}
-                      invoice={invoice}
-                      index={index}
-                      invoiceLine={line}
-                    />
-                  )
+                  return null
                 case 1:
                 case 2:
                 default:
@@ -120,9 +130,7 @@ export const InvoiceLinesEditor: React.FC<InvoiceLinesEditorProps> = ({ invoice 
           <Button variant="outline" onClick={() => setEditMode(false)}>
             Abbrechen
           </Button>
-          <Button type="submit" form={form.id}>
-            Speichern
-          </Button>
+          <Button onClick={onSubmit}>Speichern</Button>
         </div>
       </div>
     </div>

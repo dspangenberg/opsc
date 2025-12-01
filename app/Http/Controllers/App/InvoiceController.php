@@ -17,6 +17,7 @@ use App\Data\TaxData;
 use App\Data\TransactionData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceDetailsBaseUpdateRequest;
+use App\Http\Requests\InvoiceLinesUpdateRequest;
 use App\Http\Requests\InvoiceLineUpdateRequest;
 use App\Http\Requests\InvoiceStoreRequest;
 use App\Models\Contact;
@@ -235,9 +236,15 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function updateLines(Request $request, Invoice $invoice)
+    public function updateLines(InvoiceLinesUpdateRequest $request, Invoice $invoice)
     {
-       ds($request->lines);
+        $validatedLines = $request->validated('lines');
+
+        // Simply pass the validated array data to updatePositions
+        // The model will handle the data as arrays, not DTOs
+        $invoice->updatePositions($validatedLines);
+
+        return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
     public function destroy(Invoice $invoice)
@@ -607,6 +614,7 @@ class InvoiceController extends Controller
 
         $duplicatedLine = $invoiceLine->replicate();
         $duplicatedLine->pos = InvoiceLine::query()->where('invoice_id', $invoice->id)->where('pos', '<>', 999)->max('pos') + 1;
+
         return Inertia::modal('App/Invoice/InvoiceDetailsEditLine')
             ->with([
                 'invoice' => InvoiceData::from($invoice),
