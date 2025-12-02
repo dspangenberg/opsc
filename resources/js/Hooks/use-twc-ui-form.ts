@@ -146,56 +146,56 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
 
   // Neue registerDateRange Funktion für separate start/end Felder
   const registerDateRange = (startFieldName: string, endFieldName: string) => {
-    // Konvertiere die gespeicherten Werte zu RangeValue für DateRangePicker
-    const convertToRangeValue = (): RangeValue<string> | null => {
-      const startValue = (form.data as any)[startFieldName] as string
-      const endValue = (form.data as any)[endFieldName] as string
+      // Konvertiere die gespeicherten Werte zu RangeValue für DateRangePicker
+      const convertToRangeValue = (): RangeValue<string> | null => {
+        const startValue = (form.data as any)[startFieldName] as string
+        const endValue = (form.data as any)[endFieldName] as string
 
-      if (!startValue || !endValue) return null
+        if (!startValue || !endValue) return null
 
-      // Konvertiere beide Werte mit date-fns zu ISO-Format
-      const startISO = convertToISO(startValue)
-      const endISO = convertToISO(endValue)
+        // Konvertiere beide Werte mit date-fns zu ISO-Format
+        const startISO = convertToISO(startValue)
+        const endISO = convertToISO(endValue)
 
-      if (startISO && endISO) {
-        return { start: startISO, end: endISO }
+        if (startISO && endISO) {
+          return { start: startISO, end: endISO }
+        }
+
+        return null
       }
 
-      return null
-    }
+      const value = convertToRangeValue()
+      const error = (form.errors as any)[startFieldName] || (form.errors as any)[endFieldName]
 
-    const value = convertToRangeValue()
-    const error = (form.errors as any)[startFieldName] || (form.errors as any)[endFieldName]
+      return {
+        name: `${startFieldName}_${endFieldName}`,
+        value,
+        error,
+        onChange: (rangeValue: RangeValue<string> | null) => {
+          if (rangeValue) {
+            // Konvertiere von yyyy-MM-dd zurück zum konfigurierten Format mit date-fns
+            const startFormatted = convertFromISO(rangeValue.start)
+            const endFormatted = convertFromISO(rangeValue.end)
 
-    return {
-      name: `${startFieldName}_${endFieldName}`,
-      value,
-      error,
-      onChange: (rangeValue: RangeValue<string> | null) => {
-        if (rangeValue) {
-          // Konvertiere von yyyy-MM-dd zurück zum konfigurierten Format mit date-fns
-          const startFormatted = convertFromISO(rangeValue.start)
-          const endFormatted = convertFromISO(rangeValue.end)
-
-          setFormData(startFieldName, startFormatted)
-          setFormData(endFieldName, endFormatted)
-          validateFormField(startFieldName)
-          validateFormField(endFieldName)
-        } else {
-          setFormData(startFieldName, null)
-          setFormData(endFieldName, null)
+            setFormData(startFieldName, startFormatted)
+            setFormData(endFieldName, endFormatted)
+            validateFormField(startFieldName)
+            validateFormField(endFieldName)
+          } else {
+            setFormData(startFieldName, null)
+            setFormData(endFieldName, null)
+            validateFormField(startFieldName)
+            validateFormField(endFieldName)
+          }
+        },
+        onBlur: () => {
           validateFormField(startFieldName)
           validateFormField(endFieldName)
         }
-      },
-      onBlur: () => {
-        validateFormField(startFieldName)
-        validateFormField(endFieldName)
-      }
-    } as const
-  }
+      } as const
+    }
 
-  // Add isDirty to the form object
+    // Add isDirty to the form object
   ;(form as any).isDirty = isDirty
 
   return {

@@ -10,11 +10,11 @@ import {
   type TextProps as AriaTextProps,
   composeRenderProps
 } from 'react-aria-components'
-import { cn } from '@/Lib/utils'
 import { useFormContext } from './form'
+import { cn } from '@/Lib/utils'
 
 const labelVariants = cva([
-  'text-sm font-normal leading-none text-foreground',
+  'text-sm font-normal leading-none',
   /* Disabled */
   'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70',
   /* Invalid */
@@ -37,10 +37,10 @@ const Label = ({ className, children, value, isRequired = false, ...props }: Lab
   )
 }
 
-function FormDescription({ className, ...props }: AriaTextProps) {
+function FieldDescription({ className, ...props }: AriaTextProps) {
   return (
     <AriaText
-      className={cn('text-muted-foreground text-xs', className)}
+      className={cn('text-xs text-muted-foreground', className)}
       {...props}
       slot="description"
     />
@@ -73,9 +73,9 @@ const fieldGroupVariants = cva('', {
   variants: {
     variant: {
       default: [
-        'relative flex h-9 w-full outline-0 items-center overflow-hidden rounded-sm border border-input bg-background px-3 py-1 text-base font-medium shadow-none transition-colors',
+        'relative flex h-9 w-full items-center overflow-hidden rounded-sm border border-input bg-background px-3 py-1 text-base font-medium shadow-none transition-colors',
         /* Focus Within */
-        'focus-visible:border-primary focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/20',
+        'focus:border-primary focus-within:border-primary focus-within:ring-[3px] focus-within:ring-primary/20',
         'data-[invalid]:focus-within:ring-destructive/20  data-[invalid]:focus-within:border-destructive  data-[invalid]:border-destructive',
         /* Disabled */
         'data-[disabled]:opacity-50'
@@ -101,12 +101,4 @@ function FieldGroup({ className, variant, ...props }: GroupProps) {
   )
 }
 
-export {
-  Label,
-  labelVariants,
-  BaseFieldError,
-  FieldGroup,
-  fieldGroupVariants,
-  FieldError,
-  FormDescription
-}
+export { Label, labelVariants, FieldGroup, fieldGroupVariants, BaseFieldError, FieldError, FieldDescription }

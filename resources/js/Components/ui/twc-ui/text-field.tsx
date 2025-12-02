@@ -1,4 +1,3 @@
-import { useEffect, useRef } from 'react'
 import {
   Input as AriaInput,
   type InputProps as AriaInputProps,
@@ -9,20 +8,23 @@ import {
   composeRenderProps,
   Text
 } from 'react-aria-components'
+import { useFormContext } from './form'
 import { cn } from '@/Lib/utils'
 import { FieldError, Label } from './field'
-import { useFormContext } from './form'
 
 const BaseTextField = AriaTextField
 
-const Input = ({ className, ...props }: AriaInputProps) => {
+const Input = ({
+  className,
+  ...props
+}: AriaInputProps) => {
   return (
     <AriaInput
       className={composeRenderProps(className, className =>
         cn(
           'flex h-9 w-full rounded-sm border border-input bg-transparent px-3 py-1 font-medium text-sm shadow-none outline-0 transition-colors file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground',
           /* Disabled */
-          'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
+          'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 ',
           /* Focused */
           /* Resets */
           'focus:border-primary focus:ring-[3px] focus:ring-primary/20',
@@ -37,46 +39,26 @@ const Input = ({ className, ...props }: AriaInputProps) => {
 }
 
 interface TextAreaProps extends AriaTextAreaProps {
-  rows?: number
   autoSize?: boolean
 }
 
-const TextArea = ({ className, autoSize = false, rows = 2, ...props }: TextAreaProps) => {
-  const textAreaRef = useRef<HTMLTextAreaElement>(null)
-
-  useEffect(() => {
-    if (autoSize && textAreaRef.current) {
-      const adjustHeight = () => {
-        const textarea = textAreaRef.current
-        if (textarea) {
-          textarea.style.height = 'auto'
-          textarea.style.height = `${textarea.scrollHeight}px`
-        }
-      }
-
-      adjustHeight()
-
-      const textarea = textAreaRef.current
-      textarea.addEventListener('input', adjustHeight)
-
-      return () => textarea.removeEventListener('input', adjustHeight)
-    }
-  }, [autoSize, props.value])
-
+const TextArea = ({
+  className,
+  autoSize = false,
+  ...props
+}: TextAreaProps) => {
   return (
     <AriaTextArea
-      ref={textAreaRef}
-      rows={rows}
       className={composeRenderProps(className, className =>
         cn(
-          'flex min-h-[40px] w-full rounded-sm border border-input bg-transparent px-3 py-1 font-medium text-sm shadow-none outline-0 transition-colors file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground',
+          'flex h-9 min-h-[80px] w-full rounded-sm border border-input bg-transparent px-3 py-1 font-medium text-sm shadow-none outline-0 transition-colors file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground',
           /* Disabled */
           'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
           /* Focused */
           /* Resets */
           'focus:border-primary focus:ring-[3px] focus:ring-primary/20',
           'data-[invalid]:border-destructive data-[invalid]:focus:border-destructive data-[invalid]:focus:ring-destructive/20',
-          autoSize ? 'resize-none overflow-hidden' : '',
+          autoSize ? 'field-sizing-content min-h-[80px] resize-none' : 'h-9 min-h-[80px]',
           className
         )
       )}
@@ -99,7 +81,7 @@ interface TextFieldProps extends Omit<AriaTextFieldProps, 'value' | 'onChange'> 
   autoComplete?: string
 }
 
-function TextField({
+function TextField ({
   label,
   description,
   textArea,
@@ -138,11 +120,8 @@ function TextField({
       {...props}
     >
       {label && <Label isRequired={isRequired} value={label} />}
-      {textArea ? (
-        <TextArea rows={rows} autoSize={autoSize} autoComplete={autoComplete} />
-      ) : (
-        <Input autoComplete={autoComplete} />
-      )}
+      {textArea ? <TextArea rows={rows} autoSize={autoSize} autoComplete={autoComplete} /> :
+        <Input autoComplete={autoComplete} />}
       {description && (
         <Text className="text-muted-foreground text-sm" slot="description">
           {description}
