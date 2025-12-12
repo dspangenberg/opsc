@@ -6,11 +6,11 @@ import {
   TextField as AriaTextField,
   type TextFieldProps as AriaTextFieldProps,
   composeRenderProps,
-  Text
 } from 'react-aria-components'
 import { useFormContext } from './form'
 import { cn } from '@/Lib/utils'
-import { FieldError, Label } from './field'
+import { FieldError, FormFieldError, Label, FieldDescription } from './field'
+import React from 'react'
 
 const BaseTextField = AriaTextField
 
@@ -22,13 +22,13 @@ const Input = ({
     <AriaInput
       className={composeRenderProps(className, className =>
         cn(
-          'flex h-9 w-full rounded-sm border border-input bg-transparent px-3 py-1 font-medium text-sm shadow-none outline-0 transition-colors file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground',
+          'flex h-9 w-full rounded-sm border border-input bg-transparent px-3 py-1 font-medium shadow-none outline-0 transition-colors file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground',
           /* Disabled */
-          'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 ',
+          'data-disabled:cursor-not-allowed data-disabled:opacity-50 ',
           /* Focused */
           /* Resets */
           'focus:border-primary focus:ring-[3px] focus:ring-primary/20',
-          'data-[invalid]:border-destructive data-[invalid]:focus:border-destructive data-[invalid]:focus:ring-destructive/20',
+          'data-invalid:border-destructive data-invalid:focus:border-destructive data-invalid:focus:ring-destructive/20',
           className
         )
       )}
@@ -38,27 +38,29 @@ const Input = ({
   )
 }
 
-interface TextAreaProps extends AriaTextAreaProps {
+interface RACTextAreaProps extends AriaTextAreaProps {
   autoSize?: boolean
+  rows?: number
 }
 
-const TextArea = ({
+const RACTextarea = ({
   className,
-  autoSize = false,
+  autoSize = true,
+  rows = 2,
   ...props
-}: TextAreaProps) => {
+}: RACTextAreaProps) => {
   return (
     <AriaTextArea
       className={composeRenderProps(className, className =>
         cn(
-          'flex h-9 min-h-[80px] w-full rounded-sm border border-input bg-transparent px-3 py-1 font-medium text-sm shadow-none outline-0 transition-colors file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground',
+          'flex w-full rounded-sm border border-input bg-transparent px-3 py-1 font-medium shadow-none outline-0 transition-colors file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground',
           /* Disabled */
-          'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
+          'data-disabled:cursor-not-allowed data-disabled:opacity-50',
           /* Focused */
           /* Resets */
           'focus:border-primary focus:ring-[3px] focus:ring-primary/20',
-          'data-[invalid]:border-destructive data-[invalid]:focus:border-destructive data-[invalid]:focus:ring-destructive/20',
-          autoSize ? 'field-sizing-content min-h-[80px] resize-none' : 'h-9 min-h-[80px]',
+          'data-invalid:border-destructive data-invalid:focus:border-destructive data-invalid:focus:ring-destructive/20',
+          autoSize ? 'field-sizing-content min-h-20 ' : 'h-9 min-h-20 resize-none',
           className
         )
       )}
@@ -72,8 +74,10 @@ interface TextFieldProps extends Omit<AriaTextFieldProps, 'value' | 'onChange'> 
   description?: string
   textArea?: boolean
   rows?: number
+  placeholder?: string
   autoSize?: boolean
   onChange?: ((value: string | null) => void) | ((value: string) => void)
+  errorComponent?: React.ComponentType<{ children?: React.ReactNode }>
   name?: string
   value?: string | null | undefined
   error?: string | undefined
@@ -81,21 +85,21 @@ interface TextFieldProps extends Omit<AriaTextFieldProps, 'value' | 'onChange'> 
   autoComplete?: string
 }
 
-function TextField ({
+const TextField = ({
   label,
   description,
   textArea,
   isRequired = false,
-  autoSize = false,
-  rows = 3,
   className,
   autoComplete = 'off',
+  placeholder = '',
   onChange,
+  errorComponent: ErrorComponent = FieldError,
   value,
+  error,
   ...props
-}: TextFieldProps) {
-  const form = useFormContext()
-  const error = form?.errors?.[props.name as string] || props.error
+}: TextFieldProps) => {
+
   const hasError = !!error
 
   const handleChange = (val: string) => {
@@ -112,7 +116,7 @@ function TextField ({
   return (
     <AriaTextField
       className={composeRenderProps(className, className =>
-        cn('group flex flex-col gap-1.5', className)
+        cn('group flex flex-col gap-1.5  text-sm ', className)
       )}
       isInvalid={hasError}
       value={value ?? undefined}
@@ -120,16 +124,99 @@ function TextField ({
       {...props}
     >
       {label && <Label isRequired={isRequired} value={label} />}
-      {textArea ? <TextArea rows={rows} autoSize={autoSize} autoComplete={autoComplete} /> :
-        <Input autoComplete={autoComplete} />}
+      <Input autoComplete={autoComplete} placeholder={placeholder}/>
       {description && (
-        <Text className="text-muted-foreground text-sm" slot="description">
+        <FieldDescription>
           {description}
-        </Text>
+        </FieldDescription>
       )}
-      <FieldError>{error}</FieldError>
+      <ErrorComponent>{error}</ErrorComponent>
     </AriaTextField>
   )
 }
 
-export { Input, TextField, BaseTextField, TextArea }
+interface TextAreaProps extends Omit<AriaTextFieldProps, 'value' | 'onChange'> {
+  label?: string
+  description?: string
+  rows?: number
+  placeholder?: string
+  autoSize?: boolean
+  onChange?: ((value: string | null) => void) | ((value: string) => void)
+  errorComponent?: React.ComponentType<{ children?: React.ReactNode }>
+  name?: string
+  value?: string | null | undefined
+  error?: string | undefined
+  onBlur?: () => void
+  autoComplete?: string
+}
+
+const TextAreaField = ({
+  label,
+  description,
+  isRequired = false,
+  autoSize = true,
+  rows = 3,
+  className,
+  autoComplete = 'off',
+  placeholder = '',
+  onChange,
+  errorComponent: ErrorComponent = FieldError,
+  error,
+  value,
+  ...props
+}: TextAreaProps) => {
+
+  const hasError = !!error
+
+  const handleChange = (val: string) => {
+    if (onChange) {
+      try {
+        onChange(val || '')
+      } catch {
+        // If not, use the string directly
+        ;(onChange as (value: string) => void)(val)
+      }
+    }
+  }
+
+  return (
+    <AriaTextField
+      className={composeRenderProps(className, className =>
+        cn('group flex flex-col gap-1.5  text-sm ', className)
+      )}
+      isInvalid={hasError}
+      value={value ?? undefined}
+      onChange={handleChange}
+      {...props}
+    >
+      {label && <Label isRequired={isRequired} value={label} />}
+      <RACTextarea rows={rows} autoSize={autoSize} autoComplete={autoComplete} />
+      {description && (
+        <FieldDescription>
+          {description}
+        </FieldDescription>
+      )}
+      <ErrorComponent>{error}</ErrorComponent>
+    </AriaTextField>
+  )
+}
+const FormTextField = ({ ...props}: TextFieldProps) => {
+  const form = useFormContext()
+  const error = form?.errors?.[props.name as string]
+
+  return (
+    <TextField errorComponent={FormFieldError} error={error} {...props} />
+  )
+}
+
+const FormTextAreaField = ({ ...props}: TextFieldProps) => {
+  const form = useFormContext()
+  const error = form?.errors?.[props.name as string]
+
+  return (
+    <TextAreaField errorComponent={FormFieldError} error={error} {...props} />
+  )
+}
+
+
+export { Input, TextField, FormTextField, BaseTextField, TextAreaField, FormTextAreaField }

@@ -13,7 +13,7 @@ interface Props {
 export const FormErrors: React.FC<Props> = ({
   errors,
   showErrors = true,
-  title = 'Oobs! Something went wrong:'
+  title = 'Something went wrong'
 }) => {
   const errorMessages = useMemo(() => {
     if (!errors) return []
@@ -59,6 +59,5 @@ export const FormErrors: React.FC<Props> = ({
         )}
       </div>
     </div>
-    
   )
 }

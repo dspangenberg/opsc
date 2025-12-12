@@ -7,9 +7,10 @@ import {
   composeRenderProps,
   Text,
 } from "react-aria-components"
-import { cn } from "@/Lib/utils"
-import { FieldError, Label, labelVariants } from "./field"
 import { useFormContext } from './form'
+import { cn } from "@/Lib/utils"
+
+import { FieldError, Label, labelVariants } from "./field"
 
 const BaseRadioGroup = AriaRadioGroup
 
@@ -45,13 +46,11 @@ const Radio = ({ className, children, ...props }: AriaRadioProps) => (
         >
           {renderProps.isSelected && (
             <svg
-              width="6"
-              height="6"
+              className="size-2.5 fill-current"
               viewBox="0 0 6 6"
-              fill="currentcolor"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <title>Selected radio</title>
+              <title>Radio selected</title>
               <circle cx="3" cy="3" r="3" />
             </svg>
           )}
@@ -72,7 +71,7 @@ interface RadioGroupProps<T extends Record<string, unknown>> {
   itemName?: keyof T & string
   itemValue?: keyof T & string
   value?: string | number | null | undefined
-  onChange: (value: number | null) => void // Geändert von string | number | null zu number | null
+  onChange: (value: string | number | null) => void
   onBlur?: () => void
   isOptional?: boolean
   optionalValue?: string
@@ -103,7 +102,7 @@ const RadioGroup = <T extends Record<string, unknown>>({
 }: RadioGroupProps<T>) => {
   const form = useFormContext()
   const error = form?.errors?.[name as string] || props.error
-  const hasError = !!error
+  const realHasError = !!error
 
   const itemsWithOptional = isOptional
     ? [
@@ -116,8 +115,8 @@ const RadioGroup = <T extends Record<string, unknown>>({
     : Array.from(items)
 
   const handleSelectionChange = (selectedValue: string) => {
-    // Immer zu number | null konvertieren
-    const numericValue = selectedValue === 'null' ? null : Number(selectedValue)
+    const numericValue = selectedValue === 'null' ? null :
+      !Number.isNaN(Number(selectedValue)) ? Number(selectedValue) : selectedValue
     onChange(numericValue)
   }
 
@@ -156,7 +155,7 @@ const RadioGroup = <T extends Record<string, unknown>>({
           className
         )
       )}
-      isInvalid={hasError}
+      isInvalid={realHasError}
       value={selectedKey}
       onChange={handleSelectionChange}
       orientation={orientation}

@@ -1,25 +1,24 @@
-import type * as React from 'react'
+import type * as React from "react"
 import {
   Checkbox as AriaCheckbox,
   CheckboxGroup as AriaCheckboxGroup,
   type CheckboxGroupProps as AriaCheckboxGroupProps,
   type CheckboxProps as AriaCheckboxProps,
   type ValidationResult as AriaValidationResult,
+  composeRenderProps,
   Text,
-  composeRenderProps
-} from 'react-aria-components'
+} from "react-aria-components"
 
-import { cn } from '@/Lib/utils'
+import { cn } from "@/Lib/utils"
 
-import { FieldError, Label, labelVariants } from './field'
-import { useFormContext } from './form'
+import { FieldError, Label, labelVariants } from "./field"
 
 interface CheckboxProps {
   label?: string
   name: string
   className?: string
   autoFocus?: boolean
-  error?: string
+  hasError?: boolean
   isIndeterminate?: boolean
   isSelected?: boolean
   isDisabled?: boolean
@@ -33,9 +32,9 @@ const BaseCheckboxGroup = AriaCheckboxGroup
 
 const BaseCheckbox = ({ className, children, ...props }: AriaCheckboxProps) => (
   <AriaCheckbox
-    className={composeRenderProps(className, className =>
+    className={composeRenderProps(className, (className) =>
       cn(
-        'group/checkbox flex items-center gap-x-2',
+        "group/checkbox flex items-center gap-x-2",
         /* Disabled */
         'items-center data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70',
         labelVariants,
@@ -50,15 +49,15 @@ const BaseCheckbox = ({ className, children, ...props }: AriaCheckboxProps) => (
           className={cn(
             'flex size-4 shrink-0 items-center justify-center rounded-sm border border-input text-base text-current',
             /* Focus Visible */
-            'group-data-[focus-visible]/checkbox:outline-none group-data-[focus-visible]/checkbox:ring-1 group-data-[focus-visible]/checkbox:ring-ring',
+            "group-data-[focus-visible]/checkbox:outline-none group-data-[focus-visible]/checkbox:ring-1 group-data-[focus-visible]/checkbox:ring-ring",
             /* Selected */
             'group-data-[indeterminate]/checkbox:bg-primary group-data-[selected]/checkbox:bg-primary group-data-[indeterminate]/checkbox:text-primary-foreground group-data-[selected]/checkbox:text-primary-foreground',
             /* Disabled */
-            'group-data-[disabled]/checkbox:cursor-not-allowed group-data-[disabled]/checkbox:opacity-50',
+            "group-data-[disabled]/checkbox:cursor-not-allowed group-data-[disabled]/checkbox:opacity-50",
             /* Invalid */
             'group-data-[invalid]/checkbox:group-data-[selected]/checkbox:bg-destructive group-data-[invalid]/checkbox:group-data-[selected]/checkbox:text-destructive-foreground group-data-[invalid]/checkbox:border-destructive',
             /* Resets */
-            'focus-visible:outline-none'
+            "focus-visible:outline-none"
           )}
         >
           {renderProps.isIndeterminate ? (
@@ -93,9 +92,7 @@ const BaseCheckbox = ({ className, children, ...props }: AriaCheckboxProps) => (
             </svg>
           ) : null}
         </div>
-        <Label htmlFor="props.name" className="font-medium">
-          {children}
-        </Label>
+        <Label htmlFor="props.name" className="font-medium">{children}</Label>
       </>
     ))}
   </AriaCheckbox>
@@ -116,12 +113,12 @@ const CheckboxGroup = ({
   ...props
 }: CheckboxGroupProps) => (
   <BaseCheckboxGroup
-    className={composeRenderProps(className, className =>
-      cn('group flex flex-col gap-2', className)
+    className={composeRenderProps(className, (className) =>
+      cn("group flex flex-col gap-2", className)
     )}
     {...props}
   >
-    {composeRenderProps(children, children => (
+    {composeRenderProps(children, (children) => (
       <>
         <Label>{label}</Label>
         {children}
@@ -141,20 +138,16 @@ const Checkbox = ({
   name,
   className = '',
   autoFocus = false,
+  hasError = false,
   isSelected,
   isIndeterminate = false,
-  isDisabled = false,
   onChange,
   onBlur,
   checked,
-  children,
-  ...props
+  children
 }: CheckboxProps) => {
   // Use checked as fallback if isSelected is not set
   const actualIsSelected = isSelected !== undefined ? isSelected : !!checked
-  const form = useFormContext()
-  const error = form?.errors?.[name as string] || props.error
-  const hasError = !!error
 
   return (
     <AriaCheckbox
@@ -162,12 +155,11 @@ const Checkbox = ({
       onBlur={onBlur}
       isSelected={actualIsSelected}
       isIndeterminate={isIndeterminate}
-      isDisabled={isDisabled}
       autoFocus={autoFocus}
       name={name}
-      className={composeRenderProps(className, className =>
+      className={composeRenderProps(className, (className) =>
         cn(
-          'group/checkbox flex items-center gap-x-2',
+          "group/checkbox flex items-center gap-x-2",
           'items-center data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70',
           labelVariants,
           className
@@ -181,15 +173,15 @@ const Checkbox = ({
             className={cn(
               'flex size-4 shrink-0 items-center justify-center rounded-sm border border-input text-base text-current',
               /* Focus Visible */
-              'group-data-[focus-visible]/checkbox:outline-none group-data-[focus-visible]/checkbox:ring-1 group-data-[focus-visible]/checkbox:ring-ring',
+              "group-data-[focus-visible]/checkbox:outline-none group-data-[focus-visible]/checkbox:ring-1 group-data-[focus-visible]/checkbox:ring-ring",
               /* Selected */
               'group-data-[indeterminate]/checkbox:bg-primary group-data-[selected]/checkbox:bg-primary group-data-[indeterminate]/checkbox:text-primary-foreground group-data-[selected]/checkbox:text-primary-foreground',
               /* Disabled */
-              'group-data-[disabled]/checkbox:cursor-not-allowed group-data-[disabled]/checkbox:opacity-50',
+              "group-data-[disabled]/checkbox:cursor-not-allowed group-data-[disabled]/checkbox:opacity-50",
               /* Invalid */
               'group-data-[invalid]/checkbox:group-data-[selected]/checkbox:bg-destructive group-data-[invalid]/checkbox:group-data-[selected]/checkbox:text-destructive-foreground group-data-[invalid]/checkbox:border-destructive',
               /* Resets */
-              'focus-visible:outline-none'
+              "focus-visible:outline-none"
             )}
           >
             {renderProps.isIndeterminate ? (
@@ -224,9 +216,7 @@ const Checkbox = ({
               </svg>
             ) : null}
           </div>
-          <Label htmlFor={name} className="font-medium">
-            {children}
-          </Label>
+          <Label htmlFor={name} className="font-medium">{children}</Label>
         </>
       ))}
     </AriaCheckbox>

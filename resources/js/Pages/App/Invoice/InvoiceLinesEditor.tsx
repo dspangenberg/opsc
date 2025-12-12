@@ -15,14 +15,17 @@ import { Button } from '@/Components/ui/twc-ui/button'
 import { Form, useForm } from '@/Components/ui/twc-ui/form'
 import { InvoiceLinesEditorDefaultLine } from '@/Pages/App/Invoice/InvoiceLinesEditorDefaultLine'
 import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
-import { InvoiceLinesEditorLinkedInvoice } from './InvoiceLinesEditorLinkedInvoice'
+import { InvoiceLinesEditorCaptionLine } from './InvoiceLinesEditorCaptionLine'
+import { InvoiceLinesEditorLineContainer } from './InvoiceLinesEditorLineContainer'
+import { InvoiceLinesEditorTextLine } from './InvoiceLinesEditorTextLine'
 
 interface InvoiceLinesEditorProps {
   invoice: App.Data.InvoiceData
 }
 
 export const InvoiceLinesEditor: React.FC<InvoiceLinesEditorProps> = ({ invoice }) => {
-  const { amountNet, amountTax, amountGross, editMode, setEditMode, lines } = useInvoiceTable()
+  const { amountNet, amountTax, amountGross, editMode, setEditMode, lines, addLine } =
+    useInvoiceTable()
 
   const form = useForm<App.Data.InvoiceData>(
     'app.invoice.lines-update',
@@ -63,14 +66,30 @@ export const InvoiceLinesEditor: React.FC<InvoiceLinesEditorProps> = ({ invoice 
           <div className="col-span-4">Gesamtpreis</div>
           <div>USt.</div>
         </div>
-        <Form form={form}>
+        <Form form={form} errorVariant="field">
           <div className="divide-y">
             {lines.map((line, index: number) => {
               switch (line.type_id) {
                 case 9:
                   return null
-                case 1:
                 case 2:
+                  return (
+                    <InvoiceLinesEditorCaptionLine
+                      key={line.id}
+                      invoice={invoice}
+                      index={index}
+                      invoiceLine={line}
+                    />
+                  )
+                case 4:
+                  return (
+                    <InvoiceLinesEditorTextLine
+                      key={line.id}
+                      invoice={invoice}
+                      index={index}
+                      invoiceLine={line}
+                    />
+                  )
                 default:
                   return (
                     <InvoiceLinesEditorDefaultLine
@@ -100,30 +119,21 @@ export const InvoiceLinesEditor: React.FC<InvoiceLinesEditorProps> = ({ invoice 
             icon={ChevronDown}
             className="!rounded-l-none !border-l-0 p-1"
           >
-            <MenuItem icon={CalculatorIcon} title="Standard-Rechnungsposition" ellipsis />
+            <MenuItem
+              icon={CalculatorIcon}
+              title="Standard-Rechnungsposition"
+              onClick={() => addLine(1)}
+            />
             <MenuItem
               icon={FirstBracketIcon}
               title="Überschreibarer Gesamtpreis"
-              ellipsis
               separator
+              onClick={() => addLine(3)}
             />
 
-            <MenuItem icon={HeadingIcon} title="Überschrift" ellipsis isDisabled />
-            <MenuItem icon={TextAlignJustifyLeftIcon} title="Text" ellipsis isDisabled />
-            <MenuItem
-              icon={TextVerticalAlignmentIcon}
-              title="Seitenumbruch"
-              ellipsis
-              separator
-              isDisabled
-            />
-            <MenuItem
-              icon={CashbackEuroIcon}
-              title="Mit Akonto-Zahlung verrechnen"
-              isDisabled={invoice.type_id !== 3}
-              href={route('app.invoice.link-on-account-invoice', { invoice: invoice.id })}
-              ellipsis
-            />
+            <MenuItem icon={HeadingIcon} title="Überschrift" onClick={() => addLine(2)} />
+            <MenuItem icon={TextAlignJustifyLeftIcon} title="Text" onClick={() => addLine(4)} />
+            <MenuItem icon={TextVerticalAlignmentIcon} title="Seitenumbruch" isDisabled />
           </DropdownButton>
         </div>
         <div className="flex-none items-center justify-end space-x-2 px-2">

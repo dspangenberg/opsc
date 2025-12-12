@@ -124,7 +124,11 @@ class Invoice extends Model implements MediableInterface
             ->with('contact.tax')
             ->with('payment_deadline')
             ->with('type')
-            ->with('lines', 'lines.rate')
+            ->with([
+                'lines' => function ($query) {
+                    $query->with('rate')->orderBy('pos');
+                },
+            ])
             ->withSum('lines', 'amount')
             ->withSum('lines', 'tax')
             ->where('id', $invoice->id)
