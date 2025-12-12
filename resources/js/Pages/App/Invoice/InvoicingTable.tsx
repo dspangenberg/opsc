@@ -414,6 +414,19 @@ export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
         <TableCell colSpan={3} className="font-medium text-lg">
           {line.text}
         </TableCell>
+        <TableCell colSpan={3} />
+      </TableRow>
+    )
+  }
+
+  if (line.type_id === 4) {
+    return (
+      <TableRow>
+        <TableCell colSpan={3} />
+        <TableCell colSpan={3} className="font-medium">
+          {line.text}
+        </TableCell>
+        <TableCell colSpan={3} />
       </TableRow>
     )
   }

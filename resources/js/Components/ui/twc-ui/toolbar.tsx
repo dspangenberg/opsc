@@ -9,7 +9,7 @@ import {
 import { cn } from '@/Lib/utils'
 import { Button, type ButtonProps } from './button'
 
-const toolbarVariants = cva('flex gap-2 data-[orientation=vertical]:flex-col', {
+const toolbarVariants = cva('flex gap-1.5 data-[orientation=vertical]:flex-col py-1', {
   variants: {
     variant: {
       default: '[&>button_svg]:text-primary',

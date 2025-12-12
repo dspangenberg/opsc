@@ -1,12 +1,12 @@
 import { format, parseISO } from 'date-fns'
 import type * as React from 'react'
+import { useEffect } from 'react'
 import { DateRangePicker } from '@/Components/ui/twc-ui/date-picker'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 import { NumberField } from '@/Components/ui/twc-ui/number-field'
 import { TextField } from '@/Components/ui/twc-ui/text-field'
 import { InvoiceLinesEditorLineContainer } from '@/Pages/App/Invoice/InvoiceLinesEditorLineContainer'
 import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
-import { useEffect } from 'react'
 
 interface InvoiceLinesEditorProps {
   invoiceLine: App.Data.InvoiceLineData
@@ -62,31 +62,30 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
             onChange={(value: string) => updateLine(invoiceLine.id as number, { text: value })}
           />
 
-                  <DateRangePicker
-                    aria-label="Leistungsdatum"
-                    value={
-                      invoiceLine.service_period_begin && invoiceLine.service_period_end
-                        ? {
-                            start: invoiceLine.service_period_begin,
-                            end: invoiceLine.service_period_end
-                          }
-                        : undefined
-                    }
-                    onChange={range => {
-                      if (!invoiceLine.id) return
+          <DateRangePicker
+            aria-label="Leistungsdatum"
+            value={
+              invoiceLine.service_period_begin && invoiceLine.service_period_end
+                ? {
+                    start: invoiceLine.service_period_begin,
+                    end: invoiceLine.service_period_end
+                  }
+                : undefined
+            }
+            onChange={range => {
+              if (!invoiceLine.id) return
 
-                      const formatDate = (date: any) => {
-                        if (!date) return null
-                        return format(parseISO(date), 'dd.MM.yyyy')
-                      }
+              const formatDate = (date: any) => {
+                if (!date) return null
+                return format(parseISO(date), 'dd.MM.yyyy')
+              }
 
-                      updateLine(invoiceLine.id, {
-                        service_period_begin: formatDate(range?.start),
-                        service_period_end: formatDate(range?.end)
-                      })
-                    }}
-                  />
-
+              updateLine(invoiceLine.id, {
+                service_period_begin: formatDate(range?.start),
+                service_period_end: formatDate(range?.end)
+              })
+            }}
+          />
         </div>
         <div className="col-span-4">
           <NumberField
@@ -100,7 +99,7 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
         <div className="col-span-4">
           <NumberField
             aria-label="Gesamtbetrag"
-            isDisabled={invoice.type_id !== 2}
+            isDisabled={invoiceLine.type_id === 1}
             value={invoiceLine.amount}
             onChange={(value: number | null) =>
               updateLine(invoiceLine.id as number, { amount: value ?? 0 })

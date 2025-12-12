@@ -24,6 +24,7 @@ class TaxData extends Data
         public readonly bool $needs_vat_id,
         public readonly bool $is_default,
         public readonly float $value,
+        public readonly int $default_rate_id,
 
         /** @var TaxRateData[] */
         public readonly ?array $rates,

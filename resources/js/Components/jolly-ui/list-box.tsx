@@ -1,4 +1,4 @@
-import { CheckIcon } from "@radix-ui/react-icons"
+import { CheckIcon } from '@radix-ui/react-icons'
 import {
   Collection as AriaCollection,
   Header as AriaHeader,
@@ -7,27 +7,24 @@ import {
   type ListBoxItemProps as AriaListBoxItemProps,
   type ListBoxProps as AriaListBoxProps,
   Section as AriaSection,
-  composeRenderProps,
-} from "react-aria-components"
+  composeRenderProps
+} from 'react-aria-components'
 
-import { cn } from "@/Lib/utils"
+import { cn } from '@/Lib/utils'
 
 const ListBoxSection = AriaSection
 
 const ListBoxCollection = AriaCollection
 
-function ListBox<T extends object>({
-  className,
-  ...props
-}: AriaListBoxProps<T>) {
+function ListBox<T extends object>({ className, ...props }: AriaListBoxProps<T>) {
   return (
     <AriaListBox
-      className={composeRenderProps(className, (className) =>
+      className={composeRenderProps(className, className =>
         cn(
           className,
-          "group overflow-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md outline-none",
+          'group overflow-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md outline-none',
           /* Empty */
-          "data-[empty]:p-6 data-[empty]:text-center data-[empty]:text-sm"
+          'data-[empty]:p-6 data-[empty]:text-center data-[empty]:text-sm'
         )
       )}
       {...props}
@@ -40,24 +37,22 @@ const ListBoxItem = <T extends object>({
   children,
   id,
   ...props
-}: Omit<AriaListBoxItemProps<T>, 'id'> & { id?: number }) => {
+}: Omit<AriaListBoxItemProps<T>, 'id'> & { id?: string | number }) => {
   return (
     <AriaListBoxItem
-      textValue={
-        props.textValue || (typeof children === "string" ? children : undefined)
-      }
+      textValue={props.textValue}
       id={id}
-      className={composeRenderProps(className, (className) =>
+      className={composeRenderProps(className, className =>
         cn(
-          "relative flex pointer-events-auto w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
+          'pointer-events-auto relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none',
           /* Disabled */
-          "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+          'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
           /* Focused */
-          "data-[focused]:bg-accent data-[focused]:text-accent-foreground",
+          'data-[focused]:bg-accent data-[focused]:text-accent-foreground',
           /* Hovered */
-          "data-[hovered]:bg-accent data-[hovered]:text-accent-foreground",
+          'data-[hovered]:bg-accent data-[hovered]:text-accent-foreground',
           /* Selection */
-          "data-[selection-mode]:pl-8",
+          'data-[selection-mode]:pl-8',
           className
         )
       )}
@@ -77,22 +72,8 @@ const ListBoxItem = <T extends object>({
   )
 }
 
-function ListBoxHeader({
-  className,
-  ...props
-}: React.ComponentProps<typeof AriaHeader>) {
-  return (
-    <AriaHeader
-      className={cn("px-2 py-1.5 text-sm font-semibold", className)}
-      {...props}
-    />
-  )
+function ListBoxHeader({ className, ...props }: React.ComponentProps<typeof AriaHeader>) {
+  return <AriaHeader className={cn('px-2 py-1.5 font-semibold text-sm', className)} {...props} />
 }
 
-export {
-  ListBox,
-  ListBoxItem,
-  ListBoxHeader,
-  ListBoxSection,
-  ListBoxCollection,
-}
+export { ListBox, ListBoxItem, ListBoxHeader, ListBoxSection, ListBoxCollection }

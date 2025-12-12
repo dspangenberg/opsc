@@ -9,10 +9,10 @@ import {
   composeRenderProps,
   Text
 } from 'react-aria-components'
-import { useFormContext } from './form'
 import { cn } from '@/Lib/utils'
 import { Button } from './button'
 import { FieldError, FieldGroup, Label } from './field'
+import { useFormContext } from './form'
 
 const BaseNumberField = AriaNumberField
 
@@ -26,7 +26,7 @@ const NumberFieldInput = ({ className, ...props }: AriaInputProps) => {
     <AriaInput
       className={composeRenderProps(className, className =>
         cn(
-          'mr-2 w-fit min-w-0 flex-1 border-0 border-transparent bg-background pr-4 pl-0 text-right text-sm outline-0 placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden ',
+          'mr-2 w-fit min-w-0 flex-1 border-0 border-transparent bg-background pr-4 pl-0 text-right text-sm outline-0 placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden',
           className
         )
       )}
@@ -114,9 +114,9 @@ const NumberField = ({
       onChange={handleChange}
       {...props}
     >
-      <Label value={label} isRequired={isRequired}  />
+      {label && <Label value={label} isRequired={isRequired} />}
       <FieldGroup isInvalid={hasError}>
-        <NumberFieldInput  />
+        <NumberFieldInput />
         <NumberFieldSteppers />
       </FieldGroup>
       {description && (

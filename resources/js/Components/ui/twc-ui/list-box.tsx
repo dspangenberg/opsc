@@ -1,5 +1,4 @@
-import { Check } from 'lucide-react'
-
+import { CheckIcon } from '@radix-ui/react-icons'
 import {
   Collection as AriaCollection,
   Header as AriaHeader,
@@ -8,7 +7,6 @@ import {
   type ListBoxItemProps as AriaListBoxItemProps,
   type ListBoxProps as AriaListBoxProps,
   Section as AriaSection,
-  type Key,
   composeRenderProps
 } from 'react-aria-components'
 
@@ -26,7 +24,7 @@ function ListBox<T extends object>({ className, ...props }: AriaListBoxProps<T>)
           className,
           'group overflow-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md outline-none',
           /* Empty */
-          'data-[empty]:p-6 data-[empty]:text-center data-[empty]:text-sm'
+          'data-empty:p-6 data-empty:text-center data-empty:text-sm'
         )
       )}
       {...props}
@@ -39,22 +37,22 @@ const ListBoxItem = <T extends object>({
   children,
   id,
   ...props
-}: Omit<AriaListBoxItemProps<T>, 'id'> & { id?: Key }) => { // Flexibler Key-Typ
+}: Omit<AriaListBoxItemProps<T>, 'id'> & { id?: string | number }) => {
   return (
     <AriaListBoxItem
-      textValue={props.textValue || (typeof children === 'string' ? children : undefined)}
+      textValue={props.textValue}
       id={id}
       className={composeRenderProps(className, className =>
         cn(
           'pointer-events-auto relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none',
           /* Disabled */
-          'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+          'data-disabled:pointer-events-none data-disabled:opacity-50',
           /* Focused */
-          'data-[focused]:bg-accent data-[focused]:text-accent-foreground',
+          'data-focused:bg-accent data-focused:text-accent-foreground',
           /* Hovered */
-          'data-[hovered]:bg-accent data-[hovered]:text-accent-foreground',
+          'data-hovered:bg-accent data-hovered:text-accent-foreground',
           /* Selection */
-          'data-[selection-mode]:pl-8',
+          'data-selection-mode:pl-8',
           className
         )
       )}
@@ -64,7 +62,7 @@ const ListBoxItem = <T extends object>({
         <>
           {renderProps.isSelected && (
             <span className="absolute left-2 flex size-4 items-center justify-center">
-              <Check className="size-4 text-primary" />
+              <CheckIcon className="size-4 text-primary" />
             </span>
           )}
           {children}

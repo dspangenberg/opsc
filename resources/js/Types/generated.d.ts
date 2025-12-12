@@ -441,6 +441,7 @@ invoice_text: string;
 needs_vat_id: boolean;
 is_default: boolean;
 value: number;
+default_rate_id: number;
 rates: Array<App.Data.TaxRateData> | null;
 };
 export type TaxRateData = {

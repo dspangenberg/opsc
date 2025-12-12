@@ -40,14 +40,14 @@ const Label = ({ className, children, value, isRequired = false, ...props }: Lab
 function FieldDescription({ className, ...props }: AriaTextProps) {
   return (
     <AriaText
-      className={cn('text-xs text-muted-foreground', className)}
+      className={cn('text-sm text-muted-foreground', className)}
       {...props}
       slot="description"
     />
   )
 }
 
-function FieldError({ className, ...props }: AriaFieldErrorProps) {
+function FormFieldError({ className, ...props }: AriaFieldErrorProps) {
   const form = useFormContext()
 
   if (form?.errorVariant === 'form') return null
@@ -60,7 +60,7 @@ function FieldError({ className, ...props }: AriaFieldErrorProps) {
   )
 }
 
-function BaseFieldError({ className, ...props }: AriaFieldErrorProps) {
+function FieldError({ className, ...props }: AriaFieldErrorProps) {
   return (
     <AriaFieldError
       className={cn('font-medium text-[0.8rem] text-destructive', className)}
@@ -101,4 +101,4 @@ function FieldGroup({ className, variant, ...props }: GroupProps) {
   )
 }
 
-export { Label, labelVariants, FieldGroup, fieldGroupVariants, BaseFieldError, FieldError, FieldDescription }
+export { Label, labelVariants, FieldGroup, fieldGroupVariants, FormFieldError, FieldError, FieldDescription }

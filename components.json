@@ -17,5 +17,8 @@
     "lib": "@/Lib",
     "hooks": "@/Hooks"
   },
+  "registries": {
+    "@twc-ui": "https://ui.twiceware.cloud/r/{name}.json"
+  },
   "iconLibrary": "lucide"
 }
