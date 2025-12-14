@@ -25,7 +25,7 @@ import { Separator } from '@/Components/twcui/separator'
 import { Toggle } from '@/Components/twcui/toggle'
 import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/twc-ui/button'
-import { FormlessSelect } from '@/Components/ui/twc-ui/select'
+import { Select } from '@/Components/ui/twc-ui/select'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import type { PageProps } from '@/Types'
 import { columns } from './InvoiceIndexColumns'
@@ -214,7 +214,7 @@ const InvoiceIndex: React.FC = () => {
 
         <div className="flex flex-none items-center space-x-2 p-2">
           <Toolbar variant="secondary" className="flex flex-1">
-            <FormlessSelect<ViewProps>
+            <Select<ViewProps>
               aria-label="View"
               className="w-48 bg-background"
               name="view"
@@ -280,7 +280,7 @@ const InvoiceIndex: React.FC = () => {
               onClick={handlePreviousYear}
               disabled={year <= minYear}
             />
-            <FormlessSelect<YearsProps>
+            <Select<YearsProps>
               className="w-20"
               aria-label="Jahr"
               name="year"

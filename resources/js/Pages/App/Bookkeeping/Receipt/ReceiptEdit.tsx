@@ -83,9 +83,11 @@ const ReceiptConfirm: React.FC<Props> = ({
     }
   }
 
-  const handleContactChange = (contactId: number) => {
-    const contact = contacts.find(contact => contact.id === contactId)
-    form.updateAndValidateWithoutEvent('contact_id', contactId)
+  const handleContactChange = (contactId: string | number | null) => {
+    if (contactId === null) return
+    const numericId = typeof contactId === 'number' ? contactId : Number(contactId)
+    const contact = contacts.find(contact => contact.id === numericId)
+    form.updateAndValidateWithoutEvent('contact_id', numericId)
 
     if (contact?.cost_center_id) {
       form.updateAndValidateWithoutEvent('cost_center_id', contact.cost_center_id)

@@ -79,9 +79,11 @@ const ReceiptConfirm: React.FC<Props> = ({
     router.visit(route('app.bookkeeping.receipts.payments', { id: receipt.id }))
   }
 
-  const handleContactChange = (contactId: number) => {
-    const contact = contacts.find(contact => contact.id === contactId)
-    form.updateAndValidateWithoutEvent('contact_id', contactId)
+  const handleContactChange = (contactId: string | number | null) => {
+    if (contactId === null) return
+    const numericId = typeof contactId === 'number' ? contactId : Number(contactId)
+    const contact = contacts.find(contact => contact.id === numericId)
+    form.updateAndValidateWithoutEvent('contact_id', numericId)
 
     if (contact?.cost_center_id) {
       form.updateAndValidateWithoutEvent('cost_center_id', contact.cost_center_id)
@@ -128,12 +130,11 @@ const ReceiptConfirm: React.FC<Props> = ({
           </div>
 
           <div className="col-span-8">
-            <Select<App.Data.CurrencyData, string>
+            <Select<App.Data.CurrencyData>
               label="Währung"
               itemValue="code"
               itemName="code"
-              items={currencies || []} // Sichere Behandlung
-              valueType="string"
+              items={currencies || []}
               {...form.register('org_currency')}
             />
           </div>

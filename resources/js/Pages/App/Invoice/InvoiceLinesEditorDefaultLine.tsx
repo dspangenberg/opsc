@@ -3,8 +3,8 @@ import type * as React from 'react'
 import { useEffect } from 'react'
 import { DateRangePicker } from '@/Components/ui/twc-ui/date-picker'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { NumberField } from '@/Components/ui/twc-ui/number-field'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { FormNumberField } from '@/Components/ui/twc-ui/number-field'
+import { FormTextAreaField, FormTextField } from '@/Components/ui/twc-ui/text-field'
 import { InvoiceLinesEditorLineContainer } from '@/Pages/App/Invoice/InvoiceLinesEditorLineContainer'
 import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 
@@ -32,7 +32,7 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
     <InvoiceLinesEditorLineContainer invoiceLine={invoiceLine}>
       <FormGroup>
         <div className="col-span-3">
-          <NumberField
+          <FormNumberField
             autoFocus
             formatOptions={{
               minimumFractionDigits: 2,
@@ -46,18 +46,17 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
           />
         </div>
         <div className="col-span-2">
-          <TextField
+          <FormTextField
             aria-label="Einheit"
             value={invoiceLine.unit}
             onChange={(value: string) => updateLine(invoiceLine.id as number, { unit: value })}
           />
         </div>
         <div className="col-span-10 space-y-1.5">
-          <TextField
+          <FormTextAreaField
             aria-label="Beschreibung"
             autoSize
             rows={2}
-            textArea={true}
             value={invoiceLine.text}
             onChange={(value: string) => updateLine(invoiceLine.id as number, { text: value })}
           />
@@ -88,7 +87,7 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
           />
         </div>
         <div className="col-span-4">
-          <NumberField
+          <FormNumberField
             aria-label="Einzelpreis"
             value={invoiceLine.price}
             onChange={(value: number | null) =>
@@ -97,7 +96,7 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
           />
         </div>
         <div className="col-span-4">
-          <NumberField
+          <FormNumberField
             aria-label="Gesamtbetrag"
             isDisabled={invoiceLine.type_id === 1}
             value={invoiceLine.amount}

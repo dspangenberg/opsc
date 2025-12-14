@@ -2,7 +2,7 @@ import { Plus, Trash2 } from 'lucide-react'
 import * as React from 'react'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { Select } from '@/Components/ui/twc-ui/select'
+import { FormSelect } from '@/Components/ui/twc-ui/select'
 import { TextField } from '@/Components/ui/twc-ui/text-field'
 
 interface BookkeepingRuleEditConditionProps {
@@ -57,23 +57,23 @@ export const BookkeepingRuleEditCondition: React.FC<BookkeepingRuleEditCondition
         conditions.map((condition, index) => (
           <React.Fragment key={condition.id || `new-${index}`}>
             <div className="col-span-8">
-              <Select<Fields, string>
+              <FormSelect<Fields>
                 aria-label="Feld"
                 name={`conditions.${index}.field`}
-                valueType="string"
                 items={fieldsAsOptions}
                 value={condition.field}
-                onChange={(value: string) => onUpdateCondition(index, 'field', value)}
+                itemValue="id"
+                onChange={(value) => onUpdateCondition(index, 'field', value)}
               />
             </div>
             <div className="col-span-4">
-              <Select<Fields, string>
+              <FormSelect<Fields>
                 aria-label="Feld"
                 name={`conditions.${index}.logical_operator`}
-                valueType="string"
                 items={logicalConditions}
                 value={condition.logical_condition}
-                onChange={(value: string) => onUpdateCondition(index, 'logical_condition', value)}
+                itemValue="id"
+                onChange={(value) => onUpdateCondition(index, 'logical_condition', value)}
               />
             </div>
             <div className="col-span-10">

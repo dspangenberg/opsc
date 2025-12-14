@@ -62,7 +62,7 @@ export const ContactEdit: React.FC<Props> = ({ contact, payment_deadlines, taxes
             />
           </div>
           <div className="col-span-12">
-            <Select<App.Data.TaxData, number | null>
+            <Select<App.Data.TaxData>
               {...form.register('tax_id')}
               label="Umsatzsteuer"
               items={taxes}

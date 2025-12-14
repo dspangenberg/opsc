@@ -2,7 +2,7 @@ import { Plus, Trash2 } from 'lucide-react'
 import * as React from 'react'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { Select } from '@/Components/ui/twc-ui/select'
+import { FormSelect } from '@/Components/ui/twc-ui/select'
 import { TextField } from '@/Components/ui/twc-ui/text-field'
 
 interface BookkeepingRuleEditActionProps {
@@ -44,13 +44,13 @@ export const BookkeepingRuleEditAction: React.FC<BookkeepingRuleEditActionProps>
         actions.map((action, index) => (
           <React.Fragment key={action.id || `new-${index}`}>
             <div className="col-span-8">
-              <Select<Fields, string>
+              <FormSelect<Fields>
                 aria-label="Feld"
                 name={`actions.${index}.field`}
-                valueType="string"
                 items={fieldsAsOptions}
                 value={action.field}
-                onChange={(value: string) => onUpdateAction(index, 'field', value)}
+                itemValue="id"
+                onChange={(value) => onUpdateAction(index, 'field', value)}
               />
             </div>
             <div className="col-span-10">

@@ -2,7 +2,7 @@ import { Plus, Trash2 } from 'lucide-react'
 import * as React from 'react'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { Select } from '@/Components/ui/twc-ui/select'
+import { FormSelect } from '@/Components/ui/twc-ui/select'
 import { TextField } from '@/Components/ui/twc-ui/text-field'
 
 interface EmailAddressesSectionProps {
@@ -33,12 +33,12 @@ export const ContactEditEmailAddressesSection: React.FC<EmailAddressesSectionPro
         mails.map((mail, index) => (
           <React.Fragment key={mail.id || `new-${index}`}>
             <div className="col-span-8">
-              <Select<App.Data.EmailCategoryData>
+              <FormSelect<App.Data.EmailCategoryData>
                 aria-label="Kategorie"
                 name={`mails.${index}.email_category_id`}
                 items={mailCategories}
                 value={mail.email_category_id}
-                onChange={(value: number) => onUpdateEmail(index, 'email_category_id', value)}
+                onChange={(value) => onUpdateEmail(index, 'email_category_id', value)}
               />
             </div>
             <div className="col-span-14">

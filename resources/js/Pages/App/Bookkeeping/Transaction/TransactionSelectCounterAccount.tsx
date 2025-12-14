@@ -2,7 +2,7 @@ import type * as React from 'react'
 import { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Button } from '@/Components/ui/twc-ui/button'
-import { FormlessCombobox } from '@/Components/ui/twc-ui/combo-box'
+import { FormComboBox } from '@/Components/ui/twc-ui/combo-box'
 import { Dialog } from '@/Components/ui/twc-ui/dialog'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
 
@@ -62,13 +62,13 @@ const TransactionSelectCounterAccountComponent: React.FC<
       <div className="flex w-full flex-1 rounded-t-lg">
         <FormGroup>
           <div className="col-span-24">
-            <FormlessCombobox<App.Data.BookkeepingAccountData>
+            <FormComboBox<App.Data.BookkeepingAccountData>
               className="my-3 flex-1 bg-background"
               autoFocus
               name="view"
               label="Gegenkonto"
               value={selectedAccount}
-              onChange={setSelectedAccount}
+              onChange={(value) => setSelectedAccount(typeof value === 'number' ? value : Number(value) || 0)}
               items={accounts}
               itemName="label"
               itemValue="account_number"
