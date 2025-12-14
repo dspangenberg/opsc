@@ -162,10 +162,10 @@ const BookkeepingRuleEdit: React.FC<Props> = ({ rule, fields }) => {
             <TextField label="Priorität" {...form.register('priority')} />
           </div>
           <div className="col-span-4">
-            <Select<Options, string>
+            <Select<Options>
               {...form.register('logical_operator')}
               label="Boolean"
-              valueType="string"
+              itemValue="id"
               items={logicalOperators}
             />
           </div>

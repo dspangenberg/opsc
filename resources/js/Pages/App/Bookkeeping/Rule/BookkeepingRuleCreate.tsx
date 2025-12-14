@@ -91,19 +91,19 @@ const BookkeepingRuleCreate: React.FC<Props> = ({ rule }) => {
             <TextField label="Priorität" {...form.register('priority')} />
           </div>
           <div className="col-span-4">
-            <Select<Options, string>
+            <Select<Options>
               {...form.register('table')}
               label="Tabelle"
-              valueType="string"
+              itemValue="id"
               items={tables}
             />
           </div>
           {form.data.table === 'transactions' && (
             <div className="col-span-4">
-              <Select<Options, string>
+              <Select<Options>
                 {...form.register('amount_type')}
                 label="Buchungsart"
-                valueType="string"
+                itemValue="id"
                 items={amountTypes}
               />
             </div>

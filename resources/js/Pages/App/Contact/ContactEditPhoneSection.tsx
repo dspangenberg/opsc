@@ -2,7 +2,7 @@ import { Plus, Trash2 } from 'lucide-react'
 import * as React from 'react'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { Select } from '@/Components/ui/twc-ui/select'
+import { FormSelect } from '@/Components/ui/twc-ui/select'
 import { TextField } from '@/Components/ui/twc-ui/text-field'
 
 interface ContactEditPhonedSectionProps {
@@ -33,12 +33,12 @@ export const ContactEditPhoneSection: React.FC<ContactEditPhonedSectionProps> = 
         phones.map((phone, index) => (
           <React.Fragment key={phone.id || `new-${index}`}>
             <div className="col-span-8">
-              <Select<App.Data.EmailCategoryData>
+              <FormSelect<App.Data.EmailCategoryData>
                 aria-label="Kategorie"
                 name={`phones.${index}.phone_category_id`}
                 items={phoneCategories}
                 value={phone.phone_category_id}
-                onChange={(value: number) => onUpdatePhone(index, 'phone_category_id', value)}
+                onChange={(value) => onUpdatePhone(index, 'phone_category_id', value)}
               />
             </div>
             <div className="col-span-14">

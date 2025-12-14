@@ -17,7 +17,7 @@ import { PdfViewer } from '@/Components/PdfViewer'
 import { Toggle } from '@/Components/twcui/toggle'
 import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/twc-ui/button'
-import { FormlessCombobox } from '@/Components/ui/twc-ui/combo-box'
+import { ComboBox } from '@/Components/ui/twc-ui/combo-box'
 import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { minutesToHoursExtended } from '@/Lib/DateHelper'
 import type { PageProps } from '@/Types'
@@ -123,7 +123,7 @@ const TimeIndex: React.FC = () => {
     }
     return (
       <Toolbar variant="secondary" className="px-4 pt-2 pb-3">
-        <FormlessCombobox<App.Data.ProjectData>
+        <ComboBox<App.Data.ProjectData>
           aria-label="View"
           className="w-48 bg-background"
           name="view"

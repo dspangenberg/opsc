@@ -10,13 +10,12 @@ import {
   type SelectProps as AriaSelectProps,
   SelectValue as AriaSelectValue,
   type SelectValueProps as AriaSelectValueProps,
-  type ValidationResult as AriaValidationResult,
   composeRenderProps,
   type Key,
   Text
 } from 'react-aria-components'
 import { cn } from '@/Lib/utils'
-import { BaseFieldError, FieldError, Label } from './field'
+import { FieldError, FormFieldError, Label } from './field'
 import { useFormContext } from './form'
 import { ListBoxCollection, ListBoxHeader, ListBoxItem, ListBoxSection } from './list-box'
 import { Popover } from './popover'
@@ -35,10 +34,10 @@ const SelectValue = <T extends object>({ className, ...props }: AriaSelectValueP
   <AriaSelectValue
     className={composeRenderProps(className, className =>
       cn(
-        'line-clamp-1 bg-background data-[placeholder]:text-muted-foreground',
+        'line-clamp-1 data-placeholder:text-muted-foreground',
         'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20',
         /* Description */
-        '[&>[slot=description]]:hidden',
+        '*:[[slot=description]]:hidden',
         className
       )
     )}
@@ -51,12 +50,12 @@ const SelectTrigger = ({ className, children, ...props }: AriaButtonProps) => (
     type="button"
     className={composeRenderProps(className, className =>
       cn(
-        'flex h-9 w-full items-center justify-between whitespace-nowrap rounded-sm border border-input bg-background px-3 py-2 font-medium text-sm shadow-none outline-0 ring-offset-0',
+        'flex h-9 w-full items-center justify-between whitespace-nowrap rounded-sm border border-input bg-transparent px-3 py-2 font-medium text-sm shadow-none outline-0 ring-offset-0',
         /* Disabled */
-        'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
+        'data-disabled:cursor-not-allowed data-disabled:opacity-50',
         'focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/20',
         /* Focused */
-        'data-[invalid]:border-destructive data-[invalid]:focus-visible:border-destructive data-[invalid]:focus-visible:ring-destructive/20',
+        'data-invalid:border-destructive data-invalid:focus-visible:border-destructive data-invalid:focus-visible:ring-destructive/20',
         className
       )
     )}
@@ -89,89 +88,76 @@ const SelectListBox = <T extends object>({ className, ...props }: AriaListBoxPro
     {...props}
   />
 )
-
-// Generischer Value-Typ
-type SelectValue = string | number | null
-
-interface SelectProps<T extends object, V extends SelectValue = SelectValue>
+interface SelectProps<T extends object>
   extends Omit<AriaSelectProps<T>, 'children' | 'onSelectionChange' | 'onChange'> {
   label?: string
   description?: string
-  error?: string | ((validation: AriaValidationResult) => string)
+  error?: string
   children?: React.ReactNode | ((item: T) => React.ReactNode)
-  onChange: (value: V) => void // Generischer Value-Typ
-  onBlur?: () => void
+  onChange?: (value: string | number | null) => void
   isOptional?: boolean
   optionalValue?: string
-  value: V | undefined
+  value: string | number | null
   items: Iterable<T>
   itemName?: keyof T & string
   itemValue?: keyof T & string
   name?: string
-  // Neue Props für Value-Konvertierung
-  valueType?: 'string' | 'number' // Bestimmt, welcher Typ zurückgegeben wird
-  nullValue?: V // Wert für "keine Auswahl"
+  errorComponent?: React.ComponentType<{ children?: React.ReactNode }>
 }
 
-// Internal shared component that contains all the common logic
-function SelectCore<T extends object, V extends SelectValue = number>({
+const Select = <T extends object>({
   label,
   description,
+  error,
   children,
   autoFocus,
   className,
   items,
   itemName = 'name' as keyof T & string,
   itemValue = 'id' as keyof T & string,
+  errorComponent: ErrorComponent = FieldError,
   isOptional = false,
   optionalValue = '(leer)',
   onChange,
-  onBlur,
   name,
-  value,
-  valueType = 'number',
-  nullValue = (valueType === 'number' ? 0 : null) as V,
-  error,
-  hasError,
-  ErrorComponent,
   ...props
-}: SelectProps<T, V> & { hasError: boolean; ErrorComponent: React.ComponentType<any> }) {
+}: SelectProps<T>) => {
+  const hasError = !!error
+
+  // Materialize items once to avoid exhausting one-shot iterables
+  const itemsArray = Array.from(items)
+  const firstItem = itemsArray[0]
+  const isStringValue = firstItem && typeof firstItem[itemValue] === 'string'
+
+  const NULL_SENTINEL = '__NULL__'
+  const NUMERIC_NULL_SENTINEL = -1
+
   const itemsWithNothing = isOptional
     ? [
-        {
-          [itemValue]: nullValue,
-          [itemName]: optionalValue
-        } as T,
-        ...Array.from(items || []) // Sichere Behandlung von undefined/null
-      ]
-    : Array.from(items || []) // Sichere Behandlung von undefined/null
+      {
+        [itemValue]: isStringValue ? NULL_SENTINEL : NUMERIC_NULL_SENTINEL,
+        [itemName]: optionalValue
+      } as T,
+      ...itemsArray
+    ]
+    : itemsArray
 
   const handleSelectionChange = (key: Key | null) => {
     if (key === null) {
-      onChange(nullValue)
-      return
-    }
-
-    // Konvertiere basierend auf valueType
-    let convertedValue: V
-    if (valueType === 'string') {
-      convertedValue = String(key) as V
+      onChange?.(null)
+    } else if (isStringValue) {
+      const stringKey = String(key)
+      onChange?.(stringKey === NULL_SENTINEL ? null : stringKey)
     } else {
-      convertedValue = Number(key) as V
+      const numericKey = Number(key)
+      onChange?.(numericKey === NUMERIC_NULL_SENTINEL ? null : numericKey)
     }
-
-    onChange(convertedValue)
   }
-
-  // Konvertiere value zu selectedKey für React Aria
-  const selectedKey = value !== null && value !== undefined ? String(value) : null
 
   return (
     <BaseSelect
       isInvalid={hasError}
-      selectedKey={selectedKey}
       onSelectionChange={handleSelectionChange}
-      onBlur={onBlur}
       className={composeRenderProps(className, className =>
         cn('group flex flex-col gap-1.5 text-sm', className)
       )}
@@ -192,12 +178,14 @@ function SelectCore<T extends object, V extends SelectValue = number>({
         <SelectListBox items={itemsWithNothing}>
           {children ||
             (item => {
-              // Sichere Konvertierung zu String für die ID
-              const itemId = String(item[itemValue] ?? '')
-              const itemDisplayName =
-                typeof item[itemName] === 'string' ? item[itemName] : String(item[itemName] ?? '')
-
-              return <SelectItem id={itemId}>{itemDisplayName}</SelectItem>
+              const textValue =
+                typeof item[itemName] === 'string' ? item[itemName] : String(item[itemName])
+              const idValue = isStringValue ? String(item[itemValue]) : Number(item[itemValue])
+              return (
+                <SelectItem id={idValue} textValue={textValue}>
+                  {textValue}
+                </SelectItem>
+              )
             })}
         </SelectListBox>
       </SelectPopover>
@@ -205,26 +193,16 @@ function SelectCore<T extends object, V extends SelectValue = number>({
   )
 }
 
-function Select<T extends object, V extends SelectValue = number>(props: SelectProps<T, V>) {
+const FormSelect = <T extends object>({ name, ...props }: SelectProps<T>) => {
   const form = useFormContext()
-  const realError = form?.errors?.[props.name as string] || props.error
-  const hasError = !!realError
-
-  return <SelectCore {...props} error={realError} hasError={hasError} ErrorComponent={FieldError} />
-}
-
-function FormlessSelect<T extends object, V extends SelectValue = number>(
-  props: SelectProps<T, V>
-) {
-  const hasError = !!props.error
-
-  return <SelectCore {...props} hasError={hasError} ErrorComponent={BaseFieldError} />
+  const realError = form?.errors?.[name as string]
+  return <Select<T> error={realError} name={name} {...props} errorComponent={FormFieldError} />
 }
 
 export {
   Select,
-  FormlessSelect,
   BaseSelect,
+  FormSelect,
   SelectValue,
   SelectTrigger,
   SelectItem,

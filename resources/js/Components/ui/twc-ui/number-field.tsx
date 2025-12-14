@@ -11,7 +11,7 @@ import {
 } from 'react-aria-components'
 import { cn } from '@/Lib/utils'
 import { Button } from './button'
-import { FieldError, FieldGroup, Label } from './field'
+import { FieldError, FieldGroup, FormFieldError, Label } from './field'
 import { useFormContext } from './form'
 
 const BaseNumberField = AriaNumberField
@@ -70,6 +70,7 @@ interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'value' | 'onChang
   value?: number | null | undefined
   error?: string | undefined
   name?: string
+  errorComponent?: React.ComponentType<{ children?: React.ReactNode }>
 }
 
 const NumberField = ({
@@ -80,11 +81,11 @@ const NumberField = ({
   isRequired = false,
   isInvalid = false,
   onChange,
+  error = '',
+  errorComponent: ErrorComponent = FieldError,
   value,
   ...props
 }: NumberFieldProps) => {
-  const form = useFormContext()
-  const error = form?.errors?.[props.name as string] || props.error
   const hasError = !!error
 
   if (formatOptions === undefined) {
@@ -124,9 +125,23 @@ const NumberField = ({
           {description}
         </Text>
       )}
-      <FieldError>{error}</FieldError>
+      <ErrorComponent>{error}</ErrorComponent>
     </BaseNumberField>
   )
 }
 
-export { BaseNumberField, NumberFieldInput, NumberFieldSteppers, NumberFieldStepper, NumberField }
+const FormNumberField = ({ ...props }: NumberFieldProps) => {
+  const form = useFormContext()
+  const error = form?.errors?.[props.name as string]
+
+  return <NumberField errorComponent={FormFieldError} error={error} {...props} />
+}
+
+export {
+  BaseNumberField,
+  NumberFieldInput,
+  NumberFieldSteppers,
+  NumberFieldStepper,
+  NumberField,
+  FormNumberField
+}
