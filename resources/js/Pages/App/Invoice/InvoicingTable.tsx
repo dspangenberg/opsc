@@ -1,10 +1,26 @@
-import { Delete03Icon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
+import {
+  CalculatorIcon,
+  Copy01Icon,
+  Delete03Icon,
+  Delete04Icon,
+  Edit03Icon,
+  MoreVerticalCircle01Icon,
+  MoreVerticalIcon,
+  Sent02Icon
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { useCallback, useEffect, useRef } from 'react'
 import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
+import {
+  DropdownButton,
+  Menu,
+  MenuItem,
+  MenuPopover,
+  MenuSubTrigger
+} from '@/Components/twcui/dropdown-button'
 import {
   Table as ShadcnTable,
   TableBody as ShadcnTableBody,
@@ -13,6 +29,7 @@ import {
   TableHeader as ShadcnTableHeader,
   TableRow as ShadcnTableRow
 } from '@/Components/ui/table'
+import { Button } from '@/Components/ui/twc-ui/button'
 import { cn } from '@/Lib/utils'
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
@@ -189,14 +206,12 @@ export interface InvoicingTableCommonRowProps {
 export interface InvoicingTableRowProps extends InvoicingTableCommonRowProps {
   getNextIndex: (lineType: number) => number | null
   onLineCommand: (line: LineCommandProps) => void
-  pos?: number
 }
 
 export interface InvoicingTableDefaultRowProps {
   line: App.Data.InvoiceLineData
   conditional?: boolean
   index: number | null
-  pos: number
   onLineCommand: (line: LineCommandProps) => void
 }
 
@@ -204,43 +219,6 @@ export const InvoicingTableDefaultRow: React.FC<InvoicingTableDefaultRowProps> =
   line,
   index,
   conditional = false,
-  pos,
-  onLineCommand
-}) => {
-  // @ts-expect-error
-  const { invoice } = usePage<App.Data.InvoiceData>().props as unknown as App.Data.InvoiceData
-
-  const handleDelete = useCallback(() => {
-    onLineCommand({ command: 'delete', lineId: line.id || 0 })
-  }, [onLineCommand, line])
-
-  const handleDuplicate = useCallback(() => {
-    onLineCommand({ command: 'duplicate', lineId: line.id || 0 })
-  }, [onLineCommand, line])
-
-  return (
-    <TableRow className="border-0">
-      <TableCell align="right" className="align-baseline">
-        {pos}
-      </TableCell>
-      <TableNumberCell value={line.quantity || 0} />
-      <TableCell align="center">{line.unit}</TableCell>
-      <TableMarkdownCell
-        value={line.text}
-        className="gap-0 gap-y-0 space-y-0"
-        service_period_begin={line.service_period_begin as unknown as string}
-        service_period_end={line.service_period_end as unknown as string}
-      />
-      <TableNumberCell conditional={conditional} value={line.price || 0} />
-      <TableNumberCell value={line.amount || 0} />
-      <TableCell align="center">({line.tax_rate_id})</TableCell>
-      <TableCell />
-    </TableRow>
-  )
-}
-
-export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowProps> = ({
-  line,
   onLineCommand
 }) => {
   // @ts-expect-error
@@ -256,16 +234,150 @@ export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowPr
 
   return (
     <TableRow>
-      <TableCell />
+      <TableCell align="right" className="align-baseline">
+        {index}
+      </TableCell>
+      <TableNumberCell value={line.quantity || 0} />
+      <TableCell align="center">{line.unit}</TableCell>
+      <TableMarkdownCell
+        value={line.text}
+        className="gap-0 gap-y-0 space-y-0"
+        service_period_begin={line.service_period_begin as unknown as string}
+        service_period_end={line.service_period_end as unknown as string}
+      />
+      <TableNumberCell conditional={conditional} value={line.price || 0} />
+      <TableNumberCell value={line.amount || 0} />
+      <TableCell align="center">({line.tax_rate_id})</TableCell>
+      {invoice.is_draft && (
+        <TableCell align="right">
+          <div className="flex items-center justify-end space-x-1">
+            <Button
+              size="icon-sm"
+              icon={Edit03Icon}
+              variant="ghost"
+              onClick={() => onLineCommand({ command: 'edit', lineId: line.id || 0 })}
+            />
+            <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
+              <MenuItem
+                icon={Copy01Icon}
+                title="Duplizieren"
+                ellipsis
+                separator
+                onClick={() => onLineCommand({ command: 'duplicate', lineId: line.id || 0 })}
+              />
+              <MenuItem
+                icon={Delete03Icon}
+                variant="destructive"
+                title="Löschen"
+                ellipsis
+                onClick={handleDelete}
+              />
+            </DropdownButton>
+          </div>
+        </TableCell>
+      )}
+    </TableRow>
+  )
+}
+
+export const InvoicingTableDefaultRow2: React.FC<InvoicingTableDefaultRowProps> = ({
+  line,
+  index,
+  conditional = false,
+  onLineCommand
+}) => {
+  // @ts-expect-error
+  const { invoice } = usePage<App.Data.InvoiceData>().props as unknown as App.Data.InvoiceData
+
+  const handleDelete = useCallback(() => {
+    onLineCommand({ command: 'delete', lineId: line.id || 0 })
+  }, [onLineCommand, line])
+
+  const handleDuplicate = useCallback(() => {
+    onLineCommand({ command: 'duplicate', lineId: line.id || 0 })
+  }, [onLineCommand, line])
+
+  return (
+    <TableRow>
+      <TableCell align="right" className="align-baseline">
+        {index}
+      </TableCell>
+      <TableNumberCell value={line.quantity || 0} />
+      <TableCell align="center">{line.unit}</TableCell>
+      <TableMarkdownCell
+        value={line.text}
+        className="gap-0 gap-y-0 space-y-0"
+        service_period_begin={line.service_period_begin as unknown as string}
+        service_period_end={line.service_period_end as unknown as string}
+      />
+      <TableNumberCell conditional={conditional} value={line.price || 0} />
+      <TableNumberCell value={line.amount || 0} />
+      <TableCell align="center">({line.tax_rate_id})</TableCell>
+      {invoice.is_draft && (
+        <TableCell align="right">
+          <div className="flex items-center justify-end space-x-1">
+            <Button
+              size="icon-sm"
+              icon={Edit03Icon}
+              variant="ghost"
+              onClick={() => onLineCommand({ command: 'edit', lineId: line.id || 0 })}
+            />
+            <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
+              <MenuItem
+                icon={Copy01Icon}
+                title="Duplizieren"
+                ellipsis
+                separator
+                onClick={() => onLineCommand({ command: 'duplicate', lineId: line.id || 0 })}
+              />
+              <MenuItem
+                icon={Delete03Icon}
+                variant="destructive"
+                title="Löschen"
+                ellipsis
+                onClick={handleDelete}
+              />
+            </DropdownButton>
+          </div>
+        </TableCell>
+      )}
+    </TableRow>
+  )
+}
+
+export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowProps> = ({
+  line,
+  index,
+  conditional = false,
+  onLineCommand
+}) => {
+  // @ts-expect-error
+  const { invoice } = usePage<App.Data.InvoiceData>().props as unknown as App.Data.InvoiceData
+
+  const handleDelete = useCallback(() => {
+    onLineCommand({ command: 'delete', lineId: line.id || 0 })
+  }, [onLineCommand, line])
+
+  const handleDuplicate = useCallback(() => {
+    onLineCommand({ command: 'duplicate', lineId: line.id || 0 })
+  }, [onLineCommand, line])
+
+  return (
+    <TableRow>
+      <TableCell align="right" className="align-baseline">
+        {index}
+      </TableCell>
       <TableCell />
       <TableCell />
       <TableCell>
-        Rechnung Nr. {line.linked_invoice?.formated_invoice_number} vom{' '}
-        {line.linked_invoice?.issued_on}
+        <strong>
+          Rechnung Nr. {line.linked_invoice?.formated_invoice_number} vom{' '}
+          {line.linked_invoice?.issued_on}
+        </strong>
       </TableCell>
-      <TableNumberCell conditional value={line.tax || 0} />
+      <TableNumberCell value={line.tax || 0} />
       <TableNumberCell value={line.amount || 0} />
-      <TableCell align="center">EUR</TableCell>
+      <TableCell align="center" />
       {invoice.is_draft && (
         <TableCell align="right">
           <div className="flex items-center justify-end space-x-1">
@@ -287,7 +399,6 @@ export const InvoicingTableLinkedInvoiceRow: React.FC<InvoicingTableDefaultRowPr
 
 export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
   line,
-  pos = 0,
   getNextIndex,
   onLineCommand
 }) => {
@@ -327,7 +438,6 @@ export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
   return (
     <InvoicingTableDefaultRow
       line={line}
-      pos={pos}
       conditional={conditional}
       index={rowIndex}
       onLineCommand={onLineCommand}
@@ -342,9 +452,6 @@ export const InvoicingTable: React.FC<InvoiceTableProps> = ({ invoice, onLineCom
     currentIndexRef.current = 1
   }, [])
 
-  let pos = 0
-  let subtotal = 0
-
   const getNextIndex = useCallback((lineType: number) => {
     if ([0, 1, 3].includes(lineType)) {
       const nextIndex = currentIndexRef.current
@@ -353,12 +460,6 @@ export const InvoicingTable: React.FC<InvoiceTableProps> = ({ invoice, onLineCom
     }
     return null
   }, [])
-
-  const nextPos = (line: App.Data.InvoiceLineData) => {
-    if ([1, 3].includes(line.type_id)) pos += 1
-    subtotal += line.amount || 0
-    return pos
-  }
 
   return (
     <div className="relative flex max-h-fit flex-1 flex-col overflow-hidden rounded-lg border border-border/80 bg-page-content p-1.5">
@@ -375,55 +476,15 @@ export const InvoicingTable: React.FC<InvoiceTableProps> = ({ invoice, onLineCom
           </TableRow>
         </TableHeader>
         <TableBody className="rounded-b-lg">
-          {invoice.lines
-            ?.filter(line => line.type_id !== 9)
-            .map((line, index) => (
-              <InvoicingTableRow
-                key={index}
-                pos={nextPos(line)}
-                line={line}
-                getNextIndex={getNextIndex}
-                onLineCommand={onLineCommand}
-              />
-            ))}
+          {invoice.lines?.map((line, index) => (
+            <InvoicingTableRow
+              key={index}
+              line={line}
+              getNextIndex={getNextIndex}
+              onLineCommand={onLineCommand}
+            />
+          ))}
         </TableBody>
-        {invoice.lines && invoice.lines.filter(line => line.type_id === 9).length > 0 && (
-          <TableBody className="rounded-b-lg border-t">
-            <TableRow>
-              <TableCell colSpan={3} />
-              <TableCell>Zwischensumme</TableCell>
-              <TableCell />
-              <TableNumberCell value={subtotal || 0} />
-              <TableCell align="center">EUR</TableCell>
-              <TableCell />
-            </TableRow>
-            <TableRow>
-              <TableCell />
-              <TableCell />
-              <TableCell />
-              <TableCell className="font-medium">abzüglich Akontorechnungen</TableCell>
-              <TableCell className="font-medium" align="right">
-                USt.
-              </TableCell>
-              <TableCell className="font-medium" align="right">
-                netto
-              </TableCell>
-              <TableCell />
-              <TableCell />
-            </TableRow>
-            {invoice.lines
-              ?.filter(line => line.type_id === 9)
-              .map((line, index) => (
-                <InvoicingTableLinkedInvoiceRow
-                  key={index}
-                  index={index}
-                  pos={0}
-                  line={line}
-                  onLineCommand={onLineCommand}
-                />
-              ))}
-          </TableBody>
-        )}
       </Table>
     </div>
   )

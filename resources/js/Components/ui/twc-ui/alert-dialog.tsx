@@ -1,8 +1,8 @@
+import { cn } from '@/Lib/utils'
 import { Alert02Icon, HelpCircleIcon, InformationCircleIcon } from '@hugeicons/core-free-icons'
 import type * as React from 'react'
 import { Heading } from 'react-aria-components'
 import { createRoot } from 'react-dom/client'
-import { cn } from '@/Lib/utils'
 import { Button } from './button'
 import { Dialog } from './dialog'
 import { Icon } from './icon'
@@ -24,7 +24,7 @@ const AlertDialogComponent: React.FC<AlertDialogProps> = ({
   message,
   buttonTitle = 'OK',
   variant = 'destructive',
-  cancelButtonTitle = 'Cancel',
+  cancelButtonTitle = 'Abbrechen',
   onConfirm,
   onCancel
 }) => {
@@ -49,6 +49,7 @@ const AlertDialogComponent: React.FC<AlertDialogProps> = ({
       role="alertdialog"
       bodyPadding
       hideHeader={true}
+      dismissible={true}
       title={title}
       footer={
         <div className="flex items-center justify-end space-x-2">
@@ -97,7 +98,7 @@ const AlertDialogComponent: React.FC<AlertDialogProps> = ({
           <div className="my-3 text-left sm:mt-0 sm:ml-4">
             <Heading
               slot="title"
-              className="pt-2! text-left font-semibold text-foreground text-lg!"
+              className="!text-base !pt-2 text-left font-semibold text-foreground"
             >
               {title}
             </Heading>
