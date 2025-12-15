@@ -31,6 +31,7 @@ const TransactionSelectCounterAccountComponent: React.FC<
       confirmClose={false}
       width="lg"
       bodyPadding
+      dismissible={true}
       title="Gegenkonto auswählen"
       footer={
         <div className="flex items-center justify-end space-x-2">
@@ -67,9 +68,7 @@ const TransactionSelectCounterAccountComponent: React.FC<
               name="view"
               label="Gegenkonto"
               value={selectedAccount}
-              onChange={value =>
-                setSelectedAccount(typeof value === 'number' ? value : Number(value) || 0)
-              }
+              onChange={(value) => setSelectedAccount(typeof value === 'number' ? value : Number(value) || 0)}
               items={accounts}
               itemName="label"
               itemValue="account_number"
