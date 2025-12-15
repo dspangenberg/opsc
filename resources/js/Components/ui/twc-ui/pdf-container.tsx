@@ -1,5 +1,5 @@
 import print from 'print-js'
-import type React from 'react'
+import React, { useEffect } from 'react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf'
 import { Separator } from './separator'
@@ -37,12 +37,16 @@ interface Props {
   file: string
   filename?: string
   hideFilename?: boolean
+  className?: string
+  onFilenameChange?: (filename: string) => void
 }
 
 export const PdfContainer: React.FC<Props> = ({
   file,
   filename,
-  hideFilename = false
+  className,
+  hideFilename = false,
+  onFilenameChange
 }) => {
   const defaultFilename = useMemo(() => {
     if (filename) return filename
@@ -56,11 +60,17 @@ export const PdfContainer: React.FC<Props> = ({
       return 'unbekannt.pdf'
     }
   }, [file, filename])
+
+
   const divRef = useRef<HTMLDivElement>(null)
   const [show, toggle] = useToggle(false)
   const isFullscreen = useFullscreen(divRef as React.RefObject<Element>, show, {
     onClose: () => toggle(false)
   })
+
+  useEffect(() => {
+    onFilenameChange?.(defaultFilename)
+  }, [defaultFilename, onFilenameChange])
 
   const pdfRef = useRef<PDFDocumentProxy | null>(null)
   const [numPages, setNumPages] = useState<number>(1)
@@ -301,7 +311,7 @@ export const PdfContainer: React.FC<Props> = ({
   return (
     <div
       ref={divRef}
-      className="flex aspect-210/297 max-h-[90%] w-3xl flex-col items-center justify-center rounded-md border bg-white relative"
+      className={cn(className, 'flex aspect-210/297 max-h-[90%] w-3xl flex-col items-center justify-center rounded-md border bg-white relative')}
     >
       <div
         className={cn(
@@ -330,7 +340,7 @@ export const PdfContainer: React.FC<Props> = ({
               <LogoSpinner />
             </div>
           }
-          className="overflow-auto h-full w-full bg-stone-50"
+          className="overflow-auto h-full w-full bg-accent"
           onLoadSuccess={onDocumentLoadSuccess}
           inputRef={scrollContainerRef}
         >

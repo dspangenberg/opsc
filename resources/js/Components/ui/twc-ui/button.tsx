@@ -30,11 +30,11 @@ const buttonVariants = cva(
         destructive:
           'bg-destructive text-destructive-foreground text-white data-[hovered]:bg-destructive/90 border pressed:ring-destructive/50 focus-visible:ring-destructive/20 focus-visible:border-destructive/20 ',
         outline:
-          'border border-input bg-background  data-[hovered]:bg-accent data-[hovered]:text-accent-foreground focus-visible:ring-ring/20 pressed:ring-ring/50',
+          'border border-input bg-background selected:bg-accent  data-[hovered]:bg-accent data-[hovered]:text-accent-foreground focus-visible:ring-ring/20 pressed:ring-ring/50',
         secondary:
           'bg-secondary/90 text-secondary-foreground border-transparent border focus-visible:border-input focus-visible:border data-[hovered]:bg-secondary/20 pressed:ring-ring/50',
         ghost:
-          'data-[hovered]:bg-accent data-[hovered]:text-accent-foreground focus-visible:border border border-transparent focus-visible:border-input focus-visible:ring-ring/20 pressed:ring/50 text-sm',
+          'data-[hovered]:bg-accent/80 data-[hovered]:text-accent-foreground selected:bg-accent focus-visible:border border border-transparent focus-visible:border-input focus-visible:ring-ring/20 pressed:ring/50 text-sm',
         link: 'text-primary underline-offset-4 data-[hovered]:underline',
         'ghost-destructive':
           'data-[hovered]:bg-accent data-[hovered]:text-destructive-foreground focus-visible:border border border-transparent focus-visible:border-input focus-visible:ring-ring/20 pressed:ring-ring/50 text-sm',

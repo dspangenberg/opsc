@@ -101,7 +101,7 @@ const InvoiceCreate: React.FC<Props> = ({
         </FormGroup>
         <FormGroup>
           <div className="col-span-12">
-            <FormSelect<App.Data.PaymentDeadlineData>
+            <FormSelect
               {...form.register('payment_deadline_id')}
               label="Zahlungsziel"
               items={payment_deadlines}

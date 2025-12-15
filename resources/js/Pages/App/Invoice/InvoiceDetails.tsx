@@ -9,7 +9,6 @@ import { InvoiceLinesEditor } from '@/Pages/App/Invoice/InvoiceLinesEditor'
 import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 import { InvoicingTable, type LineCommandProps } from '@/Pages/App/Invoice/InvoicingTable'
 import type { PageProps } from '@/Types'
-import { InvoiceDetailsLinkedInvoices } from './InvoiceDetailsLinkedInvoices'
 
 interface InvoiceDetailsProps extends PageProps {
   invoice: App.Data.InvoiceData
@@ -74,12 +73,6 @@ const InvoiceDetailsContent: React.FC<{ children?: React.ReactNode }> = ({ child
         <div className="space-y-4">
           <h5>Rechnungspositionen</h5>
           <InvoicingTable invoice={invoice} onLineCommand={handeLineCommand} />
-          {linkedInvoices.length > 0 && (
-            <>
-              <h5>Verrechnete Akontorechnungen</h5>
-              <InvoiceDetailsLinkedInvoices invoice={invoice} onLineCommand={handeLineCommand} />
-            </>
-          )}
         </div>
       )}
     </div>
