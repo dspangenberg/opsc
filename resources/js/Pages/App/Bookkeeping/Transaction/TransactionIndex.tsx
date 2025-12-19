@@ -62,7 +62,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
   const [search, setSearch] = useState(currentSearch)
 
   // Debounce für Search
-  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Debounced Search Handler
   const debouncedSearchChange = useCallback(

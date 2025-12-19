@@ -1,12 +1,13 @@
 import React from 'react'
 import {
-  composeRenderProps,
   ToggleButtonGroup as AriaToggleButtonGroup,
-  ToggleButtonGroupProps as AriaToggleButtonGroupProps, type TooltipProps
+  type ToggleButtonGroupProps as AriaToggleButtonGroupProps,
+  composeRenderProps,
+  type TooltipProps
 } from 'react-aria-components'
 import { tv, type VariantProps } from 'tailwind-variants'
-import { ToggleButton, ToggleButtonProps } from './toggle-button'
-import { buttonVariants } from './button'
+import type { buttonVariants } from './button'
+import { ToggleButton, type ToggleButtonProps } from './toggle-button'
 
 const ToggleButtonGroupContext = React.createContext<{
   variant?: 'ghost' | 'outline' | 'toolbar'
@@ -22,10 +23,11 @@ export interface ToggleButtonGroupProps extends AriaToggleButtonGroupProps {
   variant?: 'ghost' | 'outline' | 'toolbar'
   size?: VariantProps<typeof buttonVariants>['size']
   tooltipPlacement?: TooltipProps['placement']
+  id?: string
 }
 
 const toggleButtonGroupVariants = tv({
-  base: 'group/toggle-button-group flex w-fit items-center rounded-md gap-1.5',
+  base: 'group/toggle-button-group flex w-fit items-center gap-1.5 rounded-md',
   variants: {
     variant: {
       ghost: '',
@@ -43,28 +45,34 @@ export const ToggleButtonGroup = ({
   variant = 'ghost',
   size = 'icon',
   tooltipPlacement = 'bottom',
+  selectionMode = 'single',
   children,
   ...props
 }: ToggleButtonGroupProps) => {
+  const contextValue = React.useMemo(
+    () => ({
+      variant,
+      size,
+      tooltipPlacement
+    }),
+    [variant, size, tooltipPlacement]
+  )
+
   return (
     <AriaToggleButtonGroup
       {...props}
       data-slot="toggle-button-group"
       data-variant={variant}
       data-size={size}
-      className={composeRenderProps(className, (cls) =>
+      selectionMode={selectionMode}
+      className={composeRenderProps(className, cls =>
         toggleButtonGroupVariants({
           variant,
           className: cls
         })
       )}
     >
-      <ToggleButtonGroupContext.Provider value={{
-        variant,
-        size,
-        tooltipPlacement
-      }}
-      >
+      <ToggleButtonGroupContext.Provider value={contextValue}>
         {children as React.ReactNode}
       </ToggleButtonGroupContext.Provider>
     </AriaToggleButtonGroup>

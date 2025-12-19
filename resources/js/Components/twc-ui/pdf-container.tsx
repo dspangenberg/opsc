@@ -1,10 +1,10 @@
+import type { PDFDocumentProxy } from 'pdfjs-dist'
 import print from 'print-js'
 import type React from 'react'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf'
-import { Separator } from './separator'
 import { LogoSpinner } from './logo-spinner'
-import type { PDFDocumentProxy } from 'pdfjs-dist'
+import { Separator } from './separator'
 import 'react-pdf/dist/Page/TextLayer.css'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 
@@ -12,24 +12,22 @@ import {
   ArrowDown01Icon,
   ArrowUp01Icon,
   FileDownloadIcon,
+  FourFinger03Icon,
   PrinterIcon,
   SearchAddIcon,
   SearchMinusIcon,
-  SquareArrowDiagonal02Icon,
-  FourFinger03Icon
+  SquareArrowDiagonal02Icon
 } from '@hugeicons/core-free-icons'
-import { TextCursor } from 'lucide-react';
+import { TextCursor } from 'lucide-react'
 
 import { useFullscreen, useToggle } from 'react-use'
-import { DropdownButton, MenuItem } from './dropdown-button'
-import { Button } from './button'
-import { Toolbar } from './toolbar'
 import { useFileDownload } from '@/Hooks/use-file-download'
 import { cn } from '@/Lib/utils'
-import {
-  ToggleButtonGroup,
-  ToggleButtonGroupItem
-} from './toggle-button-group'
+import { Button } from './button'
+import { DropdownButton } from './dropdown-button'
+import { MenuItem } from './menu'
+import { ToggleButtonGroup, ToggleButtonGroupItem } from './toggle-button-group'
+import { Toolbar } from './toolbar'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
@@ -37,12 +35,16 @@ interface Props {
   file: string
   filename?: string
   hideFilename?: boolean
+  className?: string
+  onFilenameChange?: (filename: string) => void
 }
 
 export const PdfContainer: React.FC<Props> = ({
   file,
   filename,
-  hideFilename = false
+  className,
+  hideFilename = false,
+  onFilenameChange
 }) => {
   const defaultFilename = useMemo(() => {
     if (filename) return filename
@@ -56,11 +58,16 @@ export const PdfContainer: React.FC<Props> = ({
       return 'unbekannt.pdf'
     }
   }, [file, filename])
+
   const divRef = useRef<HTMLDivElement>(null)
   const [show, toggle] = useToggle(false)
   const isFullscreen = useFullscreen(divRef as React.RefObject<Element>, show, {
     onClose: () => toggle(false)
   })
+
+  useEffect(() => {
+    onFilenameChange?.(defaultFilename)
+  }, [defaultFilename, onFilenameChange])
 
   const pdfRef = useRef<PDFDocumentProxy | null>(null)
   const [numPages, setNumPages] = useState<number>(1)
@@ -213,54 +220,96 @@ export const PdfContainer: React.FC<Props> = ({
             selectionMode="single"
             selectedKeys={new Set([scaleMode])}
           >
-            {showFitToPage &&
-              <MenuItem id="fit-page" title="Ganze Seite" className="text-left" onAction={calculateFitToPage} />}
-            <MenuItem id="fit-width" title="Seitenbreite" className="text-left" separator
-                      onAction={calculateFitToWidth}
+            {showFitToPage && (
+              <MenuItem
+                id="fit-page"
+                title="Ganze Seite"
+                className="text-left"
+                onAction={calculateFitToPage}
+              />
+            )}
+            <MenuItem
+              id="fit-width"
+              title="Seitenbreite"
+              className="text-left"
+              separator
+              onAction={calculateFitToWidth}
             />
-            <MenuItem id="scale-50" title="50 %" className="text-right" onAction={() => {
-              setScale(0.5)
-              setScaleMode('scale-50')
-            }}
+            <MenuItem
+              id="scale-50"
+              title="50 %"
+              className="text-right"
+              onAction={() => {
+                setScale(0.5)
+                setScaleMode('scale-50')
+              }}
             />
-            <MenuItem id="scale-75" title="75 %" className="text-right" onAction={() => {
-              setScale(0.75)
-              setScaleMode('scale-75')
-            }}
+            <MenuItem
+              id="scale-75"
+              title="75 %"
+              className="text-right"
+              onAction={() => {
+                setScale(0.75)
+                setScaleMode('scale-75')
+              }}
             />
-            <MenuItem id="scale-100" title="100 %" className="text-right" onAction={() => {
-              setScale(1)
-              setScaleMode('scale-100')
-            }}
+            <MenuItem
+              id="scale-100"
+              title="100 %"
+              className="text-right"
+              onAction={() => {
+                setScale(1)
+                setScaleMode('scale-100')
+              }}
             />
-            <MenuItem id="scale-125" title="125 %" className="text-right" onAction={() => {
-              setScale(1.25)
-              setScaleMode('scale-125')
-            }}
+            <MenuItem
+              id="scale-125"
+              title="125 %"
+              className="text-right"
+              onAction={() => {
+                setScale(1.25)
+                setScaleMode('scale-125')
+              }}
             />
-            <MenuItem id="scale-150" title="150 %" className="text-right" onAction={() => {
-              setScale(1.5)
-              setScaleMode('scale-150')
-            }}
+            <MenuItem
+              id="scale-150"
+              title="150 %"
+              className="text-right"
+              onAction={() => {
+                setScale(1.5)
+                setScaleMode('scale-150')
+              }}
             />
-            <MenuItem id="scale-200" title="200 %" className="text-right" onAction={() => {
-              setScale(2)
-              setScaleMode('scale-200')
-            }}
+            <MenuItem
+              id="scale-200"
+              title="200 %"
+              className="text-right"
+              onAction={() => {
+                setScale(2)
+                setScaleMode('scale-200')
+              }}
             />
-            <MenuItem id="scale-300" title="300 %" className="text-right" onAction={() => {
-              setScale(3)
-              setScaleMode('scale-300')
-            }}
+            <MenuItem
+              id="scale-300"
+              title="300 %"
+              className="text-right"
+              onAction={() => {
+                setScale(3)
+                setScaleMode('scale-300')
+              }}
             />
-            <MenuItem id="scale-400" title="400 %" className="text-right" onAction={() => {
-              setScale(4)
-              setScaleMode('scale-400')
-            }}
+            <MenuItem
+              id="scale-400"
+              title="400 %"
+              className="text-right"
+              onAction={() => {
+                setScale(4)
+                setScaleMode('scale-400')
+              }}
             />
           </DropdownButton>
         ) : (
-          <div className="px-2 text-sm pt-2">{Math.round(scale * 100)} %</div>
+          <div className="px-2 pt-2 text-sm">{Math.round(scale * 100)} %</div>
         )}
         <Button variant="toolbar" icon={SearchAddIcon} title="Vergrößern" onClick={handleScaleIn} />
         <Separator orientation="vertical" />
@@ -270,7 +319,7 @@ export const PdfContainer: React.FC<Props> = ({
           aria-label="Cursor"
           selectionMode="single"
           selectedKeys={new Set([cursorTool])}
-          onSelectionChange={(keys) => {
+          onSelectionChange={keys => {
             const value = Array.from(keys)[0] as 'select' | 'grab'
             if (value) setCursorTool(value)
           }}
@@ -295,18 +344,38 @@ export const PdfContainer: React.FC<Props> = ({
         />
       </Toolbar>
     ),
-    [scale, scaleMode, showFitToPage, cursorTool, show, calculateFitToPage, calculateFitToWidth, handleScaleIn, handleScaleOut, handleNextPage, handlePrevPage, handlePrint, handleDownload, toggle, pageNumber, numPages]
+    [
+      scale,
+      scaleMode,
+      showFitToPage,
+      cursorTool,
+      show,
+      calculateFitToPage,
+      calculateFitToWidth,
+      handleScaleIn,
+      handleScaleOut,
+      handleNextPage,
+      handlePrevPage,
+      handlePrint,
+      handleDownload,
+      toggle,
+      pageNumber,
+      numPages
+    ]
   )
 
   return (
     <div
       ref={divRef}
-      className="flex aspect-210/297 max-h-[90%] w-3xl flex-col items-center justify-center rounded-md border bg-white relative"
+      className={cn(
+        className,
+        'relative flex aspect-210/297 max-h-[90%] w-3xl flex-col items-center justify-center rounded-md border bg-white'
+      )}
     >
       <div
         className={cn(
-          'py-1 z-10',
-          isFullscreen ? 'self-center' : 'w-full self-start bg-page-content px-4 border-b'
+          'z-10 py-1',
+          isFullscreen ? 'self-center' : 'w-full self-start border-b bg-page-content px-4'
         )}
       >
         {!hideFilename && (
@@ -317,7 +386,7 @@ export const PdfContainer: React.FC<Props> = ({
         {toolbar}
       </div>
 
-      <div className="flex-1 w-full overflow-hidden">
+      <div className="w-full flex-1 overflow-hidden">
         {isLoading && (
           <div className="mx-auto my-auto flex-1">
             <LogoSpinner />
@@ -330,7 +399,7 @@ export const PdfContainer: React.FC<Props> = ({
               <LogoSpinner />
             </div>
           }
-          className="overflow-auto h-full w-full bg-stone-50"
+          className="h-full w-full overflow-auto bg-accent"
           onLoadSuccess={onDocumentLoadSuccess}
           inputRef={scrollContainerRef}
         >
@@ -346,7 +415,8 @@ export const PdfContainer: React.FC<Props> = ({
               margin: '-2rem'
             }}
             className={cn(
-              cursorTool === 'grab' && '[&_.react-pdf__Page__textContent]:select-none [&_.react-pdf__Page__textContent]:pointer-events-none',
+              cursorTool === 'grab' &&
+                '[&_.react-pdf__Page__textContent]:pointer-events-none [&_.react-pdf__Page__textContent]:select-none',
               cursorTool === 'grab' && '**:cursor-grab!',
               isDragging && '**:cursor-grabbing!'
             )}

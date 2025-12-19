@@ -9,7 +9,7 @@ import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useCallback } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
-import { PdfViewerContainer } from '@/Components/PdfViewerContainer'
+import { PdfContainer } from '@/Components/twc-ui/pdf-container'
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@/Components/ui/table'
 import { Alert } from '@/Components/ui/twc-ui/alert'
 import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
@@ -114,10 +114,9 @@ const ReceiptConfirm: React.FC<Props> = ({
 
   return (
     <PageContainer title="Beleg bearbeiten" width="7xl" className="flex overflow-hidden">
-      <PdfViewerContainer
-        document={route('app.bookkeeping.receipts.pdf', { receipt: receipt.id })}
+      <PdfContainer
+        file={route('app.bookkeeping.receipts.pdf', { receipt: receipt.id })}
         filename={receipt.org_filename}
-        showFileName
       />
       <Form form={form} className="flex-1">
         {receipt.duplicate_of && <Alert variant="info">Mögliches Duplikat.</Alert>}

@@ -16,7 +16,7 @@ import { cn } from '@/Lib/utils'
 const Breadcrumbs = <T extends object>({ className, ...props }: AriaBreadcrumbsProps<T>) => (
   <AriaBreadcrumbs
     className={cn(
-      'flex flex-wrap items-center gap-1.5 break-words text-muted-foreground text-sm sm:gap-2.5',
+      'wrap-break-word flex flex-wrap items-center gap-1.5 text-muted-foreground text-sm sm:gap-2.5',
       className
     )}
     {...props}
@@ -36,11 +36,11 @@ const BreadcrumbLink = ({ className, ...props }: AriaLinkProps) => (
       cn(
         'text-foreground transition-colors',
         /* Hover */
-        'data-[hovered]:underline',
+        'data-hovered:underline',
         /* Disabled */
-        'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+        'data-disabled:pointer-events-none data-disabled:opacity-50',
         /* Current */
-        'data-[current]:pointer-events-auto data-[current]:opacity-100',
+        'current:pointer-events-auto current:opacity-100',
         className
       )
     )}

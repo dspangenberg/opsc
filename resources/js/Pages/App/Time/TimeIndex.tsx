@@ -1,7 +1,6 @@
 import {
   Add01Icon,
   FileDownloadIcon,
-  FilterAddIcon,
   FilterIcon,
   PrinterIcon,
   Sorting05Icon
@@ -13,8 +12,8 @@ import { useCallback, useMemo, useState } from 'react'
 import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
-import { PdfViewer } from '@/Components/PdfViewer'
-import { Toggle } from '@/Components/twcui/toggle'
+import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
+import { ToggleButton } from '@/Components/twc-ui/toggle-button'
 import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { ComboBox } from '@/Components/ui/twc-ui/combo-box'
@@ -26,14 +25,6 @@ export interface TimeGroupedEntries {
   entries: {
     [key: number]: App.Data.TimeData[]
   }
-}
-
-export interface BillableProjects {
-  id: number
-  name: string
-  total_mins: number
-  first_entry_at: string
-  last_entry_at: string
 }
 
 export interface TimeGroupedByDate {
@@ -58,7 +49,6 @@ const TimeIndex: React.FC = () => {
   const times = usePage<TimeIndexProps>().props.times
   const projects = usePage<TimeIndexProps>().props.projects
   const currentFilters = usePage<TimeIndexProps>().props.currentFilters
-  const [showPdfViewer, setShowPdfViewer] = useState(false)
   const [selectedRows, setSelectedRows] = useState<App.Data.TimeData[]>([])
   const [showFilter, setShowFilter] = useState<boolean>(false)
 
@@ -69,6 +59,19 @@ const TimeIndex: React.FC = () => {
 
   const breadcrumbs = useMemo(() => [{ title: 'Zeiterfassung' }], [])
 
+  const onShowPdf = async () => {
+    await PdfViewer.call({
+      filename: 'proof.pdf',
+      file: route('app.time.pdf', {
+        _query: {
+          filter: {
+            project_id: selectedProject
+          }
+        }
+      })
+    })
+  }
+
   const handleTimeCreateClicked = useCallback(() => {
     router.visit(
       route('app.time.create', {
@@ -78,10 +81,6 @@ const TimeIndex: React.FC = () => {
       })
     )
   }, [])
-
-  const handlePdfReportClicked = () => {
-    router.visit(route('app.time.pdf'))
-  }
 
   const handleProjectChange = useCallback((value: unknown) => {
     setSelectedProject(Number(value))
@@ -96,12 +95,7 @@ const TimeIndex: React.FC = () => {
           title="Neue Rechnung"
           onPress={handleTimeCreateClicked}
         />
-        <Button
-          variant="toolbar"
-          icon={PrinterIcon}
-          title="Drucken"
-          onClick={() => setShowPdfViewer(true)}
-        />
+        <Button variant="toolbar" icon={PrinterIcon} title="Drucken" onClick={() => onShowPdf()} />
       </Toolbar>
     ),
     [handleTimeCreateClicked]
@@ -146,15 +140,12 @@ const TimeIndex: React.FC = () => {
     () => (
       <div className="flex flex-col rounded-t-md py-1.5">
         <Toolbar variant="secondary">
-          <Toggle
+          <ToggleButton
             icon={FilterIcon}
             tooltip="Filter ein- /ausblenden"
-            variant="default"
-            size="default"
             isSelected={showFilter}
             onChange={setShowFilter}
           />
-          <Button variant="toolbar" icon={FilterAddIcon} title="Filter hinzufügen" />
         </Toolbar>
       </div>
     ),
@@ -178,7 +169,6 @@ const TimeIndex: React.FC = () => {
     )
   }, [selectedMins, selectedRows.length])
 
-  const currentRoute = route().current()
   const footer = useMemo(() => <Pagination data={times} />, [times])
 
   return (
@@ -205,18 +195,6 @@ const TimeIndex: React.FC = () => {
         footer={footer}
         header={header}
         itemName="Zeiten"
-      />
-      <PdfViewer
-        open={showPdfViewer}
-        filename={'proof.pdf'}
-        onOpenChange={setShowPdfViewer}
-        document={route('app.time.pdf', {
-          _query: {
-            filter: {
-              ['project_id']: selectedProject
-            }
-          }
-        })}
       />
     </PageContainer>
   )
