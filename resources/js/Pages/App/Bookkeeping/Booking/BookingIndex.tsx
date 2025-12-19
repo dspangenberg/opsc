@@ -80,7 +80,7 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({ bookings, currentSearch
     setSearch(newSearch)
     debouncedSearchChange(newSearch)
   }
-  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const debouncedSearchChange = useCallback((newSearch: string) => {
     if (searchTimeoutRef.current) {

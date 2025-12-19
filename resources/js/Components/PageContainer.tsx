@@ -93,7 +93,7 @@ export const PageContainer: React.FC<PageContainerProps> = ({
       <div className={cn('relative flex-1 bg-page-content py-6', backgroundClass)}>
         <LayoutContainer
           className={cn(
-            'xl:!flex-row absolute inset-0 my-6 min-h-0 flex-col gap-2 overflow-y-auto px-4',
+            'absolute inset-0 my-6 min-h-0 flex-col gap-2 overflow-y-auto px-4 xl:flex-row!',
             className
           )}
         >

@@ -5,7 +5,7 @@ import {
   type TextAreaProps as AriaTextAreaProps,
   TextField as AriaTextField,
   type TextFieldProps as AriaTextFieldProps,
-  composeRenderProps,
+  composeRenderProps
 } from 'react-aria-components'
 import { useFormContext } from './form'
 import { cn } from '@/Lib/utils'
@@ -14,10 +14,7 @@ import React from 'react'
 
 const BaseTextField = AriaTextField
 
-const Input = ({
-  className,
-  ...props
-}: AriaInputProps) => {
+const Input = ({ className, ...props }: AriaInputProps) => {
   return (
     <AriaInput
       className={composeRenderProps(className, className =>
@@ -43,12 +40,7 @@ interface RACTextAreaProps extends AriaTextAreaProps {
   rows?: number
 }
 
-const RACTextarea = ({
-  className,
-  autoSize = true,
-  rows = 2,
-  ...props
-}: RACTextAreaProps) => {
+const RACTextarea = ({ className, autoSize = true, rows = 2, ...props }: RACTextAreaProps) => {
   return (
     <AriaTextArea
       className={composeRenderProps(className, className =>
@@ -99,7 +91,6 @@ const TextField = ({
   error,
   ...props
 }: TextFieldProps) => {
-
   const hasError = !!error
 
   const handleChange = (val: string) => {
@@ -124,12 +115,8 @@ const TextField = ({
       {...props}
     >
       {label && <Label isRequired={isRequired} value={label} />}
-      <Input autoComplete={autoComplete} placeholder={placeholder}/>
-      {description && (
-        <FieldDescription>
-          {description}
-        </FieldDescription>
-      )}
+      <Input autoComplete={autoComplete} placeholder={placeholder} />
+      {description && <FieldDescription>{description}</FieldDescription>}
       <ErrorComponent>{error}</ErrorComponent>
     </AriaTextField>
   )
@@ -165,7 +152,6 @@ const TextAreaField = ({
   value,
   ...props
 }: TextAreaProps) => {
-
   const hasError = !!error
 
   const handleChange = (val: string) => {
@@ -191,32 +177,23 @@ const TextAreaField = ({
     >
       {label && <Label isRequired={isRequired} value={label} />}
       <RACTextarea rows={rows} autoSize={autoSize} autoComplete={autoComplete} />
-      {description && (
-        <FieldDescription>
-          {description}
-        </FieldDescription>
-      )}
+      {description && <FieldDescription>{description}</FieldDescription>}
       <ErrorComponent>{error}</ErrorComponent>
     </AriaTextField>
   )
 }
-const FormTextField = ({ ...props}: TextFieldProps) => {
+const FormTextField = ({ ...props }: TextFieldProps) => {
   const form = useFormContext()
   const error = form?.errors?.[props.name as string]
 
-  return (
-    <TextField errorComponent={FormFieldError} error={error} {...props} />
-  )
+  return <TextField errorComponent={FormFieldError} error={error} {...props} />
 }
 
-const FormTextAreaField = ({ ...props}: TextFieldProps) => {
+const FormTextAreaField = ({ ...props }: TextFieldProps) => {
   const form = useFormContext()
   const error = form?.errors?.[props.name as string]
 
-  return (
-    <TextAreaField errorComponent={FormFieldError} error={error} {...props} />
-  )
+  return <TextAreaField errorComponent={FormFieldError} error={error} {...props} />
 }
-
 
 export { Input, TextField, FormTextField, BaseTextField, TextAreaField, FormTextAreaField }

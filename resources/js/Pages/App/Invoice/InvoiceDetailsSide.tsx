@@ -17,8 +17,7 @@ interface ContactDetailsOrgInfoBoxProps {
 }
 
 export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
-  invoice,
-  showSecondary
+  invoice
 }: ContactDetailsOrgInfoBoxProps) => {
   const currencyFormatter = new Intl.NumberFormat('de-DE', {
     style: 'decimal',

@@ -1,10 +1,11 @@
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useState } from 'react'
+import { DatePicker } from '@/Components/twc-ui/date-picker'
+import { FormDateRangePicker } from '@/Components/twc-ui/date-range-picker'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
 import { FormComboBox } from '@/Components/ui/twc-ui/combo-box'
-import { DatePicker, DateRangePicker } from '@/Components/ui/twc-ui/date-picker'
 import { Dialog } from '@/Components/ui/twc-ui/dialog'
 import { Form, useForm } from '@/Components/ui/twc-ui/form'
 import { FormGroup } from '@/Components/ui/twc-ui/form-group'
@@ -75,7 +76,7 @@ export const InvoiceDetailsEditBaseData: React.FC<Props> = ({
           <div className="col-span-4" />
 
           <div className="col-span-12">
-            <DateRangePicker
+            <FormDateRangePicker
               label="Leistungsdatum"
               {...form.registerDateRange('service_period_begin', 'service_period_end')}
             />

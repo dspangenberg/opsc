@@ -19,19 +19,14 @@ import {
 import { router } from '@inertiajs/react'
 import print from 'print-js'
 import type * as React from 'react'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
-import { PdfViewer } from '@/Components/PdfViewer'
-import {
-  DropdownButton,
-  Menu,
-  MenuItem,
-  MenuPopover,
-  MenuSubTrigger
-} from '@/Components/twcui/dropdown-button'
-import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
-import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
-import { Toolbar, ToolbarButton } from '@/Components/ui/twc-ui/toolbar'
+import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { Menu, MenuItem, MenuPopover, MenuSubTrigger } from '@/Components/twc-ui/menu'
+import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
+import { Tab, TabList, Tabs } from '@/Components/twc-ui/tabs'
+import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
 import { useFileDownload } from '@/Hooks/useFileDownload'
 import { InvoiceTableProvider, useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 
@@ -43,6 +38,13 @@ interface Props {
 const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => {
   const onPrintPdf = () => {
     print(route('app.invoice.pdf', { id: invoice.id }))
+  }
+
+  const onShowPdf = async () => {
+    await PdfViewer.call({
+      file: route('app.invoice.pdf', { id: invoice.id }),
+      filename: invoice.filename || 'invoice.pdf'
+    })
   }
 
   const { editMode, setEditMode } = useInvoiceTable()
@@ -69,7 +71,6 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
   )
 
   const title = `RG-${invoice.formated_invoice_number}`
-  const [showPdfViewer, setShowPdfViewer] = useState(false)
 
   const { handleDownload } = useFileDownload({
     route: route('app.invoice.pdf', { id: invoice.id }),
@@ -175,16 +176,11 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
           />
         )}
 
-        <ToolbarButton
-          icon={Pdf02Icon}
-          title="PDF-Vorschau"
-          onClick={() => setShowPdfViewer(true)}
-        />
+        <ToolbarButton icon={Pdf02Icon} title="PDF-Vorschau" onClick={() => onShowPdf()} />
 
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} isDisabled={editMode}>
           {invoice.is_draft && (
             <>
-
               <MenuItem
                 icon={Edit03Icon}
                 title="Stammdaten bearbeiten"
@@ -198,14 +194,16 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
                 separator
                 onAction={() => setEditMode(true)}
               />
-              {invoice.type_id === 3 && <MenuItem
-                icon={CashbackEuroIcon}
-                title="Mit Akonto-Zahlung verrechnen"
-                separator
-                isDisabled={invoice.type_id !== 3}
-                href={route('app.invoice.link-on-account-invoice', { invoice: invoice.id })}
-                ellipsis
-              />}
+              {invoice.type_id === 3 && (
+                <MenuItem
+                  icon={CashbackEuroIcon}
+                  title="Mit Akonto-Zahlung verrechnen"
+                  separator
+                  isDisabled={invoice.type_id !== 3}
+                  href={route('app.invoice.link-on-account-invoice', { invoice: invoice.id })}
+                  ellipsis
+                />
+              )}
               <MenuItem
                 icon={DocumentValidationIcon}
                 title="Rechnung abschließen"
@@ -215,12 +213,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
               />
             </>
           )}
-          <MenuItem
-            icon={Pdf02Icon}
-            title="PDF-Vorschau"
-            ellipsis
-            onAction={() => setShowPdfViewer(true)}
-          />
+          <MenuItem icon={Pdf02Icon} title="PDF-Vorschau" ellipsis onAction={() => onShowPdf()} />
           <MenuItem
             icon={FileDownloadIcon}
             title="PDF herunterladen"
@@ -248,7 +241,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
             <MenuPopover>
               <Menu>
                 <MenuItem
-                  disabled={invoice.is_draft || !!invoice.sent_at}
+                  isDisabled={invoice.is_draft || !!invoice.sent_at}
                   icon={Sent02Icon}
                   title="Als versendet markieren"
                   separator
@@ -265,7 +258,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
                   icon={FileEditIcon}
                   title="Rechnung korrigieren"
                   onAction={handleUnrelease}
-                  disabled={!invoice.is_draft && !!invoice.sent_at}
+                  isDisabled={!invoice.is_draft && !!invoice.sent_at}
                 />
                 <MenuItem icon={FileRemoveIcon} title="Rechnung stornieren" separator />
                 <MenuItem
@@ -273,18 +266,18 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
                   title="Rechnung löschen"
                   separator
                   variant="destructive"
-                  disabled={!invoice.is_draft}
+                  isDisabled={!invoice.is_draft}
                   onAction={handleDelete}
                 />
                 <MenuItem
                   title="Rechnung buchen"
                   href={route('app.invoice.booking-create', { invoice })}
-                  disabled={!invoice.sent_at || !!invoice.booking?.id}
+                  isDisabled={!invoice.sent_at || !!invoice.booking?.id}
                 />
                 <MenuItem
                   icon={UnavailableIcon}
                   title="Als Forderungsverlust markieren"
-                  disabled={invoice.is_draft}
+                  isDisabled={invoice.is_draft}
                 />
               </Menu>
             </MenuPopover>
@@ -292,7 +285,16 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
         </DropdownButton>
       </Toolbar>
     ),
-    [editMode, handleDownload, invoice.sent_at, handleRelease, setEditMode, invoice, invoice.type_id, invoice.id]
+    [
+      editMode,
+      handleDownload,
+      invoice.sent_at,
+      handleRelease,
+      setEditMode,
+      invoice,
+      invoice.type_id,
+      invoice.id
+    ]
   )
 
   return (
@@ -304,12 +306,6 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
       className="flex gap-4 overflow-y-auto"
       toolbar={toolbar}
     >
-      <PdfViewer
-        open={showPdfViewer}
-        filename={invoice.filename || 'invoice.pdf'}
-        onOpenChange={setShowPdfViewer}
-        document={route('app.invoice.pdf', { id: invoice.id })}
-      />
       {children}
     </PageContainer>
   )

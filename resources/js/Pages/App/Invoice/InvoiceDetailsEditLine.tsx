@@ -1,14 +1,15 @@
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useEffect, useState } from 'react'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { DateRangePicker } from '@/Components/ui/twc-ui/date-picker'
-import { Dialog } from '@/Components/ui/twc-ui/dialog'
-import { Form, useForm } from '@/Components/ui/twc-ui/form'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { NumberField } from '@/Components/ui/twc-ui/number-field'
-import { Select } from '@/Components/ui/twc-ui/select'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { Button } from '@/Components/twc-ui/button'
+import { FormDateRangePicker } from '@/Components/twc-ui/date-range-picker'
+import { Dialog } from '@/Components/twc-ui/dialog'
+import { Form, useForm } from '@/Components/twc-ui/form'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormNumberField } from '@/Components/twc-ui/number-field'
+import { FormSelect } from '@/Components/twc-ui/select'
+import { FormTextArea } from '@/Components/twc-ui/text-area'
+import { FormTextField } from '@/Components/twc-ui/text-field'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -66,9 +67,9 @@ export const InvoiceDetailsEditLine: React.FC<Props> = ({ invoice, invoiceLine }
       )}
     >
       <Form form={form} onSubmitted={() => setIsOpen(false)}>
-        <FormGroup>
+        <FormGrid>
           <div className="col-span-2">
-            <NumberField
+            <FormNumberField
               autoFocus
               formatOptions={{
                 minimumFractionDigits: 2,
@@ -79,23 +80,23 @@ export const InvoiceDetailsEditLine: React.FC<Props> = ({ invoice, invoiceLine }
             />
           </div>
           <div className="col-span-2">
-            <TextField label="Einheit" {...form.register('unit')} />
+            <FormTextField label="Einheit" {...form.register('unit')} />
           </div>
           <div className="col-span-11">
-            <TextField label="Beschreibung" rows={2} textArea={true} {...form.register('text')} />
+            <FormTextArea label="Beschreibung" rows={2} {...form.register('text')} />
           </div>
           <div className="col-span-3">
-            <NumberField label="Einzelpreis" {...form.register('price')} />
+            <FormNumberField label="Einzelpreis" {...form.register('price')} />
           </div>
           <div className="col-span-3">
-            <NumberField
+            <FormNumberField
               label="Gesamtbetrag"
               isDisabled={form.data.type_id === 1}
               {...form.register('amount')}
             />
           </div>
           <div className="col-span-3">
-            <Select<App.Data.TaxRateData>
+            <FormSelect<App.Data.TaxRateData>
               {...form.register('tax_rate_id')}
               label="USt.-Satz"
               items={invoice.tax?.rates || []}
@@ -103,12 +104,12 @@ export const InvoiceDetailsEditLine: React.FC<Props> = ({ invoice, invoiceLine }
           </div>
           <div className="col-span-4" />
           <div className="col-span-7">
-            <DateRangePicker
+            <FormDateRangePicker
               label="Leistungsdatum"
               {...form.registerDateRange('service_period_begin', 'service_period_end')}
             />
           </div>
-        </FormGroup>
+        </FormGrid>
       </Form>
     </Dialog>
   )

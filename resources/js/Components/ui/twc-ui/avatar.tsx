@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { generateColorFromString, getIdealTextColor } from '@/Lib/color-utils'
 import { cn } from '@/Lib/utils'
 
-// Basic Avatar components (original shadcn/ui implementation)
 const AvatarRoot = ({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Root>) => {
   return (
     <AvatarPrimitive.Root
@@ -61,6 +60,13 @@ const Avatar = ({
   const [backgroundColor, setBackgroundColor] = useState<string>('')
   const [textColor, setTextColor] = useState<string>('')
 
+  if (!initials) {
+    initials = fullname
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+  }
+
   const avatarSizeClass = {
     sm: 'size-7',
     md: 'size-8',
@@ -80,7 +86,7 @@ const Avatar = ({
       setBackgroundColor(bgColor)
       setTextColor(getIdealTextColor(bgColor))
     }
-  }, [fullname])
+  }, [fullname, src])
 
   return (
     <div className="rounded-full border border-border" data-testid="avatar-container">

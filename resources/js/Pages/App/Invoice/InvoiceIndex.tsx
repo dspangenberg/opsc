@@ -19,10 +19,10 @@ import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
 import { StatsField } from '@/Components/StatsField'
+import { ToggleButton } from '@/Components/twc-ui/toggle-button'
 import { BorderedBox } from '@/Components/twcui/bordered-box'
 import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
 import { Separator } from '@/Components/twcui/separator'
-import { Toggle } from '@/Components/twcui/toggle'
 import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/twc-ui/button'
 import { Select } from '@/Components/ui/twc-ui/select'
@@ -230,11 +230,9 @@ const InvoiceIndex: React.FC = () => {
             />
             <Separator orientation="vertical" />
 
-            <Toggle
+            <ToggleButton
               icon={FilterIcon}
               tooltip="Filter ein- /ausblenden"
-              variant="default"
-              size="default"
               isSelected={showFilter}
               onChange={setShowFilter}
             />
@@ -305,7 +303,6 @@ const InvoiceIndex: React.FC = () => {
         data={invoices.data}
         filterBar={filterBar}
         footer={footer}
-        header={header}
         onSelectedRowsChange={setSelectedRows}
         itemName="Rechnungen mit den Suchkriterien"
       />
