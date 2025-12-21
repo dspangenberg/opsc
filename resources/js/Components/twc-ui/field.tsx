@@ -1,5 +1,3 @@
-'use client'
-
 import { cva, type VariantProps } from 'class-variance-authority'
 import {
   FieldError as AriaFieldError,
@@ -29,13 +27,14 @@ interface LabelProps extends AriaLabelProps {
 }
 
 const Label = ({ className, children, value, isRequired = false, ...props }: LabelProps) => {
+  const valueWithColon = value ? `${value}:` : ''
   return (
     <AriaLabel className={cn(labelVariants(), className)} {...props}>
       {children ? (
         children
       ) : (
         <span>
-          {value ?? ''}: {isRequired && <span className="text-destructive">*</span>}
+          {valueWithColon ?? ''} {isRequired && <span className="text-destructive">*</span>}
         </span>
       )}
     </AriaLabel>

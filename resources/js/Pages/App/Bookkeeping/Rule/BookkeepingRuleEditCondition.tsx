@@ -1,9 +1,9 @@
 import { Plus, Trash2 } from 'lucide-react'
 import * as React from 'react'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { FormSelect } from '@/Components/ui/twc-ui/select'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { Button } from '@/Components/twc-ui/button'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormSelect } from '@/Components/twc-ui/select'
+import { FormTextField } from '@/Components/twc-ui/text-field'
 
 interface BookkeepingRuleEditConditionProps {
   conditions: App.Data.BookkeepingRuleConditionData[]
@@ -41,7 +41,7 @@ export const BookkeepingRuleEditCondition: React.FC<BookkeepingRuleEditCondition
   const fieldsAsOptions: Fields[] = fields.map((field: string) => ({ id: field, name: field }))
 
   return (
-    <FormGroup
+    <FormGrid
       title="Bedingungen"
       action={
         <Button
@@ -63,7 +63,7 @@ export const BookkeepingRuleEditCondition: React.FC<BookkeepingRuleEditCondition
                 items={fieldsAsOptions}
                 value={condition.field}
                 itemValue="id"
-                onChange={(value) => onUpdateCondition(index, 'field', value)}
+                onChange={value => onUpdateCondition(index, 'field', value)}
               />
             </div>
             <div className="col-span-4">
@@ -73,11 +73,11 @@ export const BookkeepingRuleEditCondition: React.FC<BookkeepingRuleEditCondition
                 items={logicalConditions}
                 value={condition.logical_condition}
                 itemValue="id"
-                onChange={(value) => onUpdateCondition(index, 'logical_condition', value)}
+                onChange={value => onUpdateCondition(index, 'logical_condition', value)}
               />
             </div>
             <div className="col-span-10">
-              <TextField
+              <FormTextField
                 aria-label="Wert"
                 name={`conditions.${index}.value`}
                 value={condition.value}
@@ -109,7 +109,7 @@ export const BookkeepingRuleEditCondition: React.FC<BookkeepingRuleEditCondition
       ) : (
         <div />
       )}
-    </FormGroup>
+    </FormGrid>
   )
 }
 

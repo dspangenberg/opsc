@@ -4,7 +4,8 @@ import type * as React from 'react'
 import { useCallback, useEffect, useRef } from 'react'
 import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { MenuItem } from '@/Components/twc-ui/menu'
 import {
   Table as ShadcnTable,
   TableBody as ShadcnTableBody,
@@ -355,41 +356,47 @@ export const InvoicingTable: React.FC<InvoiceTableProps> = ({ invoice, onLineCom
             ))}
         </TableBody>
         {invoice.lines && invoice.lines.filter(line => line.type_id === 9).length > 0 && (
-          <TableBody className="rounded-b-lg border-t">
-            <TableRow className="font-medium">
-              <TableCell colSpan={3} />
-              <TableCell>Zwischensumme</TableCell>
-              <TableCell />
-              <TableNumberCell value={subtotal || 0} />
-              <TableCell align="center">EUR</TableCell>
-              <TableCell />
-            </TableRow>
-            <TableRow>
-              <TableCell />
-              <TableCell />
-              <TableCell />
-              <TableCell className="font-medium">abzüglich Akontorechnungen</TableCell>
-              <TableCell className="font-medium" align="right">
-                USt.
-              </TableCell>
-              <TableCell className="font-medium" align="right">
-                netto
-              </TableCell>
-              <TableCell />
-              <TableCell />
-            </TableRow>
-            {invoice.lines
-              ?.filter(line => line.type_id === 9)
-              .map((line, index) => (
-                <InvoicingTableLinkedInvoiceRow
-                  key={index}
-                  index={index}
-                  pos={0}
-                  line={line}
-                  onLineCommand={onLineCommand}
-                />
-              ))}
-          </TableBody>
+          <>
+            <TableBody className="rounded-b-lg border-t">
+              <TableRow className="font-medium">
+                <TableCell colSpan={3} />
+                <TableCell>Zwischensumme</TableCell>
+                <TableCell />
+                <TableNumberCell value={subtotal || 0} />
+                <TableCell align="center">EUR</TableCell>
+                <TableCell />
+              </TableRow>
+            </TableBody>
+            <TableHeader className="rounded-t-lg border-t">
+              <TableRow>
+                <TableHead />
+                <TableHead />
+                <TableHead />
+                <TableHead className="font-medium">abzüglich Akontorechnung/en</TableHead>
+                <TableHead className="font-medium" align="right">
+                  USt.
+                </TableHead>
+                <TableHead className="font-medium" align="right">
+                  netto
+                </TableHead>
+                <TableHead />
+                <TableHead />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {invoice.lines
+                ?.filter(line => line.type_id === 9)
+                .map((line, index) => (
+                  <InvoicingTableLinkedInvoiceRow
+                    key={index}
+                    index={index}
+                    pos={0}
+                    line={line}
+                    onLineCommand={onLineCommand}
+                  />
+                ))}
+            </TableBody>
+          </>
         )}
       </Table>
     </div>

@@ -1,9 +1,9 @@
 import { Plus, Trash2 } from 'lucide-react'
 import * as React from 'react'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { FormSelect } from '@/Components/ui/twc-ui/select'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { Button } from '@/Components/twc-ui/button'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormSelect } from '@/Components/twc-ui/select'
+import { FormTextField } from '@/Components/twc-ui/text-field'
 
 interface EmailAddressesSectionProps {
   mails: App.Data.ContactMailData[]
@@ -23,7 +23,7 @@ export const ContactEditEmailAddressesSection: React.FC<EmailAddressesSectionPro
   onUpdateEmail
 }) => {
   return (
-    <FormGroup
+    <FormGrid
       title="E-Mail-Adressen"
       action={
         <Button type="button" variant="outline" size="icon-sm" onClick={onAddEmail} icon={Plus} />
@@ -38,11 +38,11 @@ export const ContactEditEmailAddressesSection: React.FC<EmailAddressesSectionPro
                 name={`mails.${index}.email_category_id`}
                 items={mailCategories}
                 value={mail.email_category_id}
-                onChange={(value) => onUpdateEmail(index, 'email_category_id', value)}
+                onChange={value => onUpdateEmail(index, 'email_category_id', value)}
               />
             </div>
             <div className="col-span-14">
-              <TextField
+              <FormTextField
                 aria-label="E-Mail-Adresse"
                 name={`mails.${index}.email`}
                 value={mail.email}
@@ -72,7 +72,7 @@ export const ContactEditEmailAddressesSection: React.FC<EmailAddressesSectionPro
       ) : (
         <div />
       )}
-    </FormGroup>
+    </FormGrid>
   )
 }
 

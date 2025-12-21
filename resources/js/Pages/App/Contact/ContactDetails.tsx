@@ -1,10 +1,10 @@
 import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Form, useForm } from '@/Components/ui/twc-ui/form'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { NotesView } from '@/Components/ui/twc-ui/NotesView'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { Button } from '@/Components/twc-ui/button'
+import { Form, useForm } from '@/Components/twc-ui/form'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormTextArea } from '@/Components/twc-ui/text-area'
+import { NotesView } from '@/Components/twcui/NotesView'
 import { ContactDetailsLayout } from '@/Pages/App/Contact/ContactDetailsLayout'
 import { ContactDetailsOrg } from '@/Pages/App/Contact/ContactDetailsOrg'
 import { ContactDetailsPerson } from '@/Pages/App/Contact/ContactDetailsPerson'
@@ -34,9 +34,9 @@ const ContactDetails: React.FC = () => {
     <ContactDetailsLayout contact={contact}>
       <div className="flex-1">
         <Form form={form} onSubmitted={() => form.reset()}>
-          <FormGroup>
+          <FormGrid>
             <div className="col-span-24">
-              <TextField textArea label="Notiz" {...form.register('note')} />
+              <FormTextArea label="Notiz" {...form.register('note')} />
             </div>
             <div className="col-span-24 flex justify-end">
               <Button
@@ -47,7 +47,7 @@ const ContactDetails: React.FC = () => {
                 isLoading={form.processing}
               />
             </div>
-          </FormGroup>
+          </FormGrid>
         </Form>
         <NotesView notes={contact.notables || []} />
       </div>

@@ -40,7 +40,6 @@ const AvatarFallback = ({
   )
 }
 
-// Enhanced Avatar component (from twc-ui implementation)
 interface AvatarProps extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root> {
   fullname?: string
   initials?: string
@@ -81,7 +80,6 @@ const Avatar = ({
 
   useEffect(() => {
     if (!src && fullname) {
-      // Generate color based on fullname using improved algorithm
       const bgColor = generateColorFromString(fullname)
       setBackgroundColor(bgColor)
       setTextColor(getIdealTextColor(bgColor))

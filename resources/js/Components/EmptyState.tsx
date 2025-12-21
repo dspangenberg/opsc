@@ -3,12 +3,12 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Button } from '@/Components/ui/twc-ui/button'
-import { cn } from '@/Lib/utils'
 import { Add01Icon, GeometricShapes01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import type React from 'react'
 import type { ReactNode } from 'react'
+import { Button } from '@/Components/twc-ui/button'
+import { cn } from '@/Lib/utils'
 
 interface Props {
   children: ReactNode
@@ -36,7 +36,7 @@ export const EmptyState: React.FC<Props> = ({
       )}
     >
       <div className="motion-rotate-loop-[6deg] motion-loop-once motion-ease-spring-bounciest">
-        <HugeiconsIcon icon={icon} size={28} className="mx-auto " />
+        <HugeiconsIcon icon={icon} size={28} className="mx-auto" />
       </div>
       <div>{children}</div>
       <Button

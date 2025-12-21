@@ -1,10 +1,9 @@
-import { router } from '@inertiajs/react'
 import type * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { DataTable } from '@/Components/DataTable'
 
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Dialog } from '@/Components/ui/twc-ui/dialog'
+import { Button } from '@/Components/twc-ui/button'
+import { Dialog } from '@/Components/twc-ui/dialog'
 import { columns } from '@/Pages/App/Invoice/InvoiceIndexColumns'
 
 interface Props {
@@ -14,7 +13,6 @@ interface Props {
 
 export const TransactionPayInvoice: React.FC<Props> = ({ invoices, transaction }) => {
   const [isOpen, setIsOpen] = useState(true)
-  const [selectedRows, setSelectedRows] = useState<App.Data.TransactionData[]>([])
 
   const handleOnClosed = () => {
     setIsOpen(false)

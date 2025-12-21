@@ -2,15 +2,15 @@ import { Clock05Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useState } from 'react'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
-import { ComboBox } from '@/Components/ui/twc-ui/combo-box'
-import { DateTimeField } from '@/Components/ui/twc-ui/date-time-field'
-import { Dialog } from '@/Components/ui/twc-ui/dialog'
-import { Form, useForm } from '@/Components/ui/twc-ui/form'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { Select } from '@/Components/ui/twc-ui/select'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { Button } from '@/Components/twc-ui/button'
+import { Checkbox } from '@/Components/twc-ui/checkbox'
+import { FormComboBox } from '@/Components/twc-ui/combo-box'
+import { FormDateTimeField } from '@/Components/twc-ui/date-time-field'
+import { Dialog } from '@/Components/twc-ui/dialog'
+import { Form, useForm } from '@/Components/twc-ui/form'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormSelect } from '@/Components/twc-ui/select'
+import { FormTextArea } from '@/Components/twc-ui/text-area'
 import { formatDate } from '@/Lib/DateHelper'
 import type { PageProps } from '@/Types'
 
@@ -82,9 +82,9 @@ const TimeCreate: React.FC<Props> = ({ time, projects, categories, users }) => {
       )}
     >
       <Form form={form} onSubmitted={handleSubmit}>
-        <FormGroup>
+        <FormGrid>
           <div className="col-span-10 flex items-end gap-2">
-            <DateTimeField autoFocus label="Start" {...form.register('begin_at')} />
+            <FormDateTimeField autoFocus label="Start" {...form.register('begin_at')} />
             <Button
               icon={Clock05Icon}
               variant="ghost"
@@ -94,7 +94,7 @@ const TimeCreate: React.FC<Props> = ({ time, projects, categories, users }) => {
             />
           </div>
           <div className="col-span-10 flex items-end gap-2">
-            <DateTimeField label="Ende" {...form.register('end_at')} />
+            <FormDateTimeField label="Ende" {...form.register('end_at')} />
             <Button
               icon={Clock05Icon}
               variant="ghost"
@@ -104,7 +104,7 @@ const TimeCreate: React.FC<Props> = ({ time, projects, categories, users }) => {
             />
           </div>
           <div className="col-span-24">
-            <TextField label="Notizen" textArea rows={2} {...form.register('note')} />
+            <FormTextArea label="Notizen" rows={2} {...form.register('note')} />
             <div className="flex gap-4 pt-0.5">
               <Checkbox {...form.registerCheckbox('is_billable')} className="pt-1.5">
                 abrechenbar
@@ -120,28 +120,28 @@ const TimeCreate: React.FC<Props> = ({ time, projects, categories, users }) => {
           </div>
 
           <div className="col-span-24">
-            <ComboBox<App.Data.ProjectData>
+            <FormComboBox<App.Data.ProjectData>
               {...form.register('project_id')}
               label="Projekt"
               items={projects}
             />
           </div>
           <div className="col-span-12">
-            <Select<App.Data.TimeCategoryData>
+            <FormSelect<App.Data.TimeCategoryData>
               {...form.register('time_category_id')}
               label="Kategorie"
               items={categories}
             />
           </div>
           <div className="col-span-12">
-            <Select<App.Data.UserData>
+            <FormSelect<App.Data.UserData>
               {...form.register('user_id')}
               label="Mitarbeiter"
               itemName="full_name"
               items={users}
             />
           </div>
-        </FormGroup>
+        </FormGrid>
       </Form>
     </Dialog>
   )

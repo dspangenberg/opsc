@@ -126,7 +126,6 @@ const FormDateRangePicker = ({ value, onChange, ...props }: FormDateRangePickerP
   const form = useFormContext()
   const error = form?.errors?.[props.name as string]
   const { parsedDate, handleChange } = useDateRangeConversion(value, onChange)
-
   return (
     <DateRangePicker
       errorComponent={FormFieldError}

@@ -1,15 +1,16 @@
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useState } from 'react'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
-import { FormComboBox } from '@/Components/ui/twc-ui/combo-box'
-import { DatePicker, DateRangePicker } from '@/Components/ui/twc-ui/date-picker'
-import { Dialog } from '@/Components/ui/twc-ui/dialog'
-import { Form, useForm } from '@/Components/ui/twc-ui/form'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { RadioGroup } from '@/Components/ui/twc-ui/radio-group'
-import { FormSelect } from '@/Components/ui/twc-ui/select'
+import { Button } from '@/Components/twc-ui/button'
+import { Checkbox } from '@/Components/twc-ui/checkbox'
+import { FormComboBox } from '@/Components/twc-ui/combo-box'
+import { FormDatePicker } from '@/Components/twc-ui/date-picker'
+import { FormDateRangePicker } from '@/Components/twc-ui/date-range-picker'
+import { Dialog } from '@/Components/twc-ui/dialog'
+import { Form, useForm } from '@/Components/twc-ui/form'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { RadioGroup } from '@/Components/twc-ui/radio-group'
+import { FormSelect } from '@/Components/twc-ui/select'
 import type { PageProps } from '@/Types'
 
 interface Props extends PageProps {
@@ -67,7 +68,7 @@ const InvoiceCreate: React.FC<Props> = ({
       )}
     >
       <Form form={form} onSubmitted={handleSubmit}>
-        <FormGroup>
+        <FormGrid>
           <div className="col-span-24">
             <FormComboBox<App.Data.ContactData>
               label="Kunde"
@@ -85,21 +86,21 @@ const InvoiceCreate: React.FC<Props> = ({
               {...form.register('type_id')}
             />
           </div>
-        </FormGroup>
-        <FormGroup>
+        </FormGrid>
+        <FormGrid>
           <div className="col-span-8">
-            <DatePicker label="Rechnungsdatum" {...form.register('issued_on')} />
+            <FormDatePicker label="Rechnungsdatum" {...form.register('issued_on')} />
           </div>
           <div className="col-span-4" />
 
           <div className="col-span-12">
-            <DateRangePicker
+            <FormDateRangePicker
               label="Leistungsdatum"
               {...form.registerDateRange('service_period_begin', 'service_period_end')}
             />
           </div>
-        </FormGroup>
-        <FormGroup>
+        </FormGrid>
+        <FormGrid>
           <div className="col-span-12">
             <FormSelect<App.Data.PaymentDeadlineData>
               {...form.register('payment_deadline_id')}
@@ -126,7 +127,7 @@ const InvoiceCreate: React.FC<Props> = ({
               Wiederkehrende Rechnung
             </Checkbox>
           </div>
-        </FormGroup>
+        </FormGrid>
       </Form>
     </Dialog>
   )

@@ -1,16 +1,16 @@
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useState } from 'react'
-import { Alert } from '@/Components/ui/twc-ui/alert'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
-import { ComboBox } from '@/Components/ui/twc-ui/combo-box'
-import { Dialog } from '@/Components/ui/twc-ui/dialog'
-import { Form, useForm } from '@/Components/ui/twc-ui/form'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { Select } from '@/Components/ui/twc-ui/select'
-import { Tab, TabList, TabPanel, Tabs } from '@/Components/ui/twc-ui/tabs'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { Alert } from '@/Components/twc-ui/alert'
+import { Button } from '@/Components/twc-ui/button'
+import { Checkbox } from '@/Components/twc-ui/checkbox'
+import { FormComboBox } from '@/Components/twc-ui/combo-box'
+import { Dialog } from '@/Components/twc-ui/dialog'
+import { Form, useForm } from '@/Components/twc-ui/form'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormSelect } from '@/Components/twc-ui/select'
+import { Tab, TabList, TabPanel, Tabs } from '@/Components/twc-ui/tabs'
+import { FormTextField } from '@/Components/twc-ui/text-field'
 import { ContactEditEmailAddressesSection } from '@/Pages/App/Contact/ContactEditEmailAddressesSection'
 import { ContactEditPhoneSection } from '@/Pages/App/Contact/ContactEditPhoneSection'
 
@@ -231,15 +231,15 @@ export const ContactEdit: React.FC<Props> = ({
             </Tab>
           </TabList>
           <TabPanel id="base">
-            <FormGroup>
+            <FormGrid>
               {isOrganization ? (
                 <div className="col-span-24">
-                  <TextField autoFocus label="Organisation" {...form.register('name')} />
+                  <FormTextField autoFocus label="Organisation" {...form.register('name')} />
                 </div>
               ) : (
                 <>
                   <div className="col-span-3">
-                    <Select<App.Data.SalutationData>
+                    <FormSelect<App.Data.SalutationData>
                       {...form.register('salutation_id')}
                       label="Anrede"
                       autoFocus
@@ -248,7 +248,7 @@ export const ContactEdit: React.FC<Props> = ({
                     />
                   </div>
                   <div className="col-span-5">
-                    <Select<App.Data.TitleData>
+                    <FormSelect<App.Data.TitleData>
                       label="Titel"
                       isOptional
                       {...form.register('title_id')}
@@ -256,16 +256,16 @@ export const ContactEdit: React.FC<Props> = ({
                     />
                   </div>
                   <div className="col-span-8">
-                    <TextField label="Vorname" {...form.register('first_name')} />
+                    <FormTextField label="Vorname" {...form.register('first_name')} />
                   </div>
                   <div className="col-span-8">
-                    <TextField label="Nachname" {...form.register('name')} />
+                    <FormTextField label="Nachname" {...form.register('name')} />
                   </div>
                   <div className="col-span-12">
-                    <TextField label="Abteilung" {...form.register('department')} />
+                    <FormTextField label="Abteilung" {...form.register('department')} />
                   </div>
                   <div className="col-span-12">
-                    <TextField label="Position" {...form.register('position')} />
+                    <FormTextField label="Position" {...form.register('position')} />
                   </div>
                 </>
               )}
@@ -275,7 +275,7 @@ export const ContactEdit: React.FC<Props> = ({
                   <Checkbox {...form.registerCheckbox('is_creditor')}>Kreditor</Checkbox>
                 </div>
               )}
-            </FormGroup>
+            </FormGrid>
 
             <ContactEditEmailAddressesSection
               mails={form.data.mails}
@@ -296,11 +296,11 @@ export const ContactEdit: React.FC<Props> = ({
             />
           </TabPanel>
           <TabPanel id="addresses">
-            <FormGroup>addresses</FormGroup>
+            <FormGrid>addresses</FormGrid>
           </TabPanel>
           <TabPanel id="finances">
             {form.data.is_debtor && (
-              <FormGroup title="Debitordaten">
+              <FormGrid title="Debitordaten">
                 {!form.data.debtor_number && (
                   <div className="col-span-24">
                     <Alert>
@@ -309,21 +309,21 @@ export const ContactEdit: React.FC<Props> = ({
                   </div>
                 )}
                 <div className="col-span-6">
-                  <TextField
+                  <FormTextField
                     label="Debitor-Nr."
                     isReadOnly
                     {...form.register('formated_debtor_number')}
                   />
                 </div>
                 <div className="col-span-9">
-                  <Select<App.Data.TaxData>
+                  <FormSelect<App.Data.TaxData>
                     {...form.register('tax_id')}
                     label="Umsatzsteuer"
                     items={taxes}
                   />
                 </div>
                 <div className="col-span-9">
-                  <Select<App.Data.PaymentDeadlineData>
+                  <FormSelect<App.Data.PaymentDeadlineData>
                     {...form.register('payment_deadline_id')}
                     label="Zahlungsziel"
                     items={payment_deadlines}
@@ -332,10 +332,10 @@ export const ContactEdit: React.FC<Props> = ({
                     Mahnsperre
                   </Checkbox>
                 </div>
-              </FormGroup>
+              </FormGrid>
             )}
             {form.data.is_creditor && (
-              <FormGroup title="Kreditordaten">
+              <FormGrid title="Kreditordaten">
                 {!form.data.creditor_number && (
                   <div className="col-span-24">
                     <Alert>
@@ -344,25 +344,25 @@ export const ContactEdit: React.FC<Props> = ({
                   </div>
                 )}
                 <div className="col-span-6">
-                  <TextField
+                  <FormTextField
                     label="Kreditor-Nr."
                     isReadOnly
                     {...form.register('formated_creditor_number')}
                   />
                 </div>
                 <div className="col-span-18">
-                  <ComboBox<App.Data.CostCenterData>
+                  <FormComboBox<App.Data.CostCenterData>
                     label="Kostenstelle"
                     items={cost_centers}
                     {...form.register('cost_center_id')}
                   />
                 </div>
-              </FormGroup>
+              </FormGrid>
             )}
             {(form.data.is_creditor || form.data.is_debtor) && (
-              <FormGroup title="Buchhaltung">
+              <FormGrid title="Buchhaltung">
                 <div className="col-span-12">
-                  <ComboBox<App.Data.BookkeepingAccountData>
+                  <FormComboBox<App.Data.BookkeepingAccountData>
                     label="Erfolgskonto"
                     items={bookkeeping_accounts}
                     isOptional
@@ -374,37 +374,40 @@ export const ContactEdit: React.FC<Props> = ({
                     Bei Buchung primär verwenden
                   </Checkbox>
                 </div>
-              </FormGroup>
+              </FormGrid>
             )}
           </TabPanel>
           <TabPanel id="payments">
-            <FormGroup title="Steuerdaten">
+            <FormGrid title="Steuerdaten">
               <div className="col-span-12">
-                <TextField label="Umsatzsteuer-ID" {...form.register('vat_id')} />
+                <FormTextField label="Umsatzsteuer-ID" {...form.register('vat_id')} />
               </div>
               <div className="col-span-12">
-                <TextField label="Steuernummer" {...form.register('tax_number')} />
+                <FormTextField label="Steuernummer" {...form.register('tax_number')} />
               </div>
-            </FormGroup>
-            <FormGroup title="Registerdaten">
+            </FormGrid>
+            <FormGrid title="Registerdaten">
               <div className="col-span-12">
-                <TextField label="Registergericht" {...form.register('register_court')} />
-              </div>
-              <div className="col-span-12">
-                <TextField label="Registernummer" {...form.register('register_number')} />
-              </div>
-            </FormGroup>
-            <FormGroup title="Zahlungsverkehr">
-              <div className="col-span-12">
-                <TextField label="IBAN" {...form.register('iban')} />
+                <FormTextField label="Registergericht" {...form.register('register_court')} />
               </div>
               <div className="col-span-12">
-                <TextField label="Paypal" {...form.register('paypal_email')} />
+                <FormTextField label="Registernummer" {...form.register('register_number')} />
+              </div>
+            </FormGrid>
+            <FormGrid title="Zahlungsverkehr">
+              <div className="col-span-12">
+                <FormTextField label="IBAN" {...form.register('iban')} />
               </div>
               <div className="col-span-12">
-                <TextField label="Name auf Kreditkartenabrechnung" {...form.register('cc_name')} />
+                <FormTextField label="Paypal" {...form.register('paypal_email')} />
               </div>
-            </FormGroup>
+              <div className="col-span-12">
+                <FormTextField
+                  label="Name auf Kreditkartenabrechnung"
+                  {...form.register('cc_name')}
+                />
+              </div>
+            </FormGrid>
           </TabPanel>
         </Tabs>
       </Form>

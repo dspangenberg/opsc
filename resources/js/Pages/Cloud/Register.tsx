@@ -5,10 +5,10 @@
 
 import type React from 'react'
 import AuthContainer from '@/Components/AuthContainer'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Form, type FormSchema, useForm } from '@/Components/ui/twc-ui/form'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { Button } from '@/Components/twc-ui/button'
+import { Form, type FormSchema, useForm } from '@/Components/twc-ui/form'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormTextField } from '@/Components/twc-ui/text-field'
 import GuestLayout from '@/Layouts/GuestLayout'
 
 interface RegisterForm {
@@ -36,21 +36,21 @@ const Register: React.FC = () => {
   const registerContent = (
     <AuthContainer title="Registrierung" maxWidth="md">
       <Form form={form}>
-        <FormGroup>
+        <FormGrid>
           <div className="col-span-12">
-            <TextField label="Vorname" autoFocus {...form.register('first_name')} />
+            <FormTextField label="Vorname" autoFocus {...form.register('first_name')} />
           </div>
           <div className="col-span-12">
-            <TextField label="Name" autoFocus {...form.register('last_name')} />
+            <FormTextField label="Name" autoFocus {...form.register('last_name')} />
           </div>
           <div className="col-span-24">
-            <TextField label="Organisation" autoFocus {...form.register('organisation')} />
+            <FormTextField label="Organisation" autoFocus {...form.register('organisation')} />
           </div>
           <div className="col-span-24">
-            <TextField label="E-Mail-Adresse" autoFocus {...form.register('email')} />
+            <FormTextField label="E-Mail-Adresse" autoFocus {...form.register('email')} />
           </div>
           <div className="col-span-24">
-            <TextField label="Website" autoFocus {...form.register('website')} />
+            <FormTextField label="Website" autoFocus {...form.register('website')} />
           </div>
           <div className="col-span-24 text-center text-sm">
             <p className="my-3 text-center font-medium text-base text-black">
@@ -84,7 +84,7 @@ const Register: React.FC = () => {
               &nbsp;klicke hier, wenn Du Hilfe bei der Anmeldung benötigst.
             </a>
           </div>
-        </FormGroup>
+        </FormGrid>
       </Form>
     </AuthContainer>
   )

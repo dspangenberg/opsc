@@ -1,6 +1,6 @@
 import type React from 'react'
-import { ScrollArea } from '../ui/scroll-area'
 import { cn } from '@/Lib/utils'
+import { ScrollArea } from '../ui/scroll-area'
 
 interface BorderedBoxProps {
   className?: string
@@ -8,10 +8,24 @@ interface BorderedBoxProps {
   children: React.ReactNode
 }
 
-export const BorderedBox: React.FC<BorderedBoxProps> = ({children, className, innerClassName}) => {
+export const BorderedBox: React.FC<BorderedBoxProps> = ({
+  children,
+  className,
+  innerClassName
+}) => {
   return (
-    <div className={cn('relative flex-1 flex border-border/80 bg-page-content rounded-lg p-1 border overflow-hidden flex-col max-h-fit', className)}>
-      <ScrollArea className={cn('flex-1 border rounded-md max-h-fit bg-transparent absolute top-0 bottom-0 left-0 right-0', innerClassName)}>
+    <div
+      className={cn(
+        'relative flex max-h-fit flex-1 flex-col overflow-hidden rounded-lg border border-border/80 bg-page-content p-1',
+        className
+      )}
+    >
+      <ScrollArea
+        className={cn(
+          'absolute top-0 right-0 bottom-0 left-0 max-h-fit flex-1 rounded-md border bg-transparent',
+          innerClassName
+        )}
+      >
         {children}
       </ScrollArea>
     </div>

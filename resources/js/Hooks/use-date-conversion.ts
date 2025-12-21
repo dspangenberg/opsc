@@ -1,12 +1,23 @@
-import { CalendarDate, type DateValue, Time } from '@internationalized/date'
+import { CalendarDate, CalendarDateTime, type DateValue, Time } from '@internationalized/date'
 import type { RangeValue } from '@react-types/shared'
 import { format, parse } from 'date-fns'
 import { useCallback, useMemo } from 'react'
 
-export const DATE_FORMAT = import.meta.env.VITE_DATE_FORMAT || 'yyyy-MM-dd'
-export const TIME_FORMAT = import.meta.env.VITE_TIME_FORMAT || 'HH:mm:ss'
+export const DATE_FORMAT = import.meta.env.VITE_APP_DATE_FORMAT || 'yyyy-MM-dd'
+export const TIME_FORMAT = import.meta.env.VITE_APP_TIME_FORMAT || 'HH:mm:ss'
+export const DATE_TIME_FORMAT = import.meta.env.VITE_APP_DATE_TIME_FORMAT || 'yyyy-MM-dd HH:mm'
 
 export const dateValueToDate = (dateValue: DateValue): Date => {
+  const hasTime = 'hour' in dateValue && 'minute' in dateValue
+  if (hasTime) {
+    return new Date(
+      dateValue.year,
+      dateValue.month - 1,
+      dateValue.day,
+      dateValue.hour,
+      dateValue.minute
+    )
+  }
   return new Date(dateValue.year, dateValue.month - 1, dateValue.day)
 }
 
@@ -52,6 +63,57 @@ export function useDateConversion(
   )
 
   return { parsedDate, handleChange }
+}
+
+interface UseDateTimeConversionReturn {
+  parsedDateTime: DateValue | null
+  handleChange: (newValue: DateValue | null) => void
+}
+
+export function useDateTimeConversion(
+  value: string | null | undefined,
+  onChange?: (value: string | null) => void
+): UseDateTimeConversionReturn {
+  const parsedDateTime = useMemo((): DateValue | null => {
+    if (!value) return null
+
+    try {
+      const date = parse(value, DATE_TIME_FORMAT, new Date())
+      if (Number.isNaN(date.getTime())) return null
+
+      return new CalendarDateTime(
+        date.getFullYear(),
+        date.getMonth() + 1,
+        date.getDate(),
+        date.getHours(),
+        date.getMinutes()
+      )
+    } catch {
+      return null
+    }
+  }, [value])
+
+  const handleChange = useCallback(
+    (newValue: DateValue | null) => {
+      if (!onChange) return
+
+      if (!newValue) {
+        onChange(null)
+        return
+      }
+
+      try {
+        const jsDate = dateValueToDate(newValue)
+        const formattedDateTime = format(jsDate, DATE_TIME_FORMAT)
+        onChange(formattedDateTime)
+      } catch {
+        onChange(null)
+      }
+    },
+    [onChange]
+  )
+
+  return { parsedDateTime, handleChange }
 }
 
 interface UseTimeConversionReturn {

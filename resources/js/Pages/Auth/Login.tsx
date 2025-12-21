@@ -6,12 +6,12 @@
 import { Link } from '@inertiajs/react'
 import type React from 'react'
 import { AuthContainer } from '@/Components/AuthContainer'
-import { Logo } from '@/Components/ui/logo'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
-import { Form, useForm } from '@/Components/ui/twc-ui/form'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { Button } from '@/Components/twc-ui/button'
+import { Checkbox } from '@/Components/twc-ui/checkbox'
+import { Form, useForm } from '@/Components/twc-ui/form'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import Logo from '@/Components/twc-ui/logo'
+import { FormTextField } from '@/Components/twc-ui/text-field'
 import GuestLayout from '@/Layouts/GuestLayout'
 
 interface LoginProps {
@@ -29,14 +29,14 @@ const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
   const loginContent = (
     <AuthContainer
       title="Login"
-      logo={<Logo />}
+      logo={<Logo className="size-12 rounded-md" />}
       cardTitle="Willkommen zurück"
       cardDescription="Melde Dich mit Deinen Zugangsdaten an."
     >
       <Form form={form}>
-        <FormGroup>
+        <FormGrid>
           <div className="col-span-24">
-            <TextField
+            <FormTextField
               autoComplete="username"
               label="E-Mail"
               autoFocus
@@ -45,7 +45,7 @@ const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
           </div>
 
           <div className="col-span-24">
-            <TextField
+            <FormTextField
               autoComplete="current-password"
               type="password"
               label="Kennwort"
@@ -80,7 +80,7 @@ const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
               Anmelden
             </Button>
           </div>
-        </FormGroup>
+        </FormGrid>
       </Form>
     </AuthContainer>
   )

@@ -1,13 +1,13 @@
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useState } from 'react'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
-import { Dialog } from '@/Components/ui/twc-ui/dialog'
-import { Form, useForm } from '@/Components/ui/twc-ui/form'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { Select } from '@/Components/ui/twc-ui/select'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { Button } from '@/Components/twc-ui/button'
+import { Checkbox } from '@/Components/twc-ui/checkbox'
+import { Dialog } from '@/Components/twc-ui/dialog'
+import { Form, useForm } from '@/Components/twc-ui/form'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormSelect } from '@/Components/twc-ui/select'
+import { FormTextField } from '@/Components/twc-ui/text-field'
 import type { PageProps } from '@/Types'
 
 interface Props extends PageProps {
@@ -55,7 +55,7 @@ const ContactCreate: React.FC<Props> = ({ contact, salutations, titles }) => {
       )}
     >
       <Form form={form} onSubmitted={handleClose}>
-        <FormGroup>
+        <FormGrid>
           <div className="col-span-24">
             <Checkbox {...form.registerCheckbox('is_org')} autoFocus className="pt-1.5">
               Neuer Kontakt ist eine Organisation
@@ -64,12 +64,12 @@ const ContactCreate: React.FC<Props> = ({ contact, salutations, titles }) => {
 
           {isOrganization ? (
             <div className="col-span-24">
-              <TextField label="Name der Organisation" {...form.register('name')} />
+              <FormTextField label="Name der Organisation" {...form.register('name')} />
             </div>
           ) : (
             <>
               <div className="col-span-3">
-                <Select<App.Data.SalutationData>
+                <FormSelect<App.Data.SalutationData>
                   {...form.register('salutation_id')}
                   label="Geschl."
                   items={salutations}
@@ -77,7 +77,7 @@ const ContactCreate: React.FC<Props> = ({ contact, salutations, titles }) => {
                 />
               </div>
               <div className="col-span-5">
-                <Select<App.Data.TitleData>
+                <FormSelect<App.Data.TitleData>
                   label="Titel"
                   isOptional
                   {...form.register('title_id')}
@@ -85,14 +85,14 @@ const ContactCreate: React.FC<Props> = ({ contact, salutations, titles }) => {
                 />
               </div>
               <div className="col-span-8">
-                <TextField label="Vorname" {...form.register('first_name')} />
+                <FormTextField label="Vorname" {...form.register('first_name')} />
               </div>
               <div className="col-span-8">
-                <TextField label="Nachname" {...form.register('name')} />
+                <FormTextField label="Nachname" {...form.register('name')} />
               </div>
             </>
           )}
-        </FormGroup>
+        </FormGrid>
       </Form>
     </Dialog>
   )

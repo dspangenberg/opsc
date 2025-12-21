@@ -1,22 +1,20 @@
 import {
   CalculatorIcon,
-  CashbackEuroIcon,
   FirstBracketIcon,
   HeadingIcon,
   RowInsertIcon,
   TextAlignJustifyLeftIcon,
   TextVerticalAlignmentIcon
 } from '@hugeicons/core-free-icons'
-import { ChevronDown } from 'lucide-react'
 import type * as React from 'react'
+import { Button } from '@/Components/twc-ui/button'
+import { Form, useForm } from '@/Components/twc-ui/form'
+import { MenuItem } from '@/Components/twc-ui/menu'
+import { SplitButton } from '@/Components/twc-ui/split-button'
 import { BorderedBox } from '@/Components/twcui/bordered-box'
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Form, useForm } from '@/Components/ui/twc-ui/form'
 import { InvoiceLinesEditorDefaultLine } from '@/Pages/App/Invoice/InvoiceLinesEditorDefaultLine'
 import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 import { InvoiceLinesEditorCaptionLine } from './InvoiceLinesEditorCaptionLine'
-import { InvoiceLinesEditorLineContainer } from './InvoiceLinesEditorLineContainer'
 import { InvoiceLinesEditorTextLine } from './InvoiceLinesEditorTextLine'
 
 interface InvoiceLinesEditorProps {
@@ -106,18 +104,11 @@ export const InvoiceLinesEditor: React.FC<InvoiceLinesEditorProps> = ({ invoice 
       </BorderedBox>
       <div className="flex flex-1 p-4">
         <div className="flex flex-1 items-center">
-          <Button
-            variant="outline"
-            className="!rounded-r-none"
+          <SplitButton
             title="Rechnungsposition hinzufügen"
-            icon={RowInsertIcon}
-          />
-          <DropdownButton
             variant="outline"
-            size="icon"
-            iconClassName="size-4"
-            icon={ChevronDown}
-            className="!rounded-l-none !border-l-0 p-1"
+            icon={RowInsertIcon}
+            onClick={() => addLine(1)}
           >
             <MenuItem
               icon={CalculatorIcon}
@@ -134,7 +125,7 @@ export const InvoiceLinesEditor: React.FC<InvoiceLinesEditorProps> = ({ invoice 
             <MenuItem icon={HeadingIcon} title="Überschrift" onClick={() => addLine(2)} />
             <MenuItem icon={TextAlignJustifyLeftIcon} title="Text" onClick={() => addLine(4)} />
             <MenuItem icon={TextVerticalAlignmentIcon} title="Seitenumbruch" isDisabled />
-          </DropdownButton>
+          </SplitButton>
         </div>
         <div className="flex-none items-center justify-end space-x-2 px-2">
           <Button variant="outline" onClick={() => setEditMode(false)}>

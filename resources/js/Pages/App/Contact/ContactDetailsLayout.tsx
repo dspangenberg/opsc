@@ -4,11 +4,11 @@ import { Link } from '@inertiajs/react'
 import type * as React from 'react'
 import { useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
+import { Avatar } from '@/Components/twc-ui/avatar'
+import { Button } from '@/Components/twc-ui/button'
+import { Tab, TabList, Tabs } from '@/Components/twc-ui/tabs'
+import { Toolbar } from '@/Components/twc-ui/toolbar'
 import { Badge } from '@/Components/ui/badge'
-import { Avatar } from '@/Components/ui/twc-ui/avatar'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 
 interface Props {
   contact: App.Data.ContactData

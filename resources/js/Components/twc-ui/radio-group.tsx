@@ -1,26 +1,26 @@
-import type * as React from "react"
+import type * as React from 'react'
 import {
   Radio as AriaRadio,
   RadioGroup as AriaRadioGroup,
   type RadioProps as AriaRadioProps,
   type ValidationResult as AriaValidationResult,
   composeRenderProps,
-  Text,
-} from "react-aria-components"
+  Text
+} from 'react-aria-components'
 import { useFormContext } from './form'
-import { cn } from "@/Lib/utils"
+import { cn } from '@/Lib/utils'
 
-import { FieldError, Label, labelVariants } from "./field"
+import { FieldError, Label, labelVariants } from './field'
 
 const BaseRadioGroup = AriaRadioGroup
 
 const Radio = ({ className, children, ...props }: AriaRadioProps) => (
   <AriaRadio
-    className={composeRenderProps(className, (className) =>
+    className={composeRenderProps(className, className =>
       cn(
-        "group/radio flex items-center gap-x-2",
+        'group/radio flex items-center gap-x-2',
         /* Disabled */
-        "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70",
+        'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70',
         labelVariants,
         className
       )
@@ -31,15 +31,15 @@ const Radio = ({ className, children, ...props }: AriaRadioProps) => (
       <>
         <span
           className={cn(
-            "flex aspect-square size-4 items-center justify-center rounded-full border border-input text-primary",
+            'flex aspect-square size-4 items-center justify-center rounded-full border border-input text-primary',
             /* Focus */
-            "group-data-[focused]/radio:outline-none",
+            'group-data-[focused]/radio:outline-none',
             /* Focus Visible */
-            "group-data-[focus-visible]/radio:ring-1 group-data-[focus-visible]/radio:ring-ring",
+            'group-data-[focus-visible]/radio:ring-1 group-data-[focus-visible]/radio:ring-ring',
             /* Selected */
             'group-data-[selected]/radio:border-primary group-data-[selected]/radio:bg-primary group-data-[selected]/radio:text-primary-foreground',
             /* Disabled */
-            "group-data-[disabled]/radio:cursor-not-allowed group-data-[disabled]/radio:opacity-50",
+            'group-data-[disabled]/radio:cursor-not-allowed group-data-[disabled]/radio:opacity-50',
             /* Invalid */
             'group-data-[invalid]/radio:group-data-[selected]/radio:bg-destructive group-data-[invalid]/radio:group-data-[selected]/radio:text-destructive-foreground group-data-[invalid]/radio:border-destructive'
           )}
@@ -106,17 +106,21 @@ const RadioGroup = <T extends Record<string, unknown>>({
 
   const itemsWithOptional = isOptional
     ? [
-      {
-        [itemValue]: null,
-        [itemName]: optionalValue
-      } as T,
-      ...Array.from(items)
-    ]
+        {
+          [itemValue]: null,
+          [itemName]: optionalValue
+        } as T,
+        ...Array.from(items)
+      ]
     : Array.from(items)
 
   const handleSelectionChange = (selectedValue: string) => {
-    const numericValue = selectedValue === 'null' ? null :
-      !Number.isNaN(Number(selectedValue)) ? Number(selectedValue) : selectedValue
+    const numericValue =
+      selectedValue === 'null'
+        ? null
+        : !Number.isNaN(Number(selectedValue))
+          ? Number(selectedValue)
+          : selectedValue
     onChange(numericValue)
   }
 
@@ -127,7 +131,7 @@ const RadioGroup = <T extends Record<string, unknown>>({
       return children
     }
 
-    return itemsWithOptional.map((item) => {
+    return itemsWithOptional.map(item => {
       const itemKey = item[itemValue] === null ? 'null' : String(item[itemValue])
 
       if (renderItem) {
@@ -148,10 +152,10 @@ const RadioGroup = <T extends Record<string, unknown>>({
 
   return (
     <BaseRadioGroup
-      className={composeRenderProps(className, (className) =>
+      className={composeRenderProps(className, className =>
         cn(
-          "group flex flex-col gap-2",
-          orientation === "horizontal" && 'flex-row flex-wrap items-center',
+          'group flex flex-col gap-2',
+          orientation === 'horizontal' && 'flex-row flex-wrap items-center',
           className
         )
       )}
@@ -163,10 +167,12 @@ const RadioGroup = <T extends Record<string, unknown>>({
       {...props}
     >
       <Label value={label} />
-      <div className={cn(
-        "flex gap-2",
-        orientation === "horizontal" ? "flex-row flex-wrap" : "flex-col"
-      )}>
+      <div
+        className={cn(
+          'flex gap-2',
+          orientation === 'horizontal' ? 'flex-row flex-wrap' : 'flex-col'
+        )}
+      >
         {renderRadioItems()}
       </div>
       {description && (

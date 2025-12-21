@@ -156,15 +156,16 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
         {invoice.is_draft && (
           <>
             <ToolbarButton
+              icon={EditTableIcon}
               variant="primary"
+              title="Positionen bearbeiten"
+              onClick={() => setEditMode(true)}
+            />
+            <ToolbarButton
+              variant="default"
               icon={Edit03Icon}
               title="Stammdaten bearbeiten"
               onClick={handleEditBaseDataButtonClick}
-            />
-            <ToolbarButton
-              icon={EditTableIcon}
-              title="Positionen bearbeiten"
-              onClick={() => setEditMode(true)}
             />
           </>
         )}

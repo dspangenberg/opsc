@@ -5,10 +5,10 @@
 
 import type React from 'react'
 import AuthContainer from '@/Components/AuthContainer'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Form, type FormSchema, useForm } from '@/Components/ui/twc-ui/form'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { Button } from '@/Components/twc-ui/button'
+import { Form, type FormSchema, useForm } from '@/Components/twc-ui/form'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormTextField } from '@/Components/twc-ui/text-field'
 import GuestLayout from '@/Layouts/GuestLayout'
 
 interface RegisterCredentialsProps {
@@ -48,16 +48,16 @@ const RegisterCredentials: React.FC<RegisterCredentialsProps> = ({ registrationD
   const registerCredentialsContent = (
     <AuthContainer title="Registrierung" maxWidth="md">
       <Form form={form}>
-        <FormGroup>
+        <FormGrid>
           <div className="col-span-24">
-            <TextField label="Deine Subdomain" autoFocus {...form.register('domain')} />
+            <FormTextField label="Deine Subdomain" autoFocus {...form.register('domain')} />
 
             <span className="inline-flex items-center rounded-r border border-gray-300 border-l-0 px-3 text-gray-500 sm:text-sm">
               {domain}
             </span>
           </div>
           <div className="col-span-24">
-            <TextField
+            <FormTextField
               label="E-Mail-Adresse"
               autoComplete="username"
               isDisabled={true}
@@ -65,7 +65,7 @@ const RegisterCredentials: React.FC<RegisterCredentialsProps> = ({ registrationD
             />
           </div>
           <div className="col-span-24">
-            <TextField
+            <FormTextField
               password-rules="minlength: 8; maxLength: 24; required: lower; required: upper; required: digit; required: [!@#$%^&*+=.-];"
               label="Kennwort"
               autoComplete="new-password"
@@ -76,7 +76,7 @@ const RegisterCredentials: React.FC<RegisterCredentialsProps> = ({ registrationD
           </div>
 
           <div className="col-span-24">
-            <TextField
+            <FormTextField
               label="Kennwort-Bestätigung"
               autoComplete="new-password"
               type="password"
@@ -111,7 +111,7 @@ const RegisterCredentials: React.FC<RegisterCredentialsProps> = ({ registrationD
               &nbsp;klicke hier, wenn Du Hilfe bei der Anmeldung benötigst.
             </a>
           </div>
-        </FormGroup>
+        </FormGrid>
       </Form>
     </AuthContainer>
   )
