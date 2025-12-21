@@ -6,7 +6,7 @@ import {
   TextAlignJustifyLeftIcon,
   TextVerticalAlignmentIcon
 } from '@hugeicons/core-free-icons'
-import type * as React from 'react'
+import React, { useEffect, type FC } from 'react'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { MenuItem } from '@/Components/twc-ui/menu'
@@ -21,8 +21,8 @@ interface InvoiceLinesEditorProps {
   invoice: App.Data.InvoiceData
 }
 
-export const InvoiceLinesEditor: React.FC<InvoiceLinesEditorProps> = ({ invoice }) => {
-  const { amountNet, amountTax, amountGross, editMode, setEditMode, lines, addLine } =
+export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => {
+  const { amountNet, amountTax, amountGross, editMode, setEditMode, lines, addLine, setLines } =
     useInvoiceTable()
 
   const form = useForm<App.Data.InvoiceData>(
@@ -31,16 +31,20 @@ export const InvoiceLinesEditor: React.FC<InvoiceLinesEditorProps> = ({ invoice 
     route('app.invoice.lines-update', {
       invoice: invoice.id
     }),
-
-    invoice
+    {
+      ...invoice,
+      lines
+    }
   )
 
-  const onSubmit = () => {
-    form.transform(data => ({
-      ...data,
-      lines
-    }))
+  // Sync form lines with context lines
+  useEffect(() => {
+    if (form.data.lines !== lines) {
+      setLines(form.data.lines as App.Data.InvoiceLineData[])
+    }
+  }, [form.data.lines])
 
+  const onSubmit = () => {
     form.submit({
       preserveScroll: true,
       onSuccess: () => {

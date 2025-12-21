@@ -11,6 +11,7 @@ import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormSelect } from '@/Components/twc-ui/select'
 import { Tab, TabList, TabPanel, Tabs } from '@/Components/twc-ui/tabs'
 import { FormTextField } from '@/Components/twc-ui/text-field'
+import { ContactEditAddressesSection } from '@/Pages/App/Contact/ContactEditAddressesSection'
 import { ContactEditEmailAddressesSection } from '@/Pages/App/Contact/ContactEditEmailAddressesSection'
 import { ContactEditPhoneSection } from '@/Pages/App/Contact/ContactEditPhoneSection'
 
@@ -22,8 +23,10 @@ interface Props {
   titles: App.Data.TitleData[]
   mail_categories: App.Data.EmailCategoryData[]
   phone_categories: App.Data.PhoneCategoryData[]
+  address_categories: App.Data.AddressCategoryData[]
   bookkeeping_accounts: App.Data.BookkeepingAccountData[]
   cost_centers: App.Data.CostCenterData[]
+  countries: App.Data.CountryData[]
 }
 
 // Typisierung für Formular ohne zirkuläre Referenzen
@@ -35,7 +38,6 @@ type FormData = Omit<
   | 'salutation'
   | 'payment_deadline'
   | 'sales'
-  | 'addresses'
   | 'tax'
   | 'notables'
   | 'bookkeeping_account'
@@ -46,6 +48,7 @@ type FormData = Omit<
 > & {
   mails: App.Data.ContactMailData[]
   phones: App.Data.ContactPhoneData[]
+  addresses: App.Data.ContactAddressData[]
 }
 
 export const ContactEdit: React.FC<Props> = ({
@@ -56,7 +59,9 @@ export const ContactEdit: React.FC<Props> = ({
   phone_categories,
   payment_deadlines,
   cost_centers,
+  countries,
   bookkeeping_accounts,
+  address_categories,
   taxes
 }) => {
   // Form-Daten vorbereiten
@@ -91,6 +96,7 @@ export const ContactEdit: React.FC<Props> = ({
     tax_id: contact.tax_id,
     mails: contact.mails || [],
     phones: contact.phones || [],
+    addresses: contact.addresses || [],
     iban: contact.iban,
     outturn_account_id: contact.outturn_account_id,
     website: contact.website,
@@ -130,6 +136,26 @@ export const ContactEdit: React.FC<Props> = ({
     form.setData('mails', updatedMails)
   }
 
+  const addAddress = () => {
+    const defaultCategoryId = address_categories[0]?.id || 1
+    const defaultCountry = countries[0]?.id || 1
+    const newAddress: App.Data.ContactAddressData = {
+      id: null,
+      address: '',
+      zip: '',
+      city: '',
+      country_id: 1,
+      address_category_id: defaultCategoryId,
+      contact_id: contact.id as number,
+      full_address: '',
+      category: address_categories.find(cat => cat.id === defaultCategoryId) || null,
+      country: countries.find(country => country.id === defaultCountry) || null
+    }
+
+    const updatedAddresses = [...form.data.addresses, newAddress]
+    form.setData('addresses', updatedAddresses)
+  }
+
   const addPhone = () => {
     const defaultCategoryId = phone_categories[0]?.id || 1
     const newPhone: App.Data.ContactPhoneData = {
@@ -151,45 +177,13 @@ export const ContactEdit: React.FC<Props> = ({
     form.setData('mails', updatedMails)
   }
 
+  const removeAddress = (index: number) => {
+    const updatedAddresses = form.data.addresses.filter((_, i) => i !== index)
+    form.setData('addresses', updatedAddresses)
+  }
+
   const removePhone = (index: number) => {
     const updatedPhones = form.data.phones.filter((_, i) => i !== index)
-    form.setData('phones', updatedPhones)
-  }
-
-  // Funktion zum Aktualisieren einer E-Mail-Adresse
-  const updateEmailAddress = (index: number, field: keyof App.Data.ContactMailData, value: any) => {
-    const updatedMails = form.data.mails.map((mail, i) => {
-      if (i === index) {
-        const updatedMail = { ...mail, [field]: value }
-
-        // Wenn die email_category_id geändert wird, auch die category aktualisieren
-        if (field === 'email_category_id') {
-          updatedMail.category = mail_categories.find(cat => cat.id === value) || null
-        }
-
-        return updatedMail
-      }
-      return mail
-    })
-
-    form.setData('mails', updatedMails)
-  }
-
-  const updatePhone = (index: number, field: keyof App.Data.ContactPhoneData, value: any) => {
-    const updatedPhones = form.data.phones.map((phone, i) => {
-      if (i === index) {
-        const updatedPhone = { ...phone, [field]: value }
-
-        // Wenn die email_category_id geändert wird, auch die category aktualisieren
-        if (field === 'phone_category_id') {
-          updatedPhone.category = mail_categories.find(cat => cat.id === value) || null
-        }
-
-        return updatedPhone
-      }
-      return phone
-    })
-
     form.setData('phones', updatedPhones)
   }
 
@@ -278,25 +272,24 @@ export const ContactEdit: React.FC<Props> = ({
             </FormGrid>
 
             <ContactEditEmailAddressesSection
-              mails={form.data.mails}
               mailCategories={mail_categories}
-              contactId={contact.id as number}
               onAddEmail={addEmailAddress}
               onRemoveEmail={removeEmailAddress}
-              onUpdateEmail={updateEmailAddress}
             />
 
             <ContactEditPhoneSection
-              phones={form.data.phones}
               phoneCategories={phone_categories}
-              contactId={contact.id as number}
               onAddPhone={addPhone}
               onRemovePhone={removePhone}
-              onUpdatePhone={updatePhone}
             />
           </TabPanel>
           <TabPanel id="addresses">
-            <FormGrid>addresses</FormGrid>
+            <ContactEditAddressesSection
+              addressCategories={address_categories}
+              countries={countries}
+              onAddAddress={addAddress}
+              onRemoveAddress={removeAddress}
+            />
           </TabPanel>
           <TabPanel id="finances">
             {form.data.is_debtor && (

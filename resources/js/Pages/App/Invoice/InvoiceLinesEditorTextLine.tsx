@@ -1,9 +1,8 @@
 import type * as React from 'react'
-import { useEffect } from 'react'
+import { useFormContext } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextArea } from '@/Components/twc-ui/text-area'
 import { InvoiceLinesEditorLineContainer } from '@/Pages/App/Invoice/InvoiceLinesEditorLineContainer'
-import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 
 interface InvoiceLinesEditorProps {
   invoiceLine: App.Data.InvoiceLineData
@@ -11,15 +10,17 @@ interface InvoiceLinesEditorProps {
   index: number
 }
 
-export const InvoiceLinesEditorTextLine: React.FC<InvoiceLinesEditorProps> = ({ invoiceLine }) => {
-  const { updateLine } = useInvoiceTable()
+export const InvoiceLinesEditorTextLine: React.FC<InvoiceLinesEditorProps> = ({
+  invoiceLine,
+  index
+}) => {
+  const form = useFormContext<App.Data.InvoiceData>()
 
-  useEffect(() => {
-    if (invoiceLine.type_id === 1 && invoiceLine.quantity && invoiceLine.price) {
-      const totalPrice = invoiceLine.quantity * invoiceLine.price
-      updateLine(invoiceLine.id as number, { amount: totalPrice ?? 0 })
-    }
-  }, [invoiceLine.type_id, invoiceLine.quantity, invoiceLine.price])
+  if (!form) {
+    throw new Error('InvoiceLinesEditorTextLine must be used within a Form context')
+  }
+
+  const textField = form.register(`lines[${index}].text`)
 
   return (
     <InvoiceLinesEditorLineContainer invoiceLine={invoiceLine}>
@@ -27,12 +28,7 @@ export const InvoiceLinesEditorTextLine: React.FC<InvoiceLinesEditorProps> = ({ 
         <div className="col-span-5" />
 
         <div className="col-span-10">
-          <FormTextArea
-            aria-label="Beschreibung"
-            rows={2}
-            value={invoiceLine.text}
-            onChange={(value: string) => updateLine(invoiceLine.id as number, { text: value })}
-          />
+          <FormTextArea aria-label="Beschreibung" rows={2} {...textField} />
         </div>
         <div className="col-span-8" />
       </FormGrid>

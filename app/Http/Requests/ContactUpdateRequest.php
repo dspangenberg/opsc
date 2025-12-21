@@ -39,6 +39,14 @@ class ContactUpdateRequest extends FormRequest
             'mails.*.email_category_id' => ['required', 'integer', 'exists:email_categories,id'],
             'mails.*.pos' => ['nullable', 'integer'],
 
+            'addresses' => ['nullable', 'array'],
+            'addresses.*.id' => ['nullable', 'integer'],
+            'addresses.*.address' => ['required', 'string', 'max:255'],
+            'addresses.*.zip' => ['required', 'string', 'max:255'],
+            'addresses.*.city' => ['required', 'string', 'max:255'],
+            'addresses.*.address_category_id' => ['required', 'integer', 'exists:address_categories,id'],
+            'addresses.*.country_id' => ['required', 'integer', 'exists:countries,id'],
+
             'phones' => ['nullable', 'array'],
             'phones.*.id' => ['nullable', 'integer'],
             'phones.*.phone' => ['required', 'string', 'max:255'],

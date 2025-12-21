@@ -186,7 +186,7 @@ class ContactController extends Controller
 
     public function edit(Request $request, Contact $contact)
     {
-        $contact->load(['mails.category', 'salutation', 'title', 'payment_deadline', 'phones.category', 'cost_center']);
+        $contact->load(['addresses', 'addresses.category', 'mails.category', 'salutation', 'title', 'payment_deadline', 'phones.category', 'cost_center']);
 
         $countries = Country::orderBy('name')->get();
         $categories = AddressCategory::all();
@@ -207,6 +207,7 @@ class ContactController extends Controller
             'salutations' => SalutationData::collect($salutations),
             'titles' => TitleData::collect($titles),
             'mail_categories' => EmailCategoryData::collect($mail_categories),
+            'address_categories' => AddressCategoryData::collect($categories),
             'phone_categories' => PhoneCategoryData::collect($phone_categories),
             'bookkeeping_accounts' => BookkeepingAccountData::collect($bookkeeping_accounts),
             'cost_centers' => CostCenterData::collect($cost_centers),
@@ -228,6 +229,10 @@ class ContactController extends Controller
 
             if ($request->has('phones')) {
                 $this->updateContactPhones($contact, $request->input('phones', []));
+            }
+
+            if ($request->has('addresses')) {
+                $this->updateContactAddresses($contact, $request->input('addresses', []));
             }
         });
 
@@ -290,27 +295,6 @@ class ContactController extends Controller
         ])->baseRoute('app.contact.details', ['contact' => $contact->id]);
     }
 
-    public function storeAddress(ContactAddressRequest $request)
-    {
-        $validatedData = $request->validated();
-
-        ContactAddress::create($validatedData);
-
-        return redirect()->route('app.contact.details', ['contact' => $validatedData['contact_id']]);
-    }
-
-    public function editAddress(Request $request, Contact $contact, ContactAddress $address)
-    {
-        $countries = Country::orderBy('name')->get();
-        $categories = AddressCategory::all();
-
-        return Inertia::modal('App/Contact/ContactEditAddress', [
-            'address' => ContactAddressData::from($address),
-            'categories' => AddressCategoryData::collect($categories),
-            'countries' => CountryData::collect($countries),
-        ])->baseRoute('app.contact.details', ['contact' => $contact->id]);
-    }
-
     public function updateAddress(ContactAddressRequest $request, Contact $contact, ContactAddress $contact_address)
     {
         $contact_address->update($request->validated());
@@ -351,6 +335,43 @@ class ContactController extends Controller
         }
     }
 
+    private function updateContactAddresses(Contact $contact, array $addressesData): void
+    {
+
+        ds($addressesData);
+
+        $incomingIds = collect($addressesData)
+            ->pluck('id')
+            ->filter()
+            ->toArray();
+
+        if (! empty($incomingIds)) {
+            $contact->addresses()
+                ->whereNotIn('id', $incomingIds)
+                ->delete();
+        } else {
+            $contact->addresses()->delete();
+        }
+
+        foreach ($addressesData as $index => $addressData) {
+            $addressAttributes = [
+                'contact_id' => $contact->id,
+                'address' => $addressData['address'],
+                'zip' => $addressData['zip'],
+                'city' => $addressData['city'],
+                'country_id' => $addressData['country_id'],
+                'address_category_id' => $addressData['address_category_id'],
+            ];
+
+            if (! empty($addressData['id'])) {
+                ContactAddress::where('id', $addressData['id'])
+                    ->where('contact_id', $contact->id)
+                    ->update($addressAttributes);
+            } else {
+                ContactAddress::create($addressAttributes);
+            }
+        }
+    }
     private function updateContactPhones(Contact $contact, array $phonesData): void
     {
         $incomingIds = collect($phonesData)

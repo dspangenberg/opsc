@@ -1,9 +1,8 @@
 import type * as React from 'react'
-import { useEffect } from 'react'
+import { useFormContext } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextField } from '@/Components/twc-ui/text-field'
 import { InvoiceLinesEditorLineContainer } from '@/Pages/App/Invoice/InvoiceLinesEditorLineContainer'
-import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 
 interface InvoiceLinesEditorProps {
   invoiceLine: App.Data.InvoiceLineData
@@ -16,14 +15,13 @@ export const InvoiceLinesEditorCaptionLine: React.FC<InvoiceLinesEditorProps> = 
   invoice,
   invoiceLine
 }) => {
-  const { updateLine } = useInvoiceTable()
+  const form = useFormContext<App.Data.InvoiceData>()
 
-  useEffect(() => {
-    if (invoiceLine.type_id === 1 && invoiceLine.quantity && invoiceLine.price) {
-      const totalPrice = invoiceLine.quantity * invoiceLine.price
-      updateLine(invoiceLine.id as number, { amount: totalPrice ?? 0 })
-    }
-  }, [invoiceLine.type_id, invoiceLine.quantity, invoiceLine.price])
+  if (!form) {
+    throw new Error('InvoiceLinesEditorCaptionLine must be used within a Form context')
+  }
+
+  const textField = form.register(`lines[${index}].text`)
 
   return (
     <InvoiceLinesEditorLineContainer invoiceLine={invoiceLine}>
@@ -31,12 +29,7 @@ export const InvoiceLinesEditorCaptionLine: React.FC<InvoiceLinesEditorProps> = 
         <div className="col-span-5" />
 
         <div className="col-span-10">
-          <FormTextField
-            aria-label="Beschreibung"
-            className="!text-lg"
-            value={invoiceLine.text}
-            onChange={(value: string) => updateLine(invoiceLine.id as number, { text: value })}
-          />
+          <FormTextField aria-label="Beschreibung" className="!text-lg" {...textField} />
         </div>
         <div className="col-span-8" />
       </FormGrid>
