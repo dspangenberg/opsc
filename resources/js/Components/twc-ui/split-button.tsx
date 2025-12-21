@@ -22,7 +22,7 @@ function SplitButton<T extends object>({
         size={size}
         icon={props.icon}
         title={title}
-        onClick={onClick}
+        onClick={onClick as any}
         className="rounded-r-none! border-0 border-r border-r-transparent! focus-visible:ring-0 group-hover:border-r-border!"
       />
       <DropdownButton

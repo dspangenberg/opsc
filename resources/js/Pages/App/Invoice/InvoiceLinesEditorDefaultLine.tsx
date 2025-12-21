@@ -1,13 +1,12 @@
-import { format, parseISO } from 'date-fns'
 import type * as React from 'react'
 import { useEffect } from 'react'
 import { FormDateRangePicker } from '@/Components/twc-ui/date-range-picker'
+import { useFormContext } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormNumberField } from '@/Components/twc-ui/number-field'
 import { FormTextArea } from '@/Components/twc-ui/text-area'
 import { FormTextField } from '@/Components/twc-ui/text-field'
 import { InvoiceLinesEditorLineContainer } from '@/Pages/App/Invoice/InvoiceLinesEditorLineContainer'
-import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 
 interface InvoiceLinesEditorProps {
   invoiceLine: App.Data.InvoiceLineData
@@ -20,14 +19,26 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
   invoice,
   invoiceLine
 }) => {
-  const { updateLine } = useInvoiceTable()
+  const form = useFormContext<App.Data.InvoiceData>()
+
+  if (!form) {
+    throw new Error('InvoiceLinesEditorDefaultLine must be used within a Form context')
+  }
+
+  const quantityField = form.register(`lines[${index}].quantity`)
+  const unitField = form.register(`lines[${index}].unit`)
+  const textField = form.register(`lines[${index}].text`)
+  const priceField = form.register(`lines[${index}].price`)
+  const amountField = form.register(`lines[${index}].amount`)
+  const servicePeriodBegin = form.register(`lines[${index}].service_period_begin`)
+  const servicePeriodEnd = form.register(`lines[${index}].service_period_end`)
 
   useEffect(() => {
-    if (invoiceLine.type_id === 1 && invoiceLine.quantity && invoiceLine.price) {
-      const totalPrice = invoiceLine.quantity * invoiceLine.price
-      updateLine(invoiceLine.id as number, { amount: totalPrice ?? 0 })
+    if (invoiceLine.type_id === 1 && quantityField.value && priceField.value) {
+      const totalPrice = Number(quantityField.value) * Number(priceField.value)
+      amountField.onChange(totalPrice ?? 0)
     }
-  }, [invoiceLine.type_id, invoiceLine.quantity, invoiceLine.price])
+  }, [invoiceLine.type_id, quantityField.value, priceField.value])
 
   return (
     <InvoiceLinesEditorLineContainer invoiceLine={invoiceLine}>
@@ -40,80 +51,40 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
               maximumFractionDigits: 2
             }}
             aria-label="Menge"
-            value={invoiceLine.quantity}
-            onChange={(value: number | null) =>
-              updateLine(invoiceLine.id as number, { quantity: value ?? 0 })
-            }
+            {...quantityField}
           />
         </div>
         <div className="col-span-2">
-          <FormTextField
-            aria-label="Einheit"
-            value={invoiceLine.unit}
-            onChange={(value: string) => updateLine(invoiceLine.id as number, { unit: value })}
-          />
+          <FormTextField aria-label="Einheit" {...unitField} />
         </div>
         <div className="col-span-10 space-y-1.5">
-          <FormTextArea
-            aria-label="Beschreibung"
-            autoSize
-            rows={2}
-            value={invoiceLine.text}
-            onChange={(value: string) => updateLine(invoiceLine.id as number, { text: value })}
-          />
+          <FormTextArea aria-label="Beschreibung" autoSize rows={2} {...textField} />
 
           <FormDateRangePicker
-            name="service_period"
+            name={`lines[${index}].service_period`}
             aria-label="Leistungsdatum"
             value={
-              invoiceLine.service_period_begin && invoiceLine.service_period_end
+              servicePeriodBegin.value && servicePeriodEnd.value
                 ? {
-                    start: invoiceLine.service_period_begin,
-                    end: invoiceLine.service_period_end
+                    start: servicePeriodBegin.value,
+                    end: servicePeriodEnd.value
                   }
                 : undefined
             }
             onChange={range => {
-              if (!invoiceLine.id) return
-
-              const formatDate = (date: any) => {
-                if (!date) return null
-                // Check if date is already a string in the correct format
-                if (typeof date === 'string' && date.match(/^\d{2}\.\d{2}\.\d{4}$/)) {
-                  return date
-                }
-                // Otherwise parse and format
-                try {
-                  return format(parseISO(date), 'dd.MM.yyyy')
-                } catch {
-                  return null
-                }
-              }
-
-              updateLine(invoiceLine.id, {
-                service_period_begin: formatDate(range?.start),
-                service_period_end: formatDate(range?.end)
-              })
+              servicePeriodBegin.onChange(range?.start ?? null)
+              servicePeriodEnd.onChange(range?.end ?? null)
             }}
           />
         </div>
         <div className="col-span-4">
-          <FormNumberField
-            aria-label="Einzelpreis"
-            value={invoiceLine.price}
-            onChange={(value: number | null) =>
-              updateLine(invoiceLine.id as number, { price: value ?? 0 })
-            }
-          />
+          <FormNumberField aria-label="Einzelpreis" {...priceField} />
         </div>
         <div className="col-span-4">
           <FormNumberField
             aria-label="Gesamtbetrag"
             isDisabled={invoiceLine.type_id === 1}
-            value={invoiceLine.amount}
-            onChange={(value: number | null) =>
-              updateLine(invoiceLine.id as number, { amount: value ?? 0 })
-            }
+            {...amountField}
           />
         </div>
         <div className="pt-2 font-medium text-sm">{invoiceLine.rate?.rate}%</div>
