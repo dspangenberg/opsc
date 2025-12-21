@@ -2,8 +2,8 @@ import { Plus, Trash2 } from 'lucide-react'
 import * as React from 'react'
 import { Button } from '@/Components/twc-ui/button'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
-import { FormSelect } from '@/Components/twc-ui/select'
-import { FormTextField } from '@/Components/twc-ui/text-field'
+import { FormSelect } from '@/Components/twc-ui/form-select'
+import { FormTextField } from '@/Components/twc-ui/form-text-field'
 
 interface BookkeepingRuleEditConditionProps {
   conditions: App.Data.BookkeepingRuleConditionData[]

@@ -2,6 +2,7 @@ import type { FormDataConvertible } from '@inertiajs/core'
 import type { RequestMethod, SimpleValidationErrors, ValidationConfig } from 'laravel-precognition'
 import type React from 'react'
 import { createContext, type FormEvent, type HTMLAttributes, useContext } from 'react'
+import { useLocale } from 'react-aria-components'
 import { useForm as internalUseForm } from '@/Hooks/use-twc-ui-form'
 import { cn } from '@/Lib/utils'
 import { FormErrors } from './form-errors'
@@ -60,11 +61,13 @@ export const Form = <T extends FormSchema>({
   form,
   children,
   errorVariant = 'form',
-  errorTitle = 'Something went wrong',
+  errorTitle,
   onSubmitted,
   className,
   ...props
 }: FormProps<T>) => {
+  const { locale } = useLocale()
+
   if (!form) {
     console.error('Form component received undefined form prop')
     return null

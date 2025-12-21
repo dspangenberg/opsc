@@ -1,7 +1,7 @@
 import type * as React from 'react'
 import { useFormContext } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
-import { FormTextArea } from '@/Components/twc-ui/text-area'
+import { FormTextArea } from '@/Components/twc-ui/form-text-area'
 import { InvoiceLinesEditorLineContainer } from '@/Pages/App/Invoice/InvoiceLinesEditorLineContainer'
 
 interface InvoiceLinesEditorProps {

@@ -1,7 +1,10 @@
 import { Sad01Icon } from '@hugeicons/core-free-icons'
 import type * as React from 'react'
 import { useMemo } from 'react'
+import { type FieldErrorProps as AriaFieldErrorProps, useLocale } from 'react-aria-components'
 import { cn } from '@/Lib/utils'
+import { FieldError } from './field'
+import { useFormContext } from './form'
 import { Icon } from './icon'
 
 interface Props {
@@ -10,11 +13,15 @@ interface Props {
   showErrors?: boolean
 }
 
-export const FormErrors: React.FC<Props> = ({
-  errors,
-  showErrors = true,
-  title = 'Something went wrong'
-}) => {
+export const FormErrors: React.FC<Props> = ({ errors, showErrors = true, title }) => {
+  const { locale } = useLocale()
+
+  const realErrorTitle = title
+    ? title
+    : locale.startsWith('de')
+      ? 'Es ist ein Fehler aufgetreten.'
+      : 'Something went wrong'
+
   const errorMessages = useMemo(() => {
     if (!errors) return []
     return Object.values(errors)
@@ -40,7 +47,7 @@ export const FormErrors: React.FC<Props> = ({
               <Icon icon={Sad01Icon} className={cn('size-5 stroke-3 text-destructive')} />
             </div>
           </div>
-          <div className="flex-1 font-medium text-base">{title}</div>
+          <div className="flex-1 font-medium text-base">{realErrorTitle}</div>
         </div>
         {showErrors && (
           <div className="grow space-y-1 pt-2">
@@ -53,5 +60,18 @@ export const FormErrors: React.FC<Props> = ({
         )}
       </div>
     </div>
+  )
+}
+
+export function FormFieldError({ className, ...props }: AriaFieldErrorProps) {
+  const form = useFormContext()
+
+  if (form?.errorVariant === 'form') return null
+
+  return (
+    <FieldError
+      className={cn('font-medium text-[0.8rem] text-destructive', className)}
+      {...props}
+    />
   )
 }

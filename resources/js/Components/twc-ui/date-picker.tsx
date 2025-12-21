@@ -1,3 +1,5 @@
+'use client'
+
 import { Calendar04Icon } from '@hugeicons/core-free-icons'
 import type { DateValue } from '@internationalized/date'
 import type React from 'react'
@@ -12,13 +14,11 @@ import {
   Text,
   type ValidationResult
 } from 'react-aria-components'
-import { useDateConversion } from '@/Hooks/use-date-conversion'
 import { cn } from '@/Lib/utils'
 import { Button } from './button'
 import { Calendar, type FooterButtons } from './calendar'
 import { DateInput } from './date-field'
-import { FieldError, FieldGroup, FormFieldError, Label } from './field'
-import { useFormContext } from './form'
+import { FieldError, FieldGroup, Label } from './field'
 import { Popover } from './popover'
 
 const BaseDatePicker = AriaDatePicker
@@ -109,18 +109,5 @@ const DatePicker = ({
   )
 }
 
-interface FormDatePickerProps extends Omit<DatePickerProps, 'value' | 'onChange'> {
-  value?: string | null
-  onChange?: (value: string | null) => void
-}
-
-const FormDatePicker = ({ value, onChange, ...props }: FormDatePickerProps) => {
-  const form = useFormContext()
-  const error = form?.errors?.[props.name as string]
-  const { parsedDate, handleChange } = useDateConversion(value, onChange)
-
-  return <DatePicker errorComponent={FormFieldError} errorMessage={error} value={parsedDate} onChange={handleChange} {...props} />
-}
-
-export { DatePicker, BaseDatePicker, FormDatePicker }
-export type { DatePickerProps, FormDatePickerProps }
+export { DatePicker, BaseDatePicker, DatePickerContent }
+export type { DatePickerProps }

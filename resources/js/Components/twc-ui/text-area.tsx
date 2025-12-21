@@ -9,8 +9,7 @@ import {
 } from 'react-aria-components'
 import { useFieldChange } from '@/Hooks/use-field-change'
 import { cn } from '@/Lib/utils'
-import { FieldDescription, FieldError, FormFieldError, Label } from './field'
-import { useFormContext } from './form'
+import { FieldDescription, FieldError, Label } from './field'
 
 interface RACTextAreaProps extends AriaTextAreaProps {
   autoSize?: boolean
@@ -96,12 +95,5 @@ const TextArea = ({
   )
 }
 
-const FormTextArea = ({ ...props }: TextAreaProps) => {
-  const form = useFormContext()
-  const error = form?.errors?.[props.name as string]
-
-  return <TextArea errorComponent={FormFieldError} errorMessage={error} {...props} />
-}
-
-export { TextArea, FormTextArea, RACTextArea }
+export { TextArea, RACTextArea }
 export type { TextAreaProps }

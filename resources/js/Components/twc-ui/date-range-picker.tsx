@@ -1,8 +1,5 @@
-'use client'
-
 import { Calendar04Icon } from '@hugeicons/core-free-icons'
 import type { DateValue } from '@internationalized/date'
-import type { RangeValue } from '@react-types/shared'
 import type React from 'react'
 import {
   DateRangePicker as AriaDateRangePicker,
@@ -15,12 +12,10 @@ import {
   Text,
   type ValidationResult
 } from 'react-aria-components'
-import { useDateRangeConversion } from '@/Hooks/use-date-conversion'
 import { cn } from '@/Lib/utils'
 import { Button } from './button'
 import { DateInput } from './date-field'
-import { FieldError, FieldGroup, FormFieldError, Label } from './field'
-import { useFormContext } from './form'
+import { FieldError, FieldGroup, Label } from './field'
 import { Popover } from './popover'
 import { type FooterButtons, RangeCalendar } from './range-calendar'
 
@@ -116,26 +111,5 @@ const DateRangePicker = ({
   )
 }
 
-interface FormDateRangePickerProps extends Omit<DateRangePickerProps, 'value' | 'onChange'> {
-  value?: RangeValue<string> | null
-  onChange?: (value: RangeValue<string> | null) => void
-  name: string
-}
-
-const FormDateRangePicker = ({ value, onChange, ...props }: FormDateRangePickerProps) => {
-  const form = useFormContext()
-  const error = form?.errors?.[props.name as string]
-  const { parsedDate, handleChange } = useDateRangeConversion(value, onChange)
-  return (
-    <DateRangePicker
-      errorComponent={FormFieldError}
-      errorMessage={error}
-      value={parsedDate}
-      onChange={handleChange}
-      {...props}
-    />
-  )
-}
-
-export { DateRangePicker, BaseDateRangePicker, FormDateRangePicker }
-export type { DateRangePickerProps, FormDateRangePickerProps }
+export { DateRangePicker, BaseDateRangePicker, DatePickerContent }
+export type { DateRangePickerProps }

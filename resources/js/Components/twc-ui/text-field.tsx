@@ -9,8 +9,7 @@ import {
 } from 'react-aria-components'
 import { useFieldChange } from '@/Hooks/use-field-change'
 import { cn } from '@/Lib/utils'
-import { FieldDescription, FieldError, FormFieldError, Label } from './field'
-import { useFormContext } from './form'
+import { FieldDescription, FieldError, Label } from './field'
 
 const BaseTextField = AriaTextField
 
@@ -84,12 +83,5 @@ const TextField = ({
   )
 }
 
-const FormTextField = ({ ...props }: TextFieldProps) => {
-  const form = useFormContext()
-  const error = form?.errors?.[props.name as string]
-
-  return <TextField errorComponent={FormFieldError} errorMessage={error} {...props} />
-}
-
-export { Input, TextField, FormTextField, BaseTextField }
+export { Input, TextField, BaseTextField }
 export type { TextFieldProps }

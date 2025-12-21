@@ -2,8 +2,8 @@ import type * as React from 'react'
 import { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Button } from '@/Components/twc-ui/button'
-import { FormComboBox } from '@/Components/twc-ui/combo-box'
 import { Dialog } from '@/Components/twc-ui/dialog'
+import { FormComboBox } from '@/Components/twc-ui/form-combo-box'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 
 interface TransactionSelectCounterAccountComponentProps {
