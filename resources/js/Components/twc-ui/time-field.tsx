@@ -1,17 +1,22 @@
-import type { DateValue } from '@internationalized/date'
+'use client'
+
 import type React from 'react'
 import {
-  type DateFieldProps as AriaDateFieldProps,
+  TimeField as AriaTimeField,
+  type TimeFieldProps as AriaTimeFieldProps,
+  type TimeValue as AriaTimeValue,
   type ValidationResult as AriaValidationResult,
   composeRenderProps,
   Text,
   type ValidationResult
 } from 'react-aria-components'
 import { cn } from '@/Lib/utils'
-import { BaseDateField, DateInput } from './date-field'
+import { DateInput } from './date-field'
 import { FieldError, Label } from './field'
 
-interface DateTimeFieldProps extends AriaDateFieldProps<DateValue> {
+const BaseTimeField = AriaTimeField
+
+interface TimeFieldProps<T extends AriaTimeValue> extends AriaTimeFieldProps<T> {
   label?: string
   description?: string
   errorMessage?: string | ((validation: AriaValidationResult) => string)
@@ -20,32 +25,25 @@ interface DateTimeFieldProps extends AriaDateFieldProps<DateValue> {
   }>
 }
 
-const DateTimeField = ({
+const TimeField = <T extends AriaTimeValue>({
   label,
   description,
-  className,
   errorComponent: ErrorComponent = FieldError,
-  value,
   errorMessage,
-  onChange,
-  isRequired = false,
+  className,
   ...props
-}: DateTimeFieldProps) => {
+}: TimeFieldProps<T>) => {
   const hasError = !!errorMessage
 
   return (
-    <BaseDateField
-      className={composeRenderProps(className, className =>
-        cn('group flex flex-col gap-2 data-invalid:border-destructive', className)
-      )}
+    <BaseTimeField
       isInvalid={hasError}
-      value={value}
-      granularity="minute"
-      onChange={onChange}
-      validationBehavior="native"
+      className={composeRenderProps(className, className =>
+        cn('group flex flex-col gap-2', className)
+      )}
       {...props}
     >
-      {label && <Label value={label} isRequired={isRequired} />}
+      <Label value={label} />
       <DateInput />
       {description && (
         <Text className="text-muted-foreground text-sm" slot="description">
@@ -53,9 +51,9 @@ const DateTimeField = ({
         </Text>
       )}
       <ErrorComponent>{errorMessage}</ErrorComponent>
-    </BaseDateField>
+    </BaseTimeField>
   )
 }
 
-export { DateTimeField }
-export type { DateTimeFieldProps }
+export { TimeField, BaseTimeField }
+export type { TimeFieldProps }

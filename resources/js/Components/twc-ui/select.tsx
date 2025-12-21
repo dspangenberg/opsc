@@ -15,8 +15,7 @@ import {
   Text
 } from 'react-aria-components'
 import { cn } from '@/Lib/utils'
-import { FieldError, FormFieldError, Label } from './field'
-import { useFormContext } from './form'
+import { FieldError, Label } from './field'
 import { ListBoxCollection, ListBoxHeader, ListBoxItem, ListBoxSection } from './list-box'
 import { Popover } from './popover'
 
@@ -193,16 +192,9 @@ const Select = <T extends object>({
   )
 }
 
-const FormSelect = <T extends object>({ name, ...props }: SelectProps<T>) => {
-  const form = useFormContext()
-  const realError = form?.errors?.[name as string]
-  return <Select<T> error={realError} name={name} {...props} errorComponent={FormFieldError} />
-}
-
 export {
   Select,
   BaseSelect,
-  FormSelect,
   SelectValue,
   SelectTrigger,
   SelectItem,

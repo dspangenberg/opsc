@@ -3,8 +3,8 @@ import * as React from 'react'
 import { Button } from '@/Components/twc-ui/button'
 import { useFormContext } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
-import { FormSelect } from '@/Components/twc-ui/select'
-import { FormTextField } from '@/Components/twc-ui/text-field'
+import { FormSelect } from '@/Components/twc-ui/form-select'
+import { FormTextField } from '@/Components/twc-ui/form-text-field'
 
 interface EmailAddressesSectionProps {
   mailCategories: App.Data.EmailCategoryData[]

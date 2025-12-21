@@ -8,7 +8,7 @@ import AuthContainer from '@/Components/AuthContainer'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, type FormSchema, useForm } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
-import { FormTextField } from '@/Components/twc-ui/text-field'
+import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import GuestLayout from '@/Layouts/GuestLayout'
 
 interface RegisterForm {

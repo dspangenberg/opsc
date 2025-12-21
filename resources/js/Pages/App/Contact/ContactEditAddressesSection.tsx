@@ -1,12 +1,12 @@
 import { Plus, Trash2 } from 'lucide-react'
 import * as React from 'react'
 import { Button } from '@/Components/twc-ui/button'
-import { FormComboBox } from '@/Components/twc-ui/combo-box'
 import { useFormContext } from '@/Components/twc-ui/form'
+import { FormComboBox } from '@/Components/twc-ui/form-combo-box'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
-import { FormSelect } from '@/Components/twc-ui/select'
-import { FormTextArea } from '@/Components/twc-ui/text-area'
-import { FormTextField } from '@/Components/twc-ui/text-field'
+import { FormSelect } from '@/Components/twc-ui/form-select'
+import { FormTextArea } from '@/Components/twc-ui/form-text-area'
+import { FormTextField } from '@/Components/twc-ui/form-text-field'
 
 interface AddressesSectionProps {
   addressCategories: App.Data.AddressCategoryData[]
@@ -33,6 +33,7 @@ export const ContactEditAddressesSection: React.FC<AddressesSectionProps> = ({
   return (
     <FormGrid
       title="Anschriften"
+      className="gap-y-3"
       action={
         <Button type="button" variant="outline" size="icon-sm" onClick={onAddAddress} icon={Plus} />
       }

@@ -11,7 +11,6 @@ import {
   composeRenderProps
 } from 'react-aria-components'
 import { cn } from '@/Lib/utils'
-import { useFormContext } from './form'
 
 const labelVariants = cva([
   'text-sm font-normal leading-none',
@@ -47,19 +46,6 @@ function FieldDescription({ className, ...props }: AriaTextProps) {
       className={cn('text-muted-foreground text-sm', className)}
       {...props}
       slot="description"
-    />
-  )
-}
-
-function FormFieldError({ className, ...props }: AriaFieldErrorProps) {
-  const form = useFormContext()
-
-  if (form?.errorVariant === 'form') return null
-
-  return (
-    <AriaFieldError
-      className={cn('font-medium text-[0.8rem] text-destructive', className)}
-      {...props}
     />
   )
 }
@@ -110,7 +96,6 @@ export {
   labelVariants,
   FieldGroup,
   fieldGroupVariants,
-  FormFieldError,
   FieldError,
   FieldDescription
 }

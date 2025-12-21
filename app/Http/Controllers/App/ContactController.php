@@ -337,9 +337,6 @@ class ContactController extends Controller
 
     private function updateContactAddresses(Contact $contact, array $addressesData): void
     {
-
-        ds($addressesData);
-
         $incomingIds = collect($addressesData)
             ->pluck('id')
             ->filter()

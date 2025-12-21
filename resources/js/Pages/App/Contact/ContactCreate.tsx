@@ -6,8 +6,8 @@ import { Checkbox } from '@/Components/twc-ui/checkbox'
 import { Dialog } from '@/Components/twc-ui/dialog'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
-import { FormSelect } from '@/Components/twc-ui/select'
-import { FormTextField } from '@/Components/twc-ui/text-field'
+import { FormSelect } from '@/Components/twc-ui/form-select'
+import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import type { PageProps } from '@/Types'
 
 interface Props extends PageProps {

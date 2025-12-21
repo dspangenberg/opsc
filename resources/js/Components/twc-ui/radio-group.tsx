@@ -1,3 +1,4 @@
+import { Circle } from 'lucide-react'
 import type * as React from 'react'
 import {
   Radio as AriaRadio,
@@ -5,11 +6,11 @@ import {
   type RadioProps as AriaRadioProps,
   type ValidationResult as AriaValidationResult,
   composeRenderProps,
-  Text
+  Text,
+  type ValidationResult
 } from 'react-aria-components'
-import { useFormContext } from './form'
-import { cn } from '@/Lib/utils'
 
+import { cn } from '@/Lib/utils'
 import { FieldError, Label, labelVariants } from './field'
 
 const BaseRadioGroup = AriaRadioGroup
@@ -18,9 +19,9 @@ const Radio = ({ className, children, ...props }: AriaRadioProps) => (
   <AriaRadio
     className={composeRenderProps(className, className =>
       cn(
-        'group/radio flex items-center gap-x-2',
+        'group/radio flex items-center gap-x-2 text-sm',
         /* Disabled */
-        'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70',
+        'data-disabled:cursor-not-allowed data-disabled:opacity-70',
         labelVariants,
         className
       )
@@ -31,29 +32,18 @@ const Radio = ({ className, children, ...props }: AriaRadioProps) => (
       <>
         <span
           className={cn(
-            'flex aspect-square size-4 items-center justify-center rounded-full border border-input text-primary',
+            'flex aspect-square size-4 items-center justify-center rounded-full border border-border text-primary ring-offset-background',
             /* Focus */
-            'group-data-[focused]/radio:outline-none',
+            'group-data-focused/radio:outline-none',
             /* Focus Visible */
-            'group-data-[focus-visible]/radio:ring-1 group-data-[focus-visible]/radio:ring-ring',
-            /* Selected */
-            'group-data-[selected]/radio:border-primary group-data-[selected]/radio:bg-primary group-data-[selected]/radio:text-primary-foreground',
+            'group-data-focus-visible/radio:ring-2 group-data-focus-visible/radio:ring-ring group-data-focus-visible/radio:ring-offset-2',
             /* Disabled */
-            'group-data-[disabled]/radio:cursor-not-allowed group-data-[disabled]/radio:opacity-50',
+            'group-data-disabled/radio:cursor-not-allowed group-data-disabled/radio:opacity-50',
             /* Invalid */
-            'group-data-[invalid]/radio:group-data-[selected]/radio:bg-destructive group-data-[invalid]/radio:group-data-[selected]/radio:text-destructive-foreground group-data-[invalid]/radio:border-destructive'
+            'group-data-invalid/radio:border-destructive'
           )}
         >
-          {renderProps.isSelected && (
-            <svg
-              className="size-2.5 fill-current"
-              viewBox="0 0 6 6"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <title>Radio selected</title>
-              <circle cx="3" cy="3" r="3" />
-            </svg>
-          )}
+          {renderProps.isSelected && <Circle className="size-2.5 fill-current text-current" />}
         </span>
         <Label className="font-medium">{children}</Label>
       </>
@@ -67,16 +57,20 @@ interface RadioGroupProps<T extends Record<string, unknown>> {
   description?: string
   className?: string
   autoFocus?: boolean
-  items: T[]
+  isRequired?: boolean
+  items?: T[]
   itemName?: keyof T & string
   itemValue?: keyof T & string
   value?: string | number | null | undefined
-  onChange: (value: string | number | null) => void
+  onChange?: (value: string) => void
   onBlur?: () => void
   isOptional?: boolean
   optionalValue?: string
   orientation?: 'horizontal' | 'vertical'
-  error?: string | ((validation: AriaValidationResult) => string)
+  errorMessage?: string | ((validation: AriaValidationResult) => string)
+  errorComponent?: React.ComponentType<{
+    children?: React.ReactNode | ((validation: ValidationResult) => React.ReactNode)
+  }>
   children?: React.ReactNode
   renderItem?: (item: T) => React.ReactNode
 }
@@ -87,42 +81,35 @@ const RadioGroup = <T extends Record<string, unknown>>({
   className = '',
   autoFocus = false,
   name,
-  items,
+  items = [] as T[],
   itemName = 'name' as keyof T & string,
   itemValue = 'id' as keyof T & string,
   value,
   onChange,
   onBlur,
+  isRequired,
   isOptional = false,
   optionalValue = '(leer)',
   orientation = 'vertical',
+  errorMessage,
+  errorComponent: ErrorComponent = FieldError,
   children,
   renderItem,
   ...props
 }: RadioGroupProps<T>) => {
-  const form = useFormContext()
-  const error = form?.errors?.[name as string] || props.error
-  const realHasError = !!error
+  const hasError = !!errorMessage
 
-  const itemsWithOptional = isOptional
-    ? [
-        {
-          [itemValue]: null,
-          [itemName]: optionalValue
-        } as T,
-        ...Array.from(items)
-      ]
-    : Array.from(items)
-
-  const handleSelectionChange = (selectedValue: string) => {
-    const numericValue =
-      selectedValue === 'null'
-        ? null
-        : !Number.isNaN(Number(selectedValue))
-          ? Number(selectedValue)
-          : selectedValue
-    onChange(numericValue)
-  }
+  const itemsWithOptional = items
+    ? isOptional
+      ? [
+          {
+            [itemValue]: null,
+            [itemName]: optionalValue
+          } as T,
+          ...Array.from(items)
+        ]
+      : Array.from(items)
+    : []
 
   const selectedKey = value === null ? 'null' : String(value)
 
@@ -159,14 +146,14 @@ const RadioGroup = <T extends Record<string, unknown>>({
           className
         )
       )}
-      isInvalid={realHasError}
+      isInvalid={hasError}
       value={selectedKey}
-      onChange={handleSelectionChange}
+      onChange={onChange}
       orientation={orientation}
       name={name}
       {...props}
     >
-      <Label value={label} />
+      {label && <Label isRequired={isRequired} value={label} />}
       <div
         className={cn(
           'flex gap-2',
@@ -180,7 +167,7 @@ const RadioGroup = <T extends Record<string, unknown>>({
           {description}
         </Text>
       )}
-      <FieldError>{error}</FieldError>
+      <ErrorComponent>{errorMessage}</ErrorComponent>
     </BaseRadioGroup>
   )
 }

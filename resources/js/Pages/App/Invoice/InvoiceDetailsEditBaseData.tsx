@@ -3,14 +3,14 @@ import type * as React from 'react'
 import { useState } from 'react'
 import { Button } from '@/Components/twc-ui/button'
 import { Checkbox } from '@/Components/twc-ui/checkbox'
-import { FormComboBox } from '@/Components/twc-ui/combo-box'
-import { FormDatePicker } from '@/Components/twc-ui/date-picker'
-import { FormDateRangePicker } from '@/Components/twc-ui/date-range-picker'
 import { Dialog } from '@/Components/twc-ui/dialog'
 import { Form, useForm } from '@/Components/twc-ui/form'
+import { FormComboBox } from '@/Components/twc-ui/form-combo-box'
+import { FormDatePicker } from '@/Components/twc-ui/form-date-picker'
+import { FormDateRangePicker } from '@/Components/twc-ui/form-date-range-picker'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
-import { RadioGroup } from '@/Components/twc-ui/radio-group'
-import { FormSelect } from '@/Components/twc-ui/select'
+import { FormRadioGroup } from '@/Components/twc-ui/form-radio-group'
+import { FormSelect } from '@/Components/twc-ui/form-select'
 
 interface Props {
   invoice: App.Data.InvoiceData
@@ -60,7 +60,7 @@ export const InvoiceDetailsEditBaseData: React.FC<Props> = ({
       <Form form={form} onSubmitted={() => setIsOpen(false)}>
         <FormGrid>
           <div className="col-span-24">
-            <RadioGroup<App.Data.InvoiceTypeData>
+            <FormRadioGroup<App.Data.InvoiceTypeData>
               autoFocus
               label="Rechnungsart"
               itemName={'display_name'}

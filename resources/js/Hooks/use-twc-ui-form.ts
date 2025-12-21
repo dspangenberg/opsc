@@ -112,9 +112,10 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
 
     return {
       name,
-      value: name.includes('.') || name.includes('[')
-        ? getNestedValue(form.data, name)
-        : (form.data as any)[name],
+      value:
+        name.includes('.') || name.includes('[')
+          ? getNestedValue(form.data, name)
+          : (form.data as any)[name],
       error,
       onChange: (value: any) => {
         setFormData(name, value)
@@ -133,9 +134,10 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
 
     return {
       name,
-      value: name.includes('.') || name.includes('[')
-        ? getNestedValue(form.data, name)
-        : (form.data as any)[name],
+      value:
+        name.includes('.') || name.includes('[')
+          ? getNestedValue(form.data, name)
+          : (form.data as any)[name],
       error,
       onChange: (e: ChangeEvent<InputElements>) => {
         setFormData(name, e.currentTarget.value)
@@ -151,9 +153,10 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
     // Get error using both array notation and Laravel dot notation
     const laravelName = name.replace(/\[(\d+)\]/g, '.$1')
     const error = (form.errors as any)[name] || (form.errors as any)[laravelName]
-    const value = name.includes('.') || name.includes('[')
-      ? getNestedValue(form.data, name)
-      : (form.data as any)[name]
+    const value =
+      name.includes('.') || name.includes('[')
+        ? getNestedValue(form.data, name)
+        : (form.data as any)[name]
 
     return {
       name,

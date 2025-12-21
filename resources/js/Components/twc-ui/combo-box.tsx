@@ -15,8 +15,7 @@ import {
 } from 'react-aria-components'
 import { cn } from '@/Lib/utils'
 import { Button } from './button'
-import { FieldError, FieldGroup, FormFieldError, Label } from './field'
-import { useFormContext } from './form'
+import { FieldError, FieldGroup, Label } from './field'
 import { ListBoxCollection, ListBoxHeader, ListBoxItem, ListBoxSection } from './list-box'
 import { Popover } from './popover'
 
@@ -207,12 +206,6 @@ const ComboBox = <T extends Record<string, unknown>>({
   )
 }
 
-const FormComboBox = <T extends Record<string, unknown>>({ ...props }: ComboBoxProps<T>) => {
-  const form = useFormContext()
-  const realError = form?.errors?.[props.name]
-  return <ComboBox<T> error={realError} {...props} errorComponent={FormFieldError} />
-}
-
 export {
   ComboBoxSection,
   ComboBoxListBox,
@@ -221,7 +214,6 @@ export {
   ComboBoxItem,
   ComboBoxHeader,
   ComboBoxPopover,
-  ComboBox,
-  FormComboBox
+  ComboBox
 }
 export type { ComboBoxProps }
