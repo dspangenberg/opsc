@@ -3,28 +3,13 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import {
-  Delete03Icon,
-  Edit03Icon,
-  FileEuroIcon,
-  MoreVerticalCircle01Icon
-} from '@hugeicons/core-free-icons'
-import { Link, router } from '@inertiajs/react'
+import { FileEuroIcon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
+import { Link } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
-import { useEffect, useState } from 'react'
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
-import { Badge } from '@/Components/ui/badge'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { MenuItem } from '@/Components/twc-ui/menu'
 import { Checkbox } from '@/Components/ui/checkbox'
-import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
-import { Avatar } from '@/Components/ui/twc-ui/avatar'
-import { Icon } from '@/Components/ui/twc-ui/icon'
-import {
-  minutesToHoursExtended,
-  minutesUntilNow,
-  parseAndFormatDate,
-  parseAndFormatDateTime
-} from '@/Lib/DateHelper'
-import { cn } from '@/Lib/utils'
+import { minutesToHoursExtended } from '@/Lib/DateHelper'
 
 const editUrl = (row: App.Data.BillableProjectData) => {
   if (!row.id) return '#'
@@ -48,18 +33,6 @@ const durationInMinutes = (row: App.Data.BillableProjectData) => {
     return value
   } catch (error) {
     return 0
-  }
-}
-
-const handleDeleteClicked = async (row: App.Data.BillableProjectData) => {
-  const promise = await AlertDialog.call({
-    title: 'Löschen bestätigen',
-    message: 'Möchtest Du den Eintrag wirklich löschen?',
-    buttonTitle: 'Eintrag löschen',
-    variant: 'destructive'
-  })
-  if (promise) {
-    router.delete(route('app.times.delete', { id: row.id }))
   }
 }
 

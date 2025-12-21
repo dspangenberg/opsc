@@ -10,7 +10,7 @@ const alertVariants = cva(
       variant: {
         default: 'bg-card text-card-foreground',
         destructive:
-          'text-destructive bg-card [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90',
+          'bg-destructive/100 text-destructive bg-card [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90',
         info: 'bg-yellow-50'
       }
     },
@@ -33,7 +33,7 @@ const Alert: React.FC<AlertProps> = ({ className, variant, icon, children, title
       className={cn(alertVariants({ variant }), className)}
       {...props}
     >
-      {icon && <Icon icon={icon} />}
+      {icon && <Icon icon={icon} className="size-4" />}
       {title && <AlertTitle>{title}</AlertTitle>}
       <AlertDescription>{children}</AlertDescription>
     </div>
@@ -55,7 +55,7 @@ const AlertDescription: React.FC<React.ComponentProps<'div'>> = ({ className, ..
     <div
       data-slot="alert-description"
       className={cn(
-        'col-start-2 grid justify-items-start gap-1 text-muted-foreground text-sm [&_p]:leading-relaxed',
+        'col-start-2 mt-1.5 grid justify-items-start gap-1 text-muted-foreground text-sm [&_p]:leading-relaxed',
         className
       )}
       {...props}

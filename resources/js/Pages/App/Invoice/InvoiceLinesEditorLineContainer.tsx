@@ -5,8 +5,9 @@ import {
   MoreVerticalCircle01Icon
 } from '@hugeicons/core-free-icons'
 import type * as React from 'react'
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
-import { Icon } from '@/Components/ui/twc-ui/icon'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { Icon } from '@/Components/twc-ui/icon'
+import { MenuItem } from '@/Components/twc-ui/menu'
 import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 
 interface InvoiceLinesEditorLineContainerProps {

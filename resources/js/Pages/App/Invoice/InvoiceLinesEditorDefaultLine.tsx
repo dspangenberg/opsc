@@ -1,10 +1,11 @@
 import { format, parseISO } from 'date-fns'
 import type * as React from 'react'
 import { useEffect } from 'react'
-import { DateRangePicker } from '@/Components/ui/twc-ui/date-picker'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { FormNumberField } from '@/Components/ui/twc-ui/number-field'
-import { FormTextAreaField, FormTextField } from '@/Components/ui/twc-ui/text-field'
+import { FormDateRangePicker } from '@/Components/twc-ui/date-range-picker'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormNumberField } from '@/Components/twc-ui/number-field'
+import { FormTextArea } from '@/Components/twc-ui/text-area'
+import { FormTextField } from '@/Components/twc-ui/text-field'
 import { InvoiceLinesEditorLineContainer } from '@/Pages/App/Invoice/InvoiceLinesEditorLineContainer'
 import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 
@@ -30,7 +31,7 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
 
   return (
     <InvoiceLinesEditorLineContainer invoiceLine={invoiceLine}>
-      <FormGroup>
+      <FormGrid>
         <div className="col-span-3">
           <FormNumberField
             autoFocus
@@ -53,7 +54,7 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
           />
         </div>
         <div className="col-span-10 space-y-1.5">
-          <FormTextAreaField
+          <FormTextArea
             aria-label="Beschreibung"
             autoSize
             rows={2}
@@ -61,7 +62,8 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
             onChange={(value: string) => updateLine(invoiceLine.id as number, { text: value })}
           />
 
-          <DateRangePicker
+          <FormDateRangePicker
+            name="service_period"
             aria-label="Leistungsdatum"
             value={
               invoiceLine.service_period_begin && invoiceLine.service_period_end
@@ -76,7 +78,16 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
 
               const formatDate = (date: any) => {
                 if (!date) return null
-                return format(parseISO(date), 'dd.MM.yyyy')
+                // Check if date is already a string in the correct format
+                if (typeof date === 'string' && date.match(/^\d{2}\.\d{2}\.\d{4}$/)) {
+                  return date
+                }
+                // Otherwise parse and format
+                try {
+                  return format(parseISO(date), 'dd.MM.yyyy')
+                } catch {
+                  return null
+                }
               }
 
               updateLine(invoiceLine.id, {
@@ -106,7 +117,7 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
           />
         </div>
         <div className="pt-2 font-medium text-sm">{invoiceLine.rate?.rate}%</div>
-      </FormGroup>
+      </FormGrid>
     </InvoiceLinesEditorLineContainer>
   )
 }

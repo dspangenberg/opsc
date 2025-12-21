@@ -11,6 +11,55 @@ type InputElements = HTMLInputElement | HTMLSelectElement
 
 const DATE_FORMAT = import.meta.env.VITE_APP_DATE_FORMAT || 'yyyy-MM-dd'
 
+/**
+ * Helper function to get a nested value from an object using a path string
+ * Supports both dot notation (obj.key) and array notation (arr[0])
+ * @example getNestedValue(data, 'user.name') // returns data.user.name
+ * @example getNestedValue(data, 'phones[0].number') // returns data.phones[0].number
+ */
+function getNestedValue(obj: any, path: string): any {
+  // Convert array notation to dot notation: phones[0].number -> phones.0.number
+  const normalizedPath = path.replace(/\[(\d+)\]/g, '.$1')
+
+  return normalizedPath.split('.').reduce((current, key) => {
+    return current?.[key]
+  }, obj)
+}
+
+/**
+ * Helper function to set a nested value in an object using a path string
+ * Supports both dot notation (obj.key) and array notation (arr[0])
+ * Creates intermediate objects/arrays as needed
+ * @example setNestedValue(data, 'user.name', 'John') // sets data.user.name = 'John'
+ * @example setNestedValue(data, 'phones[0].number', '123') // sets data.phones[0].number = '123'
+ */
+function setNestedValue(obj: any, path: string, value: any): any {
+  // Convert array notation to dot notation: phones[0].number -> phones.0.number
+  const normalizedPath = path.replace(/\[(\d+)\]/g, '.$1')
+  const keys = normalizedPath.split('.')
+  const lastKey = keys.pop()!
+
+  // Navigate to the parent object, creating intermediate objects as needed
+  const parent = keys.reduce((current, key, index) => {
+    if (!(key in current)) {
+      // Check if next key is a number (array index)
+      const nextKey = keys[index + 1]
+      current[key] = /^\d+$/.test(nextKey) ? [] : {}
+    }
+    return current[key]
+  }, obj)
+
+  parent[lastKey] = value
+  return obj
+}
+
+/**
+ * Convert Laravel error key format (phones.0.number) to array notation (phones[0].number)
+ */
+function convertErrorKey(key: string): string {
+  return key.replace(/\.(\d+)\./g, '[$1].').replace(/\.(\d+)$/, '[$1]')
+}
+
 export function useForm<T extends Record<string, FormDataConvertible>>(
   method: RequestMethod,
   url: string,
@@ -23,16 +72,32 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
   const isDirty = !isEqual(initialDataRef.current, form.data)
 
   // Create a type-safe wrapper that bypasses Inertia's complex types
+  // Now supports nested paths like 'phones[0].number'
   const setFormData = (name: string, value: any) => {
-    ;(form as any).setData(name, value)
+    // Check if this is a nested path (contains dots or brackets)
+    if (name.includes('.') || name.includes('[')) {
+      // Create a deep clone of the current data
+      const updatedData = JSON.parse(JSON.stringify(form.data))
+      // Set the nested value
+      setNestedValue(updatedData, name, value)
+      // Update the entire data object
+      ;(form as any).setData(updatedData)
+    } else {
+      // Simple top-level field
+      ;(form as any).setData(name, value)
+    }
   }
 
   const validateFormField = (name: string) => {
-    ;(form as any).validate(name)
+    // Convert array notation to dot notation for Laravel validation
+    const laravelName = name.replace(/\[(\d+)\]/g, '.$1')
+    ;(form as any).validate(laravelName)
   }
 
   const touchFormField = (name: string) => {
-    ;(form as any).touched(name)
+    // Convert array notation to dot notation for Laravel validation
+    const laravelName = name.replace(/\[(\d+)\]/g, '.$1')
+    ;(form as any).touched(laravelName)
   }
 
   const updateAndValidateWithoutEvent = (name: string, value: any) => {
@@ -41,10 +106,16 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
   }
 
   function register(name: string) {
+    // Get error using both array notation and Laravel dot notation
+    const laravelName = name.replace(/\[(\d+)\]/g, '.$1')
+    const error = (form.errors as any)[name] || (form.errors as any)[laravelName]
+
     return {
       name,
-      value: (form.data as any)[name],
-      error: (form.errors as any)[name],
+      value: name.includes('.') || name.includes('[')
+        ? getNestedValue(form.data, name)
+        : (form.data as any)[name],
+      error,
       onChange: (value: any) => {
         setFormData(name, value)
         validateFormField(name)
@@ -56,10 +127,16 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
   }
 
   function registerEvent(name: string) {
+    // Get error using both array notation and Laravel dot notation
+    const laravelName = name.replace(/\[(\d+)\]/g, '.$1')
+    const error = (form.errors as any)[name] || (form.errors as any)[laravelName]
+
     return {
       name,
-      value: (form.data as any)[name],
-      error: (form.errors as any)[name],
+      value: name.includes('.') || name.includes('[')
+        ? getNestedValue(form.data, name)
+        : (form.data as any)[name],
+      error,
       onChange: (e: ChangeEvent<InputElements>) => {
         setFormData(name, e.currentTarget.value)
         validateFormField(name)
@@ -71,11 +148,18 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
   }
 
   const registerCheckbox = (name: string) => {
+    // Get error using both array notation and Laravel dot notation
+    const laravelName = name.replace(/\[(\d+)\]/g, '.$1')
+    const error = (form.errors as any)[name] || (form.errors as any)[laravelName]
+    const value = name.includes('.') || name.includes('[')
+      ? getNestedValue(form.data, name)
+      : (form.data as any)[name]
+
     return {
       name,
-      checked: Boolean((form.data as any)[name]),
-      hasError: !!(form.errors as any)[name],
-      isSelected: Boolean((form.data as any)[name]),
+      checked: Boolean(value),
+      hasError: !!error,
+      isSelected: Boolean(value),
       onChange: (checked: boolean) => {
         setFormData(name, checked)
         validateFormField(name)

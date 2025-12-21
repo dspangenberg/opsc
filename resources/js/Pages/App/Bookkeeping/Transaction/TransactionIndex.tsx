@@ -10,20 +10,15 @@ import { sumBy } from 'lodash'
 import * as React from 'react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { DataTable } from '@/Components/DataTable'
-import { JollySearchField } from '@/Components/jolly-ui/search-field'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
-import {
-  DropdownButton,
-  Menu,
-  MenuItem,
-  MenuPopover,
-  MenuSubTrigger
-} from '@/Components/twcui/dropdown-button'
+import { Button } from '@/Components/twc-ui/button'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { Menu, MenuItem, MenuPopover, MenuSubTrigger } from '@/Components/twc-ui/menu'
+import { SearchField } from '@/Components/twc-ui/search-field'
+import { Tab, TabList, Tabs } from '@/Components/twc-ui/tabs'
+import { Toolbar } from '@/Components/twc-ui/toolbar'
 import { Badge } from '@/Components/ui/badge'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Tab, TabList, Tabs } from '@/Components/ui/twc-ui/tabs'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { TransactionHolviImport } from '@/Pages/App/Bookkeeping/Transaction/TransactionHolviImport'
 import { TransactionMoneyMoneyImport } from '@/Pages/App/Bookkeeping/Transaction/TransactionMoneyMoneyImport'
 import { TransactionSelectCounterAccountDialog } from '@/Pages/App/Bookkeeping/Transaction/TransactionSelectCounterAccount'
@@ -272,7 +267,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
   const filterBar = useMemo(
     () => (
       <div className="flex">
-        <JollySearchField
+        <SearchField
           aria-label="Suchen"
           placeholder="Nach Namen, Verwendungszweck oder IBAN suchen"
           value={search}

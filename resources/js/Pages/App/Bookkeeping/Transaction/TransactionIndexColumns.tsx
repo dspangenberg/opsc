@@ -7,20 +7,17 @@ import {
   FileEuroIcon,
   MoreVerticalCircle01Icon,
   ProfileIcon,
-  Tick01Icon,
-  WebValidationIcon
+  Tick01Icon
 } from '@hugeicons/core-free-icons'
-import { Link, router } from '@inertiajs/react'
+import { router } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
-import { Autocomplete, Menu, SubmenuTrigger, useFilter } from 'react-aria-components'
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
+import { useFilter } from 'react-aria-components'
+import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { Icon } from '@/Components/twc-ui/icon'
+import { MenuItem } from '@/Components/twc-ui/menu'
 import { Badge, type BadgeVariant } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
-import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
-import { Icon } from '@/Components/ui/twc-ui/icon'
-import { MySearchField } from '@/Components/ui/twc-ui/MySearchField'
-import { Popover } from '@/Components/ui/twc-ui/popover'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
 import { cn } from '@/Lib/utils'
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {

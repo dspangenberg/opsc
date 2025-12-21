@@ -1,10 +1,10 @@
 import type * as React from 'react'
 import { useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { FormComboBox } from '@/Components/ui/twc-ui/combo-box'
-import { Dialog } from '@/Components/ui/twc-ui/dialog'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
+import { Button } from '@/Components/twc-ui/button'
+import { FormComboBox } from '@/Components/twc-ui/combo-box'
+import { Dialog } from '@/Components/twc-ui/dialog'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
 
 interface TransactionSelectCounterAccountComponentProps {
   accounts: App.Data.BookkeepingAccountData[]
@@ -31,7 +31,7 @@ const TransactionSelectCounterAccountComponent: React.FC<
       confirmClose={false}
       width="lg"
       bodyPadding
-      dismissible={true}
+      isDismissible={true}
       title="Gegenkonto auswählen"
       footer={
         <div className="flex items-center justify-end space-x-2">
@@ -60,7 +60,7 @@ const TransactionSelectCounterAccountComponent: React.FC<
       }
     >
       <div className="flex w-full flex-1 rounded-t-lg">
-        <FormGroup>
+        <FormGrid>
           <div className="col-span-24">
             <FormComboBox<App.Data.BookkeepingAccountData>
               className="my-3 flex-1 bg-background"
@@ -68,13 +68,15 @@ const TransactionSelectCounterAccountComponent: React.FC<
               name="view"
               label="Gegenkonto"
               value={selectedAccount}
-              onChange={(value) => setSelectedAccount(typeof value === 'number' ? value : Number(value) || 0)}
+              onChange={value =>
+                setSelectedAccount(typeof value === 'number' ? value : Number(value) || 0)
+              }
               items={accounts}
               itemName="label"
               itemValue="account_number"
             />
           </div>
-        </FormGroup>
+        </FormGrid>
       </div>
     </Dialog>
   )

@@ -1,9 +1,9 @@
 import { Plus, Trash2 } from 'lucide-react'
 import * as React from 'react'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { FormSelect } from '@/Components/ui/twc-ui/select'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { Button } from '@/Components/twc-ui/button'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormSelect } from '@/Components/twc-ui/select'
+import { FormTextField } from '@/Components/twc-ui/text-field'
 
 interface BookkeepingRuleEditActionProps {
   actions: App.Data.BookkeepingRuleActionData[]
@@ -34,7 +34,7 @@ export const BookkeepingRuleEditAction: React.FC<BookkeepingRuleEditActionProps>
   const fieldsAsOptions: Fields[] = fields.map((field: string) => ({ id: field, name: field }))
 
   return (
-    <FormGroup
+    <FormGrid
       title="Aktionen"
       action={
         <Button type="button" variant="outline" size="icon-sm" onClick={onAddAction} icon={Plus} />
@@ -50,11 +50,11 @@ export const BookkeepingRuleEditAction: React.FC<BookkeepingRuleEditActionProps>
                 items={fieldsAsOptions}
                 value={action.field}
                 itemValue="id"
-                onChange={(value) => onUpdateAction(index, 'field', value)}
+                onChange={value => onUpdateAction(index, 'field', value)}
               />
             </div>
             <div className="col-span-10">
-              <TextField
+              <FormTextField
                 aria-label="Wert"
                 name={`actions.${index}.value`}
                 value={action.value}
@@ -86,7 +86,7 @@ export const BookkeepingRuleEditAction: React.FC<BookkeepingRuleEditActionProps>
       ) : (
         <div />
       )}
-    </FormGroup>
+    </FormGrid>
   )
 }
 

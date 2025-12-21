@@ -7,7 +7,7 @@ import { Button, type buttonVariants } from './button'
 import type { IconType } from './icon'
 import { type AriaMenuProps, Menu, MenuPopover, MenuTrigger } from './menu'
 
-interface DropdownMenuProps<T>
+interface DropdownButtonProps<T>
   extends AriaMenuProps<T>,
     VariantProps<typeof buttonVariants>,
     Omit<AriaMenuTriggerProps, 'children'> {
@@ -39,7 +39,7 @@ function DropdownButton<T extends object>({
   className = undefined,
   onSelectionChange,
   ...props
-}: DropdownMenuProps<T>) {
+}: DropdownButtonProps<T>) {
   return (
     <MenuTrigger {...props}>
       {triggerElement ? (
@@ -69,4 +69,4 @@ function DropdownButton<T extends object>({
 }
 
 export { DropdownButton }
-export type { DropdownMenuProps }
+export type { DropdownButtonProps }

@@ -12,12 +12,13 @@ import {
 import { Link, router } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
+import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
+import { Avatar } from '@/Components/twc-ui/avatar'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { Icon } from '@/Components/twc-ui/icon'
+import { MenuItem } from '@/Components/twc-ui/menu'
 import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
-import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
-import { Avatar } from '@/Components/ui/twc-ui/avatar'
-import { Icon } from '@/Components/ui/twc-ui/icon'
 import { minutesToHoursExtended, minutesUntilNow, parseAndFormatDate } from '@/Lib/DateHelper'
 import { cn } from '@/Lib/utils'
 
@@ -108,7 +109,7 @@ const DurationCell = ({ row }: { row: Row<App.Data.TimeData> }) => {
         // Permanent subtiler Glow-Effekt für laufende Einträge
         isRunning && 'relative font-medium text-blue-600 dark:text-blue-400',
         isRunning &&
-          "before:-inset-1 before:absolute before:animate-pulse before:rounded before:bg-blue-500/10 before:content-['']"
+          "before:absolute before:-inset-1 before:animate-pulse before:rounded before:bg-blue-500/10 before:content-['']"
       )}
     >
       {duration}
@@ -160,7 +161,7 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
           size="md"
         />
         {row.original.is_billable && (
-          <div className="-bottom-1 -right-1 absolute flex size-5 items-center justify-center rounded-full border-2 border-background bg-blue-300">
+          <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-2 border-background bg-blue-300">
             <Icon icon={EuroIcon} className="size-3 text-blue-800" strokeWidth={2} />
           </div>
         )}

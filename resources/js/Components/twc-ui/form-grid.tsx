@@ -9,6 +9,7 @@ interface FormLayoutGroupProps {
   margin?: boolean
   title?: string
   className?: string
+  action?: React.ReactNode
   titleClass?: string
   children?: React.ReactNode
 }
@@ -17,6 +18,8 @@ export const FormGrid: React.FC<FormLayoutGroupProps> = ({
   border = false,
   cols = 24,
   fullWidth = true,
+  action = null,
+
   grid = true,
   margin = true,
   title = '',
@@ -32,7 +35,12 @@ export const FormGrid: React.FC<FormLayoutGroupProps> = ({
 
   return (
     <div className="flex-1 border-accent">
-      {title !== '' && <div className={cn('px-4', titleClass)}>{title}</div>}
+      {title !== '' && (
+        <div className={cn('flex items-center px-4', titleClass)}>
+          <div className="flex-1">{title}</div>
+          <div className="flex-none">{action}</div>
+        </div>
+      )}
       <div
         className={cn(
           'mb-1 flex-1 px-4 last:mb-3',

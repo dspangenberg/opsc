@@ -3,7 +3,7 @@ import type { FC } from 'react'
 import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
 import { DataCardField, DataCardFieldGroup } from '@/Components/DataCard'
-import { Button } from '@/Components/ui/twc-ui/button'
+import { Button } from '@/Components/twc-ui/button'
 
 interface Props {
   addresses: App.Data.ContactAddressData[]

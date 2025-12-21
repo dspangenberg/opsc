@@ -1,38 +1,16 @@
-import {
-  Add01Icon,
-  Csv02Icon,
-  Delete02Icon,
-  DocumentValidationIcon,
-  Edit03Icon,
-  EuroReceiveIcon,
-  FileDownloadIcon,
-  FileEditIcon,
-  FileExportIcon,
-  FileRemoveIcon,
-  FileScriptIcon,
-  MoreVerticalCircle01Icon,
-  RepeatIcon,
-  Sent02Icon,
-  Tick01Icon,
-  UnavailableIcon
-} from '@hugeicons/core-free-icons'
+import { FileExportIcon, MoreVerticalCircle01Icon, Tick01Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { DataTable } from '@/Components/DataTable'
-import { JollySearchField } from '@/Components/jolly-ui/search-field'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
-import {
-  DropdownButton,
-  Menu,
-  MenuItem,
-  MenuPopover,
-  MenuSubTrigger
-} from '@/Components/twcui/dropdown-button'
+import { Button } from '@/Components/twc-ui/button'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { MenuItem } from '@/Components/twc-ui/menu'
+import { SearchField } from '@/Components/twc-ui/search-field'
+import { Toolbar } from '@/Components/twc-ui/toolbar'
 import { Badge } from '@/Components/ui/badge'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
 import { useFileDownload } from '@/Hooks/useFileDownload'
 import type { PageProps } from '@/Types'
 import { columns } from './BookingIndexColumns'
@@ -46,13 +24,6 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({ bookings, currentSearch
   const [selectedRows, setSelectedRows] = useState<App.Data.BookkeepingBookingData[]>([])
   const [search, setSearch] = useState(currentSearch)
   const breadcrumbs = useMemo(() => [{ title: 'Buchhaltung' }], [])
-
-  const handleBulkConfirmationClicked = () => {
-    const ids = selectedRows.map(row => row.id).join(',')
-    router.get(route('app.bookkeeping.transactions.confirm', { _query: { ids } }), {
-      preserveScroll: true
-    })
-  }
 
   const { handleDownload } = useFileDownload({
     route: route('app.bookkeeping.bookings.export')
@@ -73,7 +44,7 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({ bookings, currentSearch
         </DropdownButton>
       </Toolbar>
     ),
-    []
+    [handleDownload]
   )
 
   const handleSearchInputChange = (newSearch: string) => {
@@ -124,7 +95,7 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({ bookings, currentSearch
   const filterBar = useMemo(
     () => (
       <div className="flex p-2 pt-0">
-        <JollySearchField
+        <SearchField
           aria-label="Suchen"
           placeholder="Im Buchungstext suchen"
           value={search}

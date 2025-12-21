@@ -7,7 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
   Breadcrumbs
-} from '@/Components/ui/twc-ui/breadcrumbs'
+} from '@/Components/twc-ui/breadcrumbs'
 
 export type BreadcrumbProp = {
   title: string

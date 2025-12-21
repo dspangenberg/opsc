@@ -1,7 +1,7 @@
 import type React from 'react'
 import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
-import { Avatar } from '@/Components/ui/twc-ui/avatar'
+import { Avatar } from '@/Components/twc-ui/avatar'
 
 interface NotesViewProps {
   notes: App.Data.NoteableData[]

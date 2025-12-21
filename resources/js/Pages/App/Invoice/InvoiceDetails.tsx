@@ -2,7 +2,7 @@ import { router, usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { useEffect } from 'react'
 
-import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
+import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { InvoiceDetailsLayout } from '@/Pages/App/Invoice/InvoiceDetailsLayout'
 import { InvoiceDetailsSide } from '@/Pages/App/Invoice/InvoiceDetailsSide'
 import { InvoiceLinesEditor } from '@/Pages/App/Invoice/InvoiceLinesEditor'

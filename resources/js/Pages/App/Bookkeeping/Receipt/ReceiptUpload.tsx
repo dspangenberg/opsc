@@ -2,29 +2,18 @@ import {
   Csv02Icon,
   FileExportIcon,
   FileScriptIcon,
-  MoreVerticalCircle01Icon,
-  Tick01Icon
+  MoreVerticalCircle01Icon
 } from '@hugeicons/core-free-icons'
 import { router, useForm } from '@inertiajs/react'
-import { sumBy } from 'lodash'
 import type * as React from 'react'
 import { useMemo, useState } from 'react'
-import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
-import { Pagination } from '@/Components/Pagination'
-import {
-  DropdownButton,
-  Menu,
-  MenuItem,
-  MenuPopover,
-  MenuSubTrigger
-} from '@/Components/twcui/dropdown-button'
-import { Badge } from '@/Components/ui/badge'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
+import { Button } from '@/Components/twc-ui/button'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { Menu, MenuItem, MenuPopover, MenuSubTrigger } from '@/Components/twc-ui/menu'
+import { Toolbar } from '@/Components/twc-ui/toolbar'
 import { useFileUpload } from '@/Hooks/use-file-upload'
 import type { PageProps } from '@/Types'
-import { columns } from './ReceiptIndexColumns'
 
 interface ReceiptIndexPageProps extends PageProps {
   receipts: App.Data.Paginated.PaginationMeta<App.Data.ReceiptData[]>

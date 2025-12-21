@@ -1,8 +1,8 @@
 import { useForm } from '@inertiajs/react'
 import type * as React from 'react'
 import { type FormEvent, useState } from 'react'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Dialog } from '@/Components/ui/twc-ui/dialog'
+import { Button } from '@/Components/twc-ui/button'
+import { Dialog } from '@/Components/twc-ui/dialog'
 
 interface Props {
   isOpen: boolean

@@ -2,11 +2,11 @@ import { FilterHorizontalIcon } from '@hugeicons/core-free-icons'
 import { X } from 'lucide-react'
 import type * as React from 'react'
 import { useMemo } from 'react'
+import { Button } from '@/Components/twc-ui/button'
+import { Checkbox } from '@/Components/twc-ui/checkbox'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { Popover, PopoverDialog, PopoverTrigger } from '@/Components/twc-ui/popover'
 import { Badge } from '@/Components/ui/badge'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { Popover, PopoverDialog, PopoverTrigger } from '@/Components/ui/twc-ui/popover'
 
 interface Props {
   accounts: App.Data.BookkeepingAccountData[]
@@ -112,7 +112,7 @@ export const TransactionIndexFilterForm: React.FC<Props> = ({
               )}
             </div>
 
-            <FormGroup>
+            <FormGrid>
               <div className="col-span-24 space-y-2">
                 <div className="space-y-2">
                   <Checkbox
@@ -140,7 +140,7 @@ export const TransactionIndexFilterForm: React.FC<Props> = ({
                   </Checkbox>
                 </div>
               </div>
-            </FormGroup>
+            </FormGrid>
 
             {/* Aktive Filter anzeigen */}
             {activeFiltersCount > 0 && (

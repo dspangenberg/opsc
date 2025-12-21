@@ -145,12 +145,12 @@ const ComboBox = <T extends Record<string, unknown>>({
     () =>
       isOptional
         ? [
-          ...Array.from(items),
-          {
-            [itemValue]: isStringValue ? NULL_SENTINEL : NUMERIC_NULL_SENTINEL,
-            [itemName]: optionalValue
-          } as T
-        ]
+            ...Array.from(items),
+            {
+              [itemValue]: isStringValue ? NULL_SENTINEL : NUMERIC_NULL_SENTINEL,
+              [itemName]: optionalValue
+            } as T
+          ]
         : Array.from(items),
     [isOptional, itemValue, itemName, optionalValue, items, isStringValue]
   )

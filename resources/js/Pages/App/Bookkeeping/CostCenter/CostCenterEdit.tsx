@@ -1,12 +1,12 @@
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useState } from 'react'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { ComboBox } from '@/Components/ui/twc-ui/combo-box'
-import { Dialog } from '@/Components/ui/twc-ui/dialog'
-import { Form, useForm } from '@/Components/ui/twc-ui/form'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { Button } from '@/Components/twc-ui/button'
+import { FormComboBox } from '@/Components/twc-ui/combo-box'
+import { Dialog } from '@/Components/twc-ui/dialog'
+import { Form, useForm } from '@/Components/twc-ui/form'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { TextField } from '@/Components/twc-ui/text-field'
 import type { PageProps } from '@/Types'
 
 interface Props extends PageProps {
@@ -56,20 +56,20 @@ const CostCenterEdit: React.FC<Props> = ({ cost_center, bookkeeping_accounts }) 
       )}
     >
       <Form form={form} onSubmitted={() => setIsOpen(false)}>
-        <FormGroup>
+        <FormGrid>
           <div className="col-span-24">
             <TextField label="Bezeichnung" {...form.register('name')} />
           </div>
 
           <div className="col-span-24">
-            <ComboBox<App.Data.BookkeepingAccountData>
+            <FormComboBox<App.Data.BookkeepingAccountData>
               {...form.register('bookkeeping_account_id')}
               label="Buchhalterkonto"
               itemName="label"
               items={bookkeeping_accounts}
             />
           </div>
-        </FormGroup>
+        </FormGrid>
       </Form>
     </Dialog>
   )

@@ -1,13 +1,13 @@
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useState } from 'react'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
-import { Dialog } from '@/Components/ui/twc-ui/dialog'
-import { Form, useForm } from '@/Components/ui/twc-ui/form'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { Select } from '@/Components/ui/twc-ui/select'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { Form, useForm } from '@/Components//twc-ui/form'
+import { Button } from '@/Components/twc-ui/button'
+import { Checkbox } from '@/Components/twc-ui/checkbox'
+import { Dialog } from '@/Components/twc-ui/dialog'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormSelect } from '@/Components/twc-ui/select'
+import { FormTextField } from '@/Components/twc-ui/text-field'
 import type { PageProps } from '@/Types'
 
 interface Props extends PageProps {
@@ -80,18 +80,18 @@ const BookkeepingRuleCreate: React.FC<Props> = ({ rule }) => {
       )}
     >
       <Form form={form} onSubmitted={() => setIsOpen(false)}>
-        <FormGroup>
+        <FormGrid>
           <div className="col-span-16">
-            <TextField label="Bezeichnung" {...form.register('name')} />
+            <FormTextField label="Bezeichnung" {...form.register('name')} />
             <Checkbox {...form.registerCheckbox('is_active')} className="pt-1.5">
               Regel ist aktiv
             </Checkbox>
           </div>
           <div className="col-span-4">
-            <TextField label="Priorität" {...form.register('priority')} />
+            <FormTextField label="Priorität" {...form.register('priority')} />
           </div>
           <div className="col-span-4">
-            <Select<Options>
+            <FormSelect<Options>
               {...form.register('table')}
               label="Tabelle"
               itemValue="id"
@@ -100,7 +100,7 @@ const BookkeepingRuleCreate: React.FC<Props> = ({ rule }) => {
           </div>
           {form.data.table === 'transactions' && (
             <div className="col-span-4">
-              <Select<Options>
+              <FormSelect<Options>
                 {...form.register('amount_type')}
                 label="Buchungsart"
                 itemValue="id"
@@ -108,7 +108,7 @@ const BookkeepingRuleCreate: React.FC<Props> = ({ rule }) => {
               />
             </div>
           )}
-        </FormGroup>
+        </FormGrid>
       </Form>
     </Dialog>
   )

@@ -4,12 +4,13 @@ import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { DataTable } from '@/Components/DataTable'
-import { JollySearchField } from '@/Components/jolly-ui/search-field'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Toolbar } from '@/Components/ui/twc-ui/toolbar'
+import { Button } from '@/Components/twc-ui/button'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { MenuItem } from '@/Components/twc-ui/menu'
+import { SearchField } from '@/Components/twc-ui/search-field'
+import { Toolbar } from '@/Components/twc-ui/toolbar'
 import type { PageProps } from '@/Types'
 import { columns } from './ContactIndexColumns'
 
@@ -91,7 +92,7 @@ const ContactIndex: React.FC<ContactIndexProps> = ({ currentSearch }) => {
   const filterBar = useMemo(
     () => (
       <div className="flex p-2 pt-0">
-        <JollySearchField
+        <SearchField
           aria-label="Suchen"
           placeholder="Nach Vor- oder Nachnamen suchen"
           value={search}
@@ -110,12 +111,7 @@ const ContactIndex: React.FC<ContactIndexProps> = ({ currentSearch }) => {
       className="flex overflow-hidden"
       toolbar={toolbar}
     >
-      <DataTable
-        columns={columns}
-        data={contacts.data}
-        footer={footer}
-        filterBar={filterBar}
-      />
+      <DataTable columns={columns} data={contacts.data} footer={footer} filterBar={filterBar} />
     </PageContainer>
   )
 }

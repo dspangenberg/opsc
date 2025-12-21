@@ -1,7 +1,7 @@
 import type * as React from 'react'
 import { useEffect } from 'react'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormTextField } from '@/Components/twc-ui/text-field'
 import { InvoiceLinesEditorLineContainer } from '@/Pages/App/Invoice/InvoiceLinesEditorLineContainer'
 import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 
@@ -27,20 +27,19 @@ export const InvoiceLinesEditorCaptionLine: React.FC<InvoiceLinesEditorProps> = 
 
   return (
     <InvoiceLinesEditorLineContainer invoiceLine={invoiceLine}>
-      <FormGroup>
+      <FormGrid>
         <div className="col-span-5" />
 
         <div className="col-span-10">
-          <TextField
+          <FormTextField
             aria-label="Beschreibung"
             className="!text-lg"
-            autoSize
             value={invoiceLine.text}
             onChange={(value: string) => updateLine(invoiceLine.id as number, { text: value })}
           />
         </div>
         <div className="col-span-8" />
-      </FormGroup>
+      </FormGrid>
     </InvoiceLinesEditorLineContainer>
   )
 }

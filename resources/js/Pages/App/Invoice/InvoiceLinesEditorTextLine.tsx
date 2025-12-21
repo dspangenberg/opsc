@@ -1,10 +1,7 @@
-import { format, parseISO } from 'date-fns'
 import type * as React from 'react'
 import { useEffect } from 'react'
-import { DateRangePicker } from '@/Components/ui/twc-ui/date-picker'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { NumberField } from '@/Components/ui/twc-ui/number-field'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormTextArea } from '@/Components/twc-ui/text-area'
 import { InvoiceLinesEditorLineContainer } from '@/Pages/App/Invoice/InvoiceLinesEditorLineContainer'
 import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 
@@ -14,11 +11,7 @@ interface InvoiceLinesEditorProps {
   index: number
 }
 
-export const InvoiceLinesEditorTextLine: React.FC<InvoiceLinesEditorProps> = ({
-  index,
-  invoice,
-  invoiceLine
-}) => {
+export const InvoiceLinesEditorTextLine: React.FC<InvoiceLinesEditorProps> = ({ invoiceLine }) => {
   const { updateLine } = useInvoiceTable()
 
   useEffect(() => {
@@ -30,20 +23,19 @@ export const InvoiceLinesEditorTextLine: React.FC<InvoiceLinesEditorProps> = ({
 
   return (
     <InvoiceLinesEditorLineContainer invoiceLine={invoiceLine}>
-      <FormGroup>
+      <FormGrid>
         <div className="col-span-5" />
 
         <div className="col-span-10">
-          <TextField
+          <FormTextArea
             aria-label="Beschreibung"
-            textArea
             rows={2}
             value={invoiceLine.text}
             onChange={(value: string) => updateLine(invoiceLine.id as number, { text: value })}
           />
         </div>
         <div className="col-span-8" />
-      </FormGroup>
+      </FormGrid>
     </InvoiceLinesEditorLineContainer>
   )
 }

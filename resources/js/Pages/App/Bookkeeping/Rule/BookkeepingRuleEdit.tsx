@@ -1,13 +1,13 @@
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useState } from 'react'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
-import { Dialog } from '@/Components/ui/twc-ui/dialog'
-import { Form, useForm } from '@/Components/ui/twc-ui/form'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { Select } from '@/Components/ui/twc-ui/select'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { Button } from '@/Components/twc-ui/button'
+import { Checkbox } from '@/Components/twc-ui/checkbox'
+import { Dialog } from '@/Components/twc-ui/dialog'
+import { Form, useForm } from '@/Components/twc-ui/form'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormSelect } from '@/Components/twc-ui/select'
+import { FormTextField } from '@/Components/twc-ui/text-field'
 import BookkeepingRuleEditAction from '@/Pages/App/Bookkeeping/Rule/BookkeepingRuleEditAction'
 import type { PageProps } from '@/Types'
 import BookkeepingRuleEditCondition from './BookkeepingRuleEditCondition'
@@ -151,25 +151,25 @@ const BookkeepingRuleEdit: React.FC<Props> = ({ rule, fields }) => {
       )}
     >
       <Form form={form} onSubmitted={() => setIsOpen(false)}>
-        <FormGroup>
+        <FormGrid>
           <div className="col-span-16">
-            <TextField label="Bezeichnung" {...form.register('name')} />
+            <FormTextField label="Bezeichnung" {...form.register('name')} />
             <Checkbox {...form.registerCheckbox('is_active')} className="pt-1.5">
               Regel ist aktiv
             </Checkbox>
           </div>
           <div className="col-span-4">
-            <TextField label="Priorität" {...form.register('priority')} />
+            <FormTextField label="Priorität" {...form.register('priority')} />
           </div>
           <div className="col-span-4">
-            <Select<Options>
+            <FormSelect<Options>
               {...form.register('logical_operator')}
               label="Boolean"
               itemValue="id"
               items={logicalOperators}
             />
           </div>
-        </FormGroup>
+        </FormGrid>
 
         <BookkeepingRuleEditCondition
           conditions={form.data.conditions || []}

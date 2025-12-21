@@ -7,8 +7,8 @@ import { StarIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Link, router } from '@inertiajs/react'
 import type { ColumnDef } from '@tanstack/react-table'
+import { Avatar } from '@/Components/twc-ui/avatar'
 import { Checkbox } from '@/Components/ui/checkbox'
-import { Avatar } from '@/Components/ui/twc-ui/avatar'
 
 const editUrl = (id: number | null) => (id ? route('app.contact.details', { id }) : '#')
 const onFavoriteToggle = (id: number | null) => {

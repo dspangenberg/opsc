@@ -3,17 +3,16 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { MoreVerticalCircle01Icon, Tick01Icon, WebValidationIcon } from '@hugeicons/core-free-icons'
-import { Link, router } from '@inertiajs/react'
+import { MoreVerticalCircle01Icon, Tick01Icon } from '@hugeicons/core-free-icons'
+import { router } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
 import { Focusable } from 'react-aria-components'
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
-import { Badge, type BadgeVariant } from '@/Components/ui/badge'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { Icon } from '@/Components/twc-ui/icon'
+import { MenuItem } from '@/Components/twc-ui/menu'
+import { Tooltip, TooltipTrigger } from '@/Components/twc-ui/tooltip'
+import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
-import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
-import { Icon } from '@/Components/ui/twc-ui/icon'
-import { Tooltip, TooltipTrigger } from '@/Components/ui/twc-ui/tooltip'
-import { cn } from '@/Lib/utils'
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
   style: 'decimal',

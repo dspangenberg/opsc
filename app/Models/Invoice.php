@@ -292,6 +292,19 @@ class Invoice extends Model implements MediableInterface
             $taxRate = TaxRate::where('id', $line['tax_rate_id'])->first();
             $amount = $line['type_id'] === 1 ? $line['quantity'] * $line['price'] : $line['amount'];
 
+            // Convert date format from d.m.Y to Y-m-d for database
+            $servicePeriodBegin = null;
+            if (!empty($line['service_period_begin'])) {
+                $date = \Carbon\Carbon::createFromFormat('d.m.Y', $line['service_period_begin']);
+                $servicePeriodBegin = $date ? $date->format('Y-m-d') : null;
+            }
+
+            $servicePeriodEnd = null;
+            if (!empty($line['service_period_end'])) {
+                $date = \Carbon\Carbon::createFromFormat('d.m.Y', $line['service_period_end']);
+                $servicePeriodEnd = $date ? $date->format('Y-m-d') : null;
+            }
+
             $lineAttributes = [
                 'invoice_id' => $this->id,
                 'quantity' => $line['quantity'],
@@ -304,6 +317,8 @@ class Invoice extends Model implements MediableInterface
                 'tax_rate' => $taxRate->rate ?? 0,
                 'tax' => $amount / 100 * $taxRate->rate,
                 'pos' => $line['type_id'] === 9 ? 999 : $line['pos'] ?? $index,
+                'service_period_begin' => $servicePeriodBegin,
+                'service_period_end' => $servicePeriodEnd
             ];
 
             if ($line['id'] > 0) {

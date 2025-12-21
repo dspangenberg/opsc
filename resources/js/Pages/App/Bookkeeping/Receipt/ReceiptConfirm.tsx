@@ -1,25 +1,19 @@
-import {
-  ArrowLeft01Icon,
-  ArrowRight01Icon,
-  Delete02Icon,
-  EuroSendIcon
-} from '@hugeicons/core-free-icons'
+import { ArrowLeft01Icon, ArrowRight01Icon, Delete02Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useCallback } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
+import { Alert } from '@/Components/twc-ui/alert'
+import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
+import { Button } from '@/Components/twc-ui/button'
+import { FormComboBox } from '@/Components/twc-ui/combo-box'
+import { FormDatePicker } from '@/Components/twc-ui/date-picker'
+import { Form, useForm } from '@/Components/twc-ui/form'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormNumberField } from '@/Components/twc-ui/number-field'
 import { PdfContainer } from '@/Components/twc-ui/pdf-container'
-import { Alert } from '@/Components/ui/twc-ui/alert'
-import { AlertDialog } from '@/Components/ui/twc-ui/alert-dialog'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
-import { ComboBox } from '@/Components/ui/twc-ui/combo-box'
-import { DatePicker } from '@/Components/ui/twc-ui/date-picker'
-import { Form, useForm } from '@/Components/ui/twc-ui/form'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { NumberField } from '@/Components/ui/twc-ui/number-field'
-import { Select } from '@/Components/ui/twc-ui/select'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { FormSelect } from '@/Components/twc-ui/select'
+import { FormTextField } from '@/Components/twc-ui/text-field'
 import type { PageProps } from '@/Types'
 
 interface Props extends PageProps {
@@ -52,11 +46,6 @@ const ReceiptConfirm: React.FC<Props> = ({
     false
   )
 
-  const currencyFormatter = new Intl.NumberFormat('de-DE', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 2
-  })
   const form = useForm<App.Data.ReceiptData>('update-receipt', 'put', actionUrl, receipt, {})
 
   const handleNextReceipt = () => {
@@ -73,10 +62,6 @@ const ReceiptConfirm: React.FC<Props> = ({
     } else {
       router.visit(route('app.bookkeeping.receipts.index'))
     }
-  }
-
-  const handleLinkPayments = () => {
-    router.visit(route('app.bookkeeping.receipts.payments', { id: receipt.id }))
   }
 
   const handleContactChange = (contactId: string | number | null) => {
@@ -109,13 +94,13 @@ const ReceiptConfirm: React.FC<Props> = ({
       <PdfContainer file={route('app.bookkeeping.receipts.pdf', { receipt: receipt.id })} />
       <Form form={form} className="flex-1">
         {receipt.duplicate_of && <Alert variant="info">Mögliches Duplikat.</Alert>}
-        <FormGroup>
+        <FormGrid>
           <div className="col-span-8">
-            <DatePicker label="Rechnungsdatum" {...form.register('issued_on')} autoFocus />
+            <FormDatePicker label="Rechnungsdatum" {...form.register('issued_on')} autoFocus />
           </div>
 
           <div className="col-span-8">
-            <NumberField
+            <FormNumberField
               label="Bruttobetrag"
               {...form.register('amount')}
               formatOptions={{
@@ -127,7 +112,7 @@ const ReceiptConfirm: React.FC<Props> = ({
           </div>
 
           <div className="col-span-8">
-            <Select<App.Data.CurrencyData>
+            <FormSelect<App.Data.CurrencyData>
               label="Währung"
               itemValue="code"
               itemName="code"
@@ -137,11 +122,11 @@ const ReceiptConfirm: React.FC<Props> = ({
           </div>
 
           <div className="col-span-24">
-            <TextField label="Referenz" {...form.register('reference')} />
+            <FormTextField label="Referenz" {...form.register('reference')} />
           </div>
 
           <div className="col-span-24">
-            <ComboBox<App.Data.ContactData>
+            <FormComboBox<App.Data.ContactData>
               {...form.register('contact_id')}
               label="Kreditor"
               itemName="full_name"
@@ -150,7 +135,7 @@ const ReceiptConfirm: React.FC<Props> = ({
             />
           </div>
           <div className="col-span-24">
-            <ComboBox<App.Data.CostCenterData>
+            <FormComboBox<App.Data.CostCenterData>
               {...form.register('cost_center_id')}
               label="Kostenstelle"
               items={cost_centers}
@@ -190,7 +175,7 @@ const ReceiptConfirm: React.FC<Props> = ({
               title="Speichern"
             />
           </div>
-        </FormGroup>
+        </FormGrid>
       </Form>
     </PageContainer>
   )

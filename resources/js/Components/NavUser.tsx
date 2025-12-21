@@ -7,6 +7,8 @@ import { Door01Icon, Settings05Icon, UserIcon } from '@hugeicons/core-free-icons
 import { HugeiconsIcon } from '@hugeicons/react'
 import { router } from '@inertiajs/react'
 import { ThemeSwitch } from '@/Components/theme-switch'
+import { Avatar } from '@/Components/twc-ui/avatar'
+import { Button } from '@/Components/twc-ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,8 +18,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/Components/ui/dropdown-menu'
-import { Avatar } from '@/Components/ui/twc-ui/avatar'
-import { Button } from '@/Components/ui/twc-ui/button'
 
 export function NavUser({ user }: { user: App.Data.UserData }) {
   const handleLogout = () => {

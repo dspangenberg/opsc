@@ -6,10 +6,11 @@
 import { Delete03Icon, MoreVerticalCircle01Icon, Tick01Icon } from '@hugeicons/core-free-icons'
 import { Link } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
-import { DropdownButton, MenuItem } from '@/Components/twcui/dropdown-button'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { Icon } from '@/Components/twc-ui/icon'
+import { MenuItem } from '@/Components/twc-ui/menu'
 import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
-import { Icon } from '@/Components/ui/twc-ui/icon'
 
 const editUrl = (id: number | null) => (id ? route('app.bookkeeping.receipts.edit', { id }) : '#')
 

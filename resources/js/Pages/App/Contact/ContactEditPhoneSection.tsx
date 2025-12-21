@@ -1,9 +1,9 @@
 import { Plus, Trash2 } from 'lucide-react'
 import * as React from 'react'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { FormSelect } from '@/Components/ui/twc-ui/select'
-import { TextField } from '@/Components/ui/twc-ui/text-field'
+import { Button } from '@/Components/twc-ui/button'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormSelect } from '@/Components/twc-ui/select'
+import { FormTextField } from '@/Components/twc-ui/text-field'
 
 interface ContactEditPhonedSectionProps {
   phones: App.Data.ContactPhoneData[]
@@ -23,7 +23,7 @@ export const ContactEditPhoneSection: React.FC<ContactEditPhonedSectionProps> = 
   onUpdatePhone
 }) => {
   return (
-    <FormGroup
+    <FormGrid
       title="Telefon"
       action={
         <Button type="button" variant="outline" size="icon-sm" onClick={onAddPhone} icon={Plus} />
@@ -38,11 +38,11 @@ export const ContactEditPhoneSection: React.FC<ContactEditPhonedSectionProps> = 
                 name={`phones.${index}.phone_category_id`}
                 items={phoneCategories}
                 value={phone.phone_category_id}
-                onChange={(value) => onUpdatePhone(index, 'phone_category_id', value)}
+                onChange={value => onUpdatePhone(index, 'phone_category_id', value)}
               />
             </div>
             <div className="col-span-14">
-              <TextField
+              <FormTextField
                 aria-label="Telefonnummer"
                 name={`phones.${index}.email`}
                 value={phone.phone}
@@ -71,7 +71,7 @@ export const ContactEditPhoneSection: React.FC<ContactEditPhonedSectionProps> = 
       ) : (
         <div />
       )}
-    </FormGroup>
+    </FormGrid>
   )
 }
 

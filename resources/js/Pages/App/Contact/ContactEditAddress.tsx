@@ -2,15 +2,11 @@
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useState } from 'react'
-import { Button } from '@/Components/ui/twc-ui/button'
-import { Checkbox } from '@/Components/ui/twc-ui/checkbox'
-import { ComboBox } from '@/Components/ui/twc-ui/combo-box'
-import { DatePicker, DateRangePicker } from '@/Components/ui/twc-ui/date-picker'
-import { Dialog } from '@/Components/ui/twc-ui/dialog'
-import { Form, useForm } from '@/Components/ui/twc-ui/form'
-import { FormGroup } from '@/Components/ui/twc-ui/form-group'
-import { RadioGroup } from '@/Components/ui/twc-ui/radio-group'
-import { Select } from '@/Components/ui/twc-ui/select'
+import { Button } from '@/Components/twc-ui/button'
+import { Dialog } from '@/Components/twc-ui/dialog'
+import { Form, useForm } from '@/Components/twc-ui/form'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormSelect } from '@/Components/twc-ui/select'
 
 interface Props {
   contact: App.Data.ContactData
@@ -49,26 +45,26 @@ export const ContactEdit: React.FC<Props> = ({ contact, payment_deadlines, taxes
       )}
     >
       <Form form={form} onSubmitted={() => setIsOpen(false)}>
-        <FormGroup>
+        <FormGrid>
           <div className="col-span-24"></div>
-        </FormGroup>
+        </FormGrid>
 
-        <FormGroup>
+        <FormGrid>
           <div className="col-span-12">
-            <Select<App.Data.PaymentDeadlineData>
+            <FormSelect<App.Data.PaymentDeadlineData>
               {...form.register('payment_deadline_id')}
               label="Zahlungsziel"
               items={payment_deadlines}
             />
           </div>
           <div className="col-span-12">
-            <Select<App.Data.TaxData>
+            <FormSelect<App.Data.TaxData>
               {...form.register('tax_id')}
               label="Umsatzsteuer"
               items={taxes}
             />
           </div>
-        </FormGroup>
+        </FormGrid>
       </Form>
     </Dialog>
   )
