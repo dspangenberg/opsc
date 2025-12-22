@@ -5,6 +5,8 @@ import {
   MoreVerticalCircle01Icon
 } from '@hugeicons/core-free-icons'
 import type * as React from 'react'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { Icon } from '@/Components/twc-ui/icon'
 import { MenuItem } from '@/Components/twc-ui/menu'
@@ -21,9 +23,19 @@ export const InvoiceLinesEditorLineContainer: React.FC<InvoiceLinesEditorLineCon
 }) => {
   const { duplicateLine, removeLine } = useInvoiceTable()
 
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: invoiceLine.id ?? 0
+  })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1
+  }
+
   return (
-    <div className="flex">
-      <div className="py-8 pl-4">
+    <div ref={setNodeRef} style={style} className="flex">
+      <div className="cursor-grab py-8 pl-4 active:cursor-grabbing" {...attributes} {...listeners}>
         <Icon icon={DragDropVerticalIcon} className="size-4" strokeWidth={4} />
       </div>
       <div className="flex flex-1">{children}</div>
