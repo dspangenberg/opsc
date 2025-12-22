@@ -2,7 +2,8 @@ import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useState } from 'react'
 import { Button } from '@/Components/twc-ui/button'
-import { Dialog } from '@/Components/twc-ui/dialog'
+import { ExtendedDialog as Dialog } from '@/Components/twc-ui/extended-dialog'
+import type { DialogRenderProps } from '@/Components/twc-ui/dialog'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormComboBox } from '@/Components/twc-ui/form-combo-box'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
@@ -41,7 +42,7 @@ const CostCenterEdit: React.FC<Props> = ({ cost_center, bookkeeping_accounts }) 
       onClosed={handleClose}
       title={title}
       confirmClose={form.isDirty}
-      footer={dialogRenderProps => (
+      footer={(dialogRenderProps: DialogRenderProps) => (
         <div className="mx-0 flex w-full gap-2">
           <div className="flex flex-1 justify-start" />
           <div className="flex flex-none gap-2">

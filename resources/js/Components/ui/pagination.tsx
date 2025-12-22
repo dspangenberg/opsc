@@ -1,9 +1,8 @@
-import type * as React from 'react'
-import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from 'lucide-react'
-
-import { cn } from '@/Lib/utils'
-import { buttonVariants } from '@/Components/ui/button'
 import { Link } from '@inertiajs/react'
+import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from 'lucide-react'
+import type * as React from 'react'
+import { buttonVariants } from '@/Components/twc-ui/button'
+import { cn } from '@/Lib/utils'
 
 function Pagination({ className, ...props }: React.ComponentProps<'nav'>) {
   return (
@@ -69,7 +68,7 @@ function PaginationPrevious({ className, ...props }: React.ComponentProps<typeof
     <PaginationLink
       aria-label="Go to previous page"
       size="default"
-      className={cn('gap-1 px-2.5 sm:pl-2.5 data[disabled]:text-focus', className)}
+      className={cn('gap-1 px-2.5 data[disabled]:text-focus sm:pl-2.5', className)}
       {...props}
     >
       <ChevronLeftIcon />

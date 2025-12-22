@@ -1,10 +1,10 @@
 import { Alert02Icon, HelpCircleIcon, InformationCircleIcon } from '@hugeicons/core-free-icons'
 import type * as React from 'react'
-import { Heading } from 'react-aria-components'
+import { Heading, useLocale } from 'react-aria-components'
 import { createRoot } from 'react-dom/client'
 import { cn } from '@/Lib/utils'
 import { Button } from './button'
-import { Dialog } from './dialog'
+import { Dialog, DialogBody, DialogContent, DialogFooter } from './dialog'
 import { Icon } from './icon'
 
 type AlertDialogVariant = 'default' | 'destructive' | 'info'
@@ -24,10 +24,17 @@ const AlertDialogComponent: React.FC<AlertDialogProps> = ({
   message,
   buttonTitle = 'OK',
   variant = 'destructive',
-  cancelButtonTitle = 'Cancel',
+  cancelButtonTitle,
   onConfirm,
   onCancel
 }) => {
+  const { locale } = useLocale()
+  const realCancelButtonTitle = cancelButtonTitle
+    ? cancelButtonTitle
+    : locale.startsWith('de')
+      ? 'Abbrechen'
+      : 'Cancel'
+
   const icon =
     variant === 'destructive'
       ? Alert02Icon
@@ -38,20 +45,49 @@ const AlertDialogComponent: React.FC<AlertDialogProps> = ({
   return (
     <Dialog
       isOpen={true}
-      onClose={() => {
-        setTimeout(() => {
-          onCancel()
-        }, 50)
+      onOpenChange={open => {
+        if (!open) {
+          setTimeout(() => {
+            onCancel()
+          }, 50)
+        }
       }}
-      className="z-100 max-w-xl bg-white"
-      confirmClose={false}
-      description={message}
-      role="alertdialog"
-      bodyPadding
-      hideHeader={true}
-      title={title}
-      footer={
-        <div className="flex items-center justify-end space-x-2">
+      isDismissible={true}
+      _skipContentWrapper={true}
+    >
+      <DialogContent closeButton={false} role="alertdialog" className="z-100 max-w-xl bg-white">
+        <DialogBody className="px-4 py-0">
+          <div className="mt-6 flex rounded-t-lg">
+            <div className="sm:flex sm:items-start">
+              <div
+                className={cn(
+                  'mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10',
+                  variant === 'destructive' ? 'bg-destructive/20' : 'bg-primary/20'
+                )}
+              >
+                <Icon
+                  icon={icon}
+                  className={cn(
+                    'size-6 stroke-2',
+                    variant === 'destructive' ? 'text-destructive' : 'text-primary'
+                  )}
+                />
+              </div>
+              <div className="text-left sm:mt-0 sm:ml-4">
+                <Heading
+                  slot="title"
+                  className="pt-2! text-left font-semibold text-foreground text-lg!"
+                >
+                  {title}
+                </Heading>
+                <div className="mt-2">
+                  <p className="text-gray-500 text-sm">{message}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogBody>
+        <DialogFooter className="flex flex-col-reverse items-center justify-end space-x-2 rounded-b-lg bg-muted/40! px-4 py-4 sm:flex-row sm:justify-end sm:space-x-2">
           {variant !== 'info' && (
             <Button
               autoFocus
@@ -62,7 +98,7 @@ const AlertDialogComponent: React.FC<AlertDialogProps> = ({
                 }, 50)
               }}
             >
-              {cancelButtonTitle}
+              {realCancelButtonTitle}
             </Button>
           )}
           <Button
@@ -75,38 +111,8 @@ const AlertDialogComponent: React.FC<AlertDialogProps> = ({
           >
             {buttonTitle}
           </Button>
-        </div>
-      }
-    >
-      <div className="mt-6 flex rounded-t-lg">
-        <div className="sm:flex sm:items-start">
-          <div
-            className={cn(
-              'mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10',
-              variant === 'destructive' ? 'bg-destructive/20' : 'bg-primary/20'
-            )}
-          >
-            <Icon
-              icon={icon}
-              className={cn(
-                'size-6 stroke-2',
-                variant === 'destructive' ? 'text-destructive' : 'text-primary'
-              )}
-            />
-          </div>
-          <div className="my-3 text-left sm:mt-0 sm:ml-4">
-            <Heading
-              slot="title"
-              className="pt-2! text-left font-semibold text-foreground text-lg!"
-            >
-              {title}
-            </Heading>
-            <div className="mt-2">
-              <p className="text-gray-500 text-sm">{message}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   )
 }

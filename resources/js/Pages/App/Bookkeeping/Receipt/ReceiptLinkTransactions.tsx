@@ -5,7 +5,7 @@ import { DataTable } from '@/Components/DataTable'
 
 import { Button } from '@/Components/twc-ui/button'
 import { Checkbox } from '@/Components/twc-ui/checkbox'
-import { Dialog } from '@/Components/twc-ui/dialog'
+import { ExtendedDialog as Dialog } from '@/Components/twc-ui/extended-dialog'
 import { columns } from './ReceiptTransactionColumns'
 
 interface Props {

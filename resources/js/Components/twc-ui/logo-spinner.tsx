@@ -1,24 +1,24 @@
 import type React from 'react'
 import { cn } from '@/Lib/utils'
-import Logo from './logo'
+import { Logo } from './logo'
 
 interface LogoSpinnerProps {
   className?: string
 }
 
-export const LogoSpinner: React.FC<LogoSpinnerProps> = ({ className = '' }) => {
+export const LogoSpinner: React.FC<LogoSpinnerProps> = ({ className = 'size-6' }) => {
   return (
     <div className="rounded-full bg-transparent" data-testid="logo-spinner">
       <div className="relative flex items-center justify-center rounded-full bg-foreground">
         <span className="absolute">
-          <Logo className="size-6 rounded-full border border-white" />
+          <Logo className={cn(className, 'rounded-full border border-white')} />
         </span>
         <svg
           aria-hidden="true"
           data-testid="logo-spinner-svg"
           className={cn(
-            'animate absolute size-6 animate-spin rounded-full bg-[transparent]',
-            'text-bg-foreground/80',
+            'animate absolute size-6 animate-spin rounded-full bg-transparent',
+            'text-bg-foreground/60',
             className
           )}
           viewBox="0 0 100 101"

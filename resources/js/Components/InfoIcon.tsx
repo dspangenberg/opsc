@@ -3,10 +3,11 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/Components/ui/tooltip'
 import { InformationCircleIcon } from '@hugeicons/core-free-icons'
-import { HugeiconsIcon } from '@hugeicons/react'
 import type { FC, ReactNode } from 'react'
+import { Focusable } from 'react-aria-components'
+import { Icon } from '@/Components/twc-ui/icon'
+import { Tooltip, TooltipTrigger } from '@/Components/twc-ui/tooltip'
 
 interface InfoIconProps {
   title?: string
@@ -15,22 +16,16 @@ interface InfoIconProps {
 
 export const InfoIcon: FC<InfoIconProps> = ({ children, title }: InfoIconProps) => {
   return (
-    <TooltipProvider delayDuration={0}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <HugeiconsIcon
-            icon={InformationCircleIcon}
-            stroke="1"
-            className="size-[16px] text-primary cursor-help"
-          />
-        </TooltipTrigger>
-        <TooltipContent className="py-3">
-          <div className="space-y-0">
-            {title && <p className="text-sm font-medium leading-none">{title}</p>}
-            <p className="text-sm p-0  hyphens-auto leading-relaxed">{children}</p>
-          </div>
-        </TooltipContent>
+    <TooltipTrigger>
+      <Focusable>
+        <Icon icon={InformationCircleIcon} stroke="1" className="size-4 cursor-help text-primary" />
+      </Focusable>
+      <Tooltip className="py-3">
+        <div className="space-y-0">
+          {title && <p className="font-medium text-sm leading-none">{title}</p>}
+          <p className="hyphens-auto p-0 text-sm leading-relaxed">{children}</p>
+        </div>
       </Tooltip>
-    </TooltipProvider>
+    </TooltipTrigger>
   )
 }

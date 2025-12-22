@@ -34,6 +34,7 @@ const data = {
       url: route('app.contact.index', { view: 'all' }, false),
       icon: ContactBookIcon,
       activePath: '/app/contacts',
+      tooltip: 'Kontakte',
       items: [
         {
           title: 'Alle',

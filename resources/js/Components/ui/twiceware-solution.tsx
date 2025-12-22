@@ -1,5 +1,5 @@
 import type React from 'react'
-import { Logo } from './logo'
+import { Logo } from '@/Components/twc-ui/logo'
 
 export interface TwicewareSolutionProps {
   hideCopyright?: boolean

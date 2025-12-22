@@ -16,10 +16,7 @@ import {
 } from 'react-aria-components'
 import { cn } from '@/Lib/utils'
 
-import { AlertDialog } from './alert-dialog'
-import { Button } from './button'
-
-type ReactNodeOrString = ReactNode | string
+export type ReactNodeOrString = ReactNode | string
 
 const sheetVariants = cva(
   [
@@ -90,7 +87,7 @@ export const DialogContent = ({
               side,
               className: 'h-full'
             })
-          : '-translate-x-1/2 -translate-y-1/2 entering:fade-in-0 exiting:fade-out-0 entering:zoom-in-95 exiting:zoom-out-95 fixed top-[50%] left-[50vw] z-50 max-h-screen w-full max-w-lg entering:animate-in exiting:animate-out border bg-background shadow-lg duration-200 exiting:duration-300 sm:rounded-lg md:w-full',
+          : 'entering:fade-in-0 exiting:fade-out-0 entering:zoom-in-95 exiting:zoom-out-95 fixed top-[50%] left-[50vw] z-50 max-h-screen w-full max-w-lg -translate-x-1/2 -translate-y-1/2 entering:animate-in exiting:animate-out border bg-background shadow-lg duration-200 exiting:duration-300 sm:rounded-lg md:w-full',
         className
       )
     )}
@@ -143,7 +140,7 @@ export const DialogBody = ({ className, ...props }: React.HTMLAttributes<HTMLDiv
 )
 
 export const DialogTitle = ({ className, ...props }: AriaHeadingProps) => (
-  <AriaHeading slot="title" className={cn('py-3 font-medium', className)} {...props} />
+  <AriaHeading slot="title" className={cn('py-3 font-medium text-lg!', className)} {...props} />
 )
 
 export const DialogDescription = ({
@@ -157,81 +154,33 @@ export interface DialogRenderProps {
   close: () => void
 }
 
-interface DialogProps {
-  children: React.ReactNode | ((renderProps: DialogRenderProps) => React.ReactNode)
-  footer?: React.ReactNode | ((renderProps: DialogRenderProps) => React.ReactNode)
+export interface DialogProps {
+  children: React.ReactNode
   isOpen?: boolean
-  role?: 'alertdialog' | 'dialog'
-  showDescription?: boolean
-  title?: string
-  header?: ReactNodeOrString
-  confirmClose?: boolean
-  confirmationTitle?: string
-  confirmationMessage?: string
-  confirmationButtonTitle?: string
-  confirmationVariant?: 'default' | 'destructive'
-  description?: ReactNodeOrString
   isDismissible?: boolean
-  bodyClass?: string
-  footerClassName?: string
-  className?: string
-  bodyPadding?: boolean
-  width?: 'default' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | 'md' | 'lg'
-  hideHeader?: boolean
-  background?: 'accent' | 'sidebar' | 'background' | 'page'
   onOpenChange?: (open: boolean) => void
   onClose?: () => void
-  onInteractOutside?: (event: Event) => void
   onClosed?: () => void
+  onBeforeClose?: () => Promise<boolean> | boolean
+  /**
+   * @internal - Used by ConfirmableDialog/AlertDialog to prevent automatic DialogContent wrapping
+   */
+  _skipContentWrapper?: boolean
 }
 
 export const Dialog: React.FC<DialogProps> = ({
   children,
-  footer,
   isOpen = undefined,
-  confirmClose = false,
-  showDescription = false,
   isDismissible = true,
-  confirmationTitle = 'Änderungen verwerfen',
-  confirmationVariant = 'default',
-  confirmationButtonTitle = 'Verwerfen',
-  confirmationMessage = 'Möchtest Du die Änderungen verwerfen?',
-  title = 'Dialog',
-  role = 'dialog',
-  description,
-  bodyPadding = false,
-  bodyClass,
-  className,
-  onClose,
-  width = 'default',
-  footerClassName = '',
-  hideHeader = false,
-  background = 'page',
   onOpenChange,
-  onClosed
+  onClose,
+  onClosed,
+  onBeforeClose,
+  _skipContentWrapper = false
 }) => {
-  const bgClass = {
-    accent: 'bg-accent',
-    sidebar: 'bg-sidebar',
-    background: 'bg-background',
-    page: 'bg-page-content'
-  }[background]
-
-  const widthClass = {
-    default: 'max-w-xl',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    '2xl': 'max-w-2xl',
-    '3xl': 'max-w-3xl',
-    '4xl': 'max-w-4xl',
-    '5xl': 'max-w-6xl',
-    '6xl': 'max-w-5xl'
-  }[width]
-
   // Determine if this is controlled (used standalone) or uncontrolled (used with DialogTrigger)
   const isControlled = isOpen !== undefined
   const [internalOpen, setInternalOpen] = useState<boolean>(isOpen ?? false)
-
   const currentOpen = isControlled ? isOpen : internalOpen
 
   useEffect(() => {
@@ -241,62 +190,27 @@ export const Dialog: React.FC<DialogProps> = ({
   }, [isOpen, isControlled])
 
   const handleClose = async () => {
-    return new Promise<boolean>(resolve => {
-      if (confirmClose) {
-        setTimeout(async () => {
-          try {
-            const result = await AlertDialog.call({
-              title: confirmationTitle,
-              message: confirmationMessage,
-              buttonTitle: confirmationButtonTitle,
-              variant: confirmationVariant
-            })
-
-            if (result) {
-              if (isControlled) {
-                onOpenChange?.(false)
-              } else {
-                setInternalOpen(false)
-              }
-              onClose?.()
-              onClosed?.()
-              resolve(true)
-            } else {
-              if (isControlled) {
-                onOpenChange?.(true)
-              } else {
-                setInternalOpen(true)
-              }
-              resolve(false)
-            }
-          } catch (error) {
-            console.error('Error in confirmation dialog:', error)
-            resolve(false)
-          }
-        }, 100)
-      } else {
-        if (isControlled) {
-          onOpenChange?.(false)
-        } else {
-          setInternalOpen(false)
-        }
-        onClose?.()
-        onClosed?.()
-        resolve(true)
+    // Call onBeforeClose if provided
+    if (onBeforeClose) {
+      const shouldClose = await onBeforeClose()
+      if (!shouldClose) {
+        return false
       }
-    })
+    }
+
+    if (isControlled) {
+      onOpenChange?.(false)
+    } else {
+      setInternalOpen(false)
+    }
+    onClose?.()
+    onClosed?.()
+    return true
   }
 
   const handleOpenChange = async (open: boolean) => {
     if (!open) {
-      const shouldClose = await handleClose()
-      if (!shouldClose) {
-        if (isControlled) {
-          onOpenChange?.(true)
-        } else {
-          setInternalOpen(true)
-        }
-      }
+      await handleClose()
     } else {
       if (isControlled) {
         onOpenChange?.(true)
@@ -306,82 +220,10 @@ export const Dialog: React.FC<DialogProps> = ({
     }
   }
 
-  // Content to render
-  const content = (
-    <DialogContent
-      closeButton={false}
-      className={cn(
-        'relative flex w-full flex-col gap-0 space-y-0 rounded-lg',
-        widthClass,
-        className
-      )}
-      role={role}
-    >
-      {composeRenderProps(children, (children, providedRenderProps) => {
-        const renderProps: DialogRenderProps = {
-          close: () => {
-            if (isControlled) {
-              void handleClose()
-            } else {
-              providedRenderProps.close()
-            }
-          }
-        }
-
-        return (
-          <>
-            {!hideHeader && (
-              <DialogHeader
-                className={cn(
-                  'relative my-0 flex w-full flex-1 flex-col justify-stretch gap-0 px-0 py-0'
-                )}
-              >
-                {isDismissible && (
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    className="absolute top-0.5 right-1.5 flex-1"
-                    icon={X}
-                    aria-label="Close"
-                    onClick={() => renderProps.close()}
-                  />
-                )}
-                <DialogTitle className="flex flex-1 items-center justify-between py-1.5! text-left text-base leading-0! md:text-center">
-                  <span className="text-base">{title}</span>
-                </DialogTitle>
-                <DialogDescription className={cn('', !showDescription ? 'sr-only py-0' : '')}>
-                  {description}
-                </DialogDescription>
-              </DialogHeader>
-            )}
-
-            <DialogBody
-              className={cn(
-                'mx-0 my-0 flex flex-1 flex-col px-0',
-                'overflow-y-auto',
-                bgClass,
-                hideHeader ? 'rounded-lg' : '',
-                bodyClass,
-                bodyPadding ? 'px-4' : ''
-              )}
-            >
-              {children}
-            </DialogBody>
-            {!!footer && (
-              <DialogFooter
-                className={cn(
-                  'flex flex-justify-end flex-none items-center space-x-2 px-4 py-3',
-                  footerClassName,
-                  bgClass
-                )}
-              >
-                {typeof footer === 'function' ? footer(renderProps) : footer}
-              </DialogFooter>
-            )}
-          </>
-        )
-      })}
-    </DialogContent>
+  const content = _skipContentWrapper ? (
+    children
+  ) : (
+    <DialogContent closeButton={false}>{children}</DialogContent>
   )
 
   if (isControlled) {
