@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { DataTable } from '@/Components/DataTable'
 
 import { Button } from '@/Components/twc-ui/button'
-import { Dialog } from '@/Components/twc-ui/dialog'
+import { ExtendedDialog as Dialog } from '@/Components/twc-ui/extended-dialog'
 import { columns } from '@/Pages/App/Invoice/InvoiceIndexColumns'
 
 interface Props {

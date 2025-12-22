@@ -14,11 +14,11 @@ import type { ColumnDef, Row } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Avatar } from '@/Components/twc-ui/avatar'
+import { Checkbox } from '@/Components/twc-ui/checkbox'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { Icon } from '@/Components/twc-ui/icon'
 import { MenuItem } from '@/Components/twc-ui/menu'
 import { Badge } from '@/Components/ui/badge'
-import { Checkbox } from '@/Components/ui/checkbox'
 import { minutesToHoursExtended, minutesUntilNow, parseAndFormatDate } from '@/Lib/DateHelper'
 import { cn } from '@/Lib/utils'
 
@@ -26,8 +26,10 @@ const editUrl = (row: App.Data.TimeData) => {
   if (!row.id) return '#'
 
   const currentView = route().queryParams.view
-  const baseUrl = `${route('app.time.edit', { id: row.id, _query: { view: currentView } })}?view=${currentView}`
-  return baseUrl
+  return `${route('app.time.edit', {
+    id: row.id,
+    _query: { view: currentView }
+  })}?view=${currentView}`
 }
 
 const durationInMinutes = (row: App.Data.TimeData) => {
@@ -53,22 +55,20 @@ const RowActions = ({ row }: { row: Row<App.Data.TimeData> }) => {
   return (
     <div className="mx-auto">
       <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
-        <>
-          <MenuItem
-            icon={Edit03Icon}
-            title="Eintrag bearbeiten"
-            ellipsis
-            separator
-            href={editUrl(row.original)}
-          />
-          <MenuItem
-            icon={Delete03Icon}
-            variant="destructive"
-            title="Eintrag löschen"
-            ellipsis
-            onAction={() => handleDeleteClicked(row.original)}
-          />
-        </>
+        <MenuItem
+          icon={Edit03Icon}
+          title="Eintrag bearbeiten"
+          ellipsis
+          separator
+          href={editUrl(row.original)}
+        />
+        <MenuItem
+          icon={Delete03Icon}
+          variant="destructive"
+          title="Eintrag löschen"
+          ellipsis
+          onAction={() => handleDeleteClicked(row.original)}
+        />
       </DropdownButton>
     </div>
   )
@@ -129,10 +129,10 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
     size: 20,
     header: ({ table }) => (
       <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+        name="select-all"
+        isSelected={table.getIsAllPageRowsSelected()}
+        isIndeterminate={table.getIsSomePageRowsSelected()}
+        onChange={value => table.toggleAllPageRowsSelected(value)}
         className="mx-3 bg-background align-middle"
         aria-label="Select all"
       />
@@ -140,9 +140,10 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
     cell: ({ row }) => (
       <div className="flex items-center">
         <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={value => row.toggleSelected(!!value)}
-          className="mx-3 bg-background align-middle"
+          name={`select-row-${row.id}`}
+          isSelected={row.getIsSelected()}
+          onChange={value => row.toggleSelected(value)}
+          className="mx-3 bg-transparent align-middle"
           aria-label="Select row"
         />
       </div>

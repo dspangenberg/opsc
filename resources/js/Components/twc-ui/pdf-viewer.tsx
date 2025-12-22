@@ -1,7 +1,7 @@
 import type * as React from 'react'
 import { useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { Dialog } from './dialog'
+import { ExtendedDialog } from './extended-dialog'
 import { PdfContainer } from './pdf-container'
 
 interface PdfViewerComponentProps {
@@ -14,7 +14,7 @@ const PdfViewerComponent: React.FC<PdfViewerComponentProps> = ({ file, filename,
   const [title, setTitle] = useState<string | undefined>(filename)
 
   return (
-    <Dialog
+    <ExtendedDialog
       isOpen={true}
       onClose={() => {
         setTimeout(() => {
@@ -36,7 +36,7 @@ const PdfViewerComponent: React.FC<PdfViewerComponentProps> = ({ file, filename,
         hideFilename
         onFilenameChange={value => setTitle(value)}
       />
-    </Dialog>
+    </ExtendedDialog>
   )
 }
 

@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react'
 import type * as React from 'react'
 import { type FormEvent, useState } from 'react'
 import { Button } from '@/Components/twc-ui/button'
-import { Dialog } from '@/Components/twc-ui/dialog'
+import { ExtendedDialog as Dialog } from '@/Components/twc-ui/extended-dialog'
 
 interface Props {
   isOpen: boolean

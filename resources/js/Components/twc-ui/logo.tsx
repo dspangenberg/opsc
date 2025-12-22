@@ -1,6 +1,6 @@
 import type { SVGAttributes } from 'react'
 
-export default function AppLogoIcon(props: SVGAttributes<SVGElement>) {
+export const Logo = (props: SVGAttributes<SVGElement>) => {
   return (
     <svg
       width="100%"
@@ -68,3 +68,5 @@ export default function AppLogoIcon(props: SVGAttributes<SVGElement>) {
     </svg>
   )
 }
+
+export default Logo

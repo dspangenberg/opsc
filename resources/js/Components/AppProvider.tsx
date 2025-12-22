@@ -11,7 +11,6 @@ import { RouterProvider } from 'react-aria-components'
 import { BreadcrumbProvider } from '@/Components/BreadcrumbProvider'
 import { ThemeContainerProvider } from '@/Components/theme-container-provider'
 import { ThemeProvider } from '@/Components/theme-provider'
-import { TooltipProvider } from '@/Components/ui/tooltip'
 import { NuqsAdapter } from '@/Lib/nuqs-inertia-adapter'
 export function AppProvider(props: React.PropsWithChildren) {
   const queryClient = new QueryClient()
@@ -27,11 +26,9 @@ export function AppProvider(props: React.PropsWithChildren) {
           <ThemeContainerProvider width="7xl">
             <BreadcrumbProvider>
               <QueryClientProvider client={queryClient}>
-                <TooltipProvider delayDuration={0}>
-                  <div vaul-drawer-wrapper="" className="bg-background">
-                    {props.children}
-                  </div>
-                </TooltipProvider>
+                <div vaul-drawer-wrapper="" className="bg-background">
+                  {props.children}
+                </div>
               </QueryClientProvider>
             </BreadcrumbProvider>
           </ThemeContainerProvider>

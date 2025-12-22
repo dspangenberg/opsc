@@ -7,9 +7,10 @@ import { Copy02Icon } from '@hugeicons/core-free-icons'
 import { Check } from 'lucide-react'
 import type * as React from 'react'
 import { type FC, useState } from 'react'
+import { Focusable } from 'react-aria-components'
 import { DataCardField } from '@/Components/DataCard'
 import { Button } from '@/Components/twc-ui/button'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/Components/ui/tooltip'
+import { Tooltip, TooltipTrigger } from '@/Components/twc-ui/tooltip'
 import { cn } from '@/Lib/utils'
 
 interface Props {
@@ -37,39 +38,35 @@ export const ContactDetailsMailField: FC<Props> = ({ mail }: Props) => {
           {mail.email}
         </a>
 
-        <TooltipProvider delayDuration={0}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex items-center">
-                <Button
-                  onClick={handleCopy}
-                  variant="ghost"
-                  aria-label={copied ? 'Copied' : 'Copy to clipboard'}
-                  className="opacity-0 group-hover/mail:opacity-100"
-                  size="icon-xs"
-                  icon={Copy02Icon}
-                  disabled={copied}
+        <TooltipTrigger>
+          <Focusable>
+            <div className="flex items-center">
+              <Button
+                onClick={handleCopy}
+                variant="ghost"
+                aria-label={copied ? 'Copied' : 'Copy to clipboard'}
+                className="opacity-0 group-hover/mail:opacity-100"
+                size="icon-xs"
+                icon={Copy02Icon}
+                disabled={copied}
+              />
+              <div
+                className={cn(
+                  'transition-all',
+                  copied ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
+                )}
+              >
+                <Check
+                  className="stroke-emerald-500"
+                  size={16}
+                  strokeWidth={2}
+                  aria-hidden="true"
                 />
-                <div
-                  className={cn(
-                    'transition-all',
-                    copied ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
-                  )}
-                >
-                  <Check
-                    className="stroke-emerald-500"
-                    size={16}
-                    strokeWidth={2}
-                    aria-hidden="true"
-                  />
-                </div>
               </div>
-            </TooltipTrigger>
-            <TooltipContent className="px-2 py-1 text-xs">
-              In Zwischenablage kopieren
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+            </div>
+          </Focusable>
+          <Tooltip>In Zwischenablage kopieren</Tooltip>
+        </TooltipTrigger>
       </div>
     </DataCardField>
   )
