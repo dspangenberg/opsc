@@ -1,5 +1,8 @@
 <x-layout :styles="$styles" :footer="$pdf_footer">
     <style>
+        table {
+            page-break-inside: initial;
+        }
         table tr th {
             border-bottom: 1px solid #aaa;
             border-collapse: collapse;
@@ -153,8 +156,8 @@
 
         <thead>
         <tr>
-            <th class="right">Pos.</th>
-            <th class="right">Menge</th>
+            <th class="right" style="width:7mm;">Pos.</th>
+            <th class="right" style="width:5mm;">Menge</th>
             <th style="text-align:center;"></th>
             <th colspan="2" style="text-align:left;">
                 Dienstleistung/Artikel
@@ -189,6 +192,41 @@
 
                 @if($line->type_id === 4)
                     @include('pdf.invoice.text')
+                @endif
+
+                @if($line->type_id === 8)
+                    <tr style="color: #fff;">
+
+
+                        <td width="8mm">&nbsp;</td>
+                        <td width="15mm">&nbsp;</td>
+                        <td width="8mm">&nbsp;</td>
+                        <td width="35mm">&nbsp;</td>
+                        <td width="35mm">&nbsp;</td>
+                        <td width="18mm">&nbsp;</td>
+                        <td width="21mm">&nbsp;</td>
+                        <td width="12mm">&nbsp;</td>
+
+                    </tr>
+                    </table>
+                    <pagebreak>
+
+                        <table style="vertical-align:top;" border-spacing="0" cellspacing="0">
+
+                            <thead>
+                            <tr>
+                                <th class="right">Pos.</th>
+                                <th class="right">Menge</th>
+                                <th style="text-align:center;"></th>
+                                <th colspan="2" style="text-align:left;">
+                                    Dienstleistung/Artikel
+                                </th>
+                                <th class="right">Einzelpreis</th>
+                                <th class="right">Gesamt</th>
+                                <th class="center">USt.</th>
+                            </tr>
+
+                            </thead>
                 @endif
 
         @endforeach
