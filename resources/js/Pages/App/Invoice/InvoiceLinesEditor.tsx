@@ -21,7 +21,7 @@ import {
   TextAlignJustifyLeftIcon,
   TextVerticalAlignmentIcon
 } from '@hugeicons/core-free-icons'
-import React, { type FC, useEffect } from 'react'
+import { type FC, useEffect } from 'react'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { MenuItem } from '@/Components/twc-ui/menu'
@@ -30,6 +30,7 @@ import { BorderedBox } from '@/Components/twcui/bordered-box'
 import { InvoiceLinesEditorDefaultLine } from '@/Pages/App/Invoice/InvoiceLinesEditorDefaultLine'
 import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 import { InvoiceLinesEditorCaptionLine } from './InvoiceLinesEditorCaptionLine'
+import { InvoiceLinesEditorPageBreak } from './InvoiceLinesEditorPageBreak'
 import { InvoiceLinesEditorTextLine } from './InvoiceLinesEditorTextLine'
 
 interface InvoiceLinesEditorProps {
@@ -146,6 +147,15 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
                           invoiceLine={line}
                         />
                       )
+                    case 8:
+                      return (
+                        <InvoiceLinesEditorPageBreak
+                          key={line.id}
+                          invoice={invoice}
+                          index={index}
+                          invoiceLine={line}
+                        />
+                      )
                     default:
                       return (
                         <InvoiceLinesEditorDefaultLine
@@ -184,7 +194,11 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
 
             <MenuItem icon={HeadingIcon} title="Überschrift" onClick={() => addLine(2)} />
             <MenuItem icon={TextAlignJustifyLeftIcon} title="Text" onClick={() => addLine(4)} />
-            <MenuItem icon={TextVerticalAlignmentIcon} title="Seitenumbruch" isDisabled />
+            <MenuItem
+              icon={TextVerticalAlignmentIcon}
+              title="Seitenumbruch"
+              onClick={() => addLine(8)}
+            />
           </SplitButton>
         </div>
         <div className="flex-none items-center justify-end space-x-2 px-2">
