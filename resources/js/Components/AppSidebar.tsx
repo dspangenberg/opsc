@@ -65,9 +65,33 @@ const data = {
     },
     {
       title: 'Dokumente',
-      url: route('app.dashboard', {}, false),
+      url: route('app.documents.documents.index', {}, false),
       icon: FolderFileStorageIcon,
-      activePath: '/appsi'
+      activePath: '/app/documents',
+      items: [
+        {
+          title: 'Dokumente',
+          url: route('app.documents.documents.index', {}, false),
+          activePath: '/app/documents/documents'
+        },
+        {
+          title: 'Upload',
+          url: route('app.documents.documents.upload-form', {}, false),
+          activePath: '/app/documents/upload'
+        },
+        {
+          title: 'Vorgaben',
+          url: route('app.documents.document_types.index', {}, false),
+          activePath: '/app/documents/preferences',
+          items: [
+            {
+              title: 'Dokumenttypen',
+              url: route('app.documents.document_types.index', {}, false),
+              activePath: '/app/documents/preferences/document-types'
+            }
+          ]
+        }
+      ]
     },
     {
       title: 'Projekte',
