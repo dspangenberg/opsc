@@ -261,6 +261,7 @@ file_size: number;
 pages: number;
 issued_on: string | null;
 sent_on: string | null;
+deleted_at: string | null;
 title: string;
 label: string | null;
 description: string | null;

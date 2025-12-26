@@ -46,12 +46,13 @@ class DocumentController extends Controller
         $documents = Document::query()
             ->applyFiltersFromObject($filters, [
                 'allowed_filters' => ['document_type_id', 'contact_id', 'project_id'],
-                'allowed_operators' => ['=', '!=', 'like', 'scope']
+                'allowed_operators' => ['=', '!=', 'like', 'scope'],
+                'allowed_scopes' => ['view'],
             ])
             ->with('contact', 'type', 'project')
             ->orderBy('is_pinned', 'DESC')
             ->orderBy('issued_on', 'DESC')
-            ->paginate();
+            ->paginate(20);
 
         return Inertia::render('App/Document/Document/DocumentIndex', [
             'documents' => DocumentData::collect($documents),
@@ -79,11 +80,16 @@ class DocumentController extends Controller
             ]
         );
     }
+
+    public function restore(Document $document)
+    {
+        $document->restore();
+        return redirect()->route('app.documents.documents.index');
+    }
+
     public function streamPdf(Document $document)
     {
         $media = $document->firstMedia('file');
-        ds($document->toArray());
-        ds($media);
         return response()->streamDownload(
             function () use ($media) {
                 $stream = $media->stream();
@@ -102,6 +108,8 @@ class DocumentController extends Controller
     public function trash(Document $document)
     {
         $document->delete();
+        $document->is_pinned = false;
+        $document->save();
         return redirect()->route('app.documents.documents.index');
     }
 
@@ -118,8 +126,12 @@ class DocumentController extends Controller
     }
 
     public function update(DocumentRequest $request, Document $document) {
-        ds($request->validated());
+
         $document->update($request->validated());
+        if (!$document->is_confirmed) {
+            $document->is_confirmed = true;
+            $document->save();
+        }
         return redirect()->route('app.documents.documents.index');
     }
 
@@ -128,6 +140,11 @@ class DocumentController extends Controller
         return Inertia::render('App/Document/Document/DocumentUpload');
     }
 
+    public function forceDelete(Document $document)
+    {
+        $document->forceDelete();
+        return redirect()->route('app.documents.documents.index');
+    }
 
     /**
      * @throws FileNotSupportedException
