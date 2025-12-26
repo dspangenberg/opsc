@@ -32,7 +32,7 @@ class DocumentData extends Data
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
         public readonly ?DateTime $sent_on,
 
-        #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:M')]
+        #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]
         public readonly ?DateTime $deleted_at,
 
         public readonly string $title,
