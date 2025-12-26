@@ -142,7 +142,10 @@ class DocumentController extends Controller
 
     public function forceDelete(Document $document)
     {
+        $document->firstMedia('file')->delete();
+        $document->firstMedia('preview')->delete();
         $document->forceDelete();
+        
         return redirect()->route('app.documents.documents.index');
     }
 
