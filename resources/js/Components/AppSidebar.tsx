@@ -72,12 +72,31 @@ const data = {
         {
           title: 'Dokumente',
           url: route('app.documents.documents.index', {}, false),
-          activePath: '/app/documents/documents'
+          activePath: '/app/documents/documents',
+          exact: true
+        },
+        {
+          title: 'Inbox',
+          url: route(
+            'app.documents.documents.index',
+            { filters: { view: { operator: 'scope', value: 'inbox' } } },
+            false
+          ),
+          activePath: '/app/documents/documents?filters[view][value]=inbox'
+        },
+        {
+          title: 'Papierkorb',
+          url: route(
+            'app.documents.documents.index',
+            { filters: { view: { operator: 'scope', value: 'trash' } } },
+            false
+          ),
+          activePath: '/app/documents/documents?filters[view][value]=trash'
         },
         {
           title: 'Upload',
           url: route('app.documents.documents.upload-form', {}, false),
-          activePath: '/app/documents/upload'
+          activePath: '/app/documents/documents/upload-form'
         },
         {
           title: 'Vorgaben',

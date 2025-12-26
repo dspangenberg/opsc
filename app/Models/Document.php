@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Plank\Mediable\Mediable;
@@ -30,6 +31,14 @@ class Document extends Model
             'issued_on' => 'date',
             'is_in_inbox' => 'boolean'
         ];
+    }
+
+    public function scopeView(Builder $query, $view): Builder
+    {
+        return match ($view) {
+            'inbox' => $query->where('is_confirmed', false),
+            'trash' => $query->onlyTrashed()
+        };
     }
 
     public function contact(): HasOne
