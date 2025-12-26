@@ -140,6 +140,14 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
       case 'inbox':
         return 'Inbox'
     }
+
+    const criteria: string[] = []
+    if (documentType)
+      criteria.push(`Dokumenttyp=${documentTypes.find(item => item.id === documentType)?.name}`)
+    if (contactId)
+      criteria.push(`Kontakt=${contacts.find(item => item.id === contactId)?.full_name}`)
+    if (projectId) criteria.push(`Projekt=${projects.find(item => item.id === projectId)?.name}`)
+    return criteria.toLocaleString()
   }
 
   console.log(folder())
@@ -152,13 +160,12 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
         breadcrumbs={breadcrumbs}
         className="overflow-hidden"
       >
-        <div className="mb-6 flex gap-4">
+        <div className="mb-6 grid grid-cols-6 gap-4">
           <Select
             label="Dokumenttyp"
             value={documentType}
             items={documentTypes}
             onChange={value => handleDocumentTypeChange(value as number | null)}
-            className="w-64"
             isOptional
           />
           <Select
@@ -166,7 +173,6 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
             value={contactId}
             items={contacts}
             onChange={value => handleContactChange(value as number | null)}
-            className="w-64"
             isOptional
           />
           <Select
@@ -174,13 +180,14 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
             value={projectId}
             items={projects}
             onChange={value => handleProjectChange(value as number | null)}
-            className="w-64"
             isOptional
           />
         </div>
         <div className="py-3 text-sm">
-          {documents.from} - {documents.to} / {documents.total} Dokumenten –{' '}
-          {selectedDocuments.length} ausgewählt
+          {documents.from} - {documents.to} / {documents.total} Dokumenten
+          {selectedDocuments.length > 0 && (
+            <span>&mdash; {selectedDocuments.length} ausgewählt</span>
+          )}
         </div>
         {!documents.total && (
           <Empty className="border border-dashed">
@@ -188,7 +195,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
               <EmptyMedia variant="icon">
                 <Icon icon={FolderFileStorageIcon} className="size-10 text-gray-400" />
               </EmptyMedia>
-              <EmptyTitle>Keine Dokumente</EmptyTitle>
+              <EmptyTitle>Keine Dokumente gefunden</EmptyTitle>
               <EmptyDescription>{folder()} enthält keine Dokumente</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
