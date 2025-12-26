@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\HasDynamicFilters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Plank\Mediable\Mediable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\HasDynamicFilters;
+use Plank\Mediable\Mediable;
+
 class Document extends Model
 {
-    use Mediable, SoftDeletes, HasDynamicFilters;
+    use HasDynamicFilters, Mediable, SoftDeletes;
 
     protected $fillable = [
         'document_type_id',
@@ -23,13 +24,12 @@ class Document extends Model
         'fulltext',
     ];
 
-
     protected function casts(): array
     {
         return [
             'file_created_at' => 'datetime',
             'issued_on' => 'date',
-            'is_in_inbox' => 'boolean'
+            'is_in_inbox' => 'boolean',
         ];
     }
 
@@ -41,18 +41,18 @@ class Document extends Model
         };
     }
 
-    public function contact(): HasOne
+    public function contact(): BelongsTo
     {
-        return $this->hasOne(Contact::class, 'id', 'contact_id');
+        return $this->belongsTo(Contact::class, 'contact_id');
     }
 
-    public function type(): HasOne
+    public function type(): BelongsTo
     {
-        return $this->hasOne(DocumentType::class, 'id', 'document_type_id');
+        return $this->belongsTo(DocumentType::class, 'document_type_id');
     }
 
-    public function project(): HasOne
+    public function project(): BelongsTo
     {
-        return $this->hasOne(Project::class, 'id', 'project_id');
+        return $this->belongsTo(Project::class, 'project_id');
     }
 }
