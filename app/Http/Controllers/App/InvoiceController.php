@@ -158,6 +158,11 @@ class InvoiceController extends Controller
 
         $validatedData['invoice_number'] = null;
         $invoice = Invoice::create($validatedData);
+        $invoice->load('contact');
+
+        $invoice->address = $invoice->contact->getInvoiceAddress()->full_address;
+        $invoice->save();
+
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }

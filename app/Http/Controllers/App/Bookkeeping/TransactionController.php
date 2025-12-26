@@ -41,7 +41,6 @@ class TransactionController extends Controller
         // POST-Daten für Filter verwenden, mit Fallback auf GET für initiale Seitenaufrufe
         $filters = $request->input('filters', []);
         $search = $request->input('search', '');
-
         $transactions = Transaction::query()
             ->where('bank_account_id', $bank_account->id)
             ->applyFiltersFromObject($filters, [

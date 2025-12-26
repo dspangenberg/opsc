@@ -274,7 +274,17 @@ trait HasDynamicFilters
     {
         // Use the column name as the scope name for JSON format
         $scopeName = $column;
-        $scopeParams = $filterConfig['params'] ?? [];
+        $scopeParams = [];
+
+        // Check if 'value' exists and use it as scope parameter
+        if (isset($filterConfig['value'])) {
+            $scopeParams = is_array($filterConfig['value']) ? $filterConfig['value'] : [$filterConfig['value']];
+        }
+
+        // Also support 'params' key for explicit parameters
+        if (isset($filterConfig['params'])) {
+            $scopeParams = is_array($filterConfig['params']) ? $filterConfig['params'] : [$filterConfig['params']];
+        }
 
         // Check if scope is allowed
         if (! empty($allowedScopes) && ! in_array($scopeName, $allowedScopes)) {

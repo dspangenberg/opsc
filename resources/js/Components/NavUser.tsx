@@ -20,7 +20,7 @@ export function NavUser({ user }: { user: App.Data.UserData }) {
       menuClassName="min-w-64"
       triggerElement={
         <Pressable>
-          <div className="mr-4 flex items-center gap-2">
+          <div className="mr-4 flex items-center gap-2" role="button">
             <Avatar
               src={user.avatar_url as unknown as string}
               initials={user.initials}

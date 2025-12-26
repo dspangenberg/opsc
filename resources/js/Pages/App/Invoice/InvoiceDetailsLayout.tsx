@@ -235,6 +235,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
             title="Zahlung zuordnen"
             ellipsis
             separator
+            isDisabled={invoice.is_draft || !!invoice.sent_at}
             onClick={handlePaymentCreateClicked}
           />
           <MenuSubTrigger>

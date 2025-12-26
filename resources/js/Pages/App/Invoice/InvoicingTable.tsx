@@ -288,6 +288,15 @@ export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
     )
   }
 
+  if (line.type_id === 8) {
+    return (
+      <TableRow>
+        <TableCell colSpan={3} />
+        <TableCell colSpan={7}>=== Seitenumbruch ====================</TableCell>
+      </TableRow>
+    )
+  }
+
   if (line.type_id === 9) {
     return null
   }

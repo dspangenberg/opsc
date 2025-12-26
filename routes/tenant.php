@@ -48,6 +48,7 @@ Route::middleware([
     require __DIR__.'/tenant/bookkeeping.php';
     require __DIR__.'/tenant/contacts.php';
     require __DIR__.'/tenant/invoices.php';
+    require __DIR__.'/tenant/documents.php';
 
     Route::get('/onboarding', function () {
         return Inertia::modal('Onboarding')->baseRoute('app.soon');

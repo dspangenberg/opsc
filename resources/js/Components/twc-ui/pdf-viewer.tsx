@@ -23,14 +23,14 @@ const PdfViewerComponent: React.FC<PdfViewerComponentProps> = ({ file, filename,
       }}
       className="z-100"
       width="3xl"
-      bodyClass="aspect-210/297 w-3x bg-accent"
+      bodyClass="bg-accent h-auto"
       confirmClose={false}
       role="dialog"
       background="accent"
       title={title}
     >
       <PdfContainer
-        className="h-full rounded-none!"
+        className="rounded-none!"
         file={file}
         filename={filename}
         hideFilename

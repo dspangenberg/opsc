@@ -65,9 +65,52 @@ const data = {
     },
     {
       title: 'Dokumente',
-      url: route('app.dashboard', {}, false),
+      url: route('app.documents.documents.index', {}, false),
       icon: FolderFileStorageIcon,
-      activePath: '/appsi'
+      activePath: '/app/documents',
+      items: [
+        {
+          title: 'Dokumente',
+          url: route('app.documents.documents.index', {}, false),
+          activePath: '/app/documents/documents',
+          exact: true
+        },
+        {
+          title: 'Inbox',
+          url: route(
+            'app.documents.documents.index',
+            { filters: { view: { operator: 'scope', value: 'inbox' } } },
+            false
+          ),
+          activePath: '/app/documents/documents?filters[view][value]=inbox'
+        },
+        {
+          title: 'Papierkorb',
+          url: route(
+            'app.documents.documents.index',
+            { filters: { view: { operator: 'scope', value: 'trash' } } },
+            false
+          ),
+          activePath: '/app/documents/documents?filters[view][value]=trash'
+        },
+        {
+          title: 'Upload',
+          url: route('app.documents.documents.upload-form', {}, false),
+          activePath: '/app/documents/documents/upload-form'
+        },
+        {
+          title: 'Vorgaben',
+          url: route('app.documents.document_types.index', {}, false),
+          activePath: '/app/documents/preferences',
+          items: [
+            {
+              title: 'Dokumenttypen',
+              url: route('app.documents.document_types.index', {}, false),
+              activePath: '/app/documents/preferences/document-types'
+            }
+          ]
+        }
+      ]
     },
     {
       title: 'Projekte',
