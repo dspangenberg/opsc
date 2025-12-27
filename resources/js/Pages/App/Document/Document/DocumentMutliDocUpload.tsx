@@ -6,17 +6,11 @@ import { ExtendedDialog as Dialog } from '@/Components/twc-ui/extended-dialog'
 
 interface Props {
   isOpen: boolean
-  bank_account: App.Data.BankAccountData
   onClosed: () => void
 }
 
-export const TransactionMoneyMoneyImport: React.FC<Props> = ({
-  isOpen,
-  bank_account,
-  onClosed
-}) => {
+export const DocumentMutliDocUpload: React.FC<Props> = ({ isOpen, onClosed }) => {
   const { data, setData, post, progress, processing, errors, clearErrors } = useForm({
-    bank_account_id: bank_account.id,
     file: null as File | null
   })
 
@@ -34,10 +28,9 @@ export const TransactionMoneyMoneyImport: React.FC<Props> = ({
 
     console.log('Submitting with Inertia.js...')
     console.log('File:', data.file.name, data.file.size, 'bytes')
-    console.log('Bank Account ID:', data.bank_account_id)
 
     // Verwende Inertia.js - handhabt CSRF automatisch korrekt
-    post(route('app.bookkeeping.transactions.money-money-import'), {
+    post(route('app.documents.documents.multi-upload'), {
       forceFormData: true,
       onBefore: () => {
         console.log('Starting upload...')
@@ -70,8 +63,8 @@ export const TransactionMoneyMoneyImport: React.FC<Props> = ({
       }
 
       // Überprüfe Dateityp
-      if (!file.type.includes('json') && !file.name.endsWith('.json')) {
-        alert('Bitte wählen Sie eine JSON-Datei aus.')
+      if (!file.type.includes('pdf') && !file.name.endsWith('.pdf')) {
+        alert('Bitte wählen Sie eine PDF-Datei aus.')
         return
       }
     }
@@ -100,12 +93,12 @@ export const TransactionMoneyMoneyImport: React.FC<Props> = ({
         <div className="space-y-4">
           <div>
             <label htmlFor="file-input" className="mb-2 block font-medium text-gray-700 text-sm">
-              JSON-Datei auswählen:
+              Multi-Datei auswählen:
             </label>
             <input
               id="file-input"
               type="file"
-              accept=".json,application/json"
+              accept=".pdf,application/pdf"
               onChange={handleFileChange}
               className="block w-full text-gray-500 text-sm file:mr-4 file:rounded file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-semibold file:text-blue-700 file:text-sm hover:file:bg-blue-100"
             />

@@ -1,4 +1,4 @@
-import { FolderFileStorageIcon } from '@hugeicons/core-free-icons'
+import { FolderFileStorageIcon, FolderUploadIcon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { createContext, useMemo, useState } from 'react'
@@ -16,6 +16,8 @@ import { Icon } from '@/Components/twc-ui/icon'
 import { LinkButton } from '@/Components/twc-ui/link-button'
 import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
 import { Select } from '@/Components/twc-ui/select'
+import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
+import { DocumentMutliDocUpload } from '@/Pages/App/Document/Document/DocumentMutliDocUpload'
 import type { PageProps } from '@/Types'
 import { DocumentIndexFile } from './DocumentIndexFile'
 
@@ -52,6 +54,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   const [contactId, setContactId] = useState<number | null>(null)
   const [projectId, setProjectId] = useState<number | null>(null)
   const [selectedDocuments, setSelectedDocuments] = useState<number[]>([])
+  const [showMultiDocUpload, setShowMultiDocUpload] = useState(false)
 
   const [filters, setFilters] = useState<FilterConfig>(currentFilters)
 
@@ -150,13 +153,26 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
     return criteria.toLocaleString()
   }
 
-  console.log(folder())
+  const toolbar = useMemo(
+    () => (
+      <Toolbar>
+        <ToolbarButton
+          variant="primary"
+          icon={FolderUploadIcon}
+          title="MultiDoc hochladen"
+          onClick={() => setShowMultiDocUpload(true)}
+        />
+      </Toolbar>
+    ),
+    []
+  )
 
   return (
     <DocumentIndexContext.Provider value={{ selectedDocuments, setSelectedDocuments }}>
       <PageContainer
         title="Dokumente"
         width="7xl"
+        toolbar={toolbar}
         breadcrumbs={breadcrumbs}
         className="overflow-hidden"
       >
@@ -217,6 +233,10 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
             />
           ))}
         </div>
+        <DocumentMutliDocUpload
+          isOpen={showMultiDocUpload}
+          onClosed={() => setShowMultiDocUpload(false)}
+        />
       </PageContainer>
     </DocumentIndexContext.Provider>
   )

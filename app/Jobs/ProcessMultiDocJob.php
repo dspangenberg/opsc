@@ -2,12 +2,12 @@
 
 namespace App\Jobs;
 
-use App\Services\ReceiptService;
+use App\Services\MultidocService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Exception;
 
-class ReceiptUploadJob implements ShouldQueue
+class ProcessMultiDocJob implements ShouldQueue
 {
     use Queueable;
 
@@ -18,13 +18,15 @@ class ReceiptUploadJob implements ShouldQueue
         public string $file
     ) {}
 
+
+
     /**
      * Execute the job.
      *
      * @throws Exception
      */
-    public function handle(ReceiptService $service): void
+    public function handle(MultidocService $service): void
     {
-        $service->processZipArchive($this->file);
+        $service->process($this->file);
     }
 }
