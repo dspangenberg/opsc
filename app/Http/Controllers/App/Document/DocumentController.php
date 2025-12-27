@@ -9,24 +9,16 @@ use App\Data\ProjectData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentRequest;
 use App\Http\Requests\ReceiptUploadRequest;
+use App\Jobs\DocumentUploadJob;
+use App\Jobs\ProcessMultiDocJob;
 use App\Models\Contact;
 use App\Models\Document;
 use App\Models\DocumentType;
 use App\Models\Project;
-use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
-use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
-use Plank\Mediable\Exceptions\MediaUpload\FileNotFoundException;
-use Plank\Mediable\Exceptions\MediaUpload\FileNotSupportedException;
-use Plank\Mediable\Exceptions\MediaUpload\FileSizeException;
-use Plank\Mediable\Exceptions\MediaUpload\ForbiddenException;
-use Plank\Mediable\Exceptions\MediaUpload\InvalidHashException;
-use Plank\Mediable\Facades\MediaUploader;
-use Smalot\PdfParser\Parser;
 use Throwable;
-use Spatie\PdfToImage\Pdf;
+
 class DocumentController extends Controller
 {
 
@@ -142,23 +134,35 @@ class DocumentController extends Controller
 
     public function forceDelete(Document $document)
     {
-        $document->firstMedia('file')->delete();
-        $document->firstMedia('preview')->delete();
+        $file = $document->firstMedia('file');
+        $file?->delete();
+
+        $preview = $document->firstMedia('preview');
+        $preview?->delete();
+
         $document->forceDelete();
-        
+
         return redirect()->route('app.documents.documents.index');
     }
 
     /**
-     * @throws FileNotSupportedException
-     * @throws FileExistsException
-     * @throws FileNotFoundException
-     * @throws ForbiddenException
-     * @throws FileSizeException
-     * @throws InvalidHashException
-     * @throws ConfigurationException
      * @throws Throwable
      */
+
+    public function multiDocUpload (Request $request) {
+        $tempFile = storage_path('app/temp');
+        if (!file_exists($tempFile)) {
+            mkdir($tempFile, 0755, true);
+        }
+        $originalName = $request->file->getClientOriginalName();
+        $fileName = uniqid().'_'.$originalName;
+        $request->file->move($tempFile, $fileName);
+
+        $realPath = $tempFile.'/'.$fileName;
+
+        ProcessMultiDocJob::dispatch($realPath);
+
+    }
     public function upload(ReceiptUploadRequest $request)
     {
         $files = $request->file('files');
@@ -166,79 +170,32 @@ class DocumentController extends Controller
 
             foreach ($files as $file) {
 
-                $document = new Document();
-                $document->filename = $file->getClientOriginalName();
-                $document->title = pathinfo($file->getClientOriginalName())['filename'];
-                $document->file_size = $file->getSize();
-                $document->mime_type = $file->getMimeType();
-                $document->checksum = hash_file('sha256', $file->getRealPath());
-                $document->save();
-
-
-                try {
-                    $parser = new Parser();
-                    $pdf = $parser->parseFile($file);
-                    $metadata = $pdf->getDetails();
-
-                    $document->pages = $metadata['Pages'] ?? 1;
-                    $document->fulltext = $pdf->getText();
-
-                    $creationDate = $metadata['CreationDate'] ?? null;
-                    if (is_array($creationDate)) {
-                        $creationDate = reset($creationDate);
-                    }
-                    $document->file_created_at = $creationDate ?? $file->getMTime();
-                } catch (Exception) {
-                    $document->pages = 1;
-                    $document->fulltext = '';
-                    $document->file_created_at = $file->getMTime();
+                $tempFile = storage_path('app/temp');
+                if (!file_exists($tempFile)) {
+                    mkdir($tempFile, 0755, true);
                 }
 
-                $document->checksum = hash_file('sha256', $file->getRealPath());
-                $document->issued_on = $document->file_created_at;
+                // Get file info before moving
+                $originalName = $file->getClientOriginalName();
+                $fileSize = $file->getSize();
+                $mimeType = $file->getMimeType();
+                $mTime = $file->getMTime();
 
+                $fileName = uniqid().'_'.$originalName;
+                $file->move($tempFile, $fileName);
 
-                $document->save();
+                $realPath = $tempFile.'/'.$fileName;
 
-
-                $media = MediaUploader::fromSource($file)
-                    ->toDestination('s3_private', 'documents/'.$document->issued_on->format('Y/m/'))
-                    ->upload();
-
-                $document->attachMedia($media, 'file');
-
-                try {
-                    $tempFile = sys_get_temp_dir();
-                    $previewFile = $tempFile.'/'.uniqid('preview_').'.jpg';
-
-                    $ghostscriptPath = config('pdf.ghostscript_path');
-
-                    if ($ghostscriptPath && $ghostscriptPath !== 'gs' && file_exists($ghostscriptPath)) {
-                        putenv('MAGICK_GHOSTSCRIPT='.$ghostscriptPath);
-                        putenv('PATH='.dirname($ghostscriptPath).':'.getenv('PATH'));
-                    }
-
-                    $pdfImage = new Pdf($file->getRealPath());
-                    $pdfImage
-                        ->thumbnailSize(250)
-                        ->resolution(150)
-                        ->save($previewFile);
-
-                    $preview = MediaUploader::fromSource($previewFile)
-                        ->toDestination('s3_private', 'documents/'.$document->issued_on->format('Y/m').'/previews/')
-                        ->upload();
-
-                    $document->attachMedia($preview, 'preview');
-
-                    @unlink($previewFile);
-                } catch (Exception $e) {
-                    logger()->warning('Failed to generate PDF preview', [
-                        'file' => $file->getClientOriginalName(),
-                        'error' => $e->getMessage(),
-                    ]);
-                }
+                DocumentUploadJob::dispatch($realPath, $originalName, $fileSize, $mimeType, $mTime);
             }
 
-        return redirect()->route('app.documents.documents.index')->with('success', 'File(s) uploaded successfully.');
+        return redirect()->route('app.documents.documents.index', [
+            'filters' => [
+                'view' => [
+                    'operator' => 'scope',
+                    'value' => 'inbox'
+                ]
+            ]
+        ])->with('success', 'File(s) uploaded successfully.');
     }
 }

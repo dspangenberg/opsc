@@ -1,4 +1,3 @@
-import { Delete02Icon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
 import { filesize } from 'filesize'
 import type * as React from 'react'
 
@@ -14,9 +13,15 @@ export const DocumentIndexFileCard: React.FC<DocumentIndexFileCardProps> = ({ do
           <span className="text-muted-foreground">Dateiname</span>
           <span className="font-medium">{document.filename}</span>
         </li>
-        <li className="grid gap-0.5">
-          <span className="text-muted-foreground">Dokumentdatum</span>
-          <span className="font-medium">{document.issued_on}</span>
+        <li className="grid grid-cols-2 gap-0.5">
+          <li className="grid gap-0.5">
+            <span className="text-muted-foreground">Dokumentdatum</span>
+            <span className="font-medium">{document.issued_on}</span>
+          </li>
+          <li className="grid gap-0.5">
+            <span className="text-muted-foreground">Label</span>
+            <span className="font-medium">{document.label}</span>
+          </li>
         </li>
         <li className="grid gap-0.5">
           <span className="text-muted-foreground">Titel</span>

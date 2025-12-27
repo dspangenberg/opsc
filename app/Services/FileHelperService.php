@@ -26,6 +26,7 @@ class FileHelperService
 
         $f = $tmpDir->path() . '/'.$fileName;
         Log::info('tmpFile: ' .$f);
+        ds($f);
         return $f;
     }
 }
