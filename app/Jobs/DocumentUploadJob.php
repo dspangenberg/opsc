@@ -2,12 +2,12 @@
 
 namespace App\Jobs;
 
-use App\Services\MultidocService;
+use App\Services\DocumentUploadService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Exception;
 
-class ProcessMultiDocJob implements ShouldQueue
+class DocumentUploadJob implements ShouldQueue
 {
     use Queueable;
 
@@ -15,7 +15,12 @@ class ProcessMultiDocJob implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        public string $file
+        public string $file,
+        public string $fileName,
+        public int $fileSize,
+        public string $fileMimeType,
+        public int $fileMTime,
+        public ?string $label = null
     ) {}
 
     /**
@@ -23,8 +28,8 @@ class ProcessMultiDocJob implements ShouldQueue
      *
      * @throws Exception
      */
-    public function handle(MultidocService $service): void
+    public function handle(DocumentUploadService $service): void
     {
-        $service->process($this->file);
+        $service->upload($this->file, $this->fileName, $this->fileSize, $this->fileMimeType, $this->fileMTime, $this->label);
     }
 }

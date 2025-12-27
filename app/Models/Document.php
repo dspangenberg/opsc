@@ -37,7 +37,8 @@ class Document extends Model
     {
         return match ($view) {
             'inbox' => $query->where('is_confirmed', false),
-            'trash' => $query->onlyTrashed()
+            'trash' => $query->onlyTrashed(),
+            default => $query->where('is_confirmed', true)
         };
     }
 

@@ -17,6 +17,7 @@ import { Button } from '@/Components/twc-ui/button'
 import { Checkbox } from '@/Components/twc-ui/checkbox'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { MenuItem } from '@/Components/twc-ui/menu'
+import { Badge } from '@/Components/ui/badge'
 import { DocumentIndexContext } from '@/Pages/App/Document/Document/DocumentIndex'
 import { DocumentIndexFileCard } from '@/Pages/App/Document/Document/DocumentIndexFileCard'
 
@@ -84,12 +85,13 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
       </Pressable>
 
       <div className="flex flex-none flex-col space-y-0 rounded-b-md p-4">
+        <div className="truncate text-muted-foreground text-xs">{document.type?.name}</div>
         <HoverCard>
           <Pressable>
             <span
               role="button"
               tabIndex={0}
-              className="truncate font-medium text-sm hover:text-primary-500"
+              className="truncate py-0.5 font-medium text-sm hover:text-primary-500"
             >
               {document.title}
             </span>
@@ -102,7 +104,6 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
           <div className="mt-1 truncate text-xs">{document.contact?.full_name}</div>
         )}
 
-        <div className="mt-1 truncate text-muted-foreground text-xs">{document.filename}</div>
         <div className="mt-0.5 grid grid-cols-2 text-muted-foreground text-xs">
           <div>{document.issued_on}</div>
           <div className="text-right">{filesize(document.file_size)}</div>

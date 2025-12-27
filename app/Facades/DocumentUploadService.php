@@ -2,14 +2,15 @@
 
 namespace App\Facades;
 
-    use Illuminate\Support\Facades\Facade;
-    
-    /**
-     * @see \App\Services\DocumentUploadService
-     */
-    class DocumentUploadService extends Facade {
-        protected static function getFacadeAccessor(): string 
-        {
+use Illuminate\Support\Facades\Facade;
+
+/**
+ * @see \App\Services\DocumentUploadService
+ */
+class DocumentUploadService extends Facade
+{
+    protected static function getFacadeAccessor(): string
+    {
         return \App\Services\DocumentUploadService::class;
-        }
     }
+}
