@@ -178,7 +178,8 @@ const data = {
         },
         {
           title: 'Angebote',
-          url: route('app.invoice.index', {}, false)
+          url: route('app.offer.index', {}, false),
+          activePath: '/app/invoicing/offers'
         }
       ]
     },

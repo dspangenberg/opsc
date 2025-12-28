@@ -11,6 +11,7 @@ use App\Data\ContactData;
 use App\Data\InvoiceData;
 use App\Data\InvoiceLineData;
 use App\Data\InvoiceTypeData;
+use App\Data\OfferData;
 use App\Data\PaymentDeadlineData;
 use App\Data\ProjectData;
 use App\Data\TaxData;
@@ -20,10 +21,12 @@ use App\Http\Requests\InvoiceDetailsBaseUpdateRequest;
 use App\Http\Requests\InvoiceLinesUpdateRequest;
 use App\Http\Requests\InvoiceLineUpdateRequest;
 use App\Http\Requests\InvoiceStoreRequest;
+use App\Http\Requests\OfferStoreRequest;
 use App\Models\Contact;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
 use App\Models\InvoiceType;
+use App\Models\Offer;
 use App\Models\Payment;
 use App\Models\PaymentDeadline;
 use App\Models\Project;
@@ -41,7 +44,7 @@ class OfferController extends Controller
 {
     public function index(Request $request)
     {
-        $years = Invoice::query()->selectRaw('DISTINCT YEAR(issued_on) as year')->orderByRaw('YEAR(issued_on) DESC')->get()->pluck('year');
+        $years = Offer::query()->selectRaw('DISTINCT YEAR(issued_on) as year')->orderByRaw('YEAR(issued_on) DESC')->get()->pluck('year');
         $currentYear = date('Y');
 
         $year = $request->query('year');
@@ -55,21 +58,20 @@ class OfferController extends Controller
 
         $view = $request->query('view', 'all');
 
-        $invoices = Invoice::query()
-            ->with(['invoice_contact', 'contact', 'project', 'payment_deadline', 'type'])
+        $offers = Offer::query()
+            ->with(['contact', 'project'])
             ->view($view)
             ->withSum('lines', 'amount')
             ->withSum('lines', 'tax')
-            ->withSum('payable', 'amount')
             ->byYear($year)
             ->orderBy('issued_on', 'desc')
-            ->orderBy('invoice_number', 'desc')
+            ->orderBy('offer_number', 'desc')
             ->paginate(15);
 
-        $invoices->appends($_GET)->links();
+        $offers->appends($_GET)->links();
 
-        return Inertia::render('App/Invoice/InvoiceIndex', [
-            'invoices' => InvoiceData::collect($invoices),
+        return Inertia::render('App/Offer/OfferIndex', [
+            'offers' => OfferData::collect($offers),
             'years' => $years,
             'currentYear' => $year,
         ]);
@@ -78,74 +80,61 @@ class OfferController extends Controller
     public function create()
     {
         // Load all data in single queries, ordered appropriately for defaults
-        $invoiceTypes = InvoiceType::query()->orderBy('is_default', 'DESC')->orderBy('display_name')->get();
-        $paymentDeadlines = PaymentDeadline::query()->orderBy('is_default', 'DESC')->orderBy('name')->get();
         $taxes = Tax::query()->with('rates')->orderBy('is_default', 'DESC')->orderBy('name')->get();
         $projects = Project::query()->where('is_archived', false)->orderBy('name')->get();
         $contacts = Contact::query()->whereNotNull('debtor_number')->orderBy('name')->orderBy('first_name')->get();
 
-        // Create new invoice with default values from loaded collections
-        $invoice = new Invoice;
-        $invoice->contact_id = 0;
-        $invoice->type_id = $invoiceTypes->first()?->id ?? 0;
-        $invoice->is_draft = true;
-        $invoice->issued_on = now();
-        $invoice->invoice_contact_id = 0;
-        $invoice->project_id = 0;
-        $invoice->payment_deadline_id = $paymentDeadlines->first()?->id ?? 0;
-        $invoice->tax_id = $taxes->first()?->id ?? 0;
-        $invoice->is_recurring = false;
-        $invoice->recurring_interval_days = 0;
-        $invoice->invoice_number = null;
+        // Create new offer with default values from loaded collections
+        $offer = new Offer;
+        $offer->contact_id = 0;
+        $offer->is_draft = true;
+        $offer->issued_on = now();
+        $offer->project_id = 0;
+        $offer->tax_id = $taxes->first()?->id ?? 0;
+        $offer->offer_number = null;
 
-        return Inertia::modal('App/Invoice/InvoiceCreate')
+        return Inertia::modal('App/Offer/OfferCreate')
             ->with([
-                'invoice' => InvoiceData::from($invoice),
-                'invoice_types' => InvoiceTypeData::collect($invoiceTypes),
+                'offer' => OfferData::from($offer),
                 'projects' => ProjectData::collect($projects),
                 'taxes' => TaxData::collect($taxes),
-                'payment_deadlines' => PaymentDeadlineData::collect($paymentDeadlines),
                 'contacts' => ContactData::collect($contacts),
-            ])->baseRoute('app.invoice.index');
+            ])->baseRoute('app.offer.index');
     }
 
-    public function store(InvoiceStoreRequest $request)
+    public function store(OfferStoreRequest $request)
     {
         $validatedData = $request->validated();
 
-        $validatedData['invoice_number'] = null;
-        $invoice = Invoice::create($validatedData);
-        $invoice->load('contact');
+        $validatedData['offer_number'] = null;
+        $offer = Offer::create($validatedData);
+        $offer->load('contact');
 
-        $invoice->address = $invoice->contact->getInvoiceAddress()->full_address;
-        $invoice->save();
+        $offer->address = $offer->contact->getInvoiceAddress()->full_address;
+        $offer->save();
 
 
-        return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
+        return redirect()->route('app.offer.details', ['invoice' => $offer->id]);
     }
 
-    public function show(Invoice $invoice, ?int $line = null)
+    public function show(Offer $offer)
     {
-        $invoice
-            ->load('invoice_contact')
+        $offer
             ->load('contact')
             ->load('project')
-            ->load('payment_deadline')
-            ->load('type')
             ->load([
                 'lines' => function ($query) {
-                    $query->with('linked_invoice')->with('rate')->orderBy('pos')->orderBy('id');
+                    $query->orderBy('pos')->orderBy('id');
                 },
             ])
-            ->load('booking')
             ->load('tax')
             ->load('tax.rates')
             ->loadSum('lines', 'amount')
             ->loadSum('lines', 'tax');
 
 
-        return Inertia::render('App/Invoice/InvoiceDetails', [
-            'invoice' => InvoiceData::from($invoice),
+        return Inertia::render('App/Offer/OfferDetails', [
+            'offer' => OfferData::from($offer),
         ]);
     }
 

@@ -102,14 +102,12 @@ class Offer extends Model implements MediableInterface
     ];
 
     protected $appends = [
-        'formated_invoice_number',
+        'formated_offer_number',
         'invoice_address',
         'amount_net',
-        'qr_code',
         'amount_tax',
         'amount_gross',
         'amount_open',
-        'amount_paid',
     ];
 
     /**
@@ -122,8 +120,6 @@ class Offer extends Model implements MediableInterface
             ->with('project')
             ->with('project.manager')
             ->with('contact.tax')
-            ->with('payment_deadline')
-            ->with('type')
             ->with([
                 'lines' => function ($query) {
                     $query->with('rate')->orderBy('pos');
@@ -134,20 +130,6 @@ class Offer extends Model implements MediableInterface
             ->where('id', $invoice->id)
             ->first();
 
-        $times = Time::query()
-            ->where('invoice_id', $invoice->id)
-            ->with('project')
-            ->withMinutes()
-            ->with('category')
-            ->with('user')
-            ->whereNotNull('begin_at')
-            ->orderBy('begin_at', 'desc')
-            ->get();
-
-        $groupedTimes = $times ? TimeController::groupByDate($times) : [];
-        $groupedByCategoryTimes = $times ? TimeController::groupByCategoryAndDate($times) : [];
-        $timesSum = $times ? $times->sum('mins') : 0;
-
         $taxes = $invoice->taxBreakdown($invoice->lines);
         $invoice->linked_invoices = $invoice->lines->filter(function ($line) {
             return $line->type_id === 9;
@@ -157,13 +139,6 @@ class Offer extends Model implements MediableInterface
             return $line->type_id !== 9;
         });
 
-        $bank_account = (object) [
-            'iban' => 'DE39440100460126083465',
-            'bic' => 'PBNKDEFF',
-            'account_owner' => 'twiceware solutions e. K.',
-            'bank_name' => 'Postbank',
-        ];
-
         $pdfConfig = [];
         $pdfConfig['pdfA'] = ! $invoice->is_draft;
         $pdfConfig['hide'] = true;
@@ -172,11 +147,7 @@ class Offer extends Model implements MediableInterface
         $pdfFile = PdfService::createPdf('invoice', 'pdf.invoice.index',
             [
                 'invoice' => $invoice,
-                'taxes' => $taxes,
-                'bank_account' => $bank_account,
-                'groupedTimes' => $groupedTimes,
-                'groupedByCategoryTimes' => $groupedByCategoryTimes,
-                'timesSum' => $timesSum,
+                'taxes' => $taxes
             ], $pdfConfig);
 
         return $pdfFile;
@@ -333,10 +304,10 @@ class Offer extends Model implements MediableInterface
 
 
 
-    public function getFormatedInvoiceNumberAttribute(): string
+    public function getFormatedOfferNumberAttribute(): string
     {
-        if ($this->invoice_number) {
-            return formated_invoice_id($this->invoice_number);
+        if ($this->offer_number) {
+            return formated_offer_id($this->offer_number);
         }
 
         return 'Entwurf '.$this->id;

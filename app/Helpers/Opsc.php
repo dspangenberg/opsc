@@ -55,6 +55,27 @@ if (!function_exists('formated_invoice_id')) {
     }
 }
 
+if (!function_exists('formated_offer_id')) {
+    function formated_offer_id(int $invoice_id): string
+    {
+        if (! $invoice_id) {
+            return '(Entwurf)';
+        }
+
+        $formated_id = substr($invoice_id, 0, 4).'.';
+        $formated_id .= substr($invoice_id, 4, 1).'.';
+        if (strlen($invoice_id) == 8) {
+            $formated_id .= substr($invoice_id, 5);
+        } else {
+            $formated_id .= substr($invoice_id, 5, 1).'.';
+            $formated_id .= substr($invoice_id, 6);
+
+        }
+
+        return $formated_id;
+    }
+}
+
 if (!function_exists('iban_to_human_format')) {
     function iban_to_human_format($iban)
     {
