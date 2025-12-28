@@ -70,7 +70,15 @@ export const InvoiceTableProvider = ({ children }: InvoiceTableProviderProps) =>
   }
 
   const duplicateLine = (line: App.Data.InvoiceLineData) => {
-    const newLine = { ...line, id: getNewLineId() }
+    const newLines = lines.filter(line => line.id !== null && line.id < 0)
+    const newId = newLines.length ? -1 * (newLines.length + 1) : -1
+
+    const newLine = {
+      ...line,
+      id: newId,
+      pos: lines.length
+    }
+
     setLines(prevLines => [...prevLines, newLine])
   }
 

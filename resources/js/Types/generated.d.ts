@@ -250,6 +250,35 @@ id: number | null;
 name: string;
 code: string;
 };
+export type DocumentData = {
+id: number | null;
+document_type_id: number | null;
+contact_id: number | null;
+project_id: number | null;
+filename: string;
+mime_type: string;
+file_size: number;
+pages: number;
+issued_on: string | null;
+sent_on: string | null;
+deleted_at: string | null;
+title: string;
+label: string | null;
+description: string | null;
+reference: string | null;
+is_pinned: boolean;
+is_confirmed: boolean;
+contact: App.Data.ContactData | null;
+type: App.Data.DocumentTypeData | null;
+project: App.Data.ProjectData | null;
+};
+export type DocumentTypeData = {
+id: number | null;
+parent_id: number | null;
+name: string;
+color: string | null;
+icon: string | null;
+};
 export type EmailCategoryData = {
 id: number | null;
 name: string;

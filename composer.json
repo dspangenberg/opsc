@@ -31,7 +31,7 @@
     "spatie/laravel-query-builder": "^6.3.2",
     "spatie/laravel-settings": "^3.4",
     "spatie/laravel-typescript-transformer": "^2.5.2",
-    "spatie/pdf-to-image": "^1.2",
+    "spatie/pdf-to-image": "^3.1",
     "spatie/temporary-directory": "^2.3",
     "stancl/jobpipeline": "^2.0@RC",
     "stancl/tenancy": "dev-master",

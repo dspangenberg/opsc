@@ -19,7 +19,7 @@
   --radius-sm: calc(var(--radius) - 4px);
   --width-8xl: 88rem;
   --max-width-8xl: 88rem;
-
+  --font-size-xs: 0.8rem;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
@@ -261,4 +261,25 @@ h4[id],
 h5[id],
 h6[id] {
   scroll-margin-top: 80px;
+}
+
+/*
+  ---break---
+*/
+
+@theme inline {
+  --color-page-content: var(--page-content);
+}
+
+/*
+  ---break---
+*/
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

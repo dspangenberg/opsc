@@ -1,0 +1,126 @@
+import { useForm } from '@inertiajs/react'
+import type * as React from 'react'
+import { type FormEvent, useState } from 'react'
+import { Button } from '@/Components/twc-ui/button'
+import { ExtendedDialog as Dialog } from '@/Components/twc-ui/extended-dialog'
+
+interface Props {
+  isOpen: boolean
+  onClosed: () => void
+}
+
+export const DocumentMutliDocUpload: React.FC<Props> = ({ isOpen, onClosed }) => {
+  const { data, setData, post, progress, processing, errors, clearErrors } = useForm({
+    file: null as File | null
+  })
+
+  const handleOnClosed = () => {
+    onClosed()
+  }
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault()
+
+    if (!data.file) {
+      alert('Bitte wählen Sie eine Datei aus.')
+      return
+    }
+
+    console.log('Submitting with Inertia.js...')
+    console.log('File:', data.file.name, data.file.size, 'bytes')
+
+    // Verwende Inertia.js - handhabt CSRF automatisch korrekt
+    post(route('app.documents.documents.multi-upload'), {
+      forceFormData: true,
+      onBefore: () => {
+        console.log('Starting upload...')
+      },
+      onStart: () => {
+        console.log('Upload started')
+      },
+      onSuccess: response => {
+        console.log('Upload successful:', response)
+        handleOnClosed()
+      },
+      onError: errors => {
+        console.error('Upload errors:', errors)
+      },
+      onProgress: progress => {
+        console.log('Upload progress:', progress)
+      }
+    })
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null
+    if (file) {
+      console.log('File selected:', file.name, 'Size:', file.size, 'Type:', file.type)
+
+      // Überprüfe Dateigröße (50MB Limit)
+      if (file.size > 50 * 1024 * 1024) {
+        alert('Die Datei ist zu groß. Maximum sind 50MB erlaubt.')
+        return
+      }
+
+      // Überprüfe Dateityp
+      if (!file.type.includes('pdf') && !file.name.endsWith('.pdf')) {
+        alert('Bitte wählen Sie eine PDF-Datei aus.')
+        return
+      }
+    }
+
+    clearErrors('file')
+    setData('file', file)
+  }
+
+  return (
+    <Dialog
+      isOpen={isOpen}
+      title="MoneyMoney JSON-Datei importieren"
+      onClosed={handleOnClosed}
+      footer={renderProps => (
+        <>
+          <Button id="dialog-cancel-button" variant="outline" onClick={() => renderProps.close()}>
+            Abbrechen
+          </Button>
+          <Button isLoading={processing} form="import-form" type="submit" disabled={!data.file}>
+            Datei importieren
+          </Button>
+        </>
+      )}
+    >
+      <form id="import-form" onSubmit={handleSubmit}>
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="file-input" className="mb-2 block font-medium text-gray-700 text-sm">
+              Multi-Datei auswählen:
+            </label>
+            <input
+              id="file-input"
+              type="file"
+              accept=".pdf,application/pdf"
+              onChange={handleFileChange}
+              className="block w-full text-gray-500 text-sm file:mr-4 file:rounded file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-semibold file:text-blue-700 file:text-sm hover:file:bg-blue-100"
+            />
+            {errors.file && <p className="mt-1 text-red-600 text-sm">{errors.file}</p>}
+            {data.file && (
+              <p className="mt-1 text-green-600 text-sm">
+                Datei ausgewählt: {data.file.name} ({Math.round(data.file.size / 1024)}KB)
+              </p>
+            )}
+          </div>
+
+          {progress && (
+            <div className="h-2 w-full rounded-full bg-gray-200">
+              <div
+                className="h-2 rounded-full bg-blue-600 transition-all duration-300"
+                style={{ width: `${progress.percentage}%` }}
+              />
+              <p className="mt-1 text-gray-600 text-sm">{progress.percentage}% hochgeladen</p>
+            </div>
+          )}
+        </div>
+      </form>
+    </Dialog>
+  )
+}

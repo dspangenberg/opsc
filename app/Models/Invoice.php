@@ -157,11 +157,13 @@ class Invoice extends Model implements MediableInterface
             return $line->type_id !== 9;
         });
 
+        $bankAccount = BankAccount::orderBy('pos')->first();
+
         $bank_account = (object) [
-            'iban' => 'DE39440100460126083465',
-            'bic' => 'PBNKDEFF',
-            'account_owner' => 'twiceware solutions e. K.',
-            'bank_name' => 'Postbank',
+            'iban' => $bankAccount->iban,
+            'bic' => $bankAccount->bic,
+            'account_owner' => $bankAccount->account_owner,
+            'bank_name' => $bankAccount->bank_name,
         ];
 
         $pdfConfig = [];

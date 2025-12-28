@@ -1,4 +1,19 @@
 import {
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors
+} from '@dnd-kit/core'
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy
+} from '@dnd-kit/sortable'
+import {
   CalculatorIcon,
   FirstBracketIcon,
   HeadingIcon,
@@ -6,7 +21,8 @@ import {
   TextAlignJustifyLeftIcon,
   TextVerticalAlignmentIcon
 } from '@hugeicons/core-free-icons'
-import React, { useEffect, type FC } from 'react'
+import { type FC, useEffect } from 'react'
+import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { MenuItem } from '@/Components/twc-ui/menu'
@@ -15,6 +31,7 @@ import { BorderedBox } from '@/Components/twcui/bordered-box'
 import { InvoiceLinesEditorDefaultLine } from '@/Pages/App/Invoice/InvoiceLinesEditorDefaultLine'
 import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 import { InvoiceLinesEditorCaptionLine } from './InvoiceLinesEditorCaptionLine'
+import { InvoiceLinesEditorPageBreak } from './InvoiceLinesEditorPageBreak'
 import { InvoiceLinesEditorTextLine } from './InvoiceLinesEditorTextLine'
 
 interface InvoiceLinesEditorProps {
@@ -22,10 +39,16 @@ interface InvoiceLinesEditorProps {
 }
 
 export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => {
-  const { amountNet, amountTax, amountGross, editMode, setEditMode, lines, addLine, setLines } =
-    useInvoiceTable()
+  const { setEditMode, lines, addLine, setLines } = useInvoiceTable()
 
-  const form = useForm<App.Data.InvoiceData>(
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates
+    })
+  )
+
+  const form = useForm(
     'app.invoice.lines-update',
     'put',
     route('app.invoice.lines-update', {
@@ -37,12 +60,51 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
     }
   )
 
-  // Sync form lines with context lines
+  // Sync form data when lines change (e.g., when duplicating or adding lines)
   useEffect(() => {
-    if (form.data.lines !== lines) {
-      setLines(form.data.lines as App.Data.InvoiceLineData[])
+    // @ts-expect-error - Circular reference in InvoiceLineData.linked_invoice
+    form.setData('lines', lines)
+  }, [lines])
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (over && active.id !== over.id) {
+      const oldIndex = lines.findIndex(line => line.id === active.id)
+      const newIndex = lines.findIndex(line => line.id === over.id)
+
+      const newLines = [...lines]
+      const [movedItem] = newLines.splice(oldIndex, 1)
+      newLines.splice(newIndex, 0, movedItem)
+
+      // Update pos values to reflect new order
+      const updatedLines = newLines.map((line, index) => ({
+        ...line,
+        pos: line.type_id === 9 ? 999 : index
+      }))
+
+      // Update both the context state and form data
+      setLines(updatedLines)
+      form.setData('lines', updatedLines)
     }
-  }, [form.data.lines])
+  }
+
+  const onCancel = async () => {
+    if (form.isDirty) {
+      const promise = await AlertDialog.call({
+        title: 'Änderungen verwerfen',
+        message: 'Möchtest Du die Änderungen wirklich verwerfen?',
+        buttonTitle: 'Verwerfen',
+        variant: 'default'
+      })
+
+      if (promise) {
+        setEditMode(false)
+      }
+    } else {
+      setEditMode(false)
+    }
+  }
 
   const onSubmit = () => {
     form.submit({
@@ -58,7 +120,6 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
 
   return (
     <div className="flex flex-1 flex-col">
-      {amountNet} {amountTax} {amountGross} Edit: {(editMode as boolean) ? 'true' : 'false'}{' '}
       <BorderedBox className="flex flex-1 overflow-y-hidden" innerClassName="bg-white">
         <div className="grid grid-cols-24 gap-x-3 border-b bg-sidebar px-13 py-2.5 font-medium text-sm">
           <div className="col-span-3">Menge</div>
@@ -69,41 +130,62 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
           <div>USt.</div>
         </div>
         <Form form={form} errorVariant="field">
-          <div className="divide-y">
-            {lines.map((line, index: number) => {
-              switch (line.type_id) {
-                case 9:
-                  return null
-                case 2:
-                  return (
-                    <InvoiceLinesEditorCaptionLine
-                      key={line.id}
-                      invoice={invoice}
-                      index={index}
-                      invoiceLine={line}
-                    />
-                  )
-                case 4:
-                  return (
-                    <InvoiceLinesEditorTextLine
-                      key={line.id}
-                      invoice={invoice}
-                      index={index}
-                      invoiceLine={line}
-                    />
-                  )
-                default:
-                  return (
-                    <InvoiceLinesEditorDefaultLine
-                      key={line.id}
-                      invoice={invoice}
-                      index={index}
-                      invoiceLine={line}
-                    />
-                  )
-              }
-            })}
-          </div>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            modifiers={[restrictToVerticalAxis]}
+          >
+            <SortableContext
+              items={lines.filter(line => line.id != null).map(line => line.id as number)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="divide-y">
+                {lines.map((line, index: number) => {
+                  switch (line.type_id) {
+                    case 9:
+                      return null
+                    case 2:
+                      return (
+                        <InvoiceLinesEditorCaptionLine
+                          key={line.id}
+                          invoice={invoice}
+                          index={index}
+                          invoiceLine={line}
+                        />
+                      )
+                    case 4:
+                      return (
+                        <InvoiceLinesEditorTextLine
+                          key={line.id}
+                          invoice={invoice}
+                          index={index}
+                          invoiceLine={line}
+                        />
+                      )
+                    case 8:
+                      return (
+                        <InvoiceLinesEditorPageBreak
+                          key={line.id}
+                          invoice={invoice}
+                          index={index}
+                          invoiceLine={line}
+                        />
+                      )
+                    default:
+                      return (
+                        <InvoiceLinesEditorDefaultLine
+                          key={line.id}
+                          invoice={invoice}
+                          index={index}
+                          invoiceLine={line}
+                        />
+                      )
+                  }
+                })}
+              </div>
+            </SortableContext>
+          </DndContext>
         </Form>
       </BorderedBox>
       <div className="flex flex-1 p-4">
@@ -128,11 +210,15 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
 
             <MenuItem icon={HeadingIcon} title="Überschrift" onClick={() => addLine(2)} />
             <MenuItem icon={TextAlignJustifyLeftIcon} title="Text" onClick={() => addLine(4)} />
-            <MenuItem icon={TextVerticalAlignmentIcon} title="Seitenumbruch" isDisabled />
+            <MenuItem
+              icon={TextVerticalAlignmentIcon}
+              title="Seitenumbruch"
+              onClick={() => addLine(8)}
+            />
           </SplitButton>
         </div>
         <div className="flex-none items-center justify-end space-x-2 px-2">
-          <Button variant="outline" onClick={() => setEditMode(false)}>
+          <Button variant="outline" onClick={onCancel}>
             Abbrechen
           </Button>
           <Button onClick={onSubmit}>Speichern</Button>
