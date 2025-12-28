@@ -65,7 +65,7 @@ use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
  *
  * @mixin Eloquent
  */
-class Invoice extends Model implements MediableInterface
+class Offer extends Model implements MediableInterface
 {
     use Mediable;
 
@@ -115,9 +115,9 @@ class Invoice extends Model implements MediableInterface
     /**
      * @throws MpdfException|PathAlreadyExists
      */
-    public static function createOrGetPdf(Invoice $invoice, bool $uploadToS3 = false): string
+    public static function createOrGetPdf(Offer $invoice, bool $uploadToS3 = false): string
     {
-        $invoice = Invoice::query()
+        $invoice = Offer::query()
             ->with('contact')
             ->with('project')
             ->with('project.manager')
@@ -157,13 +157,11 @@ class Invoice extends Model implements MediableInterface
             return $line->type_id !== 9;
         });
 
-        $bankAccount = BankAccount::orderBy('pos')->first();
-
         $bank_account = (object) [
-            'iban' => $bankAccount->iban,
-            'bic' => $bankAccount->bic,
-            'account_owner' => $bankAccount->account_owner,
-            'bank_name' => $bankAccount->bank_name,
+            'iban' => 'DE39440100460126083465',
+            'bic' => 'PBNKDEFF',
+            'account_owner' => 'twiceware solutions e. K.',
+            'bank_name' => 'Postbank',
         ];
 
         $pdfConfig = [];
@@ -227,7 +225,7 @@ class Invoice extends Model implements MediableInterface
     public function release(): void
     {
         if (! $this->invoice_number) {
-            $counter = Invoice::whereYear('issued_on', $this->issued_on->year)->max('invoice_number');
+            $counter = Offer::whereYear('issued_on', $this->issued_on->year)->max('invoice_number');
             if ($counter == 0) {
                 $counter = $this->issued_on->year * 100000;
             }
@@ -333,35 +331,7 @@ class Invoice extends Model implements MediableInterface
         }
     }
 
-    public static function createBooking($invoice): BookkeepingBooking
-    {
 
-        if (! $invoice->number_range_document_numbers_id) {
-            $invoice->number_range_document_numbers_id = NumberRange::createDocumentNumber($invoice,
-                'issued_on');
-        }
-
-        $booking = BookkeepingBooking::whereMorphedTo('bookable', Invoice::class)->where('bookable_id',
-            $invoice->id)->first();
-
-        $invoice->load('lines');
-        $invoice->load('tax');
-        $invoice->amount = $invoice->lines->sum('amount') + $invoice->lines->sum('tax');
-
-        $outturnAccount = BookkeepingAccount::where('account_number', $invoice->tax->outturn_account_id)->first();
-
-        $accounts = Contact::getAccounts(true, $invoice->contact_id, true, true);
-        $booking = BookkeepingBooking::createBooking($invoice, 'issued_on', 'amount', $accounts['subledgerAccount'],
-            $outturnAccount, 'A', $booking ? $booking->id : null);
-
-        if ($booking) {
-            $name = strtoupper($accounts['name']);
-            $booking->booking_text = "Rechnungsausgang|$name|$invoice->formatedInvoiceNumber";
-            $booking->save();
-        }
-
-        return $booking;
-    }
 
     public function getFormatedInvoiceNumberAttribute(): string
     {
@@ -420,71 +390,15 @@ class Invoice extends Model implements MediableInterface
         return round($this->amount_gross - $this->amount_paid, 2);
     }
 
-    public function getDocumentNumberAttribute(): string
-    {
-        if ($this->range_document_number) {
-            return $this->range_document_number->document_number;
-        }
-
-        return '';
-    }
-
-    public function range_document_number(): HasOne
-    {
-        return $this->hasOne(NumberRangeDocumentNumber::class, 'id', 'number_range_document_numbers_id');
-    }
-
-    public function getQrCodeAttribute(): string
-    {
-        if (! $this->contact || $this->amount_gross <= 0) {
-            return '';
-        }
-
-        $purposeText = [];
-        $purposeText[] = 'RG-'.$this->formated_invoice_number;
-        $purposeText[] = 'K-'.number_format($this->contact->debtor_number, 0, ',', '.');
-
-        $bankAccount = BankAccount::orderBy('pos')->first();
-
-        $payment = new QrPayment($bankAccount->iban);
-        $payment
-            ->setBic($bankAccount->bic)
-            ->setBeneficiaryName($bankAccount->account_owner)
-            ->setAmount($this->amount_gross)
-            ->setCurrency('EUR')
-            ->setRemittanceText(implode(' ', $purposeText));
-
-        return $payment->getQrCode()->getDataUri();
-    }
 
     public function lines(): HasMany
     {
-        return $this->hasMany(InvoiceLine::class);
-    }
-
-    public function payable(): MorphMany
-    {
-        return $this->morphMany(Payment::class, 'payable');
+        return $this->hasMany(OfferLine::class);
     }
 
     public function contact(): HasOne
     {
         return $this->hasOne(Contact::class, 'id', 'contact_id');
-    }
-
-    public function linked_invoice(): HasOne
-    {
-        return $this->hasOne(Contact::class, 'id', 'linked_invoice_id');
-    }
-
-    public function invoice_contact(): HasOne
-    {
-        return $this->hasOne(Contact::class, 'id', 'invoice_contact_id');
-    }
-
-    public function type(): HasOne
-    {
-        return $this->hasOne(InvoiceType::class, 'id', 'type_id');
     }
 
     public function tax(): HasOne
@@ -497,32 +411,9 @@ class Invoice extends Model implements MediableInterface
         return $this->hasOne(Project::class, 'id', 'project_id');
     }
 
-    public function scopeUnpaid(Builder $query): Builder
-    {
-        $query
-            ->where('is_draft', false)
-            ->whereRaw('(
-                SELECT COALESCE(SUM(amount), 0) 
-                FROM invoice_lines 
-                WHERE invoice_id = invoices.id
-            ) - COALESCE((
-                SELECT SUM(amount) 
-                FROM payments 
-                WHERE payable_type = ? AND payable_id = invoices.id
-            ), 0) > 0.01', [Invoice::class]);
-
-        return $query;
-    }
-
-    public function payment_deadline(): HasOne
-    {
-        return $this->hasOne(PaymentDeadline::class, 'id', 'payment_deadline_id');
-    }
-
     public function scopeView(Builder $query, $view): Builder
     {
         return match ($view) {
-            'unpaid' => $query->unpaid(),
             'drafts' => $query->where('is_draft', true),
             default => $query->where('is_draft', false)
         };
@@ -534,9 +425,6 @@ class Invoice extends Model implements MediableInterface
             'issued_on' => 'date',
             'due_on' => 'date',
             'sent_at' => 'datetime',
-            'service_period_begin' => 'date',
-            'service_period_end' => 'date',
-            'is_loss_of_receivables' => 'boolean',
             'is_draft' => 'boolean',
         ];
     }
