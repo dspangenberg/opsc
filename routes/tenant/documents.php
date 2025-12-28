@@ -18,13 +18,16 @@ Route::get('/documents/preferences/document-types/{documentType}/edit', [Documen
 Route::put('/documents/preferences/document-types/{documentType}/edit', [DocumentTypeController::class, 'update'])->name('app.documents.document_types.update');
 
 
-Route::get('/documents/preview/{document}', [DocumentController::class, 'streamPreview'])->name('app.documents.documents.preview')->withTrashed();
-Route::get('/documents/pdf/{document}', [DocumentController::class, 'streamPdf'])->name('app.documents.documents.pdf')->withTrashed();
+Route::get('/documents/documents/preview/{document}', [DocumentController::class, 'streamPreview'])->name('app.documents.documents.preview')->withTrashed();
+Route::get('/documents/documents/pdf/{document}', [DocumentController::class, 'streamPdf'])->name('app.documents.documents.pdf')->withTrashed();
 
 
 
+Route::delete('/documents/documents/bulk-force-delete', [DocumentController::class, 'bulkForceDelete'])->name('app.documents.documents.bulk-force-delete');
 Route::delete('/documents/{document}/force-delete', [DocumentController::class, 'forceDelete'])->name('app.documents.documents.force-delete')->withTrashed();
 Route::delete('/documents/{document}', [DocumentController::class, 'trash'])->name('app.documents.documents.trash');
+
+
 
 Route::get('/documents/{document}/restore', [DocumentController::class, 'restore'])->name('app.documents.documents.restore')->withTrashed();
 Route::get('/documents/{document}/edit', [DocumentController::class, 'edit'])->name('app.documents.documents.edit');

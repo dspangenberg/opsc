@@ -71,7 +71,11 @@ const data = {
       items: [
         {
           title: 'Dokumente',
-          url: route('app.documents.documents.index', {}, false),
+          url: route(
+            'app.documents.documents.index',
+            { filters: { view: { operator: 'scope', value: 'all' } } },
+            false
+          ),
           activePath: '/app/documents/documents',
           exact: true
         },

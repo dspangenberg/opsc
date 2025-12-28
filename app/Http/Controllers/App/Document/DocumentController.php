@@ -8,6 +8,7 @@ use App\Data\DocumentTypeData;
 use App\Data\ProjectData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentRequest;
+use App\Http\Requests\MultiDocUploadRequest;
 use App\Http\Requests\ReceiptUploadRequest;
 use App\Jobs\DocumentUploadJob;
 use App\Jobs\ProcessMultiDocJob;
@@ -44,14 +45,22 @@ class DocumentController extends Controller
             ->with('contact', 'type', 'project')
             ->orderBy('is_pinned', 'DESC')
             ->orderBy('issued_on', 'DESC')
-            ->paginate(20);
+            ->paginate(24);
+
+        $documentsPaginateProp = $documents->toArray();
+        $isNextPage = $documentsPaginateProp['current_page'] < $documentsPaginateProp['last_page'];
 
         return Inertia::render('App/Document/Document/DocumentIndex', [
-            'documents' => DocumentData::collect($documents),
+            'documents' => Inertia::merge(DocumentData::collect($documents->items())),
+            'page' => $documents->currentPage(),
+            'from' => $documentsPaginateProp['from'],
+            'to' => $documentsPaginateProp['to'],
+            'total' => $documentsPaginateProp['total'],
             'contacts' => ContactData::collect($contacts),
             'documentTypes' => DocumentTypeData::collect($types),
             'projects' => ProjectData::collect($projects),
             'currentFilters' => $filters,
+            'isNextPage' => $isNextPage
         ]);
     }
 
@@ -76,7 +85,14 @@ class DocumentController extends Controller
     public function restore(Document $document)
     {
         $document->restore();
-        return redirect()->route('app.documents.documents.index');
+        return redirect()->route('app.documents.documents.index', [
+            'filters' => [
+                'view' => [
+                    'operator' => 'scope',
+                    'value' => 'trash'
+                ]
+            ]
+        ])->with('success', 'File(s) uploaded successfully.');
     }
 
     public function streamPdf(Document $document)
@@ -142,14 +158,51 @@ class DocumentController extends Controller
 
         $document->forceDelete();
 
-        return redirect()->route('app.documents.documents.index');
+        return redirect()->route('app.documents.documents.index', [
+            'filters' => [
+                'view' => [
+                    'operator' => 'scope',
+                    'value' => 'trash'
+                ]
+            ]
+        ])->with('success', 'File(s) uploaded successfully.');
+    }
+
+    public function bulkForceDelete(Request $request)
+    {
+        $ids = $request->query('document_ids');
+        $ids = $ids ? explode(',', $ids) : [];
+
+        $documents = Document::whereIn('id', $ids)->withTrashed()->get();
+
+
+        $documents->each(function ($document) {
+            $file = $document->firstMedia('file');
+            $file?->delete();
+
+            $preview = $document->firstMedia('preview');
+            $preview?->delete();
+
+            $document->forceDelete();
+        });
+
+
+
+        return redirect()->route('app.documents.documents.index', [
+            'filters' => [
+                'view' => [
+                    'operator' => 'scope',
+                    'value' => 'trash'
+                ]
+            ]
+        ])->with('success', 'File(s) uploaded successfully.');
     }
 
     /**
      * @throws Throwable
      */
 
-    public function multiDocUpload (Request $request) {
+    public function multiDocUpload (MultiDocUploadRequest $request) {
         $tempFile = storage_path('app/temp');
         if (!file_exists($tempFile)) {
             mkdir($tempFile, 0755, true);
@@ -161,6 +214,15 @@ class DocumentController extends Controller
         $realPath = $tempFile.'/'.$fileName;
 
         ProcessMultiDocJob::dispatch($realPath);
+
+        return redirect()->route('app.documents.documents.index', [
+            'filters' => [
+                'view' => [
+                    'operator' => 'scope',
+                    'value' => 'inbox'
+                ]
+            ]
+        ])->with('success', 'File(s) uploaded successfully.');
 
     }
     public function upload(ReceiptUploadRequest $request)
@@ -186,7 +248,7 @@ class DocumentController extends Controller
 
                 $realPath = $tempFile.'/'.$fileName;
 
-                DocumentUploadJob::dispatch($realPath, $originalName, $fileSize, $mimeType, $mTime);
+                DocumentUploadJob::dispatch($realPath, $originalName, $fileSize, $mimeType, $mTime, '');
             }
 
         return redirect()->route('app.documents.documents.index', [

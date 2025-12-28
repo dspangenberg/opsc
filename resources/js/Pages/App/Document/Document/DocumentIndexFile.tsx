@@ -3,6 +3,7 @@ import {
   Delete04Icon,
   DeletePutBackIcon,
   Edit03Icon,
+  FileDownloadIcon,
   MoreVerticalCircle01Icon,
   PinIcon
 } from '@hugeicons/core-free-icons'
@@ -17,7 +18,7 @@ import { Button } from '@/Components/twc-ui/button'
 import { Checkbox } from '@/Components/twc-ui/checkbox'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { MenuItem } from '@/Components/twc-ui/menu'
-import { Badge } from '@/Components/ui/badge'
+import { useFileDownload } from '@/Hooks/use-file-download'
 import { DocumentIndexContext } from '@/Pages/App/Document/Document/DocumentIndex'
 import { DocumentIndexFileCard } from '@/Pages/App/Document/Document/DocumentIndexFileCard'
 
@@ -29,6 +30,11 @@ interface DocumentIndexPageProps {
 export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, onClick }) => {
   const { selectedDocuments, setSelectedDocuments } = useContext(DocumentIndexContext)
   const isSelected = selectedDocuments.includes(document.id as number)
+  const { handleDownload: downloadFile } = useFileDownload({
+    route: route('app.documents.documents.pdf', { id: document.id }),
+    filename: document.filename || 'document.pdf'
+  })
+
   const handleDelete = async () => {
     const promise = await AlertDialog.call({
       title: 'Dokument löschen',
@@ -37,17 +43,6 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
     })
     if (promise) {
       router.delete(route('app.documents.documents.trash', { id: document.id }))
-    }
-  }
-
-  const handleRestore = async () => {
-    const promise = await AlertDialog.call({
-      title: 'Dokument wiederherstellen',
-      message: `Möchtest Du das ${document.filename} wiederherstellen?`,
-      buttonTitle: 'Wiederherstellen'
-    })
-    if (promise) {
-      router.get(route('app.documents.documents.restore', { id: document.id }))
     }
   }
 
@@ -68,6 +63,10 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
     } else {
       setSelectedDocuments(selectedDocuments.filter(id => id !== document.id))
     }
+  }
+
+  const handleDownload = () => {
+    downloadFile()
   }
 
   return (
@@ -128,6 +127,12 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
           {!document.deleted_at && (
             <>
               <MenuItem
+                icon={FileDownloadIcon}
+                title="Dokument herunterladen"
+                separator
+                onClick={handleDownload}
+              />
+              <MenuItem
                 icon={Edit03Icon}
                 title="Dokument bearbeiten"
                 href={route('app.documents.documents.edit', { document: document.id })}
@@ -146,11 +151,13 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
               <MenuItem
                 icon={DeletePutBackIcon}
                 title="Dokument wiederherstellen"
-                onClick={handleRestore}
+                separator
+                href={route('app.documents.documents.restore', { id: document.id })}
               />
               <MenuItem
                 icon={Delete04Icon}
                 title="Dokument endgültig löschen"
+                variant="destructive"
                 onClick={handleForceDelete}
               />
             </>

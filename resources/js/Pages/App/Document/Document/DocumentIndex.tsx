@@ -1,9 +1,19 @@
-import { FolderFileStorageIcon, FolderUploadIcon } from '@hugeicons/core-free-icons'
-import { router } from '@inertiajs/react'
+import {
+  Delete01Icon,
+  Delete04Icon,
+  DeletePutBackIcon,
+  FolderFileStorageIcon,
+  FolderUploadIcon,
+  Refresh04Icon
+} from '@hugeicons/core-free-icons'
+import { router, WhenVisible } from '@inertiajs/react'
 import type * as React from 'react'
 import { createContext, useMemo, useState } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
-import { Button } from '@/Components/twc-ui/button'
+import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
+
+import { Checkbox } from '@/Components/twc-ui/checkbox'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import {
   Empty,
   EmptyContent,
@@ -14,6 +24,7 @@ import {
 } from '@/Components/twc-ui/empty'
 import { Icon } from '@/Components/twc-ui/icon'
 import { LinkButton } from '@/Components/twc-ui/link-button'
+import { MenuItem } from '@/Components/twc-ui/menu'
 import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
 import { Select } from '@/Components/twc-ui/select'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
@@ -22,11 +33,16 @@ import type { PageProps } from '@/Types'
 import { DocumentIndexFile } from './DocumentIndexFile'
 
 interface DocumentIndexPageProps extends PageProps {
-  documents: App.Data.Paginated.PaginationMeta<App.Data.DocumentData[]>
+  documents: App.Data.DocumentData[]
   documentTypes: App.Data.DocumentTypeData[]
   currentFilters?: FilterConfig
   contacts: App.Data.ContactData[]
   projects: App.Data.ProjectData[]
+  from: number
+  to: number
+  total: number
+  page: number
+  isNextPage: boolean
 }
 
 type FilterConfig = {
@@ -46,6 +62,11 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   documents,
   documentTypes,
   contacts,
+  page,
+  total,
+  from,
+  to,
+  isNextPage,
   projects,
   currentFilters = { filters: {}, boolean: 'AND' }
 }) => {
@@ -57,9 +78,9 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   const [showMultiDocUpload, setShowMultiDocUpload] = useState(false)
 
   const [filters, setFilters] = useState<FilterConfig>(currentFilters)
+  const routeFilters = route().params.filters as unknown as FilterConfig['filters'] | undefined
 
   const onClick = async (document: App.Data.DocumentData) => {
-    console.log(route('app.documents.documents.pdf', { id: document.id }))
     await PdfViewer.call({
       file: route('app.documents.documents.pdf', { id: document.id }),
       filename: document.filename
@@ -69,12 +90,10 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
     router.post(
       route('app.documents.documents.index'),
       {
-        filters: newFilters
+        filters: newFilters,
+        page: 1
       },
       {
-        preserveScroll: true,
-        preserveState: true,
-        only: ['documents'],
         onSuccess: () => {
           setFilters(newFilters)
         }
@@ -135,8 +154,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   }
 
   const folder = () => {
-    const filters = route().params.filters as unknown as FilterConfig['filters'] | undefined
-    const view = filters?.view?.value
+    const view = routeFilters?.view?.value
     switch (view) {
       case 'trash':
         return 'Papierkorb'
@@ -153,6 +171,26 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
     return criteria.toLocaleString()
   }
 
+  const isTrash = routeFilters?.view?.value === 'trash'
+  const isInbox = routeFilters?.view?.value === 'inbox'
+
+  const handleForceDelete = async () => {
+    const promise = await AlertDialog.call({
+      title: 'Dokumente endgültig löschen',
+      message: `Möchtest Du die ausgewählten Dokumente (${selectedDocuments.length}) wirklich endgültig löschen?`,
+      buttonTitle: 'Endgültig löschen'
+    })
+    if (promise) {
+      router.delete(
+        route('app.documents.documents.bulk-force-delete', {
+          _query: {
+            document_ids: selectedDocuments.join(',')
+          }
+        })
+      )
+    }
+  }
+
   const toolbar = useMemo(
     () => (
       <Toolbar>
@@ -162,6 +200,13 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
           title="MultiDoc hochladen"
           onClick={() => setShowMultiDocUpload(true)}
         />
+        {isInbox && (
+          <ToolbarButton
+            icon={Refresh04Icon}
+            title="Aktualisieren"
+            onClick={() => router.reload()}
+          />
+        )}
       </Toolbar>
     ),
     []
@@ -176,7 +221,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
         breadcrumbs={breadcrumbs}
         className="overflow-hidden"
       >
-        <div className="mb-6 grid grid-cols-6 gap-4">
+        <div className="relative mb-6 grid grid-cols-6 gap-4">
           <Select
             label="Dokumenttyp"
             value={documentType}
@@ -188,6 +233,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
             label="Kontakt"
             value={contactId}
             items={contacts}
+            itemName="reverse_full_name"
             onChange={value => handleContactChange(value as number | null)}
             isOptional
           />
@@ -199,13 +245,53 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
             isOptional
           />
         </div>
-        <div className="py-3 text-sm">
-          {documents.from} - {documents.to} / {documents.total} Dokumenten
+
+        <Toolbar variant="secondary" className="h-12 flex-1 items-center">
+          <Checkbox
+            name={`document-selection-all`}
+            isSelected={selectedDocuments.length === documents.length}
+            onChange={() =>
+              setSelectedDocuments(
+                selectedDocuments.length === documents.length
+                  ? []
+                  : documents.map(document => document.id as number)
+              )
+            }
+            isIndeterminate={
+              selectedDocuments.length > 0 && selectedDocuments.length !== documents.length
+            }
+          />
+
+          <div className="items.center flex">
+            {from} - {to} / {total} Dokumenten
+          </div>
           {selectedDocuments.length > 0 && (
-            <span>&mdash; {selectedDocuments.length} ausgewählt</span>
+            <>
+              <div>&mdash; {selectedDocuments.length} ausgewählt</div>
+              <DropdownButton title="Ausgewählte Dokumente" variant="outline" size="default">
+                {isTrash ? (
+                  <>
+                    <MenuItem icon={DeletePutBackIcon} title="Wiederherstellen" />
+                    <MenuItem
+                      icon={Delete04Icon}
+                      title="Endgültig löschen"
+                      variant="destructive"
+                      onClick={() => handleForceDelete()}
+                    />
+                  </>
+                ) : (
+                  <MenuItem
+                    icon={Delete01Icon}
+                    title="In Papierkorb verschieben"
+                    variant="destructive"
+                  />
+                )}
+              </DropdownButton>
+            </>
           )}
-        </div>
-        {!documents.total && (
+        </Toolbar>
+
+        {!total && (
           <Empty className="border border-dashed">
             <EmptyHeader>
               <EmptyMedia variant="icon">
@@ -224,14 +310,28 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
             </EmptyContent>
           </Empty>
         )}
-        <div className="mb-4 flex grid min-h-0 grid-cols-6 flex-wrap items-start justify-start gap-4">
-          {documents.data.map(document => (
+        <div className="absolute top-32 bottom-0 mb-4 grid min-h-0 grid-cols-6 gap-4 overflow-y-auto">
+          {documents.map(document => (
             <DocumentIndexFile
               document={document}
               key={document.id}
               onClick={document => onClick(document)}
             />
           ))}
+          {isNextPage && (
+            <WhenVisible
+              always
+              params={{
+                data: {
+                  page: page + 1
+                },
+                only: ['documents', 'page', 'isNextPage', 'from', 'to', 'total']
+              }}
+              fallback={<div />}
+            >
+              <div />
+            </WhenVisible>
+          )}
         </div>
         <DocumentMutliDocUpload
           isOpen={showMultiDocUpload}

@@ -13,7 +13,7 @@ export const DocumentIndexFileCard: React.FC<DocumentIndexFileCardProps> = ({ do
           <span className="text-muted-foreground">Dateiname</span>
           <span className="font-medium">{document.filename}</span>
         </li>
-        <li className="grid grid-cols-2 gap-0.5">
+        <ul className="grid grid-cols-2 gap-0.5">
           <li className="grid gap-0.5">
             <span className="text-muted-foreground">Dokumentdatum</span>
             <span className="font-medium">{document.issued_on}</span>
@@ -22,21 +22,21 @@ export const DocumentIndexFileCard: React.FC<DocumentIndexFileCardProps> = ({ do
             <span className="text-muted-foreground">Label</span>
             <span className="font-medium">{document.label}</span>
           </li>
-        </li>
+        </ul>
         <li className="grid gap-0.5">
           <span className="text-muted-foreground">Titel</span>
           <span className="font-medium">{document.title}</span>
         </li>
-        <li className="grid grid-cols-2 gap-0.5">
-          <div className="grid">
+        <ul className="grid grid-cols-2 gap-0.5">
+          <li className="grid">
             <span className="text-muted-foreground">Seiten</span>
             <span className="font-medium">{document.pages}</span>
-          </div>
-          <div className="grid">
+          </li>
+          <li className="grid">
             <span className="text-muted-foreground">Dateigröße</span>
             <span className="font-medium">{filesize(document.file_size)}</span>
-          </div>
-        </li>
+          </li>
+        </ul>
         <li className="grid gap-0.5">
           <span className="text-muted-foreground">Dokumenttyp</span>
           <span className="font-medium">{document.type?.name}</span>

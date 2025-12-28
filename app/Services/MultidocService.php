@@ -13,7 +13,6 @@ class MultidocService
     }
 
     public function process(string $file): void {
-        $pdfBaseName = basename($file, '.pdf');
         $fileDate = date('Y-m-d', filemtime($file));
 
         // Separate PDF pages first
@@ -110,7 +109,7 @@ class MultidocService
             } else {
                 // Merge multiple pages using pdftk or pdfunite
                 $pagesList = implode(' ', array_map('escapeshellarg', $group['pages']));
-                Process::timeout(60)->run("pdfunite {$pagesList} ".escapeshellarg($outputPath));
+                Process::timeout(60)->run("pdfunite $pagesList ".escapeshellarg($outputPath));
             }
 
             // Dispatch upload job for the created PDF
