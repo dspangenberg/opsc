@@ -1,25 +1,24 @@
 import type * as React from 'react'
 import { useEffect } from 'react'
 import { useFormContext } from '@/Components/twc-ui/form'
-import { FormDateRangePicker } from '@/Components/twc-ui/form-date-range-picker'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormNumberField } from '@/Components/twc-ui/form-number-field'
 import { FormTextArea } from '@/Components/twc-ui/form-text-area'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
-import { InvoiceLinesEditorLineContainer } from '@/Pages/App/Invoice/InvoiceLinesEditorLineContainer'
+import { OfferLinesEditorLineContainer } from './OfferLinesEditorLineContainer'
 
-interface InvoiceLinesEditorProps {
-  invoiceLine: App.Data.InvoiceLineData
-  invoice: App.Data.InvoiceData
+interface OfferLinesEditorDefaultLineProps {
+  offerLine: App.Data.OfferLineData
+  offer: App.Data.OfferData
   index: number
 }
 
-export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = ({
+export const OfferLinesEditorDefaultLine: React.FC<OfferLinesEditorDefaultLineProps> = ({
   index,
-  invoice,
-  invoiceLine
+  offer,
+  offerLine
 }) => {
-  const form = useFormContext<App.Data.InvoiceData>()
+  const form = useFormContext<App.Data.OfferData>()
 
   if (!form) {
     throw new Error('InvoiceLinesEditorDefaultLine must be used within a Form context')
@@ -30,18 +29,16 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
   const textField = form.register(`lines[${index}].text`)
   const priceField = form.register(`lines[${index}].price`)
   const amountField = form.register(`lines[${index}].amount`)
-  const servicePeriodBegin = form.register(`lines[${index}].service_period_begin`)
-  const servicePeriodEnd = form.register(`lines[${index}].service_period_end`)
 
   useEffect(() => {
-    if (invoiceLine.type_id === 1 && quantityField.value && priceField.value) {
+    if (offerLine.type_id === 1 && quantityField.value && priceField.value) {
       const totalPrice = Number(quantityField.value) * Number(priceField.value)
       amountField.onChange(totalPrice ?? 0)
     }
-  }, [invoiceLine.type_id, quantityField.value, priceField.value])
+  }, [offerLine.type_id, quantityField.value, priceField.value])
 
   return (
-    <InvoiceLinesEditorLineContainer invoiceLine={invoiceLine}>
+    <OfferLinesEditorLineContainer offerLine={offerLine}>
       <FormGrid>
         <div className="col-span-3">
           <FormNumberField
@@ -59,23 +56,6 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
         </div>
         <div className="col-span-10 space-y-1.5">
           <FormTextArea aria-label="Beschreibung" autoSize rows={2} {...textField} />
-
-          <FormDateRangePicker
-            name={`lines[${index}].service_period`}
-            aria-label="Leistungsdatum"
-            value={
-              servicePeriodBegin.value && servicePeriodEnd.value
-                ? {
-                    start: servicePeriodBegin.value,
-                    end: servicePeriodEnd.value
-                  }
-                : undefined
-            }
-            onChange={range => {
-              servicePeriodBegin.onChange(range?.start ?? null)
-              servicePeriodEnd.onChange(range?.end ?? null)
-            }}
-          />
         </div>
         <div className="col-span-4">
           <FormNumberField aria-label="Einzelpreis" {...priceField} />
@@ -83,12 +63,12 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
         <div className="col-span-4">
           <FormNumberField
             aria-label="Gesamtbetrag"
-            isDisabled={invoiceLine.type_id === 1}
+            isDisabled={offerLine.type_id === 1}
             {...amountField}
           />
         </div>
-        <div className="pt-2 font-medium text-sm">{invoiceLine.rate?.rate}%</div>
+        <div className="pt-2 font-medium text-sm">{offerLine.rate?.rate}%</div>
       </FormGrid>
-    </InvoiceLinesEditorLineContainer>
+    </OfferLinesEditorLineContainer>
   )
 }

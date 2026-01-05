@@ -50,7 +50,7 @@ export const OfferTableProvider = ({ children }: OfferTableProviderProps) => {
       type_id: typeId,
       pos: 0,
       tax_id: 0,
-      quantity: [1, 2].includes(typeId) ? 1 : 0,
+      quantity: [1, 3].includes(typeId) ? 1 : 0,
       unit: '',
       text: '',
       price: 0,

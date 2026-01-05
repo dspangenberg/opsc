@@ -72,33 +72,16 @@ class Offer extends Model implements MediableInterface
     protected $fillable = [
         'contact_id',
         'project_id',
-        'invoice_number',
+        'offer_number',
         'issued_on',
-        'due_on',
-        'dunning_block',
         'is_draft',
-        'type_id',
-        'service_provision',
-        'vat_id',
         'address',
-        'payment_deadline_id',
-        'invoice_contact_id',
-        'payment_deadline_id',
-        'is_recurring',
-        'is_loss_of_receivables',
-        'service_period_begin',
         'tax_id',
-        'service_period_end',
         'sent_at',
     ];
 
     protected $attributes = [
-        'dunning_block' => false,
         'project_id' => 0,
-        'invoice_contact_id' => 0,
-        'payment_deadline_id' => 0,
-        'service_provision' => '',
-        'is_loss_of_receivables' => false,
     ];
 
     protected $appends = [
@@ -113,9 +96,9 @@ class Offer extends Model implements MediableInterface
     /**
      * @throws MpdfException|PathAlreadyExists
      */
-    public static function createOrGetPdf(Offer $invoice, bool $uploadToS3 = false): string
+    public static function createOrGetPdf(Offer $offer, bool $uploadToS3 = false): string
     {
-        $invoice = Offer::query()
+        $offer = Offer::query()
             ->with('contact')
             ->with('project')
             ->with('project.manager')
@@ -127,28 +110,25 @@ class Offer extends Model implements MediableInterface
             ])
             ->withSum('lines', 'amount')
             ->withSum('lines', 'tax')
-            ->where('id', $invoice->id)
+            ->where('id', $offer->id)
             ->first();
 
-        $taxes = $invoice->taxBreakdown($invoice->lines);
-        $invoice->linked_invoices = $invoice->lines->filter(function ($line) {
-            return $line->type_id === 9;
-        });
+        $taxes = $offer->taxBreakdown($offer->lines);
 
-        $invoice->lines = $invoice->lines->filter(function ($line) {
+        $offer->lines = $offer->lines->filter(function ($line) {
             return $line->type_id !== 9;
         });
 
         $pdfConfig = [];
-        $pdfConfig['pdfA'] = ! $invoice->is_draft;
+        $pdfConfig['pdfA'] = ! $offer->is_draft;
         $pdfConfig['hide'] = true;
-        $pdfConfig['watermark'] = $invoice->is_draft ? 'ENTWURF' : '';
+        $pdfConfig['watermark'] = $offer->is_draft ? 'ENTWURF' : '';
 
-        $pdfFile = PdfService::createPdf('invoice', 'pdf.invoice.index',
+        $pdfFile = PdfService::createPdf('invoice', 'pdf.offer.index',
             [
-                'invoice' => $invoice,
+                'offer' => $offer,
                 'taxes' => $taxes
-            ], $pdfConfig);
+            ], $pdfConfig, [77]);
 
         return $pdfFile;
     }
@@ -263,23 +243,10 @@ class Offer extends Model implements MediableInterface
             $taxRate = TaxRate::where('id', $line['tax_rate_id'])->first();
             $amount = $line['type_id'] === 1 ? $line['quantity'] * $line['price'] : $line['amount'];
 
-            // Convert date format from d.m.Y to Y-m-d for database
-            $servicePeriodBegin = null;
-            if (!empty($line['service_period_begin'])) {
-                $date = \Carbon\Carbon::createFromFormat('d.m.Y', $line['service_period_begin']);
-                $servicePeriodBegin = $date ? $date->format('Y-m-d') : null;
-            }
-
-            $servicePeriodEnd = null;
-            if (!empty($line['service_period_end'])) {
-                $date = \Carbon\Carbon::createFromFormat('d.m.Y', $line['service_period_end']);
-                $servicePeriodEnd = $date ? $date->format('Y-m-d') : null;
-            }
-
             $lineAttributes = [
-                'invoice_id' => $this->id,
+                'offer_id' => $this->id,
                 'quantity' => $line['quantity'],
-                'type_id' => $line['type_id'] ?? 1,
+                'type_id' => $line['type_id'] ?: 1,
                 'unit' => $line['unit'] ?? '',
                 'tax_rate_id' => $line['tax_rate_id'] ?? null,
                 'text' => $line['text'] ?? '',
@@ -288,16 +255,14 @@ class Offer extends Model implements MediableInterface
                 'tax_rate' => $taxRate->rate ?? 0,
                 'tax' => $amount / 100 * $taxRate->rate,
                 'pos' => $line['type_id'] === 9 ? 999 : $line['pos'] ?? $index,
-                'service_period_begin' => $servicePeriodBegin,
-                'service_period_end' => $servicePeriodEnd
             ];
 
             if ($line['id'] > 0) {
-                InvoiceLine::where('id', $line['id'])
-                    ->where('invoice_id', $this->id)
+                OfferLine::where('id', $line['id'])
+                    ->where('offer_id', $this->id)
                     ->update($lineAttributes);
             } else {
-                InvoiceLine::create($lineAttributes);
+                OfferLine::create($lineAttributes);
             }
         }
     }
@@ -394,7 +359,7 @@ class Offer extends Model implements MediableInterface
     {
         return [
             'issued_on' => 'date',
-            'due_on' => 'date',
+            'valid_until' => 'date',
             'sent_at' => 'datetime',
             'is_draft' => 'boolean',
         ];

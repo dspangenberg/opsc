@@ -2,20 +2,20 @@ import type * as React from 'react'
 import { useFormContext } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
-import { InvoiceLinesEditorLineContainer } from '@/Pages/App/Invoice/InvoiceLinesEditorLineContainer'
+import { OfferLinesEditorLineContainer } from './OfferLinesEditorLineContainer'
 
-interface InvoiceLinesEditorProps {
-  invoiceLine: App.Data.InvoiceLineData
-  invoice: App.Data.InvoiceData
+interface OfferLinesEditorProps {
+  offerLine: App.Data.OfferLineData
+  offer: App.Data.OfferData
   index: number
 }
 
-export const InvoiceLinesEditorCaptionLine: React.FC<InvoiceLinesEditorProps> = ({
+export const OfferLinesEditorCaptionLine: React.FC<OfferLinesEditorProps> = ({
   index,
-  invoice,
-  invoiceLine
+  offer,
+  offerLine
 }) => {
-  const form = useFormContext<App.Data.InvoiceData>()
+  const form = useFormContext<App.Data.OfferData>()
 
   if (!form) {
     throw new Error('InvoiceLinesEditorCaptionLine must be used within a Form context')
@@ -24,15 +24,15 @@ export const InvoiceLinesEditorCaptionLine: React.FC<InvoiceLinesEditorProps> = 
   const textField = form.register(`lines[${index}].text`)
 
   return (
-    <InvoiceLinesEditorLineContainer invoiceLine={invoiceLine}>
+    <OfferLinesEditorLineContainer offerLine={offerLine}>
       <FormGrid>
         <div className="col-span-5" />
 
         <div className="col-span-10">
-          <FormTextField aria-label="Beschreibung" className="!text-lg" {...textField} />
+          <FormTextField aria-label="Beschreibung" className="text-lg!" {...textField} />
         </div>
         <div className="col-span-8" />
       </FormGrid>
-    </InvoiceLinesEditorLineContainer>
+    </OfferLinesEditorLineContainer>
   )
 }

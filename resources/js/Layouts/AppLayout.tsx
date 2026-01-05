@@ -54,7 +54,7 @@ const SidebarContent: React.FC<PropsWithChildren> = ({ children }) => {
                 aria-label="Sidebar umschalten"
                 size="icon-sm"
               />
-              <PageBreadcrumbs className="hidden flex-1 md:flex" />
+              <PageBreadcrumbs className="hidden flex-1 items-center md:flex" />
               <div className="flex-none">
                 <NavUser user={user} />
               </div>

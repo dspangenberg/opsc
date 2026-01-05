@@ -10,6 +10,7 @@
     "calebporzio/sushi": "^2.5",
     "eg-mohamed/notable": "^1.4",
     "endroid/qr-code": "^6.0.8",
+    "erusev/parsedown": "^1.7",
     "inertiajs/inertia-laravel": "^2.0",
     "laravel/framework": "^12",
     "laravel/sanctum": "^4.1.1",

@@ -9,30 +9,24 @@ namespace App\Http\Controllers\App;
 
 use App\Data\ContactData;
 use App\Data\InvoiceData;
-use App\Data\InvoiceLineData;
 use App\Data\InvoiceTypeData;
 use App\Data\OfferData;
 use App\Data\PaymentDeadlineData;
 use App\Data\ProjectData;
 use App\Data\TaxData;
-use App\Data\TransactionData;
+use App\Data\TextModuleData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceDetailsBaseUpdateRequest;
-use App\Http\Requests\InvoiceLinesUpdateRequest;
-use App\Http\Requests\InvoiceLineUpdateRequest;
-use App\Http\Requests\InvoiceStoreRequest;
 use App\Http\Requests\OfferStoreRequest;
 use App\Models\Contact;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
 use App\Models\InvoiceType;
 use App\Models\Offer;
-use App\Models\Payment;
-use App\Models\PaymentDeadline;
 use App\Models\Project;
 use App\Models\Tax;
+use App\Models\TextModule;
 use App\Models\Time;
-use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -60,7 +54,6 @@ class OfferController extends Controller
 
         $offers = Offer::query()
             ->with(['contact', 'project'])
-            ->view($view)
             ->withSum('lines', 'amount')
             ->withSum('lines', 'tax')
             ->byYear($year)
@@ -114,7 +107,7 @@ class OfferController extends Controller
         $offer->save();
 
 
-        return redirect()->route('app.offer.details', ['invoice' => $offer->id]);
+        return redirect()->route('app.offer.details', ['offer' => $offer->id]);
     }
 
     public function show(Offer $offer)
@@ -159,7 +152,6 @@ class OfferController extends Controller
         $invoiceTypes = InvoiceType::query()->orderBy('display_name')->get();
         $projects = Project::where('is_archived', false)->orderBy('name')->get();
         $taxes = Tax::with('rates')->orderBy('name')->get();
-        $paymentDeadlines = PaymentDeadline::orderBy('name')->get();
 
         return Inertia::modal('App/Invoice/InvoiceDetailsEditBaseData')
             ->with([
@@ -167,7 +159,6 @@ class OfferController extends Controller
                 'invoice_types' => InvoiceTypeData::collect($invoiceTypes),
                 'projects' => ProjectData::collect($projects),
                 'taxes' => TaxData::collect($taxes),
-                'payment_deadlines' => PaymentDeadlineData::collect($paymentDeadlines),
             ])->baseRoute('app.invoice.details', [
                 'invoice' => $invoice->id,
             ]);
@@ -185,15 +176,15 @@ class OfferController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function updateLines(Request $request, Invoice $invoice)
+    public function updateLines(Request $request, Offer $offer)
     {
         $validatedLines = $request->lines;
 
         // Simply pass the validated array data to updatePositions
         // The model will handle the data as arrays, not DTOs
-        $invoice->updatePositions($validatedLines);
+        $offer->updatePositions($validatedLines);
 
-        return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
+        return redirect()->route('app.offer.details', ['offer' => $offer->id]);
     }
 
     public function destroy(Invoice $invoice)
@@ -270,42 +261,56 @@ class OfferController extends Controller
      * @throws MpdfException
      * @throws PathAlreadyExists
      */
-    public function downloadPdf(Invoice $invoice): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function downloadPdf(Offer $offer): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
-        $file = '/Invoicing/Invoices/'.$invoice->issued_on->format('Y').'/'.$invoice->filename;
+        $file = '/Invoicing/Invoices/'.$offer->issued_on->format('Y').'/'.$offer->filename;
 
-        $pdfFile = Invoice::createOrGetPdf($invoice, false);
+        $pdfFile = Offer::createOrGetPdf($offer, false);
 
         return response()->file($pdfFile);
-
-        if (Storage::disk('s3')->exists($file)) {
-            return Storage::disk('s3')->download($file, $invoice->filename);
-        }
 
         abort(404);
     }
 
-    public function history(Invoice $invoice, ?int $line = null)
+    public function terms(Offer $offer, ?int $line = null)
     {
-        $invoice
-            ->load('invoice_contact')
+        $textModules = TextModule::orderBy('title')->get();
+
+        $offer
             ->load('contact')
             ->load('project')
-            ->load('payment_deadline')
-            ->load('type')
             ->load([
                 'lines' => function ($query) {
                     $query->orderBy('pos');
                 },
             ])
-            ->load('lines.linked_invoice')
             ->load('tax')
             ->load('tax.rates')
             ->loadSum('lines', 'amount')
             ->loadSum('lines', 'tax');
 
-        return Inertia::render('App/Invoice/InvoiceHistory', [
-            'invoice' => InvoiceData::from($invoice),
+        return Inertia::render('App/Offer/OfferTerms', [
+            'offer' => OfferData::from($offer),
+            'textModules' => TextModuleData::collect($textModules),
+        ]);
+    }
+    public function history(Offer $offer, ?int $line = null)
+    {
+        $offer
+            ->load('contact')
+            ->load('project')
+            ->load([
+                'lines' => function ($query) {
+                    $query->orderBy('pos');
+                },
+            ])
+            ->load('tax')
+            ->load('tax.rates')
+            ->loadSum('lines', 'amount')
+            ->loadSum('lines', 'tax');
+
+        return Inertia::render('App/Offer/OfferHistory', [
+            'offer' => OfferData::from($offer),
         ]);
     }
 }

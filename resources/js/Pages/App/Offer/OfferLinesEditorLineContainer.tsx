@@ -1,3 +1,5 @@
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import {
   Copy01Icon,
   Delete03Icon,
@@ -5,26 +7,24 @@ import {
   MoreVerticalCircle01Icon
 } from '@hugeicons/core-free-icons'
 import type * as React from 'react'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { Icon } from '@/Components/twc-ui/icon'
 import { MenuItem } from '@/Components/twc-ui/menu'
-import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
+import { useOfferTable } from './OfferTableProvider'
 
-interface InvoiceLinesEditorLineContainerProps {
-  invoiceLine: App.Data.InvoiceLineData
+interface OfferLinesEditorLineContainerProps {
+  offerLine: App.Data.OfferLineData
   children: React.ReactNode
 }
 
-export const InvoiceLinesEditorLineContainer: React.FC<InvoiceLinesEditorLineContainerProps> = ({
+export const OfferLinesEditorLineContainer: React.FC<OfferLinesEditorLineContainerProps> = ({
   children,
-  invoiceLine
+  offerLine
 }) => {
-  const { duplicateLine, removeLine } = useInvoiceTable()
+  const { duplicateLine, removeLine } = useOfferTable()
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: invoiceLine.id ?? 0
+    id: offerLine.id ?? 0
   })
 
   const style = {
@@ -45,13 +45,13 @@ export const InvoiceLinesEditorLineContainer: React.FC<InvoiceLinesEditorLineCon
             icon={Copy01Icon}
             title="Duplizieren"
             separator
-            onClick={() => duplicateLine(invoiceLine)}
+            onClick={() => duplicateLine(offerLine)}
           />
           <MenuItem
             icon={Delete03Icon}
             variant="destructive"
             title="Löschen"
-            onClick={() => removeLine(invoiceLine.id)}
+            onClick={() => removeLine(offerLine.id)}
           />
         </DropdownButton>
       </div>

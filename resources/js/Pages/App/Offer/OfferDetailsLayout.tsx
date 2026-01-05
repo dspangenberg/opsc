@@ -1,4 +1,5 @@
 import {
+  Cancel01Icon,
   CashbackEuroIcon,
   Delete02Icon,
   DocumentValidationIcon,
@@ -9,6 +10,7 @@ import {
   FileEditIcon,
   FileRemoveIcon,
   Files02Icon,
+  LegalDocument02Icon,
   MoreVerticalCircle01Icon,
   Pdf02Icon,
   PrinterIcon,
@@ -33,9 +35,16 @@ import { OfferTableProvider, useOfferTable } from './OfferTableProvider'
 interface Props {
   offer: App.Data.OfferData
   children: React.ReactNode
+  termsEditMode?: boolean
+  onTermsEditModeChange?: (editMode: boolean) => void
 }
 
-const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children }) => {
+const OfferDetailsLayoutContent: React.FC<Props> = ({
+  offer,
+  children,
+  termsEditMode,
+  ...props
+}) => {
   const onPrintPdf = () => {
     print(route('app.invoice.pdf', { id: offer.id }))
   }
@@ -60,8 +69,8 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children }) => {
   const breadcrumbs = useMemo(
     () => [
       {
-        title: 'Rechnungen',
-        url: route('app.invoice.index')
+        title: 'Angebote',
+        url: route('app.offer.index')
       },
       {
         title: offer.formated_offer_number
@@ -70,7 +79,7 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children }) => {
     [offer.formated_offer_number]
   )
 
-  const title = `RG-${offer.formated_offer_number}`
+  const title = `AG-${offer.formated_offer_number}`
 
   const { handleDownload } = useFileDownload({
     route: route('app.invoice.pdf', { id: offer.id }),
@@ -116,10 +125,13 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children }) => {
       <Tabs variant="underlined" defaultSelectedKey={currentRoute}>
         <TabList aria-label="Ansicht">
           <Tab id="app.offer.details" href={route('app.offer.details', { offer }, false)}>
-            Details
+            Angebotspositionen
           </Tab>
-          <Tab id="app.invoice.history" href={route('app.invoice.history', { offer }, false)}>
-            Historie + Buchungen
+          <Tab id="app.offer.terms" href={route('app.offer.terms', { offer }, false)}>
+            Bedingungen
+          </Tab>
+          <Tab id="app.offer.history" href={route('app.offer.history', { offer }, false)}>
+            Historie
           </Tab>
         </TabList>
       </Tabs>
@@ -127,9 +139,13 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children }) => {
     [currentRoute, offer]
   )
 
+  const setTermsEditMode = (value: boolean) => {
+    props?.onTermsEditModeChange?.(value)
+  }
+
   const toolbar = useMemo(
     () => (
-      <Toolbar isDisabled={editMode}>
+      <Toolbar isDisabled={editMode || termsEditMode}>
         {!offer.is_draft && !offer.sent_at && (
           <ToolbarButton
             variant="primary"
@@ -137,33 +153,46 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children }) => {
             title="Rechnung per E-Mail versenden"
           />
         )}
+        {offer.is_draft && currentRoute === 'app.offer.terms' && (
+          <ToolbarButton
+            icon={LegalDocument02Icon}
+            variant="primary"
+            title="Bedingungen bearbeiten"
+            isDisabled={termsEditMode}
+            onClick={() => setTermsEditMode(true)}
+          />
+        )}
+        {offer.is_draft && currentRoute === 'app.offer.details' && (
+          <ToolbarButton
+            icon={EditTableIcon}
+            variant="primary"
+            title="Positionen bearbeiten"
+            onClick={() => setEditMode(true)}
+          />
+        )}
         {offer.is_draft && (
           <>
-            <ToolbarButton
-              icon={EditTableIcon}
-              variant="primary"
-              title="Positionen bearbeiten"
-              onClick={() => setEditMode(true)}
-            />
             <ToolbarButton
               variant="default"
               icon={Edit03Icon}
               title="Stammdaten bearbeiten"
               onClick={handleEditBaseDataButtonClick}
             />
+            <ToolbarButton
+              icon={DocumentValidationIcon}
+              title="Angebot abschließen"
+              onClick={handleRelease}
+            />
           </>
-        )}
-        {offer.is_draft && (
-          <ToolbarButton
-            icon={DocumentValidationIcon}
-            title="Angebot abschließen"
-            onClick={handleRelease}
-          />
         )}
 
         <ToolbarButton icon={Pdf02Icon} title="PDF-Vorschau" onClick={() => onShowPdf()} />
 
-        <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} isDisabled={editMode}>
+        <DropdownButton
+          variant="toolbar"
+          icon={MoreVerticalCircle01Icon}
+          isDisabled={editMode || termsEditMode}
+        >
           {offer.is_draft && (
             <>
               <MenuItem
@@ -228,7 +257,17 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children }) => {
         </DropdownButton>
       </Toolbar>
     ),
-    [editMode, handleDownload, offer.sent_at, handleRelease, setEditMode, offer, offer.id]
+    [
+      editMode,
+      termsEditMode,
+      handleDownload,
+      offer.sent_at,
+      handleRelease,
+      setEditMode,
+      offer,
+      offer.id,
+      currentRoute
+    ]
   )
 
   return (
@@ -245,10 +284,12 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children }) => {
   )
 }
 
-export const OfferDetailsLayout: React.FC<Props> = ({ offer, children }) => {
+export const OfferDetailsLayout: React.FC<Props> = ({ offer, children, ...props }) => {
   return (
     <OfferTableProvider>
-      <OfferDetailsLayoutContent offer={offer}>{children}</OfferDetailsLayoutContent>
+      <OfferDetailsLayoutContent offer={offer} {...props}>
+        {children}
+      </OfferDetailsLayoutContent>
     </OfferTableProvider>
   )
 }

@@ -5,6 +5,7 @@
 
 import {
   AbacusIcon,
+  Configuration01Icon,
   ContactBookIcon,
   DashboardSpeed02Icon,
   FileEuroIcon,
@@ -241,7 +242,22 @@ const data = {
       ]
     }
   ],
-  navSecondary: []
+  navSecondary: [
+    {
+      title: 'Einstellungen',
+      url: route('app.setting.text-module.index', {}, false),
+      icon: Configuration01Icon,
+      activePath: '/app/settings',
+      items: [
+        {
+          title: 'Textbausteine',
+          url: route('app.setting.text-module.index', {}, false),
+          icon: Configuration01Icon,
+          activePath: '/app/settings/text-modules'
+        }
+      ]
+    }
+  ]
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

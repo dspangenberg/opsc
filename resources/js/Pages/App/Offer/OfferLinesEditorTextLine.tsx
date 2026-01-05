@@ -2,16 +2,16 @@ import type * as React from 'react'
 import { useFormContext } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextArea } from '@/Components/twc-ui/form-text-area'
-import { InvoiceLinesEditorLineContainer } from '@/Pages/App/Invoice/InvoiceLinesEditorLineContainer'
+import { OfferLinesEditorLineContainer } from './OfferLinesEditorLineContainer'
 
 interface InvoiceLinesEditorProps {
-  invoiceLine: App.Data.InvoiceLineData
-  invoice: App.Data.InvoiceData
+  offerLine: App.Data.OfferLineData
+  offer: App.Data.OfferData
   index: number
 }
 
-export const InvoiceLinesEditorTextLine: React.FC<InvoiceLinesEditorProps> = ({
-  invoiceLine,
+export const OfferLinesEditorTextLine: React.FC<InvoiceLinesEditorProps> = ({
+  offerLine,
   index
 }) => {
   const form = useFormContext<App.Data.InvoiceData>()
@@ -23,7 +23,7 @@ export const InvoiceLinesEditorTextLine: React.FC<InvoiceLinesEditorProps> = ({
   const textField = form.register(`lines[${index}].text`)
 
   return (
-    <InvoiceLinesEditorLineContainer invoiceLine={invoiceLine}>
+    <OfferLinesEditorLineContainer offerLine={offerLine}>
       <FormGrid>
         <div className="col-span-5" />
 
@@ -32,6 +32,6 @@ export const InvoiceLinesEditorTextLine: React.FC<InvoiceLinesEditorProps> = ({
         </div>
         <div className="col-span-8" />
       </FormGrid>
-    </InvoiceLinesEditorLineContainer>
+    </OfferLinesEditorLineContainer>
   )
 }

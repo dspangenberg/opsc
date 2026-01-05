@@ -3,6 +3,10 @@
 @plugin 'tailwindcss-animate';
 @plugin "tailwindcss-react-aria-components";
 @plugin 'tailwind-scrollbar';
+/*
+  ---break---
+*/
+@plugin "tailwind-scrollbar-hide";
 
 @source '../views';
 @source '../ressources/js';
@@ -116,6 +120,8 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.87 0 0);
+  --brand: oklch(0.623 0.214 259.815);
+  --highlight: oklch(0.852 0.199 91.936);
 }
 
 .dark {
@@ -152,6 +158,8 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+  --brand: oklch(0.707 0.165 254.624);
+  --highlight: oklch(0.852 0.199 91.936);
 }
 
 @layer base {
@@ -269,6 +277,8 @@ h6[id] {
 
 @theme inline {
   --color-page-content: var(--page-content);
+  --color-brand: var(--brand);
+  --color-highlight: var(--highlight);
 }
 
 /*

@@ -28,18 +28,18 @@ import { Form, useForm } from '@/Components/twc-ui/form'
 import { MenuItem } from '@/Components/twc-ui/menu'
 import { SplitButton } from '@/Components/twc-ui/split-button'
 import { BorderedBox } from '@/Components/twcui/bordered-box'
-import { InvoiceLinesEditorDefaultLine } from '@/Pages/App/Invoice/InvoiceLinesEditorDefaultLine'
-import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
-import { InvoiceLinesEditorCaptionLine } from './InvoiceLinesEditorCaptionLine'
-import { InvoiceLinesEditorPageBreak } from './InvoiceLinesEditorPageBreak'
-import { InvoiceLinesEditorTextLine } from './InvoiceLinesEditorTextLine'
+import { OfferLinesEditorCaptionLine } from './OfferLinesEditorCaptionLine'
+import { OfferLinesEditorDefaultLine } from './OfferLinesEditorDefaultLine'
+import { OfferLinesEditorPageBreak } from './OfferLinesEditorPageBreak'
+import { OfferLinesEditorTextLine } from './OfferLinesEditorTextLine'
+import { useOfferTable } from './OfferTableProvider'
 
 interface InvoiceLinesEditorProps {
-  invoice: App.Data.InvoiceData
+  offer: App.Data.OfferData
 }
 
-export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => {
-  const { setEditMode, lines, addLine, setLines } = useInvoiceTable()
+export const OfferLinesEditor: FC<InvoiceLinesEditorProps> = ({ offer }) => {
+  const { setEditMode, lines, addLine, setLines } = useOfferTable()
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -49,21 +49,27 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
   )
 
   const form = useForm(
-    'app.invoice.lines-update',
+    'app.offerlines.lines-update',
     'put',
-    route('app.invoice.lines-update', {
-      invoice: invoice.id
+    route('app.offer.lines-update', {
+      offer: offer.id
     }),
     {
-      ...invoice,
+      ...offer,
       lines
     }
   )
 
   // Sync form data when lines change (e.g., when duplicating or adding lines)
   useEffect(() => {
-    // @ts-expect-error - Circular reference in InvoiceLineData.linked_invoice
-    form.setData('lines', lines)
+    // Merge current form values with new lines structure to preserve user input
+    const currentFormLines = form.data.lines || []
+    const mergedLines = lines.map((line, index) => {
+      const existingFormLine = currentFormLines.find(fl => fl.id === line.id)
+      // If line exists in form with user input, keep form values; otherwise use context values
+      return existingFormLine || line
+    })
+    form.setData('lines', mergedLines)
   }, [lines])
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -73,7 +79,9 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
       const oldIndex = lines.findIndex(line => line.id === active.id)
       const newIndex = lines.findIndex(line => line.id === over.id)
 
-      const newLines = [...lines]
+      // Use current form data to preserve user input during drag
+      const currentFormLines = form.data.lines || []
+      const newLines = [...currentFormLines]
       const [movedItem] = newLines.splice(oldIndex, 1)
       newLines.splice(newIndex, 0, movedItem)
 
@@ -147,38 +155,38 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
                       return null
                     case 2:
                       return (
-                        <InvoiceLinesEditorCaptionLine
+                        <OfferLinesEditorCaptionLine
                           key={line.id}
-                          invoice={invoice}
+                          offer={offer}
                           index={index}
-                          invoiceLine={line}
+                          offerLine={line}
                         />
                       )
                     case 4:
                       return (
-                        <InvoiceLinesEditorTextLine
+                        <OfferLinesEditorTextLine
                           key={line.id}
-                          invoice={invoice}
+                          offer={offer}
                           index={index}
-                          invoiceLine={line}
+                          offerLine={line}
                         />
                       )
                     case 8:
                       return (
-                        <InvoiceLinesEditorPageBreak
+                        <OfferLinesEditorPageBreak
                           key={line.id}
-                          invoice={invoice}
+                          offer={offer}
                           index={index}
-                          invoiceLine={line}
+                          offerLine={line}
                         />
                       )
                     default:
                       return (
-                        <InvoiceLinesEditorDefaultLine
+                        <OfferLinesEditorDefaultLine
                           key={line.id}
-                          invoice={invoice}
+                          offer={offer}
                           index={index}
-                          invoiceLine={line}
+                          offerLine={line}
                         />
                       )
                   }
@@ -191,7 +199,7 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
       <div className="flex flex-1 p-4">
         <div className="flex flex-1 items-center">
           <SplitButton
-            title="Rechnungsposition hinzufügen"
+            title="Position hinzufügen"
             variant="outline"
             icon={RowInsertIcon}
             onClick={() => addLine(1)}

@@ -1,18 +1,18 @@
 import type * as React from 'react'
 import { useFormContext } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
-import { InvoiceLinesEditorLineContainer } from '@/Pages/App/Invoice/InvoiceLinesEditorLineContainer'
+import { OfferLinesEditorLineContainer } from './OfferLinesEditorLineContainer'
 
 interface InvoiceLinesEditorProps {
-  invoiceLine: App.Data.InvoiceLineData
-  invoice: App.Data.InvoiceData
+  offerLine: App.Data.OfferLineData
+  offer: App.Data.OfferData
   index: number
 }
 
-export const InvoiceLinesEditorPageBreak: React.FC<InvoiceLinesEditorProps> = ({
+export const OfferLinesEditorPageBreak: React.FC<InvoiceLinesEditorProps> = ({
   index,
-  invoice,
-  invoiceLine
+  offer,
+  offerLine
 }) => {
   const form = useFormContext<App.Data.InvoiceData>()
 
@@ -21,10 +21,10 @@ export const InvoiceLinesEditorPageBreak: React.FC<InvoiceLinesEditorProps> = ({
   }
 
   return (
-    <InvoiceLinesEditorLineContainer invoiceLine={invoiceLine}>
+    <OfferLinesEditorLineContainer offerLine={offerLine}>
       <FormGrid className="flex items-center pt-4">
         <div className="col-span-23">Seitenumbruch</div>
       </FormGrid>
-    </InvoiceLinesEditorLineContainer>
+    </OfferLinesEditorLineContainer>
   )
 }

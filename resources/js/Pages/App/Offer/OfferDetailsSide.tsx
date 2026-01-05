@@ -29,7 +29,7 @@ export const OfferDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
     [offer.contact_id]
   )
 
-  const title = `RG-${offer.formated_offer_number}`
+  const title = `AG-${offer.formated_offer_number}`
 
   return (
     <DataCard title={title}>

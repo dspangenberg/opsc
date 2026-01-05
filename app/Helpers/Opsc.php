@@ -30,7 +30,8 @@ if (!function_exists('md')) {
      */
     function md($markdown): string
     {
-        return Str::inlineMarkdown($markdown);
+        $md = new Parsedown();
+        return $md->text($markdown);
     }
 }
 

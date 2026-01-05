@@ -411,6 +411,14 @@ tax: number | null;
 tax_rate_id: number;
 rate: App.Data.TaxRateData | null;
 };
+export type OfferSectionData = {
+id: number | null;
+is_required: boolean;
+name: string;
+title: string | null;
+default_content: string | null;
+pos: number;
+};
 export type PaymentData = {
 id: number | null;
 payable_type: string;
@@ -527,6 +535,11 @@ website: string;
 subdomain: string;
 prefix: string;
 formated_prefix: string;
+};
+export type TextModuleData = {
+id: number | null;
+title: string | null;
+content: string | null;
 };
 export type TimeCategoryData = {
 id: number | null;

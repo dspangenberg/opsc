@@ -10,6 +10,7 @@
     "cssVariables": true,
     "prefix": ""
   },
+  "iconLibrary": "lucide",
   "aliases": {
     "components": "@/Components",
     "utils": "@/Lib/utils",
@@ -18,7 +19,7 @@
     "hooks": "@/Hooks"
   },
   "registries": {
-    "@twc-ui": "https://twc-ui.test/r/{name}.json"
-  },
-  "iconLibrary": "lucide"
+    "@twc-ui": "https://twc-ui.test/r/{name}.json",
+    "@plate": "https://platejs.org/r/{name}.json"
+  }
 }

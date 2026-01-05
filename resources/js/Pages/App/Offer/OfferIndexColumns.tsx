@@ -2,7 +2,7 @@ import { Link } from '@inertiajs/react'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '@/Components/ui/checkbox'
 
-const editUrl = (id: number | null) => (id ? route('app.invoice.details', { id }) : '#')
+const editUrl = (id: number | null) => (id ? route('app.offer.details', { id }) : '#')
 const contactUrl = (id: number | null) => (id ? route('app.contact.details', { id }) : '#')
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {

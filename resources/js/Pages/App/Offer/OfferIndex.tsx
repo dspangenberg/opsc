@@ -46,14 +46,14 @@ const OfferIndex: React.FC<OfferIndexProps> = ({ offers, years, currentYear }) =
 
   const handleNextYear = useCallback(() => {
     const newYear =
-      Number(year) === 0 ? localCurrentYear : Number.parseInt(year as unknown as string) + 1
+      Number(year) === 0 ? localCurrentYear : Number.parseInt(year as unknown as string, 10) + 1
     setYear(_prevYear => newYear)
   }, [localCurrentYear, setYear, year])
 
   useEffect(() => {
     const debouncedNavigate = debounce(() => {
       if (year !== currentYear) {
-        router.get(route('app.invoice.index', { _query: { view: route().queryParams.view, year } }))
+        router.get(route('app.offer.index', { _query: { view: route().queryParams.view, year } }))
       }
     }, 300) // 300ms delay
 

@@ -21,14 +21,8 @@ const currencyFormatter = new Intl.NumberFormat('de-DE', {
   minimumFractionDigits: 2
 })
 
-export interface LineCommandProps {
-  command: string
-  lineId?: number
-}
-
 export interface InvoiceTableProps {
   offer: App.Data.OfferData
-  onLineCommand: (line: LineCommandProps) => void
 }
 
 export interface CommonTableProps {
