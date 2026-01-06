@@ -27,27 +27,27 @@ class OfferSectionController extends Controller
         $section->pos = $pos;
         return Inertia::modal('App/OfferSection/OfferSectionEdit', [
             'section' => OfferSectionData::from($section),
-        ])->baseRoute('app.offer.section.index');
+        ])->baseRoute('app.settings.offer-section.index');
     }
 
     public function edit(OfferSection $section) {
         return Inertia::modal('App/OfferSection/OfferSectionEdit', [
             'section' => OfferSectionData::from($section),
-        ])->baseRoute('app.offer.section.index');
+        ])->baseRoute('app.settings.offer-section.index');
     }
 
     public function update(OfferSectionRequest $request, OfferSection $section) {
         $section->update($request->validated());
-        return redirect()->route('app.offer.section.index');
+        return redirect()->route('app.settings.offer-section.index');
     }
 
     public function delete(OfferSection $section) {
         $section->delete();
-        return redirect()->route('app.offer.section.index');
+        return redirect()->route('app.settings.offer-section.index');
     }
 
     public function store(OfferSectionRequest $request) {
         OfferSection::create($request->validated());
-        return redirect()->route('app.offer.section.index');
+        return redirect()->route('app.settings.offer-section.index');
     }
 }

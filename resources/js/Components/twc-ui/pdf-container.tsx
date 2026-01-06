@@ -57,7 +57,7 @@ export const PdfContainer: React.FC<Props> = ({
     } catch {
       return 'unbekannt.pdf'
     }
-  }, [file, filename])
+  }, [file])
 
   const divRef = useRef<HTMLDivElement>(null)
   const [show, toggle] = useToggle(false)
@@ -346,8 +346,6 @@ export const PdfContainer: React.FC<Props> = ({
     ),
     [
       scale,
-      scaleMode,
-      showFitToPage,
       cursorTool,
       show,
       calculateFitToPage,
@@ -395,26 +393,28 @@ export const PdfContainer: React.FC<Props> = ({
         <Document
           file={file}
           loading={
-            <div className="mx-auto my-auto flex-1">
+            <div className="flex- mx-auto my-auto flex">
               <LogoSpinner />
             </div>
           }
-          className="h-full w-full overflow-auto bg-accent"
+          className="flex h-full w-full overflow-auto bg-accent"
           onLoadSuccess={onDocumentLoadSuccess}
           inputRef={scrollContainerRef}
+          externalLinkTarget="_blank"
         >
           <div
             style={{
               cursor: cursorTool === 'grab' ? (isDragging ? 'grabbing' : 'grab') : 'text',
               userSelect: cursorTool === 'grab' ? 'none' : 'auto',
               display: 'inline-flex',
-              justifyContent: 'center',
+              justifyContent: 'start',
               alignItems: 'center',
               minHeight: 'calc(100% + 4rem)',
               minWidth: 'calc(100% + 4rem)',
               margin: '-2rem'
             }}
             className={cn(
+              'flex flex-col space-y-6',
               cursorTool === 'grab' &&
                 '[&_.react-pdf__Page__textContent]:pointer-events-none [&_.react-pdf__Page__textContent]:select-none',
               cursorTool === 'grab' && '**:cursor-grab!',
@@ -427,16 +427,19 @@ export const PdfContainer: React.FC<Props> = ({
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
           >
-            <Page
-              pageNumber={pageNumber}
-              scale={scale}
-              className="z-10 border"
-              loading={
-                <div className="mx-auto my-auto flex-1">
-                  <LogoSpinner />
-                </div>
-              }
-            />
+            {Array.from(new Array(numPages), (_el, index) => (
+              <Page
+                key={`page_${index + 1}`}
+                pageNumber={index + 1}
+                scale={scale}
+                className="z-10 border"
+                loading={
+                  <div className="mx-auto my-auto flex-1">
+                    <LogoSpinner />
+                  </div>
+                }
+              />
+            ))}
           </div>
         </Document>
       </div>

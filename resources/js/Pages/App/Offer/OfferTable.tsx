@@ -1,11 +1,7 @@
-import { Delete03Icon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
-import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { useCallback, useEffect, useRef } from 'react'
 import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
-import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
-import { MenuItem } from '@/Components/twc-ui/menu'
 import {
   Table as ShadcnTable,
   TableBody as ShadcnTableBody,
@@ -218,9 +214,7 @@ export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
     return (
       <TableRow>
         <TableCell colSpan={3} />
-        <TableCell colSpan={3} className="font-medium">
-          {line.text}
-        </TableCell>
+        <TableMarkdownCell value={line.text} colSpan={3} />
         <TableCell colSpan={3} />
       </TableRow>
     )

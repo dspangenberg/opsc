@@ -64,14 +64,11 @@ if (!function_exists('formated_offer_id')) {
         }
 
         $formated_id = substr($invoice_id, 0, 4).'.';
-        $formated_id .= substr($invoice_id, 4, 1).'.';
-        if (strlen($invoice_id) == 8) {
-            $formated_id .= substr($invoice_id, 5);
-        } else {
-            $formated_id .= substr($invoice_id, 5, 1).'.';
-            $formated_id .= substr($invoice_id, 6);
+        $formated_id .= substr($invoice_id, 4, 2).'.';
 
-        }
+        $formated_id .= substr($invoice_id, 6, 3).'.';
+        $formated_id .= substr($invoice_id, 9, 2);
+
 
         return $formated_id;
     }

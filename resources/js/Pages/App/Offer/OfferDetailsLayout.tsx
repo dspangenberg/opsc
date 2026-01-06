@@ -46,13 +46,13 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
   ...props
 }) => {
   const onPrintPdf = () => {
-    print(route('app.invoice.pdf', { id: offer.id }))
+    print(route('app.offer.pdf', { id: offer.id }))
   }
 
   const onShowPdf = async () => {
     await PdfViewer.call({
       file: route('app.offer.pdf', { id: offer.id }),
-      filename: offer.filename || 'invoice.pdf'
+      filename: offer.filename || 'offer.pdf'
     })
   }
 
@@ -60,7 +60,7 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
 
   const handleEditBaseDataButtonClick = () => {
     router.visit(
-      route('app.invoice.base-edit', {
+      route('app.offer.edit', {
         offer: offer.id
       })
     )
@@ -83,14 +83,14 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
 
   const { handleDownload } = useFileDownload({
     route: route('app.invoice.pdf', { id: offer.id }),
-    filename: offer.filename || 'invoice.pdf'
+    filename: offer.filename || 'offer.pdf'
   })
 
   const handleRelease = useCallback(async () => {
     const promise = await AlertDialog.call({
-      title: 'Rechnung abschließen',
-      message: 'Möchtest Du die Rechnung wirklich abschließen?',
-      buttonTitle: 'Rechnung abschließen',
+      title: 'Angebot abschließen',
+      message: 'Möchtest Du das Angebot wirklich abschließen?',
+      buttonTitle: 'Angebot abschließen',
       variant: 'default'
     })
 
@@ -101,17 +101,17 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
 
   const handleDelete = async () => {
     const promise = await AlertDialog.call({
-      title: 'Rechnung löschen',
-      message: 'Möchtest Du die Rechnung wirklich löschen?',
-      buttonTitle: 'Rechnung löschen'
+      title: 'Angebot löschen',
+      message: 'Möchtest Du das Angebot wirklich löschen?',
+      buttonTitle: 'Angebot löschen'
     })
     if (promise) {
-      router.delete(route('app.invoice.delete', { id: offer.id }))
+      router.delete(route('app.offer.destroy', { id: offer.id }))
     }
   }
 
   const handleMarkAsSent = () => {
-    router.get(route('app.invoice.mark-as-sent', { id: offer.id }))
+    router.get(route('app.offer.mark-as-sent', { id: offer.id }))
   }
 
   const handleUnrelease = () => {
@@ -231,7 +231,13 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
             separator
             onAction={onPrintPdf}
           />
-          <MenuItem icon={Sent02Icon} title="Angebot per E-Mail versenden" ellipsis separator />
+          <MenuItem
+            isDisabled={offer.is_draft || !!offer.sent_at}
+            icon={Sent02Icon}
+            title="Angebot per E-Mail versenden"
+            ellipsis
+            separator
+          />
           <MenuItem
             isDisabled={offer.is_draft || !!offer.sent_at}
             icon={Sent02Icon}
@@ -240,15 +246,20 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
             onAction={handleMarkAsSent}
           />
           <MenuItem
+            icon={Files02Icon}
+            title="Angebot duplizieren"
+            separator
+            href={route('app.offer.duplicate', { offer: offer.id })}
+          />
+          <MenuItem
             icon={FileEditIcon}
-            title="Rechnung korrigieren"
+            title="Angebot korrigieren"
             onAction={handleUnrelease}
             isDisabled={!offer.is_draft && !!offer.sent_at}
           />
-          <MenuItem icon={FileRemoveIcon} title="Rechnung stornieren" separator />
           <MenuItem
             icon={Delete02Icon}
-            title="Rechnung löschen"
+            title="Angebot löschen"
             separator
             variant="destructive"
             isDisabled={!offer.is_draft}
@@ -264,9 +275,8 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
       offer.sent_at,
       handleRelease,
       setEditMode,
-      offer,
-      offer.id,
-      currentRoute
+      currentRoute,
+      offer.is_draft
     ]
   )
 

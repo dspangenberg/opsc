@@ -8,31 +8,27 @@
 namespace App\Http\Controllers\App;
 
 use App\Data\ContactData;
-use App\Data\InvoiceData;
-use App\Data\InvoiceTypeData;
 use App\Data\OfferData;
-use App\Data\PaymentDeadlineData;
 use App\Data\ProjectData;
 use App\Data\TaxData;
 use App\Data\TextModuleData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceDetailsBaseUpdateRequest;
 use App\Http\Requests\OfferStoreRequest;
+use App\Http\Requests\OfferTermsRequest;
 use App\Models\Contact;
 use App\Models\Invoice;
-use App\Models\InvoiceLine;
-use App\Models\InvoiceType;
 use App\Models\Offer;
+use App\Models\OfferLine;
 use App\Models\Project;
 use App\Models\Tax;
 use App\Models\TextModule;
-use App\Models\Time;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Mpdf\MpdfException;
 use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class OfferController extends Controller
 {
@@ -86,7 +82,23 @@ class OfferController extends Controller
         $offer->tax_id = $taxes->first()?->id ?? 0;
         $offer->offer_number = null;
 
-        return Inertia::modal('App/Offer/OfferCreate')
+        return Inertia::modal('App/Offer/OfferEdit')
+            ->with([
+                'offer' => OfferData::from($offer),
+                'projects' => ProjectData::collect($projects),
+                'taxes' => TaxData::collect($taxes),
+                'contacts' => ContactData::collect($contacts),
+            ])->baseRoute('app.offer.index');
+    }
+
+    public function edit(Offer $offer)
+    {
+        // Load all data in single queries, ordered appropriately for defaults
+        $taxes = Tax::query()->with('rates')->orderBy('is_default', 'DESC')->orderBy('name')->get();
+        $projects = Project::query()->where('is_archived', false)->orderBy('name')->get();
+        $contacts = Contact::query()->whereNotNull('debtor_number')->orderBy('name')->orderBy('first_name')->get();
+
+        return Inertia::modal('App/Offer/OfferEdit')
             ->with([
                 'offer' => OfferData::from($offer),
                 'projects' => ProjectData::collect($projects),
@@ -131,49 +143,24 @@ class OfferController extends Controller
         ]);
     }
 
-    public function edit(Request $request, Invoice $invoice)
+    public function update(OfferStoreRequest $request, Offer $offer)
     {
-        $invoice
-            ->load('invoice_contact')
-            ->load('contact')
-            ->load('project')
-            ->load('payment_deadline')
-            ->load('type')
-            ->load([
-                'lines' => function ($query) {
-                    $query->orderBy('pos');
-                },
-            ])
-            ->load('tax')
-            ->load('tax.rates')
-            ->loadSum('lines', 'amount')
-            ->loadSum('lines', 'tax');
-
-        $invoiceTypes = InvoiceType::query()->orderBy('display_name')->get();
-        $projects = Project::where('is_archived', false)->orderBy('name')->get();
-        $taxes = Tax::with('rates')->orderBy('name')->get();
-
-        return Inertia::modal('App/Invoice/InvoiceDetailsEditBaseData')
-            ->with([
-                'invoice' => InvoiceData::from($invoice),
-                'invoice_types' => InvoiceTypeData::collect($invoiceTypes),
-                'projects' => ProjectData::collect($projects),
-                'taxes' => TaxData::collect($taxes),
-            ])->baseRoute('app.invoice.details', [
-                'invoice' => $invoice->id,
-            ]);
-    }
-
-    public function update(InvoiceDetailsBaseUpdateRequest $request, Invoice $invoice)
-    {
+        $oldContactId = $offer->contact_id;
         if ($request->validated('project_id') === -1) {
-            $invoice->project_id = 0;
-            $invoice->save();
+            $offer->project_id = 0;
+            $offer->save();
         }
 
-        $invoice->update($request->validated());
 
-        return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
+        $offer->update($request->validated());
+
+        if ($request->validated('contact_id') !== $oldContactId) {
+
+            $offer->address = $offer->contact->getInvoiceAddress()->full_address;
+            $offer->save();
+        }
+
+        return redirect()->route('app.offer.details', ['offer' => $offer->id]);
     }
 
     public function updateLines(Request $request, Offer $offer)
@@ -187,49 +174,45 @@ class OfferController extends Controller
         return redirect()->route('app.offer.details', ['offer' => $offer->id]);
     }
 
-    public function destroy(Invoice $invoice)
+    public function destroy(Offer $offer)
     {
-        if ($invoice->is_draft) {
-            InvoiceLine::where('invoice_id', $invoice->id)->delete();
-            $invoice->delete();
+        if ($offer->is_draft) {
+            OfferLine::where('offer_id', $offer->id)->delete();
+            $offer->delete();
 
-            Time::where('invoice_id', $invoice->id)->update(['invoice_id' => 0]);
-
-            return redirect()->route('app.invoice.index');
+            return redirect()->route('app.offer.index');
         }
 
         abort('Cannot delete a published invoice');
     }
 
-    public function duplicate(Invoice $invoice)
+    public function duplicate(Offer $offer)
     {
-        $duplicatedInvoice = $invoice->replicate();
+        $duplicatedOffer = $offer->replicate();
 
-        $duplicatedInvoice->issued_on = Carbon::now()->format('Y-m-d');
-        $duplicatedInvoice->is_draft = 1;
-        $duplicatedInvoice->invoice_number = null;
-        $duplicatedInvoice->number_range_document_numbers_id = null;
-        $duplicatedInvoice->sent_at = null;
-        $duplicatedInvoice->save();
+        $duplicatedOffer->issued_on = Carbon::now()->format('Y-m-d');
+        $duplicatedOffer->is_draft = true;
+        $duplicatedOffer->offer_number = null;
+        $duplicatedOffer->sent_at = null;
+        $duplicatedOffer->save();
 
-        $invoice->lines()->each(function ($line) use ($duplicatedInvoice) {
+        $offer->lines()->each(function ($line) use ($duplicatedOffer) {
             $replicatedLine = $line->replicate();
-            $replicatedLine->invoice_id = $duplicatedInvoice->id;
+            $replicatedLine->offer_id = $duplicatedOffer->id;
             $replicatedLine->save();
         });
 
-        return redirect()->route('app.invoice.details', ['invoice' => $duplicatedInvoice->id]);
+        return redirect()->route('app.offer.details', ['offer' => $duplicatedOffer->id]);
     }
 
     /**
      * @throws MpdfException
      * @throws PathAlreadyExists
      */
-    public function release(Invoice $invoice)
+    public function release(Offer $offer)
     {
-        $invoice->release();
-
-        return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
+        $offer->release();
+        return redirect()->route('app.offer.details', ['invoice' => $offer->id]);
     }
 
     public function unrelease(Invoice $invoice)
@@ -245,23 +228,21 @@ class OfferController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function markAsSent(Invoice $invoice)
+    public function markAsSent(Offer $offer)
     {
-        if (! $invoice->sent_at) {
-            $invoice->sent_at = now();
-            $invoice->save();
-
-            Invoice::createBooking($invoice);
+        if (! $offer->sent_at) {
+            $offer->sent_at = now();
+            $offer->save();
         }
 
-        return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
+        return redirect()->route('app.offer.details', ['offer' => $offer->id]);
     }
 
     /**
      * @throws MpdfException
      * @throws PathAlreadyExists
      */
-    public function downloadPdf(Offer $offer): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function downloadPdf(Offer $offer): BinaryFileResponse
     {
         $file = '/Invoicing/Invoices/'.$offer->issued_on->format('Y').'/'.$offer->filename;
 
@@ -294,6 +275,16 @@ class OfferController extends Controller
             'textModules' => TextModuleData::collect($textModules),
         ]);
     }
+
+    public function updateTerms(OfferTermsRequest $request, Offer $offer)
+    {
+        $offer->additional_text = $request->validated()['additional_text'];
+        $offer->save();
+
+        return redirect()->route('app.offer.terms', ['offer' => $offer->id]);
+    }
+
+
     public function history(Offer $offer, ?int $line = null)
     {
         $offer

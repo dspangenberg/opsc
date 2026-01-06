@@ -2,22 +2,20 @@
 
 namespace App\Models;
 
-use App\Http\Controllers\App\TimeController;
 use App\Services\PdfService;
+use App\Services\WeasyPdfService;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Mpdf\MpdfException;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
 use Plank\Mediable\MediableInterface;
-use rikudou\EuQrPayment\QrPayment;
 use Spatie\Holidays\Countries\Germany;
 use Spatie\Holidays\Holidays;
 use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
@@ -124,11 +122,11 @@ class Offer extends Model implements MediableInterface
         $pdfConfig['hide'] = true;
         $pdfConfig['watermark'] = $offer->is_draft ? 'ENTWURF' : '';
 
-        $pdfFile = PdfService::createPdf('invoice', 'pdf.offer.index',
+        $pdfFile = PdfService::createPdf('offer', 'pdf.offer.index',
             [
                 'offer' => $offer,
                 'taxes' => $taxes
-            ], $pdfConfig, [77]);
+            ], $pdfConfig, [82]);
 
         return $pdfFile;
     }
@@ -296,7 +294,7 @@ class Offer extends Model implements MediableInterface
 
     public function getFilenameAttribute(): string
     {
-        return 'RG-'.str_replace('.', '_', basename($this->formated_invoice_number)).'.pdf';
+        return 'AG-'.str_replace('.', '_', basename($this->formated_offer_number)).'.pdf';
     }
 
     public function getAmountNetAttribute(): float

@@ -23,7 +23,7 @@ const OfferSectionEdit: React.FC<Props> = ({ section }) => {
   const form = useForm<App.Data.OfferSectionData>(
     'form-offer-section-edit',
     section.id ? 'put' : 'post',
-    route(section.id ? 'app.offer.section.update' : 'app.offer.section.store', {
+    route(section.id ? 'app.settings.offer-section.update' : 'app.settings.offer-section.store', {
       section: section.id
     }),
     section
@@ -33,7 +33,7 @@ const OfferSectionEdit: React.FC<Props> = ({ section }) => {
 
   const handleClose = () => {
     setIsOpen(false)
-    router.visit(route('app.offer.section.index'))
+    router.visit(route('app.settings.offer-section.index'))
   }
 
   return (

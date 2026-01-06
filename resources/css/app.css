@@ -293,3 +293,19 @@ h6[id] {
     @apply bg-background text-foreground;
   }
 }
+
+table tr td ul {
+  @apply list-disc list-inside;
+}
+
+table tr td ul li ul li {
+  @apply ml-3;
+}
+
+.md-editor ul {
+  @apply list-disc list-inside;
+}
+
+.md-editor ul li ul li {
+  @apply ml-3;
+}

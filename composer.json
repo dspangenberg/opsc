@@ -23,6 +23,7 @@
     "mtvs/eloquent-hashids": "^3.6",
     "plank/laravel-mediable": "^6.3.1",
     "ploi/ploi-php-sdk": "^1.9.5",
+    "pontedilana/php-weasyprint": "^2.3",
     "predis/predis": "^3.2",
     "rikudou/euqrpayment": "^1.4",
     "smalot/pdfparser": "^2.12",

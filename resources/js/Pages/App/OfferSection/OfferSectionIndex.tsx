@@ -21,7 +21,7 @@ const OfferSectionIndex: React.FC<DocumentTypesIndexPageProps> = ({ sections }) 
   const breadcrumbs = useMemo(() => [{ title: 'Dokumente' }, { title: 'Dokumenttypen' }], [])
 
   const handleDocumentTypeAdd = () => {
-    router.get(route('app.offer.section.create'))
+    router.get(route('app.settings.offer-section.create'))
   }
 
   const toolbar = useMemo(

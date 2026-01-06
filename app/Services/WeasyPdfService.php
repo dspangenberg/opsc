@@ -9,14 +9,11 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
-use Mpdf\Config\FontVariables;
-use Mpdf\Mpdf;
-use Mpdf\MpdfException;
-use Mpdf\WatermarkText;
+use Pontedilana\PhpWeasyPrint\Pdf;
 use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 
-class PdfService
+class WeasyPdfService
 {
     /**
      * @throws PathAlreadyExists
@@ -51,6 +48,8 @@ public static function createPdf(string $layoutName, string $view, array $data, 
     $letterheads = Storage::disk('system')->json('letterheads/letterheads.json');
     $fonts = Storage::disk('system')->json('fonts/fonts.json');
 
+    ds($systemDisk->path('layouts'));
+    ds($layouts);
     // Null-Checks für JSON-Dateien
     if (!$layouts || !isset($layouts['layouts'])) {
         throw new Exception('Layout-Konfiguration konnte nicht geladen werden oder ist ungültig.');
@@ -120,7 +119,9 @@ public static function createPdf(string $layoutName, string $view, array $data, 
     $data['styles'] = $styles;
 
     $html = View::make($view, $data)->render();
+    $tmpDir = storage_path('system/tmp').'/'.Str::random().'.pdf';
 
+    /*
     $customFontData = [];
     if (is_array($fonts['fonts'])) {
         foreach ($fonts['fonts'] as $value) {
@@ -207,7 +208,14 @@ public static function createPdf(string $layoutName, string $view, array $data, 
     }
 
     $mpdf->Output($pdfFile, 'F');
+    */
 
-    return $pdfFile;
+
+    $pdf = new Pdf('/opt/homebrew/bin/weasyprint');
+    $pdf->generateFromHtml($html, $tmpDir);
+    ds($tmpDir);
+
+
+    return $tmpDir;
     }
 }

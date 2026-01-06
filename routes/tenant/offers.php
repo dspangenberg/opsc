@@ -18,11 +18,15 @@ Route::post('invoicing/offers', [OfferController::class, 'store'])
     ->middleware([HandlePrecognitiveRequests::class])
     ->name('app.offer.store');
 
+Route::get('invoicing/offers/{offer}/edit', [OfferController::class, 'edit'])
+    ->name('app.offer.edit');
+
 Route::get('invoicing/offers/{offer}', [OfferController::class, 'show'])
     ->name('app.offer.details');
 
-Route::get('invoicing/offers/{offer}/history', [OfferController::class, 'history'])
-    ->name('app.offer.history');
+Route::put('invoicing/offers/{offer}', [OfferController::class, 'update'])
+    ->name('app.offer.update')->middleware([HandlePrecognitiveRequests::class]);
+
 
 Route::get('invoicing/offers/{offer}/history', [OfferController::class, 'history'])
     ->name('app.offer.history');
@@ -37,9 +41,15 @@ Route::put('invoicing/offers/lines-update/{offer}', [OfferController::class, 'up
 Route::get('invoicing/offers/{offer}/pdf', [OfferController::class, 'downloadPdf'])
     ->name('app.offer.pdf');
 
-Route::get('invoicing/offer-sections', [OfferSectionController::class, 'index'])->name('app.offer.section.index');
-Route::get('invoicing/offer-sections/create', [OfferSectionController::class, 'create'])->name('app.offer.section.create');
-Route::post('invoicing/offer-sections/store', [OfferSectionController::class, 'store'])->name('app.offer.section.store')->middleware([HandlePrecognitiveRequests::class]);
-Route::get('invoicing/offer-sections/{section}', [OfferSectionController::class, 'edit'])->name('app.offer.section.edit');
-Route::put('invoicing/offer-sections/{section}', [OfferSectionController::class, 'update'])->name('app.offer.section.update')->middleware([HandlePrecognitiveRequests::class]);
-Route::delete('invoicing/offer-sections/{section}', [OfferSectionController::class, 'delete'])->name('app.offer.section.delete');
+Route::get('invoicing/offers/{offer}/duplicate', [OfferController::class, 'duplicate'])
+    ->name('app.offer.duplicate');
+
+Route::delete('invoicing/offers/{offer}/delete', [OfferController::class, 'destroy'])
+    ->name('app.offer.destroy');
+
+Route::get('invoicing/offers/{offer}/mark-as-sent', [OfferController::class, 'markAsSent'])
+    ->name('app.offer.mark-as-sent');
+
+Route::put('invoicing/offers/terms/{offer}', [OfferController::class, 'updateTerms'])
+    ->name('app.offer.update-terms')
+    ->middleware([HandlePrecognitiveRequests::class]);

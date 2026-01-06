@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import {
   PaginationContent,
   PaginationEllipsis,
@@ -21,22 +20,6 @@ export const Pagination = <T,>({
   selected = 0
 }: PaginatorProps<T>) => {
   const pages = data.links.slice(1, -1) // Remove first and last elements
-  const [recordsPerPage, setRecordsPerPage] = useState('10')
-
-  const options: { value: string; label: string }[] = [
-    {
-      value: '10',
-      label: '10/Seite'
-    },
-    {
-      value: '25',
-      label: '25/Seite'
-    },
-    {
-      value: '50',
-      label: '50/Seite'
-    }
-  ]
 
   return (
     <div className="flex flex-none items-center px-4 py-2">
@@ -52,7 +35,7 @@ export const Pagination = <T,>({
       </div>
       <div className="flex-2">
         <ShadcnPagination>
-          <PaginationContent className="mx-auto">
+          <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
                 href={data.prev_page_url || '#'}

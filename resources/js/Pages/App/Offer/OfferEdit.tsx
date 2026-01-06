@@ -20,18 +20,27 @@ interface Props extends PageProps {
   contacts: App.Data.ContactData[]
 }
 
-const OfferCreate: React.FC<Props> = ({ offer, contacts, projects, taxes }) => {
+const OfferEdit: React.FC<Props> = ({ offer, contacts, projects, taxes }) => {
   const [isOpen, setIsOpen] = useState(true)
 
   const form = useForm<App.Data.OfferData>(
-    'form-offer-create',
-    'post',
-    route('app.offer.store'),
+    'form-offer-edit',
+    offer.id ? 'put' : 'post',
+    offer.id ? route('app.offer.update', { id: offer.id }) : route('app.offer.store'),
     offer
   )
 
   const handleClose = () => {
-    router.visit(route('app.offer.index'))
+    const newRoute = offer.id
+      ? route('app.offer.details', { id: offer.id })
+      : route('app.offer.index')
+    console.log(newRoute)
+    router.visit(newRoute)
+  }
+
+  const handleCancel = () => {
+    setIsOpen(false)
+    handleClose()
   }
 
   const handleSubmit = () => {
@@ -48,7 +57,7 @@ const OfferCreate: React.FC<Props> = ({ offer, contacts, projects, taxes }) => {
         <div className="mx-0 flex w-full gap-2">
           <div className="flex flex-1 justify-start" />
           <div className="flex flex-none gap-2">
-            <Button variant="outline" onClick={dialogRenderProps.close}>
+            <Button variant="outline" onClick={handleCancel}>
               Abbrechen
             </Button>
             <Button variant="default" form={form.id} type="submit">
@@ -99,4 +108,4 @@ const OfferCreate: React.FC<Props> = ({ offer, contacts, projects, taxes }) => {
   )
 }
 
-export default OfferCreate
+export default OfferEdit

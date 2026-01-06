@@ -61,6 +61,20 @@
         }
 
 
+        ul {
+            list-style-type: circle;
+            list-style-position: inside;
+        }
+
+
+        ul li ul {
+            list-style-type: circle;
+            padding: 0;
+            margin: 0 0 0 0.5cm;
+        }
+
+
+
     </style>
 
     <htmlpageheader name="attachment"></htmlpageheader>
