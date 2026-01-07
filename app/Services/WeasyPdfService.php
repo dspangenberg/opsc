@@ -152,7 +152,7 @@ class WeasyPdfService
         $pdf->stamp('/Users/dspangenberg/Downloads/entwurf.pdf')->saveAs($tmpDir);
         */
 
-        /*
+        
         if ($attachments && count($attachments) > 0) {
             $pdf = new \mikehaertl\pdftk\Pdf($tmpDir, ['command' => config('pdf.pdftk_path')]);
             foreach ($attachments as $attachment) {
@@ -171,7 +171,6 @@ class WeasyPdfService
                 throw new Exception($pdf->getError());
             }
         }
-        */
 
         return $tmpDir;
     }
