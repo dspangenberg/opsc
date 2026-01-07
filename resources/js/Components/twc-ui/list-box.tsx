@@ -1,4 +1,4 @@
-import { CheckIcon } from '@radix-ui/react-icons'
+import { Check } from 'lucide-react'
 import {
   Collection as AriaCollection,
   Header as AriaHeader,
@@ -62,7 +62,7 @@ const ListBoxItem = <T extends object>({
         <>
           {renderProps.isSelected && (
             <span className="absolute left-2 flex size-4 items-center justify-center">
-              <CheckIcon className="size-4 text-primary" />
+              <Check className="size-4 text-primary" />
             </span>
           )}
           {children}

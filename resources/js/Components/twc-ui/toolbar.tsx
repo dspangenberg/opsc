@@ -4,8 +4,7 @@ import { createContext, useContext } from 'react'
 import {
   Toolbar as AriaToolbar,
   type ToolbarProps as AriaToolbarProps,
-  composeRenderProps,
-  Group
+  composeRenderProps
 } from 'react-aria-components'
 import { cn } from '@/Lib/utils'
 import { Button, type ButtonProps } from './button'
@@ -73,5 +72,3 @@ export const ToolbarButton = ({
 
   return <Button variant={realVariant} isDisabled={isContextDisabled || isDisabled} {...props} />
 }
-
-export { Group as ToolbarGroup }

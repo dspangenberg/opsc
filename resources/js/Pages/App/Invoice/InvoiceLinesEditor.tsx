@@ -62,8 +62,15 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
 
   // Sync form data when lines change (e.g., when duplicating or adding lines)
   useEffect(() => {
+    // Merge current form values with new lines structure to preserve user input
+    const currentFormLines = form.data.lines || []
+    const mergedLines = lines.map((line, index) => {
+      const existingFormLine = currentFormLines.find(fl => fl.id === line.id)
+      // If line exists in form with user input, keep form values; otherwise use context values
+      return existingFormLine || line
+    })
     // @ts-expect-error - Circular reference in InvoiceLineData.linked_invoice
-    form.setData('lines', lines)
+    form.setData('lines', mergedLines)
   }, [lines])
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -73,7 +80,9 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
       const oldIndex = lines.findIndex(line => line.id === active.id)
       const newIndex = lines.findIndex(line => line.id === over.id)
 
-      const newLines = [...lines]
+      // Use current form data to preserve user input during drag
+      const currentFormLines = form.data.lines || []
+      const newLines = [...currentFormLines]
       const [movedItem] = newLines.splice(oldIndex, 1)
       newLines.splice(newIndex, 0, movedItem)
 

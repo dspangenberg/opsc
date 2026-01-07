@@ -19,6 +19,7 @@ class OfferLine extends Model
 {
     protected $fillable = [
         'offer_id',
+        'type_id',
         'quantity',
         'unit',
         'text',
@@ -27,12 +28,12 @@ class OfferLine extends Model
         'tax',
         'tax_id',
         'tax_rate_id',
+        'tax_rate',
         'pos',
     ];
 
     protected $attributes = [
         'tax_id' => 0,
-        'legacy_id' => 0,
         'tax_rate' => 0,
     ];
 

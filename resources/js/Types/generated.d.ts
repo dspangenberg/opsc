@@ -372,6 +372,53 @@ creator: App.Data.UserData;
 created_at: string;
 updated_at: string;
 };
+export type OfferData = {
+id: number | null;
+contact_id: number;
+project_id: number;
+offer_number: number | null;
+issued_on: string;
+valid_until: string | null;
+is_draft: boolean;
+filename: string | null;
+formated_offer_number: string;
+amount_net: number;
+amount_tax: number;
+amount_gross: number;
+additional_text: string | null;
+parent_id: number | null;
+tax_id: number | null;
+address: string | null;
+sent_at: string | null;
+recurring_end_on: string | null;
+contact: App.Data.ContactData | null;
+project: App.Data.ProjectData | null;
+lines: Array<App.Data.OfferLineData> | null;
+tax: App.Data.TaxData | null;
+};
+export type OfferLineData = {
+id: number | null;
+offer_id: number;
+type_id: number;
+pos: number;
+tax_id: number;
+quantity: number | null;
+unit: string | null;
+text: string;
+price: number | null;
+amount: number | null;
+tax: number | null;
+tax_rate_id: number;
+rate: App.Data.TaxRateData | null;
+};
+export type OfferSectionData = {
+id: number | null;
+is_required: boolean;
+name: string;
+title: string | null;
+default_content: string | null;
+pos: number;
+};
 export type PaymentData = {
 id: number | null;
 payable_type: string;
@@ -488,6 +535,11 @@ website: string;
 subdomain: string;
 prefix: string;
 formated_prefix: string;
+};
+export type TextModuleData = {
+id: number | null;
+title: string | null;
+content: string | null;
 };
 export type TimeCategoryData = {
 id: number | null;

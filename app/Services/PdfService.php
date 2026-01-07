@@ -2,11 +2,13 @@
 
 namespace App\Services;
 
+use App\Models\Document;
+use App\Facades\FileHelperService;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
-use Log;
 use Mpdf\Config\FontVariables;
 use Mpdf\Mpdf;
 use Mpdf\MpdfException;
@@ -24,7 +26,7 @@ class PdfService
      * @throws MpdfException|PathAlreadyExists
      * @throws Exception
      */
-public static function createPdf(string $layoutName, string $view, array $data, array $config = []): string
+public static function createPdf(string $layoutName, string $view, array $data, array $config = [], array $attachments = []): string
 {
     $systemDisk = Storage::disk('system');
 
@@ -152,7 +154,11 @@ public static function createPdf(string $layoutName, string $view, array $data, 
     if ($data['pdf_config']['watermark']) {
         $mpdf->SetWatermarkText(new WatermarkText($config['watermark']));
         $mpdf->showWatermarkText = true;
+        $mpdf->watermark_font = 'Facit';
     }
+
+    $mpdf->list_marker_offset = '5.5pt';
+    $mpdf->list_symbol_size = '3.6pt';
 
     $mpdf->WriteHTML($html);
     $mpdf->SetTitle($data['pdf_footer']['title']);
@@ -160,6 +166,40 @@ public static function createPdf(string $layoutName, string $view, array $data, 
 
     if ($data['pdf_config']['pdfA']) {
         $mpdf->PDFA = true;
+    }
+
+    // Add attachments after main document using mPDF
+    if ($attachments && count($attachments) > 0) {
+        // Disable docTemplate and watermark for attachments
+        $mpdf->docTemplate = null;
+        $mpdf->showWatermarkText = false;
+
+        foreach ($attachments as $attachment) {
+            $media = Document::find($attachment)->firstMedia('file');
+
+            if ($media) {
+                $attachmentFile = FileHelperService::createTemporaryFileFromDoc($media->filename, $media->contents());
+
+                if (file_exists($attachmentFile)) {
+                    $pagecount = $mpdf->setSourceFile($attachmentFile);
+
+                    for($i = 1; $i <= $pagecount; $i++) {
+                        // Create page without header or footer
+                        $mpdf->AddPageByArray([
+                            'odd-footer-name' => 'html_attachment',
+                            'even-footer-name' => 'html_attachment',
+                        ]);
+
+
+                        $tplId = $mpdf->importPage($i);
+                        $mpdf->useTemplate($tplId, 0, 0, null, null, true);
+                    }
+
+                    // Clean up temporary attachment file
+                    @unlink($attachmentFile);
+                }
+            }
+        }
     }
 
     if ($data['pdf_config']['saveAs']) {

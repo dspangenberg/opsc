@@ -5,6 +5,7 @@
 
 import {
   AbacusIcon,
+  Configuration01Icon,
   ContactBookIcon,
   DashboardSpeed02Icon,
   FileEuroIcon,
@@ -151,7 +152,7 @@ const data = {
       title: 'Fakturierung',
       url: route('app.invoice.index', { _query: { view: 'all' } }, false),
       icon: FileEuroIcon,
-      activePath: '/app/invoicing/invoices',
+      activePath: '/app/invoicing/',
       hasSep: true,
       items: [
         {
@@ -178,7 +179,15 @@ const data = {
         },
         {
           title: 'Angebote',
-          url: route('app.invoice.index', {}, false)
+          url: route('app.offer.index', {}, false),
+          activePath: '/app/invoicing/offers',
+          items: [
+            {
+              title: 'Alle Angebote',
+              url: route('app.offer.index', {}, false),
+              activePath: '/app/invoicing/offers'
+            }
+          ]
         }
       ]
     },
@@ -240,7 +249,27 @@ const data = {
       ]
     }
   ],
-  navSecondary: []
+  navSecondary: [
+    {
+      title: 'Einstellungen',
+      url: route('app.setting.text-module.index', {}, false),
+      icon: Configuration01Icon,
+      activePath: '/app/settings',
+      items: [
+        {
+          title: 'Angebotsabschnitte',
+          url: route('app.settings.offer-section.index', {}, false),
+          activePath: '/app/settings/offer-sections'
+        },
+        {
+          title: 'Textbausteine',
+          url: route('app.setting.text-module.index', {}, false),
+          icon: Configuration01Icon,
+          activePath: '/app/settings/text-modules'
+        }
+      ]
+    }
+  ]
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

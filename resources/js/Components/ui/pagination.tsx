@@ -40,17 +40,39 @@ function PaginationLink({
   isActive,
   disabled = false,
   size = 'default',
+  children,
   ...props
 }: PaginationLinkProps) {
+  const commonProps = {
+    'aria-current': isActive ? ('page' as const) : undefined,
+    'data-slot': 'pagination-link' as const,
+    'data-active': isActive,
+    'aria-disabled': disabled,
+    ...(disabled ? { 'data-disabled': true } : {})
+  }
+
+  if (disabled || isActive) {
+    return (
+      <span
+        {...commonProps}
+        className={cn(
+          buttonVariants({
+            variant: isActive ? 'outline' : 'ghost',
+            size
+          }),
+          'pointer-events-none',
+          disabled && 'opacity-50',
+          className
+        )}
+      >
+        {children}
+      </span>
+    )
+  }
+
   return (
     <Link
-      aria-current={isActive ? 'page' : undefined}
-      data-slot="pagination-link"
-      data-active={isActive}
-      disabled={disabled}
-      data-disabled={disabled}
-      aria-disabled={disabled}
-      as="button"
+      {...commonProps}
       className={cn(
         buttonVariants({
           variant: isActive ? 'outline' : 'ghost',
@@ -59,7 +81,9 @@ function PaginationLink({
         className
       )}
       {...props}
-    />
+    >
+      {children}
+    </Link>
   )
 }
 

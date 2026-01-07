@@ -30,7 +30,8 @@ if (!function_exists('md')) {
      */
     function md($markdown): string
     {
-        return Str::inlineMarkdown($markdown);
+        $md = new Parsedown();
+        return $md->text($markdown);
     }
 }
 
@@ -50,6 +51,24 @@ if (!function_exists('formated_invoice_id')) {
             $formated_id .= substr($invoice_id, 6);
 
         }
+
+        return $formated_id;
+    }
+}
+
+if (!function_exists('formated_offer_id')) {
+    function formated_offer_id(int $invoice_id): string
+    {
+        if (! $invoice_id) {
+            return '(Entwurf)';
+        }
+
+        $formated_id = substr($invoice_id, 0, 4).'.';
+        $formated_id .= substr($invoice_id, 4, 2).'.';
+
+        $formated_id .= substr($invoice_id, 6, 3).'.';
+        $formated_id .= substr($invoice_id, 9, 2);
+
 
         return $formated_id;
     }

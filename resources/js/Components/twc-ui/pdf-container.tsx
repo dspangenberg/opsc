@@ -57,7 +57,7 @@ export const PdfContainer: React.FC<Props> = ({
     } catch {
       return 'unbekannt.pdf'
     }
-  }, [file, filename])
+  }, [file])
 
   const divRef = useRef<HTMLDivElement>(null)
   const [show, toggle] = useToggle(false)
@@ -346,8 +346,6 @@ export const PdfContainer: React.FC<Props> = ({
     ),
     [
       scale,
-      scaleMode,
-      showFitToPage,
       cursorTool,
       show,
       calculateFitToPage,
