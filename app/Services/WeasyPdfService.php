@@ -165,7 +165,10 @@ class WeasyPdfService
                     }
                 }
             }
-            $pdf->saveAs($tmpDir);
+            $result = $pdf->saveAs($tmpDir);
+            if ($result === false) {
+                throw new Exception($pdf->getError());
+            }
         }
 
         return $tmpDir;
