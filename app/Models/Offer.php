@@ -93,6 +93,7 @@ class Offer extends Model implements MediableInterface
 
     /**
      * @throws MpdfException|PathAlreadyExists
+     * @throws \Exception
      */
     public static function createOrGetPdf(Offer $offer, bool $uploadToS3 = false): string
     {
@@ -117,16 +118,20 @@ class Offer extends Model implements MediableInterface
             return $line->type_id !== 9;
         });
 
+        // TODO
+
         $pdfConfig = [];
         $pdfConfig['pdfA'] = ! $offer->is_draft;
         $pdfConfig['hide'] = true;
         $pdfConfig['watermark'] = $offer->is_draft ? 'ENTWURF' : '';
 
+        $terms_document_id = config('pdf.terms_document_id');
+
         $pdfFile = WeasyPdfService::createPdf('offer', 'pdf.weasy-offer.index',
             [
                 'offer' => $offer,
                 'taxes' => $taxes
-            ], $pdfConfig, [83, 73]);
+            ], $pdfConfig, [$terms_document_id]);
 
         return $pdfFile;
     }
@@ -168,8 +173,7 @@ class Offer extends Model implements MediableInterface
     }
 
     /**
-     * @throws MpdfException
-     * @throws PathAlreadyExists
+         * @throws PathAlreadyExists
      */
     public function release(): void
     {

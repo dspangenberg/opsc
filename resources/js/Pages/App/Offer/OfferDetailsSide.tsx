@@ -45,10 +45,10 @@ export const OfferDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
       <DataCardContent>
         <DataCardSection
           className={cn('grid space-y-0', offer.is_draft ? 'grid-cols-2' : 'grid-cols-3')}
-          title="Rechnungsdetails"
+          title="Angbotsdetails"
         >
           <DataCardField variant="vertical" label="Datum" value={offer.issued_on} />
-          <DataCardField variant="vertical" label="Fälligkeit" value={offer.valid_until} />
+          <DataCardField variant="vertical" label="gültig bis" value={offer.valid_until} />
           {!offer.is_draft && (
             <DataCardField
               variant="vertical"
@@ -61,25 +61,17 @@ export const OfferDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
           <DataCardField variant="vertical" label="Umsatzsteuer" value={offer.tax?.name} />
         </DataCardSection>
         <DataCardSection>
+          <DataCardField className="col-span-2" variant="vertical" label="Kunde">
+            <Link href={contactRoute} className="hover:underline">
+              {offer.contact?.formated_debtor_number} &ndash; {offer.contact?.full_name}
+            </Link>
+          </DataCardField>
           <DataCardField
             className="col-span-2"
             variant="vertical"
             label="Projekt"
             value={offer.project?.name}
           />
-        </DataCardSection>
-
-        <DataCardSection title="Rechnungsempfänger">
-          <DataCardField
-            variant="vertical"
-            label="Debitor"
-            value={offer.contact?.full_name}
-            className="col-span-3"
-          >
-            <Link href={contactRoute} className="hover:underline">
-              {offer.contact?.formated_debtor_number} &ndash; {offer.contact?.full_name}
-            </Link>
-          </DataCardField>
         </DataCardSection>
       </DataCardContent>
     </DataCard>

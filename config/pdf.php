@@ -15,7 +15,9 @@ return [
     | If not set in .env, will auto-detect common paths.
     |
     */
-
+    'terms_document_id' => env('PDF_TERMS_DOCUMENT_ID'),
+    'weasyprint_path' => env('PDF_WEASYPRINT_PATH'),
+    'pdftk_path' => env('PDF_PDFTK_PATH'),
     'ghostscript_path' => env('PDF_GHOSTSCRIPT_PATH') ?: (function () {
         $paths = [
             '/usr/bin/gs',              // Linux standard

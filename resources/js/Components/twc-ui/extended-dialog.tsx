@@ -26,7 +26,7 @@ interface ExtendedDialogProps extends Omit<DialogProps, 'onBeforeClose' | 'child
   showDescription?: boolean
   title?: string
   description?: ReactNodeOrString
-  bodyClass?: string
+  bodyClassName?: string
   className?: string
   footerClassName?: string
   bodyPadding?: boolean
@@ -48,7 +48,7 @@ export const ExtendedDialog: React.FC<ExtendedDialogProps> = ({
   showDescription = false,
   title = 'Dialog',
   description,
-  bodyClass,
+  bodyClassName,
   footerClassName = '',
   bodyPadding = false,
   width = 'default',
@@ -84,7 +84,7 @@ export const ExtendedDialog: React.FC<ExtendedDialogProps> = ({
     '6xl': 'max-w-6xl'
   }[width]
 
-  const realConfirmatioTitle = confirmationTitle
+  const realConfirmationTitle = confirmationTitle
     ? confirmationTitle
     : locale.startsWith('de')
       ? 'Änderungen verwerfen'
@@ -117,7 +117,7 @@ export const ExtendedDialog: React.FC<ExtendedDialogProps> = ({
       setTimeout(async () => {
         try {
           const result = await AlertDialog.call({
-            title: realConfirmatioTitle,
+            title: realConfirmationTitle,
             message: realConfirmationMessage,
             buttonTitle: realConfirmationButtonTitle,
             cancelButtonTitle: realConfirmationCancelButtonTitle,
@@ -175,7 +175,7 @@ export const ExtendedDialog: React.FC<ExtendedDialogProps> = ({
                   <DialogTitle className="flex flex-1 items-center justify-between py-1.5! text-left text-base leading-0! md:text-center">
                     <span className="text-base">{title}</span>
                   </DialogTitle>
-                  <DialogDescription className={cn('', !showDescription ? 'sr-only py-0' : '')}>
+                  <DialogDescription className={cn('', !showDescription ? 'sr-only mb-3' : '')}>
                     {description}
                   </DialogDescription>
                 </DialogHeader>
@@ -187,7 +187,7 @@ export const ExtendedDialog: React.FC<ExtendedDialogProps> = ({
                   'overflow-y-auto',
                   bgClass,
                   hideHeader ? 'rounded-lg' : '',
-                  bodyClass,
+                  bodyClassName,
                   bodyPadding ? 'px-4' : ''
                 )}
               >
@@ -196,7 +196,7 @@ export const ExtendedDialog: React.FC<ExtendedDialogProps> = ({
               {!!footer && (
                 <DialogFooter
                   className={cn(
-                    'flex flex-justify-end flex-none items-center space-x-2 px-4 py-3',
+                    'flex flex-justify-end flex-none items-center space-x-2 bg-muted/40! px-4 py-3',
                     footerClassName,
                     bgClass
                   )}

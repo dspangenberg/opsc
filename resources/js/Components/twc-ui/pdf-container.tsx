@@ -393,28 +393,26 @@ export const PdfContainer: React.FC<Props> = ({
         <Document
           file={file}
           loading={
-            <div className="flex- mx-auto my-auto flex">
+            <div className="mx-auto my-auto flex-1">
               <LogoSpinner />
             </div>
           }
-          className="flex h-full w-full overflow-auto bg-accent"
+          className="h-full w-full overflow-auto bg-accent"
           onLoadSuccess={onDocumentLoadSuccess}
           inputRef={scrollContainerRef}
-          externalLinkTarget="_blank"
         >
           <div
             style={{
               cursor: cursorTool === 'grab' ? (isDragging ? 'grabbing' : 'grab') : 'text',
               userSelect: cursorTool === 'grab' ? 'none' : 'auto',
               display: 'inline-flex',
-              justifyContent: 'start',
+              justifyContent: 'center',
               alignItems: 'center',
               minHeight: 'calc(100% + 4rem)',
               minWidth: 'calc(100% + 4rem)',
               margin: '-2rem'
             }}
             className={cn(
-              'flex flex-col space-y-6',
               cursorTool === 'grab' &&
                 '[&_.react-pdf__Page__textContent]:pointer-events-none [&_.react-pdf__Page__textContent]:select-none',
               cursorTool === 'grab' && '**:cursor-grab!',
@@ -427,19 +425,16 @@ export const PdfContainer: React.FC<Props> = ({
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
           >
-            {Array.from(new Array(numPages), (_el, index) => (
-              <Page
-                key={`page_${index + 1}`}
-                pageNumber={index + 1}
-                scale={scale}
-                className="z-10 border"
-                loading={
-                  <div className="mx-auto my-auto flex-1">
-                    <LogoSpinner />
-                  </div>
-                }
-              />
-            ))}
+            <Page
+              pageNumber={pageNumber}
+              scale={scale}
+              className="z-10 border"
+              loading={
+                <div className="mx-auto my-auto flex-1">
+                  <LogoSpinner />
+                </div>
+              }
+            />
           </div>
         </Document>
       </div>
