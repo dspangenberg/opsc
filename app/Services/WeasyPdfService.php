@@ -120,6 +120,8 @@ public static function createPdf(string $layoutName, string $view, array $data, 
 
     $html = View::make($view, $data)->render();
     $tmpDir = storage_path('system/tmp').'/'.Str::random().'.pdf';
+    $tmpDir2 = storage_path('system/tmp').'/'.Str::random().'.pdf';
+    $tmpDir3 = storage_path('system/tmp').'/'.Str::random().'.pdf';
 
     /*
     $customFontData = [];
@@ -213,9 +215,41 @@ public static function createPdf(string $layoutName, string $view, array $data, 
 
     $pdf = new Pdf('/opt/homebrew/bin/weasyprint');
     $pdf->generateFromHtml($html, $tmpDir);
-    ds($tmpDir);
+
+    $pdf = new \mikehaertl\pdftk\Pdf($tmpDir);
+
+    $result = $pdf->multiBackground($letterheadPdfFile)
+        ->saveAs($tmpDir2);
+
+    $pdf = new \mikehaertl\pdftk\Pdf($tmpDir2);
+    $pdf->stamp('/Users/dspangenberg/Downloads/entwurf.pdf')->saveAs($tmpDir2);
+
+    if ($result === false) {
+        $error = $pdf->getError();
+        ds($error);
+    }
+
+    $pdf = new \mikehaertl\pdftk\Pdf($tmpDir2);
+    if ($attachments && count($attachments) > 0) {
+        // Disable docTemplate and watermark for attachments
+               foreach ($attachments as $attachment) {
+            $media = Document::find($attachment)->firstMedia('file');
+
+            if ($media) {
+                $attachmentFile = FileHelperService::createTemporaryFileFromDoc($media->filename, $media->contents());
+                if (file_exists($attachmentFile)) {
+                    $pdf->addFile($attachmentFile);
+                }
+            }
+        }
+               $pdf->saveAs($tmpDir3);
+    }
 
 
-    return $tmpDir;
+
+
+
+    ds($tmpDir3);
+    return $tmpDir3;
     }
 }

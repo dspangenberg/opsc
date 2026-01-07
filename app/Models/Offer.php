@@ -122,11 +122,11 @@ class Offer extends Model implements MediableInterface
         $pdfConfig['hide'] = true;
         $pdfConfig['watermark'] = $offer->is_draft ? 'ENTWURF' : '';
 
-        $pdfFile = PdfService::createPdf('offer', 'pdf.offer.index',
+        $pdfFile = WeasyPdfService::createPdf('offer', 'pdf.weasy-offer.index',
             [
                 'offer' => $offer,
                 'taxes' => $taxes
-            ], $pdfConfig, [82]);
+            ], $pdfConfig, [83, 73]);
 
         return $pdfFile;
     }

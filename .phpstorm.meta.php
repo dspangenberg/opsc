@@ -3599,9 +3599,10 @@ namespace PHPSTORM_META {
 'app.onboarding','app.logout','tenant.impersonate','login','login.store',
 'password.request','password.email','password.reset','password.store',);
         registerArgumentsSet('views', 
-'app','components.footer','components.layout','generated.emails.verify-email','pdf.invoice.caption',
-'pdf.invoice.defaultLine','pdf.invoice.index','pdf.invoice.text','pdf.offer.caption','pdf.offer.defaultLine',
-'pdf.offer.index','pdf.offer.text','pdf.proof-of-activity.index','laradumps::output','laradumps::summary',
+'app','components.footer','components.layout','components.pdf.info-box','generated.emails.verify-email',
+'pdf.invoice.caption','pdf.invoice.defaultLine','pdf.invoice.index','pdf.invoice.text','pdf.offer.caption',
+'pdf.offer.defaultLine','pdf.offer.index','pdf.offer.text','pdf.proof-of-activity.index','pdf.weasy-offer.caption',
+'pdf.weasy-offer.defaultLine','pdf.weasy-offer.index','pdf.weasy-offer.text','laradumps::output','laradumps::summary',
 'laravel-exceptions-renderer::components.badge','laravel-exceptions-renderer::components.empty-state','laravel-exceptions-renderer::components.file-with-line','laravel-exceptions-renderer::components.formatted-source','laravel-exceptions-renderer::components.frame',
 'laravel-exceptions-renderer::components.frame-code','laravel-exceptions-renderer::components.header','laravel-exceptions-renderer::components.http-method','laravel-exceptions-renderer::components.icons.alert','laravel-exceptions-renderer::components.icons.check',
 'laravel-exceptions-renderer::components.icons.chevron-left','laravel-exceptions-renderer::components.icons.chevron-right','laravel-exceptions-renderer::components.icons.chevrons-down-up','laravel-exceptions-renderer::components.icons.chevrons-left','laravel-exceptions-renderer::components.icons.chevrons-right',
