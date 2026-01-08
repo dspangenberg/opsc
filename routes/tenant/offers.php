@@ -1,9 +1,8 @@
 <?php
 
 declare(strict_types=1);
+
 use App\Http\Controllers\App\OfferController;
-use App\Http\Controllers\App\OfferSectionController;
-use App\Http\Controllers\App\TextModuleController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 

@@ -1,106 +1,4 @@
-<x-layout :styles="$styles" :footer="$pdf_footer">
-    <style>
-        table {
-            page-break-inside: initial;
-        }
-
-        table tr th {
-            border-bottom: 1px solid #aaa;
-            border-collapse: collapse;
-        }
-
-        table tr td {
-            line-height: 1.4;
-        }
-
-        table tr td.center {
-            text-align: center !important;
-        }
-
-        table tr td.mdx-cell p {
-            padding: 0;
-            margin: 0;
-        }
-
-        table tr.border_top td {
-            border-top: 1px solid #444;
-            border-collapse: collapse;
-        }
-
-        table tr.border_bottom td {
-            border-bottom: 1px solid #444;
-            border-collapse: collapse;
-            padding-bottom: 0;
-        }
-
-        table tr td.right, table tr th.right {
-            text-align: right;
-            padding-right: 0;
-        }
-
-
-        p {
-            margin-bottom: 3mm; /* ca. 1 Zeile Abstand */
-            line-height: 1.5;
-            hyphens: auto;
-        }
-
-        h1 {
-            margin-top: 8mm;
-            margin-bottom: 4mm;
-        }
-
-        h2 {
-            margin-top: 6mm;
-            margin-bottom: 3mm;
-        }
-
-        h3 {
-            margin-top: 4mm;
-            margin-bottom: 2mm;
-        }
-
-        h4, h5, h6 {
-            margin-top: 3mm;
-            margin-bottom: 2mm;
-        }
-
-        h5 {
-            font-size: 10pt;
-            font-weight: bold;
-            color: #000;
-            line-height: 1;
-        }
-
-        h4 {
-            font-size: 12pt;
-            font-weight: bold;
-            color: #000;
-            line-height: 1;
-        }
-
-        a {
-            color: #0b5ed7;
-        }
-
-
-        ul {
-            list-style-type: circle;
-            list-style-position: inside;
-        }
-
-
-        ul li ul {
-            list-style-type: circle;
-            padding: 0;
-            margin: 0 0 0 0.5cm;
-        }
-
-
-        .page-break {
-            page-break-before: always;
-        }
-    </style>
+<x-layout :config="$config" :styles="$styles" :footer="$pdf_footer">
 
     <div id="recipient">
         {!! nl2br($offer->address) !!}
@@ -120,7 +18,7 @@
         <x-pdf.info-box
                 :issued-on="$offer->issued_on->format('d.m.Y')"
                 :reference="$offer->formated_offer_number"
-                reference-label="Angebotsnr."
+                reference-label="Angebotsnummer"
         />
     </div>
 
