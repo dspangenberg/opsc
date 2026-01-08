@@ -140,13 +140,8 @@ class WeasyPdfService
 
         $settings = app(GeneralSettings::class);
 
-        $letterhead = null;
-        $layout = PrintLayout::where('name', $layoutName)->first();
-        if ($layout) {
-            if ($layout->letterhead_id) {
-                $letterhead = Letterhead::where('id', $layout->letterhead_id)->first();
-            }
-        }
+        $layout = PrintLayout::with('letterhead')->where('name', $layoutName)->first();
+        $letterhead = $layout?->letterhead;
 
         if (! $letterhead) {
             $letterhead = Letterhead::where('is_default', true)->first();
