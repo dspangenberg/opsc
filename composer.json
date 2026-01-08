@@ -18,7 +18,6 @@
     "league/csv": "^9.24.1",
     "league/flysystem-aws-s3-v3": "^3.29",
     "maize-tech/laravel-markable": "^2.3.1",
-    "mikehaertl/php-pdftk": "^0.14.2",
     "mpdf/mpdf": "^8.2.5",
     "mpdf/qrcode": "^1.2.1",
     "mtvs/eloquent-hashids": "^3.6",
@@ -59,7 +58,7 @@
     "laravel/sail": "^1.43.1",
     "mockery/mockery": "^1.6.12",
     "nunomaduro/collision": "^8.8",
-    "pestphp/pest": "^3.8.2",
+    "pestphp/pest": "^4.3.1",
     "phpstan/phpstan": "^2.1.17",
     "soloterm/solo": "^0.5.0"
   },

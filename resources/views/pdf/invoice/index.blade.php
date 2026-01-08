@@ -1,130 +1,30 @@
-<x-layout :styles="$styles" :footer="$pdf_footer">
-    <style>
-        table {
-            page-break-inside: initial;
-        }
-        table tr th {
-            border-bottom: 1px solid #aaa;
-            border-collapse: collapse;
-        }
+<x-layout :config="$config" :styles="$styles" :footer="$pdf_footer">
 
-        table tr td {
-            line-height: 1.4;
-        }
+    <div id="recipient">
+        {!! nl2br($invoice->address) !!}
+    </div>
 
-        table tr.border_top td {
-            border-top: 1px solid #444;
-            border-collapse: collapse;
-        }
+    <div id="infobox-first-page">
+        <x-pdf.info-box
+            :issued-on="$invoice->issued_on->format('d.m.Y')"
+            :reference="$invoice->formated_invoice_number"
+            reference-label="Rechnungsnummer"
+            :account-id="number_format($invoice->contact->debtor_number, 0, ',', '.')"
+            :service-period-begin="$invoice->service_period_begin?->format('d.m.Y')"
+            :service-period-end="$invoice->service_period_end?->format('d.m.Y')"
+        />
+    </div>
 
-        table tr.border_bottom td {
-            border-bottom: 1px solid #444;
-            border-collapse: collapse;
-            padding-bottom: 0;
-        }
-
-        table tr td.right, table tr th.right {
-            text-align: right;
-            padding-right: 0;
-        }
-
-        table tr td.center {
-            text-align: center;
-        }
+    <div id="infobox">
+        <x-pdf.info-box
+            :issued-on="$invoice->issued_on->format('d.m.Y')"
+            :reference="$invoice->formated_invoice_number"
+            reference-label="Rechnungsnummer"
+        />
+    </div>
 
 
-    </style>
 
-    <htmlpageheader name="first_header">
-        <div id="recipient">
-            {!! nl2br($invoice->address) !!}
-        </div>
-
-        <div id="infobox-first-page">
-            <table>
-                <tr>
-                    <td>
-                        Rechnungsdatum:
-                    </td>
-                    <td class="right">
-                        {{ $invoice->issued_on->format('d.m.Y') }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Rechnungsnummer:&nbsp;&nbsp;
-                    </td>
-                    <td class="right">
-                        {{ $invoice->formated_invoice_number }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Kundennummer:&nbsp;&nbsp;
-                    </td>
-                    <td class="right">
-                        {{ number_format($invoice->contact->debtor_number, 0, ',', '.') }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Seite:&nbsp;&nbsp;
-                    </td>
-                    <td class="right">
-                        {PAGENO}/{nbpg}
-                    </td>
-                </tr>
-                @if(($invoice->type_id !== 2 && $invoice->type_id !== 4) && $invoice->service_period_begin && $invoice->service_period_end)
-                    <tr>
-                        <td colspan="2">
-                            <br>Leistungszeitraum:&nbsp;&nbsp;
-                        </td>
-
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            {{ $invoice->service_period_begin->format('d.m.Y') }}
-                            - {{ $invoice->service_period_end->format('d.m.Y') }}
-                        </td>
-
-                    </tr>
-                @endif
-
-
-            </table>
-        </div>
-    </htmlpageheader>
-    <htmlpageheader name="header">
-        <div id="infobox">
-            <table>
-                <tr>
-                    <td>
-                        Rechnungsdatum:
-                    </td>
-                    <td class="right">
-                        {{ $invoice->issued_on->format('d.m.Y') }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Rechnungsnummer:&nbsp;&nbsp;
-                    </td>
-                    <td class="right">
-                        {{ $invoice->formated_invoice_number }}
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        Seite:&nbsp;&nbsp;
-                    </td>
-                    <td class="right">
-                        {PAGENO}/{nbpg}
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </htmlpageheader>
 
     @if ($invoice->type)
         <h2>{{$invoice->type->print_name}}</h2>
@@ -154,19 +54,32 @@
 
     <table style="vertical-align:top;" border-spacing="0" cellspacing="0">
 
+
+        <colgroup>
+            <col style="width: 8mm">
+            <col style="width: 12mm">
+            <col style="width: 8mm">
+            <col style="width: 30mm">
+            <col style="width: 30mm">
+            <col style="width: 18mm">
+            <col style="width: 21mm">
+            <col style="width: 12mm">
+        </colgroup>
         <thead>
         <tr>
-            <th class="right" style="width:7mm;">Pos.</th>
-            <th class="right" style="width:5mm;">Menge</th>
-            <th style="text-align:center;"></th>
-            <th colspan="2" style="text-align:left;">
+            <th class="right">Pos.</th>
+            <th class="right">Menge</th>
+            <th></th>
+            <th colspan="2">
                 Dienstleistung/Artikel
             </th>
             <th class="right">Einzelpreis</th>
             <th class="right">Gesamt</th>
             <th class="center">USt.</th>
         </tr>
-
+        <tr>
+            <td colspan="8">&nbsp;</td>
+        </tr>
         </thead>
 
         @php
@@ -194,40 +107,11 @@
                 @include('pdf.invoice.text')
             @endif
 
-            @if($line->type_id === 8)
-                <tr style="color: #fff;">
-
-
-                    <td width="8mm">&nbsp;</td>
-                    <td width="15mm">&nbsp;</td>
-                    <td width="8mm">&nbsp;</td>
-                    <td width="35mm">&nbsp;</td>
-                    <td width="35mm">&nbsp;</td>
-                    <td width="18mm">&nbsp;</td>
-                    <td width="21mm">&nbsp;</td>
-                    <td width="12mm">&nbsp;</td>
-
-                </tr>
-    </table>
-    <pagebreak>
-
-        <table style="vertical-align:top;" border-spacing="0" cellspacing="0">
-
-            <thead>
-            <tr>
-                <th class="right">Pos.</th>
-                <th class="right">Menge</th>
-                <th style="text-align:center;"></th>
-                <th colspan="2" style="text-align:left;">
-                    Dienstleistung/Artikel
-                </th>
-                <th class="right">Einzelpreis</th>
-                <th class="right">Gesamt</th>
-                <th class="center">USt.</th>
-            </tr>
-
-            </thead>
-            @endif
+                @if($line->type_id === 8)
+                    <tr class="page-break">
+                        <td colspan="8"></td>
+                    </tr>
+                @endif
 
             @endforeach
             <tr>
@@ -270,8 +154,7 @@
                     <tr>
                         <td colspan="3">&nbsp;</td>
                         <td colspan="2">
-                            Rechnung Nr. {{$line->linked_invoice->formated_invoice_number}}
-                            vom {{ $line->linked_invoice->issued_on->format('d.m.Y') }}<br />
+                            {{ $line->linked_invoice->issued_on->format('d.m.Y') }} RG-{{$line->linked_invoice->formated_invoice_number}}
                         </td>
                         <td class="right">
                             ({{ number_format($line->tax * -1, 2, ',', '.') }})
@@ -285,19 +168,10 @@
 
             @endif
 
-            <tr style="color: #fff;">
 
-
-                <td width="8mm">&nbsp;</td>
-                <td width="15mm">&nbsp;</td>
-                <td width="8mm">&nbsp;</td>
-                <td width="35mm">&nbsp;</td>
-                <td width="35mm">&nbsp;</td>
-                <td width="18mm">&nbsp;</td>
-                <td width="21mm">&nbsp;</td>
-                <td width="12mm">&nbsp;</td>
-
-            </tr>
+        <tr>
+            <td colspan="8">&nbsp;</td>
+        </tr>
 
 
             <tr class="">
@@ -382,23 +256,21 @@
                 </strong>
             </p>
 
+            <table>
+                <tr>
+                    <td><img src="{{ $invoice->qr_code }}" style="width: 1.5cm;"></td>
+                    <td style="vertical-align: top; padding-left: 0.5cm; text-align: justify;">
+                        Bitte überweisen Sie den Rechnungsbetrag unter Angabe der Rechnungs- und Kundennummer kurzfristig auf
+                        unser Konto <strong>{{ iban_to_human_format($bank_account->iban) }}</strong> bei der
+                        <strong>{{ $bank_account->bank_name }}</strong> ({{ $bank_account->bic }}).
+                    </td>
+                </tr>
+            </table>
+        <p>
+            Bitte beachten Sie, dass Sie, ohne dass es einer Mahnung bedarf, spätestens in Verzug kommen, wenn Sie Ihre
+            Zahlung nicht innerhalb von 30 Tagen nach Zugang dieser Rechnung leisten (§ 286 Abs. 3 BGB).
+        </p>
 
-            <div style="float: left; width: 2cm;">
-
-                <img src="{{ $invoice->qr_code }}" style="width: 1.5cm;">
-
-            </div>
-            <div style="float: left;text-align: justify;">
-                <p>
-                    Bitte überweisen Sie den Rechnungsbetrag unter Angabe der Rechnungs- und Kundennummer kurzfristig auf
-                    unser Konto <strong>{{ iban_to_human_format($bank_account->iban) }}</strong> bei der
-                    <strong>{{ $bank_account->bank_name }}</strong> ({{ $bank_account->bic }}).
-                </p>
-            </div>
-            <p>
-                Bitte beachten Sie, dass Sie, ohne dass es einer Mahnung bedarf, spätestens in Verzug kommen, wenn Sie Ihre
-                Zahlung nicht innerhalb von 30 Tagen nach Zugang dieser Rechnung leisten (§ 286 Abs. 3 BGB).
-            </p>
         @endif
 
         @if($groupedByCategoryTimes)
