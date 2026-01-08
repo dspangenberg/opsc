@@ -162,7 +162,7 @@ class WeasyPdfService
 
         $data['styles'] = [
             'default_css' => '',
-            'letterhead_css' => $letterhead->css,
+            'letterhead_css' => $letterhead?->css ?? '',
             'layout_css' => '',
         ];
 

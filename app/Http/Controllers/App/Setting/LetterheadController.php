@@ -68,9 +68,9 @@ class LetterheadController extends Controller
         return redirect()->route('app.setting.letterhead.index');
     }
 
-    public function delete(TextModule $module)
+    public function delete(Letterhead $letterhead)
     {
-        $module->delete();
+        $letterhead->delete();
         return redirect()->route('app.setting.letterhead.index');
     }
 

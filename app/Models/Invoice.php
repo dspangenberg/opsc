@@ -295,13 +295,17 @@ class Invoice extends Model implements MediableInterface
             $servicePeriodBegin = null;
             if (!empty($line['service_period_begin'])) {
                 $date = Carbon::createFromFormat('d.m.Y', $line['service_period_begin']);
-                $servicePeriodBegin = $date?->format('Y-m-d');
+                if ($date instanceof Carbon) {
+                    $servicePeriodBegin = $date->format('Y-m-d');
+                }
             }
 
             $servicePeriodEnd = null;
             if (!empty($line['service_period_end'])) {
                 $date = Carbon::createFromFormat('d.m.Y', $line['service_period_end']);
-                $servicePeriodEnd = $date?->format('Y-m-d');
+                if ($date instanceof Carbon) {
+                    $servicePeriodEnd = $date->format('Y-m-d');
+                }
             }
 
             $lineAttributes = [
