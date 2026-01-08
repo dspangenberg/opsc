@@ -33,7 +33,7 @@ class WeasyPdfService
         $result = Process::run($command);
 
         if ($result->failed()) {
-            throw new Exception('PDF/A conversion failed: ' . $result->output());
+            throw new Exception('PDF/A conversion failed: '.$result->output());
         }
 
         return $outputFile;
@@ -44,7 +44,8 @@ class WeasyPdfService
         return storage_path('system/tmp').'/'.Str::random().'.pdf';
     }
 
-    private function getPdfCpuCommand(): string {
+    private function getPdfCpuCommand(): string
+    {
 
         return escapeshellarg(Config::get('pdf.pdfcpu_path'));
     }
@@ -68,7 +69,7 @@ class WeasyPdfService
         $result = Process::run($command);
 
         if ($result->failed()) {
-            throw new Exception('Adding letterhead failed: ' . $result->output());
+            throw new Exception('Adding letterhead failed: '.$result->output());
         }
 
         return $outputFile;
@@ -94,7 +95,7 @@ class WeasyPdfService
         $result = Process::run($command);
 
         if ($result->failed()) {
-            throw new Exception('Adding stamp failed: ' . $result->output());
+            throw new Exception('Adding stamp failed: '.$result->output());
         }
 
         return $outputFile;
@@ -119,7 +120,7 @@ class WeasyPdfService
         $result = Process::run($command);
 
         if ($result->failed()) {
-            throw new Exception('Merging PDFs failed: ' . $result->output());
+            throw new Exception('Merging PDFs failed: '.$result->output());
         }
 
         return $outputFile;
@@ -184,13 +185,17 @@ class WeasyPdfService
             $files = [$tmpDir];
 
             foreach ($attachments as $attachment) {
-                $media = Document::find($attachment)->firstMedia('file');
+                $document = Document::find($attachment);
+                if ($document) {
+                    $media = Document::find($attachment)->firstMedia('file');
 
-                if ($media) {
-                    $attachmentFile = FileHelperService::createTemporaryFileFromDoc($media->filename,
-                        $media->contents());
-                    if (file_exists($attachmentFile)) {
-                        $files[] = $attachmentFile;
+
+                    if ($media) {
+                        $attachmentFile = FileHelperService::createTemporaryFileFromDoc($media->filename,
+                            $media->contents());
+                        if (file_exists($attachmentFile)) {
+                            $files[] = $attachmentFile;
+                        }
                     }
                 }
             }
