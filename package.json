@@ -130,7 +130,7 @@
     "class-variance-authority": "^0.7.1",
     "cmdk": "1.1.1",
     "date-fns": "^4.1.0",
-    "dedent": "1.0.0",
+    "dedent": "1.7.1",
     "filesize": "^11.0.13",
     "focus-trap-react": "^11.0.4",
     "framer-motion": "^12.24.10",
