@@ -18,6 +18,8 @@ class InfoBox extends Component
         public ?string $reference,
         public ?string $accountId,
         public ?string $referenceLabel,
+        public ?string $servicePeriodBegin,
+        public ?string $servicePeriodEnd,
     ) {}
 
     /**

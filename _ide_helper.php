@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 12.45.0.
+ * Generated for Laravel 12.46.0.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -9558,7 +9558,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Determine if a given ability has been defined.
          *
-         * @param string|array $ability
+         * @param \UnitEnum|array|string $ability
          * @return bool
          * @static
          */

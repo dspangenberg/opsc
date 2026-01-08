@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2e33169614dde1782f10ef988c169be0",
+    "content-hash": "06ece86a43f63686e299475da3924a62",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.369.7",
+            "version": "3.369.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "8678ee11ac680d462fabbecb455112a17aa7728d"
+                "reference": "cb7c0a255a34d44f13f9276d720827d56a3b381b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8678ee11ac680d462fabbecb455112a17aa7728d",
-                "reference": "8678ee11ac680d462fabbecb455112a17aa7728d",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/cb7c0a255a34d44f13f9276d720827d56a3b381b",
+                "reference": "cb7c0a255a34d44f13f9276d720827d56a3b381b",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.7"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.9"
             },
-            "time": "2026-01-05T19:05:14+00:00"
+            "time": "2026-01-07T19:06:56+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -2085,16 +2085,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v12.45.0",
+            "version": "v12.46.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "9dfd2afc48f2519bfdbe6862dfb9849491c673ad"
+                "reference": "9dcff48d25a632c1fadb713024c952fec489c4ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/9dfd2afc48f2519bfdbe6862dfb9849491c673ad",
-                "reference": "9dfd2afc48f2519bfdbe6862dfb9849491c673ad",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/9dcff48d25a632c1fadb713024c952fec489c4ae",
+                "reference": "9dcff48d25a632c1fadb713024c952fec489c4ae",
                 "shasum": ""
             },
             "require": {
@@ -2303,7 +2303,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-01-06T15:24:52+00:00"
+            "time": "2026-01-07T23:26:53+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -2366,16 +2366,16 @@
         },
         {
             "name": "laravel/sanctum",
-            "version": "v4.2.1",
+            "version": "v4.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/sanctum.git",
-                "reference": "f5fb373be39a246c74a060f2cf2ae2c2145b3664"
+                "reference": "fd447754d2d3f56950d53b930128af2e3b617de9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/sanctum/zipball/f5fb373be39a246c74a060f2cf2ae2c2145b3664",
-                "reference": "f5fb373be39a246c74a060f2cf2ae2c2145b3664",
+                "url": "https://api.github.com/repos/laravel/sanctum/zipball/fd447754d2d3f56950d53b930128af2e3b617de9",
+                "reference": "fd447754d2d3f56950d53b930128af2e3b617de9",
                 "shasum": ""
             },
             "require": {
@@ -2425,7 +2425,7 @@
                 "issues": "https://github.com/laravel/sanctum/issues",
                 "source": "https://github.com/laravel/sanctum"
             },
-            "time": "2025-11-21T13:59:03+00:00"
+            "time": "2026-01-06T23:11:51+00:00"
         },
         {
             "name": "laravel/serializable-closure",
@@ -3337,151 +3337,6 @@
                 }
             ],
             "time": "2025-07-19T15:48:46+00:00"
-        },
-        {
-            "name": "mikehaertl/php-pdftk",
-            "version": "0.14.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mikehaertl/php-pdftk.git",
-                "reference": "f1f9ac6d6c9ee655504ddfcc0d1be3ff9cbfb3eb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mikehaertl/php-pdftk/zipball/f1f9ac6d6c9ee655504ddfcc0d1be3ff9cbfb3eb",
-                "reference": "f1f9ac6d6c9ee655504ddfcc0d1be3ff9cbfb3eb",
-                "shasum": ""
-            },
-            "require": {
-                "mikehaertl/php-shellcommand": "^1.7",
-                "mikehaertl/php-tmpfile": "^1.3",
-                "php": ">=8.1"
-            },
-            "require-dev": {
-                "bamarni/composer-bin-plugin": "^1.8"
-            },
-            "type": "library",
-            "extra": {
-                "bamarni-bin": {
-                    "bin-links": true,
-                    "forward-command": true
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "mikehaertl\\pdftk\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Haertl",
-                    "email": "haertl.mike@gmail.com"
-                }
-            ],
-            "description": "A PDF conversion and form utility based on pdftk.",
-            "keywords": [
-                "pdf",
-                "pdftk"
-            ],
-            "support": {
-                "issues": "https://github.com/mikehaertl/php-pdftk/issues",
-                "source": "https://github.com/mikehaertl/php-pdftk/tree/0.14.2"
-            },
-            "time": "2025-10-01T10:06:01+00:00"
-        },
-        {
-            "name": "mikehaertl/php-shellcommand",
-            "version": "1.7.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mikehaertl/php-shellcommand.git",
-                "reference": "e79ea528be155ffdec6f3bf1a4a46307bb49e545"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mikehaertl/php-shellcommand/zipball/e79ea528be155ffdec6f3bf1a4a46307bb49e545",
-                "reference": "e79ea528be155ffdec6f3bf1a4a46307bb49e545",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">= 5.3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": ">4.0 <=9.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "mikehaertl\\shellcommand\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Härtl",
-                    "email": "haertl.mike@gmail.com"
-                }
-            ],
-            "description": "An object oriented interface to shell commands",
-            "keywords": [
-                "shell"
-            ],
-            "support": {
-                "issues": "https://github.com/mikehaertl/php-shellcommand/issues",
-                "source": "https://github.com/mikehaertl/php-shellcommand/tree/1.7.0"
-            },
-            "time": "2023-04-19T08:25:22+00:00"
-        },
-        {
-            "name": "mikehaertl/php-tmpfile",
-            "version": "1.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mikehaertl/php-tmpfile.git",
-                "reference": "a5392bed91f67e2849a7cb24075d346468e1b1a8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mikehaertl/php-tmpfile/zipball/a5392bed91f67e2849a7cb24075d346468e1b1a8",
-                "reference": "a5392bed91f67e2849a7cb24075d346468e1b1a8",
-                "shasum": ""
-            },
-            "require-dev": {
-                "php": ">=5.3.0",
-                "phpunit/phpunit": ">4.0 <=9.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "mikehaertl\\tmp\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Härtl",
-                    "email": "haertl.mike@gmail.com"
-                }
-            ],
-            "description": "A convenience class for temporary files",
-            "keywords": [
-                "files"
-            ],
-            "support": {
-                "issues": "https://github.com/mikehaertl/php-tmpfile/issues",
-                "source": "https://github.com/mikehaertl/php-tmpfile/tree/1.3.0"
-            },
-            "time": "2024-10-14T16:12:48+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -6059,16 +5914,16 @@
         },
         {
             "name": "smalot/pdfparser",
-            "version": "v2.12.2",
+            "version": "v2.12.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/smalot/pdfparser.git",
-                "reference": "370b7e983fafecb787a9bcfd73baab8038212ad1"
+                "reference": "61c9bcafcb92899b76d8ebda6508267bae77e264"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/smalot/pdfparser/zipball/370b7e983fafecb787a9bcfd73baab8038212ad1",
-                "reference": "370b7e983fafecb787a9bcfd73baab8038212ad1",
+                "url": "https://api.github.com/repos/smalot/pdfparser/zipball/61c9bcafcb92899b76d8ebda6508267bae77e264",
+                "reference": "61c9bcafcb92899b76d8ebda6508267bae77e264",
                 "shasum": ""
             },
             "require": {
@@ -6104,9 +5959,9 @@
             ],
             "support": {
                 "issues": "https://github.com/smalot/pdfparser/issues",
-                "source": "https://github.com/smalot/pdfparser/tree/v2.12.2"
+                "source": "https://github.com/smalot/pdfparser/tree/v2.12.3"
             },
-            "time": "2025-09-04T08:49:09+00:00"
+            "time": "2026-01-08T08:04:04+00:00"
         },
         {
             "name": "spatie/enum",
@@ -12548,16 +12403,16 @@
         },
         {
             "name": "laravel/boost",
-            "version": "v1.8.7",
+            "version": "v1.8.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/boost.git",
-                "reference": "7a5709a8134ed59d3e7f34fccbd74689830e296c"
+                "reference": "1f2c2d41b5216618170fb6730ec13bf894c5bffd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/boost/zipball/7a5709a8134ed59d3e7f34fccbd74689830e296c",
-                "reference": "7a5709a8134ed59d3e7f34fccbd74689830e296c",
+                "url": "https://api.github.com/repos/laravel/boost/zipball/1f2c2d41b5216618170fb6730ec13bf894c5bffd",
+                "reference": "1f2c2d41b5216618170fb6730ec13bf894c5bffd",
                 "shasum": ""
             },
             "require": {
@@ -12610,7 +12465,7 @@
                 "issues": "https://github.com/laravel/boost/issues",
                 "source": "https://github.com/laravel/boost"
             },
-            "time": "2025-12-19T15:04:12+00:00"
+            "time": "2026-01-07T18:43:11+00:00"
         },
         {
             "name": "laravel/breeze",

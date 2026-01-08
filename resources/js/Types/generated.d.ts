@@ -359,6 +359,13 @@ display_name: string;
 abbreviation: string;
 key: string;
 };
+export type LetterheadData = {
+id: number | null;
+title: string;
+css: string | null;
+is_multi: boolean;
+is_default: boolean;
+};
 export type LoginData = {
 email: string;
 password: string;
@@ -439,6 +446,14 @@ export type PhoneCategoryData = {
 id: number | null;
 name: string;
 type: number | null;
+};
+export type PrintLayoutData = {
+id: number | null;
+name: string;
+title: string;
+css: string | null;
+letterhead_id: number;
+letterhead: App.Data.LetterheadData;
 };
 export type ProjectData = {
 id: number | null;
