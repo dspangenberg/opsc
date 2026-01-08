@@ -32,8 +32,7 @@ class FileHelperService
 
     public function getTempFile(string $ext)
     {
-        return sys_get_temp_dir().''.uniqid('file_').'.'.$ext;
-
+        return sys_get_temp_dir().'/'.uniqid('file_').'.'.$ext;
     }
 
     public function createTemporaryFileFromDoc($fileName, $content): string
