@@ -298,7 +298,7 @@ importers:
         version: 1.0.0
       laravel-precognition-react-inertia:
         specifier: ^0.8.0
-        version: 0.8.0(@inertiajs/react@2.3.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
+        version: 0.8.0(@inertiajs/react@2.3.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -439,8 +439,8 @@ importers:
         specifier: 2.3.11
         version: 2.3.11
       '@inertiajs/react':
-        specifier: 2.3.6
-        version: 2.3.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: 2.3.7
+        version: 2.3.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@react-types/shared':
         specifier: ^3.32.1
         version: 3.32.1(react@19.2.3)
@@ -1282,13 +1282,16 @@ packages:
   '@inertiajs/core@2.3.6':
     resolution: {integrity: sha512-3JzJ04HBoGK/OlDZyzhD0WFB9jH3KNT32fQ45zWMFa4eGthm1kuSSF+BgPAKQQm8jS38whx2WuhMOsH+Ec++7A==}
 
+  '@inertiajs/core@2.3.7':
+    resolution: {integrity: sha512-gBu2m71KoAu3kyaBDeszYiInkPqR0lIe+mRpI1JQyOlX1CT+Hwn+Tk5O7Dsr3dRMphEkRj6H9oVmJ19jHSNTIA==}
+
   '@inertiajs/react@1.3.0':
     resolution: {integrity: sha512-K+PF23xP6jjMkubs8PbxT1MroSDdH1z3VTEGbO3685Xyf0QNwoNIF95hnyqJxlWaeG4fB0GAag40gh04fefRUA==}
     peerDependencies:
       react: ^16.9.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  '@inertiajs/react@2.3.6':
-    resolution: {integrity: sha512-kctI5xdBAtSyH0nQxBwOvGz5RcUmWal8jhSvUMY8nrY63AvTybWRbLvMzlxZc8QrwPuj8cALBr5lf+7lFDnTbw==}
+  '@inertiajs/react@2.3.7':
+    resolution: {integrity: sha512-MvGwVvKGiKD/pq9kqr4FmFjmhy/f77NUiG1cvpv7zHzuwzVClDRwRL8BvJR1nwAR4Q06yKGPZgVdki6waTOxAw==}
     peerDependencies:
       react: ^16.9.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.9.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -9193,6 +9196,16 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
+  '@inertiajs/core@2.3.7':
+    dependencies:
+      '@types/lodash-es': 4.17.12
+      axios: 1.13.2
+      laravel-precognition: 1.0.0
+      lodash-es: 4.17.22
+      qs: 6.14.1
+    transitivePeerDependencies:
+      - debug
+
   '@inertiajs/react@1.3.0(react@18.3.1)':
     dependencies:
       '@inertiajs/core': 1.3.0
@@ -9201,9 +9214,9 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@inertiajs/react@2.3.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@inertiajs/react@2.3.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@inertiajs/core': 2.3.6
+      '@inertiajs/core': 2.3.7
       '@types/lodash-es': 4.17.12
       laravel-precognition: 1.0.0
       lodash-es: 4.17.22
@@ -14541,9 +14554,9 @@ snapshots:
 
   kleur@4.1.5: {}
 
-  laravel-precognition-react-inertia@0.8.0(@inertiajs/react@2.3.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3):
+  laravel-precognition-react-inertia@0.8.0(@inertiajs/react@2.3.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3):
     dependencies:
-      '@inertiajs/react': 2.3.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@inertiajs/react': 2.3.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       laravel-precognition: 0.8.0
       laravel-precognition-react: 0.8.0(react@19.2.3)
       react: 19.2.3
