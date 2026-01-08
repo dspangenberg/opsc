@@ -275,7 +275,9 @@
                 @endif
               </td>
               <td class="category">
-                {{$entry['category']['name'] }}
+                @if($entry['category'])
+                  {{$entry['category']['name'] }}
+                @endif
               </td>
               <td class="duration right">
                 {{ minutes_to_hours($entry['mins']) }}

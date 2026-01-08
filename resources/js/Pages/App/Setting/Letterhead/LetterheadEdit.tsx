@@ -8,7 +8,6 @@ import { FileTrigger } from '@/Components/twc-ui/FileTrigger'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormCheckbox } from '@/Components/twc-ui/form-checkbox'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
-import { FormTextArea } from '@/Components/twc-ui/form-text-area'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import type { PageProps } from '@/Types'
 

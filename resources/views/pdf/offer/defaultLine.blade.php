@@ -1,35 +1,32 @@
 <tr>
     <td class="right">
-        @if($line->type_id !== 2)
-            {{ $counter }}
-        @endif
+        {{ $counter }}
     </td>
     <td class="right">
         @if($line->type_id === 1)
             {{ number_format($line->quantity, 2, ',', '.') }}
         @endif
     </td>
-    <td style="text-align:center;">
+    <td class="center">
         @if($line->type_id === 1)
             {{ $line->unit }}
         @endif
+        &nbsp;
     </td>
-    <td colspan="2" style="text-align:left;">
+    <td colspan="2" class="mdx-cell">
         {!! md(nl2br($line->text))  !!}
     </td>
     <td class="right">
-        @if($line->type_id === 2)
+        @if($line->type_id === 1)
             {{ number_format($line->price, 2, ',', '.') }}
         @endif
     </td>
     <td class="right">
-        @if($line->type_id !== 2)
+
             {{ number_format($line->amount, 2, ',', '.') }}
-        @endif
     </td>
     <td class="center">
-        @if($line->type_id !== 2)
+
             ({{$line->tax_rate_id}})
-        @endif
-    </td>
+         </td>
 </tr>

@@ -11,8 +11,8 @@
       </style>
   </head>
   <body>
-    {{ $slot }}
     <x-footer :footer="$footer" />
+    {{ $slot }}
   </body>
 </html>
 

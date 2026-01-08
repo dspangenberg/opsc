@@ -4,20 +4,19 @@ namespace App\Models;
 
 use App\Facades\WeasyPdfService;
 use Eloquent;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Mpdf\MpdfException;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
 use Plank\Mediable\MediableInterface;
 use Spatie\Holidays\Countries\Germany;
 use Spatie\Holidays\Holidays;
-use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
 
 /**
  * @property-read Contact|null $contact
@@ -91,8 +90,7 @@ class Offer extends Model implements MediableInterface
     ];
 
     /**
-     * @throws MpdfException|PathAlreadyExists
-     * @throws \Exception
+     * @throws Exception
      */
     public static function createOrGetPdf(Offer $offer, bool $uploadToS3 = false): string
     {
@@ -117,8 +115,6 @@ class Offer extends Model implements MediableInterface
             return $line->type_id !== 9;
         });
 
-        // TODO
-
         $pdfConfig = [];
         $pdfConfig['pdfA'] = ! $offer->is_draft;
         $pdfConfig['hide'] = true;
@@ -126,11 +122,11 @@ class Offer extends Model implements MediableInterface
 
         $terms_document_id = config('pdf.terms_document_id');
 
-        return WeasyPdfService::createPdf('offer', 'pdf.weasy-offer.index',
+        return WeasyPdfService::createPdf('offer', 'pdf.offer.index',
             [
                 'offer' => $offer,
-                'taxes' => $taxes
-            ], $pdfConfig, [73, $terms_document_id]);
+                'taxes' => $taxes,
+            ], $pdfConfig, [$terms_document_id]);
     }
 
     public function taxBreakdown(Collection $invoiceLines): array
@@ -169,8 +165,6 @@ class Offer extends Model implements MediableInterface
         }
     }
 
-    /**
-     */
     public function release(): void
     {
         if (! $this->invoice_number) {
@@ -265,8 +259,6 @@ class Offer extends Model implements MediableInterface
         }
     }
 
-
-
     public function getFormatedOfferNumberAttribute(): string
     {
         if ($this->offer_number) {
@@ -323,7 +315,6 @@ class Offer extends Model implements MediableInterface
     {
         return round($this->amount_gross - $this->amount_paid, 2);
     }
-
 
     public function lines(): HasMany
     {

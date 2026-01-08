@@ -6,6 +6,7 @@ use App\Services\WeasyPdfService;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Spatie\LaravelSettings\SettingsCache;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,5 +27,12 @@ class AppServiceProvider extends ServiceProvider
             Mail::alwaysTo('danny.spangenberg@twiceware.de');
         }
         Vite::prefetch(concurrency: 3);
+
+        // Tenant-aware settings cache
+        if (tenancy()->initialized) {
+            app(SettingsCache::class)->setBaseCacheKey(
+                'settings_'.tenant()->getTenantKey()
+            );
+        }
     }
 }
