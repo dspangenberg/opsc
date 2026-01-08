@@ -1,31 +1,42 @@
-<style>
-    table.info-table tr td:last-child {
-        text-align: right;
-    }
-</style>
-<table class="info-table">
+<table class="info-table" style="width: 60mm;">
     <tr>
         <td>Datum:</td>
-        <td>{{ $issuedOn }}</td>
+        <td class="right">{{ $issuedOn }}</td>
     </tr>
     @if($accountId)
         <tr>
             <td>Kundennummer:</td>
-            <td>{{ $accountId }}</td>
+            <td class="right">{{ $accountId }}</td>
         </tr>
     @endif
     <tr>
         <td>{{ $referenceLabel }}:</td>
-        <td>{{ $reference }}</td>
+        <td class="right">{{ $reference }}</td>
     </tr>
     @if($dueDate)
         <tr>
             <td>Angebot gültig bis:</td>
-            <td>{{ $dueDate }}</td>
+            <td class="right">{{ $dueDate }}</td>
         </tr>
     @endif
     <tr>
         <td>Seite:</td>
-        <td><span class="page-number"></span>/<span class="total-pages"></span></td>
+        <td class="right"><span class="page-number"></span>/<span class="total-pages"></span></td>
     </tr>
+
+    @if($servicePeriodBegin)
+        <tr>
+            <td colspan="2" class="left">
+                <br>Leistungszeitraum:&nbsp;&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="left">
+                {{ $servicePeriodBegin }}
+                @if($servicePeriodEnd !== $servicePeriodBegin)
+                    - {{ $servicePeriodEnd }}
+                @endif
+            </td>
+        </tr>
+    @endif
 </table>

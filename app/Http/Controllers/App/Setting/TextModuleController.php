@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\App;
+namespace App\Http\Controllers\App\Setting;
 
 use App\Data\TextModuleData;
 use App\Http\Controllers\Controller;
@@ -13,20 +13,20 @@ class TextModuleController extends Controller
     public function index()
     {
         $modules = TextModule::query()->orderBy('title')->paginate();
-        return Inertia::render('App/TextModule/TextModuleIndex', [
+        return Inertia::render('App/Setting/TextModule/TextModuleIndex', [
             'modules' => TextModuleData::collect($modules),
         ]);
     }
 
     public function create() {
         $module = new TextModule();
-        return Inertia::render('App/TextModule/TextModuleEdit', [
+        return Inertia::render('App/Setting/TextModule/TextModuleEdit', [
             'module' => TextModuleData::from($module),
         ]);
     }
 
     public function edit(TextModule $module) {
-        return Inertia::render('App/TextModule/TextModuleEdit', [
+        return Inertia::render('App/Setting/TextModule/TextModuleEdit', [
             'module' => TextModuleData::from($module),
         ]);
     }

@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-use App\Services\PdfService;
-use App\Services\WeasyPdfService;
+use App\Facades\WeasyPdfService;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -127,13 +126,11 @@ class Offer extends Model implements MediableInterface
 
         $terms_document_id = config('pdf.terms_document_id');
 
-        $pdfFile = WeasyPdfService::createPdf('offer', 'pdf.weasy-offer.index',
+        return WeasyPdfService::createPdf('offer', 'pdf.weasy-offer.index',
             [
                 'offer' => $offer,
                 'taxes' => $taxes
-            ], $pdfConfig, [$terms_document_id]);
-
-        return $pdfFile;
+            ], $pdfConfig, [73, $terms_document_id]);
     }
 
     public function taxBreakdown(Collection $invoiceLines): array
@@ -173,7 +170,6 @@ class Offer extends Model implements MediableInterface
     }
 
     /**
-         * @throws PathAlreadyExists
      */
     public function release(): void
     {
