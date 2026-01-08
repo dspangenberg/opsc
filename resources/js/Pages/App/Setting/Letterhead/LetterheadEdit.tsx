@@ -50,10 +50,6 @@ const LetterheadEdit: React.FC<Props> = ({ letterhead }) => {
     router.get(route('app.setting.letterhead.index'))
   }
 
-  function onChange(newValue) {
-    console.log('change', newValue)
-  }
-
   return (
     <PageContainer
       title={title}
