@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
+use App\Facades\WeasyPdfService;
 use App\Http\Controllers\App\TimeController;
-use App\Services\PdfService;
+use Carbon\Carbon;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -171,7 +172,7 @@ class Invoice extends Model implements MediableInterface
         $pdfConfig['hide'] = true;
         $pdfConfig['watermark'] = $invoice->is_draft ? 'ENTWURF' : '';
 
-        $pdfFile = PdfService::createPdf('invoice', 'pdf.invoice.index',
+        return WeasyPdfService::createPdf('invoice', 'pdf.invoice.index',
             [
                 'invoice' => $invoice,
                 'taxes' => $taxes,
@@ -180,8 +181,6 @@ class Invoice extends Model implements MediableInterface
                 'groupedByCategoryTimes' => $groupedByCategoryTimes,
                 'timesSum' => $timesSum,
             ], $pdfConfig);
-
-        return $pdfFile;
     }
 
     public function taxBreakdown(Collection $invoiceLines): array
@@ -221,8 +220,6 @@ class Invoice extends Model implements MediableInterface
     }
 
     /**
-     * @throws MpdfException
-     * @throws PathAlreadyExists
      */
     public function release(): void
     {
@@ -297,14 +294,18 @@ class Invoice extends Model implements MediableInterface
             // Convert date format from d.m.Y to Y-m-d for database
             $servicePeriodBegin = null;
             if (!empty($line['service_period_begin'])) {
-                $date = \Carbon\Carbon::createFromFormat('d.m.Y', $line['service_period_begin']);
-                $servicePeriodBegin = $date ? $date->format('Y-m-d') : null;
+                $date = Carbon::createFromFormat('d.m.Y', $line['service_period_begin']);
+                if ($date instanceof Carbon) {
+                    $servicePeriodBegin = $date->format('Y-m-d');
+                }
             }
 
             $servicePeriodEnd = null;
             if (!empty($line['service_period_end'])) {
-                $date = \Carbon\Carbon::createFromFormat('d.m.Y', $line['service_period_end']);
-                $servicePeriodEnd = $date ? $date->format('Y-m-d') : null;
+                $date = Carbon::createFromFormat('d.m.Y', $line['service_period_end']);
+                if ($date instanceof Carbon) {
+                    $servicePeriodEnd = $date->format('Y-m-d');
+                }
             }
 
             $lineAttributes = [

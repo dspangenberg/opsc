@@ -4,157 +4,185 @@ namespace App\Services;
 
 use App\Models\Document;
 use App\Facades\FileHelperService;
+use App\Models\Letterhead;
+use Config;
 use Exception;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Pontedilana\PhpWeasyPrint\Pdf;
-use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
-use Spatie\TemporaryDirectory\TemporaryDirectory;
+use Process;
 
 class WeasyPdfService
 {
     /**
      * @throws Exception
      */
-    public static function createPdf(
+
+    private function convertToPdfA(string $inputFile): string
+    {
+        $outputFile = self::getOutputFile();
+        $gsPath = config('pdf.ghostscript_path', '/usr/bin/gs');
+
+        $command = sprintf(
+            '%s -dPDFA=3 -dBATCH -dNOPAUSE -sColorConversionStrategy=RGB -sDEVICE=pdfwrite -dPDFACompatibilityPolicy=1 -sOutputFile=%s %s 2>&1',
+            escapeshellarg($gsPath),
+            escapeshellarg($outputFile),
+            escapeshellarg($inputFile)
+        );
+
+        $result = Process::run($command);
+
+        if ($result->failed()) {
+            throw new Exception('PDF/A conversion failed: ' . $result->output());
+        }
+
+        return $outputFile;
+    }
+
+    private function getOutputFile(): string
+    {
+        return storage_path('system/tmp').'/'.Str::random().'.pdf';
+    }
+
+    private function getPdfCpuCommand(): string {
+
+        return escapeshellarg(Config::get('pdf.pdfcpu_path'));
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function addLetterhead(string $inputFile, string $letterheadFile): string
+    {
+
+        $outputFile = self::getOutputFile();
+
+        $command = sprintf(
+            '%s watermark add -mode pdf -- %s "scale:1 abs, rot:0" %s %s 2>&1',
+            self::getPdfCpuCommand(),
+            escapeshellarg($letterheadFile),
+            escapeshellarg($inputFile),
+            $outputFile
+        );
+
+        $result = Process::run($command);
+
+        if ($result->failed()) {
+            throw new Exception('Adding letterhead failed: ' . $result->output());
+        }
+
+        return $outputFile;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function addStamp(string $inputFile, string $stamp): string
+    {
+        $outputFile = self::getOutputFile();
+        $watermarkFont = Config::get('pdf.pdfcpu_watermark_font', 'Helvetica-Bold');
+
+        $command = sprintf(
+            '%s stamp add -mode text -- %s "fo:%s,points:96,scale:1 abs,op:.3" %s %s 2>&1',
+            self::getPdfCpuCommand(),
+            escapeshellarg($stamp),
+            $watermarkFont,
+            $inputFile,
+            $outputFile
+        );
+
+        $result = Process::run($command);
+
+        if ($result->failed()) {
+            throw new Exception('Adding stamp failed: ' . $result->output());
+        }
+
+        return $outputFile;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function mergePdfs(array $files): string
+    {
+        $outputFile = self::getOutputFile();
+
+        $escapedFiles = array_map('escapeshellarg', $files);
+
+        $command = sprintf(
+            '%s merge %s %s 2>&1',
+            self::getPdfCpuCommand(),
+            $outputFile,
+            implode(' ', $escapedFiles)
+        );
+
+        $result = Process::run($command);
+
+        if ($result->failed()) {
+            throw new Exception('Merging PDFs failed: ' . $result->output());
+        }
+
+        return $outputFile;
+    }
+
+
+    /**
+     * @throws Exception
+     */
+    public function createPdf(
         string $layoutName,
         string $view,
         array $data,
         array $config = [],
         array $attachments = []
     ): string {
-        $systemDisk = Storage::disk('system');
 
-        // Kompaktes Debug-Logging
-        Log::info('PdfService Debug Info:', [
-            'requested_layout' => $layoutName,
-            'system_disk_path' => $systemDisk->path(''),
-            'json_files_exist' => [
-                'layouts.json' => $systemDisk->exists('layouts/layouts.json'),
-                'letterheads.json' => $systemDisk->exists('letterheads/letterheads.json'),
-                'fonts.json' => $systemDisk->exists('fonts/fonts.json')
-            ],
-            'json_file_paths' => [
-                'layouts' => $systemDisk->path('layouts/layouts.json'),
-                'letterheads' => $systemDisk->path('letterheads/letterheads.json'),
-                'fonts' => $systemDisk->path('fonts/fonts.json')
-            ]
-        ]);
-
-
-        $layouts = Storage::disk('system')->json('layouts/layouts.json');
-        $letterheads = Storage::disk('system')->json('letterheads/letterheads.json');
-
-        // Null-Checks für JSON-Dateien
-        if (!$layouts || !isset($layouts['layouts'])) {
-            throw new Exception('Layout-Konfiguration konnte nicht geladen werden oder ist ungültig.');
+        $letterheadPdfFile = null;
+        $letterhead = Letterhead::where('is_default', true)->first();
+        if ($letterhead) {
+            $media = $letterhead->firstMedia('file');
+            if ($media) {
+                $letterheadPdfFile = FileHelperService::createTemporaryFileFromDoc($media->filename.'.pdf',
+                    $media->contents());
+            }
         }
-
-        if (!$letterheads || !isset($letterheads['letterheads'])) {
-            throw new Exception('Letterhead-Konfiguration konnte nicht geladen werden oder ist ungültig.');
-        }
-
-        // Collections erst NACH den Null-Checks erstellen
-        $layoutsCollection = collect($layouts['layouts']);
-        $letterheadsCollection = collect($letterheads['letterheads']);
-
-        $layout = $layoutsCollection->where('name', $layoutName)->first();
-
-        if (!$layout) {
-            throw new Exception("Layout '$layoutName' wurde nicht gefunden.");
-        }
-
-        if (!isset($layout['letterhead'])) {
-            throw new Exception("Layout '$layoutName' hat keine Letterhead-Konfiguration.");
-        }
-
-        $letterhead = $letterheadsCollection->where('name', $layout['letterhead'])->first();
-
-        if (!$letterhead) {
-            throw new Exception("Letterhead '{$layout['letterhead']}' wurde nicht gefunden.");
-        }
-
-        // Sicherstellen, dass erforderliche Felder vorhanden sind
-        if (!isset($layout['css-file'])) {
-            throw new Exception("Layout $layoutName hat keine CSS-Datei konfiguriert.");
-        }
-
-        if (!isset($letterhead['css-file']) || !isset($letterhead['pdf-file'])) {
-            throw new Exception("Letterhead '{$layout['letterhead']}' hat keine CSS- oder PDF-Datei konfiguriert.");
-        }
-
-        $defaultLayoutCss = Storage::disk('system')->get('layouts/default.css');
-        $layoutCss = Storage::disk('system')->get('layouts/'.$layout['css-file']);
-
-        $defaultLetterheadCss = Storage::disk('system')->get('letterheads/default.css');
-        $letterheadCss = Storage::disk('system')->get('letterheads/'.$letterhead['css-file']);
-        $letterheadPdfFile = storage_path('system/letterheads/'.$letterhead['pdf-file']);
-
-        $styles = [
-            'layout_default_css' => $defaultLayoutCss,
-            'layout_css' => $layoutCss,
-            'letterhead_default_css' => $defaultLetterheadCss,
-            'letterhead_css' => $letterheadCss,
-        ];
 
         $defaultConfig = [
             'title' => '',
+            'generator' => 'opsc.cloud',
             'hide' => false,
             'pdfA' => false,
             'saveAs' => false,
-            'watermark' => ''
+            'watermark' => '',
+            'creator' => 'opsc.cloud'
         ];
 
-        $data['pdf_footer'] = array_merge($defaultConfig, $config);
-        $data['pdf_config'] = array_merge($defaultConfig, $config);
-        $data['styles'] = $styles;
+        $data['config'] = array_merge($defaultConfig, $config);
+        $data['pdf_footer'] = $data['config'];
+
+        $data['styles'] = [
+            'default_css' => '',
+            'letterhead_css' => $letterhead?->css ?? '',
+            'layout_css' => '',
+        ];
 
         $html = View::make($view, $data)->render();
-        $tmpDir = storage_path('system/tmp').'/'.Str::random().'.pdf';
-
-        /*
-
-        if ($data['pdf_config']['watermark']) {
-            $mpdf->SetWatermarkText(new WatermarkText($config['watermark']));
-            $mpdf->showWatermarkText = true;
-            $mpdf->watermark_font = 'Facit';
-        }
-
-        $mpdf->list_marker_offset = '5.5pt';
-        $mpdf->list_symbol_size = '3.6pt';
-
-        $mpdf->WriteHTML($html);
-        $mpdf->SetTitle($data['pdf_footer']['title']);
-        $mpdf->SetCreator('opsc.cloud');
-
-        if ($data['pdf_config']['pdfA']) {
-            $mpdf->PDFA = true;
-        }
-
-        */
-
+        $tmpDir = FileHelperService::getTempFile('pdf');
 
         $pdf = new Pdf(config('pdf.weasyprint_path'));
         $pdf->generateFromHtml($html, $tmpDir);
 
-        $pdf = new \mikehaertl\pdftk\Pdf($tmpDir, ['command' => config('pdf.pdftk_path')]);
-
-        $result = $pdf->multiBackground($letterheadPdfFile)->saveAs($tmpDir);
-
-        if ($result === false) {
-            throw new Exception($pdf->getError());
+        if ($letterheadPdfFile) {
+            $tmpDir = self::addLetterhead($tmpDir, $letterheadPdfFile);
         }
 
-        /*
-        $pdf = new \mikehaertl\pdftk\Pdf($tmpDir, ['command' => config('pdf.pdftk_path')]);
-        $pdf->stamp('/Users/dspangenberg/Downloads/entwurf.pdf')->saveAs($tmpDir);
-        */
-
+        if ($data['config']['watermark']) {
+            $tmpDir = self::addStamp($tmpDir, $data['config']['watermark']);
+        }
 
         if ($attachments && count($attachments) > 0) {
-            $pdf = new \mikehaertl\pdftk\Pdf($tmpDir, ['command' => config('pdf.pdftk_path')]);
+            $files = [$tmpDir];
+
             foreach ($attachments as $attachment) {
                 $media = Document::find($attachment)->firstMedia('file');
 
@@ -162,14 +190,18 @@ class WeasyPdfService
                     $attachmentFile = FileHelperService::createTemporaryFileFromDoc($media->filename,
                         $media->contents());
                     if (file_exists($attachmentFile)) {
-                        $pdf->addFile($attachmentFile);
+                        $files[] = $attachmentFile;
                     }
                 }
             }
-            $result = $pdf->saveAs($tmpDir);
-            if ($result === false) {
-                throw new Exception($pdf->getError());
+
+            if (count($files) > 1) {
+                $tmpDir = self::mergePdfs($files);
             }
+        }
+
+        if ($data['config']['pdfA']) {
+            $tmpDir = self::convertToPdfA($tmpDir);
         }
 
         return $tmpDir;

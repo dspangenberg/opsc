@@ -1,4 +1,4 @@
-<x-layout :styles="$styles" :footer="$pdf_footer">
+<x-layout :config="$config" :styles="$styles" :footer="$pdf_footer">
     <style>
         table {
             page-break-inside: initial;

@@ -12,13 +12,12 @@ import '@fontsource/clear-sans/500.css'
 import '@fontsource/clear-sans/700.css'
 
 import 'mapbox-gl/dist/mapbox-gl.css'
-import * as Sentry from '@sentry/react'
-
-import { ApplicationProvider } from '@/Components/ApplicationProvider'
-import AppLayout from '@/Layouts/AppLayout'
 import { createInertiaApp } from '@inertiajs/react'
+import * as Sentry from '@sentry/react'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { createRoot } from 'react-dom/client'
+import { ApplicationProvider } from '@/Components/ApplicationProvider'
+import AppLayout from '@/Layouts/AppLayout'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel'
 const sentryEnabled = import.meta.env.VITE_SENTRY_ENABLED === 'true'
@@ -45,10 +44,15 @@ createInertiaApp({
       import.meta.glob('./Pages/**/*.tsx')
     )
 
-    // @ts-ignore
+    // @ts-expect-error
     page.default.layout = name.startsWith('App') ? page => <AppLayout>{page}</AppLayout> : undefined
 
     return page
+  },
+  defaults: {
+    visitOptions: (href, options) => {
+      return { viewTransition: true }
+    }
   },
   setup({ el, App, props }) {
     const root = createRoot(el)

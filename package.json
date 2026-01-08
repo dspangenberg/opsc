@@ -61,6 +61,7 @@
     "@internationalized/date": "^3.10.1",
     "@jswork/next-nl2br": "^1.0.2",
     "@mdxeditor/editor": "^3.52.3",
+    "@monaco-editor/react": "^4.7.0",
     "@platejs/ai": "^52.0.16",
     "@platejs/autoformat": "^52.0.11",
     "@platejs/basic-nodes": "^52.0.11",

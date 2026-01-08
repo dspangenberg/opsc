@@ -1,13 +1,7 @@
 <tr>
-    <td>
+    <td colspan="3" />
+    <td colspan="4" class="mdx-cell">
+        <h3>{{$line->text}}</h3>
     </td>
-
-    <td>
-    </td>
-
-    <td>
-    </td>
-    <td colspan="5" style="text-align:left;">
-        <h3 style="padding:0;margin:0;">{{$line->text}}</h3>
-    </td>
+    <td />
 </tr>

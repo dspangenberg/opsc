@@ -257,6 +257,11 @@ const data = {
       activePath: '/app/settings',
       items: [
         {
+          title: 'Briefbögen',
+          url: route('app.setting.letterhead.index', {}, false),
+          activePath: '/app/settings/letterheads'
+        },
+        {
           title: 'Angebotsabschnitte',
           url: route('app.settings.offer-section.index', {}, false),
           activePath: '/app/settings/offer-sections'
@@ -264,7 +269,6 @@ const data = {
         {
           title: 'Textbausteine',
           url: route('app.setting.text-module.index', {}, false),
-          icon: Configuration01Icon,
           activePath: '/app/settings/text-modules'
         }
       ]
