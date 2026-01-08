@@ -166,7 +166,7 @@ table tr td.right, table tr th.right {
   padding-right: 0;
 }
 
-table tr td.left, table tr td.left {
+table tr td.left, table tr th.left {
   text-align: left;
 }
 
@@ -204,16 +204,16 @@ table.info-table tr td {
 }
 CSS;
 
-        foreach (Tenant::all() as $tenant) {
-            tenancy()->initialize($tenant);
+        Tenant::chunkById(100, function ($tenants) use ($defaultCss) {
+            foreach ($tenants as $tenant) {
+                $tenant->run(function () use ($tenant, $defaultCss) {
+                    $settings = app(GeneralSettings::class);
+                    $settings->pdf_global_css = $defaultCss;
+                    $settings->save();
 
-            $settings = app(GeneralSettings::class);
-            $settings->pdf_global_css = $defaultCss;
-            $settings->save();
-
-            $this->command->info("Updated PDF CSS for tenant: {$tenant->organisation}");
-
-            tenancy()->end();
-        }
+                    $this->command->info("Updated PDF CSS for tenant: {$tenant->organisation}");
+                });
+            }
+        });
     }
 }

@@ -1,7 +1,7 @@
 <x-layout :config="$config" :styles="$styles" :footer="$pdf_footer">
 
     <div id="recipient">
-        {!! nl2br($offer->address) !!}
+        {!! nl2br(e($offer->address)) !!}
     </div>
 
     <div id="infobox-first-page">
@@ -107,7 +107,7 @@
             <td colspan="8">&nbsp;</td>
         </tr>
 
-        <tr class="">
+        <tr>
             <td colspan="4"></td>
             <td colspan="2" style="border-top: 1px solid #aaa;">
                 Nettobetrag
@@ -123,7 +123,7 @@
         </tr>
 
         @foreach ($taxes as $tax)
-            <tr class="">
+            <tr>
                 <td colspan="4"></td>
 
                 <td colspan="2">
@@ -157,12 +157,12 @@
                 {{ number_format($offer->amount_gross, 2, ',', '.') }}
 
             </td>
-            <td style="text-align:right;border-top: 1px solid #aaa;text-align: center;font-weight: bold;">
+            <td style="border-top: 1px solid #aaa;text-align: center;font-weight: bold;">
                 EUR
             </td>
         </tr>
 
-        <tr class="">
+        <tr>
             <td colspan="4"></td>
             <td colspan="2" style="border-bottom: 1px solid #aaa;border-top: 1px solid #aaa;"></td>
             <td style="border-bottom: 1px double #aaa;border-top: 1px solid #aaa;text-align: right;"></td>

@@ -159,7 +159,7 @@ table tr td.right, table tr th.right {
   padding-right: 0;
 }
 
-table tr td.left, table tr td.left {
+table tr td.left, table tr th.left {
   text-align: left;
 }
 

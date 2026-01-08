@@ -351,7 +351,7 @@ class TimeController extends Controller
         $now = Carbon::now()->format('d.m.Y');
         $title = "Leistungsnachweis vom $now";
 
-        $pdfContent = WeasyPdfService::createPdf('proof-of-activity', 'pdf.proof-of-activity.index', ['times' => $timesForReport, ''], [
+        $pdfContent = WeasyPdfService::createPdf('proof-of-activity', 'pdf.proof-of-activity.index', ['times' => $timesForReport], [
             'title' => $title,
         ]);
 

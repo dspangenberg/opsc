@@ -9,6 +9,6 @@
     @endif
   </div>
   <div id="footer-right">
-      <span class="page-number"></span>/<span class="total-pages">
+    <span class="page-number"></span>/<span class="total-pages"></span>
   </div>
 @endif
