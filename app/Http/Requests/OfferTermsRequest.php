@@ -9,6 +9,15 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Request validation for offer terms.
+ *
+ * Security Note:
+ * The additional_text field stores raw markdown which is sanitized when rendered
+ * via the md() helper function. The md() helper uses league/commonmark with
+ * HTMLPurifier to prevent XSS attacks while allowing safe HTML tags like
+ * tables, line breaks, and basic formatting.
+ */
 class OfferTermsRequest extends FormRequest
 {
     public function rules(): array
@@ -21,20 +30,5 @@ class OfferTermsRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
-    }
-
-    /**
-     * Get the validated data from the request.
-     * Additional sanitization is handled by the md() helper which uses
-     * league/commonmark with HTML stripping to prevent XSS.
-     */
-    public function validated($key = null, $default = null): array
-    {
-        $validated = parent::validated($key, $default);
-
-        // Additional text is sanitized when rendered via md() helper
-        // No pre-storage sanitization needed as markdown is safe to store
-
-        return $validated;
     }
 }
