@@ -12,7 +12,7 @@ import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { MenuItem } from '@/Components/twc-ui/menu'
 import { Checkbox } from '@/Components/ui/checkbox'
 
-const editUrl = (id: number | null) => (id ? route('app.setting.layout.edit', { id }) : '#')
+const editUrl = (id: number | null) => (id ? route('app.setting.layout.edit', { layout: id }) : '#')
 
 const deleteSection = async (row: App.Data.PrintLayoutData) => {
   const promise = await AlertDialog.call({
@@ -21,7 +21,7 @@ const deleteSection = async (row: App.Data.PrintLayoutData) => {
     buttonTitle: 'Layout löschen'
   })
   if (promise) {
-    router.delete(route('app.setting.layout.delete', { section: row.id }))
+    router.delete(route('app.setting.layout.delete', { layout: row.id }))
   }
 }
 

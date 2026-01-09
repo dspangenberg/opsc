@@ -34,6 +34,7 @@ class PrintLayoutController extends Controller
 
     public function edit(PrintLayout $layout)
     {
+        $layout->load('letterhead');
         $letterheads = Letterhead::query()->orderBy('title')->get();
         return Inertia::render('App/Setting/PrintLayout/PrintLayoutEdit', [
             'layout' => PrintLayoutData::from($layout),
@@ -41,7 +42,7 @@ class PrintLayoutController extends Controller
         ]);
     }
 
-       public function update(PrintLayoutRequest $request, PrintLayout $layout)
+    public function update(PrintLayoutRequest $request, PrintLayout $layout)
     {
         $layout->update($request->validated());
         return redirect()->route('app.setting.letterhead.index');

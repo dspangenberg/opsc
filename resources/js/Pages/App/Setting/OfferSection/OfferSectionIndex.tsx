@@ -18,10 +18,13 @@ interface DocumentTypesIndexPageProps extends PageProps {
 const OfferSectionIndex: React.FC<DocumentTypesIndexPageProps> = ({ sections }) => {
   const [selectedRows, setSelectedRows] = useState<App.Data.OfferSectionData[]>([])
 
-  const breadcrumbs = useMemo(() => [{ title: 'Dokumente' }, { title: 'Dokumenttypen' }], [])
-
-  const handleDocumentTypeAdd = () => {
-    router.get(route('app.settings.offer-section.create'))
+  const breadcrumbs = [
+    { title: 'Einstellungen', url: route('app.setting') },
+    { title: 'Angebote', url: route('app.setting.offer') },
+    { title: 'Abschnitte' }
+  ]
+  const handleSectionAdd = () => {
+    router.get(route('app.setting.offer-section.create'))
   }
 
   const toolbar = useMemo(
@@ -31,7 +34,7 @@ const OfferSectionIndex: React.FC<DocumentTypesIndexPageProps> = ({ sections }) 
           variant="toolbar-default"
           icon={Add01Icon}
           title="Neuen Abschnitte hinzufügen"
-          onClick={handleDocumentTypeAdd}
+          onClick={handleSectionAdd}
         />
       </Toolbar>
     ),

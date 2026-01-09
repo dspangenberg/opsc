@@ -12,19 +12,19 @@ use Illuminate\Support\Facades\Route;
 Route::get('settings/offers/text-modules', [TextModuleController::class, 'index'])->name('app.setting.text-module.index');
 Route::get('settings/offers/text-modules/create', [TextModuleController::class, 'create'])->name('app.setting.text-module.create');
 Route::post('settings/offers/text-modules/store', [TextModuleController::class, 'store'])->name('app.setting.text-module.store')->middleware([HandlePrecognitiveRequests::class]);
-Route::get('settings/offers/text-modules/store/{module}', [TextModuleController::class, 'edit'])->name('app.setting.text-module.edit');
-Route::put('settings/offers/text-modules/store/{module}', [TextModuleController::class, 'update'])->name('app.setting.text-module.update')->middleware([HandlePrecognitiveRequests::class]);
+Route::get('settings/offers/text-modules/{module}', [TextModuleController::class, 'edit'])->name('app.setting.text-module.edit');
+Route::put('settings/offers/text-modules/{module}', [TextModuleController::class, 'update'])->name('app.setting.text-module.update')->middleware([HandlePrecognitiveRequests::class]);
 Route::delete('settings/offers/text-modules/{module}', [TextModuleController::class, 'delete'])->name('app.setting.text-module.delete');
 
 
 Route::redirect('settings/offers', '/app/settings/offers/offer-sections')->name('app.setting.offer');
 
-Route::get('settings/offers/offer-sections', [OfferSectionController::class, 'index'])->name('app.settings.offer-section.index');
-Route::get('settings/offers/offer-sections/create', [OfferSectionController::class, 'create'])->name('app.settings.offer-section.create');
-Route::post('settings/offers/offer-sections/store', [OfferSectionController::class, 'store'])->name('app.settings.offer-section.store')->middleware([HandlePrecognitiveRequests::class]);
-Route::get('settings/offers/offer-sections/{section}', [OfferSectionController::class, 'edit'])->name('app.settings.offer-section.edit');
-Route::put('settings/offers/offer-sections/{section}', [OfferSectionController::class, 'update'])->name('app.settings.offer-section.update')->middleware([HandlePrecognitiveRequests::class]);
-Route::delete('settings/offers/offer-sections/{section}', [OfferSectionController::class, 'delete'])->name('app.settings.offer-section.delete');
+Route::get('settings/offers/offer-sections', [OfferSectionController::class, 'index'])->name('app.setting.offer-section.index');
+Route::get('settings/offers/offer-sections/create', [OfferSectionController::class, 'create'])->name('app.setting.offer-section.create');
+Route::post('settings/offers/offer-sections/store', [OfferSectionController::class, 'store'])->name('app.setting.offer-section.store')->middleware([HandlePrecognitiveRequests::class]);
+Route::get('settings/offers/offer-sections/{section}', [OfferSectionController::class, 'edit'])->name('app.setting.offer-section.edit');
+Route::put('settings/offers/offer-sections/{section}', [OfferSectionController::class, 'update'])->name('app.setting.offer-section.update')->middleware([HandlePrecognitiveRequests::class]);
+Route::delete('settings/offers/offer-sections/{section}', [OfferSectionController::class, 'delete'])->name('app.setting.offer-section.delete');
 
 Route::get('settings/printing-system/global-css', [LetterheadController::class, 'editGlobalCSS'])->name('app.setting.global-css-edit');
 Route::put('settings/printing-system/global-css', [LetterheadController::class, 'updateGlobalCSS'])->name('app.setting.global-css-update')->middleware([HandlePrecognitiveRequests::class]);
