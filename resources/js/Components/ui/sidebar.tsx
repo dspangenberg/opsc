@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import { Slot as SlotPrimitive } from 'radix-ui'
+import * as SlotPrimitive from '@radix-ui/react-slot'
 import * as React from 'react'
 import { Focusable } from 'react-aria-components'
 import { Button } from '@/Components/twc-ui/button'
