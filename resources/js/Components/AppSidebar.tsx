@@ -119,9 +119,9 @@ const data = {
     },
     {
       title: 'Projekte',
-      url: route('app.dashboard', {}, false),
+      url: route('app.project.index'),
       icon: KanbanIcon,
-      activePath: '/appsi',
+      activePath: '/app/projects',
       hasSep: true
     },
     {

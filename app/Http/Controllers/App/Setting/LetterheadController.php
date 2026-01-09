@@ -91,14 +91,35 @@ class LetterheadController extends Controller
 
     public function delete(Letterhead $letterhead)
     {
+        $file = $letterhead->firstMedia('file');
+        $file?->delete();
+
         $letterhead->delete();
 
         return redirect()->route('app.setting.letterhead.index');
     }
 
+    /**
+     * @throws FileNotSupportedException
+     * @throws FileExistsException
+     * @throws ForbiddenException
+     * @throws FileNotFoundException
+     * @throws FileSizeException
+     * @throws InvalidHashException
+     * @throws ConfigurationException
+     */
     public function store(LetterheadRequest $request)
     {
-        Letterhead::create($request->validated());
+        $letterhead = Letterhead::create($request->validated());
+        if ($request->hasFile('file')) {
+            $letterhead->detachMediaTags('file');
+
+            $media = MediaUploader::fromSource($request->file('file'))
+                ->toDestination('s3_private', 'letterheads')
+                ->upload();
+
+            $letterhead->attachMedia($media, 'file');
+        }
 
         return redirect()->route('app.setting.letterhead.index');
     }

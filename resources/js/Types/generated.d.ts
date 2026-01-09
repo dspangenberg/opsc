@@ -455,9 +455,31 @@ css: string | null;
 letterhead_id: number;
 letterhead: App.Data.LetterheadData;
 };
+export type ProjectCategoryData = {
+id: number | null;
+name: string;
+color: string | null;
+icon: string | null;
+};
 export type ProjectData = {
 id: number | null;
 name: string;
+owner_contact_id: number;
+lead_user_id: number;
+manager_contact_id: number;
+project_category_id: number;
+is_archived: boolean;
+hourly: number;
+budget_hours: number | null;
+budget_costs: number | null;
+budget_period: string | null;
+begin_on: string | null;
+end_on: string | null;
+website: string | null;
+owner: App.Data.ContactData | null;
+leadUser: App.Data.UserData | null;
+managerContact: App.Data.ContactData | null;
+category: App.Data.ProjectCategoryData | null;
 };
 export type ReceiptData = {
 id: number | null;
