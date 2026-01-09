@@ -50,7 +50,7 @@ class LetterheadController extends Controller
     public function updateGlobalCSS(GlobalCssUpdateRequest $request)
     {
         $settings = app(GeneralSettings::class);
-        $settings->pdf_global_css = $request->validated()['css'] ?? null;
+        $settings->pdf_global_css = $request->validated()['css'];
         $settings->save();
 
         return redirect()->route('app.setting.global-css-edit');
