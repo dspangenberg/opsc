@@ -11,7 +11,7 @@ import { MenuItem } from '@/Components/twc-ui/menu'
 import { SearchField } from '@/Components/twc-ui/search-field'
 import { Toolbar } from '@/Components/twc-ui/toolbar'
 import { Badge } from '@/Components/ui/badge'
-import { useFileDownload } from '@/Hooks/useFileDownload'
+import { useFileDownload } from '@/Hooks/use-file-download'
 import type { PageProps } from '@/Types'
 import { columns } from './BookingIndexColumns'
 

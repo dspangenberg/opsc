@@ -1,22 +1,16 @@
 import {
-  Cancel01Icon,
-  CashbackEuroIcon,
   Delete02Icon,
   DocumentValidationIcon,
   Edit03Icon,
   EditTableIcon,
-  EuroReceiveIcon,
   FileDownloadIcon,
   FileEditIcon,
-  FileRemoveIcon,
   Files02Icon,
   LegalDocument02Icon,
   MoreVerticalCircle01Icon,
   Pdf02Icon,
   PrinterIcon,
-  RepeatIcon,
-  Sent02Icon,
-  UnavailableIcon
+  Sent02Icon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import print from 'print-js'
@@ -25,11 +19,11 @@ import { useCallback, useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
-import { Menu, MenuItem, MenuPopover, MenuSubTrigger } from '@/Components/twc-ui/menu'
+import { MenuItem } from '@/Components/twc-ui/menu'
 import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
 import { Tab, TabList, Tabs } from '@/Components/twc-ui/tabs'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
-import { useFileDownload } from '@/Hooks/useFileDownload'
+import { useFileDownload } from '@/Hooks/use-file-download'
 import { OfferTableProvider, useOfferTable } from './OfferTableProvider'
 
 interface Props {
@@ -276,7 +270,8 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
       handleRelease,
       setEditMode,
       currentRoute,
-      offer.is_draft
+      offer.is_draft,
+      offer.id
     ]
   )
 

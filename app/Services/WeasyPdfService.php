@@ -84,6 +84,8 @@ class WeasyPdfService
         $outputFile = self::getOutputFile();
         $watermarkFont = Config::get('pdf.pdfcpu_watermark_font', 'Helvetica-Bold');
 
+        // Userfont => pdfcpu fonts install font.ttf
+
         $command = sprintf(
             '%s stamp add -mode text -- %s "fo:%s,points:96,scale:1 abs,op:.3" %s %s 2>&1',
             self::getPdfCpuCommand(),

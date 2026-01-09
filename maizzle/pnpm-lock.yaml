@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       '@maizzle/framework':
-        specifier: latest
+        specifier: 5.4.0
         version: 5.4.0(jiti@1.21.7)
       tailwindcss-preset-email:
         specifier: latest
