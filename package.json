@@ -118,7 +118,7 @@
     "nuqs": "^2.8.6",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "5.4.296",
-    "platejs": "^52.0.15",
+    "platejs": "^52.0.17",
     "print-js": "^1.6.0",
     "radix-ui": "latest",
     "react-aria": "^3.45.0",
