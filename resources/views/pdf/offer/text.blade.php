@@ -1,10 +1,11 @@
 <tr>
     <td colspan="3">
+        &nbsp;
     </td>
 
-    <td colspan="5" style="text-align:justify;">
+    <td colspan="4" class="mdx-cell">
         {!! md(nl2br($line->text))  !!}
     </td>
 
-
+    <td />
 </tr>

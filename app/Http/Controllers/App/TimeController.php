@@ -12,6 +12,7 @@ use App\Data\ProjectData;
 use App\Data\TimeCategoryData;
 use App\Data\TimeData;
 use App\Data\UserData;
+use App\Facades\WeasyPdfService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TimeStoreRequest;
 use App\Models\Contact;
@@ -21,7 +22,6 @@ use App\Models\Project;
 use App\Models\Time;
 use App\Models\TimeCategory;
 use App\Models\User;
-use App\Services\PdfService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
@@ -203,7 +203,7 @@ class TimeController extends Controller
                 'tax' => $category['quantity'] * $timeCategory['hourly'] * 0.19,
                 'service_period_begin' => $category['start'],
                 'service_period_end' => $category['end'],
-                'text' => "**".$category['name']."**\ngem. Leistungsnachweis",
+                'text' => '**'.$category['name']."**\ngem. Leistungsnachweis",
             ]);
         });
 
@@ -351,7 +351,7 @@ class TimeController extends Controller
         $now = Carbon::now()->format('d.m.Y');
         $title = "Leistungsnachweis vom $now";
 
-        $pdfContent = PdfService::createPdf('proof-of-activity', 'pdf.proof-of-activity.index', ['times' => $timesForReport, ''], [
+        $pdfContent = WeasyPdfService::createPdf('proof-of-activity', 'pdf.proof-of-activity.index', ['times' => $timesForReport], [
             'title' => $title,
         ]);
 

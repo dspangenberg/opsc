@@ -2,15 +2,19 @@
 
 namespace App\Models;
 
+use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * @property-read \App\Models\NumberRange|null $range
- * @method static \Illuminate\Database\Eloquent\Builder<static>|NumberRangeDocumentNumber newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|NumberRangeDocumentNumber newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|NumberRangeDocumentNumber query()
- * @mixin \Eloquent
+ * @property-read NumberRange|null $range
+ *
+ * @method static Builder<static>|NumberRangeDocumentNumber newModelQuery()
+ * @method static Builder<static>|NumberRangeDocumentNumber newQuery()
+ * @method static Builder<static>|NumberRangeDocumentNumber query()
+ *
+ * @mixin Eloquent
  */
 class NumberRangeDocumentNumber extends Model
 {

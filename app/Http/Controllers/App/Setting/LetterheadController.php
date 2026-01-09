@@ -6,7 +6,6 @@ use App\Data\LetterheadData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LetterheadRequest;
 use App\Models\Letterhead;
-use App\Models\TextModule;
 use Inertia\Inertia;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
 use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
@@ -22,6 +21,7 @@ class LetterheadController extends Controller
     public function index()
     {
         $letterheads = Letterhead::query()->orderBy('title')->paginate();
+
         return Inertia::render('App/Setting/Letterhead/LetterheadIndex', [
             'letterheads' => LetterheadData::collect($letterheads),
         ]);
@@ -29,7 +29,8 @@ class LetterheadController extends Controller
 
     public function create()
     {
-        $letterhead = new Letterhead();
+        $letterhead = new Letterhead;
+
         return Inertia::render('App/Setting/Letterhead/LetterheadEdit', [
             'letterhead' => LetterheadData::from($letterhead),
         ]);
@@ -71,12 +72,14 @@ class LetterheadController extends Controller
     public function delete(Letterhead $letterhead)
     {
         $letterhead->delete();
+
         return redirect()->route('app.setting.letterhead.index');
     }
 
     public function store(LetterheadRequest $request)
     {
         Letterhead::create($request->validated());
+
         return redirect()->route('app.setting.letterhead.index');
     }
 }

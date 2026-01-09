@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
-use App\Models\Document;
 use App\Facades\FileHelperService;
+use App\Models\Document;
 use App\Models\Letterhead;
+use App\Models\PrintLayout;
+use App\Settings\GeneralSettings;
 use Config;
 use Exception;
 use Illuminate\Support\Facades\View;
@@ -17,7 +19,6 @@ class WeasyPdfService
     /**
      * @throws Exception
      */
-
     private function convertToPdfA(string $inputFile): string
     {
         $outputFile = self::getOutputFile();
@@ -126,7 +127,6 @@ class WeasyPdfService
         return $outputFile;
     }
 
-
     /**
      * @throws Exception
      */
@@ -138,8 +138,17 @@ class WeasyPdfService
         array $attachments = []
     ): string {
 
+        $settings = app(GeneralSettings::class);
+
+        $layout = PrintLayout::with('letterhead')->where('name', $layoutName)->first();
+        $letterhead = $layout?->letterhead;
+
+        if (! $letterhead) {
+            $letterhead = Letterhead::where('is_default', true)->first();
+        }
+
         $letterheadPdfFile = null;
-        $letterhead = Letterhead::where('is_default', true)->first();
+
         if ($letterhead) {
             $media = $letterhead->firstMedia('file');
             if ($media) {
@@ -155,16 +164,16 @@ class WeasyPdfService
             'pdfA' => false,
             'saveAs' => false,
             'watermark' => '',
-            'creator' => 'opsc.cloud'
+            'creator' => 'opsc.cloud',
         ];
 
         $data['config'] = array_merge($defaultConfig, $config);
         $data['pdf_footer'] = $data['config'];
 
         $data['styles'] = [
-            'default_css' => '',
+            'default_css' => $settings->pdf_global_css ?? '',
             'letterhead_css' => $letterhead?->css ?? '',
-            'layout_css' => '',
+            'layout_css' => $layout?->css ?? '',
         ];
 
         $html = View::make($view, $data)->render();
@@ -188,7 +197,6 @@ class WeasyPdfService
                 $document = Document::find($attachment);
                 if ($document) {
                     $media = Document::find($attachment)->firstMedia('file');
-
 
                     if ($media) {
                         $attachmentFile = FileHelperService::createTemporaryFileFromDoc($media->filename,

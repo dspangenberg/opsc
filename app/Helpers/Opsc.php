@@ -1,6 +1,6 @@
 <?php
 
-if (!function_exists('minutes_to_hours')) {
+if (! function_exists('minutes_to_hours')) {
     function minutes_to_hours($minutes): string
     {
         $is_neg = ($minutes < 0);
@@ -14,7 +14,7 @@ if (!function_exists('minutes_to_hours')) {
     }
 }
 
-if (!function_exists('minutes_to_units')) {
+if (! function_exists('minutes_to_units')) {
     function minutes_to_units($minutes): string
     {
         $quarters = ceil($minutes / 15) * 15;
@@ -24,18 +24,42 @@ if (!function_exists('minutes_to_units')) {
     }
 }
 
-if (!function_exists('md')) {
+if (! function_exists('md')) {
     /**
-     * @throws CommonMarkException
+     * Converts markdown to sanitized HTML to prevent XSS attacks.
+     * Uses league/commonmark with CommonMark and Table extensions.
+     * Allows safe HTML tags via HTMLPurifier configuration.
      */
-    function md($markdown): string
+    function md(?string $markdown): string
     {
-        $md = new Parsedown();
-        return $md->text($markdown);
+        if (empty($markdown)) {
+            return '';
+        }
+
+        $config = [
+            'html_input' => 'allow',
+            'allow_unsafe_links' => false,
+        ];
+
+        $environment = new \League\CommonMark\Environment\Environment($config);
+        $environment->addExtension(new \League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension);
+        $environment->addExtension(new \League\CommonMark\Extension\Table\TableExtension);
+
+        $converter = new \League\CommonMark\MarkdownConverter($environment);
+        $html = $converter->convert($markdown)->getContent();
+
+        // Sanitize HTML output using HTMLPurifier to allow safe tags only
+        $purifierConfig = \HTMLPurifier_Config::createDefault();
+        $purifierConfig->set('HTML.Allowed', 'p,br,strong,em,u,h1,h2,h3,h4,h5,h6,ul,ol,li,a[href],table,thead,tbody,tr,th,td,span,div,blockquote,code,pre');
+        $purifierConfig->set('URI.DisableExternalResources', true);
+        $purifierConfig->set('URI.DisableResources', true);
+        $purifier = new \HTMLPurifier($purifierConfig);
+
+        return $purifier->purify($html);
     }
 }
 
-if (!function_exists('formated_invoice_id')) {
+if (! function_exists('formated_invoice_id')) {
     function formated_invoice_id(int $invoice_id): string
     {
         if (! $invoice_id) {
@@ -56,7 +80,7 @@ if (!function_exists('formated_invoice_id')) {
     }
 }
 
-if (!function_exists('formated_offer_id')) {
+if (! function_exists('formated_offer_id')) {
     function formated_offer_id(int $invoice_id): string
     {
         if (! $invoice_id) {
@@ -69,12 +93,11 @@ if (!function_exists('formated_offer_id')) {
         $formated_id .= substr($invoice_id, 6, 3).'.';
         $formated_id .= substr($invoice_id, 9, 2);
 
-
         return $formated_id;
     }
 }
 
-if (!function_exists('iban_to_human_format')) {
+if (! function_exists('iban_to_human_format')) {
     function iban_to_human_format($iban)
     {
         // First verify validity, or return
@@ -92,7 +115,7 @@ if (!function_exists('iban_to_human_format')) {
     }
 }
 
-if (!function_exists('sortByLength')) {
+if (! function_exists('sortByLength')) {
     // https://stackoverflow.com/questions/838227/php-sort-an-array-by-the-length-of-its-values
     function sortByLength($a, $b): int
     {
