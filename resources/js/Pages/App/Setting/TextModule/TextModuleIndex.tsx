@@ -20,7 +20,8 @@ const TextModuleIndex: React.FC<TextModuleIndexPageProps> = ({ modules }) => {
 
   const breadcrumbs = useMemo(
     () => [
-      { title: 'Einstellungen', url: route('app.setting.text-module.index') },
+      { title: 'Einstellungen', url: route('app.setting') },
+      { title: 'Angebote', url: route('app.setting.offer') },
       { title: 'Textbausteine' }
     ],
     []

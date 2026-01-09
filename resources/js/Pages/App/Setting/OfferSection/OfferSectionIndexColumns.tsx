@@ -12,7 +12,8 @@ import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { MenuItem } from '@/Components/twc-ui/menu'
 import { Checkbox } from '@/Components/ui/checkbox'
 
-const editUrl = (id: number | null) => (id ? route('app.settings.offer-section.edit', { id }) : '#')
+const editUrl = (id: number | null) =>
+  id ? route('app.setting.offer-section.edit', { section: id }) : '#'
 
 const deleteSection = async (row: App.Data.OfferSectionData) => {
   const promise = await AlertDialog.call({
@@ -21,7 +22,7 @@ const deleteSection = async (row: App.Data.OfferSectionData) => {
     buttonTitle: 'Abschnitt löschen'
   })
   if (promise) {
-    router.delete(route('app.settings.offer-section.delete', { section: row.id }))
+    router.delete(route('app.setting.offer-section.delete', { section: row.id }))
   }
 }
 
@@ -63,19 +64,6 @@ export const columns: ColumnDef<App.Data.OfferSectionData>[] = [
           aria-label="Select row"
         />
       </div>
-    )
-  },
-  {
-    accessorKey: 'name',
-    header: 'Sektion',
-    size: 300,
-    cell: ({ row, getValue }) => (
-      <Link
-        href={editUrl(row.original.id)}
-        className="truncate align-middle font-medium hover:underline"
-      >
-        {getValue() as string}
-      </Link>
     )
   },
   {

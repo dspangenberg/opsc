@@ -19,6 +19,6 @@ class PrintLayoutData extends Data
         public readonly string $title,
         public readonly ?string $css,
         public readonly int $letterhead_id,
-        public readonly ?LetterheadData $letterhead,
+        public readonly LetterheadData $letterhead,
     ) {}
 }

@@ -43,11 +43,12 @@ const TextModuleEdit: React.FC<Props> = ({ module }) => {
 
   const breadcrumbs = useMemo(
     () => [
-      { title: 'Einstellungen', url: route('app.setting.text-module.index') },
-      { title: 'Textbausteine', url: route('app.setting.text-module.index') },
+      { title: 'Einstellungen', url: route('app.setting') },
+      { title: 'Angebote', url: route('app.setting.offer') },
+      { title: 'Textbaustein', url: route('app.setting.text-module.index') },
       { title: module.title || 'Neuer Textbaustein' }
     ],
-    []
+    [module.title]
   )
 
   const handleClose = () => {

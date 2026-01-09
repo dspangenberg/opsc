@@ -39,13 +39,12 @@ const PrintLayoutIndex: React.FC<PrintLayoutIndexPageProps> = ({ layouts }) => {
   }, [selectedRows.length])
 
   const footer = useMemo(() => {
-    // Nur Pagination rendern, wenn cost_centers existiert
     return <Pagination data={layouts} />
   }, [layouts])
 
   return (
     <PageContainer
-      title="Briefbögen"
+      title="Layouts"
       width="7xl"
       breadcrumbs={breadcrumbs}
       className="flex overflow-hidden"

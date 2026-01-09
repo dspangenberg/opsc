@@ -263,7 +263,7 @@ const data = {
           items: [
             {
               title: 'Angebotsabschnitte',
-              url: route('app.settings.offer-section.index', {}, false),
+              url: route('app.setting.offer-section.index', {}, false),
               activePath: '/app/settings/offers/offer-sections'
             },
             {

@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@maizzle/framework':
-        specifier: 5.4.0
-        version: 5.4.0(jiti@1.21.7)
+        specifier: next
+        version: 5.4.0-0(jiti@1.21.7)
       tailwindcss-preset-email:
         specifier: latest
         version: 1.4.1(tailwindcss@3.4.19)
@@ -97,8 +97,8 @@ packages:
     resolution: {integrity: sha512-ZTvEM58L5ndRtnxtBykMAFUjsFYZU2gpYEC9eSs2mqIAJ3ogT10p7ehq+YacwAXOHpCm5uk04pJRNvg6TcA40w==}
     hasBin: true
 
-  '@maizzle/framework@5.4.0':
-    resolution: {integrity: sha512-muKmAseHSSVnMGzPpY7RXGuuG/zaZBkEEti26aIuzoIDkMsamc2h9UWg1M1nnrHuaUW75LRFy9USrBmHC3/Ecg==}
+  '@maizzle/framework@5.4.0-0':
+    resolution: {integrity: sha512-YUBIzaSW5n+8BLkHIuT/sdBaVdDPlRQPwBhONwOaYm3VSS1kaoETJbHWcNdqOap0O98Vg2QYdeQT7d0Iln13mA==}
     engines: {node: '>=18.20'}
     hasBin: true
 
@@ -753,8 +753,8 @@ packages:
     resolution: {integrity: sha512-PMSmkqxr106Xa156c2M265Z+FTrPl+oxd/rgOQy2tijQeK5TxQ43psO1ZCwhVOSdnn+RzkzlRz/eY4BgJBYVpg==}
     hasBin: true
 
-  juice@11.1.0:
-    resolution: {integrity: sha512-jZj/pUGFddSU7HS6ThAdiQ21IILIM23JNdFNgTacwxFUMTw/6qvMv3suv/I66Bz2xZ6yC3Vl8fWl0At/wVcH3A==}
+  juice@11.1.0-2:
+    resolution: {integrity: sha512-4DwSRLmSBnwkLijK3Atf8XqOEueqJl1lq2XL+8hi59zsF8LtYWJ0utk8RGLNxiRXLYF7ttdBkVSnUpge41pqCQ==}
     engines: {node: '>=18.17'}
     hasBin: true
 
@@ -1643,7 +1643,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@maizzle/framework@5.4.0(jiti@1.21.7)':
+  '@maizzle/framework@5.4.0-0(jiti@1.21.7)':
     dependencies:
       '@maizzle/cli': 2.0.0
       cheerio: 1.0.0
@@ -1658,7 +1658,7 @@ snapshots:
       html-crush: 6.1.0
       is-url-superb: 6.1.0
       istextorbinary: 9.5.0
-      juice: 11.1.0
+      juice: 11.1.0-2
       lodash-es: 4.17.22
       morphdom: 2.7.7
       ora: 8.2.0
@@ -2366,7 +2366,7 @@ snapshots:
       argparse: 1.0.10
       esprima: 4.0.1
 
-  juice@11.1.0:
+  juice@11.1.0-2:
     dependencies:
       cheerio: 1.0.0
       commander: 12.1.0

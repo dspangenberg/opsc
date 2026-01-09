@@ -453,7 +453,7 @@ name: string;
 title: string;
 css: string | null;
 letterhead_id: number;
-letterhead: App.Data.LetterheadData | null;
+letterhead: App.Data.LetterheadData;
 };
 export type ProjectData = {
 id: number | null;
