@@ -252,24 +252,48 @@ const data = {
   navSecondary: [
     {
       title: 'Einstellungen',
-      url: route('app.setting.text-module.index', {}, false),
+      url: route('app.setting', {}, false),
       icon: Configuration01Icon,
       activePath: '/app/settings',
       items: [
         {
-          title: 'Briefbögen',
-          url: route('app.setting.letterhead.index', {}, false),
-          activePath: '/app/settings/letterheads'
+          title: 'Angebote',
+          url: route('app.setting.offer', {}, false),
+          activePath: '/app/settings/offers',
+          items: [
+            {
+              title: 'Angebotsabschnitte',
+              url: route('app.settings.offer-section.index', {}, false),
+              activePath: '/app/settings/offers/offer-sections'
+            },
+            {
+              title: 'Textbausteine',
+              url: route('app.setting.text-module.index', {}, false),
+              activePath: '/app/settings/offers/text-modules'
+            }
+          ]
         },
         {
-          title: 'Angebotsabschnitte',
-          url: route('app.settings.offer-section.index', {}, false),
-          activePath: '/app/settings/offer-sections'
-        },
-        {
-          title: 'Textbausteine',
-          url: route('app.setting.text-module.index', {}, false),
-          activePath: '/app/settings/text-modules'
+          title: 'Drucksystem',
+          url: route('app.setting.printing-system', {}, false),
+          activePath: '/app/settings/printing-system',
+          items: [
+            {
+              title: 'Globales CSS für PDF-Dateien',
+              url: route('app.setting.global-css-edit', {}, false),
+              activePath: '/app/settings/printing-system/global-css'
+            },
+            {
+              title: 'Briefbögen',
+              url: route('app.setting.letterhead.index', {}, false),
+              activePath: '/app/settings/printing-system/letterheads'
+            },
+            {
+              title: 'Layouts',
+              url: route('app.setting.layout.index', {}, false),
+              activePath: '/app/settings/printing-system/layouts'
+            }
+          ]
         }
       ]
     }

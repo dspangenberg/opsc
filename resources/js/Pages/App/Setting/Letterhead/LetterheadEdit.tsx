@@ -38,7 +38,8 @@ const LetterheadEdit: React.FC<Props> = ({ letterhead }) => {
 
   const breadcrumbs = useMemo(
     () => [
-      { title: 'Einstellungen', url: route('app.setting.text-module.index') },
+      { title: 'Einstellungen', url: route('app.setting') },
+      { title: 'Drucksystem', url: route('app.setting.printing-system') },
       { title: 'Briefbögen', url: route('app.setting.letterhead.index') },
       { title: letterhead.title || 'Neuer Briefbogen' }
     ],

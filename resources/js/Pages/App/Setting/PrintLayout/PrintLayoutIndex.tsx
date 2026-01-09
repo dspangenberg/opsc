@@ -1,48 +1,27 @@
-import { Add01Icon, Tick01Icon } from '@hugeicons/core-free-icons'
-import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useMemo, useState } from 'react'
 import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
-import { Button } from '@/Components/twc-ui/button'
 
 import { Toolbar } from '@/Components/twc-ui/toolbar'
 import { Badge } from '@/Components/ui/badge'
 import type { PageProps } from '@/Types'
-import { columns } from './LetterheadIndexColumns'
+import { columns } from './PrintLayoutIndexColumns'
 
-interface LetterheadIndexPageProps extends PageProps {
-  letterheads: App.Data.Paginated.PaginationMeta<App.Data.LetterheadData[]>
+interface PrintLayoutIndexPageProps extends PageProps {
+  layouts: App.Data.Paginated.PaginationMeta<App.Data.PrintLayoutData[]>
 }
 
-const LetterheadIndex: React.FC<LetterheadIndexPageProps> = ({ letterheads }) => {
-  const [selectedRows, setSelectedRows] = useState<App.Data.LetterheadData[]>([])
+const PrintLayoutIndex: React.FC<PrintLayoutIndexPageProps> = ({ layouts }) => {
+  const [selectedRows, setSelectedRows] = useState<App.Data.PrintLayoutData[]>([])
 
   const breadcrumbs = useMemo(
     () => [
       { title: 'Einstellungen', url: route('app.setting') },
       { title: 'Drucksystem', url: route('app.setting.printing-system') },
-      { title: 'Briefbögen' }
+      { title: 'Layouts' }
     ],
-    []
-  )
-
-  const handleAdd = () => {
-    router.get(route('app.setting.letterhead.create'))
-  }
-
-  const toolbar = useMemo(
-    () => (
-      <Toolbar>
-        <Button
-          variant="toolbar-default"
-          icon={Add01Icon}
-          title="Neuen Briefbogen hinzufügen"
-          onClick={handleAdd}
-        />
-      </Toolbar>
-    ),
     []
   )
 
@@ -55,16 +34,14 @@ const LetterheadIndex: React.FC<LetterheadIndexPageProps> = ({ letterheads }) =>
           </Badge>
           ausgewählte Datensätze
         </div>
-        <Button variant="ghost" size="auto" icon={Tick01Icon} title="als bestätigt markieren" />
-        <div className="flex-1 text-right font-medium text-sm">x</div>
       </Toolbar>
     )
   }, [selectedRows.length])
 
   const footer = useMemo(() => {
     // Nur Pagination rendern, wenn cost_centers existiert
-    return <Pagination data={letterheads} />
-  }, [letterheads])
+    return <Pagination data={layouts} />
+  }, [layouts])
 
   return (
     <PageContainer
@@ -72,18 +49,17 @@ const LetterheadIndex: React.FC<LetterheadIndexPageProps> = ({ letterheads }) =>
       width="7xl"
       breadcrumbs={breadcrumbs}
       className="flex overflow-hidden"
-      toolbar={toolbar}
     >
       <DataTable
         columns={columns}
         actionBar={actionBar}
         onSelectedRowsChange={setSelectedRows}
-        data={letterheads.data}
+        data={layouts.data}
         footer={footer}
-        itemName="Briefbögen"
+        itemName="Layouts"
       />
     </PageContainer>
   )
 }
 
-export default LetterheadIndex
+export default PrintLayoutIndex

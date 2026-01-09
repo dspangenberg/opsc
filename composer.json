@@ -18,8 +18,6 @@
     "league/csv": "^9.24.1",
     "league/flysystem-aws-s3-v3": "^3.29",
     "maize-tech/laravel-markable": "^2.3.1",
-    "mpdf/mpdf": "^8.2.5",
-    "mpdf/qrcode": "^1.2.1",
     "mtvs/eloquent-hashids": "^3.6",
     "plank/laravel-mediable": "^6.3.1",
     "ploi/ploi-php-sdk": "^1.9.5",
