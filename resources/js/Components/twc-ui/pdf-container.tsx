@@ -24,7 +24,7 @@ import { TextCursor } from 'lucide-react'
 const useToggle = (initialValue = false): [boolean, (value?: boolean) => void] => {
   const [value, setValue] = useState(initialValue)
   const toggle = useCallback((newValue?: boolean) => {
-    setValue(prev => newValue !== undefined ? newValue : !prev)
+    setValue(prev => (newValue !== undefined ? newValue : !prev))
   }, [])
   return [value, toggle]
 }
@@ -36,6 +36,7 @@ const useFullscreen = (
   options?: { onClose?: () => void }
 ) => {
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const onClose = options?.onClose
 
   useEffect(() => {
     if (!ref.current) return
@@ -43,14 +44,14 @@ const useFullscreen = (
     const onFullscreenChange = () => {
       const isFull = !!document.fullscreenElement
       setIsFullscreen(isFull)
-      if (!isFull && options?.onClose) {
-        options.onClose()
+      if (!isFull && onClose) {
+        onClose()
       }
     }
 
     document.addEventListener('fullscreenchange', onFullscreenChange)
     return () => document.removeEventListener('fullscreenchange', onFullscreenChange)
-  }, [ref, options])
+  }, [onClose])
 
   useEffect(() => {
     if (!ref.current) return
@@ -64,6 +65,7 @@ const useFullscreen = (
 
   return isFullscreen
 }
+
 import { useFileDownload } from '@/Hooks/use-file-download'
 import { cn } from '@/Lib/utils'
 import { Button } from './button'
