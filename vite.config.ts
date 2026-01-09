@@ -42,8 +42,12 @@ export default defineConfig(({ mode }) => {
           manualChunks: (id) => {
             if (!id.includes('node_modules')) return
 
-            // React core must be first (base dependency for many libs)
-            if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
+            // React core with scheduler (must stay together)
+            if (
+              id.includes('node_modules/react/') ||
+              id.includes('node_modules/react-dom/') ||
+              id.includes('node_modules/scheduler/')
+            ) {
               return 'react-core'
             }
 
