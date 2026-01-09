@@ -13,9 +13,20 @@ class TenantAwareSettingsRepository extends DatabaseSettingsRepository
 {
     protected function getConnection(): ?string
     {
-        return tenancy()->initialized
-            ? 'tenant'
-            : config('database.default');
+        // Stancl Tenancy v4 creates the 'tenant' connection dynamically
+        // via DatabaseTenancyBootstrapper when tenancy is initialized
+        if (tenancy()->initialized) {
+            // Verify the connection exists before returning it
+            if (array_key_exists('tenant', config('database.connections', []))) {
+                return 'tenant';
+            }
+
+            // Fallback: If tenant connection doesn't exist yet, return null
+            // to use the default connection (shouldn't happen in normal flow)
+            return null;
+        }
+
+        return config('database.default');
     }
 
     protected function getTable(): string

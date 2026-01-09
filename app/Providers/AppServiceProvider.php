@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Stancl\Tenancy\Events\TenancyInitialized;
-use Stancl\Tenancy\Events\TenantSwitched;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,7 +31,11 @@ class AppServiceProvider extends ServiceProvider
         Vite::prefetch(concurrency: 3);
 
         // Tenant-aware settings cache - listen to tenancy events
-        Event::listen([TenancyInitialized::class, TenantSwitched::class], function ($event) {
+        Event::listen(TenancyInitialized::class, function (TenancyInitialized $event) {
+            if (! $event->tenancy->tenant) {
+                return;
+            }
+
             $tenantKey = $event->tenancy->tenant->getTenantKey();
 
             // Update cache prefix for this tenant
