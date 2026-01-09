@@ -6,13 +6,12 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Carbon;
 
 /**
- * @property-read \App\Models\ProjectCategory|null $category
- * @property-read \App\Models\User|null $lead
- * @property-read \App\Models\Contact|null $manager
- * @property-read \App\Models\Contact|null $owner
+ * @property-read ProjectCategory|null $category
+ * @property-read User|null $lead
+ * @property-read Contact|null $manager
+ * @property-read Contact|null $owner
  * @method static Builder<static>|Project newModelQuery()
  * @method static Builder<static>|Project newQuery()
  * @method static Builder<static>|Project query()
@@ -45,7 +44,13 @@ class Project extends Model
         'budget_costs' => 0,
         'budget_period' => 0,
         'parent_project_id' => 0,
+        'owner_contact_id' => 0,
+        'project_category_id' => 0,
+        'hourly' => 0,
+        'lead_user_id' => 0,
+        'manager_contact_id' => 0,
         'is_archived' => false,
+        'name' => '',
         'website' => '',
         'note' => '',
     ];

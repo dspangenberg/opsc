@@ -44,13 +44,14 @@ Route::middleware([
     })->name('app.dashboard');
 
     // Domain routes
-    require __DIR__.'/tenant/times.php';
     require __DIR__.'/tenant/bookkeeping.php';
     require __DIR__.'/tenant/contacts.php';
+    require __DIR__.'/tenant/documents.php';
     require __DIR__.'/tenant/invoices.php';
     require __DIR__.'/tenant/offers.php';
-    require __DIR__.'/tenant/documents.php';
+    require __DIR__.'/tenant/projects.php';
     require __DIR__.'/tenant/settings.php';
+    require __DIR__.'/tenant/times.php';
 
     Route::get('/onboarding', function () {
         return Inertia::modal('Onboarding')->baseRoute('app.soon');

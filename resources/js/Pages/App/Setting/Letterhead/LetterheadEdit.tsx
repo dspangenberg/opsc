@@ -88,7 +88,7 @@ const LetterheadEdit: React.FC<Props> = ({ letterhead }) => {
                 }
               }}
             >
-              <Button variant="outline">Datei auswählen</Button>
+              <Button variant="outline">PDF-Dokument hochladen</Button>
             </FileTrigger>
             {file && <p>Ausgewählt: {file}</p>}
           </div>
