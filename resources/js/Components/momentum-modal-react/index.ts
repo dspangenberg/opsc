@@ -1,2 +1,2 @@
-export {useModal} from './use-modal';
-export {Modal} from './modal';
+export { Modal } from './modal'
+export { useModal } from './use-modal'

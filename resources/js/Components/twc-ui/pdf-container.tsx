@@ -20,7 +20,52 @@ import {
 } from '@hugeicons/core-free-icons'
 import { TextCursor } from 'lucide-react'
 
-import { useFullscreen, useToggle } from 'react-use'
+// Native implementation of useToggle
+const useToggle = (initialValue = false): [boolean, (value?: boolean) => void] => {
+  const [value, setValue] = useState(initialValue)
+  const toggle = useCallback((newValue?: boolean) => {
+    setValue(prev => (newValue !== undefined ? newValue : !prev))
+  }, [])
+  return [value, toggle]
+}
+
+// Native implementation of useFullscreen
+const useFullscreen = (
+  ref: React.RefObject<Element>,
+  enabled: boolean,
+  options?: { onClose?: () => void }
+) => {
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const onClose = options?.onClose
+
+  useEffect(() => {
+    if (!ref.current) return
+
+    const onFullscreenChange = () => {
+      const isFull = !!document.fullscreenElement
+      setIsFullscreen(isFull)
+      if (!isFull && onClose) {
+        onClose()
+      }
+    }
+
+    document.addEventListener('fullscreenchange', onFullscreenChange)
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange)
+  }, [onClose])
+
+  useEffect(() => {
+    if (!ref.current) return
+
+    if (enabled && !document.fullscreenElement) {
+      ref.current.requestFullscreen?.()
+    } else if (!enabled && document.fullscreenElement) {
+      document.exitFullscreen?.()
+    }
+  }, [enabled, ref])
+
+  return isFullscreen
+}
+
 import { useFileDownload } from '@/Hooks/use-file-download'
 import { cn } from '@/Lib/utils'
 import { Button } from './button'
@@ -340,7 +385,7 @@ export const PdfContainer: React.FC<Props> = ({
           variant="toolbar"
           icon={SquareArrowDiagonal02Icon}
           title="Vollbildmodus"
-          onClick={toggle}
+          onClick={() => toggle()}
         />
       </Toolbar>
     ),

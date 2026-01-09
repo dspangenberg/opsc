@@ -3,7 +3,7 @@
  * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Switch as SwitchPrimitives } from "radix-ui"
+import * as SwitchPrimitives from "@radix-ui/react-switch"
 import type * as React from "react"
 
 import { cn } from "@/Lib/utils"
