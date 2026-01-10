@@ -6,7 +6,6 @@ import { cn } from '@/Lib/utils'
 import { Alert } from './alert'
 import { FieldError } from './field'
 import { useFormContext } from './form'
-import { Icon } from './icon'
 
 interface Props {
   errors: Partial<Record<string, string>>

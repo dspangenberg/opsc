@@ -138,7 +138,7 @@ const ComboBox = <T extends Record<string, unknown>>({
         onChange(numericKey === NUMERIC_NULL_SENTINEL ? null : numericKey)
       }
     },
-    [onChange, isStringValue]
+    [onChange]
   )
 
   const itemsWithPlaceholder = useMemo(
@@ -152,7 +152,7 @@ const ComboBox = <T extends Record<string, unknown>>({
             } as T
           ]
         : Array.from(items),
-    [isOptional, itemValue, itemName, optionalValue, items, isStringValue]
+    [isOptional, itemValue, itemName, optionalValue, items]
   )
 
   const { contains } = useFilter({ sensitivity: 'base' })
