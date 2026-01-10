@@ -11,6 +11,9 @@ Route::get('contacts', [ContactController::class, 'index'])->name('app.contact.i
 
 Route::get('contacts/create', [ContactController::class, 'create'])->name('app.contact.create');
 
+Route::get('contacts/{company}/create-person', [ContactController::class, 'createPerson'])->name('app.contact.create-person');
+Route::post('contacts/store-person', [ContactController::class, 'storePerson'])->name('app.contact.store-person')->middleware([HandlePrecognitiveRequests::class]);
+
 Route::post('contacts/store', [ContactController::class, 'store'])
     ->name('app.contact.store')
     ->middleware([HandlePrecognitiveRequests::class]);
@@ -26,9 +29,6 @@ Route::put('contacts/{contact}/edit', [ContactController::class, 'update'])
 Route::get('contacts/{contact}/persons', [ContactController::class, 'persons'])
     ->name('app.contact.details.persons');
 
-Route::get('contacts/{contact}/{address}/edit', [ContactController::class, 'editAddress'])
-    ->name('app.contact.edit.address');
-
 Route::get('contacts/{contact}/create', [ContactController::class, 'createAddress'])
     ->name('app.contact.create.address');
 
@@ -38,10 +38,6 @@ Route::put('contacts/{contact}/toggle-favorite', [ContactController::class, 'tog
 Route::put('contacts/{contact}/{contact_address}', [ContactController::class, 'updateAddress'])
     ->middleware([HandlePrecognitiveRequests::class])
     ->name('app.contact.address.update');
-
-Route::post('contacts/{contact}/address', [ContactController::class, 'storeAddress'])
-    ->middleware([HandlePrecognitiveRequests::class])
-    ->name('app.contact.address.store');
 
 Route::post('contacts/{contact}/note-store', [ContactController::class, 'storeNote'])
     ->middleware([HandlePrecognitiveRequests::class])

@@ -24,7 +24,7 @@ const ContactIndex: React.FC<ContactIndexProps> = ({ currentSearch }) => {
   const [search, setSearch] = useState(currentSearch)
 
   const handleAdd = useCallback(() => {
-    router.visit(route('app.contact.create'))
+    router.visit(route('app.contact.create', { _query: { view: route().queryParams.view } }))
   }, [])
 
   const breadcrumbs = useMemo(

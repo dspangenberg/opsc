@@ -23,7 +23,11 @@ export const ContactDetailsAddresses: FC<Props> = ({ addresses }: Props) => {
   return (
     <DataCardFieldGroup>
       {firstAddress ? (
-        <DataCardField variant="vertical" label={firstAddress.category?.name || 'Adresse'}>
+        <DataCardField
+          variant="vertical"
+          label={firstAddress.category?.name || 'Adresse'}
+          value={firstAddress.full_address}
+        >
           <div className="group/address flex items-center gap-0.5">
             <div className="flex-1 text-wrap">
               <Markdown remarkPlugins={[remarkBreaks]}>{firstAddress.full_address}</Markdown>

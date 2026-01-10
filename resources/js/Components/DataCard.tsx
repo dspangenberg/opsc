@@ -23,7 +23,7 @@ export const DataCard: FC<DataCardProps> = ({
     <BorderedBox className="flex flex-1 overflow-y-hidden" innerClassName="overflow-y-hidden">
       <div className={cn('flex w-full max-w-sm flex-1 flex-col rounded-lg', className)}>
         {title && <DataCardHeader title={title} />}
-        <div className="flex-1 overflow-y-auto rounded-lg p-2">{children}</div>
+        <div className="flex-1 overflow-y-auto rounded-lg px-2">{children}</div>
       </div>
     </BorderedBox>
   )

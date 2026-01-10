@@ -82,7 +82,6 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
       const item = e[0]
 
       if (item) {
-        // Revoke previous blob URL before creating new one
         if (droppedImage?.startsWith('blob:')) {
           URL.revokeObjectURL(droppedImage)
         }

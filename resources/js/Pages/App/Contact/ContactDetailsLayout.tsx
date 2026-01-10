@@ -1,4 +1,4 @@
-import { Edit03Icon } from '@hugeicons/core-free-icons'
+import { Edit03Icon, UserAdd02Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/core'
 import { Link } from '@inertiajs/react'
 import type * as React from 'react'
@@ -17,31 +17,38 @@ interface Props {
 
 export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => {
   const breadcrumbs = useMemo(
-    () => [
-      { title: 'Kontakte', url: route('app.contact.index') },
-      { title: contact.full_name, url: route('app.contact.details', { id: contact.id }) }
-    ],
-    [contact.full_name, contact.id]
+    () => [{ title: 'Kontakte', url: route('app.contact.index') }, { title: contact.full_name }],
+    [contact.full_name]
   )
 
-  const handleContactEditClicked = () => {
-    router.visit(route('app.contact.edit', { id: contact.id }))
-  }
+  const currentRoute = route().current()
 
   const toolbar = useMemo(
     () => (
       <Toolbar>
-        <Button
-          variant="toolbar-default"
-          icon={Edit03Icon}
-          title="Bearbeiten"
-          onClick={handleContactEditClicked}
-        />
+        {currentRoute === 'app.contact.details' && (
+          <Button
+            variant="toolbar-default"
+            icon={Edit03Icon}
+            title="Bearbeiten"
+            onClick={() => router.visit(route('app.contact.edit', { id: contact.id }))}
+          />
+        )}
+
+        {currentRoute === 'app.contact.details.persons' && (
+          <Button
+            variant="toolbar-default"
+            icon={UserAdd02Icon}
+            title="Ansprechperson hinzufügen"
+            onClick={() =>
+              router.visit(route('app.contact.create-person', { company: contact.id }))
+            }
+          />
+        )}
       </Toolbar>
     ),
-    []
+    [currentRoute, contact.id]
   )
-  const currentRoute = route().current()
 
   const tabs = useMemo(
     () => (

@@ -9,6 +9,7 @@ import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormComboBox } from '@/Components/twc-ui/form-combo-box'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormSelect } from '@/Components/twc-ui/form-select'
+import { FormTextArea } from '@/Components/twc-ui/form-text-area'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import { Tab, TabList, TabPanel, Tabs } from '@/Components/twc-ui/tabs'
 import { ContactEditAddressesSection } from '@/Pages/App/Contact/ContactEditAddressesSection'
@@ -228,11 +229,16 @@ export const ContactEdit: React.FC<Props> = ({
             <FormGrid>
               {isOrganization ? (
                 <div className="col-span-24">
-                  <FormTextField autoFocus label="Organisation" {...form.register('name')} />
+                  <FormTextArea
+                    autoFocus
+                    label="Organisation"
+                    rows={2}
+                    {...form.register('name')}
+                  />
                 </div>
               ) : (
                 <>
-                  <div className="col-span-3">
+                  <div className="col-span-4">
                     <FormSelect<App.Data.SalutationData>
                       {...form.register('salutation_id')}
                       label="Anrede"
@@ -241,7 +247,7 @@ export const ContactEdit: React.FC<Props> = ({
                       itemName="gender"
                     />
                   </div>
-                  <div className="col-span-5">
+                  <div className="col-span-4">
                     <FormSelect<App.Data.TitleData>
                       label="Titel"
                       isOptional
@@ -249,10 +255,10 @@ export const ContactEdit: React.FC<Props> = ({
                       items={titles}
                     />
                   </div>
-                  <div className="col-span-8">
+                  <div className="col-span-6">
                     <FormTextField label="Vorname" {...form.register('first_name')} />
                   </div>
-                  <div className="col-span-8">
+                  <div className="col-span-10">
                     <FormTextField label="Nachname" {...form.register('name')} />
                   </div>
                   <div className="col-span-12">

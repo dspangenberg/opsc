@@ -7,6 +7,7 @@ import { ExtendedDialog as Dialog } from '@/Components/twc-ui/extended-dialog'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormSelect } from '@/Components/twc-ui/form-select'
+import { FormTextArea } from '@/Components/twc-ui/form-text-area'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import type { PageProps } from '@/Types'
 
@@ -27,7 +28,7 @@ const ContactCreate: React.FC<Props> = ({ contact, salutations, titles }) => {
 
   const handleClose = () => {
     setIsOpen(false)
-    router.visit(route('app.contacts.index'))
+    router.visit(route('app.contact.index', { _query: { view: route().queryParams.view } }))
   }
 
   // Hilfsvariable für bessere Lesbarkeit
@@ -64,7 +65,7 @@ const ContactCreate: React.FC<Props> = ({ contact, salutations, titles }) => {
 
           {isOrganization ? (
             <div className="col-span-24">
-              <FormTextField label="Name der Organisation" {...form.register('name')} />
+              <FormTextArea label="Name der Organisation" {...form.register('name')} />
             </div>
           ) : (
             <>
