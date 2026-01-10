@@ -62,7 +62,7 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
 
   const handleClose = () => {
     if (project.id) {
-      router.visit(route('app.project.details', { id: project.id }))
+      router.visit(route('app.project.details', { project: project.id }))
     } else {
       router.visit(route('app.project.index'))
     }

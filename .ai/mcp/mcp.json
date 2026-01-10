@@ -2,10 +2,7 @@
   "mcpServers": {
     "laravel-boost": {
       "command": "php",
-      "args": [
-        "/home/dspangenberg/Projects/twiceware.cloud/opsc/artisan",
-        "boost:mcp"
-      ]
+      "args": ["./artisan", "boost:mcp"]
     }
   }
 }

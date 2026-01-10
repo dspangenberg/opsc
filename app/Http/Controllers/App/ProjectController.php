@@ -91,8 +91,26 @@ class ProjectController extends Controller
         return redirect()->route('app.project.index');
     }
 
+    /**
+     * @throws FileNotSupportedException
+     * @throws FileExistsException
+     * @throws FileNotFoundException
+     * @throws ForbiddenException
+     * @throws FileSizeException
+     * @throws InvalidHashException
+     * @throws ConfigurationException
+     */
     public function store(ProjectRequest $request) {
-        Project::create($request->validated());
+        $project = Project::create($request->validated());
+        if ($request->hasFile('avatar')) {
+            $project->detachMediaTags('avatar');
+
+            $media = MediaUploader::fromSource($request->file('avatar'))
+                ->toDestination('s3', 'avatars/projects')
+                ->upload();
+
+            $project->attachMedia($media, 'avatar');
+        }
         return redirect()->route('app.project.index');
     }
 }
