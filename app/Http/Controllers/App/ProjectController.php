@@ -101,10 +101,9 @@ class ProjectController extends Controller
      * @throws ConfigurationException
      */
     public function store(ProjectRequest $request) {
-        $project = Project::create($request->validated());
+        $data = $request->safe()->except('avatar');
+        $project = Project::create($data);
         if ($request->hasFile('avatar')) {
-            $project->detachMediaTags('avatar');
-
             $media = MediaUploader::fromSource($request->file('avatar'))
                 ->toDestination('s3', 'avatars/projects')
                 ->upload();
