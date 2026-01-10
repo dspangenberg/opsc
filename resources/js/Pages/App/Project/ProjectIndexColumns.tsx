@@ -12,16 +12,17 @@ import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { MenuItem } from '@/Components/twc-ui/menu'
 import { Checkbox } from '@/Components/ui/checkbox'
 
-const editUrl = (id: number | null) => (id ? route('app.project.edit', { id }) : '#')
+const editUrl = (id: number | null) => (id ? route('app.project.details', { project: id }) : '#')
 
 const handleDeleteProject = async (row: App.Data.ProjectData) => {
+  if (row.id == null) return
   const promise = await AlertDialog.call({
     title: 'Projekt in den Papierkorb legen',
     message: `Möchtest Du das Projekt ${row.name} in den Papierkorb legen?`,
     buttonTitle: 'Projekt löschen'
   })
   if (promise) {
-    router.delete(route('app.project.trash', { project: row.id }))
+    router.delete(route('app.project.delete', { project: row.id }))
   }
 }
 

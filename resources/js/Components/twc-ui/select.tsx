@@ -49,7 +49,7 @@ const SelectTrigger = ({ className, children, ...props }: AriaButtonProps) => (
     type="button"
     className={composeRenderProps(className, className =>
       cn(
-        'flex h-9 w-full items-center justify-between whitespace-nowrap rounded-sm border border-input bg-transparent px-3 py-2 font-medium text-sm shadow-none outline-0 ring-offset-0',
+        'flex h-9 w-full items-center justify-between whitespace-nowrap rounded-sm border border-input bg-background px-3 py-2 font-medium text-sm shadow-none outline-0 ring-offset-0',
         /* Disabled */
         'data-disabled:cursor-not-allowed data-disabled:opacity-50',
         'focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/20',
@@ -163,7 +163,7 @@ const Select = <T extends object>({
       name={name}
       {...props}
     >
-      {label && <Label value={label} />}
+      {label && <Label value={label} isRequired={!isOptional} />}
       <SelectTrigger autoFocus={autoFocus}>
         <SelectValue className="focus-within-0 border-transparent" />
       </SelectTrigger>

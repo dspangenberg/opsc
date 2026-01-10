@@ -21,7 +21,7 @@ const ProjectIndex: React.FC<ProjectIndexPageProps> = ({ projects }) => {
   const breadcrumbs = [{ title: 'Projekt' }]
 
   const handleProjectAdd = () => {
-    router.get(route('app.project.create'))
+    router.visit(route('app.project.create'))
   }
 
   const toolbar = useMemo(
@@ -53,7 +53,6 @@ const ProjectIndex: React.FC<ProjectIndexPageProps> = ({ projects }) => {
   }, [selectedRows.length])
 
   const footer = useMemo(() => {
-    // Nur Pagination rendern, wenn cost_centers existiert
     return <Pagination data={projects} />
   }, [projects])
 

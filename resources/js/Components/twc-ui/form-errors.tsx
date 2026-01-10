@@ -3,17 +3,23 @@ import type * as React from 'react'
 import { useMemo } from 'react'
 import { type FieldErrorProps as AriaFieldErrorProps, useLocale } from 'react-aria-components'
 import { cn } from '@/Lib/utils'
+import { Alert } from './alert'
 import { FieldError } from './field'
 import { useFormContext } from './form'
-import { Icon } from './icon'
 
 interface Props {
   errors: Partial<Record<string, string>>
+  className?: string
   title?: string
   showErrors?: boolean
 }
 
-export const FormErrors: React.FC<Props> = ({ errors, showErrors = true, title }) => {
+export const FormErrors: React.FC<Props> = ({
+  className = 'my-3',
+  errors,
+  showErrors = true,
+  title
+}) => {
   const { locale } = useLocale()
 
   const realErrorTitle = title
@@ -32,34 +38,15 @@ export const FormErrors: React.FC<Props> = ({ errors, showErrors = true, title }
   }
 
   return (
-    <div
-      className="mx-4 mb-6 rounded-lg border border-destructive/50 bg-destructive/5 p-4 pt-2 text-destructive"
-      role="alert"
-    >
-      <div className="flex flex-col">
-        <div className="flex items-center gap-3">
-          <div className="flex-none">
-            <div
-              className={cn(
-                'mx-auto flex size-6 shrink-0 items-center justify-center rounded-full bg-destructive/20 sm:mx-0 sm:size-8'
-              )}
-            >
-              <Icon icon={Sad01Icon} className={cn('size-5 stroke-3 text-destructive')} />
-            </div>
-          </div>
-          <div className="flex-1 font-medium text-base">{realErrorTitle}</div>
-        </div>
-        {showErrors && (
-          <div className="grow space-y-1 pt-2">
-            <ul className="motion-opacity-in-0 motion-translate-y-in-100 motion-blur-in-md list-inside list-disc pl-12 text-sm opacity-80">
-              {errorMessages.map((message, index) => (
-                <li key={index}>{message}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    </div>
+    <Alert variant="destructive" icon={Sad01Icon} title={realErrorTitle} className={className}>
+      {showErrors && (
+        <ul className="motion-opacity-in-0 motion-translate-y-in-100 motion-blur-in-md list-inside list-disc text-sm">
+          {errorMessages.map((message, index) => (
+            <li key={index}>{message}</li>
+          ))}
+        </ul>
+      )}
+    </Alert>
   )
 }
 

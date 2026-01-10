@@ -1,6 +1,6 @@
-import { FormFieldError } from './form-errors'
-import { useFormContext } from './form'
 import { ComboBox, type ComboBoxProps } from './combo-box'
+import { useFormContext } from './form'
+import { FormFieldError } from './form-errors'
 
 const FormComboBox = <T extends Record<string, unknown>>({ ...props }: ComboBoxProps<T>) => {
   const form = useFormContext()
