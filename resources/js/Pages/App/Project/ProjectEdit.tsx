@@ -9,6 +9,7 @@ import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import type { PageProps } from '@/Types'
 import '@mdxeditor/editor/style.css'
 import { Pressable } from 'react-aria-components'
+import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Avatar } from '@/Components/twc-ui/avatar'
 import { FileTrigger } from '@/Components/twc-ui/FileTrigger'
 import { FormCard } from '@/Components/twc-ui/form-card'
@@ -33,7 +34,7 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
 
   useEffect(() => {
     return () => {
-      if (droppedImage && droppedImage.startsWith('blob:')) {
+      if (droppedImage?.startsWith('blob:')) {
         URL.revokeObjectURL(droppedImage)
       }
     }
@@ -52,6 +53,8 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
     }
   )
 
+  const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Schließen'
+
   useEffect(() => {
     return () => {
       if (droppedImage) {
@@ -68,32 +71,47 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
     [project.name]
   )
 
-  const handleClose = () => {
-    if (project.id) {
-      router.visit(route('app.project.details', { project: project.id }))
-    } else {
-      router.visit(route('app.project.index'))
-    }
-  }
-
   async function onSelectHandler(e: FileList | null) {
     if (!e || e.length === 0) return
-    
+
     try {
       const item = e[0]
 
       if (item) {
         // Revoke previous blob URL before creating new one
-        if (droppedImage && droppedImage.startsWith('blob:')) {
+        if (droppedImage?.startsWith('blob:')) {
           URL.revokeObjectURL(droppedImage)
         }
-        
+
         setDroppedImage(URL.createObjectURL(item))
         form.setData('avatar', item)
       }
     } catch (error) {
       console.error('Fehler beim Verarbeiten des Bildes:', error)
       // Optional: Benutzer-Feedback anzeigen
+    }
+  }
+
+  const handleCancel = async () => {
+    if (form.isDirty) {
+      const promise = await AlertDialog.call({
+        title: 'Änderungen verwerfen',
+        message: `Möchtest Du die Änderungen verwerfen?`,
+        buttonTitle: 'Verwerfen'
+      })
+      if (promise) {
+        router.visit(
+          project.id
+            ? route('app.project.details', { project: project.id })
+            : route('app.project.index')
+        )
+      }
+    } else {
+      router.visit(
+        project.id
+          ? route('app.project.details', { project: project.id })
+          : route('app.project.index')
+      )
     }
   }
 
@@ -109,21 +127,12 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
         innerClassName="bg-white"
         footer={
           <div className="flex flex-none items-center justify-end gap-2 px-4 py-2">
-            <Button variant="outline" onClick={handleClose}>
-              Abbrechen
-            </Button>
-            <Button variant="default" form={form.id} type="submit">
-              Speichern
-            </Button>
+            <Button variant="outline" onClick={handleCancel} title={cancelButtonTitle} />
+            <Button variant="default" form={form.id} type="submit" title="Speichern" />
           </div>
         }
       >
-        <Form
-          form={form}
-          onSubmitted={handleClose}
-          className="max-w-4xl"
-          errorClassName="w-auto m-3"
-        >
+        <Form form={form} className="max-w-4xl" errorClassName="w-auto m-3">
           <FormGrid>
             <div className="col-span-2 inline-flex items-center justify-center">
               <div>
@@ -143,16 +152,19 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
                 </FileTrigger>
               </div>
             </div>
-            <div className="col-span-12">
+            <div className="col-span-8">
               <FormTextField label="Bezeichnung" isRequired {...form.register('name')} />
             </div>
-            <div className="col-span-10">
+            <div className="col-span-6">
               <FormSelect
                 isRequired
                 label="Kategorie"
                 items={categories}
                 {...form.register('project_category_id')}
               />
+            </div>
+            <div className="col-span-8">
+              <FormTextField label="Website" {...form.register('website')} />
             </div>
           </FormGrid>
           <FormGrid title="Kunde">
