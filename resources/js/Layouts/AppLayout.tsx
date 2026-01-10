@@ -76,7 +76,8 @@ const AppLayout = ({ children }: PropsWithChildren<{ header?: ReactNode }>) => {
   useEffect(() => {
     const unsubscribe = router.on('flash', event => {
       if (event.detail.flash.toast) {
-        toast(event.detail.flash.toast.message, event.detail.flash.toast.type)
+        const toastData = event.detail.flash.toast
+        toast(toastData.message, toastData.type)
       }
     })
 
