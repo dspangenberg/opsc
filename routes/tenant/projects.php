@@ -17,6 +17,7 @@ Route::post('projects', [ProjectController::class, 'store'])
 Route::get('projects/{project}', [ProjectController::class, 'show'])->name('app.project.details');
 
 Route::get('projects/{project}/edit', [ProjectController::class, 'edit'])->name('app.project.edit');
+Route::get('projects/{project}/archive', [ProjectController::class, 'archiveToggle'])->name('app.project.archive');
 
 Route::put('projects/{project}/edit', [ProjectController::class, 'update'])
     ->middleware([HandlePrecognitiveRequests::class])

@@ -1,13 +1,8 @@
-/*
- * Beleg-Portal is a twiceware solution
- * Copyright (c) 2025 by Rechtsanwalt Peter Trettin
- *
- */
-
 import { SidebarLeftIcon } from '@hugeicons/core-free-icons'
-import { usePage } from '@inertiajs/react'
+import { router, usePage } from '@inertiajs/react'
 import type React from 'react'
 import type { PropsWithChildren, ReactNode } from 'react'
+import { useEffect } from 'react'
 import { AppProvider } from '@/Components/AppProvider'
 import { AppSidebar } from '@/Components/AppSidebar'
 import { LayoutContainer } from '@/Components/LayoutContainer'
@@ -16,8 +11,8 @@ import { NavUser } from '@/Components/NavUser'
 import { PageBreadcrumbs } from '@/Components/PageBreadcrumbs'
 import { useThemeContainer } from '@/Components/theme-container-provider'
 import { Button } from '@/Components/twc-ui/button'
+import { Toaster, toast } from '@/Components/twc-ui/sonner'
 import { SidebarInset, SidebarProvider, useSidebar } from '@/Components/ui/sidebar'
-import { Toaster } from '@/Components/ui/sonner'
 import { useAppInitializer } from '@/Hooks/useAppInitializer'
 import { cn } from '@/Lib/utils'
 
@@ -75,8 +70,18 @@ const SidebarContent: React.FC<PropsWithChildren> = ({ children }) => {
   )
 }
 
-export default function AppLayout({ children }: PropsWithChildren<{ header?: ReactNode }>) {
+const AppLayout = ({ children }: PropsWithChildren<{ header?: ReactNode }>) => {
   useAppInitializer()
+
+  useEffect(() => {
+    const unsubscribe = router.on('flash', event => {
+      if (event.detail.flash.toast) {
+        toast(event.detail.flash.toast.message, event.detail.flash.toast.type)
+      }
+    })
+
+    return () => unsubscribe()
+  }, [])
 
   return (
     <AppProvider>
@@ -89,3 +94,5 @@ export default function AppLayout({ children }: PropsWithChildren<{ header?: Rea
     </AppProvider>
   )
 }
+
+export default AppLayout

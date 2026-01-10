@@ -86,6 +86,14 @@ class ProjectController extends Controller
         return redirect()->route('app.project.details', ['project' => $project->id]);
     }
 
+    public function archiveToggle(Project $project) {
+        $project->is_archived = !$project->is_archived;
+        $project->save();
+
+        $message = $project->is_archived ? 'Projekt wurde archiviert' : 'Projekt wurde wiederhergestellt';
+        return Inertia::flash('toast', ['type' => 'success', 'message' => $message, 'is_archived' => $project->is_archived])->back();
+    }
+
     public function trash(Project $project) {
         $project->delete();
         return redirect()->route('app.project.index');

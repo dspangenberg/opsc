@@ -53,7 +53,7 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
     }
   )
 
-  const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Schließen'
+  const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Zurück'
 
   useEffect(() => {
     return () => {
@@ -63,13 +63,17 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
     }
   }, [droppedImage])
 
-  const breadcrumbs = useMemo(
-    () => [
-      { title: 'Projekte', url: route('app.project.index') },
-      { title: project.name || 'Neues Projekt' }
-    ],
-    [project.name]
-  )
+  const breadcrumbs = useMemo(() => {
+    if (project.id) {
+      return [
+        { title: 'Projekte', url: route('app.project.index') },
+        { title: project.name, url: route('app.project.details', { project: project.id }) },
+        { title: 'Bearbeiten' }
+      ]
+    } else {
+      return [{ title: 'Projekte', url: route('app.project.index') }, { title: 'Neues Projekt' }]
+    }
+  }, [project.name, project.id])
 
   async function onSelectHandler(e: FileList | null) {
     if (!e || e.length === 0) return

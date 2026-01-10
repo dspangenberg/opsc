@@ -74,26 +74,19 @@ export const DataCardContent: FC<DataCardContentProps> = ({ children, showSecond
     setShowSecondarySections(true)
   }
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault()
-      onShowSecondaryClicked()
-    }
-  }
-
   return (
     <div className="">
       <div className="my-1 space-y-1.5 divide-border/40 overflow-y-auto">
         {showSecondarySections ? allChildren : filteredChildren}
       </div>
       {!showSecondarySections && allChildren.length > filteredChildren.length && (
-        <div
-          className="flex cursor-pointer items-center justify-center overflow-y-auto py-2 text-center text-xs hover:underline"
+        <button
+          type="button"
+          className="flex w-full cursor-pointer items-center justify-center overflow-y-auto py-2 text-center text-xs hover:underline"
           onClick={onShowSecondaryClicked}
-          onKeyDown={handleKeyDown}
         >
-          <a onClick={onShowSecondaryClicked}>Details anzeigen</a>
-        </div>
+          Details anzeigen
+        </button>
       )}
     </div>
   )
@@ -205,12 +198,8 @@ interface DataCardSectionHeaderProps {
 export const DataCardSectionHeader: FC<DataCardSectionHeaderProps> = ({
   children = '',
   title = '',
-  icon = '',
   className = '',
-  addonText = '',
-  buttonVariant = 'default',
-  buttonTooltip = '',
-  onClick
+  addonText = ''
 }: DataCardSectionHeaderProps) => {
   return (
     <div className="flex items-center py-1 pr-0.5 pl-2.5 text-sm">
@@ -246,6 +235,8 @@ export const DataCardField: FC<DataCardFieldProps> = ({
   }
 
   const props = { label, value, children, className }
+
+  if (!value) return
 
   switch (variant) {
     case 'horizontal':
