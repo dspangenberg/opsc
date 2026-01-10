@@ -1,11 +1,6 @@
-/*
- * ecting.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
- */
-
 import type { PageProps as InertiaPageProps } from '@inertiajs/core'
 import type { AxiosInstance } from 'axios'
-import type { route as ziggyRoute } from 'ziggy-js'
+import type { route as routeFn } from 'ziggy-js'
 import type { PageProps as AppPageProps } from './'
 
 declare global {
@@ -20,7 +15,7 @@ declare global {
     }
   ])[]
 
-  const route: typeof ziggyRoute
+  const route: typeof routeFn
 }
 
 declare module '@inertiajs/core' {

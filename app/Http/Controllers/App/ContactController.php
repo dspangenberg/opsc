@@ -21,6 +21,7 @@ use App\Data\TaxData;
 use App\Data\TitleData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ContactAddressRequest;
+use App\Http\Requests\ContactPersonStoreRequest;
 use App\Http\Requests\ContactStoreRequest;
 use App\Http\Requests\ContactUpdateRequest;
 use App\Http\Requests\NoteStoreRequest;
@@ -33,7 +34,6 @@ use App\Models\ContactPhone;
 use App\Models\CostCenter;
 use App\Models\Country;
 use App\Models\EmailCategory;
-use App\Models\Invoice;
 use App\Models\PaymentDeadline;
 use App\Models\PhoneCategory;
 use App\Models\Salutation;
@@ -44,6 +44,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Maize\Markable\Models\Favorite;
 use Stevebauman\Purify\Facades\Purify;
+use Throwable;
 
 class ContactController extends Controller
 {
@@ -102,6 +103,24 @@ class ContactController extends Controller
             ])->baseRoute('app.contact.index');
     }
 
+    public function createPerson(Contact $company)
+    {
+        ds($company);
+        $contact = new Contact;
+        $contact->is_org = false;
+        $contact->company_id = $company->id;
+
+        $salutations = Salutation::query()->whereNot('is_hidden', true)->orderBy('name')->get();
+        $titles = Title::query()->orderBy('name')->get();
+
+        return Inertia::modal('App/Contact/ContactCreatePerson')
+            ->with([
+                'contact' => ContactData::from($contact),
+                'salutations' => SalutationData::collect($salutations),
+                'titles' => TitleData::collect($titles),
+            ])->baseRoute('app.contact.index');
+    }
+
     public function store(ContactStoreRequest $request)
     {
         $request->validated();
@@ -125,6 +144,14 @@ class ContactController extends Controller
         return Inertia::render('App/Contact/ContactDetails', [
             'contact' => ContactData::from($contact),
         ]);
+    }
+
+    public function storePerson(ContactPersonStoreRequest $request)
+    {
+        $request->validated();
+        $contact = Contact::create($request->validated());
+
+        return redirect()->route('app.contact.details', ['contact' => $contact->id]);
     }
 
     public function show(Contact $contact)
@@ -164,27 +191,12 @@ class ContactController extends Controller
             'notables.creator',
         ]);
 
-        if ($contact->debtor_number) {
-            $sales = ['currentYear' => 0, 'allTime' => 0];
-            $invoices = Invoice::query()->where('contact_id', $contact->id)->withSum('lines', 'amount')->get();
-            $invoicesCollection = collect($invoices);
-
-            $invoicesCollection->each(function ($invoice) use ($sales) {
-                if ($invoice->issued_on->year === now()->year) {
-                    $sales['currentYear'] += $invoice->lines_sum_amount;
-                }
-                $sales['allTime'] += $invoice->lines_sum_amount;
-            });
-        }
-
-        $contact->sales = $sales ?? null;
-
         return Inertia::render('App/Contact/ContactDetails', [
             'contact' => ContactData::from($contact),
         ]);
     }
 
-    public function edit(Request $request, Contact $contact)
+    public function edit(Contact $contact)
     {
         $contact->load(['addresses', 'addresses.category', 'mails.category', 'salutation', 'title', 'payment_deadline', 'phones.category', 'cost_center']);
 
@@ -215,7 +227,7 @@ class ContactController extends Controller
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function update(ContactUpdateRequest $request, Contact $contact)
     {
@@ -350,7 +362,7 @@ class ContactController extends Controller
             $contact->addresses()->delete();
         }
 
-        foreach ($addressesData as $index => $addressData) {
+        foreach ($addressesData as $addressData) {
             $addressAttributes = [
                 'contact_id' => $contact->id,
                 'address' => $addressData['address'],
@@ -369,6 +381,7 @@ class ContactController extends Controller
             }
         }
     }
+
     private function updateContactPhones(Contact $contact, array $phonesData): void
     {
         $incomingIds = collect($phonesData)

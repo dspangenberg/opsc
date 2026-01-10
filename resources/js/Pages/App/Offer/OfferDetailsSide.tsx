@@ -61,7 +61,12 @@ export const OfferDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
           <DataCardField variant="vertical" label="Umsatzsteuer" value={offer.tax?.name} />
         </DataCardSection>
         <DataCardSection>
-          <DataCardField className="col-span-2" variant="vertical" label="Kunde">
+          <DataCardField
+            className="col-span-2"
+            variant="vertical"
+            label="Kunde"
+            value={offer.contact_id}
+          >
             <Link href={contactRoute} className="hover:underline">
               {offer.contact?.formated_debtor_number} &ndash; {offer.contact?.full_name}
             </Link>
