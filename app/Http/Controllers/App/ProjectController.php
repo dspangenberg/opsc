@@ -11,6 +11,14 @@ use App\Models\Contact;
 use App\Models\Project;
 use App\Models\ProjectCategory;
 use Inertia\Inertia;
+use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
+use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
+use Plank\Mediable\Exceptions\MediaUpload\FileNotFoundException;
+use Plank\Mediable\Exceptions\MediaUpload\FileNotSupportedException;
+use Plank\Mediable\Exceptions\MediaUpload\FileSizeException;
+use Plank\Mediable\Exceptions\MediaUpload\ForbiddenException;
+use Plank\Mediable\Exceptions\MediaUpload\InvalidHashException;
+use Plank\Mediable\Facades\MediaUploader;
 
 class ProjectController extends Controller
 {
@@ -35,9 +43,9 @@ class ProjectController extends Controller
     }
 
     public function show(Project $project) {
-        $project->load(['category', 'owner']);
+        $project->load(['category', 'owner', 'manager']);
 
-        return Inertia::render('App/Setting/TextModule/TextModuleEdit', [
+        return Inertia::render('App/Project/ProjectDetails', [
             'project' => ProjectData::from($project)
         ]);
     }
@@ -52,8 +60,29 @@ class ProjectController extends Controller
         ]);
     }
 
+    /**
+     * @throws FileNotSupportedException
+     * @throws FileExistsException
+     * @throws ForbiddenException
+     * @throws FileNotFoundException
+     * @throws FileSizeException
+     * @throws InvalidHashException
+     * @throws ConfigurationException
+     */
     public function update(ProjectRequest $request, Project $project) {
-        $project->update($request->validated());
+        $data = $request->safe()->except('file');
+        $project->update($data);
+
+        if ($request->hasFile('avatar')) {
+            $project->detachMediaTags('avatar');
+
+            $media = MediaUploader::fromSource($request->file('avatar'))
+                ->toDestination('s3', 'avatars/projects')
+                ->upload();
+
+            $project->attachMedia($media, 'avatar');
+        }
+
         return redirect()->route('app.project.index');
     }
 

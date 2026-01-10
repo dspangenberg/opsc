@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   FileTrigger as AriaFileTrigger,
   type FileTriggerProps as AriaFileTriggerProps
@@ -6,6 +5,6 @@ import {
 
 export interface FileTriggerProps extends AriaFileTriggerProps {}
 
-export function FileTrigger(props: FileTriggerProps) {
-  return <AriaFileTrigger {...props} />
+export const FileTrigger = ({ ...props }: FileTriggerProps) => {
+  return <AriaFileTrigger {...(props as AriaFileTriggerProps)} />
 }

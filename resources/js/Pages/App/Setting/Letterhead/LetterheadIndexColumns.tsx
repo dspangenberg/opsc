@@ -16,12 +16,12 @@ const editUrl = (id: number | null) => (id ? route('app.setting.letterhead.edit'
 
 const deleteSection = async (row: App.Data.LetterheadData) => {
   const promise = await AlertDialog.call({
-    title: 'Abschnitt löschen',
-    message: `Möchtest Du den Textbaustein ${row.title} wirklich löschen?`,
-    buttonTitle: 'Textbaustein löschen'
+    title: 'Briefbogen löschen',
+    message: `Möchtest Du den Briefbogen ${row.title} wirklich löschen?`,
+    buttonTitle: 'Briefbogen löschen'
   })
   if (promise) {
-    router.delete(route('app.text-module.delete', { section: row.id }))
+    router.delete(route('app.setting.letterhead.delete', { letterhead: row.id }))
   }
 }
 

@@ -20,29 +20,30 @@ class ProjectData extends Data
         public readonly ?int $id,
         public readonly string $name,
 
-        public int $owner_contact_id,
-        public int $lead_user_id,
-        public int $manager_contact_id,
+        public readonly ?string $website,
 
-        public int $project_category_id,
-        public bool $is_archived,
-        public float $hourly,
+        public readonly ?int $owner_contact_id,
+        public readonly ?int $lead_user_id,
+        public readonly int $manager_contact_id,
 
-        public ?float $budget_hours,
-        public ?float $budget_costs,
-        public ?string $budget_period,
+        public readonly int $project_category_id,
+        public readonly bool $is_archived,
+        public readonly float $hourly,
+
+        public readonly ?float $budget_hours,
+        public readonly ?float $budget_costs,
+        public readonly ?string $budget_period,
+        public readonly ?string $avatar_url,
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
-        public ?DateTime $begin_on,
+        public readonly ?DateTime $begin_on,
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
-        public ?DateTime $end_on,
-
-        public ?string $website,
+        public readonly ?DateTime $end_on,
 
         public readonly ?ContactData $owner,
-        public readonly ?UserData $leadUser,
-        public readonly ?ContactData $managerContact,
+        public readonly ?UserData $user,
+        public readonly ?ContactData $manager,
 
         public readonly ?ProjectCategoryData $category,
 

@@ -25,7 +25,7 @@ const ComboBoxHeader = ListBoxHeader
 const ComboBoxSection = ListBoxSection
 const ComboBoxCollection = ListBoxCollection
 
-const ComboBoxInput = ({ className, ...props }: AriaInputProps) => {
+const ComboBoxInput = ({ autoFocus, className, ...props }: AriaInputProps) => {
   const [isReadOnly, setIsReadOnly] = useState(true)
   const randomName = useMemo(() => `combo_${Math.random().toString(36).substring(2, 11)}`, [])
 
@@ -45,6 +45,7 @@ const ComboBoxInput = ({ className, ...props }: AriaInputProps) => {
       onBlur={() => setIsReadOnly(true)}
       autoComplete="off"
       autoCorrect="off"
+      autoFocus={autoFocus}
       autoCapitalize="off"
       spellCheck="false"
       data-form-type="other"
@@ -170,13 +171,14 @@ const ComboBox = <T extends Record<string, unknown>>({
       items={filteredItems}
       onInputChange={setFilterValue}
       className={composeRenderProps(className, className =>
-        cn('group flex flex-col gap-2', className)
+        cn('group flex flex-col gap-1.5', className)
       )}
       isInvalid={hasError}
+      autoFocus={autoFocus}
       name={name}
       {...props}
     >
-      <Label value={label} />
+      {label && <Label value={label} isRequired={!isOptional} />}
       <FieldGroup className="p-0">
         <ComboBoxInput className="border-transparent focus:ring-0" />
         <Button variant="ghost" size="icon" className="mr-1.5 size-6 p-1">

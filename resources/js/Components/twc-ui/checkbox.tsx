@@ -66,7 +66,6 @@ const BaseCheckbox = ({ className, children, ...props }: AriaCheckboxProps) => (
               height="9"
               viewBox="0 0 9 9"
               fill="currentcolor"
-              className="bg-background"
               xmlns="http://www.w3.org/2000/svg"
             >
               <title>Checkbox indeterminate</title>
@@ -82,7 +81,6 @@ const BaseCheckbox = ({ className, children, ...props }: AriaCheckboxProps) => (
               height="9"
               viewBox="0 0 9 9"
               fill="currentcolor"
-              className="bg-background"
               xmlns="http://www.w3.org/2000/svg"
             >
               <title>Checkbox checked</title>

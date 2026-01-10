@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Mpdf\MpdfException;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
@@ -21,7 +20,6 @@ use Plank\Mediable\MediableInterface;
 use rikudou\EuQrPayment\QrPayment;
 use Spatie\Holidays\Countries\Germany;
 use Spatie\Holidays\Holidays;
-use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
 
 /**
  * @property-read Contact|null $contact
@@ -113,9 +111,6 @@ class Invoice extends Model implements MediableInterface
         'amount_paid',
     ];
 
-    /**
-     * @throws MpdfException|PathAlreadyExists
-     */
     public static function createOrGetPdf(Invoice $invoice, bool $uploadToS3 = false): string
     {
         $invoice = Invoice::query()

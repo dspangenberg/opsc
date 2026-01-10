@@ -6,7 +6,6 @@ use App\Http\Controllers\App\ProjectController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 
-// Contacts
 Route::get('projects', [ProjectController::class, 'index'])->name('app.project.index');
 
 Route::get('projects/create', [ProjectController::class, 'create'])->name('app.project.create');

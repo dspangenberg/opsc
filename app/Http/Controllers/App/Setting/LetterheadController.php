@@ -74,7 +74,8 @@ class LetterheadController extends Controller
      */
     public function update(LetterheadRequest $request, Letterhead $letterhead)
     {
-        $letterhead->update($request->validated());
+        $data = $request->validated()->except('file');
+        $letterhead->update($data);
 
         if ($request->hasFile('file')) {
             $letterhead->detachMediaTags('file');
@@ -91,9 +92,7 @@ class LetterheadController extends Controller
 
     public function delete(Letterhead $letterhead)
     {
-        $file = $letterhead->firstMedia('file');
-        $file?->delete();
-
+        $letterhead->getMedia('file')->each->delete();
         $letterhead->delete();
 
         return redirect()->route('app.setting.letterhead.index');
@@ -110,7 +109,9 @@ class LetterheadController extends Controller
      */
     public function store(LetterheadRequest $request)
     {
-        $letterhead = Letterhead::create($request->validated());
+        $data = $request->safe()->except('file');
+        $letterhead = Letterhead::create($data);
+
         if ($request->hasFile('file')) {
             $letterhead->detachMediaTags('file');
 

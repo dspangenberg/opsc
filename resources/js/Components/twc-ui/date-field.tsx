@@ -1,3 +1,5 @@
+'use client'
+
 import type { DateValue } from '@internationalized/date'
 import type { VariantProps } from 'class-variance-authority'
 import type React from 'react'

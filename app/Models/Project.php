@@ -6,7 +6,8 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-
+use Plank\Mediable\Exceptions\MediaUrlException;
+use Plank\Mediable\Mediable;
 /**
  * @property-read ProjectCategory|null $category
  * @property-read User|null $lead
@@ -19,6 +20,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class Project extends Model
 {
+    use Mediable;
+
     protected $fillable = [
         'name',
         'owner_contact_id',
@@ -36,7 +39,10 @@ class Project extends Model
         'end_on',
         'website',
         'note',
-        'avatar',
+    ];
+
+    protected $appends = [
+        'avatar_url',
     ];
 
     protected $attributes = [
@@ -54,6 +60,15 @@ class Project extends Model
         'website' => '',
         'note' => '',
     ];
+
+    /**
+     * @throws MediaUrlException
+     */
+    public function getAvatarUrlAttribute(): ?string
+    {
+        $media = $this->firstMedia('avatar');
+        return $media?->getUrl();
+    }
 
     public function owner(): HasOne
     {
