@@ -61,13 +61,14 @@ class Project extends Model
         'note' => '',
     ];
 
-    /**
-     * @throws MediaUrlException
-     */
     public function getAvatarUrlAttribute(): ?string
     {
-        $media = $this->firstMedia('avatar');
-        return $media?->getUrl();
+        try {
+            $media = $this->firstMedia('avatar');
+            return $media?->getUrl();
+        } catch (MediaUrlException $e) {
+            return null;
+        }
     }
 
     public function owner(): HasOne

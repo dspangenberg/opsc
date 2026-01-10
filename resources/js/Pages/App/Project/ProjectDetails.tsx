@@ -11,7 +11,7 @@ const ProjectDetails: React.FC<Props> = ({ project }) => {
   return (
     <ProjectDetailsLayout project={project}>
       <div className="flex-1">Details</div>
-      <div className="h-fit w-sm flex-none space-y-6 px-1">
+      <div className="h-fit w-full max-w-sm flex-none space-y-6 px-1">
         <ProjectDetailsSide project={project} />
       </div>
     </ProjectDetailsLayout>

@@ -70,7 +70,7 @@ class ProjectController extends Controller
      * @throws ConfigurationException
      */
     public function update(ProjectRequest $request, Project $project) {
-        $data = $request->safe()->except('file');
+        $data = $request->safe()->except('avatar');
         $project->update($data);
 
         if ($request->hasFile('avatar')) {

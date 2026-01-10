@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
@@ -43,6 +43,14 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
       avatar: null
     }
   )
+
+  useEffect(() => {
+    return () => {
+      if (droppedImage) {
+        URL.revokeObjectURL(droppedImage)
+      }
+    }
+  }, [droppedImage])
 
   const breadcrumbs = useMemo(
     () => [

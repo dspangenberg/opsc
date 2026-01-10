@@ -10,7 +10,9 @@ interface ProjectDetailsSideProps {
 export const ProjectDetailsSide: FC<ProjectDetailsSideProps> = ({
   project
 }: ProjectDetailsSideProps) => {
-  const contactRoute = (id: number) => route('app.contact.details', { id })
+  const contactRoute = (id: number | null) => {
+    return id ? route('app.contact.details', { id }) : '#'
+  }
 
   return (
     <DataCard title={project.name}>

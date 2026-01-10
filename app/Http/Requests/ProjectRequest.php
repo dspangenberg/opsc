@@ -14,7 +14,7 @@ class ProjectRequest extends FormRequest
             'owner_contact_id' => ['required', 'exists:contacts,id'],
             'manager_contact_id' => ['nullable', 'exists:contacts,id'],
             'website' => ['nullable', 'url'],
-            'avatar' => 'nullable|file|mimes:png,jpg,jpeg|max:51200',
+            'avatar' => ['nullable', 'file|mimes:png,jpg,jpeg', 'max:51200'],
         ];
     }
 
