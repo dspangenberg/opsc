@@ -17,16 +17,9 @@ interface Props {
 
 export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => {
   const breadcrumbs = useMemo(
-    () => [
-      { title: 'Kontakte', url: route('app.contact.index') },
-      { title: contact.full_name, url: route('app.contact.details', { id: contact.id }) }
-    ],
-    [contact.full_name, contact.id]
+    () => [{ title: 'Kontakte', url: route('app.contact.index') }, { title: contact.full_name }],
+    [contact.full_name]
   )
-
-  const handleContactEditClicked = () => {
-    router.visit(route('app.contact.edit', { id: contact.id }))
-  }
 
   const currentRoute = route().current()
 
@@ -38,7 +31,7 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
             variant="toolbar-default"
             icon={Edit03Icon}
             title="Bearbeiten"
-            onClick={handleContactEditClicked}
+            onClick={() => router.visit(route('app.contact.edit', { id: contact.id }))}
           />
         )}
 

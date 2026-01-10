@@ -23,9 +23,9 @@ const ContactIndex: React.FC<ContactIndexProps> = ({ currentSearch }) => {
   const { contacts } = usePage<ContactIndexProps>().props
   const [search, setSearch] = useState(currentSearch)
 
-  const handleAdd = () => {
+  const handleAdd = useCallback(() => {
     router.visit(route('app.contact.create', { _query: { view: route().queryParams.view } }))
-  }
+  }, [])
 
   const breadcrumbs = useMemo(
     () => [
@@ -52,7 +52,7 @@ const ContactIndex: React.FC<ContactIndexProps> = ({ currentSearch }) => {
         </DropdownButton>
       </Toolbar>
     ),
-    []
+    [handleAdd]
   )
 
   const footer = useMemo(() => <Pagination data={contacts} itemName="Kontakte" />, [contacts])

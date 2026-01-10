@@ -28,7 +28,7 @@ const ContactCreate: React.FC<Props> = ({ contact, salutations, titles }) => {
 
   const handleClose = () => {
     setIsOpen(false)
-    router.visit(route('app.contact.index', { _query: { view: route().params.view } }))
+    router.visit(route('app.contact.index', { _query: { view: route().queryParams.view } }))
   }
 
   // Hilfsvariable für bessere Lesbarkeit

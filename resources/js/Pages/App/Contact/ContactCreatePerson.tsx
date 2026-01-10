@@ -36,7 +36,7 @@ const ContactCreate: React.FC<Props> = ({ contact, salutations, titles }) => {
       isOpen={isOpen}
       width="2xl"
       onClosed={handleClose}
-      title="Neue Ansprechparon hinzufügen"
+      title="Neue Ansprechperson hinzufügen"
       confirmClose={form.isDirty}
       footer={dialogRenderProps => (
         <div className="mx-0 flex w-full gap-2">

@@ -15,7 +15,8 @@ class ContactPersonStoreRequest extends FormRequest
     {
         return [
             'salutation_id' => ['required_if:is_org,0'],
-            'title_id' => 'nullable',
+            'is_org' => ['required', 'boolean'],
+            'title_id' => ['nullable'],
             'first_name' => ['nullable', 'string'],
             'name' => ['required', 'string'],
             'company_id' => 'required|exists:contacts,id',

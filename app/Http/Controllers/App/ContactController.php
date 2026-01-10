@@ -105,7 +105,6 @@ class ContactController extends Controller
 
     public function createPerson(Contact $company)
     {
-        ds($company);
         $contact = new Contact;
         $contact->is_org = false;
         $contact->company_id = $company->id;
