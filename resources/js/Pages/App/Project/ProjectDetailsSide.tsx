@@ -23,6 +23,16 @@ export const ProjectDetailsSide: FC<ProjectDetailsSideProps> = ({
             label="Projektkategorie"
             value={project.category?.name}
           />
+          <DataCardField variant="vertical" label="Website" value={project.website}>
+            <a
+              href={project.website as string}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              {project.website}
+            </a>
+          </DataCardField>
         </DataCardSection>
 
         <DataCardSection title="Auftraggeber">

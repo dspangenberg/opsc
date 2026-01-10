@@ -83,7 +83,7 @@ class ProjectController extends Controller
             $project->attachMedia($media, 'avatar');
         }
 
-        return redirect()->route('app.project.index');
+        return redirect()->route('app.project.details', ['project' => $project->id]);
     }
 
     public function trash(Project $project) {
@@ -110,6 +110,6 @@ class ProjectController extends Controller
 
             $project->attachMedia($media, 'avatar');
         }
-        return redirect()->route('app.project.index');
+        return redirect()->route('app.project.details', ['project' => $project->id]);
     }
 }
