@@ -13,13 +13,27 @@ declare global {
     axios: AxiosInstance
   }
 
-  type IconSvgElement = readonly (readonly [string, {
-    readonly [key: string]: string | number;
-  }])[];
+  type IconSvgElement = readonly (readonly [
+    string,
+    {
+      readonly [key: string]: string | number
+    }
+  ])[]
 
   const route: typeof ziggyRoute
 }
 
 declare module '@inertiajs/core' {
   interface PageProps extends InertiaPageProps, AppPageProps {}
+  export interface InertiaConfig {
+    errorValueType: string[]
+    flashDataType: Record<string, any> & {
+      toast?: { type: 'success' | 'error'; message: string }
+    }
+    sharedPageProps: {
+      user: App.Data.UserData
+      tenant: App.Data.TenantData
+      runningTimer: App.Data.TimeData | null
+    }
+  }
 }

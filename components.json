@@ -14,12 +14,11 @@
   "aliases": {
     "components": "@/Components",
     "utils": "@/Lib/utils",
-    "ui": "@/Components",
+    "ui": "@/Components/ui",
     "lib": "@/Lib",
     "hooks": "@/Hooks"
   },
   "registries": {
-    "@twc-ui": "https://twc-ui.test/r/{name}.json",
-    "@plate": "https://platejs.org/r/{name}.json"
+    "@twc-ui": "https://twc-ui.test/r/{name}.json"
   }
 }

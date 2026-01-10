@@ -12,7 +12,7 @@ class ProjectRequest extends FormRequest
             'name' => ['required'],
             'project_category_id' => ['required', 'exists:project_categories,id'],
             'owner_contact_id' => ['required', 'exists:contacts,id'],
-            'manager_contact_id' => ['nullable'],
+            'manager_contact_id' => ['nullable', 'exists_if_not_empty:contacts,id'],
             'website' => ['nullable', 'url'],
             'avatar' => ['nullable', 'file', 'mimes:png,jpg,jpeg', 'max:51200'],
         ];

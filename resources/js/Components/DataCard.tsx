@@ -74,26 +74,19 @@ export const DataCardContent: FC<DataCardContentProps> = ({ children, showSecond
     setShowSecondarySections(true)
   }
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault()
-      onShowSecondaryClicked()
-    }
-  }
-
   return (
     <div className="">
       <div className="my-1 space-y-1.5 divide-border/40 overflow-y-auto">
         {showSecondarySections ? allChildren : filteredChildren}
       </div>
       {!showSecondarySections && allChildren.length > filteredChildren.length && (
-        <div
-          className="flex cursor-pointer items-center justify-center overflow-y-auto py-2 text-center text-xs hover:underline"
+        <button
+          type="button"
+          className="flex w-full cursor-pointer items-center justify-center overflow-y-auto py-2 text-center text-xs hover:underline"
           onClick={onShowSecondaryClicked}
-          onKeyDown={handleKeyDown}
         >
-          <a onClick={onShowSecondaryClicked}>Details anzeigen</a>
-        </div>
+          Details anzeigen
+        </button>
       )}
     </div>
   )
@@ -117,15 +110,11 @@ export interface DataCardSectionProps {
 export const DataCardSection: FC<DataCardSectionProps> = ({
   children,
   className = '',
-  icon = '',
-  buttonVariant = 'outline',
   emptyText = 'Keine Daten vorhanden',
   addonText = '',
   forceChildren = false,
   suppressEmptyText = false,
-  buttonTooltip,
-  title = '',
-  onClick
+  title = ''
 }: DataCardSectionProps) => {
   const getValidChildren = (children: ReactNode) => {
     return Children.toArray(children).filter(
@@ -151,16 +140,7 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
         !hasValidChildren && !forceChildren && suppressEmptyText ? 'hidden' : ''
       )}
     >
-      {title && (
-        <DataCardSectionHeader
-          title={title}
-          icon={icon}
-          addonText={addonText}
-          buttonVariant={buttonVariant}
-          buttonTooltip={buttonTooltip}
-          onClick={onClick}
-        />
-      )}
+      {title && <DataCardSectionHeader title={title} addonText={addonText} />}
       <div
         className={cn(
           'flex w-full flex-1 flex-col space-y-2 truncate hyphens-auto rounded-md border border-border/50 bg-background px-2.5 py-1.5 text-base',
@@ -196,21 +176,13 @@ interface DataCardSectionHeaderProps {
   children?: ReactNode
   className?: string
   addonText?: string
-  icon?: globalThis.IconSvgElement | string
-  buttonVariant?: 'ghost' | 'outline' | 'default'
-  onClick?: () => void
-  buttonTooltip?: string
 }
 
 export const DataCardSectionHeader: FC<DataCardSectionHeaderProps> = ({
   children = '',
   title = '',
-  icon = '',
   className = '',
-  addonText = '',
-  buttonVariant = 'default',
-  buttonTooltip = '',
-  onClick
+  addonText = ''
 }: DataCardSectionHeaderProps) => {
   return (
     <div className="flex items-center py-1 pr-0.5 pl-2.5 text-sm">
@@ -241,8 +213,8 @@ export const DataCardField: FC<DataCardFieldProps> = ({
   value,
   className = ''
 }: DataCardFieldProps) => {
-  if (!value && !children) {
-    if (!empty) return null
+  if (!value && !empty) {
+    return null
   }
 
   const props = { label, value, children, className }

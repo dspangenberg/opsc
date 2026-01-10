@@ -467,7 +467,7 @@ name: string;
 website: string | null;
 owner_contact_id: number | null;
 lead_user_id: number | null;
-manager_contact_id: number;
+manager_contact_id: number | null;
 project_category_id: number;
 is_archived: boolean;
 hourly: number;

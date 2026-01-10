@@ -1,10 +1,17 @@
-import { Edit03Icon } from '@hugeicons/core-free-icons'
+import {
+  Archive03Icon,
+  ArchiveOff03Icon,
+  Edit03Icon,
+  MoreVerticalCircle01Icon
+} from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { Avatar } from '@/Components/twc-ui/avatar'
 import { Button } from '@/Components/twc-ui/button'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { MenuItem } from '@/Components/twc-ui/menu'
 import { Toolbar } from '@/Components/twc-ui/toolbar'
 
 interface Props {
@@ -19,6 +26,7 @@ export const ProjectDetailsLayout: React.FC<Props> = ({ children, project }) => 
   )
 
   const handleEdit = () => router.visit(route('app.project.edit', { project: project.id }))
+  const handleArchive = () => router.get(route('app.project.archive', { project: project.id }), {})
 
   const toolbar = useMemo(
     () => (
@@ -29,9 +37,21 @@ export const ProjectDetailsLayout: React.FC<Props> = ({ children, project }) => 
           title="Bearbeiten"
           onClick={handleEdit}
         />
+        <DropdownButton variant="ghost" icon={MoreVerticalCircle01Icon}>
+          <MenuItem icon={Edit03Icon} title="Bearbeiten" onClick={handleEdit} />
+          {project.is_archived ? (
+            <MenuItem
+              icon={ArchiveOff03Icon}
+              title="Projekt wiederherstellen"
+              onAction={handleArchive}
+            />
+          ) : (
+            <MenuItem icon={Archive03Icon} title="Projekt archivieren" onAction={handleArchive} />
+          )}
+        </DropdownButton>
       </Toolbar>
     ),
-    []
+    [project.is_archived]
   )
 
   const headerContent = useMemo(
