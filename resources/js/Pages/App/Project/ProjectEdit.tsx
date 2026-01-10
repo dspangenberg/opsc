@@ -76,15 +76,24 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
     }
   }
 
-  async function onSelectHandler(e: any) {
-    if (e) {
-      const files = Array.from([...e])
-      const item = files[0]
+  async function onSelectHandler(e: FileList | null) {
+    if (!e || e.length === 0) return
+    
+    try {
+      const item = e[0]
 
       if (item) {
+        // Revoke previous blob URL before creating new one
+        if (droppedImage && droppedImage.startsWith('blob:')) {
+          URL.revokeObjectURL(droppedImage)
+        }
+        
         setDroppedImage(URL.createObjectURL(item))
         form.setData('avatar', item)
       }
+    } catch (error) {
+      console.error('Fehler beim Verarbeiten des Bildes:', error)
+      // Optional: Benutzer-Feedback anzeigen
     }
   }
 
