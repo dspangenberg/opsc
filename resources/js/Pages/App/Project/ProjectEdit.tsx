@@ -31,6 +31,14 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
     project.avatar_url as string | undefined
   )
 
+  useEffect(() => {
+    return () => {
+      if (droppedImage && droppedImage.startsWith('blob:')) {
+        URL.revokeObjectURL(droppedImage)
+      }
+    }
+  }, [droppedImage])
+
   const form = useForm<ProjectFormData>(
     'form-project-edit',
     project.id ? 'put' : 'post',
