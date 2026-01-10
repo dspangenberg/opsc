@@ -14,7 +14,9 @@ const Toaster = ({ ...props }: ToasterProps) => {
       theme={theme as ToasterProps['theme']}
       className="toaster group"
       toastOptions={{
-        unstyled: true
+        unstyled: true,
+        duration: 5000,
+        className: 'w-full md:max-w-[320px]'
       }}
       style={
         {

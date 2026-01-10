@@ -31,7 +31,9 @@ declare module '@inertiajs/core' {
       toast?: { type: 'success' | 'error'; message: string }
     }
     sharedPageProps: {
-      auth: { user: User | null }
+      user: App.Data.UserData
+      tenant: App.Data.TenantData
+      runningTimer: App.Data.TimeData | null
     }
   }
 }

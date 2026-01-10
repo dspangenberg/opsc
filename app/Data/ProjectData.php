@@ -24,7 +24,7 @@ class ProjectData extends Data
 
         public readonly ?int $owner_contact_id,
         public readonly ?int $lead_user_id,
-        public readonly int $manager_contact_id,
+        public readonly ?int $manager_contact_id,
 
         public readonly int $project_category_id,
         public readonly bool $is_archived,

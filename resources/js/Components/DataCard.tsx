@@ -110,15 +110,11 @@ export interface DataCardSectionProps {
 export const DataCardSection: FC<DataCardSectionProps> = ({
   children,
   className = '',
-  icon = '',
-  buttonVariant = 'outline',
   emptyText = 'Keine Daten vorhanden',
   addonText = '',
   forceChildren = false,
   suppressEmptyText = false,
-  buttonTooltip,
-  title = '',
-  onClick
+  title = ''
 }: DataCardSectionProps) => {
   const getValidChildren = (children: ReactNode) => {
     return Children.toArray(children).filter(
@@ -144,16 +140,7 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
         !hasValidChildren && !forceChildren && suppressEmptyText ? 'hidden' : ''
       )}
     >
-      {title && (
-        <DataCardSectionHeader
-          title={title}
-          icon={icon}
-          addonText={addonText}
-          buttonVariant={buttonVariant}
-          buttonTooltip={buttonTooltip}
-          onClick={onClick}
-        />
-      )}
+      {title && <DataCardSectionHeader title={title} addonText={addonText} />}
       <div
         className={cn(
           'flex w-full flex-1 flex-col space-y-2 truncate hyphens-auto rounded-md border border-border/50 bg-background px-2.5 py-1.5 text-base',
@@ -189,10 +176,6 @@ interface DataCardSectionHeaderProps {
   children?: ReactNode
   className?: string
   addonText?: string
-  icon?: globalThis.IconSvgElement | string
-  buttonVariant?: 'ghost' | 'outline' | 'default'
-  onClick?: () => void
-  buttonTooltip?: string
 }
 
 export const DataCardSectionHeader: FC<DataCardSectionHeaderProps> = ({
@@ -230,13 +213,11 @@ export const DataCardField: FC<DataCardFieldProps> = ({
   value,
   className = ''
 }: DataCardFieldProps) => {
-  if (!value && !children) {
-    if (!empty) return null
+  if (!value && !empty) {
+    return null
   }
 
   const props = { label, value, children, className }
-
-  if (!value) return
 
   switch (variant) {
     case 'horizontal':

@@ -15,7 +15,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
     "@types/google.maps": "^3.58.1",
-    "@types/lodash": "^4.17.22",
+    "@types/lodash": "^4.17.23",
     "@types/node": "^25.0.5",
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",

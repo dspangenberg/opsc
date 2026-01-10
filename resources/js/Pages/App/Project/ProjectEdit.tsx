@@ -183,7 +183,7 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
             <div className="col-span-8">
               <FormComboBox
                 isOptional
-                label="Projektverantwortlicher"
+                label="Verantwortliche Ansprechperson"
                 items={contacts}
                 itemName="reverse_full_name"
                 {...form.register('manager_contact_id')}

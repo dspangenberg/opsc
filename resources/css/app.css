@@ -309,12 +309,3 @@ table tr td ul li ul li {
 .md-editor ul li ul li {
   @apply ml-3;
 }
-
-/* Sonner Toast Styles */
-[data-sonner-toast] {
-  width: 320px !important;
-}
-
-[data-sonner-toast] > div {
-  width: 100% !important;
-}
