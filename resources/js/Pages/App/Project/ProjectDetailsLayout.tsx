@@ -26,18 +26,7 @@ export const ProjectDetailsLayout: React.FC<Props> = ({ children, project }) => 
   )
 
   const handleEdit = () => router.visit(route('app.project.edit', { project: project.id }))
-  const handleArchive = () =>
-    router.get(
-      route('app.project.archive', { project: project.id }),
-      {},
-      {
-        onFlash: flash => {
-          if ('is_archived' in flash) {
-            project.is_archived = flash.is_archived as boolean
-          }
-        }
-      }
-    )
+  const handleArchive = () => router.get(route('app.project.archive', { project: project.id }), {})
 
   const toolbar = useMemo(
     () => (

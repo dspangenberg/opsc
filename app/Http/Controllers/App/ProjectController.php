@@ -91,7 +91,7 @@ class ProjectController extends Controller
         $project->save();
 
         $message = $project->is_archived ? 'Projekt wurde archiviert' : 'Projekt wurde wiederhergestellt';
-        return Inertia::flash('toast', ['type' => 'success', 'message' => $message, 'is_archived' => $project->is_archived])->back();
+        return Inertia::flash('toast', ['type' => 'success', 'message' => $message])->back();
     }
 
     public function trash(Project $project) {
