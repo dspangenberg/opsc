@@ -76,7 +76,7 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
   const title = `AG-${offer.formated_offer_number}`
 
   const { handleDownload } = useFileDownload({
-    route: route('app.invoice.pdf', { id: offer.id }),
+    route: route('app.offer.pdf', { id: offer.id }),
     filename: offer.filename || 'offer.pdf'
   })
 
@@ -89,7 +89,7 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
     })
 
     if (promise) {
-      router.get(route('app.invoice.release', { id: offer.id }))
+      router.post(route('app.offer.release', { id: offer.id }))
     }
   }, [offer.id])
 
@@ -105,11 +105,11 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
   }
 
   const handleMarkAsSent = () => {
-    router.get(route('app.offer.mark-as-sent', { id: offer.id }))
+    router.post(route('app.offer.mark-as-sent', { id: offer.id }))
   }
 
   const handleUnrelease = () => {
-    router.get(route('app.invoice.unrelease', { id: offer.id }))
+    router.post(route('app.offer.unrelease', { id: offer.id }))
   }
 
   const currentRoute = route().current()

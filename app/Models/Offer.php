@@ -14,8 +14,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableInterface;
-use Spatie\Holidays\Countries\Germany;
-use Spatie\Holidays\Holidays;
 
 /**
  * @property bool $is_draft
@@ -114,67 +112,31 @@ class Offer extends Model implements MediableInterface
         return $query;
     }
 
-    public function setDueDate(): void
-    {
-        $paymentDeadline = PaymentDeadline::query()->where('id', $this->payment_deadline_id)->first();
-        if ($paymentDeadline->exists()) {
-            $dueDate = $this->issued_on->addDays($paymentDeadline->days);
-            while ($dueDate->isWeekend() || Holidays::for(Germany::make('DE-NW'))->isHoliday($dueDate)) {
-                $dueDate->addDays(1);
-            }
-
-            $this->due_on = $dueDate;
-        }
-    }
-
     public function release(): void
     {
-        if (! $this->invoice_number) {
-            $counter = Offer::whereYear('issued_on', $this->issued_on->year)->max('invoice_number');
+        if (! $this->offer_number) {
+
+            $counter = Offer::whereYear('issued_on', $this->issued_on->year)
+                ->whereMonth('issued_on', $this->issued_on->month)
+                ->max('offer_number');
+
             if ($counter == 0) {
-                $counter = $this->issued_on->year * 100000;
+                $counter = ($this->issued_on->year * 100000) + ($this->issued_on->month * 1000);
             }
 
             $counter++;
 
-            $this->invoice_number = $counter;
+            $this->offer_number = $counter;
+            $this->valid_until = $this->issued_on->copy()->addDays(30);
         }
 
-        $this->setDueDate();
         $this->is_draft = false;
 
-        /*
-        if (!$this->number_range_document_numbers_id) {
-            $this->number_range_document_numbers_id = NumberRange::createDocumentNumber($this, 'issued_on');
-        }
-        if (!$releasedInvoice->hasMedia('pdf')) {
-            Invoice::createOrGetPdf($releasedInvoice, true);
-
-        */
-
         $this->save();
-
-        /*
-        $releasedInvoice = $this->refresh();
-        $releasedInvoice
-            ->load('lines')
-            ->load('contact')
-            ->load('project')
-            ->load('lines')
-            ->load('type')
-            ->load('range_document_number')
-            ->loadSum('lines', 'amount')
-            ->loadSum('lines', 'tax')
-            ->loadSum('payable', 'amount');
-
-        Invoice::createBooking($releasedInvoice);
-        */
-
-        // return $releasedInvoice;
     }
 
     /**
-     * Update invoice positions with validated line data
+     * Update offer positions with validated line data
      *
      * @param  array<array<string, mixed>>  $linesData  Array of validated line data
      */

@@ -29,7 +29,7 @@ const OfferDetailsContent: React.FC<{ children?: React.ReactNode }> = ({ childre
         <OfferLinesEditor offer={offer} />
       ) : (
         <div className="space-y-4">
-          <h5>Angebotspositonen</h5>
+          <h5>Angebotspositionen</h5>
           <OfferTable offer={offer} />
         </div>
       )}

@@ -94,7 +94,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
     })
 
     if (promise) {
-      router.get(route('app.invoice.release', { id: invoice.id }))
+      router.post(route('app.invoice.release', { id: invoice.id }))
     }
   }, [invoice.id])
 
@@ -110,11 +110,11 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
   }
 
   const handleMarkAsSent = () => {
-    router.get(route('app.invoice.mark-as-sent', { id: invoice.id }))
+    router.post(route('app.invoice.mark-as-sent', { id: invoice.id }))
   }
 
   const handleUnrelease = () => {
-    router.get(route('app.invoice.unrelease', { id: invoice.id }))
+    router.post(route('app.invoice.unrelease', { id: invoice.id }))
   }
 
   const currentRoute = route().current()

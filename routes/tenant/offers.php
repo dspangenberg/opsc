@@ -6,7 +6,6 @@ use App\Http\Controllers\App\OfferController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 
-// Invoices
 Route::get('invoicing/offers/create', [OfferController::class, 'create'])
     ->name('app.offer.create');
 
@@ -33,6 +32,13 @@ Route::get('invoicing/offers/{offer}/history', [OfferController::class, 'history
 Route::get('invoicing/offers/{offer}/terms', [OfferController::class, 'terms'])
     ->name('app.offer.terms');
 
+Route::post('invoicing/offers/{offer}/release', [OfferController::class, 'release'])
+    ->name('app.offer.release');
+
+Route::post('invoicing/offers/{offer}/unrelease', [OfferController::class, 'unrelease'])
+    ->name('app.offer.unrelease');
+
+
 Route::put('invoicing/offers/{offer}/sort-attachments/', [OfferController::class, 'sortAttachments'])
     ->name('app.offer.sort-attachments');
 
@@ -54,7 +60,7 @@ Route::get('invoicing/offers/{offer}/duplicate', [OfferController::class, 'dupli
 Route::delete('invoicing/offers/{offer}/delete', [OfferController::class, 'destroy'])
     ->name('app.offer.destroy');
 
-Route::get('invoicing/offers/{offer}/mark-as-sent', [OfferController::class, 'markAsSent'])
+Route::post('invoicing/offers/{offer}/mark-as-sent', [OfferController::class, 'markAsSent'])
     ->name('app.offer.mark-as-sent');
 
 Route::put('invoicing/offers/terms/{offer}', [OfferController::class, 'updateTerms'])
