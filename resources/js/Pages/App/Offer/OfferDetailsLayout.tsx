@@ -89,7 +89,7 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
     })
 
     if (promise) {
-      router.post(route('app.offer.release', { id: offer.id }))
+      router.put(route('app.offer.release', { id: offer.id }))
     }
   }, [offer.id])
 
@@ -105,11 +105,11 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
   }
 
   const handleMarkAsSent = () => {
-    router.post(route('app.offer.mark-as-sent', { id: offer.id }))
+    router.put(route('app.offer.mark-as-sent', { id: offer.id }))
   }
 
   const handleUnrelease = () => {
-    router.post(route('app.offer.unrelease', { id: offer.id }))
+    router.put(route('app.offer.unrelease', { id: offer.id }))
   }
 
   const currentRoute = route().current()
@@ -141,11 +141,7 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
     () => (
       <Toolbar isDisabled={editMode || termsEditMode}>
         {!offer.is_draft && !offer.sent_at && (
-          <ToolbarButton
-            variant="primary"
-            icon={Sent02Icon}
-            title="Rechnung per E-Mail versenden"
-          />
+          <ToolbarButton variant="primary" icon={Sent02Icon} title="Angebot per E-Mail versenden" />
         )}
         {offer.is_draft && currentRoute === 'app.offer.terms' && (
           <ToolbarButton

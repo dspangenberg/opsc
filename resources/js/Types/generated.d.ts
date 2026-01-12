@@ -210,6 +210,7 @@ outturn_account_id: number | null;
 website: string | null;
 is_primary: boolean | null;
 is_debtor: boolean | null;
+is_archived: boolean | null;
 is_creditor: boolean | null;
 primary_phone: string | null;
 cost_center_id: number | null;

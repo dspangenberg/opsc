@@ -1,4 +1,10 @@
-import { Edit03Icon, UserAdd02Icon } from '@hugeicons/core-free-icons'
+import {
+  Archive03Icon,
+  ArchiveOff03Icon,
+  Edit03Icon,
+  MoreVerticalCircle01Icon,
+  UserAdd02Icon
+} from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/core'
 import { Link } from '@inertiajs/react'
 import type * as React from 'react'
@@ -6,6 +12,8 @@ import { useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { Avatar } from '@/Components/twc-ui/avatar'
 import { Button } from '@/Components/twc-ui/button'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { MenuItem } from '@/Components/twc-ui/menu'
 import { Tab, TabList, Tabs } from '@/Components/twc-ui/tabs'
 import { Toolbar } from '@/Components/twc-ui/toolbar'
 import { Badge } from '@/Components/ui/badge'
@@ -22,17 +30,40 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
   )
 
   const currentRoute = route().current()
+  const handleArchive = () => router.put(route('app.contact.archive', { contact: contact.id }), {})
 
   const toolbar = useMemo(
     () => (
       <Toolbar>
         {currentRoute === 'app.contact.details' && (
-          <Button
-            variant="toolbar-default"
-            icon={Edit03Icon}
-            title="Bearbeiten"
-            onClick={() => router.visit(route('app.contact.edit', { id: contact.id }))}
-          />
+          <>
+            <Button
+              variant="toolbar-default"
+              icon={Edit03Icon}
+              title="Bearbeiten"
+              onClick={() => router.visit(route('app.contact.edit', { id: contact.id }))}
+            />
+            <DropdownButton variant="ghost" icon={MoreVerticalCircle01Icon}>
+              <MenuItem
+                icon={Edit03Icon}
+                title="Bearbeiten"
+                onClick={() => router.visit(route('app.contact.edit', { id: contact.id }))}
+              />
+              {contact.is_archived ? (
+                <MenuItem
+                  icon={ArchiveOff03Icon}
+                  title="Kontakt wiederherstellen"
+                  onAction={handleArchive}
+                />
+              ) : (
+                <MenuItem
+                  icon={Archive03Icon}
+                  title="Kontakt archivieren"
+                  onAction={handleArchive}
+                />
+              )}
+            </DropdownButton>
+          </>
         )}
 
         {currentRoute === 'app.contact.details.persons' && (
@@ -47,7 +78,7 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
         )}
       </Toolbar>
     ),
-    [currentRoute, contact.id]
+    [currentRoute, contact.id, contact.is_archived]
   )
 
   const tabs = useMemo(

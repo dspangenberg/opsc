@@ -133,6 +133,13 @@ class ContactController extends Controller
         return redirect()->route('app.contact.details', ['contact' => $contact->id]);
     }
 
+    public function archiveToggle(Contact $contact) {
+        $contact->is_archived = !$contact->is_archived;
+        $contact->save();
+
+        $message = $contact->is_archived ? 'Kontakt wurde archiviert' : 'Kontakt wurde wiederhergestellt';
+        return Inertia::flash('toast', ['type' => 'success', 'message' => $message])->back();
+    }
     public function show(Contact $contact)
     {
         $contact->load([
@@ -238,7 +245,7 @@ class ContactController extends Controller
         if ($contact->is_debtor && ! $contact->debtor_number) {
             $contact->debtor_number = Contact::max('debtor_number') + 1;
             $contact->save();
-            $contact->createBookkeepingAccount(true);
+            $contact->createBookkeepingAccount();
         }
 
         return Inertia::render('App/Contact/ContactDetails', [
@@ -269,21 +276,6 @@ class ContactController extends Controller
         $contact->addNote(Purify::clean($request->validated('note')), auth()->user());
 
         return redirect()->route('app.contact.details', ['contact' => $contact->id]);
-    }
-
-    public function createAddress(Contact $contact)
-    {
-        $address = new ContactAddress;
-        $address->contact_id = $contact->id;
-
-        $countries = Country::all();
-        $categories = AddressCategory::all();
-
-        return Inertia::modal('App/Contact/ContactEditAddress', [
-            'address' => ContactAddressData::from($address),
-            'categories' => AddressCategoryData::collect($categories),
-            'countries' => CountryData::collect($countries),
-        ])->baseRoute('app.contact.details', ['contact' => $contact->id]);
     }
 
     private function updateContactMails(Contact $contact, array $mailsData): void
