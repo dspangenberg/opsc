@@ -26,7 +26,7 @@ export const ProjectDetailsLayout: React.FC<Props> = ({ children, project }) => 
   )
 
   const handleEdit = () => router.visit(route('app.project.edit', { project: project.id }))
-  const handleArchive = () => router.get(route('app.project.archive', { project: project.id }), {})
+  const handleArchive = () => router.put(route('app.project.archive', { project: project.id }), {})
 
   const toolbar = useMemo(
     () => (

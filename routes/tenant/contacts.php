@@ -29,8 +29,6 @@ Route::put('contacts/{contact}/edit', [ContactController::class, 'update'])
 Route::get('contacts/{contact}/persons', [ContactController::class, 'persons'])
     ->name('app.contact.details.persons');
 
-Route::get('contacts/{contact}/create', [ContactController::class, 'createAddress'])
-    ->name('app.contact.create.address');
 
 Route::put('contacts/{contact}/toggle-favorite', [ContactController::class, 'toggleFavorite'])
     ->name('app.contact.toggle-favorite');
@@ -38,3 +36,5 @@ Route::put('contacts/{contact}/toggle-favorite', [ContactController::class, 'tog
 Route::post('contacts/{contact}/note-store', [ContactController::class, 'storeNote'])
     ->middleware([HandlePrecognitiveRequests::class])
     ->name('app.contact.note-store');
+
+Route::put('contacts/{contact}/archive', [ContactController::class, 'archiveToggle'])->name('app.contact.archive');
