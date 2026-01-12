@@ -46,6 +46,7 @@ type FormData = Omit<
   | 'cost_center'
   | 'primary_phone'
   | 'primary_mail'
+  | 'is_archived'
 > & {
   mails: App.Data.ContactMailData[]
   phones: App.Data.ContactPhoneData[]
@@ -103,8 +104,7 @@ export const ContactEdit: React.FC<Props> = ({
     website: contact.website,
     is_primary: contact.is_primary,
     is_creditor: contact.is_creditor,
-    is_debtor: contact.is_debtor,
-    is_archived: contact.is_archived
+    is_debtor: contact.is_debtor
   }
 
   const form = useForm<FormData>(

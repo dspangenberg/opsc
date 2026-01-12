@@ -315,14 +315,10 @@ class Contact extends Model
 
     public function scopeView(Builder $query, $view): Builder
     {
-        if ($view != 'archived') {
-            $query->where('is_archived', false);
-        }
-
         return match ($view) {
-            'debtors' => $query->where('is_debtor', true)->orWhere('debtor_number', '<>', 0),
+            'debtors' => $query->where('is_archived', 0)->where(fn($q) => $q->where('is_debtor', true)->orWhere('debtor_number', '<>', 0)),
             'orgs' => $query->where('is_org', true),
-            'creditors' => $query->where('is_creditor', true)->orWhere('creditor_number', '<>', 0),
+            'creditors' => $query->where('is_archived', false)->where(fn($q) => $q->where('is_creditor', true)->orWhere('creditor_number', '<>', 0)),
             'archived' => $query->where('is_archived', true),
             'favorites' => $query->whereHasFavorite(
                 auth()->user()

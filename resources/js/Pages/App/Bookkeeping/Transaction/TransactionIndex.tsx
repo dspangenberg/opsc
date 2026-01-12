@@ -62,12 +62,10 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
   // Debounced Search Handler
   const debouncedSearchChange = useCallback(
     (newSearch: string) => {
-      // Clear existing timeout
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current)
       }
 
-      // Set new timeout
       searchTimeoutRef.current = setTimeout(() => {
         router.post(
           route('app.bookkeeping.transactions.index', { bank_account: bank_account.id }),
@@ -78,10 +76,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
           {
             preserveScroll: true,
             preserveState: true,
-            only: ['transactions'],
-            onSuccess: () => {
-              // Update wird durch die props vom Controller gemacht
-            }
+            only: ['transactions']
           }
         )
       }, 500) // 500ms Debounce
@@ -89,7 +84,6 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
     [filters, bank_account.id]
   )
 
-  // Filter ändern via POST (ohne Debounce, da seltener)
   const handleFiltersChange = (newFilters: FilterConfig) => {
     router.post(
       route('app.bookkeeping.transactions.index', { bank_account: bank_account.id }),
@@ -108,13 +102,11 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
     )
   }
 
-  // Search Input Handler (nur lokaler State, kein Server-Request)
   const handleSearchInputChange = (newSearch: string) => {
     setSearch(newSearch)
     debouncedSearchChange(newSearch)
   }
 
-  // Cleanup timeout on unmount
   React.useEffect(() => {
     return () => {
       if (searchTimeoutRef.current) {
