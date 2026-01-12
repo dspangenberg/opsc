@@ -41,13 +41,13 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
               variant="toolbar-default"
               icon={Edit03Icon}
               title="Bearbeiten"
-              onClick={() => router.visit(route('app.contact.edit', { id: contact.id }))}
+              onClick={() => router.visit(route('app.contact.edit', { contact: contact.id }))}
             />
             <DropdownButton variant="ghost" icon={MoreVerticalCircle01Icon}>
               <MenuItem
                 icon={Edit03Icon}
                 title="Bearbeiten"
-                onClick={() => router.visit(route('app.contact.edit', { id: contact.id }))}
+                onClick={() => router.visit(route('app.contact.edit', { contact: contact.id }))}
               />
               {contact.is_archived ? (
                 <MenuItem
