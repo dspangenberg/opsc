@@ -57,10 +57,12 @@ const DocumentSelectorComponent: React.FC<DocumentSelectorComponentProps> = ({
           <Button
             variant="default"
             onPress={() => {
-              const documentIds = selectedRows.map(row => row.id)
+              const documentIds = selectedRows
+                .filter(row => row.id != null)
+                .map(row => row.id as number)
               dialogRenderProps.close()
               setTimeout(() => {
-                onConfirm(documentIds as number[])
+                onConfirm(documentIds)
               }, 50)
             }}
             isDisabled={selectedRows.length === 0}

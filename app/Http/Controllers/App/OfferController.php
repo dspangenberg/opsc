@@ -277,11 +277,14 @@ class OfferController extends Controller
 
     public function sortAttachments(OfferAttachmentSortUpdateRequest $request, Offer $offer)
     {
-        $attachments = $offer->attachments->whereIn('id', $request->validated()['attachment_ids']);
-        for ($i = 0; $i < count($attachments); $i++) {
-            $attachments[$i]->pos = $i + 1;
+        $attachmentIds = $request->validated()['attachment_ids'];
+
+        foreach ($attachmentIds as $index => $attachmentId) {
+            Attachment::where('id', $attachmentId)
+                ->where('attachable_type', Offer::class)
+                ->where('attachable_id', $offer->id)
+                ->update(['pos' => $index + 1]);
         }
-        $offer->attachments()->saveMany($attachments);
 
         return back();
     }

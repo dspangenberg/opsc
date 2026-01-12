@@ -7,7 +7,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Offer;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class OfferAttachmentSortUpdateRequest extends FormRequest
 {
@@ -15,7 +17,13 @@ class OfferAttachmentSortUpdateRequest extends FormRequest
     {
         return [
             'attachment_ids' => ['required', 'array'],
-            'attachment_ids.*' => ['required', 'numeric', 'exists:attachments,id'],
+            'attachment_ids.*' => [
+                'required',
+                'numeric',
+                Rule::exists('attachments', 'id')
+                    ->where('attachable_type', Offer::class)
+                    ->where('attachable_id', $this->route('offer')->id),
+            ],
         ];
     }
 

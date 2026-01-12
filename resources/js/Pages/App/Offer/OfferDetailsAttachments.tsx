@@ -33,12 +33,16 @@ export const OfferDetailsAttachments: FC<OfferDetailsAttachmentsProps> = ({
     initialItems: offer.attachments ?? []
   })
 
+  const listItemsRef = useRef(list.items)
+  listItemsRef.current = list.items
+
   const debouncedSaveRef = useRef<ReturnType<typeof debounce> | null>(null)
 
   useEffect(() => {
     debouncedSaveRef.current = debounce(() => {
+      const attachmentIds = listItemsRef.current.map(item => item.id)
       router.put(route('app.offer.sort-attachments', { offer: offer.id }), {
-        attachment_ids: list.items.map(item => item.id)
+        attachment_ids: attachmentIds
       })
     }, 500)
 
@@ -72,7 +76,7 @@ export const OfferDetailsAttachments: FC<OfferDetailsAttachmentsProps> = ({
     }
   }
 
-  const handleAddDocments = async () => {
+  const handleAddDocuments = async () => {
     const result = await DocumentSelector.call()
     if (result !== false && Array.isArray(result)) {
       router.put(
@@ -111,7 +115,7 @@ export const OfferDetailsAttachments: FC<OfferDetailsAttachmentsProps> = ({
               size="icon-sm"
               icon={Add01Icon}
               isDisabled={!offer.is_draft}
-              onClick={handleAddDocments}
+              onClick={handleAddDocuments}
             />
           </div>
         </div>
