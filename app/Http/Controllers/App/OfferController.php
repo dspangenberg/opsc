@@ -13,8 +13,10 @@ use App\Data\ProjectData;
 use App\Data\TaxData;
 use App\Data\TextModuleData;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OfferAttachmentSortUpdateRequest;
 use App\Http\Requests\OfferStoreRequest;
 use App\Http\Requests\OfferTermsRequest;
+use App\Models\Attachment;
 use App\Models\Contact;
 use App\Models\Offer;
 use App\Models\OfferLine;
@@ -65,12 +67,10 @@ class OfferController extends Controller
 
     public function create()
     {
-        // Load all data in single queries, ordered appropriately for defaults
         $taxes = Tax::query()->with('rates')->orderBy('is_default', 'DESC')->orderBy('name')->get();
         $projects = Project::query()->where('is_archived', false)->orderBy('name')->get();
         $contacts = Contact::query()->whereNotNull('debtor_number')->orderBy('name')->orderBy('first_name')->get();
 
-        // Create new offer with default values from loaded collections
         $offer = new Offer;
         $offer->contact_id = 0;
         $offer->is_draft = true;
@@ -90,7 +90,6 @@ class OfferController extends Controller
 
     public function edit(Offer $offer)
     {
-        // Load all data in single queries, ordered appropriately for defaults
         $taxes = Tax::query()->with('rates')->orderBy('is_default', 'DESC')->orderBy('name')->get();
         $projects = Project::query()->where('is_archived', false)->orderBy('name')->get();
         $contacts = Contact::query()->whereNotNull('debtor_number')->orderBy('name')->orderBy('first_name')->get();
@@ -166,9 +165,6 @@ class OfferController extends Controller
     public function updateLines(Request $request, Offer $offer)
     {
         $validatedLines = $request->lines;
-
-        // Simply pass the validated array data to updatePositions
-        // The model will handle the data as arrays, not DTOs
         $offer->updatePositions($validatedLines);
 
         return redirect()->route('app.offer.details', ['offer' => $offer->id]);
@@ -240,7 +236,7 @@ class OfferController extends Controller
     public function downloadPdf(Offer $offer): BinaryFileResponse
     {
         $offer->load('attachments');
-        $pdfFile = Offer::createOrGetPdf($offer, false);
+        $pdfFile = Offer::createOrGetPdf($offer);
         return response()->file($pdfFile);
 
     }
@@ -276,6 +272,41 @@ class OfferController extends Controller
         return redirect()->route('app.offer.terms', ['offer' => $offer->id]);
     }
 
+    public function sortAttachments(OfferAttachmentSortUpdateRequest $request, Offer $offer)
+    {
+        $attachments = $offer->attachments->whereIn('id', $request->validated()['attachment_ids']);
+        for ($i = 0; $i < count($attachments); $i++) {
+            $attachments[$i]->pos = $i+1;
+        }
+        $offer->attachments()->saveMany($attachments);
+
+        return back();
+    }
+
+    public function removeAttachment(Offer $offer, Attachment $attachment)
+    {
+        $attachment = $offer->attachments()->find($attachment->id);
+        if (!$attachment) {
+            return back();
+        }
+        $attachment->delete();
+
+        return back();
+    }
+
+    public function addAttachments(Request $request, Offer $offer)
+    {
+        $documentIds = $request->input('document_ids', []);
+
+        foreach ($documentIds as $documentId) {
+            $offer->attachments()->create([
+                'document_id' => $documentId,
+                'pos' => $offer->attachments()->max('pos') + 1
+            ]);
+        }
+
+        return back();
+    }
 
     public function history(Offer $offer, ?int $line = null)
     {

@@ -80,13 +80,9 @@ class Offer extends Model implements MediableInterface
         $pdfConfig['hide'] = true;
         $pdfConfig['watermark'] = $offer->is_draft ? 'ENTWURF' : '';
 
-        $terms_document_id = config('pdf.terms_document_id');
-
         $attachments = $offer->attachments->map(function ($attachment) {
             return $attachment->document_id;
         });
-
-        ds($attachments);
 
         return WeasyPdfService::createPdf('offer', 'pdf.offer.index',
             [

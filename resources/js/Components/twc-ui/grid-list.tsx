@@ -1,6 +1,5 @@
 'use client'
 
-import type React from 'react'
 import {
   GridList as AriaGridList,
   GridListItem as AriaGridListItem,

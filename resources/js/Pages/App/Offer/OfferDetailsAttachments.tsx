@@ -1,84 +1,152 @@
-import { Link } from '@inertiajs/react'
-import { type FC, useMemo } from 'react'
-import {
-  DataCard,
-  DataCardContent,
-  DataCardField,
-  DataCardHeader,
-  DataCardSection
-} from '@/Components/DataCard'
-import { StatsField } from '@/Components/StatsField'
-import { cn } from '@/Lib/utils'
+import { Add01Icon, Cancel01Icon, DragDropHorizontalIcon } from '@hugeicons/core-free-icons'
+import { router } from '@inertiajs/core'
+import { debounce } from 'lodash'
+import type { FC } from 'react'
+import { useEffect, useMemo } from 'react'
+import { useDragAndDrop, useListData } from 'react-aria-components'
+import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
+import { BorderedBox } from '@/Components/twc-ui/bordered-box'
+import { Button } from '@/Components/twc-ui/button'
+import { GridList, GridListItem } from '@/Components/twc-ui/grid-list'
+import { Icon } from '@/Components/twc-ui/icon'
+import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
+import { DocumentSelector } from '@/Pages/App/Document/Document/DocumentSelector'
 
-interface ContactDetailsOrgInfoBoxProps {
+interface OfferDetailsAttachmentsProps {
   offer: App.Data.OfferData
-  showSecondary?: boolean
 }
 
-export const OfferDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
+export const OfferDetailsAttachments: FC<OfferDetailsAttachmentsProps> = ({
   offer
-}: ContactDetailsOrgInfoBoxProps) => {
-  const currencyFormatter = new Intl.NumberFormat('de-DE', {
-    style: 'decimal',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+}: OfferDetailsAttachmentsProps) => {
+  const handleFileShow = async (id: number | null) => {
+    const attachment = offer.attachments?.find(attachment => attachment.id === id)
+    if (attachment) {
+      await PdfViewer.call({
+        file: route('app.documents.documents.pdf', { id: attachment.document.id }),
+        filename: attachment.document.filename
+      })
+    }
+  }
+
+  const list = useListData({
+    initialItems: offer.attachments ?? []
   })
 
-  const contactRoute = useMemo(
-    () => route('app.contact.details', { id: offer.contact_id }),
-    [offer.contact_id]
+  useEffect(() => {
+    list.setSelectedKeys(new Set())
+    list.items.forEach(item => {
+      list.remove(item.id as number)
+    })
+    offer.attachments?.forEach(attachment => {
+      list.append(attachment)
+    })
+  }, [offer.attachments])
+
+  const debouncedSave = useMemo(
+    () =>
+      debounce(() => {
+        router.put(route('app.offer.sort-attachments', { offer: offer.id }), {
+          attachment_ids: list.items.map(item => item.id)
+        })
+      }, 500),
+    [offer.id, list.items]
   )
 
-  const title = `AG-${offer.formated_offer_number}`
+  const handleRemove = async (item: App.Data.AttachmentData) => {
+    if (!item) return
+    const promise = await AlertDialog.call({
+      title: 'Anlage entfernen',
+      message: `Möchtest Du ${item.document.filename} wirklich als Anlage entfernen?`,
+      buttonTitle: 'Anlage entfernen'
+    })
+    if (promise) {
+      router.delete(
+        route('app.offer.remove-attachment', { offer: offer.id, attachment: item.id }),
+        { onSuccess: () => router.reload({ only: ['offer'] }) }
+      )
+    }
+  }
+
+  const handleAddDocments = async () => {
+    const result = await DocumentSelector.call()
+    if (result !== false && Array.isArray(result)) {
+      router.put(
+        route('app.offer.add-attachments', { offer: offer.id }),
+        { document_ids: result },
+        {
+          onSuccess: () => {
+            router.reload({ only: ['offer'] })
+          }
+        }
+      )
+    }
+  }
+
+  const { dragAndDropHooks } = useDragAndDrop({
+    getItems: (_keys, items: typeof list.items) =>
+      items.map(item => ({ 'text/plain': item.document.title })),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys)
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys)
+      }
+      debouncedSave()
+    }
+  })
 
   return (
-    <DataCard title={title}>
-      <DataCardHeader
-        className={cn(
-          'grid grid-cols-3 divide-x divide-border/50 rounded-md border border-border/50 border-b bg-background p-1.5'
-        )}
-      >
-        <StatsField label="netto" value={currencyFormatter.format(offer.amount_net)} />
-        <StatsField label="USt." value={currencyFormatter.format(offer.amount_tax)} />
-        <StatsField label="brutto" value={currencyFormatter.format(offer.amount_gross)} />
-      </DataCardHeader>
-      <DataCardContent>
-        <DataCardSection
-          className={cn('grid space-y-0', offer.is_draft ? 'grid-cols-2' : 'grid-cols-3')}
-          title="Angbotsdetails"
-        >
-          <DataCardField variant="vertical" label="Datum" value={offer.issued_on} />
-          <DataCardField variant="vertical" label="gültig bis" value={offer.valid_until} />
-          {!offer.is_draft && (
-            <DataCardField
-              variant="vertical"
-              label="versendet"
-              value={offer.sent_at?.substring(0, 10)}
+    <BorderedBox>
+      <div className="p-2 text-sm">
+        <div className="flex items-center px-2 pb-1">
+          <div className="flex-1 font-medium">Anhänge</div>
+          <div>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              icon={Add01Icon}
+              isDisabled={!offer.is_draft}
+              onClick={handleAddDocments}
             />
-          )}
-        </DataCardSection>
-        <DataCardSection className="grid grid-cols-2">
-          <DataCardField variant="vertical" label="Umsatzsteuer" value={offer.tax?.name} />
-        </DataCardSection>
-        <DataCardSection>
-          <DataCardField
-            className="col-span-2"
-            variant="vertical"
-            label="Kunde"
-            value={offer.contact_id}
+          </div>
+        </div>
+        <div className="flex w-full flex-1 flex-col space-y-2 truncate hyphens-auto rounded-md border border-border/50 bg-background px-2.5 pt-1.5">
+          <GridList
+            aria-label="Attachments"
+            items={list.items}
+            selectionMode="none"
+            className="divide-y border-0 p-0"
+            dragAndDropHooks={dragAndDropHooks}
+            renderEmptyState={() => (
+              <p className="pt-2 text-muted-foreground text-sm">Keine Anhänge vorhanden</p>
+            )}
           >
-            <Link href={contactRoute} className="hover:underline">
-              {offer.contact?.formated_debtor_number} &ndash; {offer.contact?.full_name}
-            </Link>
-          </DataCardField>
-          <DataCardField
-            className="col-span-2"
-            variant="vertical"
-            label="Projekt"
-            value={offer.project?.name}
-          />
-        </DataCardSection>
-      </DataCardContent>
-    </DataCard>
+            {(item: App.Data.AttachmentData) => (
+              <GridListItem
+                textValue={item.document.title}
+                className="gap-0 rounded-none border-0 p-0 py-0.5 opacity-100"
+                onDoubleClick={() => handleFileShow(item.id)}
+                isDisabled={!offer.is_draft}
+              >
+                <div>{item.document.title}</div>
+                <div className="ml-auto flex items-center gap-0.5">
+                  <Button
+                    variant="ghost-destructive"
+                    size="icon-sm"
+                    icon={Cancel01Icon}
+                    isDisabled={!offer.is_draft}
+                    onPress={() => handleRemove(item)}
+                  />
+                </div>
+                <Button type="button" variant="ghost" size="icon-sm" slot="drag">
+                  <Icon icon={DragDropHorizontalIcon} className="rotate-90" />
+                </Button>
+              </GridListItem>
+            )}
+          </GridList>
+        </div>
+      </div>
+    </BorderedBox>
   )
 }

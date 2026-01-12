@@ -9,16 +9,13 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class OfferStoreRequest extends FormRequest
+class OfferAttachmentSortUpdateRequest extends FormRequest
 {
     public function rules(): array
     {
         return [
-            'issued_on' => ['required', 'date', 'date_format:d.m.Y'],
-            'contact_id' => ['required', 'exists:contacts,id'],
-            'project_id' => ['nullable'],
-            'tax_id' => ['required', 'exists:taxes,id'],
-            'is_draft' => ['nullable', 'boolean'],
+            'attachment_ids' => ['required', 'array'],
+            'attachment_ids.*' => ['required', 'numeric', 'exists:attachments,id'],
         ];
     }
 

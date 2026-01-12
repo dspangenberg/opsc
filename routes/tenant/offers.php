@@ -33,6 +33,14 @@ Route::get('invoicing/offers/{offer}/history', [OfferController::class, 'history
 Route::get('invoicing/offers/{offer}/terms', [OfferController::class, 'terms'])
     ->name('app.offer.terms');
 
+Route::put('invoicing/offers/{offer}/sort-attachments/', [OfferController::class, 'sortAttachments'])
+    ->name('app.offer.sort-attachments');
+
+Route::delete('invoicing/offers/{offer}/delete-attachment/{attachment}', [OfferController::class, 'removeAttachment'])->name('app.offer.remove-attachment');
+
+Route::put('invoicing/offers/{offer}/add-attachments/', [OfferController::class, 'addAttachments'])
+    ->name('app.offer.add-attachments');
+
 Route::put('invoicing/offers/lines-update/{offer}', [OfferController::class, 'updateLines'])
     ->name('app.offer.lines-update')
     ->middleware([HandlePrecognitiveRequests::class]);
@@ -52,3 +60,4 @@ Route::get('invoicing/offers/{offer}/mark-as-sent', [OfferController::class, 'ma
 Route::put('invoicing/offers/terms/{offer}', [OfferController::class, 'updateTerms'])
     ->name('app.offer.update-terms')
     ->middleware([HandlePrecognitiveRequests::class]);
+

@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Attachment extends Model
 {
+    public $timestamps = false;
+
     protected $fillable = [
         'attachable_type',
         'attachable_id',

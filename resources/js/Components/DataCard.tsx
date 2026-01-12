@@ -97,7 +97,7 @@ export interface DataCardSectionProps {
   minChildren?: number
   title?: string
   buttonVariant?: 'ghost' | 'outline'
-  addonText?: string
+  addon?: string | ReactNode
   forceChildren?: boolean
   icon?: globalThis.IconSvgElement | string
   buttonTooltip?: string
@@ -111,7 +111,7 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
   children,
   className = '',
   emptyText = 'Keine Daten vorhanden',
-  addonText = '',
+  addon = '',
   forceChildren = false,
   suppressEmptyText = false,
   title = ''
@@ -140,7 +140,7 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
         !hasValidChildren && !forceChildren && suppressEmptyText ? 'hidden' : ''
       )}
     >
-      {title && <DataCardSectionHeader title={title} addonText={addonText} />}
+      {title && <DataCardSectionHeader title={title} addon={addon} />}
       <div
         className={cn(
           'flex w-full flex-1 flex-col space-y-2 truncate hyphens-auto rounded-md border border-border/50 bg-background px-2.5 py-1.5 text-base',
@@ -175,23 +175,19 @@ interface DataCardSectionHeaderProps {
   title?: string
   children?: ReactNode
   className?: string
-  addonText?: string
+  addon?: string | ReactNode
 }
 
 export const DataCardSectionHeader: FC<DataCardSectionHeaderProps> = ({
   children = '',
   title = '',
   className = '',
-  addonText = ''
+  addon = ''
 }: DataCardSectionHeaderProps) => {
   return (
     <div className="flex items-center py-1 pr-0.5 pl-2.5 text-sm">
-      <div className={cn('flex-1 pb-1 font-medium', className)}>
-        {children || title}
-        {addonText && (
-          <span className="ml-2 font-normal text-foreground/40 text-sm">{addonText}</span>
-        )}
-      </div>
+      <div className={cn('flex-1 pb-1 font-medium', className)}>{children || title}</div>
+      <div className="flex-none text-right text-sm">{addon}</div>
     </div>
   )
 }
