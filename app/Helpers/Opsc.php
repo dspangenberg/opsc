@@ -1,5 +1,11 @@
 <?php
 
+use League\CommonMark\Environment\Environment;
+use League\CommonMark\Exception\CommonMarkException;
+use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
+use League\CommonMark\Extension\Table\TableExtension;
+use League\CommonMark\MarkdownConverter;
+
 if (! function_exists('minutes_to_hours')) {
     function minutes_to_hours($minutes): string
     {
@@ -29,6 +35,7 @@ if (! function_exists('md')) {
      * Converts markdown to sanitized HTML to prevent XSS attacks.
      * Uses league/commonmark with CommonMark and Table extensions.
      * Allows safe HTML tags via HTMLPurifier configuration.
+     * @throws CommonMarkException
      */
     function md(?string $markdown): string
     {
@@ -41,19 +48,19 @@ if (! function_exists('md')) {
             'allow_unsafe_links' => false,
         ];
 
-        $environment = new \League\CommonMark\Environment\Environment($config);
-        $environment->addExtension(new \League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension);
-        $environment->addExtension(new \League\CommonMark\Extension\Table\TableExtension);
+        $environment = new Environment($config);
+        $environment->addExtension(new CommonMarkCoreExtension);
+        $environment->addExtension(new TableExtension);
 
-        $converter = new \League\CommonMark\MarkdownConverter($environment);
+        $converter = new MarkdownConverter($environment);
         $html = $converter->convert($markdown)->getContent();
 
         // Sanitize HTML output using HTMLPurifier to allow safe tags only
-        $purifierConfig = \HTMLPurifier_Config::createDefault();
+        $purifierConfig = HTMLPurifier_Config::createDefault();
         $purifierConfig->set('HTML.Allowed', 'p,br,strong,em,u,h1,h2,h3,h4,h5,h6,ul,ol,li,a[href],table,thead,tbody,tr,th,td,span,div,blockquote,code,pre');
         $purifierConfig->set('URI.DisableExternalResources', true);
         $purifierConfig->set('URI.DisableResources', true);
-        $purifier = new \HTMLPurifier($purifierConfig);
+        $purifier = new HTMLPurifier($purifierConfig);
 
         return $purifier->purify($html);
     }
@@ -90,15 +97,15 @@ if (! function_exists('formated_offer_id')) {
         $formated_id = substr($invoice_id, 0, 4).'.';
         $formated_id .= substr($invoice_id, 4, 2).'.';
 
-        $formated_id .= substr($invoice_id, 6, 3).'.';
-        $formated_id .= substr($invoice_id, 9, 2);
+        $formated_id .= substr($invoice_id, 6, 3);
+        // $formated_id .= substr($invoice_id, 9, 2);
 
         return $formated_id;
     }
 }
 
 if (! function_exists('iban_to_human_format')) {
-    function iban_to_human_format($iban)
+    function iban_to_human_format($iban): string
     {
         // First verify validity, or return
 

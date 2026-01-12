@@ -13,21 +13,21 @@ use App\Data\ProjectData;
 use App\Data\TaxData;
 use App\Data\TextModuleData;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\InvoiceDetailsBaseUpdateRequest;
+use App\Http\Requests\OfferAttachmentSortUpdateRequest;
 use App\Http\Requests\OfferStoreRequest;
 use App\Http\Requests\OfferTermsRequest;
+use App\Models\Attachment;
 use App\Models\Contact;
-use App\Models\Invoice;
 use App\Models\Offer;
 use App\Models\OfferLine;
 use App\Models\Project;
 use App\Models\Tax;
 use App\Models\TextModule;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Mpdf\MpdfException;
-use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
+use App\Http\Requests\OfferAttachmentAddRequest;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class OfferController extends Controller
@@ -42,7 +42,7 @@ class OfferController extends Controller
             $year = $currentYear;
         }
 
-        if ($year && ! $years->contains($year)) {
+        if ($year && !$years->contains($year)) {
             $years->push($year);
         }
 
@@ -68,12 +68,10 @@ class OfferController extends Controller
 
     public function create()
     {
-        // Load all data in single queries, ordered appropriately for defaults
         $taxes = Tax::query()->with('rates')->orderBy('is_default', 'DESC')->orderBy('name')->get();
         $projects = Project::query()->where('is_archived', false)->orderBy('name')->get();
         $contacts = Contact::query()->whereNotNull('debtor_number')->orderBy('name')->orderBy('first_name')->get();
 
-        // Create new offer with default values from loaded collections
         $offer = new Offer;
         $offer->contact_id = 0;
         $offer->is_draft = true;
@@ -93,7 +91,6 @@ class OfferController extends Controller
 
     public function edit(Offer $offer)
     {
-        // Load all data in single queries, ordered appropriately for defaults
         $taxes = Tax::query()->with('rates')->orderBy('is_default', 'DESC')->orderBy('name')->get();
         $projects = Project::query()->where('is_archived', false)->orderBy('name')->get();
         $contacts = Contact::query()->whereNotNull('debtor_number')->orderBy('name')->orderBy('first_name')->get();
@@ -132,6 +129,11 @@ class OfferController extends Controller
                     $query->orderBy('pos')->orderBy('id');
                 },
             ])
+            ->load([
+                'attachments' => function ($query) {
+                    $query->with('document')->orderBy('pos');
+                }
+            ])
             ->load('tax')
             ->load('tax.rates')
             ->loadSum('lines', 'amount')
@@ -166,9 +168,6 @@ class OfferController extends Controller
     public function updateLines(Request $request, Offer $offer)
     {
         $validatedLines = $request->lines;
-
-        // Simply pass the validated array data to updatePositions
-        // The model will handle the data as arrays, not DTOs
         $offer->updatePositions($validatedLines);
 
         return redirect()->route('app.offer.details', ['offer' => $offer->id]);
@@ -183,7 +182,7 @@ class OfferController extends Controller
             return redirect()->route('app.offer.index');
         }
 
-        abort('Cannot delete a published invoice');
+        abort('Cannot delete a published offer');
     }
 
     public function duplicate(Offer $offer)
@@ -205,32 +204,28 @@ class OfferController extends Controller
         return redirect()->route('app.offer.details', ['offer' => $duplicatedOffer->id]);
     }
 
-    /**
-     * @throws MpdfException
-     * @throws PathAlreadyExists
-     */
     public function release(Offer $offer)
     {
         $offer->release();
-        return redirect()->route('app.offer.details', ['invoice' => $offer->id]);
+        return redirect()->route('app.offer.details', ['offer' => $offer->id]);
     }
 
-    public function unrelease(Invoice $invoice)
+    public function unrelease(Offer $offer)
     {
-        if ($invoice->sent_at) {
-            abort('Invoice cannot be unreleased once it has been sent.');
+        if ($offer->sent_at) {
+            abort('Offer cannot be unreleased once it has been sent.');
         }
 
-        $invoice->invoice_number = null;
-        $invoice->is_draft = true;
-        $invoice->save();
+        $offer->offer_number = null;
+        $offer->is_draft = true;
+        $offer->save();
 
-        return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
+        return redirect()->route('app.offer.details', ['offer' => $offer->id]);
     }
 
     public function markAsSent(Offer $offer)
     {
-        if (! $offer->sent_at) {
+        if (!$offer->sent_at) {
             $offer->sent_at = now();
             $offer->save();
         }
@@ -239,21 +234,17 @@ class OfferController extends Controller
     }
 
     /**
-     * @throws MpdfException
-     * @throws PathAlreadyExists
+     * @throws Exception
      */
     public function downloadPdf(Offer $offer): BinaryFileResponse
     {
-        $file = '/Invoicing/Invoices/'.$offer->issued_on->format('Y').'/'.$offer->filename;
-
-        $pdfFile = Offer::createOrGetPdf($offer, false);
-
+        $offer->load('attachments');
+        $pdfFile = Offer::createOrGetPdf($offer);
         return response()->file($pdfFile);
 
-        abort(404);
     }
 
-    public function terms(Offer $offer, ?int $line = null)
+    public function terms(Offer $offer)
     {
         $textModules = TextModule::orderBy('title')->get();
 
@@ -284,6 +275,45 @@ class OfferController extends Controller
         return redirect()->route('app.offer.terms', ['offer' => $offer->id]);
     }
 
+    public function sortAttachments(OfferAttachmentSortUpdateRequest $request, Offer $offer)
+    {
+        $attachmentIds = $request->validated()['attachment_ids'];
+
+        foreach ($attachmentIds as $index => $attachmentId) {
+            Attachment::where('id', $attachmentId)
+                ->where('attachable_type', Offer::class)
+                ->where('attachable_id', $offer->id)
+                ->update(['pos' => $index + 1]);
+        }
+
+        return back();
+    }
+
+    public function removeAttachment(Offer $offer, Attachment $attachment)
+    {
+        $attachment = $offer->attachments()->find($attachment->id);
+        if (!$attachment) {
+            return back();
+        }
+        $attachment->delete();
+
+        return back();
+    }
+
+    public function addAttachments(OfferAttachmentAddRequest $request, Offer $offer)
+    {
+        $documentIds = $request->validated('document_ids');
+        $maxPos = $offer->attachments()->max('pos') ?? 0;
+
+        foreach ($documentIds as $index => $documentId) {
+            $offer->attachments()->create([
+                'document_id' => $documentId,
+                'pos' => $maxPos + $index + 1
+            ]);
+        }
+
+        return back();
+    }
 
     public function history(Offer $offer, ?int $line = null)
     {

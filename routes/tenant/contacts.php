@@ -35,10 +35,6 @@ Route::get('contacts/{contact}/create', [ContactController::class, 'createAddres
 Route::put('contacts/{contact}/toggle-favorite', [ContactController::class, 'toggleFavorite'])
     ->name('app.contact.toggle-favorite');
 
-Route::put('contacts/{contact}/{contact_address}', [ContactController::class, 'updateAddress'])
-    ->middleware([HandlePrecognitiveRequests::class])
-    ->name('app.contact.address.update');
-
 Route::post('contacts/{contact}/note-store', [ContactController::class, 'storeNote'])
     ->middleware([HandlePrecognitiveRequests::class])
     ->name('app.contact.note-store');

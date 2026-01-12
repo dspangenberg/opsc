@@ -1,6 +1,7 @@
-import { router, usePage } from '@inertiajs/react'
+import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { useEffect } from 'react'
+import { OfferDetailsAttachments } from '@/Pages/App/Offer/OfferDetailsAttachments'
 import { OfferDetailsLayout } from '@/Pages/App/Offer/OfferDetailsLayout'
 import type { PageProps } from '@/Types'
 import { OfferDetailsSide } from './OfferDetailsSide'
@@ -36,7 +37,7 @@ const OfferDetailsContent: React.FC<{ children?: React.ReactNode }> = ({ childre
   )
 }
 
-const InvoiceDetails: React.FC<OfferDetailsProps> = ({ children }) => {
+const OfferDetails: React.FC<OfferDetailsProps> = ({ children }) => {
   const { offer } = usePage<OfferDetailsProps>().props
 
   return (
@@ -44,9 +45,10 @@ const InvoiceDetails: React.FC<OfferDetailsProps> = ({ children }) => {
       <OfferDetailsContent>{children}</OfferDetailsContent>
       <div className="h-fit w-sm flex-none space-y-6 px-1">
         <OfferDetailsSide offer={offer} />
+        <OfferDetailsAttachments offer={offer} />
       </div>
     </OfferDetailsLayout>
   )
 }
 
-export default InvoiceDetails
+export default OfferDetails

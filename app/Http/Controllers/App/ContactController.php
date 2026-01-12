@@ -20,7 +20,6 @@ use App\Data\SalutationData;
 use App\Data\TaxData;
 use App\Data\TitleData;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ContactAddressRequest;
 use App\Http\Requests\ContactPersonStoreRequest;
 use App\Http\Requests\ContactStoreRequest;
 use App\Http\Requests\ContactUpdateRequest;
@@ -122,27 +121,8 @@ class ContactController extends Controller
 
     public function store(ContactStoreRequest $request)
     {
-        $request->validated();
-        $contact = new Contact;
-
-        if ($request->validated('is_org')) {
-            $contact->is_org = true;
-            $contact->salutation_id = null;
-            $contact->title_id = null;
-            $contact->name = $request->validated('name');
-        } else {
-            $contact->is_org = false;
-            $contact->salutation_id = $request->validated('salutation_id');
-            $contact->title_id = $request->validated('title_id');
-            $contact->name = $request->validated('name');
-            $contact->first_name = $request->validated('first_name');
-        }
-
-        $contact->save();
-
-        return Inertia::render('App/Contact/ContactDetails', [
-            'contact' => ContactData::from($contact),
-        ]);
+        $contact = Contact::create($request->validated());
+        return redirect()->route('app.contact.details', ['contact' => $contact->id]);
     }
 
     public function storePerson(ContactPersonStoreRequest $request)
@@ -306,13 +286,6 @@ class ContactController extends Controller
         ])->baseRoute('app.contact.details', ['contact' => $contact->id]);
     }
 
-    public function updateAddress(ContactAddressRequest $request, Contact $contact, ContactAddress $contact_address)
-    {
-        $contact_address->update($request->validated());
-
-        return redirect()->route('app.contact.details', ['contact' => $contact->id]);
-    }
-
     private function updateContactMails(Contact $contact, array $mailsData): void
     {
         $incomingIds = collect($mailsData)
@@ -400,8 +373,8 @@ class ContactController extends Controller
             $phoneAttributes = [
                 'contact_id' => $contact->id,
                 'phone' => $phoneData['phone'],
-                'phone_category_id' => $phoneData['phone_category_id'] ?? [''],
-                'pos' => $mailData['pos'] ?? $index,
+                'phone_category_id' => $phoneData['phone_category_id'],
+                'pos' => $phoneData['pos'] ?? $index,
             ];
 
             if (! empty($phoneData['id'])) {

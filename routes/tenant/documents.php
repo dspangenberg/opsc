@@ -21,6 +21,7 @@ Route::put('/documents/preferences/document-types/{documentType}/edit', [Documen
 Route::get('/documents/documents/preview/{document}', [DocumentController::class, 'streamPreview'])->name('app.documents.documents.preview')->withTrashed();
 Route::get('/documents/documents/pdf/{document}', [DocumentController::class, 'streamPdf'])->name('app.documents.documents.pdf')->withTrashed();
 
+Route::patch('/documents/documents/toggle-pinned/{document}', [DocumentController::class, 'togglePinned'])->name('app.documents.documents.toggle-pinned');
 
 
 Route::delete('/documents/documents/bulk-force-delete', [DocumentController::class, 'bulkForceDelete'])->name('app.documents.documents.bulk-force-delete');

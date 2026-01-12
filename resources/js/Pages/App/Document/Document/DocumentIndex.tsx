@@ -94,6 +94,8 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
         page: 1
       },
       {
+        replace: true,
+        preserveState: false,
         onSuccess: () => {
           setFilters(newFilters)
         }

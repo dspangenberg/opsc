@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { tv } from 'tailwind-variants'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -27,9 +28,12 @@ export const hasErrorInput = [
   // ring color
 ]
 
-export const focusRing = [
-  // base
-  'outline outline-offset-2 outline-0 focus-visible:outline-2',
-  // outline color
-  'outline-blue-500 dark:outline-blue-500'
-]
+export const focusRing = tv({
+  base: 'outline-none',
+  variants: {
+    isFocusVisible: {
+      false: 'outline-0',
+      true: 'border-ring ring-[3px] ring-ring/50'
+    }
+  }
+})

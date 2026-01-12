@@ -9,6 +9,17 @@ id: number | null;
 name: string;
 is_invoice_address: boolean | null;
 };
+export type AttachmentData = {
+id: number | null;
+attachable_id: number;
+attachable_type: string;
+document_id: number;
+pos: number;
+days: number | null;
+amount: number | null;
+is_currency_difference: boolean | null;
+document: App.Data.DocumentData;
+};
 export type BankAccountData = {
 id: number | null;
 name: string;
@@ -401,6 +412,7 @@ recurring_end_on: string | null;
 contact: App.Data.ContactData | null;
 project: App.Data.ProjectData | null;
 lines: Array<App.Data.OfferLineData> | null;
+attachments: Array<App.Data.AttachmentData> | null;
 tax: App.Data.TaxData | null;
 };
 export type OfferLineData = {

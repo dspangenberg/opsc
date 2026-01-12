@@ -86,7 +86,7 @@ const InvoiceIndex: React.FC = () => {
 
   const handleNextYear = useCallback(() => {
     const newYear =
-      Number(year) === 0 ? localCurrentYear : Number.parseInt(year as unknown as string) + 1
+      Number(year) === 0 ? localCurrentYear : Number.parseInt(year as unknown as string, 10) + 1
     setYear(_prevYear => newYear)
   }, [localCurrentYear, setYear, year])
 
@@ -300,6 +300,7 @@ const InvoiceIndex: React.FC = () => {
     >
       <DataTable
         actionBar={actionBar}
+        header={header}
         columns={columns}
         data={invoices.data}
         filterBar={filterBar}

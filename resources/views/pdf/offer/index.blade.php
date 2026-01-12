@@ -7,7 +7,7 @@
     <div id="infobox-first-page">
         <x-pdf.info-box
                 :issued-on="$offer->issued_on->format('d.m.Y')"
-                :due-date="$offer->valid_until->format('d.m.Y')"
+                :due-date="$offer->valid_until?->format('d.m.Y')"
                 :reference="$offer->formated_offer_number"
                 reference-label="Angebotsnummer"
                 :account-id="number_format($offer->contact->debtor_number, 0, ',', '.')"
