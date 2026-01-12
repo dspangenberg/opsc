@@ -15,6 +15,8 @@ class Attachment extends Model
         'pos',
     ];
 
+    public $timestamps = false;
+
     public function attachable(): MorphTo
     {
         return $this->morphTo();

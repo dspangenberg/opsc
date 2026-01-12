@@ -2,7 +2,7 @@ import { Add01Icon, Cancel01Icon, DragDropHorizontalIcon } from '@hugeicons/core
 import { router } from '@inertiajs/core'
 import { debounce } from 'lodash'
 import type { FC } from 'react'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useRef } from 'react'
 import { useDragAndDrop, useListData } from 'react-aria-components'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { BorderedBox } from '@/Components/twc-ui/bordered-box'
@@ -33,6 +33,20 @@ export const OfferDetailsAttachments: FC<OfferDetailsAttachmentsProps> = ({
     initialItems: offer.attachments ?? []
   })
 
+  const debouncedSaveRef = useRef<ReturnType<typeof debounce> | null>(null)
+
+  useEffect(() => {
+    debouncedSaveRef.current = debounce(() => {
+      router.put(route('app.offer.sort-attachments', { offer: offer.id }), {
+        attachment_ids: list.items.map(item => item.id)
+      })
+    }, 500)
+
+    return () => {
+      debouncedSaveRef.current?.cancel()
+    }
+  }, [offer.id])
+
   useEffect(() => {
     list.setSelectedKeys(new Set())
     list.items.forEach(item => {
@@ -42,16 +56,6 @@ export const OfferDetailsAttachments: FC<OfferDetailsAttachmentsProps> = ({
       list.append(attachment)
     })
   }, [offer.attachments])
-
-  const debouncedSave = useMemo(
-    () =>
-      debounce(() => {
-        router.put(route('app.offer.sort-attachments', { offer: offer.id }), {
-          attachment_ids: list.items.map(item => item.id)
-        })
-      }, 500),
-    [offer.id, list.items]
-  )
 
   const handleRemove = async (item: App.Data.AttachmentData) => {
     if (!item) return
@@ -92,7 +96,7 @@ export const OfferDetailsAttachments: FC<OfferDetailsAttachmentsProps> = ({
       } else if (e.target.dropPosition === 'after') {
         list.moveAfter(e.target.key, e.keys)
       }
-      debouncedSave()
+      debouncedSaveRef.current?.()
     }
   })
 
@@ -139,7 +143,13 @@ export const OfferDetailsAttachments: FC<OfferDetailsAttachmentsProps> = ({
                     onPress={() => handleRemove(item)}
                   />
                 </div>
-                <Button type="button" variant="ghost" size="icon-sm" slot="drag">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  slot="drag"
+                  isDisabled={!offer.is_draft}
+                >
                   <Icon icon={DragDropHorizontalIcon} className="rotate-90" />
                 </Button>
               </GridListItem>

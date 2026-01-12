@@ -27,6 +27,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Http\Requests\OfferAttachmentAddRequest;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class OfferController extends Controller
@@ -41,7 +42,7 @@ class OfferController extends Controller
             $year = $currentYear;
         }
 
-        if ($year && ! $years->contains($year)) {
+        if ($year && !$years->contains($year)) {
             $years->push($year);
         }
 
@@ -128,9 +129,11 @@ class OfferController extends Controller
                     $query->orderBy('pos')->orderBy('id');
                 },
             ])
-            ->load(['attachments' => function ($query) {
-                $query->with('document')->orderBy('pos');
-            }])
+            ->load([
+                'attachments' => function ($query) {
+                    $query->with('document')->orderBy('pos');
+                }
+            ])
             ->load('tax')
             ->load('tax.rates')
             ->loadSum('lines', 'amount')
@@ -222,7 +225,7 @@ class OfferController extends Controller
 
     public function markAsSent(Offer $offer)
     {
-        if (! $offer->sent_at) {
+        if (!$offer->sent_at) {
             $offer->sent_at = now();
             $offer->save();
         }
@@ -276,7 +279,7 @@ class OfferController extends Controller
     {
         $attachments = $offer->attachments->whereIn('id', $request->validated()['attachment_ids']);
         for ($i = 0; $i < count($attachments); $i++) {
-            $attachments[$i]->pos = $i+1;
+            $attachments[$i]->pos = $i + 1;
         }
         $offer->attachments()->saveMany($attachments);
 
@@ -294,14 +297,15 @@ class OfferController extends Controller
         return back();
     }
 
-    public function addAttachments(Request $request, Offer $offer)
+    public function addAttachments(OfferAttachmentAddRequest $request, Offer $offer)
     {
-        $documentIds = $request->input('document_ids', []);
+        $documentIds = $request->validated('document_ids');
+        $maxPos = $offer->attachments()->max('pos') ?? 0;
 
-        foreach ($documentIds as $documentId) {
+        foreach ($documentIds as $index => $documentId) {
             $offer->attachments()->create([
                 'document_id' => $documentId,
-                'pos' => $offer->attachments()->max('pos') + 1
+                'pos' => $maxPos + $index + 1
             ]);
         }
 
