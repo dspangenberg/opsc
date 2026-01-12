@@ -46,6 +46,17 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
     }
   }
 
+  const handleTogglePinned = async () => {
+    router.patch(
+      route('app.documents.documents.toggle-pinned', { id: document.id }),
+      {},
+      {
+        preserveState: false,
+        preserveScroll: true
+      }
+    )
+  }
+
   const handleForceDelete = async () => {
     const promise = await AlertDialog.call({
       title: 'Dokument endgültig löschen',
@@ -121,6 +132,7 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
             size="icon-sm"
             icon={PinIcon}
             iconClassName={`${document.is_pinned ? 'fill-blue-500 text-blue-500 hover:text-foreground' : 'border-border fill-background hover:text-foreground/50'}`}
+            onClick={handleTogglePinned}
           />
         </div>
         <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>

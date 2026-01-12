@@ -35,6 +35,7 @@ class DocumentController extends Controller
         $projects = Project::query()->whereIn('id', $projectIds)->orderBy('name')->get();
 
         $filters = $request->input('filters', []);
+        $page = $request->input('page', 1);
 
         $documents = Document::query()
             ->applyFiltersFromObject($filters, [
@@ -45,7 +46,7 @@ class DocumentController extends Controller
             ->with('contact', 'type', 'project')
             ->orderBy('is_pinned', 'DESC')
             ->orderBy('issued_on', 'DESC')
-            ->paginate(24);
+            ->paginate(24, ['*'], 'page', $page);
 
         $documentsPaginateProp = $documents->toArray();
         $isNextPage = $documentsPaginateProp['current_page'] < $documentsPaginateProp['last_page'];
@@ -111,6 +112,19 @@ class DocumentController extends Controller
                 'Content-Length' => $media->size
             ]
         );
+    }
+
+    public function togglePinned(Request $request, Document $document)
+    {
+        $document->is_pinned = !$document->is_pinned;
+        $document->save();
+
+        $filters = $request->input('filters', []);
+
+        return redirect()->route('app.documents.documents.index', [
+            'filters' => $filters,
+            'page' => 1
+        ]);
     }
 
     public function trash(Document $document)

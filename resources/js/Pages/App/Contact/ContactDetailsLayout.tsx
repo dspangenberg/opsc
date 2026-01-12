@@ -54,7 +54,7 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
     () => (
       <Tabs variant="underlined" defaultSelectedKey={currentRoute}>
         <TabList aria-label="Tabs">
-          <Tab id="app.invoice.details" href={route('app.contact.details', { contact }, false)}>
+          <Tab id="app.contact.details" href={route('app.contact.details', { contact }, false)}>
             Übersicht
           </Tab>
 
@@ -66,7 +66,7 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
             >
               Ansprechpersonen
               {contact.contacts && contact.contacts.length > 0 && (
-                <Badge variant="secondary" className="h-fit border border-border">
+                <Badge variant="secondary" className="border border-border">
                   {contact.contacts.length}
                 </Badge>
               )}

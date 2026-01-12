@@ -30,7 +30,6 @@ const ContactCreate: React.FC<Props> = ({ contact, salutations, titles }) => {
     setIsOpen(false)
     router.visit(route('app.contact.index', { _query: { view: route().queryParams.view } }))
   }
-
   // Hilfsvariable für bessere Lesbarkeit
   const isOrganization = !!form.data.is_org
 
@@ -55,7 +54,7 @@ const ContactCreate: React.FC<Props> = ({ contact, salutations, titles }) => {
         </div>
       )}
     >
-      <Form form={form} onSubmitted={handleClose}>
+      <Form form={form} onSubmitted={() => setIsOpen(false)}>
         <FormGrid>
           <div className="col-span-24">
             <Checkbox {...form.registerCheckbox('is_org')} autoFocus className="pt-1.5">

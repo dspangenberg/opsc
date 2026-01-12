@@ -1,4 +1,4 @@
-import { Add01Icon, MoreVerticalCircle01Icon, PrinterIcon } from '@hugeicons/core-free-icons'
+import { Add01Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/core'
 import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
@@ -7,8 +7,6 @@ import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
 import { Button } from '@/Components/twc-ui/button'
-import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
-import { MenuItem } from '@/Components/twc-ui/menu'
 import { SearchField } from '@/Components/twc-ui/search-field'
 import { Toolbar } from '@/Components/twc-ui/toolbar'
 import type { PageProps } from '@/Types'
@@ -46,10 +44,6 @@ const ContactIndex: React.FC<ContactIndexProps> = ({ currentSearch }) => {
           title="Kontakt hinzufügen"
           onClick={handleAdd}
         />
-        <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} title="Weitere Optionen">
-          <MenuItem icon={Add01Icon} title="Rechnung hinzufügen" ellipsis separator />
-          <MenuItem icon={PrinterIcon} title="Auswertung drucken" ellipsis />
-        </DropdownButton>
       </Toolbar>
     ),
     [handleAdd]
@@ -64,12 +58,10 @@ const ContactIndex: React.FC<ContactIndexProps> = ({ currentSearch }) => {
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const debouncedSearchChange = useCallback((newSearch: string) => {
-    // Clear existing timeout
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current)
     }
 
-    // Set new timeout
     searchTimeoutRef.current = setTimeout(() => {
       router.get(
         route('app.contact.index'),
@@ -80,10 +72,7 @@ const ContactIndex: React.FC<ContactIndexProps> = ({ currentSearch }) => {
         {
           preserveScroll: true,
           preserveState: true,
-          only: ['contacts'],
-          onSuccess: () => {
-            // Update wird durch die props vom Controller gemacht
-          }
+          only: ['contacts']
         }
       )
     }, 500) // 500ms Debounce

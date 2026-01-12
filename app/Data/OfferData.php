@@ -49,18 +49,18 @@ class OfferData extends Data
 
         public readonly ?DateTime $recurring_end_on,
 
-        /** @var ContactData */
-        public readonly ?object $contact,
+        public readonly ?ContactData $contact,
 
-        /** @var ProjectData */
-        public readonly ?object $project,
+        public readonly ?ProjectData $project,
 
 
         /** @var OfferLineData[] */
         public readonly ?array $lines,
 
-        /** @var TaxData */
-        public readonly ?object $tax,
+        /** @var AttachmentData[] */
+        public readonly ?array $attachments,
+
+        public readonly ?TaxData $tax,
 
     ) {
     }

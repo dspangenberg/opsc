@@ -13,21 +13,18 @@ use App\Data\ProjectData;
 use App\Data\TaxData;
 use App\Data\TextModuleData;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\InvoiceDetailsBaseUpdateRequest;
 use App\Http\Requests\OfferStoreRequest;
 use App\Http\Requests\OfferTermsRequest;
 use App\Models\Contact;
-use App\Models\Invoice;
 use App\Models\Offer;
 use App\Models\OfferLine;
 use App\Models\Project;
 use App\Models\Tax;
 use App\Models\TextModule;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Mpdf\MpdfException;
-use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class OfferController extends Controller
@@ -132,6 +129,9 @@ class OfferController extends Controller
                     $query->orderBy('pos')->orderBy('id');
                 },
             ])
+            ->load(['attachments' => function ($query) {
+                $query->with('document')->orderBy('pos');
+            }])
             ->load('tax')
             ->load('tax.rates')
             ->loadSum('lines', 'amount')
@@ -205,27 +205,23 @@ class OfferController extends Controller
         return redirect()->route('app.offer.details', ['offer' => $duplicatedOffer->id]);
     }
 
-    /**
-     * @throws MpdfException
-     * @throws PathAlreadyExists
-     */
     public function release(Offer $offer)
     {
         $offer->release();
         return redirect()->route('app.offer.details', ['invoice' => $offer->id]);
     }
 
-    public function unrelease(Invoice $invoice)
+    public function unrelease(Offer $offer)
     {
-        if ($invoice->sent_at) {
-            abort('Invoice cannot be unreleased once it has been sent.');
+        if ($offer->sent_at) {
+            abort('Offer cannot be unreleased once it has been sent.');
         }
 
-        $invoice->invoice_number = null;
-        $invoice->is_draft = true;
-        $invoice->save();
+        $offer->offer_number = null;
+        $offer->is_draft = true;
+        $offer->save();
 
-        return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
+        return redirect()->route('app.offer.details', ['offer' => $offer->id]);
     }
 
     public function markAsSent(Offer $offer)
@@ -239,21 +235,17 @@ class OfferController extends Controller
     }
 
     /**
-     * @throws MpdfException
-     * @throws PathAlreadyExists
+     * @throws Exception
      */
     public function downloadPdf(Offer $offer): BinaryFileResponse
     {
-        $file = '/Invoicing/Invoices/'.$offer->issued_on->format('Y').'/'.$offer->filename;
-
+        $offer->load('attachments');
         $pdfFile = Offer::createOrGetPdf($offer, false);
-
         return response()->file($pdfFile);
 
-        abort(404);
     }
 
-    public function terms(Offer $offer, ?int $line = null)
+    public function terms(Offer $offer)
     {
         $textModules = TextModule::orderBy('title')->get();
 

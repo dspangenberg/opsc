@@ -68,6 +68,10 @@ class Invoice extends Model implements MediableInterface
 {
     use Mediable;
 
+    /**
+     * @var mixed|null
+     */
+    public mixed $offer_number;
     protected $fillable = [
         'contact_id',
         'project_id',

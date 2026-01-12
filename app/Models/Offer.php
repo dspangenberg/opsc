@@ -3,63 +3,23 @@
 namespace App\Models;
 
 use App\Facades\WeasyPdfService;
-use Eloquent;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
-use Plank\Mediable\MediableCollection;
 use Plank\Mediable\MediableInterface;
 use Spatie\Holidays\Countries\Germany;
 use Spatie\Holidays\Holidays;
 
 /**
- * @property-read Contact|null $contact
- * @property-read float $amount_gross
- * @property-read float $amount_net
- * @property-read float $amount_open
- * @property-read float $amount_paid
- * @property-read float $amount_tax
- * @property-read string $document_number
- * @property-read string $filename
- * @property-read string $formated_invoice_number
- * @property-read array $invoice_address
- * @property-read string $qr_code
- * @property-read Contact|null $invoice_contact
- * @property-read Collection<int, InvoiceLine> $lines
- * @property-read int|null $lines_count
- * @property-read Contact|null $linked_invoice
- * @property-read Collection<int, Media> $media
- * @property-read int|null $media_count
- * @property-read Collection<int, Payment> $payable
- * @property-read int|null $payable_count
- * @property-read PaymentDeadline|null $payment_deadline
- * @property-read Project|null $project
- * @property-read NumberRangeDocumentNumber|null $range_document_number
- * @property-read Tax|null $tax
- * @property-read InvoiceType|null $type
- *
- * @method static MediableCollection<int, static> all($columns = ['*'])
- * @method static Builder<static>|Invoice byYear(int $year)
- * @method static MediableCollection<int, static> get($columns = ['*'])
- * @method static Builder<static>|Invoice newModelQuery()
- * @method static Builder<static>|Invoice newQuery()
- * @method static Builder<static>|Invoice query()
- * @method static Builder<static>|Invoice whereHasMedia($tags = [], bool $matchAll = false)
- * @method static Builder<static>|Invoice whereHasMediaMatchAll($tags)
- * @method static Builder<static>|Invoice withMedia($tags = [], bool $matchAll = false, bool $withVariants = false)
- * @method static Builder<static>|Invoice withMediaAndVariants($tags = [], bool $matchAll = false)
- * @method static Builder<static>|Invoice withMediaAndVariantsMatchAll($tags = [])
- * @method static Builder<static>|Invoice withMediaMatchAll(bool $tags = [], bool $withVariants = false)
- * @method static Builder<static>|Invoice unpaid()
- * @method static Builder<static>|Invoice view($view)
- *
- * @mixin Eloquent
+ * @property bool $is_draft
+ * @property int|null $offer_number
  */
 class Offer extends Model implements MediableInterface
 {
@@ -122,11 +82,17 @@ class Offer extends Model implements MediableInterface
 
         $terms_document_id = config('pdf.terms_document_id');
 
+        $attachments = $offer->attachments->map(function ($attachment) {
+            return $attachment->document_id;
+        });
+
+        ds($attachments);
+
         return WeasyPdfService::createPdf('offer', 'pdf.offer.index',
             [
                 'offer' => $offer,
                 'taxes' => $taxes,
-            ], $pdfConfig, [$terms_document_id]);
+            ], $pdfConfig, $attachments->toArray());
     }
 
     public function taxBreakdown(Collection $invoiceLines): array
@@ -334,6 +300,11 @@ class Offer extends Model implements MediableInterface
     public function project(): HasOne
     {
         return $this->hasOne(Project::class, 'id', 'project_id');
+    }
+
+    public function attachments(): MorphMany
+    {
+        return $this->morphMany(Attachment::class, 'attachable');
     }
 
     public function scopeView(Builder $query, $view): Builder

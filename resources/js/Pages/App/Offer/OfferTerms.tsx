@@ -81,7 +81,7 @@ const OfferTerms: React.FC<OfferTermsProps> = ({ children, offer, textModules })
         />
         <Form form={form}>
           <MDXEditor
-            markdown={offer.additional_text as string}
+            markdown={(offer.additional_text as string) || ''}
             readOnly={!editMode}
             ref={ref}
             className="isolated rounded-md border border-border bg-background p-2"
