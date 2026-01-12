@@ -1,6 +1,6 @@
 import type React from 'react'
 import { cn } from '@/Lib/utils'
-import { ScrollArea } from '../ui/scroll-area'
+import { ScrollArea } from './scroll-area'
 
 interface BorderedBoxProps {
   className?: string

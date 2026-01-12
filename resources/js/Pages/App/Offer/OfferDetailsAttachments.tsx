@@ -119,7 +119,7 @@ export const OfferDetailsAttachments: FC<OfferDetailsAttachmentsProps> = ({
             className="divide-y border-0 p-0"
             dragAndDropHooks={dragAndDropHooks}
             renderEmptyState={() => (
-              <p className="pt-2 text-muted-foreground text-sm">Keine Anhänge vorhanden</p>
+              <p className="pt-2 text-muted-foreground text-sm">Keine Anlagen vorhanden</p>
             )}
           >
             {(item: App.Data.AttachmentData) => (

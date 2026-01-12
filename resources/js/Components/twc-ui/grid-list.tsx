@@ -1,5 +1,3 @@
-'use client'
-
 import {
   GridList as AriaGridList,
   GridListItem as AriaGridListItem,

@@ -3,30 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-
-class Attachment extends Model
-{
-    public $timestamps = false;
-
-    protected $fillable = [
-        'attachable_type',
-        'attachable_id',
-        'document_id',
-        'pos',
-    ];
-
-    public function attachable(): MorphTo
-    {
-        return $this->morphTo();
-    }
-
-<?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -48,6 +24,4 @@ class Attachment extends Model
     {
         return $this->belongsTo(Document::class);
     }
-}
-
 }

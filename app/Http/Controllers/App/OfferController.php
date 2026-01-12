@@ -179,7 +179,7 @@ class OfferController extends Controller
             return redirect()->route('app.offer.index');
         }
 
-        abort('Cannot delete a published invoice');
+        abort('Cannot delete a published offer');
     }
 
     public function duplicate(Offer $offer)
@@ -204,7 +204,7 @@ class OfferController extends Controller
     public function release(Offer $offer)
     {
         $offer->release();
-        return redirect()->route('app.offer.details', ['invoice' => $offer->id]);
+        return redirect()->route('app.offer.details', ['offer' => $offer->id]);
     }
 
     public function unrelease(Offer $offer)
