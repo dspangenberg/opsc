@@ -92,7 +92,7 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
           {contact.is_org && (
             <Tab
               id="app.contact.details.persons"
-              href={route('app.contact.details.persons', { id: contact.id })}
+              href={route('app.contact.details.persons', { contact: contact.id })}
               className="flex items-center gap-1"
             >
               Ansprechpersonen
@@ -110,7 +110,7 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
   )
 
   const companyRoute = useMemo(
-    () => route('app.contact.details', { id: contact.company_id }),
+    () => route('app.contact.details', { contact: contact.company_id }),
     [contact.company_id]
   )
 
