@@ -6,7 +6,6 @@ use App\Http\Controllers\App\OfferController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 
-// Invoices
 Route::get('invoicing/offers/create', [OfferController::class, 'create'])
     ->name('app.offer.create');
 

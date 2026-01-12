@@ -76,7 +76,7 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
   const title = `AG-${offer.formated_offer_number}`
 
   const { handleDownload } = useFileDownload({
-    route: route('app.invoice.pdf', { id: offer.id }),
+    route: route('app.offer.pdf', { id: offer.id }),
     filename: offer.filename || 'offer.pdf'
   })
 
