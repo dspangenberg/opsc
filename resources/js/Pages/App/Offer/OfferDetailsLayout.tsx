@@ -89,7 +89,7 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
     })
 
     if (promise) {
-      router.get(route('app.offer.release', { id: offer.id }))
+      router.post(route('app.offer.release', { id: offer.id }))
     }
   }, [offer.id])
 
@@ -105,11 +105,11 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
   }
 
   const handleMarkAsSent = () => {
-    router.get(route('app.offer.mark-as-sent', { id: offer.id }))
+    router.post(route('app.offer.mark-as-sent', { id: offer.id }))
   }
 
   const handleUnrelease = () => {
-    router.get(route('app.offer.unrelease', { id: offer.id }))
+    router.post(route('app.offer.unrelease', { id: offer.id }))
   }
 
   const currentRoute = route().current()

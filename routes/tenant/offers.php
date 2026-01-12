@@ -33,10 +33,10 @@ Route::get('invoicing/offers/{offer}/history', [OfferController::class, 'history
 Route::get('invoicing/offers/{offer}/terms', [OfferController::class, 'terms'])
     ->name('app.offer.terms');
 
-Route::get('invoicing/offers/{offer}/release', [OfferController::class, 'release'])
+Route::post('invoicing/offers/{offer}/release', [OfferController::class, 'release'])
     ->name('app.offer.release');
 
-Route::get('invoicing/offers/{offer}/unrelease', [OfferController::class, 'unrelease'])
+Route::post('invoicing/offers/{offer}/unrelease', [OfferController::class, 'unrelease'])
     ->name('app.offer.unrelease');
 
 
@@ -61,7 +61,7 @@ Route::get('invoicing/offers/{offer}/duplicate', [OfferController::class, 'dupli
 Route::delete('invoicing/offers/{offer}/delete', [OfferController::class, 'destroy'])
     ->name('app.offer.destroy');
 
-Route::get('invoicing/offers/{offer}/mark-as-sent', [OfferController::class, 'markAsSent'])
+Route::post('invoicing/offers/{offer}/mark-as-sent', [OfferController::class, 'markAsSent'])
     ->name('app.offer.mark-as-sent');
 
 Route::put('invoicing/offers/terms/{offer}', [OfferController::class, 'updateTerms'])

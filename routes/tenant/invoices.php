@@ -42,13 +42,13 @@ Route::delete('invoicing/invoices/{invoice}', [InvoiceController::class, 'destro
 Route::get('invoicing/invoices/{invoice}/base-edit', [InvoiceController::class, 'edit'])
     ->name('app.invoice.base-edit');
 
-Route::get('invoicing/invoices/{invoice}/unrelease', [InvoiceController::class, 'unrelease'])
+Route::post('invoicing/invoices/{invoice}/unrelease', [InvoiceController::class, 'unrelease'])
     ->name('app.invoice.unrelease');
 
-Route::get('invoicing/invoices/{invoice}/release', [InvoiceController::class, 'release'])
+Route::post('invoicing/invoices/{invoice}/release', [InvoiceController::class, 'release'])
     ->name('app.invoice.release');
 
-Route::get('invoicing/invoices/{invoice}/mark-as-sent', [InvoiceController::class, 'markAsSent'])
+Route::post('invoicing/invoices/{invoice}/mark-as-sent', [InvoiceController::class, 'markAsSent'])
     ->name('app.invoice.mark-as-sent');
 
 Route::get('invoicing/invoices/{invoice}/line-duplicate/{invoiceLine}', [InvoiceController::class, 'duplicateLine'])

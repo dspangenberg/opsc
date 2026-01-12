@@ -129,7 +129,7 @@ class Offer extends Model implements MediableInterface
 
     public function release(): void
     {
-        if (! $this->invoice_number) {
+        if (! $this->offer_number) {
 
             $counter = Offer::whereYear('issued_on', $this->issued_on->year)
                 ->whereMonth('issued_on', $this->issued_on->month)
