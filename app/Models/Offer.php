@@ -130,17 +130,22 @@ class Offer extends Model implements MediableInterface
     public function release(): void
     {
         if (! $this->invoice_number) {
-            $counter = Offer::whereYear('issued_on', $this->issued_on->year)->max('invoice_number');
+
+            $counter = Offer::whereYear('issued_on', $this->issued_on->year)
+                ->whereMonth('issued_on', $this->issued_on->month)
+                ->max('offer_number');
+
             if ($counter == 0) {
-                $counter = $this->issued_on->year * 100000;
+                $counter = ($this->issued_on->year * 100000) + ($this->issued_on->month * 1000);
             }
 
             $counter++;
 
-            $this->invoice_number = $counter;
+            $this->offer_number = $counter;
+            $this->valid_until = $this->issued_on->addDays(30);
         }
 
-        $this->setDueDate();
+        // $this->setDueDate();
         $this->is_draft = false;
 
         /*

@@ -33,6 +33,13 @@ Route::get('invoicing/offers/{offer}/history', [OfferController::class, 'history
 Route::get('invoicing/offers/{offer}/terms', [OfferController::class, 'terms'])
     ->name('app.offer.terms');
 
+Route::get('invoicing/offers/{offer}/release', [OfferController::class, 'release'])
+    ->name('app.offer.release');
+
+Route::get('invoicing/offers/{offer}/unrelease', [OfferController::class, 'unrelease'])
+    ->name('app.offer.unrelease');
+
+
 Route::put('invoicing/offers/{offer}/sort-attachments/', [OfferController::class, 'sortAttachments'])
     ->name('app.offer.sort-attachments');
 

@@ -89,7 +89,7 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
     })
 
     if (promise) {
-      router.get(route('app.invoice.release', { id: offer.id }))
+      router.get(route('app.offer.release', { id: offer.id }))
     }
   }, [offer.id])
 
@@ -109,7 +109,7 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
   }
 
   const handleUnrelease = () => {
-    router.get(route('app.invoice.unrelease', { id: offer.id }))
+    router.get(route('app.offer.unrelease', { id: offer.id }))
   }
 
   const currentRoute = route().current()
