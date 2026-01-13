@@ -78,7 +78,7 @@
     "dedent": "1.7.1",
     "filesize": "^11.0.13",
     "focus-trap-react": "^11.0.5",
-    "framer-motion": "^12.25.0",
+    "framer-motion": "^12.26.1",
     "html2canvas-pro": "^1.6.4",
     "laravel-precognition": "^1.0.0",
     "laravel-precognition-react-inertia": "^0.8.0",
