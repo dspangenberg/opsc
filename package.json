@@ -88,7 +88,7 @@
     "mapbox-gl": "^3.17.0",
     "moderndash": "^4.0.0",
     "momentum-modal-react": "^1.0.0",
-    "motion": "^12.25.0",
+    "motion": "^12.26.1",
     "next-themes": "^0.4.6",
     "nuqs": "^2.8.6",
     "pdfjs-dist": "5.4.296",
