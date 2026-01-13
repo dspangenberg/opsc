@@ -107,16 +107,6 @@ type: string;
 conditions: Array<App.Data.BookkeepingRuleConditionData> | null;
 actions: Array<App.Data.BookkeepingRuleActionData> | null;
 };
-export type CalendarEventData = {
-id: number | null;
-title: string;
-description: string;
-start_at: string;
-end_at: string;
-color: string;
-calendar_id: number;
-accommodation_id: number | null;
-};
 export type CompanyData = {
 id: number | null;
 name: string;
@@ -545,21 +535,6 @@ id: number | null;
 name: string;
 is_hidden: boolean;
 gender: string;
-};
-export type SeasonData = {
-id: number | null;
-name: string;
-is_default: boolean;
-color: string | null;
-booking_mode: number;
-has_season_related_restrictions: boolean;
-periods: Array<App.Data.SeasonPeriodData> | null;
-};
-export type SeasonPeriodData = {
-id: number | null;
-season_id: number;
-begin_on: string;
-end_on: string;
 };
 export type TaxData = {
 id: number | null;

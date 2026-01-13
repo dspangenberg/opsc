@@ -21,9 +21,7 @@ const DocumentTypeEdit: React.FC<Props> = ({ documentType }) => {
     'form-document-type-edit',
     documentType.id ? 'put' : 'post',
     route(
-      documentType.id
-        ? 'app.documents.document_types.update'
-        : 'app.documents.document_types.store',
+      documentType.id ? 'app.setting.document_type.update' : 'app.setting.document_type.store',
       {
         documentType: documentType.id
       }
@@ -33,7 +31,7 @@ const DocumentTypeEdit: React.FC<Props> = ({ documentType }) => {
 
   const handleClose = () => {
     setIsOpen(false)
-    router.visit(route('app.documents.document_types.index'))
+    router.visit(route('app.setting.document_type.index'))
   }
 
   return (

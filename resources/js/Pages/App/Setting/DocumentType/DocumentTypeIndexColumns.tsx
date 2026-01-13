@@ -10,8 +10,7 @@ import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { MenuItem } from '@/Components/twc-ui/menu'
 import { Checkbox } from '@/Components/ui/checkbox'
 
-const editUrl = (id: number | null) =>
-  id ? route('app.documents.document_types.edit', { id }) : '#'
+const editUrl = (id: number | null) => (id ? route('app.setting.document_type.edit', { id }) : '#')
 
 const RowActions = ({ row }: { row: Row<App.Data.DocumentTypeData> }) => {
   return (

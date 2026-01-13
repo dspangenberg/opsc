@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\App\Document;
+namespace App\Http\Controllers\App;
 
 use App\Data\ContactData;
 use App\Data\DocumentData;
@@ -101,7 +101,7 @@ class DocumentController extends Controller
     public function restore(Document $document)
     {
         $document->restore();
-        return redirect()->route('app.documents.documents.index', [
+        return redirect()->route('app.document.index', [
             'filters' => [
                 'view' => [
                     'operator' => 'scope',
@@ -136,7 +136,7 @@ class DocumentController extends Controller
 
         $filters = $request->input('filters', []);
 
-        return redirect()->route('app.documents.documents.index', [
+        return redirect()->route('app.document.index', [
             'filters' => $filters,
             'page' => 1
         ]);
@@ -147,7 +147,7 @@ class DocumentController extends Controller
         $document->delete();
         $document->is_pinned = false;
         $document->save();
-        return redirect()->route('app.documents.documents.index');
+        return redirect()->route('app.document.index');
     }
 
     public function edit(Document $document) {
@@ -169,7 +169,7 @@ class DocumentController extends Controller
             $document->is_confirmed = true;
             $document->save();
         }
-        return redirect()->route('app.documents.documents.index');
+        return redirect()->route('app.document.index');
     }
 
     public function uploadForm()
@@ -187,7 +187,7 @@ class DocumentController extends Controller
 
         $document->forceDelete();
 
-        return redirect()->route('app.documents.documents.index', [
+        return redirect()->route('app.document.index', [
             'filters' => [
                 'view' => [
                     'operator' => 'scope',
@@ -217,7 +217,7 @@ class DocumentController extends Controller
 
 
 
-        return redirect()->route('app.documents.documents.index', [
+        return redirect()->route('app.document.index', [
             'filters' => [
                 'view' => [
                     'operator' => 'scope',
@@ -244,7 +244,7 @@ class DocumentController extends Controller
 
         ProcessMultiDocJob::dispatch($realPath);
 
-        return redirect()->route('app.documents.documents.index', [
+        return redirect()->route('app.document.index', [
             'filters' => [
                 'view' => [
                     'operator' => 'scope',
@@ -280,7 +280,7 @@ class DocumentController extends Controller
                 DocumentUploadJob::dispatch($realPath, $originalName, $fileSize, $mimeType, $mTime, '');
             }
 
-        return redirect()->route('app.documents.documents.index', [
+        return redirect()->route('app.document.index', [
             'filters' => [
                 'view' => [
                     'operator' => 'scope',

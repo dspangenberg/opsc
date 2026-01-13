@@ -21,15 +21,12 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
   const form = useForm<App.Data.DocumentData>(
     'update-document',
     'put',
-    route('app.documents.documents.update', { document: document.id }),
+    route('app.document.update', { document: document.id }),
     document
   )
 
   const breadcrumbs = useMemo(
-    () => [
-      { title: 'Dokumente', url: route('app.documents.documents.index') },
-      { title: document.filename }
-    ],
+    () => [{ title: 'Dokumente', url: route('app.document.index') }, { title: document.filename }],
     [document.filename]
   )
 
@@ -41,7 +38,7 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
       breadcrumbs={breadcrumbs}
     >
       <PdfContainer
-        file={route('app.documents.documents.pdf', { document: document.id })}
+        file={route('app.document.pdf', { document: document.id })}
         filename={document.filename}
       />
       <Form form={form} className="flex-1">
