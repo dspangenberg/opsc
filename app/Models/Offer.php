@@ -78,7 +78,7 @@ class Offer extends Model implements MediableInterface
         $pdfConfig['hide'] = true;
         $pdfConfig['watermark'] = $offer->is_draft ? 'ENTWURF' : '';
 
-        $attachments = $offer->attachments->map(function ($attachment) {
+        $attachments = $offer->attachments->sortBy('pos')->map(function ($attachment) {
             return $attachment->document_id;
         });
 

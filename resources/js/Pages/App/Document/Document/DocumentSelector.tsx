@@ -21,7 +21,7 @@ const DocumentSelectorComponent: React.FC<DocumentSelectorComponentProps> = ({
 
   useEffect(() => {
     axios
-      .get(route('app.documents.index'), {
+      .get(route('app.document.index'), {
         headers: {
           'X-Requested-With': 'XMLHttpRequest'
         }
