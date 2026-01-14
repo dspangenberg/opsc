@@ -5,6 +5,7 @@ import {
   EditTableIcon,
   FileDownloadIcon,
   FileEditIcon,
+  FileEuroIcon,
   Files02Icon,
   LegalDocument02Icon,
   MoreVerticalCircle01Icon,
@@ -51,6 +52,10 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
   }
 
   const { editMode, setEditMode } = useOfferTable()
+
+  const handleCreateInvoice = () => {
+    router.post(route('app.offer.create-invoice', { offer: offer.id }))
+  }
 
   const handleEditBaseDataButtonClick = () => {
     router.visit(
@@ -255,6 +260,8 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
             isDisabled={!offer.is_draft}
             onAction={handleDelete}
           />
+
+          <MenuItem icon={FileEuroIcon} title="Rechnung erstellen" onAction={handleCreateInvoice} />
         </DropdownButton>
       </Toolbar>
     ),

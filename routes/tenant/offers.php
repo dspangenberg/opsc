@@ -63,6 +63,9 @@ Route::delete('invoicing/offers/{offer}/delete', [OfferController::class, 'destr
 Route::put('invoicing/offers/{offer}/mark-as-sent', [OfferController::class, 'markAsSent'])
     ->name('app.offer.mark-as-sent');
 
+Route::post('invoicing/offers/{offer}/invoice', [OfferController::class, 'createInvoice'])
+    ->name('app.offer.create-invoice');
+
 Route::put('invoicing/offers/terms/{offer}', [OfferController::class, 'updateTerms'])
     ->name('app.offer.update-terms')
     ->middleware([HandlePrecognitiveRequests::class]);

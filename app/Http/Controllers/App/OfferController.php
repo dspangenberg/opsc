@@ -18,6 +18,8 @@ use App\Http\Requests\OfferStoreRequest;
 use App\Http\Requests\OfferTermsRequest;
 use App\Models\Attachment;
 use App\Models\Contact;
+use App\Models\Invoice;
+use App\Models\InvoiceLine;
 use App\Models\Offer;
 use App\Models\OfferLine;
 use App\Models\Project;
@@ -117,6 +119,47 @@ class OfferController extends Controller
 
 
         return redirect()->route('app.offer.details', ['offer' => $offer->id]);
+    }
+
+
+    public function createInvoice(Offer $offer) {
+        $offer->load('contact', 'lines');
+
+        $invoice = new Invoice;
+        $invoice->issued_on = Carbon::now()->format('Y-m-d');
+        $invoice->is_draft = 1;
+        $invoice->invoice_number = null;
+        $invoice->number_range_document_numbers_id = null;
+        $invoice->sent_at = null;
+        $invoice->contact_id = $offer->contact_id;
+        $invoice->project_id = $offer->project_id;
+        $invoice->type_id = 2;
+        $invoice->payment_deadline_id = $offer->contact->payment_deadline_id;
+        $invoice->tax_id = $offer->tax_id;
+        $invoice->save();
+
+        $invoice->load('contact');
+        $invoice->address = $invoice->contact->getInvoiceAddress()->full_address;
+        $invoice->save();
+
+        $offer->lines()->each(function ($line) use ($invoice) {
+            $invoiceLine = new InvoiceLine();
+            $invoiceLine->invoice_id = $invoice->id;
+            $invoiceLine->pos = $line->pos;
+            $invoiceLine->quantity = $line->quantity;
+            $invoiceLine->price = $line->price;
+            $invoiceLine->type_id = $line->type_id;
+            $invoiceLine->text = $line->text;
+            $invoiceLine->unit = $line->unit;
+            $invoiceLine->amount = $line->amount;
+            $invoiceLine->tax_id = $line->tax_id;
+            $invoiceLine->tax = $line->tax;
+            $invoiceLine->save();
+        });
+
+
+        return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
+
     }
 
     public function show(Offer $offer)

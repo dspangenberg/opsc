@@ -17,7 +17,6 @@ use App\Data\TaxData;
 use App\Data\TransactionData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceDetailsBaseUpdateRequest;
-use App\Http\Requests\InvoiceLinesUpdateRequest;
 use App\Http\Requests\InvoiceLineUpdateRequest;
 use App\Http\Requests\InvoiceStoreRequest;
 use App\Models\Contact;
@@ -34,8 +33,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
-use Mpdf\MpdfException;
 use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class InvoiceController extends Controller
 {
@@ -287,7 +286,6 @@ class InvoiceController extends Controller
     }
 
     /**
-     * @throws MpdfException
      * @throws PathAlreadyExists
      */
     public function release(Invoice $invoice)
@@ -323,22 +321,14 @@ class InvoiceController extends Controller
     }
 
     /**
-     * @throws MpdfException
-     * @throws PathAlreadyExists
      */
-    public function downloadPdf(Invoice $invoice): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function downloadPdf(Invoice $invoice): BinaryFileResponse
     {
-        $file = '/Invoicing/Invoices/'.$invoice->issued_on->format('Y').'/'.$invoice->filename;
+        // $file = '/Invoicing/Invoices/'.$invoice->issued_on->format('Y').'/'.$invoice->filename;
 
         $pdfFile = Invoice::createOrGetPdf($invoice, false);
 
         return response()->file($pdfFile);
-
-        if (Storage::disk('s3')->exists($file)) {
-            return Storage::disk('s3')->download($file, $invoice->filename);
-        }
-
-        abort(404);
     }
 
     public function history(Invoice $invoice, ?int $line = null)
