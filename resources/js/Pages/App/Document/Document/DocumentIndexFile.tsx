@@ -57,6 +57,17 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
     )
   }
 
+  const handleRestore = async () => {
+    router.put(
+      route('app.document.restore', { document: document.id }),
+      {},
+      {
+        preserveState: false,
+        preserveScroll: true
+      }
+    )
+  }
+
   const handleForceDelete = async () => {
     const promise = await AlertDialog.call({
       title: 'Dokument endgültig löschen',

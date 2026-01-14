@@ -78,7 +78,7 @@ class Offer extends Model implements MediableInterface
         $pdfConfig['hide'] = true;
         $pdfConfig['watermark'] = $offer->is_draft ? 'ENTWURF' : '';
 
-        $attachments = $offer->attachments->sortBy('pos')->map(function ($attachment) {
+        $attachments = $offer->attachments->map(function ($attachment) {
             return $attachment->document_id;
         });
 
@@ -262,7 +262,7 @@ class Offer extends Model implements MediableInterface
 
     public function attachments(): MorphMany
     {
-        return $this->morphMany(Attachment::class, 'attachable');
+        return $this->morphMany(Attachment::class, 'attachable')->orderBy('pos');
     }
 
     public function scopeView(Builder $query, $view): Builder
