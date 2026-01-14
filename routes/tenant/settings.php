@@ -52,7 +52,7 @@ Route::get('/settings/documents/document-types/create', [DocumentTypeController:
 
 Route::post('/settings/documents/document-types', [DocumentTypeController::class, 'store'])
     ->middleware([HandlePrecognitiveRequests::class])
-    ->name('app.settings.document_type.store');
+    ->name('app.setting.document_type.store');
 
 Route::get('/settings/documents/document-types/{documentType}/edit', [DocumentTypeController::class, 'edit'])->name('app.setting.document_type.edit')->middleware([HandlePrecognitiveRequests::class]);
 Route::put('/settings/documents/document-types/{documentType}/edit', [DocumentTypeController::class, 'update'])->name('app.setting.document_type.update')->middleware([HandlePrecognitiveRequests::class]);

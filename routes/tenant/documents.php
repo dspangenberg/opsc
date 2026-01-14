@@ -18,7 +18,7 @@ Route::delete('/documents/{document}', [DocumentController::class, 'trash'])->na
 
 
 
-Route::get('/documents/{document}/restore', [DocumentController::class, 'restore'])->name('app.document.restore')->withTrashed();
+Route::put('/documents/{document}/restore', [DocumentController::class, 'restore'])->name('app.document.restore')->withTrashed();
 Route::get('/documents/{document}/edit', [DocumentController::class, 'edit'])->name('app.document.edit');
 Route::put('/documents/{document}/update', [DocumentController::class, 'update'])->name('app.document.update')->middleware([HandlePrecognitiveRequests::class]);
 Route::post('/documents/multi-upload', [DocumentController::class, 'multiDocUpload'])->name('app.document.multi-upload')->middleware([HandlePrecognitiveRequests::class]);
