@@ -8,7 +8,7 @@ import {
 } from '@hugeicons/core-free-icons'
 import { router, WhenVisible } from '@inertiajs/react'
 import type * as React from 'react'
-import { createContext, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 
@@ -30,6 +30,7 @@ import { Select } from '@/Components/twc-ui/select'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
 import { DocumentMutliDocUpload } from '@/Pages/App/Document/Document/DocumentMutliDocUpload'
 import type { PageProps } from '@/Types'
+import { DocumentIndexContext } from './DocumentIndexContext'
 import { DocumentIndexFile } from './DocumentIndexFile'
 
 interface DocumentIndexPageProps extends PageProps {
@@ -49,14 +50,6 @@ type FilterConfig = {
   filters: Record<string, { operator: string; value: any }> | Record<string, never>
   boolean?: 'AND' | 'OR'
 }
-
-export const DocumentIndexContext = createContext<{
-  selectedDocuments: number[]
-  setSelectedDocuments: (documents: number[]) => void
-}>({
-  selectedDocuments: [],
-  setSelectedDocuments: () => {}
-})
 
 const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   documents,
@@ -82,13 +75,13 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
 
   const onClick = async (document: App.Data.DocumentData) => {
     await PdfViewer.call({
-      file: route('app.documents.documents.pdf', { id: document.id }),
+      file: route('app.document.pdf', { id: document.id }),
       filename: document.filename
     })
   }
   const handleFiltersChange = (newFilters: FilterConfig) => {
     router.post(
-      route('app.documents.documents.index'),
+      route('app.document.index'),
       {
         filters: newFilters,
         page: 1
@@ -184,7 +177,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
     })
     if (promise) {
       router.delete(
-        route('app.documents.documents.bulk-force-delete', {
+        route('app.document.bulk-force-delete', {
           _query: {
             document_ids: selectedDocuments.join(',')
           }
@@ -306,7 +299,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
               <LinkButton
                 variant="outline"
                 size="sm"
-                href={route('app.documents.documents.upload-form')}
+                href={route('app.document.upload-form')}
                 title="Dokument hochladen"
               />
             </EmptyContent>

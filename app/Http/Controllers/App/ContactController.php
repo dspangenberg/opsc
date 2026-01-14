@@ -9,7 +9,6 @@ namespace App\Http\Controllers\App;
 
 use App\Data\AddressCategoryData;
 use App\Data\BookkeepingAccountData;
-use App\Data\ContactAddressData;
 use App\Data\ContactData;
 use App\Data\CostCenterData;
 use App\Data\CountryData;

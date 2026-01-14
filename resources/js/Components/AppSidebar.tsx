@@ -66,54 +66,42 @@ const data = {
     },
     {
       title: 'Dokumente',
-      url: route('app.documents.documents.index', {}, false),
+      url: route('app.document.index', {}, false),
       icon: FolderFileStorageIcon,
       activePath: '/app/documents',
       items: [
         {
           title: 'Dokumente',
           url: route(
-            'app.documents.documents.index',
+            'app.document.index',
             { filters: { view: { operator: 'scope', value: 'all' } } },
             false
           ),
-          activePath: '/app/documents/documents',
+          activePath: '/app/documents',
           exact: true
         },
         {
           title: 'Inbox',
           url: route(
-            'app.documents.documents.index',
+            'app.document.index',
             { filters: { view: { operator: 'scope', value: 'inbox' } } },
             false
           ),
-          activePath: '/app/documents/documents?filters[view][value]=inbox'
+          activePath: '/app/documents?filters[view][value]=inbox'
         },
         {
           title: 'Papierkorb',
           url: route(
-            'app.documents.documents.index',
+            'app.document.index',
             { filters: { view: { operator: 'scope', value: 'trash' } } },
             false
           ),
-          activePath: '/app/documents/documents?filters[view][value]=trash'
+          activePath: '/app/documents?filters[view][value]=trash'
         },
         {
           title: 'Upload',
-          url: route('app.documents.documents.upload-form', {}, false),
-          activePath: '/app/documents/documents/upload-form'
-        },
-        {
-          title: 'Vorgaben',
-          url: route('app.documents.document_types.index', {}, false),
-          activePath: '/app/documents/preferences',
-          items: [
-            {
-              title: 'Dokumenttypen',
-              url: route('app.documents.document_types.index', {}, false),
-              activePath: '/app/documents/preferences/document-types'
-            }
-          ]
+          url: route('app.document.upload-form', {}, false),
+          activePath: '/app/documents/upload-form'
         }
       ]
     },
@@ -270,6 +258,18 @@ const data = {
               title: 'Textbausteine',
               url: route('app.setting.text-module.index', {}, false),
               activePath: '/app/settings/offers/text-modules'
+            }
+          ]
+        },
+        {
+          title: 'Dokumente',
+          url: route('app.setting.document_type.index', {}, false),
+          activePath: '/app/settings/documents',
+          items: [
+            {
+              title: 'Dokumenttypen',
+              url: route('app.setting.document_type.index', {}, false),
+              activePath: '/app/settings/documents/document-types'
             }
           ]
         },

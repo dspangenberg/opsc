@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\App\OfferSectionController;
+use App\Http\Controllers\App\Setting\DocumentTypeController;
 use App\Http\Controllers\App\Setting\LetterheadController;
+use App\Http\Controllers\App\Setting\OfferSectionController;
 use App\Http\Controllers\App\Setting\PrintLayoutController;
 use App\Http\Controllers\App\Setting\TextModuleController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
@@ -45,3 +46,14 @@ Route::post('settings/printing-system/layouts/store', [PrintLayoutController::cl
 Route::get('settings/printing-system/layouts/{layout}/edit', [PrintLayoutController::class, 'edit'])->name('app.setting.layout.edit');
 Route::put('settings/printing-system/layouts/{layout}', [PrintLayoutController::class, 'update'])->name('app.setting.layout.update')->middleware([HandlePrecognitiveRequests::class]);
 Route::delete('settings/printing-system/layouts/{layout}', [PrintLayoutController::class, 'delete'])->name('app.setting.layout.delete');
+
+Route::get('/settings/documents/document-types', [DocumentTypeController::class, 'index'])->name('app.setting.document_type.index');
+Route::get('/settings/documents/document-types/create', [DocumentTypeController::class, 'create'])->name('app.setting.document_type.create');
+
+Route::post('/settings/documents/document-types', [DocumentTypeController::class, 'store'])
+    ->middleware([HandlePrecognitiveRequests::class])
+    ->name('app.setting.document_type.store');
+
+Route::get('/settings/documents/document-types/{documentType}/edit', [DocumentTypeController::class, 'edit'])->name('app.setting.document_type.edit')->middleware([HandlePrecognitiveRequests::class]);
+Route::put('/settings/documents/document-types/{documentType}/edit', [DocumentTypeController::class, 'update'])->name('app.setting.document_type.update')->middleware([HandlePrecognitiveRequests::class]);
+

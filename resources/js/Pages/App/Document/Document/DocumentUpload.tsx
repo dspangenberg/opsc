@@ -10,10 +10,7 @@ interface DocumentUploadPageProps extends PageProps {}
 
 const DocumentUpload: React.FC<DocumentUploadPageProps> = () => {
   const breadcrumbs = useMemo(
-    () => [
-      { title: 'Dokumente', url: route('app.documents.documents.index') },
-      { title: 'Upload' }
-    ],
+    () => [{ title: 'Dokumente', url: route('app.document.index') }, { title: 'Upload' }],
     []
   )
 
@@ -58,7 +55,7 @@ export const Upload = () => {
       return
     }
 
-    post(route('app.documents.documents.upload'), {
+    post(route('app.document.upload'), {
       forceFormData: true,
       onSuccess: () => {
         fileActions.clearFiles()

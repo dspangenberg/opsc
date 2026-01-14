@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\App;
+namespace App\Http\Controllers\App\Setting;
 
 use App\Data\OfferSectionData;
 use App\Http\Controllers\Controller;

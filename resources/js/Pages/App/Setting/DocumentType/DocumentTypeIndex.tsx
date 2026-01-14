@@ -21,7 +21,7 @@ const DocumentTypeIndex: React.FC<DocumentTypesIndexPageProps> = ({ documentType
   const breadcrumbs = useMemo(() => [{ title: 'Dokumente' }, { title: 'Dokumenttypen' }], [])
 
   const handleDocumentTypeAdd = () => {
-    router.get(route('app.documents.document_types.create'))
+    router.get(route('app.setting.document_type.create'))
   }
 
   const toolbar = useMemo(

@@ -19,7 +19,7 @@ import { Checkbox } from '@/Components/twc-ui/checkbox'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { MenuItem } from '@/Components/twc-ui/menu'
 import { useFileDownload } from '@/Hooks/use-file-download'
-import { DocumentIndexContext } from '@/Pages/App/Document/Document/DocumentIndex'
+import { DocumentIndexContext } from '@/Pages/App/Document/Document/DocumentIndexContext'
 import { DocumentIndexFileCard } from '@/Pages/App/Document/Document/DocumentIndexFileCard'
 
 interface DocumentIndexPageProps {
@@ -31,7 +31,7 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
   const { selectedDocuments, setSelectedDocuments } = useContext(DocumentIndexContext)
   const isSelected = selectedDocuments.includes(document.id as number)
   const { handleDownload: downloadFile } = useFileDownload({
-    route: route('app.documents.documents.pdf', { id: document.id }),
+    route: route('app.document.pdf', { id: document.id }),
     filename: document.filename || 'document.pdf'
   })
 
@@ -42,13 +42,24 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
       buttonTitle: 'Dokument löschen'
     })
     if (promise) {
-      router.delete(route('app.documents.documents.trash', { id: document.id }))
+      router.delete(route('app.document.trash', { id: document.id }))
     }
   }
 
   const handleTogglePinned = async () => {
     router.patch(
-      route('app.documents.documents.toggle-pinned', { id: document.id }),
+      route('app.document.toggle-pinned', { id: document.id }),
+      {},
+      {
+        preserveState: false,
+        preserveScroll: true
+      }
+    )
+  }
+
+  const handleRestore = async () => {
+    router.put(
+      route('app.document.restore', { document: document.id }),
       {},
       {
         preserveState: false,
@@ -64,7 +75,7 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
       buttonTitle: 'Löschen'
     })
     if (promise) {
-      router.delete(route('app.documents.documents.force-delete', { id: document.id }))
+      router.delete(route('app.document.force-delete', { id: document.id }))
     }
   }
 
@@ -86,7 +97,7 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
         <button type="button" className="w-full border-0 bg-transparent p-0">
           <img
             key={document.id}
-            src={route('app.documents.documents.preview', { id: document.id })}
+            src={route('app.document.preview', { id: document.id })}
             className="h-28 w-full object-cover object-top"
             style={{ objectPosition: '50% 0%' }}
             alt={document.filename}
@@ -147,7 +158,7 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
               <MenuItem
                 icon={Edit03Icon}
                 title="Dokument bearbeiten"
-                href={route('app.documents.documents.edit', { document: document.id })}
+                href={route('app.document.edit', { document: document.id })}
                 separator
               />
               <MenuItem
@@ -164,7 +175,7 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
                 icon={DeletePutBackIcon}
                 title="Dokument wiederherstellen"
                 separator
-                href={route('app.documents.documents.restore', { id: document.id })}
+                href={route('app.document.restore', { id: document.id })}
               />
               <MenuItem
                 icon={Delete04Icon}

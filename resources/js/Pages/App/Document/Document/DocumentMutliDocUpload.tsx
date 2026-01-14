@@ -30,7 +30,7 @@ export const DocumentMutliDocUpload: React.FC<Props> = ({ isOpen, onClosed }) =>
     console.log('File:', data.file.name, data.file.size, 'bytes')
 
     // Verwende Inertia.js - handhabt CSRF automatisch korrekt
-    post(route('app.documents.documents.multi-upload'), {
+    post(route('app.document.multi-upload'), {
       forceFormData: true,
       onBefore: () => {
         console.log('Starting upload...')
