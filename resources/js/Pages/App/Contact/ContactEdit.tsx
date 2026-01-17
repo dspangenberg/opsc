@@ -466,7 +466,6 @@ const ContactEdit: React.FC<Props> = ({
                       label="Erfolgskonto"
                       items={bookkeeping_accounts}
                       isOptional
-                      optionalValue=""
                       itemName="label"
                       itemValue="account_number"
                       {...form.register('outturn_account_id')}
