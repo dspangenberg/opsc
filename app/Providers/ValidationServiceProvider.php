@@ -22,8 +22,8 @@ class ValidationServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Validator::extend('exists_if_not_empty', function ($attribute, $value, $parameters, $validator) {
-            // Wenn Wert leer ist, nicht validieren
-            if (empty($value) && $value !== '0') {
+            // Wenn Wert leer ist (null, leerer String, etc.), nicht validieren
+            if ($value === null || $value === '' || (empty($value) && $value !== '0')) {
                 return true;
             }
 
