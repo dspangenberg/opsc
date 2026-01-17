@@ -18,6 +18,38 @@ use Plank\Mediable\MediableInterface;
 /**
  * @property bool $is_draft
  * @property int|null $offer_number
+ * @property-read Collection<int, \App\Models\Attachment> $attachments
+ * @property-read int|null $attachments_count
+ * @property-read \App\Models\BookkeepingBooking|null $booking
+ * @property-read \App\Models\Contact|null $contact
+ * @property-read float $amount_gross
+ * @property-read float $amount_net
+ * @property-read float $amount_open
+ * @property-read float $amount_paid
+ * @property-read float $amount_tax
+ * @property-read string $filename
+ * @property-read string $formated_offer_number
+ * @property-read array $invoice_address
+ * @property-read Collection<int, \App\Models\OfferLine> $lines
+ * @property-read int|null $lines_count
+ * @property-read Collection<int, \Plank\Mediable\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \App\Models\Project|null $project
+ * @property-read \App\Models\Tax|null $tax
+ * @method static \Plank\Mediable\MediableCollection<int, static> all($columns = ['*'])
+ * @method static Builder<static>|Offer byYear(int $year)
+ * @method static \Plank\Mediable\MediableCollection<int, static> get($columns = ['*'])
+ * @method static Builder<static>|Offer newModelQuery()
+ * @method static Builder<static>|Offer newQuery()
+ * @method static Builder<static>|Offer query()
+ * @method static Builder<static>|Offer view($view)
+ * @method static Builder<static>|Offer whereHasMedia($tags = [], bool $matchAll = false)
+ * @method static Builder<static>|Offer whereHasMediaMatchAll($tags)
+ * @method static Builder<static>|Offer withMedia($tags = [], bool $matchAll = false, bool $withVariants = false)
+ * @method static Builder<static>|Offer withMediaAndVariants($tags = [], bool $matchAll = false)
+ * @method static Builder<static>|Offer withMediaAndVariantsMatchAll($tags = [])
+ * @method static Builder<static>|Offer withMediaMatchAll(bool $tags = [], bool $withVariants = false)
+ * @mixin \Eloquent
  */
 class Offer extends Model implements MediableInterface
 {

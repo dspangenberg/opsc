@@ -49,6 +49,7 @@ class CompanyData extends Data
         public readonly ?string $primary_phone,
         public readonly ?int $cost_center_id,
         public readonly ?CostCenterData $cost_center,
+        public ?string $avatar_url,
         /** @var BookkeepingAccountData */
         public readonly ?object $outturn_account,
 

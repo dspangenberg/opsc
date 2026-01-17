@@ -36,21 +36,21 @@ export const ContactEditEmailAddressesSection: React.FC<EmailAddressesSectionPro
       {mails && mails.length > 0 ? (
         mails.map((mail, index) => (
           <React.Fragment key={mail.id || `new-${index}`}>
-            <div className="col-span-8">
+            <div className="col-span-4">
               <FormSelect<App.Data.EmailCategoryData>
                 {...form.register(`mails[${index}].email_category_id`)}
                 aria-label="Kategorie"
                 items={mailCategories}
               />
             </div>
-            <div className="col-span-14">
+            <div className="col-span-7">
               <FormTextField
                 {...form.register(`mails[${index}].email`)}
                 aria-label="E-Mail-Adresse"
                 type="email"
               />
             </div>
-            <div className="col-span-2 flex items-center">
+            <div className="col-span-1 flex items-center">
               <Button
                 type="button"
                 variant="ghost-destructive"

@@ -31,6 +31,8 @@ class ContactUpdateRequest extends FormRequest
             'outturn_account_id' => 'nullable', 'exists:bookkeeping_accounts,account_number',
             'cost_center_id' => 'nullable', 'exists:cost_centers,id',
             'is_primary' => ['nullable', 'boolean'],
+            'dob' => ['nullable', 'date'],
+            'note' => ['nullable', 'string'],
 
             // E-Mail-Validierung hinzufügen
             'mails' => ['nullable', 'array'],

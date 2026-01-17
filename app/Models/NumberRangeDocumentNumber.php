@@ -9,11 +9,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property-read NumberRange|null $range
- *
  * @method static Builder<static>|NumberRangeDocumentNumber newModelQuery()
  * @method static Builder<static>|NumberRangeDocumentNumber newQuery()
  * @method static Builder<static>|NumberRangeDocumentNumber query()
- *
  * @mixin Eloquent
  */
 class NumberRangeDocumentNumber extends Model

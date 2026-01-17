@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Plank\Mediable\Exceptions\MediaUrlException;
+use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
+use Plank\Mediable\MediableCollection;
+
 /**
  * @property-read ProjectCategory|null $category
  * @property-read User|null $lead
@@ -16,6 +20,17 @@ use Plank\Mediable\Mediable;
  * @method static Builder<static>|Project newModelQuery()
  * @method static Builder<static>|Project newQuery()
  * @method static Builder<static>|Project query()
+ * @property-read string|null $avatar_url
+ * @property-read Collection<int, Media> $media
+ * @property-read int|null $media_count
+ * @method static MediableCollection<int, static> all($columns = ['*'])
+ * @method static MediableCollection<int, static> get($columns = ['*'])
+ * @method static Builder<static>|Project whereHasMedia($tags = [], bool $matchAll = false)
+ * @method static Builder<static>|Project whereHasMediaMatchAll($tags)
+ * @method static Builder<static>|Project withMedia($tags = [], bool $matchAll = false, bool $withVariants = false)
+ * @method static Builder<static>|Project withMediaAndVariants($tags = [], bool $matchAll = false)
+ * @method static Builder<static>|Project withMediaAndVariantsMatchAll($tags = [])
+ * @method static Builder<static>|Project withMediaMatchAll(bool $tags = [], bool $withVariants = false)
  * @mixin Eloquent
  */
 class Project extends Model

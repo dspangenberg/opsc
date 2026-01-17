@@ -17,7 +17,6 @@ use App\Data\TaxData;
 use App\Data\TransactionData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceDetailsBaseUpdateRequest;
-use App\Http\Requests\InvoiceLineUpdateRequest;
 use App\Http\Requests\InvoiceStoreRequest;
 use App\Models\Contact;
 use App\Models\Invoice;
@@ -30,10 +29,9 @@ use App\Models\Tax;
 use App\Models\Time;
 use App\Models\Transaction;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
-use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class InvoiceController extends Controller
@@ -162,11 +160,10 @@ class InvoiceController extends Controller
         $invoice->address = $invoice->contact->getInvoiceAddress()->full_address;
         $invoice->save();
 
-
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function show(Invoice $invoice, ?int $line = null)
+    public function show(Invoice $invoice)
     {
         $invoice
             ->load('invoice_contact')
@@ -191,7 +188,7 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function edit(Request $request, Invoice $invoice)
+    public function edit(Invoice $invoice)
     {
         $invoice
             ->load('invoice_contact')
@@ -283,9 +280,6 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $duplicatedInvoice->id]);
     }
 
-    /**
-     * @throws PathAlreadyExists
-     */
     public function release(Invoice $invoice)
     {
         $invoice->release();
@@ -319,6 +313,7 @@ class InvoiceController extends Controller
     }
 
     /**
+     * @throws Exception
      */
     public function downloadPdf(Invoice $invoice): BinaryFileResponse
     {
@@ -367,7 +362,7 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function addOnAccountInvoice(Request $request, Invoice $invoice)
+    public function addOnAccountInvoice(Invoice $invoice)
     {
         $linkedInvoiceIds = InvoiceLine::whereNotNull('linked_invoice_id')
             ->pluck('linked_invoice_id')
@@ -489,105 +484,6 @@ class InvoiceController extends Controller
         });
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
-    }
-
-    public function createLine(Request $request, Invoice $invoice)
-    {
-        $invoice
-            ->load('invoice_contact')
-            ->load('contact')
-            ->load('project')
-            ->load('payment_deadline')
-            ->load('tax')
-            ->load('tax.rates')
-            ->load('type')
-            ->load([
-                'lines' => function ($query) {
-                    $query->with('linked_invoice')->orderBy('pos')->orderBy('id');
-                },
-            ])
-            ->loadSum('lines', 'amount')
-            ->loadSum('lines', 'tax');
-
-        $invoiceLine = new InvoiceLine;
-        $invoiceLine->invoice_id = $invoice->id;
-        $invoiceLine->pos = InvoiceLine::query()->where('invoice_id', $invoice->id)->where('pos', '<>', 999)->max('pos') + 1;
-        $invoiceLine->text = '';
-        $invoiceLine->unit = '*';
-        $invoiceLine->amount = 0;
-        $invoiceLine->tax = 0;
-        $invoiceLine->quantity = 1;
-        $invoiceLine->price = 0;
-        $invoiceLine->type_id = $request->query('type', 1);
-        $invoiceLine->tax_rate_id = $invoice->tax->default_rate_id;
-
-        return Inertia::modal('App/Invoice/InvoiceDetailsEditLine')
-            ->with([
-                'invoice' => InvoiceData::from($invoice),
-                'invoiceLine' => InvoiceLineData::from($invoiceLine),
-            ])->baseRoute('app.invoice.details', [
-                'invoice' => $invoice->id,
-            ]);
-    }
-
-    public function storeLine(InvoiceLineUpdateRequest $request, Invoice $invoice)
-    {
-        $invoiceLine = InvoiceLine::create($request->validated());
-
-        if ($invoiceLine->type_id === 1) {
-            $invoiceLine->amount = $invoiceLine->quantity * $invoiceLine->price;
-        }
-
-        $invoiceLine->tax_rate = $invoiceLine->rate->rate;
-        $invoiceLine->tax = $invoiceLine->amount * ($invoiceLine->tax_rate / 100);
-        $invoiceLine->save();
-
-        return redirect()->route('app.invoice.details', ['invoice' => $invoice->id, 'line' => $invoiceLine->id]);
-    }
-
-    public function editLine(Invoice $invoice, InvoiceLine $invoiceLine)
-    {
-        $invoiceLine->load('rate');
-
-        $invoice
-            ->load('invoice_contact')
-            ->load('contact')
-            ->load('project')
-            ->load('payment_deadline')
-            ->load('tax')
-            ->load('tax.rates')
-            ->load('type')
-            ->load([
-                'lines' => function ($query) {
-                    $query->with('linked_invoice')->orderBy('pos')->orderBy('id');
-                },
-            ])
-            ->loadSum('lines', 'amount')
-            ->loadSum('lines', 'tax');
-
-        return Inertia::modal('App/Invoice/InvoiceDetailsEditLine')
-            ->with([
-                'invoice' => InvoiceData::from($invoice),
-                'invoiceLine' => InvoiceLineData::from($invoiceLine),
-            ])->baseRoute('app.invoice.details', [
-                'invoice' => $invoice->id,
-            ]);
-    }
-
-    public function updateLine(InvoiceLineUpdateRequest $request, Invoice $invoice, InvoiceLine $invoiceLine)
-    {
-        $invoiceLine->update($request->validated());
-        $invoiceLine->load('rate');
-
-        if ($invoiceLine->type_id === 1) {
-            $invoiceLine->amount = $invoiceLine->quantity * $invoiceLine->price;
-        }
-
-        $invoiceLine->tax_rate = $invoiceLine->rate->rate;
-        $invoiceLine->tax = $invoiceLine->amount * ($invoiceLine->tax_rate / 100);
-        $invoiceLine->save();
-
-        return redirect()->route('app.invoice.details', ['invoice' => $invoice->id, 'line' => $invoiceLine->id]);
     }
 
     public function deleteLine(Invoice $invoice, InvoiceLine $invoiceLine)

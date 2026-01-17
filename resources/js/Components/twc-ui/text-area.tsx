@@ -28,7 +28,7 @@ const RACTextArea = ({ className, autoSize = true, rows = 2, ...props }: RACText
           /* Resets */
           'focus:border-primary focus:ring-[3px] focus:ring-primary/20',
           'data-invalid:border-destructive data-invalid:focus:border-destructive data-invalid:focus:ring-destructive/20',
-          autoSize ? 'field-sizing-content min-h-20' : 'h-9 min-h-20 resize-none',
+          autoSize ? 'field-sizing-content min-h-14' : 'resize-none',
           className
         )
       )}

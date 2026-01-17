@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @method static Builder<static>|BookkeepingBooking newModelQuery()
  * @method static Builder<static>|BookkeepingBooking newQuery()
  * @method static Builder<static>|BookkeepingBooking query()
+ * @method static Builder<static>|BookkeepingBooking search($search)
  * @mixin Eloquent
  */
 class BookkeepingBooking extends Model

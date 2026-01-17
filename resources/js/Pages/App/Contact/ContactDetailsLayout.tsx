@@ -1,6 +1,7 @@
 import {
   Archive03Icon,
   ArchiveOff03Icon,
+  Delete02Icon,
   Edit03Icon,
   MoreVerticalCircle01Icon,
   UserAdd02Icon
@@ -10,6 +11,7 @@ import { Link } from '@inertiajs/react'
 import type * as React from 'react'
 import { useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
+import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Avatar } from '@/Components/twc-ui/avatar'
 import { Button } from '@/Components/twc-ui/button'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
@@ -31,6 +33,17 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
 
   const currentRoute = route().current()
   const handleArchive = () => router.put(route('app.contact.archive', { contact: contact.id }), {})
+  const handleDelete = async () => {
+    console.log(contact.id)
+    const promise = await AlertDialog.call({
+      title: 'Kontakt löschen',
+      message: 'Möchtest Du die Kontakt wirklich löschen?',
+      buttonTitle: 'Kontakt löschen'
+    })
+    if (promise) {
+      router.delete(route('app.contact.delete', { contact: contact.id }))
+    }
+  }
 
   const toolbar = useMemo(
     () => (
@@ -54,14 +67,22 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
                   icon={ArchiveOff03Icon}
                   title="Kontakt wiederherstellen"
                   onAction={handleArchive}
+                  separator
                 />
               ) : (
                 <MenuItem
                   icon={Archive03Icon}
                   title="Kontakt archivieren"
                   onAction={handleArchive}
+                  separator
                 />
               )}
+              <MenuItem
+                icon={Delete02Icon}
+                variant="destructive"
+                title="Kontakt löschen"
+                onClick={handleDelete}
+              />
             </DropdownButton>
           </>
         )}
@@ -118,7 +139,12 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
     () => (
       <div className="flex items-center gap-2">
         <div className="flex-none">
-          <Avatar initials={contact.initials} fullname={contact.full_name} size="lg" />
+          <Avatar
+            initials={contact.initials}
+            fullname={contact.full_name}
+            src={contact.avatar_url}
+            size="lg"
+          />
         </div>
         <div className="flex flex-1 flex-col">
           <div className="max-w-lg flex-1 truncate font-bold text-xl">
@@ -140,7 +166,8 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
       contact.company_id,
       contact.company?.name,
       companyRoute,
-      contact.short_name
+      contact.short_name,
+      contact.avatar_url
     ]
   )
 

@@ -6,6 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * @property-read Model|\Eloquent $attachable
+ * @property-read \App\Models\Document|null $document
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attachment query()
+ * @mixin \Eloquent
+ */
 class Attachment extends Model
 {
     protected $fillable = [

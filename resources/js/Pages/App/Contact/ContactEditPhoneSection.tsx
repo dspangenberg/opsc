@@ -36,20 +36,20 @@ export const ContactEditPhoneSection: React.FC<ContactEditPhonedSectionProps> = 
       {phones && phones.length > 0 ? (
         phones.map((phone, index) => (
           <React.Fragment key={phone.id || `new-${index}`}>
-            <div className="col-span-8">
+            <div className="col-span-4">
               <FormSelect<App.Data.EmailCategoryData>
                 {...form.register(`phones[${index}].phone_category_id`)}
                 aria-label="Kategorie"
                 items={phoneCategories}
               />
             </div>
-            <div className="col-span-14">
+            <div className="col-span-7">
               <FormTextField
                 {...form.register(`phones[${index}].phone`)}
                 aria-label="Telefonnummer"
               />
             </div>
-            <div className="col-span-2 flex items-center">
+            <div className="col-span-1 flex items-center">
               <Button
                 type="button"
                 variant="ghost-destructive"
