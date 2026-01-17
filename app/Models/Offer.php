@@ -18,10 +18,10 @@ use Plank\Mediable\MediableInterface;
 /**
  * @property bool $is_draft
  * @property int|null $offer_number
- * @property-read Collection<int, \App\Models\Attachment> $attachments
+ * @property-read Collection<int, Attachment> $attachments
  * @property-read int|null $attachments_count
- * @property-read \App\Models\BookkeepingBooking|null $booking
- * @property-read \App\Models\Contact|null $contact
+ * @property-read BookkeepingBooking|null $booking
+ * @property-read Contact|null $contact
  * @property-read float $amount_gross
  * @property-read float $amount_net
  * @property-read float $amount_open
@@ -30,12 +30,12 @@ use Plank\Mediable\MediableInterface;
  * @property-read string $filename
  * @property-read string $formated_offer_number
  * @property-read array $invoice_address
- * @property-read Collection<int, \App\Models\OfferLine> $lines
+ * @property-read Collection<int, OfferLine> $lines
  * @property-read int|null $lines_count
  * @property-read Collection<int, \Plank\Mediable\Media> $media
  * @property-read int|null $media_count
- * @property-read \App\Models\Project|null $project
- * @property-read \App\Models\Tax|null $tax
+ * @property-read Project|null $project
+ * @property-read Tax|null $tax
  * @method static \Plank\Mediable\MediableCollection<int, static> all($columns = ['*'])
  * @method static Builder<static>|Offer byYear(int $year)
  * @method static \Plank\Mediable\MediableCollection<int, static> get($columns = ['*'])

@@ -104,7 +104,10 @@ export const ContactEdit: React.FC<Props> = ({
     website: contact.website,
     is_primary: contact.is_primary,
     is_creditor: contact.is_creditor,
-    is_debtor: contact.is_debtor
+    is_debtor: contact.is_debtor,
+    dob: contact.dob,
+    avatar_url: contact.avatar_url,
+    note: contact.note
   }
 
   const form = useForm<FormData>(
