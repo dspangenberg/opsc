@@ -10,6 +10,7 @@ namespace App\Models;
 use App\Exceptions\ContactNotFoundException;
 use App\Exceptions\ContactWithoutAccountException;
 use Eloquent;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -99,7 +100,8 @@ class Contact extends Model
         'tax_id' => 0,
         'hourly' => 0,
         'register_court' => '',
-        'outturn_account_id' => null,
+        'outturn_account_id' => 0,
+        'cost_center_id' => null,
         'is_primary' => false,
         'register_number' => '',
         'vat_id' => '',
@@ -342,6 +344,20 @@ class Contact extends Model
             'all' => $query->where('is_archived', false),
             default => $query,
         };
+    }
+
+    protected function outturnAccountId(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => $value === null || $value === '' ? 0 : $value,
+        );
+    }
+
+    protected function costCenterId(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => $value === '' || $value === 0 ? null : $value,
+        );
     }
 
     protected function casts(): array

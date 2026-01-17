@@ -217,11 +217,17 @@ class ContactController extends Controller
      */
     public function update(ContactUpdateRequest $request, Contact $contact)
     {
-
-
-
         DB::transaction(function () use ($request, $contact) {
             $data = $request->safe()->except('avatar', 'mails', 'phones', 'addresses');
+
+            // Convert empty strings to appropriate values for optional foreign key fields
+            if (isset($data['outturn_account_id']) && ($data['outturn_account_id'] === '' || $data['outturn_account_id'] === null)) {
+                $data['outturn_account_id'] = 0; // No foreign key, use 0
+            }
+            if (isset($data['cost_center_id']) && ($data['cost_center_id'] === '' || $data['cost_center_id'] === 0)) {
+                $data['cost_center_id'] = null; // Has foreign key, must be null if empty
+            }
+
             $contact->update($data);
 
             if ($request->has('mails')) {
