@@ -115,7 +115,8 @@ const ContactEditNew: React.FC<Props> = ({
     is_debtor: contact.is_debtor,
     avatar: null,
     dob: contact.dob,
-    note: contact.note
+    note: contact.note,
+    has_dunning_block: contact.has_dunning_block
   }
 
   const [droppedImage, setDroppedImage] = useState<string | undefined>(
@@ -186,14 +187,6 @@ const ContactEditNew: React.FC<Props> = ({
     const updatedPhones = form.data.phones.filter((_, i) => i !== index)
     form.setData('phones', updatedPhones)
   }
-
-  useEffect(() => {
-    return () => {
-      if (droppedImage?.startsWith('blob:')) {
-        URL.revokeObjectURL(droppedImage)
-      }
-    }
-  }, [droppedImage])
 
   const form = useForm<FormData>(
     'contact-form',

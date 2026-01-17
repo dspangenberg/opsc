@@ -53,6 +53,7 @@ class ContactData extends Data
         public readonly ?bool $is_debtor,
         public readonly ?bool $is_archived,
         public readonly ?bool $is_creditor,
+        public readonly ?bool $has_dunning_block,
         public readonly ?string $primary_phone,
         public readonly ?int $cost_center_id,
         public readonly ?CostCenterData $cost_center,
