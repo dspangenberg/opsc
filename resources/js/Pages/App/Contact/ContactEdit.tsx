@@ -197,6 +197,13 @@ const ContactEdit: React.FC<Props> = ({
     initialData
   )
 
+  // Transform empty strings to null for optional ID fields before submit
+  form.transform((data) => ({
+    ...data,
+    outturn_account_id: !data.outturn_account_id ? null : data.outturn_account_id,
+    cost_center_id: !data.cost_center_id ? null : data.cost_center_id
+  }))
+
   const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Zurück'
 
   useEffect(() => {
