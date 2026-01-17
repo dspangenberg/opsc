@@ -3,8 +3,7 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Add01Icon, Edit02Icon } from '@hugeicons/core-free-icons'
-import type * as React from 'react'
+import { Add01Icon } from '@hugeicons/core-free-icons'
 import type { FC } from 'react'
 import { DataCard, DataCardContent, DataCardField, DataCardSection } from '@/Components/DataCard'
 import { ContactDetailsMail } from '@/Pages/App/Contact/ContactDetailsMails'
@@ -17,10 +16,6 @@ interface ContactDetailsPersonInfoBoxProps {
 export const ContactDetailsPerson: FC<ContactDetailsPersonInfoBoxProps> = ({
   contact
 }: ContactDetailsPersonInfoBoxProps) => {
-  const onDebtorDataClicked = () => {
-    console.log('Debtor data clicked')
-  }
-
   return (
     <DataCard title={contact.full_name}>
       <DataCardContent>

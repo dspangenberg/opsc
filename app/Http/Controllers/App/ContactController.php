@@ -197,7 +197,7 @@ class ContactController extends Controller
         $cost_centers = CostCenter::orderBy('name')->get();
         $mail_categories = EmailCategory::orderBy('name')->get();
 
-        return Inertia::render('App/Contact/ContactEditNew', [
+        return Inertia::render('App/Contact/ContactEdit', [
             'contact' => ContactData::from($contact),
             'countries' => CountryData::collect($countries),
             'payment_deadlines' => PaymentDeadlineData::collect($payment_deadlines),

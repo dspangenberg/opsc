@@ -62,7 +62,7 @@ type FormData = Omit<
   avatar: File | null
 }
 
-const ContactEditNew: React.FC<Props> = ({
+const ContactEdit: React.FC<Props> = ({
   contact,
   salutations,
   titles,
@@ -466,6 +466,7 @@ const ContactEditNew: React.FC<Props> = ({
                       label="Erfolgskonto"
                       items={bookkeeping_accounts}
                       isOptional
+                      optionalValue=""
                       itemName="label"
                       itemValue="account_number"
                       {...form.register('outturn_account_id')}
@@ -516,4 +517,4 @@ const ContactEditNew: React.FC<Props> = ({
   )
 }
 
-export default ContactEditNew
+export default ContactEdit
