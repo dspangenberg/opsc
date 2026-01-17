@@ -145,7 +145,7 @@ const ContactEditNew: React.FC<Props> = ({
       address: '',
       zip: '',
       city: '',
-      country_id: 1,
+      country_id: defaultCountry,
       address_category_id: defaultCategoryId,
       contact_id: contact.id as number,
       full_address: '',
@@ -164,7 +164,7 @@ const ContactEditNew: React.FC<Props> = ({
       phone: '',
       phone_category_id: defaultCategoryId,
       contact_id: contact.id as number,
-      pos: form.data.mails.length || 0,
+      pos: form.data.phones.length || 0,
       category: phone_categories.find(cat => cat.id === defaultCategoryId) || null
     }
 
@@ -276,7 +276,7 @@ const ContactEditNew: React.FC<Props> = ({
     >
       <FormCard
         className="max-w-4xl"
-        innerClassName="bg-white"
+        innerClassName="bg-background"
         footer={
           <div className="flex flex-none items-center justify-end gap-2 px-4 py-2">
             <Button variant="outline" onClick={handleCancel} title={cancelButtonTitle} />

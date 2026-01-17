@@ -34,10 +34,9 @@ export const ContactDetailsLayout: React.FC<Props> = ({ contact, children }) => 
   const currentRoute = route().current()
   const handleArchive = () => router.put(route('app.contact.archive', { contact: contact.id }), {})
   const handleDelete = async () => {
-    console.log(contact.id)
     const promise = await AlertDialog.call({
       title: 'Kontakt löschen',
-      message: 'Möchtest Du die Kontakt wirklich löschen?',
+      message: 'Möchtest Du den Kontakt wirklich löschen?',
       buttonTitle: 'Kontakt löschen'
     })
     if (promise) {

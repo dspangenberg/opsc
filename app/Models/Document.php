@@ -3,25 +3,30 @@
 namespace App\Models;
 
 use App\Traits\HasDynamicFilters;
+use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Request;
+use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
+use Plank\Mediable\MediableCollection;
 
 /**
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Attachment> $attachments
+ * @property-read Collection<int, Attachment> $attachments
  * @property-read int|null $attachments_count
- * @property-read \App\Models\Contact|null $contact
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Plank\Mediable\Media> $media
+ * @property-read Contact|null $contact
+ * @property-read Collection<int, Media> $media
  * @property-read int|null $media_count
- * @property-read \App\Models\Project|null $project
- * @property-read \App\Models\DocumentType|null $type
- * @method static \Plank\Mediable\MediableCollection<int, static> all($columns = ['*'])
- * @method static Builder<static>|Document applyDynamicFilters(\Illuminate\Http\Request $request, array $options = [])
+ * @property-read Project|null $project
+ * @property-read DocumentType|null $type
+ * @method static MediableCollection<int, static> all($columns = ['*'])
+ * @method static Builder<static>|Document applyDynamicFilters(Request $request, array $options = [])
  * @method static Builder<static>|Document applyFiltersFromObject(array|string $filters, array $options = [])
- * @method static \Plank\Mediable\MediableCollection<int, static> get($columns = ['*'])
+ * @method static MediableCollection<int, static> get($columns = ['*'])
  * @method static Builder<static>|Document newModelQuery()
  * @method static Builder<static>|Document newQuery()
  * @method static Builder<static>|Document onlyTrashed()
@@ -32,10 +37,10 @@ use Plank\Mediable\Mediable;
  * @method static Builder<static>|Document withMedia($tags = [], bool $matchAll = false, bool $withVariants = false)
  * @method static Builder<static>|Document withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static Builder<static>|Document withMediaAndVariantsMatchAll($tags = [])
- * @method static Builder<static>|Document withMediaMatchAll(bool $tags = [], bool $withVariants = false)
+ * @method static Builder<static>|Document withMediaMatchAll(array|string  $tags = [], bool $withVariants = false)
  * @method static Builder<static>|Document withTrashed(bool $withTrashed = true)
  * @method static Builder<static>|Document withoutTrashed()
- * @mixin \Eloquent
+ * @mixin Eloquent
  */
 class Document extends Model
 {

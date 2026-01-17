@@ -30,7 +30,7 @@ use Plank\Mediable\MediableCollection;
  * @method static Builder<static>|Project withMedia($tags = [], bool $matchAll = false, bool $withVariants = false)
  * @method static Builder<static>|Project withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static Builder<static>|Project withMediaAndVariantsMatchAll($tags = [])
- * @method static Builder<static>|Project withMediaMatchAll(bool $tags = [], bool $withVariants = false)
+ * @method static Builder<static>|Project withMediaMatchAll(array|string  $tags = [], bool $withVariants = false)
  * @mixin Eloquent
  */
 class Project extends Model

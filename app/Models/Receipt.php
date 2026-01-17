@@ -32,12 +32,12 @@ use Plank\Mediable\MediableCollection;
  * @method static Builder<static>|Receipt withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static Builder<static>|Receipt withMediaAndVariantsMatchAll($tags = [])
  * @method static Builder<static>|Receipt withMediaMatchAll(bool $tags = [], bool $withVariants = false)
- * @property-read \App\Models\BookkeepingBooking|null $booking
- * @property-read \App\Models\CostCenter|null $cost_center
- * @property-read string $open_amount
- * @property-read Collection<int, \App\Models\Payment> $payable
+ * @property-read BookkeepingBooking|null $booking
+ * @property-read CostCenter|null $cost_center
+ * @property-read float $open_amount
+ * @property-read Collection<int, Payment> $payable
  * @property-read int|null $payable_count
- * @property-read \App\Models\NumberRangeDocumentNumber|null $range_document_number
+ * @property-read NumberRangeDocumentNumber|null $range_document_number
  * @mixin Eloquent
  */
 class Receipt extends Model
@@ -92,7 +92,7 @@ class Receipt extends Model
         return $this->belongsTo(Contact::class);
     }
 
-    public function getOpenAmountAttribute(): string
+    public function getOpenAmountAttribute(): float
     {
         return ($this->amount + $this->payable_sum_amount );
     }

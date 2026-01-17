@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Facades\WeasyPdfService;
-use Carbon\Carbon;
+use Eloquent;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -12,7 +12,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
+use Plank\Mediable\MediableCollection;
 use Plank\Mediable\MediableInterface;
 
 /**
@@ -32,13 +34,13 @@ use Plank\Mediable\MediableInterface;
  * @property-read array $invoice_address
  * @property-read Collection<int, OfferLine> $lines
  * @property-read int|null $lines_count
- * @property-read Collection<int, \Plank\Mediable\Media> $media
+ * @property-read Collection<int, Media> $media
  * @property-read int|null $media_count
  * @property-read Project|null $project
  * @property-read Tax|null $tax
- * @method static \Plank\Mediable\MediableCollection<int, static> all($columns = ['*'])
+ * @method static MediableCollection<int, static> all($columns = ['*'])
  * @method static Builder<static>|Offer byYear(int $year)
- * @method static \Plank\Mediable\MediableCollection<int, static> get($columns = ['*'])
+ * @method static MediableCollection<int, static> get($columns = ['*'])
  * @method static Builder<static>|Offer newModelQuery()
  * @method static Builder<static>|Offer newQuery()
  * @method static Builder<static>|Offer query()
@@ -48,8 +50,8 @@ use Plank\Mediable\MediableInterface;
  * @method static Builder<static>|Offer withMedia($tags = [], bool $matchAll = false, bool $withVariants = false)
  * @method static Builder<static>|Offer withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static Builder<static>|Offer withMediaAndVariantsMatchAll($tags = [])
- * @method static Builder<static>|Offer withMediaMatchAll(bool $tags = [], bool $withVariants = false)
- * @mixin \Eloquent
+ * @method static Builder<static>|Offer withMediaMatchAll(array|string  $tags = [], bool $withVariants = false)
+ * @mixin Eloquent
  */
 class Offer extends Model implements MediableInterface
 {
