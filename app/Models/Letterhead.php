@@ -17,7 +17,7 @@ use Plank\Mediable\Mediable;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Letterhead withMedia($tags = [], bool $matchAll = false, bool $withVariants = false)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Letterhead withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Letterhead withMediaAndVariantsMatchAll($tags = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Letterhead withMediaMatchAll(bool $tags = [], bool $withVariants = false)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Letterhead withMediaMatchAll(array|string  $tags = [], bool $withVariants = false)
  * @mixin \Eloquent
  */
 class Letterhead extends Model

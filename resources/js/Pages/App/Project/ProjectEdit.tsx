@@ -150,6 +150,7 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
                       src={droppedImage}
                       size="lg"
                       className="cursor-pointer"
+                      aria-label="Avatar ändern"
                     />
                   </Pressable>
                 </FileTrigger>

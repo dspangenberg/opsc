@@ -295,6 +295,7 @@ const ContactEditNew: React.FC<Props> = ({
                   <Pressable>
                     <Avatar
                       role="button"
+                      aria-label="Avatar ändern"
                       fullname={contact.full_name}
                       src={droppedImage}
                       size="lg"
