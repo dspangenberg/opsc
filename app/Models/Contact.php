@@ -99,7 +99,7 @@ class Contact extends Model
         'tax_id' => 0,
         'hourly' => 0,
         'register_court' => '',
-        'outturn_account_id' => 0,
+        'outturn_account_id' => null,
         'is_primary' => false,
         'register_number' => '',
         'vat_id' => '',
