@@ -6,6 +6,7 @@ use App\Facades\WeasyPdfService;
 use App\Http\Controllers\App\TimeController;
 use Carbon\Carbon;
 use Eloquent;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -46,7 +47,6 @@ use Spatie\Holidays\Holidays;
  * @property-read NumberRangeDocumentNumber|null $range_document_number
  * @property-read Tax|null $tax
  * @property-read InvoiceType|null $type
- *
  * @method static MediableCollection<int, static> all($columns = ['*'])
  * @method static Builder<static>|Invoice byYear(int $year)
  * @method static MediableCollection<int, static> get($columns = ['*'])
@@ -61,17 +61,13 @@ use Spatie\Holidays\Holidays;
  * @method static Builder<static>|Invoice withMediaMatchAll(bool $tags = [], bool $withVariants = false)
  * @method static Builder<static>|Invoice unpaid()
  * @method static Builder<static>|Invoice view($view)
- *
+ * @property-read BookkeepingBooking|null $booking
  * @mixin Eloquent
  */
 class Invoice extends Model implements MediableInterface
 {
     use Mediable;
 
-    /**
-     * @var mixed|null
-     */
-    public mixed $offer_number;
     protected $fillable = [
         'contact_id',
         'project_id',
@@ -115,6 +111,9 @@ class Invoice extends Model implements MediableInterface
         'amount_paid',
     ];
 
+    /**
+     * @throws Exception
+     */
     public static function createOrGetPdf(Invoice $invoice, bool $uploadToS3 = false): string
     {
         $invoice = Invoice::query()
@@ -218,8 +217,6 @@ class Invoice extends Model implements MediableInterface
         }
     }
 
-    /**
-     */
     public function release(): void
     {
         if (! $this->invoice_number) {
@@ -292,7 +289,7 @@ class Invoice extends Model implements MediableInterface
 
             // Convert date format from d.m.Y to Y-m-d for database
             $servicePeriodBegin = null;
-            if (!empty($line['service_period_begin'])) {
+            if (! empty($line['service_period_begin'])) {
                 $date = Carbon::createFromFormat('d.m.Y', $line['service_period_begin']);
                 if ($date instanceof Carbon) {
                     $servicePeriodBegin = $date->format('Y-m-d');
@@ -300,7 +297,7 @@ class Invoice extends Model implements MediableInterface
             }
 
             $servicePeriodEnd = null;
-            if (!empty($line['service_period_end'])) {
+            if (! empty($line['service_period_end'])) {
                 $date = Carbon::createFromFormat('d.m.Y', $line['service_period_end']);
                 if ($date instanceof Carbon) {
                     $servicePeriodEnd = $date->format('Y-m-d');
@@ -320,7 +317,7 @@ class Invoice extends Model implements MediableInterface
                 'tax' => $amount / 100 * $taxRate->rate,
                 'pos' => $line['type_id'] === 9 ? 999 : $line['pos'] ?? $index,
                 'service_period_begin' => $servicePeriodBegin,
-                'service_period_end' => $servicePeriodEnd
+                'service_period_end' => $servicePeriodEnd,
             ];
 
             if ($line['id'] > 0) {

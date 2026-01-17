@@ -55,18 +55,6 @@ Route::get('invoicing/invoices/{invoice}/line-duplicate/{invoiceLine}', [Invoice
     ->name('app.invoice.line-duplicate')
     ->middleware([HandlePrecognitiveRequests::class]);
 
-Route::get('invoicing/invoices/{invoice}/line-create', [InvoiceController::class, 'createLine'])
-    ->name('app.invoice.line-create')
-    ->middleware([HandlePrecognitiveRequests::class]);
-
-Route::get('invoicing/invoices/{invoice}/line-edit/{invoiceLine}', [InvoiceController::class, 'editLine'])
-    ->name('app.invoice.line-edit')
-    ->middleware([HandlePrecognitiveRequests::class]);
-
-Route::put('invoicing/invoices/{invoice}/line-update/{invoiceLine}', [InvoiceController::class, 'updateLine'])
-    ->name('app.invoice.line-update')
-    ->middleware([HandlePrecognitiveRequests::class]);
-
 Route::put('invoicing/invoices/lines-update/{invoice}', [InvoiceController::class, 'updateLines'])
     ->name('app.invoice.lines-update')
     ->middleware([HandlePrecognitiveRequests::class]);

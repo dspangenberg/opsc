@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import React, { createContext, useContext } from 'react'
+import { createContext, useContext } from 'react'
 import {
   Tab as AriaTab,
   TabList as AriaTabList,
@@ -29,9 +29,9 @@ const tabsVariants = cva('', {
 const tabListVariants = cva('flex', {
   variants: {
     variant: {
-      underlined: 'flex gap-4',
-      default: 'flex bg-muted rounded-lg p-1 w-fit',
-      classic: 'w-full p-0 justify-start rounded-none'
+      underlined: 'gap-4 w-full',
+      default: 'bg-muted rounded-lg p-1 w-fit',
+      classic: 'w-full rounded-none border-b border-border'
     }
   }
 })
@@ -46,7 +46,7 @@ const tabVariants = cva(
         default:
           'rounded-md px-3 py-1 data-[selected]:bg-background data-[selected]:text-foreground data-[selected]:shadow',
         classic:
-          'px-4 py-2 rounded-none border border-transparent border-b-border data-[selected]:border-border  data-[selected]:border-b-transparent  data-[selected]:rounded-t-md'
+          'px-4 py-2 rounded-none border border-transparent border-b-0 data-[selected]:border-border data-[selected]:border-b-background data-[selected]:rounded-t-md data-[selected]:bg-background data-[selected]:-mb-px'
       }
     }
   }

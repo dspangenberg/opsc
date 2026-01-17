@@ -7,7 +7,10 @@
 
 namespace App\Data;
 
+use DateTime;
+use Spatie\LaravelData\Attributes\WithTransformer;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\Transformers\DateTimeInterfaceTransformer;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
 #[TypeScript]
@@ -25,6 +28,7 @@ class ContactData extends Data
         public readonly ?int $title_id,
         public readonly ?int $salutation_id,
         public readonly ?string $creditor_number,
+        public readonly ?string $note,
         public readonly ?bool $is_favorite,
         public readonly ?bool $is_org,
         public readonly ?string $debtor_number,
@@ -38,8 +42,8 @@ class ContactData extends Data
         public readonly ?string $tax_number,
         public readonly ?string $formated_debtor_number,
         public readonly ?string $formated_creditor_number,
-        public readonly ?string $payment_deadline_id,
-        public readonly ?string $tax_id,
+        public readonly ?int $payment_deadline_id,
+        public readonly ?int $tax_id,
         public readonly ?string $iban,
         public readonly ?string $paypal_email,
         public readonly ?string $cc_name,
@@ -49,14 +53,19 @@ class ContactData extends Data
         public readonly ?bool $is_debtor,
         public readonly ?bool $is_archived,
         public readonly ?bool $is_creditor,
+        public readonly ?bool $has_dunning_block,
         public readonly ?string $primary_phone,
         public readonly ?int $cost_center_id,
         public readonly ?CostCenterData $cost_center,
+        public ?string $avatar_url,
 
         /** @var BookkeepingAccountData */
         public readonly ?object $outturn_account,
 
         public readonly ?CompanyData $company,
+
+        #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
+        public readonly ?DateTime $dob,
 
         /** @var ContactData[] */
         public readonly ?array $contacts,

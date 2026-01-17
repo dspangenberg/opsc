@@ -4,6 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OfferSection newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OfferSection newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|OfferSection query()
+ * @mixin \Eloquent
+ */
 class OfferSection extends Model
 {
     protected $fillable = [

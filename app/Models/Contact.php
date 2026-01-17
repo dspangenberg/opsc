@@ -19,8 +19,9 @@ use Maize\Markable\Mark;
 use Maize\Markable\Markable;
 use Maize\Markable\Models\Favorite;
 use MohamedSaid\Notable\Traits\HasNotables;
+use Plank\Mediable\Exceptions\MediaUrlException;
 use Plank\Mediable\MediableCollection;
-
+use Plank\Mediable\Mediable;
 /**
  * @property-read Collection<int, ContactAddress> $addresses
  * @property-read int|null $addresses_count
@@ -54,11 +55,15 @@ use Plank\Mediable\MediableCollection;
  * @method static Builder<static>|Contact view($view)
  * @method static Builder<static>|Contact whereHasMark(Mark $mark, Model $user, ?string $value = null)
  * @property-read string $primary_phone
+ * @property-read \App\Models\CostCenter|null $cost_center
+ * @property-read Collection<int, \MohamedSaid\Notable\Notable> $notables
+ * @property-read int|null $notables_count
+ * @method static Builder<static>|Contact search($search)
  * @mixin Eloquent
  */
 class Contact extends Model
 {
-    use Markable, HasNotables;
+    use Markable, HasNotables, Mediable;
 
     protected static array $marks = [
         Favorite::class,
@@ -75,6 +80,7 @@ class Contact extends Model
         'primary_phone',
         'company_name',
         'sales',
+        'avatar_url'
     ];
 
     protected $attributes = [
@@ -163,6 +169,16 @@ class Contact extends Model
     public function getIsFavoriteAttribute(): bool
     {
         return Favorite::has($this, auth()->user());
+    }
+
+    public function getAvatarUrlAttribute(): ?string
+    {
+        try {
+            $media = $this->firstMedia('avatar');
+            return $media?->getUrl();
+        } catch (MediaUrlException $e) {
+            return null;
+        }
     }
 
     public function getFormatedDebtorNumberAttribute(): ?string

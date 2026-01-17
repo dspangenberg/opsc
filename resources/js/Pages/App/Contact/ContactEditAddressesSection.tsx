@@ -41,35 +41,35 @@ export const ContactEditAddressesSection: React.FC<AddressesSectionProps> = ({
       {addresses && addresses.length > 0 ? (
         addresses.map((address, index) => (
           <React.Fragment key={address.id || `new-${index}`}>
-            <div className="col-span-8">
+            <div className="col-span-4">
               <FormSelect<App.Data.AddressCategoryData>
                 {...form.register(`addresses[${index}].address_category_id`)}
                 aria-label="Kategorie"
                 items={addressCategories}
               />
             </div>
-            <div className="col-span-14">
+            <div className="col-span-7">
               <FormTextArea
                 {...form.register(`addresses[${index}].address`)}
                 aria-label="Anschrift"
+                rows={2}
               />
             </div>
-            <div className="col-span-8" />
-            <div className="col-span-5">
-              <FormTextField {...form.register(`addresses[${index}].zip`)} aria-label="PLZ" />
-            </div>
-            <div className="col-span-9">
-              <FormTextField {...form.register(`addresses[${index}].city`)} aria-label="Ort" />
-            </div>
-            <div className="col-span-8" />
-            <div className="col-span-14">
+            <div className="col-span-3">
               <FormComboBox<App.Data.CountryData>
                 {...form.register(`addresses[${index}].country_id`)}
                 aria-label="Land"
+                itemName="iso_code"
                 items={countries}
               />
             </div>
-            <div className="col-span-2 flex items-center justify-center">
+            <div className="col-span-3">
+              <FormTextField {...form.register(`addresses[${index}].zip`)} aria-label="PLZ" />
+            </div>
+            <div className="col-span-6">
+              <FormTextField {...form.register(`addresses[${index}].city`)} aria-label="Ort" />
+            </div>
+            <div className="col-span-1 flex pt-1">
               <Button
                 type="button"
                 variant="ghost-destructive"

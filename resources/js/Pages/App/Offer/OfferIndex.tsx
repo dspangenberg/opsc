@@ -1,7 +1,7 @@
 import { Add01Icon, ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/core'
 import { getYear } from 'date-fns'
-import { debounce, sumBy } from 'lodash'
+import { debounce } from 'lodash'
 import * as React from 'react'
 import { useCallback, useEffect, useMemo } from 'react'
 import { DataTable } from '@/Components/DataTable'

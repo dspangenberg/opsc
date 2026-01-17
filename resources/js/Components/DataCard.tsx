@@ -149,7 +149,7 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
       >
         {hasValidChildren || forceChildren
           ? children
-          : !suppressEmptyText && <div className="text-foreground/40">{emptyText}</div>}
+          : !suppressEmptyText && <div className="text-foreground/40 text-sm">{emptyText}</div>}
       </div>
     </div>
   )

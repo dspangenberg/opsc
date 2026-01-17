@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  * @method static Builder<static>|Transaction applyDynamicFilters(\Illuminate\Http\Request $request, array $options = [])
  * @method static Builder<static>|Transaction applyFiltersFromObject(array|string $filters, array $options = [])
  * @method static Builder<static>|Transaction search($searchText)
+ * @method static Builder<static>|Transaction hidePrivate()
  * @mixin Eloquent
  */
 class Transaction extends Model

@@ -38,3 +38,5 @@ Route::post('contacts/{contact}/note-store', [ContactController::class, 'storeNo
     ->name('app.contact.note-store');
 
 Route::put('contacts/{contact}/archive', [ContactController::class, 'archiveToggle'])->name('app.contact.archive');
+
+Route::delete('contacts/{contact}', [ContactController::class, 'destroy'])->name('app.contact.delete');

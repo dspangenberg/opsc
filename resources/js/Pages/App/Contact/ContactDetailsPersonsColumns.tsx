@@ -64,6 +64,7 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
         <Avatar
           initials={row.original.initials.toUpperCase()}
           fullname={row.original.full_name}
+          src={row.original.avatar_url}
           size="md"
         />
       </div>

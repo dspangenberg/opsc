@@ -24,7 +24,7 @@ export const FormGrid: React.FC<FormLayoutGroupProps> = ({
   margin = true,
   title = '',
   className = '',
-  titleClass = 'font-medium text-sm text-black mt-4 pb-3 border-b',
+  titleClass = '',
   children
 }) => {
   const gridCols = {
@@ -36,7 +36,12 @@ export const FormGrid: React.FC<FormLayoutGroupProps> = ({
   return (
     <div className="flex-1 border-accent">
       {title !== '' && (
-        <div className={cn('flex items-center px-4', titleClass)}>
+        <div
+          className={cn(
+            'mt-4 flex items-center border-b px-4 pb-3 font-medium text-black text-sm',
+            titleClass
+          )}
+        >
           <div className="flex-1">{title}</div>
           <div className="flex-none">{action}</div>
         </div>

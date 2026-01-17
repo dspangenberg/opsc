@@ -41,6 +41,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Maize\Markable\Models\Favorite;
+use Plank\Mediable\Facades\MediaUploader;
 use Stevebauman\Purify\Facades\Purify;
 use Throwable;
 
@@ -121,7 +122,7 @@ class ContactController extends Controller
     public function store(ContactStoreRequest $request)
     {
         $contact = Contact::create($request->validated());
-        return redirect()->route('app.contact.details', ['contact' => $contact->id]);
+        return redirect()->route('app.contact.edit', ['contact' => $contact->id]);
     }
 
     public function storePerson(ContactPersonStoreRequest $request)
@@ -129,7 +130,7 @@ class ContactController extends Controller
         $request->validated();
         $contact = Contact::create($request->validated());
 
-        return redirect()->route('app.contact.details', ['contact' => $contact->id]);
+        return redirect()->route('app.contact.edit', ['contact' => $contact->id]);
     }
 
     public function archiveToggle(Contact $contact) {
@@ -196,7 +197,7 @@ class ContactController extends Controller
         $cost_centers = CostCenter::orderBy('name')->get();
         $mail_categories = EmailCategory::orderBy('name')->get();
 
-        return Inertia::modal('App/Contact/ContactEdit', [
+        return Inertia::render('App/Contact/ContactEditNew', [
             'contact' => ContactData::from($contact),
             'countries' => CountryData::collect($countries),
             'payment_deadlines' => PaymentDeadlineData::collect($payment_deadlines),
@@ -208,7 +209,7 @@ class ContactController extends Controller
             'phone_categories' => PhoneCategoryData::collect($phone_categories),
             'bookkeeping_accounts' => BookkeepingAccountData::collect($bookkeeping_accounts),
             'cost_centers' => CostCenterData::collect($cost_centers),
-        ])->baseRoute('app.contact.details', ['contact' => $contact->id]);
+        ]);
     }
 
     /**
@@ -216,9 +217,12 @@ class ContactController extends Controller
      */
     public function update(ContactUpdateRequest $request, Contact $contact)
     {
+
+
+
         DB::transaction(function () use ($request, $contact) {
-            $contactData = $request->except(['mails', 'phones']);
-            $contact->update($contactData);
+            $data = $request->safe()->except('avatar', 'mails', 'phones', 'addresses');
+            $contact->update($data);
 
             if ($request->has('mails')) {
                 $this->updateContactMails($contact, $request->input('mails', []));
@@ -232,6 +236,16 @@ class ContactController extends Controller
                 $this->updateContactAddresses($contact, $request->input('addresses', []));
             }
         });
+
+        if ($request->hasFile('avatar')) {
+            $contact->detachMediaTags('avatar');
+
+            $media = MediaUploader::fromSource($request->file('avatar'))
+                ->toDestination('s3', 'avatars/contacts')
+                ->upload();
+
+            $contact->attachMedia($media, 'avatar');
+        }
 
         $contact->load(['mails', 'title', 'salutation', 'addresses', 'phones']);
 
@@ -247,9 +261,7 @@ class ContactController extends Controller
             $contact->createBookkeepingAccount();
         }
 
-        return Inertia::render('App/Contact/ContactDetails', [
-            'contact' => ContactData::from($contact),
-        ]);
+       return redirect(route('app.contact.details', ['contact' => $contact]));
     }
 
     public function persons(Contact $contact)
@@ -275,6 +287,13 @@ class ContactController extends Controller
         $contact->addNote(Purify::clean($request->validated('note')), auth()->user());
 
         return redirect()->route('app.contact.details', ['contact' => $contact->id]);
+    }
+
+
+    public function destroy(Contact $contact)
+    {
+        $contact->delete();
+        return redirect()->route('app.contact.index');
     }
 
     private function updateContactMails(Contact $contact, array $mailsData): void
