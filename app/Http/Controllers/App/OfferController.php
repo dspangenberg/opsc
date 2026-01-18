@@ -9,6 +9,7 @@ namespace App\Http\Controllers\App;
 
 use App\Data\ContactData;
 use App\Data\OfferData;
+use App\Data\OfferSectionData;
 use App\Data\ProjectData;
 use App\Data\TaxData;
 use App\Data\TextModuleData;
@@ -22,6 +23,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceLine;
 use App\Models\Offer;
 use App\Models\OfferLine;
+use App\Models\OfferSection;
 use App\Models\Project;
 use App\Models\Tax;
 use App\Models\TextModule;
@@ -290,6 +292,7 @@ class OfferController extends Controller
     public function terms(Offer $offer)
     {
         $textModules = TextModule::orderBy('title')->get();
+        $sections = OfferSection::orderBy('pos')->get();
 
         $offer
             ->load('contact')
@@ -307,6 +310,7 @@ class OfferController extends Controller
         return Inertia::render('App/Offer/OfferTerms', [
             'offer' => OfferData::from($offer),
             'textModules' => TextModuleData::collect($textModules),
+            'sections' => OfferSectionData::collect($sections),
         ]);
     }
 

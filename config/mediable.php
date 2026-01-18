@@ -95,6 +95,7 @@ return [
                 'image/png',
                 'image/gif',
                 'image/heic',
+                'image/webp',
             ],
             'extensions' => [
                 'jpg',
@@ -102,6 +103,7 @@ return [
                 'png',
                 'gif',
                 'heic',
+                'webp',
             ],
         ],
         Plank\Mediable\Media::TYPE_IMAGE_VECTOR => [

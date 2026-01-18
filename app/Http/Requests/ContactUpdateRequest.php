@@ -33,7 +33,8 @@ class ContactUpdateRequest extends FormRequest
             'is_primary' => ['nullable', 'boolean'],
             'dob' => ['nullable', 'date'],
             'note' => ['nullable', 'string'],
-
+            'avatar' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:51200'],
+            
             // E-Mail-Validierung hinzufügen
             'mails' => ['nullable', 'array'],
             'mails.*.id' => ['nullable', 'integer'],

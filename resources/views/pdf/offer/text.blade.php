@@ -4,7 +4,7 @@
     </td>
 
     <td colspan="4" class="mdx-cell">
-        {!! md(nl2br($line->text))  !!}
+        {!! md($line->text)  !!}
     </td>
 
     <td />
