@@ -11,7 +11,6 @@ import '@fontsource/clear-sans/400.css'
 import '@fontsource/clear-sans/500.css'
 import '@fontsource/clear-sans/700.css'
 
-import 'mapbox-gl/dist/mapbox-gl.css'
 import { createInertiaApp } from '@inertiajs/react'
 import * as Sentry from '@sentry/react'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'

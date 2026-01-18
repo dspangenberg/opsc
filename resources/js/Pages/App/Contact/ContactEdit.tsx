@@ -198,7 +198,7 @@ const ContactEdit: React.FC<Props> = ({
   )
 
   // Transform empty strings to null for optional ID fields before submit
-  form.transform((data) => ({
+  form.transform(data => ({
     ...data,
     outturn_account_id: !data.outturn_account_id ? null : data.outturn_account_id,
     cost_center_id: !data.cost_center_id ? null : data.cost_center_id
@@ -289,7 +289,7 @@ const ContactEdit: React.FC<Props> = ({
             <div className="col-span-2 inline-flex items-center justify-center">
               <div>
                 <FileTrigger
-                  acceptedFileTypes={['image/png', 'image/jpeg']}
+                  acceptedFileTypes={['image/png', 'image/jpeg', 'image/webp']}
                   onSelect={onSelectHandler}
                 >
                   <Pressable>

@@ -140,7 +140,7 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
             <div className="col-span-2 inline-flex items-center justify-center">
               <div>
                 <FileTrigger
-                  acceptedFileTypes={['image/png', 'image/jpeg']}
+                  acceptedFileTypes={['image/png', 'image/jpeg', 'image/webp']}
                   onSelect={onSelectHandler}
                 >
                   <Pressable>

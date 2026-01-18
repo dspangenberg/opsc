@@ -1,5 +1,7 @@
 import type * as React from 'react'
 import { useEffect } from 'react'
+import { MarkdownEditor } from '@/Components/MarkdownEditor'
+import { Button } from '@/Components/twc-ui/button'
 import { useFormContext } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormNumberField } from '@/Components/twc-ui/form-number-field'
@@ -37,6 +39,13 @@ export const OfferLinesEditorDefaultLine: React.FC<OfferLinesEditorDefaultLinePr
     }
   }, [offerLine.type_id, quantityField.value, priceField.value])
 
+  const handleMarkdownEdit = async () => {
+    const content = await MarkdownEditor.call({ content: textField.value })
+    if (content) {
+      form.setData(textField.name as keyof App.Data.OfferData, content)
+    }
+  }
+
   return (
     <OfferLinesEditorLineContainer offerLine={offerLine}>
       <FormGrid>
@@ -56,6 +65,12 @@ export const OfferLinesEditorDefaultLine: React.FC<OfferLinesEditorDefaultLinePr
         </div>
         <div className="col-span-10 space-y-1.5">
           <FormTextArea aria-label="Beschreibung" autoSize rows={2} {...textField} />
+          <Button
+            variant="link"
+            onClick={() => handleMarkdownEdit()}
+            className="px-0 font-normal"
+            title="Markdown im Editor bearbeiten"
+          />
         </div>
         <div className="col-span-4">
           <FormNumberField aria-label="Einzelpreis" {...priceField} />

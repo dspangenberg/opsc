@@ -1,4 +1,6 @@
 import type * as React from 'react'
+import { MarkdownEditor } from '@/Components/MarkdownEditor'
+import { Button } from '@/Components/twc-ui/button'
 import { useFormContext } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextArea } from '@/Components/twc-ui/form-text-area'
@@ -22,6 +24,13 @@ export const OfferLinesEditorTextLine: React.FC<InvoiceLinesEditorProps> = ({
 
   const textField = form.register(`lines[${index}].text`)
 
+  const handleMarkdownEdit = async () => {
+    const content = await MarkdownEditor.call({ content: textField.value })
+    if (content) {
+      form.setData(textField.name as keyof App.Data.OfferData, content)
+    }
+  }
+
   return (
     <OfferLinesEditorLineContainer offerLine={offerLine}>
       <FormGrid>
@@ -29,6 +38,12 @@ export const OfferLinesEditorTextLine: React.FC<InvoiceLinesEditorProps> = ({
 
         <div className="col-span-10">
           <FormTextArea aria-label="Beschreibung" rows={2} {...textField} />
+          <Button
+            variant="link"
+            onClick={() => handleMarkdownEdit()}
+            className="px-0 font-normal"
+            title="Markdown im Editor bearbeiten"
+          />
         </div>
         <div className="col-span-8" />
       </FormGrid>
