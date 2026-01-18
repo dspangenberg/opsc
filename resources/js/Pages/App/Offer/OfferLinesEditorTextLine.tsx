@@ -6,17 +6,14 @@ import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextArea } from '@/Components/twc-ui/form-text-area'
 import { OfferLinesEditorLineContainer } from './OfferLinesEditorLineContainer'
 
-interface InvoiceLinesEditorProps {
+interface OfferLinesEditorProps {
   offerLine: App.Data.OfferLineData
   offer: App.Data.OfferData
   index: number
 }
 
-export const OfferLinesEditorTextLine: React.FC<InvoiceLinesEditorProps> = ({
-  offerLine,
-  index
-}) => {
-  const form = useFormContext<App.Data.InvoiceData>()
+export const OfferLinesEditorTextLine: React.FC<OfferLinesEditorProps> = ({ offerLine, index }) => {
+  const form = useFormContext<App.Data.OfferData>()
 
   if (!form) {
     throw new Error('InvoiceLinesEditorTextLine must be used within a Form context')
@@ -26,7 +23,7 @@ export const OfferLinesEditorTextLine: React.FC<InvoiceLinesEditorProps> = ({
 
   const handleMarkdownEdit = async () => {
     const content = await MarkdownEditor.call({ content: textField.value })
-    if (content) {
+    if (typeof content === 'string') {
       form.setData(textField.name as keyof App.Data.OfferData, content)
     }
   }

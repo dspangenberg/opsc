@@ -31,7 +31,7 @@ const MarkdownEditorComponent: React.FC<MarkdownEditorComponentProps> = ({
   onConfirm,
   content
 }) => {
-  const [contentText, setContentText] = useState('')
+  const [contentText, setContentText] = useState(content)
   const [isDirty, setIsDirty] = useState(false)
   const handleUpdate = (content: string) => {
     setContentText(content)

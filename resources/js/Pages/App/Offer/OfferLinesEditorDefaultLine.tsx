@@ -41,7 +41,7 @@ export const OfferLinesEditorDefaultLine: React.FC<OfferLinesEditorDefaultLinePr
 
   const handleMarkdownEdit = async () => {
     const content = await MarkdownEditor.call({ content: textField.value })
-    if (content) {
+    if (typeof content === 'string') {
       form.setData(textField.name as keyof App.Data.OfferData, content)
     }
   }
