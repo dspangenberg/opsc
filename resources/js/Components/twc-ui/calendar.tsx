@@ -213,6 +213,7 @@ const CalendarFooter = ({
           title={resetButtonText}
           onClick={() => {
             state.setValue(null)
+            onChange?.(null)
           }}
           slot={null}
         />
