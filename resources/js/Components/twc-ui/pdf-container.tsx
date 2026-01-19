@@ -7,7 +7,6 @@ import { LogoSpinner } from './logo-spinner'
 import { Separator } from './separator'
 import 'react-pdf/dist/Page/TextLayer.css'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
-
 import {
   ArrowDown01Icon,
   ArrowUp01Icon,
@@ -19,6 +18,13 @@ import {
   SquareArrowDiagonal02Icon
 } from '@hugeicons/core-free-icons'
 import { TextCursor } from 'lucide-react'
+import { useFileDownload } from '@/Hooks/use-file-download'
+import { cn } from '@/Lib/utils'
+import { Button } from './button'
+import { DropdownButton } from './dropdown-button'
+import { MenuItem } from './menu'
+import { ToggleButtonGroup, ToggleButtonGroupItem } from './toggle-button-group'
+import { Toolbar } from './toolbar'
 
 // Native implementation of useToggle
 const useToggle = (initialValue = false): [boolean, (value?: boolean) => void] => {
@@ -65,14 +71,6 @@ const useFullscreen = (
 
   return isFullscreen
 }
-
-import { useFileDownload } from '@/Hooks/use-file-download'
-import { cn } from '@/Lib/utils'
-import { Button } from './button'
-import { DropdownButton } from './dropdown-button'
-import { MenuItem } from './menu'
-import { ToggleButtonGroup, ToggleButtonGroupItem } from './toggle-button-group'
-import { Toolbar } from './toolbar'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
@@ -145,12 +143,12 @@ export const PdfContainer: React.FC<Props> = ({
     }
   }
 
-  const onDocumentLoadSuccess = async (document: PDFDocumentProxy): Promise<void> => {
+  const onDocumentLoadSuccess = (document: PDFDocumentProxy): void => {
     setNumPages(document.numPages)
     pdfRef.current = document
     setScale(1.25)
     setIsLoading(false)
-    await checkFitToPageVisibility()
+    void checkFitToPageVisibility()
   }
 
   const calculateFitToWidth = useCallback(async () => {

@@ -1,5 +1,3 @@
-'use client'
-
 import { type CalendarDate, getLocalTimeZone, today } from '@internationalized/date'
 import { ChevronLeft, ChevronRight, Dot } from 'lucide-react'
 import type React from 'react'

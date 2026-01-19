@@ -34871,6 +34871,11 @@ namespace  {
 }
 
 
+namespace . {
+    /**
+     * @mixin .\     */
+    class Facades extends .\ {}
+}
 
 
 namespace Illuminate\Support {

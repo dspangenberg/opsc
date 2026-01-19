@@ -18,10 +18,12 @@ import {
   FirstBracketIcon,
   HeadingIcon,
   RowInsertIcon,
+  ScissorIcon,
   TextAlignJustifyLeftIcon,
   TextVerticalAlignmentIcon
 } from '@hugeicons/core-free-icons'
 import { type FC, useEffect } from 'react'
+import { PageBreakIcon } from '@/Assets/Icons/PageBreakIcon'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
@@ -217,12 +219,13 @@ export const OfferLinesEditor: FC<InvoiceLinesEditorProps> = ({ offer }) => {
             />
 
             <MenuItem icon={HeadingIcon} title="Überschrift" onClick={() => addLine(2)} />
-            <MenuItem icon={TextAlignJustifyLeftIcon} title="Text" onClick={() => addLine(4)} />
             <MenuItem
-              icon={TextVerticalAlignmentIcon}
-              title="Seitenumbruch"
-              onClick={() => addLine(8)}
+              icon={TextAlignJustifyLeftIcon}
+              separator
+              title="Text"
+              onClick={() => addLine(4)}
             />
+            <MenuItem icon={PageBreakIcon} title="Seitenumbruch" onClick={() => addLine(8)} />
           </SplitButton>
         </div>
         <div className="flex-none items-center justify-end space-x-2 px-2">

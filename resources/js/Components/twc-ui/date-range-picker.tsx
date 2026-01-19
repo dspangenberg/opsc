@@ -1,3 +1,5 @@
+'use client'
+
 import { Calendar04Icon } from '@hugeicons/core-free-icons'
 import type { DateValue } from '@internationalized/date'
 import type React from 'react'
@@ -71,7 +73,7 @@ const DateRangePicker = ({
       isInvalid={hasError}
       value={value}
       onChange={onChange}
-      validationBehavior="native"
+      validationBehavior="aria"
       {...props}
     >
       <Label value={label} />

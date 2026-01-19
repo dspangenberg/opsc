@@ -15,6 +15,7 @@
     "laravel/framework": "^12",
     "laravel/sanctum": "^4.1.1",
     "laravel/tinker": "^2.10.1",
+    "laravel/wayfinder": "dev-next",
     "league/csv": "^9.24.1",
     "league/flysystem-aws-s3-v3": "^3.29",
     "maize-tech/laravel-markable": "^2.3.1",

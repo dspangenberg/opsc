@@ -39,7 +39,7 @@ export const OfferLinesEditorTextLine: React.FC<OfferLinesEditorProps> = ({ offe
             variant="link"
             onClick={() => handleMarkdownEdit()}
             className="px-0 font-normal"
-            title="Markdown im Editor bearbeiten"
+            title="Im Markdown-Editor bearbeiten"
           />
         </div>
         <div className="col-span-8" />

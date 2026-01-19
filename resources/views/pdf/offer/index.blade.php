@@ -176,5 +176,14 @@
         {!!  md($offer->additional_text) !!}
     @endif
 
+    @if($attachments)
+        <h5>Anlagen</h5>
+    <ul>
+        @foreach($attachments as $attachment)
+            <li>{{$attachment->document->title}}</li>
+        @endforeach
+    </ul>
+    @endif
+
 
 </x-layout>

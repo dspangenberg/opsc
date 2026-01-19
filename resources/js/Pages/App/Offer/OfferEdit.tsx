@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/react'
-import type * as React from 'react'
+import * as React from 'react'
 import { useState } from 'react'
 import { Button } from '@/Components/twc-ui/button'
 import { ExtendedDialog as Dialog } from '@/Components/twc-ui/extended-dialog'
@@ -19,6 +19,7 @@ interface Props extends PageProps {
 
 const OfferEdit: React.FC<Props> = ({ offer, contacts, projects, taxes }) => {
   const [isOpen, setIsOpen] = useState(true)
+  const ref = React.useRef<HTMLDivElement>(null)
 
   const form = useForm<App.Data.OfferData>(
     'form-offer-edit',
@@ -68,9 +69,9 @@ const OfferEdit: React.FC<Props> = ({ offer, contacts, projects, taxes }) => {
         <FormGrid>
           <div className="col-span-24">
             <FormComboBox<App.Data.ContactData>
+              autoFocus
               label="Kunde"
               {...form.register('contact_id')}
-              autoFocus
               itemName="reverse_full_name"
               items={contacts}
             />

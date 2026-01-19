@@ -32,7 +32,7 @@ const Radio = ({ className, children, ...props }: AriaRadioProps) => (
       <>
         <span
           className={cn(
-            'flex aspect-square size-4 items-center justify-center rounded-full border border-border text-primary ring-offset-background',
+            'flex aspect-square size-4 items-center justify-center rounded-full border border-border bg-background text-primary ring-offset-background',
             /* Focus */
             'group-data-focused/radio:outline-none',
             /* Focus Visible */

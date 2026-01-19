@@ -119,12 +119,12 @@ export const OfferDetailsAttachments: FC<OfferDetailsAttachmentsProps> = ({
             />
           </div>
         </div>
-        <div className="flex w-full flex-1 flex-col space-y-2 truncate hyphens-auto rounded-md border border-border/50 bg-background px-2.5 pt-1.5">
+        <div className="flex w-full flex-1 flex-col space-y-2 overflow-hidden rounded-md border border-border/50 bg-background px-2.5 pt-1.5">
           <GridList
             aria-label="Attachments"
             items={list.items}
             selectionMode="none"
-            className="divide-y border-0 p-0"
+            className="min-w-0 divide-y overflow-visible border-0 p-0"
             dragAndDropHooks={dragAndDropHooks}
             renderEmptyState={() => (
               <p className="pt-2 text-muted-foreground text-sm">Keine Anlagen vorhanden</p>
@@ -133,20 +133,20 @@ export const OfferDetailsAttachments: FC<OfferDetailsAttachmentsProps> = ({
             {(item: App.Data.AttachmentData) => (
               <GridListItem
                 textValue={item.document.title}
-                className="gap-0 rounded-none border-0 p-0 py-0.5 opacity-100"
+                className="gap-1 rounded-none border-0 px-0! py-1 opacity-100"
                 onDoubleClick={() => handleFileShow(item.id)}
                 isDisabled={!offer.is_draft}
               >
-                <div>{item.document.title}</div>
-                <div className="ml-auto flex items-center gap-0.5">
-                  <Button
-                    variant="ghost-destructive"
-                    size="icon-sm"
-                    icon={Cancel01Icon}
-                    isDisabled={!offer.is_draft}
-                    onPress={() => handleRemove(item)}
-                  />
-                </div>
+                <span className="max-w-67.5 flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
+                  {item.document.title}
+                </span>
+                <Button
+                  variant="ghost-destructive"
+                  size="icon-sm"
+                  icon={Cancel01Icon}
+                  isDisabled={!offer.is_draft}
+                  onPress={() => handleRemove(item)}
+                />
                 <Button
                   type="button"
                   variant="ghost"

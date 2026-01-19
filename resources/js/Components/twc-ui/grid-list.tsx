@@ -9,7 +9,7 @@ import { tv } from 'tailwind-variants'
 import { focusRing } from '@/Lib/utils'
 
 const gridListStyles = tv({
-  base: 'flex flex-col gap-0.5 overflow-auto rounded-lg border bg-background p-1 outline-none',
+  base: 'flex min-w-0 flex-col gap-0.5 overflow-auto rounded-lg border bg-background p-1 outline-none',
   variants: {
     isFocusVisible: {
       true: 'ring-2 ring-ring ring-offset-2 ring-offset-background'
@@ -36,7 +36,7 @@ export const GridList = <T extends object>({ children, className, ...props }: Gr
 
 const gridListItemStyles = tv({
   extend: focusRing,
-  base: 'group relative flex cursor-default select-none items-center gap-3 rounded-md px-3 py-2 text-sm outline-none transition-colors',
+  base: 'group relative flex min-w-0 cursor-default select-none items-center gap-3 rounded-md px-3 py-2 text-sm outline-none transition-colors',
   variants: {
     isSelected: {
       true: 'bg-accent text-accent-foreground'

@@ -1,7 +1,10 @@
+import { DashedLine01Icon, ScissorIcon } from '@hugeicons/core-free-icons'
 import type * as React from 'react'
 import { useCallback, useEffect, useRef } from 'react'
 import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
+import { PageBreakIcon } from '@/Assets/Icons/PageBreakIcon'
+import { Icon } from '@/Components/twc-ui/icon'
 import {
   Table as ShadcnTable,
   TableBody as ShadcnTableBody,
@@ -222,9 +225,14 @@ export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
 
   if (line.type_id === 8) {
     return (
-      <TableRow>
-        <TableCell colSpan={3} />
-        <TableCell colSpan={7}>=== Seitenumbruch ====================</TableCell>
+      <TableRow className="border-t [&_th]:border-t [&_th]:border-dashed">
+        <TableHead align="right">Pos</TableHead>
+        <TableHead colSpan={2}>Menge</TableHead>
+        <TableHead>Beschreibung</TableHead>
+        <TableHead align="right">Einzelpreis</TableHead>
+        <TableHead align="right">Gesamt</TableHead>
+        <TableHead align="center">USt.</TableHead>
+        <TableHead />
       </TableRow>
     )
   }
