@@ -103,16 +103,13 @@ class Offer extends Model implements MediableInterface
 
         $taxes = $offer->taxBreakdown($offer->lines);
 
-        $offer->lines = $offer->lines->filter(function ($line) {
-            return $line->type_id !== 9;
-        });
 
         $pdfConfig = [];
         $pdfConfig['pdfA'] = ! $offer->is_draft;
         $pdfConfig['hide'] = true;
         $pdfConfig['watermark'] = $offer->is_draft ? 'ENTWURF' : '';
 
-        $attachments = $offer->attachments->map(function ($attachment) {
+        $attachments = $offer->attachments()->with('document')->get()->map(function ($attachment) {
             return $attachment->document_id;
         });
 
@@ -120,6 +117,7 @@ class Offer extends Model implements MediableInterface
             [
                 'offer' => $offer,
                 'taxes' => $taxes,
+                'attachments' => $offer->attachments()->orderBy('pos')->with('document')->get()
             ], $pdfConfig, $attachments->toArray());
     }
 

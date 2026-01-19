@@ -1,3 +1,5 @@
+'use client'
+
 import { SearchIcon, XIcon } from 'lucide-react'
 import type React from 'react'
 import {

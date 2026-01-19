@@ -71,7 +71,7 @@ const DateRangePicker = ({
       isInvalid={hasError}
       value={value}
       onChange={onChange}
-      validationBehavior="native"
+      validationBehavior="aria"
       {...props}
     >
       <Label value={label} />

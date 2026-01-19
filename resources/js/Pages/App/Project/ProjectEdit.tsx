@@ -11,7 +11,7 @@ import '@mdxeditor/editor/style.css'
 import { Pressable } from 'react-aria-components'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Avatar } from '@/Components/twc-ui/avatar'
-import { FileTrigger } from '@/Components/twc-ui/FileTrigger'
+import { FileTrigger } from '@/Components/twc-ui/file-trigger'
 import { FormCard } from '@/Components/twc-ui/form-card'
 import { FormComboBox } from '@/Components/twc-ui/form-combo-box'
 import { FormSelect } from '@/Components/twc-ui/form-select'
@@ -31,14 +31,6 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
   const [droppedImage, setDroppedImage] = useState<string | undefined>(
     project.avatar_url as string | undefined
   )
-
-  useEffect(() => {
-    return () => {
-      if (droppedImage?.startsWith('blob:')) {
-        URL.revokeObjectURL(droppedImage)
-      }
-    }
-  }, [droppedImage])
 
   const form = useForm<ProjectFormData>(
     'form-project-edit',

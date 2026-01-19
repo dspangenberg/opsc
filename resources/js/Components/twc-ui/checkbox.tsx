@@ -47,7 +47,7 @@ const BaseCheckbox = ({ className, children, ...props }: AriaCheckboxProps) => (
       <>
         <div
           className={cn(
-            'flex size-4 shrink-0 items-center justify-center rounded-sm border border-input text-base text-current',
+            'flex size-4 shrink-0 items-center justify-center rounded-sm border border-input bg-background text-base text-current',
             /* Focus Visible */
             'group-data-focus-visible/checkbox:outline-none group-data-focus-visible/checkbox:ring-1 group-data-focus-visible/checkbox:ring-ring',
             /* Selected */
@@ -173,7 +173,7 @@ const Checkbox = ({
         <>
           <div
             className={cn(
-              'flex size-4 shrink-0 items-center justify-center rounded-sm border border-input text-base text-current',
+              'flex size-4 shrink-0 items-center justify-center rounded-sm border border-input bg-background text-base text-current',
               /* Focus Visible */
               'group-data-focus-visible/checkbox:outline-none group-data-focus-visible/checkbox:ring-1 group-data-focus-visible/checkbox:ring-ring',
               /* Selected */

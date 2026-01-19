@@ -59,10 +59,7 @@ const MarkdownEditorComponent: React.FC<MarkdownEditorComponentProps> = ({
             title="Markdown übernehmen"
             variant="default"
             onPress={() => {
-              dialogRenderProps.close()
-              setTimeout(() => {
-                onConfirm(contentText)
-              }, 50)
+              onConfirm(contentText)
             }}
           />
         </div>
@@ -72,7 +69,7 @@ const MarkdownEditorComponent: React.FC<MarkdownEditorComponentProps> = ({
         markdown={(content as string) || ''}
         autoFocus
         className="isolated w-full rounded-md border border-border bg-background p-2"
-        contentEditableClassName="font-sans text-base isolated md-editor"
+        contentEditableClassName="font-sans text-base isolated md-editor z-50"
         plugins={[
           headingsPlugin(),
           markdownShortcutPlugin(),

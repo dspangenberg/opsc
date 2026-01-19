@@ -79,7 +79,7 @@ const OfferTerms: React.FC<OfferTermsProps> = ({ children, offer, textModules })
           itemName="title"
           onChange={value => onInsertTextModule(value as number)}
         />
-        <Form form={form}>
+        <Form form={form} onSubmitted={() => setEditMode(false)}>
           <MDXEditor
             markdown={(offer.additional_text as string) || ''}
             readOnly={!editMode}
