@@ -1,5 +1,3 @@
-'use client'
-
 import { Calendar04Icon } from '@hugeicons/core-free-icons'
 import type { DateValue } from '@internationalized/date'
 import type React from 'react'
