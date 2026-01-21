@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PagebreakEnum;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -18,6 +19,7 @@ class OfferSection extends Model
         'is_required',
         'pos',
         'default_content',
+        'pagebreak',
     ];
 
     protected $attributes = [
@@ -28,6 +30,7 @@ class OfferSection extends Model
     {
         return [
             'is_required' => 'boolean',
+            'pagebreak' => PagebreakEnum::class,
         ];
     }
 }

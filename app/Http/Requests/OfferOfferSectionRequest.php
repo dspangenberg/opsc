@@ -2,18 +2,17 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\PagebreakEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class OfferOfferSectionRequest extends FormRequest
 {
     public function rules(): array
     {
         return [
-            'pos' => ['required', 'integer'],
-            'title' => ['nullable'],
-            'section_id' => ['required'],
             'content' => ['required', 'string'],
-            'pagebreak' => ['nullable', 'boolean'],
+            'pagebreak' => ['nullable', Rule::enum(PagebreakEnum::class)],
         ];
     }
 

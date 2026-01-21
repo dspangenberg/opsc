@@ -38,7 +38,7 @@ const handleDeleteContact = async (row: App.Data.ContactData) => {
 const RowActions = ({ row }: { row: Row<App.Data.ContactData> }) => {
   return (
     <div className="mx-auto">
-      <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
+      <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon} title="Weitere Optionen">
         <MenuItem
           icon={Delete03Icon}
           title="Löschen"

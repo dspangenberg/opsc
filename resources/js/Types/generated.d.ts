@@ -434,15 +434,13 @@ section_id: number;
 pos: number;
 title: string | null;
 content: string | null;
-pagebreak: boolean | null;
+pagebreak: App.Enums.PagebreakEnum | null;
 };
 export type OfferSectionData = {
 id: number | null;
-is_required: boolean;
 name: string;
-title: string | null;
 default_content: string | null;
-pos: number;
+pagebreak: App.Enums.PagebreakEnum | null;
 };
 export type PaymentData = {
 id: number | null;
@@ -677,4 +675,7 @@ initials: string;
 user_agent: string | null;
 email_verified_at: string | null;
 };
+}
+declare namespace App.Enums {
+export type PagebreakEnum = 'after' | 'before' | 'both' | 'none';
 }

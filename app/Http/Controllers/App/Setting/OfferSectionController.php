@@ -12,7 +12,7 @@ class OfferSectionController extends Controller
 {
     public function index()
     {
-        $sections = OfferSection::query()->orderBy('pos')->orderBy('id')->paginate();
+        $sections = OfferSection::query()->orderBy('name')->orderBy('id')->paginate();
         return Inertia::render('App/Setting/OfferSection/OfferSectionIndex', [
             'sections' => OfferSectionData::collect($sections),
         ]);

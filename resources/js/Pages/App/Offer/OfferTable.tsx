@@ -1,10 +1,7 @@
-import { DashedLine01Icon, ScissorIcon } from '@hugeicons/core-free-icons'
 import type * as React from 'react'
 import { useCallback, useEffect, useRef } from 'react'
 import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
-import { PageBreakIcon } from '@/Assets/Icons/PageBreakIcon'
-import { Icon } from '@/Components/twc-ui/icon'
 import {
   Table as ShadcnTable,
   TableBody as ShadcnTableBody,

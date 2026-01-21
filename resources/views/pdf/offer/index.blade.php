@@ -1,3 +1,4 @@
+@php use App\Enums\PagebreakEnum; @endphp
 <x-layout :config="$config" :styles="$styles" :footer="$pdf_footer">
 
     <div id="recipient">
@@ -173,12 +174,15 @@
 
     @foreach($offer->sections as $section)
         @if($section->content)
-            @if($section->pagebreak)
+            @if($section->pagebreak === PagebreakEnum::BEFORE || $section->pagebreak === PagebreakEnum::BOTH)
                 <div class="page-break"></div>
             @endif
             <div>
                 {!!  md($section->content) !!}
             </div>
+            @if($section->pagebreak === PagebreakEnum::AFTER || $section->pagebreak === PagebreakEnum::BOTH)
+                <div class="page-break"></div>
+            @endif
         @endif
     @endforeach
 
@@ -189,11 +193,11 @@
 
     @if($attachments)
         <h5>Anlagen</h5>
-    <ul>
-        @foreach($attachments as $attachment)
-            <li>{{$attachment->document->title}}</li>
-        @endforeach
-    </ul>
+        <ul>
+            @foreach($attachments as $attachment)
+                <li>{{$attachment->document->title}}</li>
+            @endforeach
+        </ul>
     @endif
 
 

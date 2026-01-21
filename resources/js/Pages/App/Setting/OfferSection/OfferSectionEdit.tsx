@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import '@mdxeditor/editor/style.css'
 import {
@@ -24,10 +24,10 @@ import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormCard } from '@/Components/twc-ui/form-card'
-import { FormCheckbox } from '@/Components/twc-ui/form-checkbox'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import type { PageProps } from '@/Types'
+import { FormSelect } from '@/Components/twc-ui/form-select'
 
 interface Props extends PageProps {
   section: App.Data.OfferSectionData
@@ -65,6 +65,15 @@ const OfferSectionEdit: React.FC<Props> = ({ section }) => {
   }
 
   const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Zurück'
+  const pagebreakOptions = useMemo(
+    () => [
+      { label: 'Nach dem Abschnitt', value: 'after' },
+      { label: 'Vor dem Abschnitt', value: 'before' },
+      { label: 'Vor und nach dem Abschnitt', value: 'both' },
+      { label: 'Kein Seitenumbruch', value: 'none' }
+    ],
+    []
+  )
 
   const handleCancel = async () => {
     if (form.isDirty) {
@@ -104,9 +113,6 @@ const OfferSectionEdit: React.FC<Props> = ({ section }) => {
               <FormTextField label="Bezeichnung" {...form.register('name')} />
             </div>
             <div className="col-span-24">
-              <FormTextField label="Titel im Angebot" {...form.register('title')} />
-            </div>
-            <div className="col-span-24">
               <MDXEditor
                 markdown={(form.data.default_content as string) || ''}
                 className="isolated rounded-md border border-border bg-background p-2"
@@ -133,7 +139,13 @@ const OfferSectionEdit: React.FC<Props> = ({ section }) => {
                 onChange={data => handleContentUpdate(data)}
               />
               <div className="pt-1.5">
-                <FormCheckbox label="Pflichtfeld" {...form.registerCheckbox('is_required')} />
+                <FormSelect
+                  label="Seitenumbruch"
+                  {...form.register('pagebreak')}
+                  items={pagebreakOptions}
+                  itemValue="value"
+                  itemName="label"
+                />
               </div>
             </div>
           </FormGrid>

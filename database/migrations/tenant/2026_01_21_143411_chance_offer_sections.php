@@ -1,0 +1,22 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void
+    {
+        Schema::table('offer_sections', function (Blueprint $table) {
+            $columns = ['title', 'is_required'];
+
+            foreach ($columns as $column) {
+                if (Schema::hasColumn('offer_sections', $column)) {
+                    $table->dropColumn($column);
+                }
+            }
+
+            $table->enum('pagebreak', ['after', 'before', 'both', 'none'])->default('none');
+        });
+    }
+};

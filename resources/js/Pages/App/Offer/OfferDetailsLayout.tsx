@@ -7,8 +7,8 @@ import {
   FileEditIcon,
   FileEuroIcon,
   Files02Icon,
-  LegalDocument02Icon,
   MoreVerticalCircle01Icon,
+  ParagraphIcon,
   Pdf02Icon,
   PrinterIcon,
   Sent02Icon
@@ -30,16 +30,10 @@ import { OfferTableProvider, useOfferTable } from './OfferTableProvider'
 interface Props {
   offer: App.Data.OfferData
   children: React.ReactNode
-  termsEditMode?: boolean
-  onTermsEditModeChange?: (editMode: boolean) => void
+  onAddSection?: () => void
 }
 
-const OfferDetailsLayoutContent: React.FC<Props> = ({
-  offer,
-  children,
-  termsEditMode,
-  ...props
-}) => {
+const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children, ...props }) => {
   const onPrintPdf = () => {
     print(route('app.offer.pdf', { id: offer.id }))
   }
@@ -138,23 +132,23 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
     [currentRoute, offer]
   )
 
-  const setTermsEditMode = (value: boolean) => {
-    props?.onTermsEditModeChange?.(value)
+  const handelAddSection = () => {
+    props?.onAddSection?.()
   }
 
   const toolbar = useMemo(
     () => (
-      <Toolbar isDisabled={editMode || termsEditMode}>
+      <Toolbar isDisabled={editMode}>
         {!offer.is_draft && !offer.sent_at && (
           <ToolbarButton variant="primary" icon={Sent02Icon} title="Angebot per E-Mail versenden" />
         )}
         {offer.is_draft && currentRoute === 'app.offer.terms' && (
           <ToolbarButton
-            icon={LegalDocument02Icon}
+            icon={ParagraphIcon}
             variant="primary"
-            title="Bedingungen bearbeiten"
-            isDisabled={termsEditMode}
-            onClick={() => setTermsEditMode(true)}
+            title="Abschnitt hinzufügen"
+            isDisabled={!offer.is_draft}
+            onClick={() => handelAddSection()}
           />
         )}
         {offer.is_draft && currentRoute === 'app.offer.details' && (
@@ -183,11 +177,7 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
 
         <ToolbarButton icon={Pdf02Icon} title="PDF-Vorschau" onClick={() => onShowPdf()} />
 
-        <DropdownButton
-          variant="toolbar"
-          icon={MoreVerticalCircle01Icon}
-          isDisabled={editMode || termsEditMode}
-        >
+        <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} isDisabled={editMode}>
           {offer.is_draft && (
             <>
               <MenuItem
@@ -267,7 +257,6 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
     ),
     [
       editMode,
-      termsEditMode,
       handleDownload,
       offer.sent_at,
       handleRelease,
