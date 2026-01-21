@@ -3,11 +3,14 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { StarIcon } from '@hugeicons/core-free-icons'
+import { Delete03Icon, MoreVerticalCircle01Icon, StarIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Link, router } from '@inertiajs/react'
-import type { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef, Row } from '@tanstack/react-table'
+import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Avatar } from '@/Components/twc-ui/avatar'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { MenuItem } from '@/Components/twc-ui/menu'
 import { Checkbox } from '@/Components/ui/checkbox'
 
 const editUrl = (id: number | null) => (id ? route('app.contact.details', { id }) : '#')
@@ -19,6 +22,33 @@ const onFavoriteToggle = (id: number | null) => {
 
 const mailLink = (mail: string) => `mailto:${mail}`
 const telLink = (phone: string) => `tel:${phone}`
+
+const handleDeleteContact = async (row: App.Data.ContactData) => {
+  if (row.id == null) return
+  const promise = await AlertDialog.call({
+    title: 'Kontakt löschen',
+    message: `Möchtest Du den Kontakt ${row.full_name} löschen?`,
+    buttonTitle: 'Kontakt löschen'
+  })
+  if (promise) {
+    router.delete(route('app.contact.delete', { contact: row.id }))
+  }
+}
+
+const RowActions = ({ row }: { row: Row<App.Data.ContactData> }) => {
+  return (
+    <div className="mx-auto">
+      <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
+        <MenuItem
+          icon={Delete03Icon}
+          title="Löschen"
+          variant="destructive"
+          onAction={() => handleDeleteContact(row.original)}
+        />
+      </DropdownButton>
+    </div>
+  )
+}
 
 export const columns: ColumnDef<App.Data.ContactData>[] = [
   {
@@ -107,11 +137,18 @@ export const columns: ColumnDef<App.Data.ContactData>[] = [
   {
     accessorKey: 'company_name',
     header: 'Organisation',
-    size: 300,
+    size: 200,
     cell: ({ row, getValue }) => (
-      <Link href={editUrl(row.original.company_id)} className="w-64 truncate hover:underline">
+      <Link href={editUrl(row.original.company_id)} className="w-full max-w-50 truncate hover:underline">
         <span>{(getValue() as string) || ''}</span>
       </Link>
     )
+  },
+  {
+    id: 'actions',
+    size: 40,
+    header: () => <span className="sr-only">Aktionen</span>,
+    cell: ({ row }) => <RowActions row={row} />,
+    enableHiding: false
   }
 ]

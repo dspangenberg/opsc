@@ -66,7 +66,20 @@ Route::put('invoicing/offers/{offer}/mark-as-sent', [OfferController::class, 'ma
 Route::post('invoicing/offers/{offer}/invoice', [OfferController::class, 'createInvoice'])
     ->name('app.offer.create-invoice');
 
+
 Route::put('invoicing/offers/terms/{offer}', [OfferController::class, 'updateTerms'])
     ->name('app.offer.update-terms')
     ->middleware([HandlePrecognitiveRequests::class]);
+
+Route::put('invoicing/offers/{offer}/terms/section/{offerSection}', [OfferController::class, 'updateSection'])
+    ->name('app.offer.update-section');
+
+Route::post('invoicing/offers/{offer}/terms/store', [OfferController::class, 'addSectionsToOffer'])
+    ->name('app.offer.add-sections');
+
+Route::delete('invoicing/offers/{offer}/terms/section/{offerSection}', [OfferController::class, 'deleteSection'])->name('app.offer.delete-section');
+
+Route::put('invoicing/offers/{offer}/terms/sort-sections', [OfferController::class, 'sortSections'])
+    ->name('app.offer.sort-sections');
+
 

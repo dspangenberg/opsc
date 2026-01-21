@@ -92,6 +92,11 @@ class Offer extends Model implements MediableInterface
             ->with('project.manager')
             ->with('contact.tax')
             ->with([
+                'sections' => function ($query) {
+                    $query->orderBy('pos');
+                },
+            ])
+            ->with([
                 'lines' => function ($query) {
                     $query->with('rate')->orderBy('pos');
                 },
@@ -295,6 +300,11 @@ class Offer extends Model implements MediableInterface
     public function attachments(): MorphMany
     {
         return $this->morphMany(Attachment::class, 'attachable')->orderBy('pos');
+    }
+
+    public function sections(): HasMany
+    {
+        return $this->hasMany(OfferOfferSection::class);
     }
 
     public function scopeView(Builder $query, $view): Builder

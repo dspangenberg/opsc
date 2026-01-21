@@ -18,9 +18,7 @@ import {
   FirstBracketIcon,
   HeadingIcon,
   RowInsertIcon,
-  ScissorIcon,
-  TextAlignJustifyLeftIcon,
-  TextVerticalAlignmentIcon
+  TextAlignJustifyLeftIcon
 } from '@hugeicons/core-free-icons'
 import { type FC, useEffect } from 'react'
 import { PageBreakIcon } from '@/Assets/Icons/PageBreakIcon'

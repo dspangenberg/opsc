@@ -24,7 +24,7 @@ const OfferSectionIndex: React.FC<DocumentTypesIndexPageProps> = ({ sections }) 
     { title: 'Abschnitte' }
   ]
   const handleSectionAdd = () => {
-    router.get(route('app.setting.offer-section.create'))
+    router.visit(route('app.setting.offer-section.create'))
   }
 
   const toolbar = useMemo(

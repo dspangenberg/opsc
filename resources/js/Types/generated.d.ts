@@ -407,6 +407,7 @@ sent_at: string | null;
 recurring_end_on: string | null;
 contact: App.Data.ContactData | null;
 project: App.Data.ProjectData | null;
+sections: Array<App.Data.OfferOfferSectionData> | null;
 lines: Array<App.Data.OfferLineData> | null;
 attachments: Array<App.Data.AttachmentData> | null;
 tax: App.Data.TaxData | null;
@@ -425,6 +426,15 @@ amount: number | null;
 tax: number | null;
 tax_rate_id: number;
 rate: App.Data.TaxRateData | null;
+};
+export type OfferOfferSectionData = {
+id: number | null;
+offer_id: number;
+section_id: number;
+pos: number;
+title: string | null;
+content: string | null;
+pagebreak: boolean | null;
 };
 export type OfferSectionData = {
 id: number | null;

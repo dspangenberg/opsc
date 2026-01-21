@@ -1,9 +1,7 @@
 import type * as React from 'react'
 import { useEffect } from 'react'
-import { I18nProvider } from 'react-aria-components'
 import { useFormContext } from '@/Components/twc-ui/form'
 import { FormDatePicker } from '@/Components/twc-ui/form-date-picker'
-import { FormDateRangePicker } from '@/Components/twc-ui/form-date-range-picker'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormNumberField } from '@/Components/twc-ui/form-number-field'
 import { FormTextArea } from '@/Components/twc-ui/form-text-area'
@@ -43,43 +41,41 @@ export const InvoiceLinesEditorDefaultLine: React.FC<InvoiceLinesEditorProps> = 
   }, [invoiceLine.type_id, quantityField.value, priceField.value])
 
   return (
-    <I18nProvider locale="de-DE">
-      <InvoiceLinesEditorLineContainer invoiceLine={invoiceLine}>
-        <FormGrid>
-          <div className="col-span-3">
-            <FormNumberField
-              autoFocus
-              formatOptions={{
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              }}
-              aria-label="Menge"
-              {...quantityField}
-            />
+    <InvoiceLinesEditorLineContainer invoiceLine={invoiceLine}>
+      <FormGrid>
+        <div className="col-span-3">
+          <FormNumberField
+            autoFocus
+            formatOptions={{
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            }}
+            aria-label="Menge"
+            {...quantityField}
+          />
+        </div>
+        <div className="col-span-2">
+          <FormTextField aria-label="Einheit" {...unitField} />
+        </div>
+        <div className="col-span-10 space-y-1.5">
+          <FormTextArea aria-label="Beschreibung" autoSize rows={2} {...textField} />
+          <div className="flex items-center gap-2">
+            <FormDatePicker aria-label="Leistungsdatum Beginn" {...servicePeriodBeginField} />
+            <FormDatePicker aria-label="Leistungsdatum Ende" {...serviceEndField} />
           </div>
-          <div className="col-span-2">
-            <FormTextField aria-label="Einheit" {...unitField} />
-          </div>
-          <div className="col-span-10 space-y-1.5">
-            <FormTextArea aria-label="Beschreibung" autoSize rows={2} {...textField} />
-            <div className="flex items-center gap-2">
-              <FormDatePicker aria-label="Leistungsdatum Beginn" {...servicePeriodBeginField} />
-              <FormDatePicker aria-label="Leistungsdatum Ende" {...serviceEndField} />
-            </div>
-          </div>
-          <div className="col-span-4">
-            <FormNumberField aria-label="Einzelpreis" {...priceField} />
-          </div>
-          <div className="col-span-4">
-            <FormNumberField
-              aria-label="Gesamtbetrag"
-              isDisabled={invoiceLine.type_id === 1}
-              {...amountField}
-            />
-          </div>
-          <div className="pt-2 font-medium text-sm">{invoiceLine.rate?.rate}%</div>
-        </FormGrid>
-      </InvoiceLinesEditorLineContainer>
-    </I18nProvider>
+        </div>
+        <div className="col-span-4">
+          <FormNumberField aria-label="Einzelpreis" {...priceField} />
+        </div>
+        <div className="col-span-4">
+          <FormNumberField
+            aria-label="Gesamtbetrag"
+            isDisabled={invoiceLine.type_id === 1}
+            {...amountField}
+          />
+        </div>
+        <div className="pt-2 font-medium text-sm">{invoiceLine.rate?.rate}%</div>
+      </FormGrid>
+    </InvoiceLinesEditorLineContainer>
   )
 }

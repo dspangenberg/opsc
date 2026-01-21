@@ -53,6 +53,8 @@ class OfferData extends Data
 
         public readonly ?ProjectData $project,
 
+        /** @var OfferOfferSectionData[] */
+        public readonly ?array $sections,
 
         /** @var OfferLineData[] */
         public readonly ?array $lines,

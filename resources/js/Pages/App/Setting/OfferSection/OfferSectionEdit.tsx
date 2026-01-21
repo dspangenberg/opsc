@@ -1,12 +1,31 @@
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { PageContainer } from '@/Components/PageContainer'
+import '@mdxeditor/editor/style.css'
+import {
+  BlockTypeSelect,
+  BoldItalicUnderlineToggles,
+  CreateLink,
+  headingsPlugin,
+  InsertTable,
+  ListsToggle,
+  linkDialogPlugin,
+  linkPlugin,
+  listsPlugin,
+  MDXEditor,
+  type MDXEditorMethods,
+  markdownShortcutPlugin,
+  Select,
+  tablePlugin,
+  toolbarPlugin
+} from '@mdxeditor/editor'
+import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Button } from '@/Components/twc-ui/button'
-import { ExtendedDialog } from '@/Components/twc-ui/extended-dialog'
 import { Form, useForm } from '@/Components/twc-ui/form'
+import { FormCard } from '@/Components/twc-ui/form-card'
 import { FormCheckbox } from '@/Components/twc-ui/form-checkbox'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
-import { FormTextArea } from '@/Components/twc-ui/form-text-area'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import type { PageProps } from '@/Types'
 
@@ -18,7 +37,17 @@ const OfferSectionEdit: React.FC<Props> = ({ section }) => {
   const title = section.id
     ? 'Angebotsbedingungen - Abschnitt bearbeiten'
     : 'Neuen Angebotsbedingungen - Abschnitt hinzufügen'
-  const [isOpen, setIsOpen] = useState(true)
+  const [isMounted, setIsMounted] = useState(false)
+
+  const breadcrumbs = [
+    { title: 'Einstellungen', url: route('app.setting') },
+    { title: 'Angebote', url: route('app.setting.offer') },
+    { title: title }
+  ]
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const form = useForm<App.Data.OfferSectionData>(
     'form-offer-section-edit',
@@ -29,50 +58,88 @@ const OfferSectionEdit: React.FC<Props> = ({ section }) => {
     section
   )
 
-  console.log(section)
+  const handleContentUpdate = (content: string) => {
+    if (isMounted) {
+      form.updateAndValidateWithoutEvent('default_content', content.replaceAll('\\', ''))
+    }
+  }
 
-  const handleClose = () => {
-    setIsOpen(false)
-    router.visit(route('app.setting.offer-section.index'))
+  const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Zurück'
+
+  const handleCancel = async () => {
+    if (form.isDirty) {
+      const promise = await AlertDialog.call({
+        title: 'Änderungen verwerfen',
+        message: `Möchtest Du die Änderungen verwerfen?`,
+        buttonTitle: 'Verwerfen'
+      })
+      if (promise) {
+        router.visit(route('app.setting.offer-section.index'))
+      }
+    } else {
+      router.visit(route('app.setting.offer-section.index'))
+    }
   }
 
   return (
-    <ExtendedDialog
-      isOpen={isOpen}
-      onClosed={handleClose}
+    <PageContainer
       title={title}
-      confirmClose={form.isDirty}
-      footer={dialogRenderProps => (
-        <div className="mx-0 flex w-full gap-2">
-          <div className="flex flex-1 justify-start" />
-          <div className="flex flex-none gap-2">
-            <Button variant="outline" onClick={dialogRenderProps.close}>
-              Abbrechen
-            </Button>
-            <Button variant="default" form={form.id} type="submit" isLoading={form.processing}>
-              Speichern
-            </Button>
-          </div>
-        </div>
-      )}
+      width="6xl"
+      className="flex overflow-hidden"
+      breadcrumbs={breadcrumbs}
     >
-      <Form form={form} onSubmitted={() => setIsOpen(false)}>
-        <FormGrid>
-          <div className="col-span-24">
-            <FormTextField label="Bezeichnung" {...form.register('name')} />
+      <FormCard
+        className="flex flex-1 overflow-y-hidden"
+        innerClassName="bg-background"
+        footer={
+          <div className="flex flex-none items-center justify-end gap-2 px-4 py-2">
+            <Button variant="outline" onClick={handleCancel} title={cancelButtonTitle} />
+            <Button variant="default" form={form.id} type="submit" title="Speichern" />
           </div>
-          <div className="col-span-24">
-            <FormTextField label="Titel im Angebot" {...form.register('title')} />
-          </div>
-          <div className="col-span-24">
-            <FormTextArea label="Standardtext" {...form.register('default_content')} />
-            <div className="pt-0.5">
-              <FormCheckbox label="Pflichtfeld" {...form.registerCheckbox('is_required')} />
+        }
+      >
+        <Form form={form}>
+          <FormGrid>
+            <div className="col-span-24">
+              <FormTextField label="Bezeichnung" {...form.register('name')} />
             </div>
-          </div>
-        </FormGrid>
-      </Form>
-    </ExtendedDialog>
+            <div className="col-span-24">
+              <FormTextField label="Titel im Angebot" {...form.register('title')} />
+            </div>
+            <div className="col-span-24">
+              <MDXEditor
+                markdown={(form.data.default_content as string) || ''}
+                className="isolated rounded-md border border-border bg-background p-2"
+                contentEditableClassName="font-sans text-base isolated md-editor"
+                plugins={[
+                  headingsPlugin(),
+                  markdownShortcutPlugin(),
+                  tablePlugin(),
+                  listsPlugin(),
+                  linkPlugin(),
+                  linkDialogPlugin(),
+                  toolbarPlugin({
+                    toolbarContents: () => (
+                      <>
+                        <BlockTypeSelect />
+                        <BoldItalicUnderlineToggles />
+                        <InsertTable />
+                        <ListsToggle />
+                        <CreateLink />
+                      </>
+                    )
+                  })
+                ]}
+                onChange={data => handleContentUpdate(data)}
+              />
+              <div className="pt-1.5">
+                <FormCheckbox label="Pflichtfeld" {...form.registerCheckbox('is_required')} />
+              </div>
+            </div>
+          </FormGrid>
+        </Form>
+      </FormCard>
+    </PageContainer>
   )
 }
 
