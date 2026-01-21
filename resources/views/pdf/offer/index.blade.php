@@ -171,6 +171,15 @@
 
     </table>
 
+    @foreach($offer->sections as $section)
+        @if($section->pagebreak)
+            <div class="page-break" />
+        @endif
+        <div>
+            {!!  md($section->content) !!}
+        </div>
+    @endforeach
+
 
     @if($offer->additional_text)
         {!!  md($offer->additional_text) !!}

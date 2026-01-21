@@ -15,6 +15,7 @@ use App\Data\TaxData;
 use App\Data\TextModuleData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OfferAttachmentSortUpdateRequest;
+use App\Http\Requests\OfferOfferSectionRequest;
 use App\Http\Requests\OfferStoreRequest;
 use App\Http\Requests\OfferTermsRequest;
 use App\Models\Attachment;
@@ -23,6 +24,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceLine;
 use App\Models\Offer;
 use App\Models\OfferLine;
+use App\Models\OfferOfferSection;
 use App\Models\OfferSection;
 use App\Models\Project;
 use App\Models\Tax;
@@ -289,16 +291,33 @@ class OfferController extends Controller
 
     }
 
+    public function addSectionsToOffer(Request $request, Offer $offer) {
+        $ids = $request->input('ids');
+        $offerSections = OfferSection::whereIn('id', $ids)->orderBy('pos')->get();
+        $pos = $offer->sections->max('pos') ?? 0;
+        foreach ($offerSections as $index => $section) {
+            $pos++;
+            $offer->sections()->create(['offer_id' => $offer->id,
+                'section_id' => $section->id,
+                'pos' => $pos, 'title' => $section->title, 'content' => $section->default_content]);
+        }
+    }
+
     public function terms(Offer $offer)
     {
         $textModules = TextModule::orderBy('title')->get();
-        $sections = OfferSection::orderBy('pos')->get();
+        $offerSections = OfferSection::orderBy('pos')->get();
 
         $offer
             ->load('contact')
             ->load('project')
             ->load([
                 'lines' => function ($query) {
+                    $query->orderBy('pos');
+                },
+            ])
+            ->load([
+                'sections' => function ($query) {
                     $query->orderBy('pos');
                 },
             ])
@@ -310,7 +329,7 @@ class OfferController extends Controller
         return Inertia::render('App/Offer/OfferTerms', [
             'offer' => OfferData::from($offer),
             'textModules' => TextModuleData::collect($textModules),
-            'sections' => OfferSectionData::collect($sections),
+            'offerSections' => OfferSectionData::collect($offerSections),
         ]);
     }
 
@@ -320,6 +339,29 @@ class OfferController extends Controller
         $offer->save();
 
         return redirect()->route('app.offer.terms', ['offer' => $offer->id]);
+    }
+
+    public function updateSection(OfferOfferSectionRequest $request, Offer $offer, OfferOfferSection $offerSection) {
+        $offerSection->update($request->validated());
+        return Inertia::flash('toast', ['type' => 'success', 'message' => 'Abschitt wurde erfolgreich gespeichert'])->back();
+    }
+
+    public function deleteSection(Offer $offer, OfferOfferSection $offerSection) {
+        $offerSection->delete();
+        return Inertia::flash('toast', ['type' => 'success', 'message' => 'Abschitt wurde erfolgreich gelöscht'])->back();
+    }
+
+    public function sortSections(Request $request, Offer $offer)
+    {
+        $sectionIds = $request->input('section_ids', []);
+
+        foreach ($sectionIds as $index => $sectionId) {
+            OfferOfferSection::where('id', $sectionId)
+                ->where('offer_id', $offer->id)
+                ->update(['pos' => $index]);
+        }
+
+        return back();
     }
 
     public function sortAttachments(OfferAttachmentSortUpdateRequest $request, Offer $offer)

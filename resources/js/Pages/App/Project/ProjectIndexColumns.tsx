@@ -8,6 +8,7 @@ import { router } from '@inertiajs/core'
 import { Link } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
+import { Avatar } from '@/Components/twc-ui/avatar'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { MenuItem } from '@/Components/twc-ui/menu'
 import { Checkbox } from '@/Components/ui/checkbox'
@@ -62,6 +63,21 @@ export const columns: ColumnDef<App.Data.ProjectData>[] = [
           onCheckedChange={value => row.toggleSelected(!!value)}
           className="mx-3 bg-background align-middle"
           aria-label="Select row"
+        />
+      </div>
+    )
+  },
+  {
+    accessorKey: 'initials',
+    header: '',
+    size: 45,
+    cell: ({ row }) => (
+      <div className="flex items-center">
+        <Avatar
+          initials={row.original.name.substring(0, 1).toUpperCase()}
+          fullname={row.original.name}
+          src={row.original.avatar_url}
+          size="md"
         />
       </div>
     )

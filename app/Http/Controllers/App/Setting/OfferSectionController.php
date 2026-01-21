@@ -22,15 +22,15 @@ class OfferSectionController extends Controller
         $pos = OfferSection::query()->max('pos') + 10;
         $section = new OfferSection();
         $section->pos = $pos;
-        return Inertia::modal('App/Setting/OfferSection/OfferSectionEdit', [
+        return Inertia::render('App/Setting/OfferSection/OfferSectionEdit', [
             'section' => OfferSectionData::from($section),
-        ])->baseRoute('app.setting.offer-section.index');
+        ]);
     }
 
     public function edit(OfferSection $section) {
-        return Inertia::modal('App/Setting/OfferSection/OfferSectionEdit', [
+        return Inertia::render('App/Setting/OfferSection/OfferSectionEdit', [
             'section' => OfferSectionData::from($section),
-        ])->baseRoute('app.setting.offer-section.index');
+        ]);
     }
 
     public function update(OfferSectionRequest $request, OfferSection $section) {

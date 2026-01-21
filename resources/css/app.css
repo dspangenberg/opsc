@@ -306,6 +306,18 @@ table tr td ul li ul li {
   @apply list-disc list-inside;
 }
 
+.md-editor p {
+  @apply pb-4;
+}
+
+.md-editor p:last-child {
+  @apply pb-0;
+}
+
 .md-editor ul li ul li {
   @apply ml-3;
+}
+
+.md-editor table {
+  @apply table-auto w-full;
 }
