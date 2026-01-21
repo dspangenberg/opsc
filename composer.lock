@@ -11379,23 +11379,22 @@
         },
         {
             "name": "laradumps/laradumps",
-            "version": "v5.0.0",
+            "version": "v5.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laradumps/laradumps.git",
-                "reference": "7bfb9b888ce351ca151e29cacf2e2e74c7b62f72"
+                "reference": "e7b3119b50124942cb1062fcbbd0036a27312d6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laradumps/laradumps/zipball/7bfb9b888ce351ca151e29cacf2e2e74c7b62f72",
-                "reference": "7bfb9b888ce351ca151e29cacf2e2e74c7b62f72",
+                "url": "https://api.github.com/repos/laradumps/laradumps/zipball/e7b3119b50124942cb1062fcbbd0036a27312d6e",
+                "reference": "e7b3119b50124942cb1062fcbbd0036a27312d6e",
                 "shasum": ""
             },
             "require": {
                 "illuminate/mail": "^11.0|^12.0",
                 "illuminate/support": "^11.0|^12.0",
-                "laradumps/laradumps-core": "^4.0.0",
-                "nunomaduro/termwind": "^2.3.3",
+                "laradumps/laradumps-core": "^4.0.1",
                 "php": "^8.2"
             },
             "require-dev": {
@@ -11439,7 +11438,7 @@
             "homepage": "https://github.com/laradumps/laradumps",
             "support": {
                 "issues": "https://github.com/laradumps/laradumps/issues",
-                "source": "https://github.com/laradumps/laradumps/tree/v5.0.0"
+                "source": "https://github.com/laradumps/laradumps/tree/v5.0.1"
             },
             "funding": [
                 {
@@ -11447,25 +11446,24 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-12-13T12:44:16+00:00"
+            "time": "2026-01-15T18:01:57+00:00"
         },
         {
             "name": "laradumps/laradumps-core",
-            "version": "v4.0.0",
+            "version": "v4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laradumps/laradumps-core.git",
-                "reference": "bb57c8fccb785777020b85592d718e8ff0c9a23a"
+                "reference": "162ceebac8e7253332270421b74a12a94a6f28b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laradumps/laradumps-core/zipball/bb57c8fccb785777020b85592d718e8ff0c9a23a",
-                "reference": "bb57c8fccb785777020b85592d718e8ff0c9a23a",
+                "url": "https://api.github.com/repos/laradumps/laradumps-core/zipball/162ceebac8e7253332270421b74a12a94a6f28b8",
+                "reference": "162ceebac8e7253332270421b74a12a94a6f28b8",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
-                "nunomaduro/termwind": "^2.0",
                 "php": "^8.2",
                 "ramsey/uuid": "^4.9.1",
                 "spatie/backtrace": "^1.5",
@@ -11476,10 +11474,13 @@
                 "symfony/yaml": "^6.4|^7.0|^8.0"
             },
             "require-dev": {
-                "illuminate/support": "^10.46",
+                "illuminate/support": "^12",
                 "laravel/pint": "^1.26.0",
                 "pestphp/pest": "^3.0|^4.0",
                 "phpstan/phpstan": "^1.10.50"
+            },
+            "suggest": {
+                "nunomaduro/termwind": "For a better terminal experience"
             },
             "bin": [
                 "bin/laradumps"
@@ -11508,7 +11509,7 @@
             "homepage": "https://github.com/laradumps/laradumps-core",
             "support": {
                 "issues": "https://github.com/laradumps/laradumps-core/issues",
-                "source": "https://github.com/laradumps/laradumps-core/tree/v4.0.0"
+                "source": "https://github.com/laradumps/laradumps-core/tree/v4.0.1"
             },
             "funding": [
                 {
@@ -11516,7 +11517,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-12-12T22:10:38+00:00"
+            "time": "2026-01-15T17:33:27+00:00"
         },
         {
             "name": "larastan/larastan",
