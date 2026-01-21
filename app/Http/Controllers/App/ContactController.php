@@ -299,7 +299,8 @@ class ContactController extends Controller
     public function destroy(Contact $contact)
     {
         $contact->delete();
-        return Inertia::flash('toast', ['type' => 'success', 'message' => 'Kontakt erfolgreich gelöscht'])->back();
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Kontakt erfolgreich gelöscht']);
+        return redirect()->route('app.contact.index');
     }
 
     private function updateContactMails(Contact $contact, array $mailsData): void

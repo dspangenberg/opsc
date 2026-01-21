@@ -26,7 +26,7 @@ const OfferTermsSectionSelectorComponent: React.FC<OfferTermsSectionSelectorProp
           onCancel()
         }, 50)
       }}
-      className="z-100 bg-white"
+      className="z-100 bg-background"
       confirmClose={false}
       width="lg"
       bodyPadding

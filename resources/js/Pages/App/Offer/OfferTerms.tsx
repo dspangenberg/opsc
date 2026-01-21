@@ -74,9 +74,7 @@ const OfferTerms: React.FC<OfferTermsProps> = ({ offerSections, offer, textModul
       sections: offerSections
     })
     if (Array.isArray(result)) {
-      router.post(route('app.offer.add-sections', { offer: offer.id, ids: result }), {
-        data: { sections: result }
-      })
+      router.post(route('app.offer.add-sections', { offer: offer.id}), {ids: result})
     }
   }
 

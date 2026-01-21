@@ -343,12 +343,12 @@ class OfferController extends Controller
 
     public function updateSection(OfferOfferSectionRequest $request, Offer $offer, OfferOfferSection $offerSection) {
         $offerSection->update($request->validated());
-        return Inertia::flash('toast', ['type' => 'success', 'message' => 'Abschitt wurde erfolgreich gespeichert'])->back();
+        return Inertia::flash('toast', ['type' => 'success', 'message' => 'Abschnitt wurde erfolgreich gespeichert'])->back();
     }
 
     public function deleteSection(Offer $offer, OfferOfferSection $offerSection) {
         $offerSection->delete();
-        return Inertia::flash('toast', ['type' => 'success', 'message' => 'Abschitt wurde erfolgreich gelöscht'])->back();
+        return Inertia::flash('toast', ['type' => 'success', 'message' => 'Abschnitt wurde erfolgreich gelöscht'])->back();
     }
 
     public function sortSections(Request $request, Offer $offer)

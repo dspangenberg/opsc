@@ -123,7 +123,9 @@ export const OfferTermsSection: React.FC<OfferTermsSectionProps> = ({
 
   const onInsertTextModule = (id: number) => {
     const textModule = textModules.find(module => module.id === id)
-    ref.current?.insertMarkdown(textModule?.content as string)
+    if (textModule?.content) {
+      ref.current?.insertMarkdown(textModule.content)
+    }
   }
 
   return (

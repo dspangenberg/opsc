@@ -26,7 +26,6 @@ import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormCard } from '@/Components/twc-ui/form-card'
 import { FormCheckbox } from '@/Components/twc-ui/form-checkbox'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
-import { FormTextArea } from '@/Components/twc-ui/form-text-area'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import type { PageProps } from '@/Types'
 
@@ -38,7 +37,6 @@ const OfferSectionEdit: React.FC<Props> = ({ section }) => {
   const title = section.id
     ? 'Angebotsbedingungen - Abschnitt bearbeiten'
     : 'Neuen Angebotsbedingungen - Abschnitt hinzufügen'
-  const [isOpen, setIsOpen] = useState(true)
   const [isMounted, setIsMounted] = useState(false)
 
   const breadcrumbs = [
@@ -92,7 +90,7 @@ const OfferSectionEdit: React.FC<Props> = ({ section }) => {
     >
       <FormCard
         className="flex flex-1 overflow-y-hidden"
-        innerClassName="bg-white"
+        innerClassName="bg-background"
         footer={
           <div className="flex flex-none items-center justify-end gap-2 px-4 py-2">
             <Button variant="outline" onClick={handleCancel} title={cancelButtonTitle} />
@@ -100,7 +98,7 @@ const OfferSectionEdit: React.FC<Props> = ({ section }) => {
           </div>
         }
       >
-        <Form form={form} onSubmitted={() => setIsOpen(false)}>
+        <Form form={form}>
           <FormGrid>
             <div className="col-span-24">
               <FormTextField label="Bezeichnung" {...form.register('name')} />

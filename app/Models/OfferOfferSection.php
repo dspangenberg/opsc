@@ -16,6 +16,13 @@ class OfferOfferSection extends Model
         'pagebreak',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'pagebreak' => 'boolean',
+        ];
+    }
+
     public function offer(): BelongsTo
     {
         return $this->belongsTo(Offer::class);

@@ -172,12 +172,14 @@
     </table>
 
     @foreach($offer->sections as $section)
-        @if($section->pagebreak)
-            <div class="page-break" />
+        @if($section->content)
+            @if($section->pagebreak)
+                <div class="page-break"></div>
+            @endif
+            <div>
+                {!!  md($section->content) !!}
+            </div>
         @endif
-        <div>
-            {!!  md($section->content) !!}
-        </div>
     @endforeach
 
 
