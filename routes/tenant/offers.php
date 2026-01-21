@@ -72,7 +72,8 @@ Route::put('invoicing/offers/terms/{offer}', [OfferController::class, 'updateTer
     ->middleware([HandlePrecognitiveRequests::class]);
 
 Route::put('invoicing/offers/{offer}/terms/section/{offerSection}', [OfferController::class, 'updateSection'])
-    ->name('app.offer.update-section');
+    ->name('app.offer.update-section')
+    ->middleware([HandlePrecognitiveRequests::class]);
 
 Route::post('invoicing/offers/{offer}/terms/store', [OfferController::class, 'addSectionsToOffer'])
     ->name('app.offer.add-sections');

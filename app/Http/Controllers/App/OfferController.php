@@ -299,7 +299,9 @@ class OfferController extends Controller
             $pos++;
             $offer->sections()->create(['offer_id' => $offer->id,
                 'section_id' => $section->id,
-                'pos' => $pos, 'title' => $section->title, 'content' => $section->default_content]);
+                'pagebreak' => $section->pagebreak,
+                'pos' => $pos,
+                'content' => $section->default_content]);
         }
     }
 

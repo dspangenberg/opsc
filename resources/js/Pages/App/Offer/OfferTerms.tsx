@@ -16,7 +16,6 @@ import {
 import { router } from '@inertiajs/core'
 import type * as React from 'react'
 import { useState } from 'react'
-import { Button } from '@/Components/twc-ui/button'
 import { OfferDetailsLayout } from '@/Pages/App/Offer/OfferDetailsLayout'
 import { OfferTermsSection } from '@/Pages/App/Offer/OfferTermsSection'
 import type { PageProps } from '@/Types'
@@ -31,7 +30,6 @@ interface OfferTermsProps extends PageProps {
 }
 
 const OfferTerms: React.FC<OfferTermsProps> = ({ offerSections, offer, textModules }) => {
-  const [editMode, setEditMode] = useState(false)
   const [editSection, setEditSection] = useState<number>(-1)
 
   const sensors = useSensors(
@@ -48,7 +46,7 @@ const OfferTerms: React.FC<OfferTermsProps> = ({ offerSections, offer, textModul
       const oldIndex = offer.sections?.findIndex(section => section.id === active.id)
       const newIndex = offer.sections?.findIndex(section => section.id === over.id)
 
-      if (oldIndex === undefined || newIndex === undefined) return
+      if (oldIndex === undefined || newIndex === undefined || oldIndex < 0 || newIndex < 0) return
 
       const currentSections = offer.sections || []
       const newSections = [...currentSections]
@@ -74,7 +72,7 @@ const OfferTerms: React.FC<OfferTermsProps> = ({ offerSections, offer, textModul
       sections: offerSections
     })
     if (Array.isArray(result)) {
-      router.post(route('app.offer.add-sections', { offer: offer.id}), {ids: result})
+      router.post(route('app.offer.add-sections', { offer: offer.id }), { ids: result })
     }
   }
 
@@ -89,16 +87,8 @@ const OfferTerms: React.FC<OfferTermsProps> = ({ offerSections, offer, textModul
     setEditSection(-1)
   }
 
-  const onSave = (section: App.Data.OfferOfferSectionData) => {
-    router.put(
-      route('app.offer.update-section', { offer: offer.id, offerSection: section.id }),
-      section,
-      {
-        onSuccess: () => {
-          setEditSection(-1)
-        }
-      }
-    )
+  const handleSaved = () => {
+    setEditSection(-1)
   }
 
   const onCancel = (_section: App.Data.OfferOfferSectionData) => {
@@ -106,13 +96,8 @@ const OfferTerms: React.FC<OfferTermsProps> = ({ offerSections, offer, textModul
   }
 
   return (
-    <OfferDetailsLayout
-      offer={offer}
-      termsEditMode={editMode}
-      onTermsEditModeChange={value => setEditMode(value as boolean)}
-    >
+    <OfferDetailsLayout offer={offer} onAddSection={() => handleSelector()}>
       <div className="flex-1 flex-col">
-        <Button variant="default" onClick={() => handleSelector()} title="Abschnitt hinzufügen" />
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -131,9 +116,10 @@ const OfferTerms: React.FC<OfferTermsProps> = ({ offerSections, offer, textModul
                 canDrag={editSection === -1}
                 section={section}
                 textModules={textModules}
+                isReadOnly={!offer.is_draft}
                 editMode={section.id === editSection}
                 onClick={value => handleClick(value)}
-                onSave={onSave}
+                onSaved={handleSaved}
                 onCancel={() => onCancel(section)}
                 onDelete={() => handleDelete(section)}
               />

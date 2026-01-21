@@ -7,6 +7,7 @@
 
 namespace App\Data;
 
+use App\Enums\PagebreakEnum;
 use DateTime;
 use Spatie\LaravelData\Attributes\WithTransformer;
 use Spatie\LaravelData\Data;
@@ -18,11 +19,9 @@ class OfferSectionData extends Data
 {
     public function __construct(
         public readonly ?int $id,
-        public readonly bool $is_required,
         public readonly string $name,
-        public readonly ?string $title,
         public readonly ?string $default_content,
-        public readonly int $pos,
+        public readonly ?PagebreakEnum $pagebreak,
     ) {
     }
 }

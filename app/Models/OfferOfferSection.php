@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PagebreakEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -19,7 +20,7 @@ class OfferOfferSection extends Model
     protected function casts(): array
     {
         return [
-            'pagebreak' => 'boolean',
+            'pagebreak' => PagebreakEnum::class,
         ];
     }
 
