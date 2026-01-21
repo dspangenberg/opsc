@@ -51,23 +51,3 @@ Route::get('/bookkeeping/receipts/{receipt}/payments-store', [ReceiptController:
 
 Route::get('/bookkeeping/receipts/confirm/{receipt}', [ReceiptController::class, 'confirm'])->name('app.bookkeeping.receipts.confirm');
 Route::get('/bookkeeping/receipts/{receipt}/edit', [ReceiptController::class, 'edit'])->name('app.bookkeeping.receipts.edit');
-
-Route::get('/bookkeeping/preferences/accounts', [BookkeepingAcountsController::class, 'index'])->name('app.bookkeeping.accounts.index');
-
-Route::get('/bookkeeping/preferences/rules', [BookkeepingRulesController::class, 'index'])->name('app.bookkeeping.rules.index');
-Route::get('/bookkeeping/preferences/rules/{rule}/edit', [BookkeepingRulesController::class, 'edit'])->name('app.bookkeeping.rules.edit');
-
-Route::put('/bookkeeping/preferences/rules/{rule}/update', [BookkeepingRulesController::class, 'update'])->name('app.bookkeeping.rules.update')->middleware([HandlePrecognitiveRequests::class]);
-Route::delete('/bookkeeping/preferences/rules/{rule}', [BookkeepingRulesController::class, 'destroy'])->name('app.bookkeeping.rules.destroy');
-Route::get('/bookkeeping/preferences/rules/create', [BookkeepingRulesController::class, 'create'])->name('app.bookkeeping.rules.create');
-Route::post('/bookkeeping/preferences/rules/store', [BookkeepingRulesController::class, 'store'])->name('app.bookkeeping.rules.store')->middleware([HandlePrecognitiveRequests::class]);
-
-Route::get('/bookkeeping/preferences/cost-centers', [CostCenterController::class, 'index'])->name('app.bookkeeping.cost-centers.index');
-Route::get('/bookkeeping/preferences/cost-centers/create', [CostCenterController::class, 'create'])->name('app.bookkeeping.cost-centers.create');
-
-Route::post('/bookkeeping/preferences/cost-centers', [CostCenterController::class, 'store'])
-    ->middleware([HandlePrecognitiveRequests::class])
-    ->name('app.bookkeeping.cost-centers.store');
-
-Route::get('/bookkeeping/preferences/cost-centers/{costCenter}/edit', [CostCenterController::class, 'edit'])->name('app.bookkeeping.cost-centers.edit')->middleware([HandlePrecognitiveRequests::class]);
-Route::put('/bookkeeping/preferences/cost-centers/{costCenter}/edit', [CostCenterController::class, 'update'])->name('app.bookkeeping.cost-centers.update');

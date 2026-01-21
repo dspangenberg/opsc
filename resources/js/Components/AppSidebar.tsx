@@ -211,28 +211,6 @@ const data = {
               activePath: '/app/bookkeeping/receipts/confirm'
             }
           ]
-        },
-        {
-          title: 'Vorgaben',
-          url: route('app.bookkeeping.cost-centers.index', {}, false),
-          activePath: '/app/bookkeeping/preferences',
-          items: [
-            {
-              title: 'Buchhaltungskonten',
-              url: route('app.bookkeeping.accounts.index', {}, false),
-              activePath: '/app/bookkeeping/preferences/accounts'
-            },
-            {
-              title: 'Kostenstellen',
-              url: route('app.bookkeeping.cost-centers.index', {}, false),
-              activePath: '/app/bookkeeping/preferences/cost-centers'
-            },
-            {
-              title: 'Regeln',
-              url: route('app.bookkeeping.rules.index', {}, false),
-              activePath: '/app/bookkeeping/preferences/rules'
-            }
-          ]
         }
       ]
     }
@@ -258,6 +236,28 @@ const data = {
               title: 'Textbausteine',
               url: route('app.setting.text-module.index', {}, false),
               activePath: '/app/settings/offers/text-modules'
+            }
+          ]
+        },
+        {
+          title: 'Buchhaltung',
+          url: route('app.setting.bookkeeping', {}, false),
+          activePath: '/app/settings/bookkeeping',
+          items: [
+            {
+              title: 'Buchhaltungskonten',
+              url: route('app.bookkeeping.accounts.index', {}, false),
+              activePath: '/app/settings/bookkeeping/accounts'
+            },
+            {
+              title: 'Kostenstellen',
+              url: route('app.bookkeeping.cost-centers.index', {}, false),
+              activePath: '/app/settings/bookkeeping/cost-centers'
+            },
+            {
+              title: 'Regeln',
+              url: route('app.bookkeeping.rules.index', {}, false),
+              activePath: '/app/settings/bookkeeping/rules'
             }
           ]
         },

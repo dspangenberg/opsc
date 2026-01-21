@@ -40,6 +40,7 @@ const InvoiceCreate: React.FC<Props> = ({
   )
 
   const handleClose = () => {
+    setIsOpen(false)
     router.visit(route('app.invoice.index'))
   }
 

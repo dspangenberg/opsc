@@ -230,6 +230,8 @@ class InvoiceController extends Controller
             $invoice->save();
         }
 
+        ds($request->validated());
+
         $invoice->update($request->validated());
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
@@ -295,6 +297,15 @@ class InvoiceController extends Controller
 
         $invoice->invoice_number = null;
         $invoice->is_draft = true;
+
+        if ($invoice->is_recurring) {
+            if ($invoice->issued_on?->toDateString() === $invoice->recurring_begin_on?->toDateString()) {
+                $invoice->recurring_begin_on = null;
+            }
+            $invoice->recurring_next_billing_date = null;
+        }
+
+
         $invoice->save();
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);

@@ -170,7 +170,11 @@ class Contact extends Model
 
     public function getIsFavoriteAttribute(): bool
     {
-        return Favorite::has($this, auth()->user());
+        $user = auth()->user();
+        if (!$user) {
+            return false;
+        }
+        return Favorite::has($this, $user);
     }
 
     public function getAvatarUrlAttribute(): ?string

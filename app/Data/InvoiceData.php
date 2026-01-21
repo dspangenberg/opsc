@@ -7,6 +7,7 @@
 
 namespace App\Data;
 
+use App\Enums\InvoiceRecurringEnum;
 use DateTime;
 use Spatie\LaravelData\Attributes\WithTransformer;
 use Spatie\LaravelData\Data;
@@ -61,8 +62,11 @@ class InvoiceData extends Data
         public readonly ?float $amount_open,
 
         public readonly bool $is_recurring,
-        public readonly int $recurring_interval_days,
+        public readonly int $recurring_interval_units,
+
         public readonly ?string $additional_text,
+
+        public readonly ?InvoiceRecurringEnum $recurring_interval,
 
         public readonly ?int $parent_id,
         public readonly ?int $tax_id,

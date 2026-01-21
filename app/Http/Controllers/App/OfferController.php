@@ -240,12 +240,25 @@ class OfferController extends Controller
         $duplicatedOffer->is_draft = true;
         $duplicatedOffer->offer_number = null;
         $duplicatedOffer->sent_at = null;
+        $duplicatedOffer->valid_until = $duplicatedOffer->issued_on->copy()->addDays(30);
         $duplicatedOffer->save();
 
         $offer->lines()->each(function ($line) use ($duplicatedOffer) {
             $replicatedLine = $line->replicate();
             $replicatedLine->offer_id = $duplicatedOffer->id;
             $replicatedLine->save();
+        });
+
+        $offer->sections()->each(function ($section) use ($duplicatedOffer) {
+            $replicatedSection = $section->replicate();
+            $replicatedSection->offer_id = $duplicatedOffer->id;
+            $replicatedSection->save();
+        });
+
+        $offer->attachments()->each(function ($attachment) use ($duplicatedOffer) {
+            $replicateAttachment = $attachment->replicate();
+            $replicateAttachment->attachable_id = $duplicatedOffer->id;
+            $replicateAttachment->save();
         });
 
         return redirect()->route('app.offer.details', ['offer' => $duplicatedOffer->id]);

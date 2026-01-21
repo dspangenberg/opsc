@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\InvoiceRecurringEnum;
 use App\Facades\WeasyPdfService;
 use App\Http\Controllers\App\TimeController;
 use Carbon\Carbon;
+use DateTime;
 use Eloquent;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -84,6 +86,11 @@ class Invoice extends Model implements MediableInterface
         'invoice_contact_id',
         'payment_deadline_id',
         'is_recurring',
+        'recurring_interval_units',
+        'recurring_interval',
+        'recurring_next_billing_date',
+        'recurring_begin_on',
+        'recurring_end_on',
         'is_loss_of_receivables',
         'service_period_begin',
         'tax_id',
@@ -217,6 +224,58 @@ class Invoice extends Model implements MediableInterface
         }
     }
 
+    public function createRecurringInvoice(): Invoice {
+
+        $this->load('lines', 'contact');
+        $duplicatedInvoice = $this->replicate();
+
+        $duplicatedInvoice->issued_on = $this->recurring_next_billing_date;
+        $duplicatedInvoice->is_draft = 0;
+        $duplicatedInvoice->invoice_number = null;
+        $duplicatedInvoice->number_range_document_numbers_id = null;
+        $duplicatedInvoice->sent_at = null;
+        $duplicatedInvoice->parent_id = $this->id;
+        $duplicatedInvoice->recurring_next_billing_date = null;
+        $duplicatedInvoice->recurring_begin_on = null;
+        $duplicatedInvoice->recurring_end_on = null;
+
+        if ($duplicatedInvoice->service_period_begin) {
+            $duplicatedInvoice->service_period_begin = $this->getDateForRecurringInterval($duplicatedInvoice->service_period_begin);
+        }
+        if ($duplicatedInvoice->service_period_end) {
+            $duplicatedInvoice->service_period_end = $this->getDateForRecurringInterval($duplicatedInvoice->service_period_end);
+        }
+
+
+        $duplicatedInvoice->save();
+
+        $duplicatedInvoice->setDueDate();
+
+        foreach ($this->lines as $line) {
+            $replicatedLine = $line->replicate();
+            $replicatedLine->invoice_id = $duplicatedInvoice->id;
+
+            if ($line->service_period_begin) {
+                $newBegin = $this->getDateForRecurringInterval($line->service_period_begin);
+                $replicatedLine->service_period_begin = $newBegin;
+            }
+
+            if ($line->service_period_end) {
+                $newEnd = $this->getDateForRecurringInterval($line->service_period_end);
+                $replicatedLine->service_period_end = $newEnd;
+            }
+
+            $replicatedLine->save();
+        }
+
+        $duplicatedInvoice->release();
+
+        $this->recurring_next_billing_date = $this->getDateForRecurringInterval($duplicatedInvoice->issued_on);
+        $this->save();
+
+        return $duplicatedInvoice;
+    }
+
     public function release(): void
     {
         if (! $this->invoice_number) {
@@ -232,6 +291,13 @@ class Invoice extends Model implements MediableInterface
 
         $this->setDueDate();
         $this->is_draft = false;
+
+        if ($this->is_recurring) {
+            if (!$this->recurring_begin_on ) {
+                $this->recurring_begin_on = $this->issued_on;
+            }
+            $this->recurring_next_billing_date = $this->getNextBilligDate();
+        }
 
         /*
         if (!$this->number_range_document_numbers_id) {
@@ -454,6 +520,27 @@ class Invoice extends Model implements MediableInterface
         return $payment->getQrCode()->getDataUri();
     }
 
+    public function getNextBilligDate(): DateTime | null {
+        if ($this->is_recurring) {
+            return $this->getDateForRecurringInterval($this->issued_on);
+        }
+        return null;
+    }
+
+    public function getDateForRecurringInterval($date): DateTime | null {
+        if (!$date || !$this->recurring_interval) {
+            return null;
+        }
+
+        return match ($this->recurring_interval) {
+            InvoiceRecurringEnum::days => $date->copy()->addDays($this->recurring_interval_units),
+            InvoiceRecurringEnum::weeks => $date->copy()->addWeeks($this->recurring_interval_units),
+            InvoiceRecurringEnum::months => $date->copy()->addMonths($this->recurring_interval_units),
+            InvoiceRecurringEnum::years => $date->copy()->addYears($this->recurring_interval_units),
+            default => null,
+        };
+    }
+
     public function lines(): HasMany
     {
         return $this->hasMany(InvoiceLine::class);
@@ -531,10 +618,14 @@ class Invoice extends Model implements MediableInterface
             'issued_on' => 'date',
             'due_on' => 'date',
             'sent_at' => 'datetime',
+            'recurring_begin_on' => 'date',
+            'recurring_end_on' => 'date',
+            'recurring_next_billing_date' => 'date',
             'service_period_begin' => 'date',
             'service_period_end' => 'date',
             'is_loss_of_receivables' => 'boolean',
             'is_draft' => 'boolean',
+            'recurring_interval' => InvoiceRecurringEnum::class,
         ];
     }
 }
