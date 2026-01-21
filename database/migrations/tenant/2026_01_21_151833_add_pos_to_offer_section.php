@@ -13,13 +13,4 @@ return new class extends Migration {
             }
         });
     }
-
-    public function down(): void
-    {
-        Schema::table('offer_sections', function (Blueprint $table) {
-            if (!Schema::hasColumn('offer_sections', 'pos')) {
-                $table->dropColumn('pos');
-            }
-        });
-    }
 };

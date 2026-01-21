@@ -7,8 +7,8 @@ import {
   FileEditIcon,
   FileEuroIcon,
   Files02Icon,
-  ParagraphIcon,
   MoreVerticalCircle01Icon,
+  ParagraphIcon,
   Pdf02Icon,
   PrinterIcon,
   Sent02Icon
@@ -33,11 +33,7 @@ interface Props {
   onAddSection?: () => void
 }
 
-const OfferDetailsLayoutContent: React.FC<Props> = ({
-  offer,
-  children,
-  ...props
-}) => {
+const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children, ...props }) => {
   const onPrintPdf = () => {
     print(route('app.offer.pdf', { id: offer.id }))
   }
@@ -181,11 +177,7 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({
 
         <ToolbarButton icon={Pdf02Icon} title="PDF-Vorschau" onClick={() => onShowPdf()} />
 
-        <DropdownButton
-          variant="toolbar"
-          icon={MoreVerticalCircle01Icon}
-          isDisabled={editMode}
-        >
+        <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} isDisabled={editMode}>
           {offer.is_draft && (
             <>
               <MenuItem
