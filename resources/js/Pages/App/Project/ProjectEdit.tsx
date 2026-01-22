@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
@@ -8,10 +8,8 @@ import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import type { PageProps } from '@/Types'
 import '@mdxeditor/editor/style.css'
-import { Pressable } from 'react-aria-components'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
-import { Avatar } from '@/Components/twc-ui/avatar'
-import { FileTrigger } from '@/Components/twc-ui/file-trigger'
+import { AvatarUpload } from '@/Components/twc-ui/avatar-upload'
 import { FormCard } from '@/Components/twc-ui/form-card'
 import { FormComboBox } from '@/Components/twc-ui/form-combo-box'
 import { FormSelect } from '@/Components/twc-ui/form-select'
@@ -28,9 +26,6 @@ type ProjectFormData = App.Data.ProjectData & {
 
 const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
   const title = project.id ? 'Projekt bearbeiten' : 'Projekt hinzufügen'
-  const [droppedImage, setDroppedImage] = useState<string | undefined>(
-    project.avatar_url as string | undefined
-  )
 
   const form = useForm<ProjectFormData>(
     'form-project-edit',
@@ -47,14 +42,6 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
 
   const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Zurück'
 
-  useEffect(() => {
-    return () => {
-      if (droppedImage) {
-        URL.revokeObjectURL(droppedImage)
-      }
-    }
-  }, [droppedImage])
-
   const breadcrumbs = useMemo(() => {
     if (project.id) {
       return [
@@ -66,26 +53,6 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
       return [{ title: 'Projekte', url: route('app.project.index') }, { title: 'Neues Projekt' }]
     }
   }, [project.name, project.id])
-
-  async function onSelectHandler(e: FileList | null) {
-    if (!e || e.length === 0) return
-
-    try {
-      const item = e[0]
-
-      if (item) {
-        if (droppedImage?.startsWith('blob:')) {
-          URL.revokeObjectURL(droppedImage)
-        }
-
-        setDroppedImage(URL.createObjectURL(item))
-        form.setData('avatar', item)
-      }
-    } catch (error) {
-      console.error('Fehler beim Verarbeiten des Bildes:', error)
-      // Optional: Benutzer-Feedback anzeigen
-    }
-  }
 
   const handleCancel = async () => {
     if (form.isDirty) {
@@ -131,21 +98,11 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
           <FormGrid>
             <div className="col-span-2 inline-flex items-center justify-center">
               <div>
-                <FileTrigger
-                  acceptedFileTypes={['image/png', 'image/jpeg', 'image/webp']}
-                  onSelect={onSelectHandler}
-                >
-                  <Pressable>
-                    <Avatar
-                      role="button"
-                      fullname={project.name}
-                      src={droppedImage}
-                      size="lg"
-                      className="cursor-pointer"
-                      aria-label="Avatar ändern"
-                    />
-                  </Pressable>
-                </FileTrigger>
+                <AvatarUpload
+                  avatarUrl={project.avatar_url}
+                  fullName={project.name}
+                  onChanged={item => form.setData('avatar', item)}
+                />
               </div>
             </div>
             <div className="col-span-8">

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d9d961c03a69c32cdc048990460091a7",
+    "content-hash": "78227205c176c5b2f91b6537a48ad670",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4861,6 +4861,70 @@
                 }
             ],
             "time": "2025-11-24T17:48:50+00:00"
+        },
+        {
+            "name": "protonemedia/laravel-verify-new-email",
+            "version": "v1.13.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/protonemedia/laravel-verify-new-email.git",
+                "reference": "530db50934fe8c7771483af2dcfbbf9b764b23fc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/protonemedia/laravel-verify-new-email/zipball/530db50934fe8c7771483af2dcfbbf9b764b23fc",
+                "reference": "530db50934fe8c7771483af2dcfbbf9b764b23fc",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^10.0|^11.0|^12.0",
+                "php": "^8.2|^8.3|^8.4"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.0|^9.0|^10.0",
+                "phpunit/phpunit": "^10.4|^11.5.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "ProtoneMedia\\LaravelVerifyNewEmail\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ProtoneMedia\\LaravelVerifyNewEmail\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Pascal Baljet",
+                    "email": "pascal@protone.media",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Package to handle email address updates and verification",
+            "homepage": "https://github.com/protonemedia/laravel-verify-new-email",
+            "keywords": [
+                "laravel-verify-new-email",
+                "protonemedia"
+            ],
+            "support": {
+                "issues": "https://github.com/protonemedia/laravel-verify-new-email/issues",
+                "source": "https://github.com/protonemedia/laravel-verify-new-email/tree/v1.13.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/pascalbaljet",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-04-01T19:31:34+00:00"
         },
         {
             "name": "psr/clock",
@@ -15512,5 +15576,5 @@
         "php": "^8.4"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

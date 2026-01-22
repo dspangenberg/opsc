@@ -8,6 +8,7 @@
 namespace App\Mail;
 
 use App\Models\TempData;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
@@ -19,16 +20,15 @@ class VerifyEmailAddressForCloudRegistrationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected static TempData $tenant;
-
+    protected static User $user;
     protected static string $verificationUrl;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(TempData $tenant, string $verificationUrl)
+    public function __construct(User $user, string $verificationUrl)
     {
-        self::$tenant = $tenant;
+        self::$user = $user;
         self::$verificationUrl = $verificationUrl;
     }
 
@@ -38,7 +38,7 @@ class VerifyEmailAddressForCloudRegistrationMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'ecting.cloud - Bitte bestätige Deine E-Mail-Adresse',
+            subject: 'opsc.cloud - Bitte bestätige Deine E-Mail-Adresse',
         );
     }
 
@@ -47,14 +47,14 @@ class VerifyEmailAddressForCloudRegistrationMail extends Mailable
      */
     public function content(): Content
     {
-        $tenant = VerifyEmailAddressForCloudRegistrationMail::$tenant['data'];
+        $user = VerifyEmailAddressForCloudRegistrationMail::$user;
 
         return new Content(
 
-            view: 'generated.emails.verify-email',
+            view: 'generated.verify-email',
             with: [
-                'title' => 'ecting.cloud - E-Mail-Adresse bestätigen',
-                'name' => $tenant['first_name'], // .' '.$tenant['last_name'],
+                'title' => 'opsc.cloud - E-Mail-Adresse bestätigen',
+                'name' => $user['first_name'], // .' '.$tenant['last_name'],
                 'verificationUrl' => VerifyEmailAddressForCloudRegistrationMail::$verificationUrl,
             ],
         );

@@ -157,9 +157,11 @@ return [
     'uuid'                   => ':Attribute muss ein UUID sein.',
     'attributes'             => [
         'company_house_name' => 'Haus- oder Firmenname',
+        'current_password'   => 'Aktuelles Kennwort',
         'email'              => 'E-Mail-Adresse',
         'first_name'         => 'Vorname',
         'last_name'          => 'Name',
+        'password'           => 'Neues Kennwort',
         'zip'                => 'PLZ',
     ],
 ];

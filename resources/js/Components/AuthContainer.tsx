@@ -51,7 +51,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
                 {appWithVersion}
               </div>
               <CardTitle className="text-xl">{cardTitle}</CardTitle>
-              <CardDescription className="text-base">{cardDescription}</CardDescription>
+              <CardDescription className="text-sm">{cardDescription}</CardDescription>
             </CardHeader>
             <CardContent>{children}</CardContent>
           </Card>

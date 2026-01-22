@@ -10,6 +10,8 @@ use App\Http\Controllers\App\Setting\LetterheadController;
 use App\Http\Controllers\App\Setting\OfferSectionController;
 use App\Http\Controllers\App\Setting\PrintLayoutController;
 use App\Http\Controllers\App\Setting\TextModuleController;
+use App\Http\Controllers\App\Setting\UserController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 
@@ -82,3 +84,27 @@ Route::post('/settings/bookkeeping/cost-centers', [CostCenterController::class, 
 Route::get('/settings/bookkeeping/cost-centers/{costCenter}/edit', [CostCenterController::class, 'edit'])->name('app.bookkeeping.cost-centers.edit')->middleware([HandlePrecognitiveRequests::class]);
 Route::put('/settings/bookkeeping/cost-centers/{costCenter}/edit', [CostCenterController::class, 'update'])->name('app.bookkeeping.cost-centers.update');
 
+Route::get('/profile', [ProfileController::class, 'edit'])->name('app.profile.edit')->middleware([HandlePrecognitiveRequests::class]);
+Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('app.profile.password-update')->middleware([HandlePrecognitiveRequests::class]);
+
+Route::redirect('settings/system', '/app/settings/system/users')
+    ->middleware(['admin'])
+    ->name('app.setting.system');
+Route::get('/settings/system/users', [UserController::class, 'index'])
+    ->middleware(['admin'])
+    ->name('app.setting.system.user.index');
+Route::get('/settings/system/users/create', [UserController::class, 'create'])
+    ->middleware(['admin'])
+    ->name('app.setting.system.user.create');
+Route::post('/settings/system/users', [UserController::class, 'store'])
+    ->middleware(['admin', HandlePrecognitiveRequests::class])
+    ->name('app.setting.system.user.store');
+Route::get('/settings/system/users/{user}/edit', [UserController::class, 'edit'])
+    ->middleware(['admin'])
+    ->name('app.setting.system.user.edit');
+Route::put('/settings/system/users/{user}/edit', [UserController::class, 'update'])
+    ->middleware(['admin', HandlePrecognitiveRequests::class])
+    ->name('app.setting.system.user.update');
+Route::delete('/settings/system/users/{user}/delete', [UserController::class, 'destroy'])
+    ->middleware(['admin'])
+    ->name('app.setting.system.user.delete');

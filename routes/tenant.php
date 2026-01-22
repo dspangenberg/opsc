@@ -8,8 +8,12 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\InitialPasswordController;
+use App\Http\Controllers\Auth\InitialPasswordStoreController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use ProtoneMedia\LaravelVerifyNewEmail\Http\VerifyNewEmailController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -81,11 +85,26 @@ Route::middleware([
         ->name('password.request');
 
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
+        ->middleware([HandlePrecognitiveRequests::class])
         ->name('password.email');
+
+    Route::get('pendingEmail/verify/{token}', [VerifyNewEmailController::class, 'verify'])
+        ->middleware(['signed'])
+        ->name('pendingEmail.verify');
 
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
         ->name('password.reset');
 
+    Route::get('confirm-email/{id}', [VerifyEmailController::class, '__invoke'])
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('email.verify');
+
+    Route::get('/initial-password/{id}', [InitialPasswordController::class, '__invoke'])
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('initial-password');
+
+    Route::post('/initial-password/store', [InitialPasswordStoreController::class, '__invoke'])->name('initial-password.store')->middleware([HandlePrecognitiveRequests::class]);
+
     Route::post('reset-password', [NewPasswordController::class, 'store'])
-        ->name('password.store');
+        ->name('password.store')->middleware([HandlePrecognitiveRequests::class]);
 });

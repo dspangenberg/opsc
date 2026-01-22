@@ -1,7 +1,7 @@
 import type { TimeValue as AriaTimeValue } from 'react-aria-components'
 import { useTimeConversion } from '@/Hooks/use-date-conversion'
 import { useFormContext } from './form'
-import { FormFieldError } from './form-errors'
+import { FormFieldError, getFormError } from './form-errors'
 import { TimeField, type TimeFieldProps } from './time-field'
 
 interface FormTimeFieldProps extends Omit<TimeFieldProps<AriaTimeValue>, 'value' | 'onChange'> {
@@ -11,7 +11,7 @@ interface FormTimeFieldProps extends Omit<TimeFieldProps<AriaTimeValue>, 'value'
 
 const FormTimeField = ({ value, onChange, ...props }: FormTimeFieldProps) => {
   const form = useFormContext()
-  const error = form?.errors?.[props.name as string]
+  const error = getFormError(form?.errors, props.name as string | undefined)
   const { parsedTime } = useTimeConversion(value, onChange)
 
   const handleTimeFieldChange = (newValue: AriaTimeValue | null) => {

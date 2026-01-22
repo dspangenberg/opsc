@@ -41,6 +41,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Maize\Markable\Models\Favorite;
+use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
+use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
+use Plank\Mediable\Exceptions\MediaUpload\FileNotFoundException;
+use Plank\Mediable\Exceptions\MediaUpload\FileNotSupportedException;
+use Plank\Mediable\Exceptions\MediaUpload\FileSizeException;
+use Plank\Mediable\Exceptions\MediaUpload\ForbiddenException;
+use Plank\Mediable\Exceptions\MediaUpload\InvalidHashException;
 use Plank\Mediable\Facades\MediaUploader;
 use Stevebauman\Purify\Facades\Purify;
 use Throwable;
@@ -213,7 +220,13 @@ class ContactController extends Controller
     }
 
     /**
-     * @throws Throwable
+     * @throws FileNotSupportedException
+     * @throws FileExistsException
+     * @throws FileNotFoundException
+     * @throws ForbiddenException
+     * @throws FileSizeException
+     * @throws InvalidHashException
+     * @throws ConfigurationException|Throwable
      */
     public function update(ContactUpdateRequest $request, Contact $contact)
     {

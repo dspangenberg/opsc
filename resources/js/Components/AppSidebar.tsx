@@ -13,13 +13,14 @@ import {
   KanbanIcon,
   TimeScheduleIcon
 } from '@hugeicons/core-free-icons'
+import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import logo from '@/Assets/Images/tw.svg'
 import { NavMain } from '@/Components/nav-main'
 import { NavSecondary } from '@/Components/nav-secondary'
 import { Sidebar, SidebarContent, SidebarHeader } from '@/Components/ui/sidebar'
 
-const data = {
+const buildNavData = (isAdmin: boolean) => ({
   navGlobalTop: [],
   navMain: [
     {
@@ -294,13 +295,33 @@ const data = {
               activePath: '/app/settings/printing-system/layouts'
             }
           ]
-        }
+        },
+        ...(isAdmin
+          ? [
+              {
+                title: 'System',
+                url: route('app.setting.system', {}, false),
+                activePath: '/app/settings/system',
+                items: [
+                  {
+                    title: 'Benutzerkonten',
+                    url: route('app.setting.system.user.index', {}, false),
+                    activePath: '/app/settings/system/users'
+                  }
+                ]
+              }
+            ]
+          : [])
       ]
     }
   ]
-}
+})
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { auth } = usePage().props
+  const isAdmin = auth?.user?.is_admin ?? false
+  const data = buildNavData(isAdmin)
+
   return (
     <Sidebar variant="inset" collapsible="icon" {...props}>
       <SidebarHeader className="h-auto flex-none">

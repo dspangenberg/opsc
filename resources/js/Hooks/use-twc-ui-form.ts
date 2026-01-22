@@ -19,7 +19,7 @@ const DATE_FORMAT = import.meta.env.VITE_APP_DATE_FORMAT || 'yyyy-MM-dd'
  */
 function getNestedValue(obj: any, path: string): any {
   // Convert array notation to dot notation: phones[0].number -> phones.0.number
-  const normalizedPath = path.replace(/\[(\d+)\]/g, '.$1')
+  const normalizedPath = path.replace(/\[(\d+)]/g, '.$1')
 
   return normalizedPath.split('.').reduce((current, key) => {
     return current?.[key]
@@ -35,9 +35,12 @@ function getNestedValue(obj: any, path: string): any {
  */
 function setNestedValue(obj: any, path: string, value: any): any {
   // Convert array notation to dot notation: phones[0].number -> phones.0.number
-  const normalizedPath = path.replace(/\[(\d+)\]/g, '.$1')
+  const normalizedPath = path.replace(/\[(\d+)]/g, '.$1')
   const keys = normalizedPath.split('.')
-  const lastKey = keys.pop()!
+  const lastKey = keys.pop()
+  if (!lastKey) {
+    return obj
+  }
 
   // Navigate to the parent object, creating intermediate objects as needed
   const parent = keys.reduce((current, key, index) => {
@@ -60,16 +63,29 @@ function convertErrorKey(key: string): string {
   return key.replace(/\.(\d+)\./g, '[$1].').replace(/\.(\d+)$/, '[$1]')
 }
 
+export type FormValidationMode = 'change' | 'blur' | 'both' | 'none'
+
+export interface FormValidationOptions {
+  validateOn?: FormValidationMode
+}
+
+type ValidationConfigWithOptions = ValidationConfig & FormValidationOptions
+
 export function useForm<T extends Record<string, FormDataConvertible>>(
   method: RequestMethod,
   url: string,
   data: T,
-  config?: ValidationConfig
+  config?: ValidationConfigWithOptions
 ) {
   // Capture the very first snapshot only once
   const initialDataRef = useRef({ ...data })
-  const form = useInertiaForm<T>(method, url, data, config)
+  const configValue = (config ?? {}) as ValidationConfigWithOptions
+  const { validateOn: configValidateOn, ...precognitionConfig } = configValue
+  const form = useInertiaForm<T>(method, url, data, precognitionConfig)
   const isDirty = !isEqual(initialDataRef.current, form.data)
+  const validateOn = configValidateOn ?? 'both'
+  const shouldValidateOnChange = validateOn === 'change' || validateOn === 'both'
+  const shouldValidateOnBlur = validateOn === 'blur' || validateOn === 'both'
 
   // Create a type-safe wrapper that bypasses Inertia's complex types
   // Now supports nested paths like 'phones[0].number'
@@ -90,24 +106,26 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
 
   const validateFormField = (name: string) => {
     // Convert array notation to dot notation for Laravel validation
-    const laravelName = name.replace(/\[(\d+)\]/g, '.$1')
+  const laravelName = name.replace(/\[(\d+)]/g, '.$1')
     ;(form as any).validate(laravelName)
   }
 
   const touchFormField = (name: string) => {
     // Convert array notation to dot notation for Laravel validation
-    const laravelName = name.replace(/\[(\d+)\]/g, '.$1')
+  const laravelName = name.replace(/\[(\d+)]/g, '.$1')
     ;(form as any).touched(laravelName)
   }
 
   const updateAndValidateWithoutEvent = (name: string, value: any) => {
     setFormData(name, value)
-    validateFormField(name)
+    if (shouldValidateOnChange) {
+      validateFormField(name)
+    }
   }
 
   function register(name: string) {
     // Get error using both array notation and Laravel dot notation
-    const laravelName = name.replace(/\[(\d+)\]/g, '.$1')
+    const laravelName = name.replace(/\[(\d+)]/g, '.$1')
     const error = (form.errors as any)[name] || (form.errors as any)[laravelName]
 
     return {
@@ -119,17 +137,21 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
       error,
       onChange: (value: any) => {
         setFormData(name, value)
-        validateFormField(name)
+        if (shouldValidateOnChange) {
+          validateFormField(name)
+        }
       },
       onBlur: () => {
-        validateFormField(name)
+        if (shouldValidateOnBlur) {
+          validateFormField(name)
+        }
       }
     } as const
   }
 
   function registerEvent(name: string) {
     // Get error using both array notation and Laravel dot notation
-    const laravelName = name.replace(/\[(\d+)\]/g, '.$1')
+    const laravelName = name.replace(/\[(\d+)]/g, '.$1')
     const error = (form.errors as any)[name] || (form.errors as any)[laravelName]
 
     return {
@@ -141,17 +163,21 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
       error,
       onChange: (e: ChangeEvent<InputElements>) => {
         setFormData(name, e.currentTarget.value)
-        validateFormField(name)
+        if (shouldValidateOnChange) {
+          validateFormField(name)
+        }
       },
       onBlur: () => {
-        validateFormField(name)
+        if (shouldValidateOnBlur) {
+          validateFormField(name)
+        }
       }
     } as const
   }
 
   const registerCheckbox = (name: string) => {
     // Get error using both array notation and Laravel dot notation
-    const laravelName = name.replace(/\[(\d+)\]/g, '.$1')
+    const laravelName = name.replace(/\[(\d+)]/g, '.$1')
     const error = (form.errors as any)[name] || (form.errors as any)[laravelName]
     const value =
       name.includes('.') || name.includes('[')
@@ -165,10 +191,14 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
       isSelected: Boolean(value),
       onChange: (checked: boolean) => {
         setFormData(name, checked)
-        validateFormField(name)
+        if (shouldValidateOnChange) {
+          validateFormField(name)
+        }
       },
       onBlur: () => {
-        validateFormField(name)
+        if (shouldValidateOnBlur) {
+          validateFormField(name)
+        }
       }
     } as const
   }
@@ -180,7 +210,9 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
     const newValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
     touchFormField(name)
     setFormData(name, newValue)
-    validateFormField(name)
+    if (shouldValidateOnChange) {
+      validateFormField(name)
+    }
   }
 
   // Hilfsfunktion: Konvertiert Datum vom konfigurierten Format zu ISO (yyyy-MM-dd) mit date-fns
@@ -266,18 +298,24 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
 
           setFormData(startFieldName, startFormatted)
           setFormData(endFieldName, endFormatted)
-          validateFormField(startFieldName)
-          validateFormField(endFieldName)
+          if (shouldValidateOnChange) {
+            validateFormField(startFieldName)
+            validateFormField(endFieldName)
+          }
         } else {
           setFormData(startFieldName, null)
           setFormData(endFieldName, null)
-          validateFormField(startFieldName)
-          validateFormField(endFieldName)
+          if (shouldValidateOnChange) {
+            validateFormField(startFieldName)
+            validateFormField(endFieldName)
+          }
         }
       },
       onBlur: () => {
-        validateFormField(startFieldName)
-        validateFormField(endFieldName)
+        if (shouldValidateOnBlur) {
+          validateFormField(startFieldName)
+          validateFormField(endFieldName)
+        }
       }
     } as const
   }
