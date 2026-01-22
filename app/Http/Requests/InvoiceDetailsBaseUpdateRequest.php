@@ -28,7 +28,7 @@ class InvoiceDetailsBaseUpdateRequest extends FormRequest
                 'nullable',
                 'required_if:is_recurring,true',
                 'required_if:is_recurring,1',
-                Rule::enum(InvoiceRecurringEnum::class)
+                Rule::enum(InvoiceRecurringEnum::class),
             ],
             'recurring_interval_units' => ['required_with:is_recurring', 'integer', 'min:1'],
             'type_id' => ['required', 'exists:invoice_types,id'],
@@ -37,7 +37,7 @@ class InvoiceDetailsBaseUpdateRequest extends FormRequest
             'payment_deadline_id' => ['required', 'exists:payment_deadlines,id'],
             'project_id' => ['nullable'],
             'tax_id' => ['required', 'exists:taxes,id'],
-            'parent_id' => ['nullable', 'exists:invoice,id'],
+            'parent_id' => ['nullable', 'exists:invoices,id'],
         ];
     }
 

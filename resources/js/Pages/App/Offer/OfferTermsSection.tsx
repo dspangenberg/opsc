@@ -159,7 +159,7 @@ export const OfferTermsSection: React.FC<OfferTermsSectionProps> = ({
   return (
     <>
       {(section.pagebreak === 'before' || section.pagebreak === 'both') && (
-        <div className="my-2 flex items-center gap-2 text-xs text-muted-foreground">
+        <div className="my-2 flex items-center gap-2 text-muted-foreground text-xs">
           <div className="h-px flex-1 bg-border" />
           <span>Seitenumbruch</span>
           <div className="h-px flex-1 bg-border" />
@@ -174,94 +174,101 @@ export const OfferTermsSection: React.FC<OfferTermsSectionProps> = ({
         )}
       >
         {editMode ? (
-        <div className="flex-1">
-          <Form form={form} onSubmitted={handleSaved}>
-            <MDXEditor
-              markdown={(section.content as string) || ''}
-              ref={ref}
-              autoFocus
-              className="isolated w-full cursor-text rounded-md border border-border bg-background p-2"
-              contentEditableClassName="font-sans text-base isolated md-editor z-50"
-              plugins={[
-                headingsPlugin(),
-                markdownShortcutPlugin(),
-                tablePlugin(),
-                listsPlugin(),
-                linkPlugin(),
-                linkDialogPlugin(),
-                toolbarPlugin({
-                  toolbarContents: () => (
-                    <>
-                      <Select
-                        items={selectItems}
-                        value={selectValue}
-                        onChange={value => onInsertTextModule(Number(value))}
-                        placeholder="Textbausteine"
-                        triggerTitle="Textbaustein einfügen"
-                      />
-                      <BlockTypeSelect />
-                      <BoldItalicUnderlineToggles />
-                      <InsertTable />
-                      <ListsToggle />
-                      <CreateLink />
-                    </>
-                  )
-                })
-              ]}
-              onChange={data => handleUpdate(data)}
-            />
-            <div className="pt-1.5">
-              <FormSelect
-                label="Seitenumbruch"
-                items={pagebreakOptions}
-                itemValue="value"
-                itemName="label"
-                {...form.register('pagebreak')}
+          <div className="flex-1">
+            <Form form={form} onSubmitted={handleSaved}>
+              <MDXEditor
+                markdown={(section.content as string) || ''}
+                ref={ref}
+                autoFocus
+                className="isolated w-full cursor-text rounded-md border border-border bg-background p-2"
+                contentEditableClassName="font-sans text-base isolated md-editor z-50"
+                plugins={[
+                  headingsPlugin(),
+                  markdownShortcutPlugin(),
+                  tablePlugin(),
+                  listsPlugin(),
+                  linkPlugin(),
+                  linkDialogPlugin(),
+                  toolbarPlugin({
+                    toolbarContents: () => (
+                      <>
+                        <Select
+                          items={selectItems}
+                          value={selectValue}
+                          onChange={value => onInsertTextModule(Number(value))}
+                          placeholder="Textbausteine"
+                          triggerTitle="Textbaustein einfügen"
+                        />
+                        <BlockTypeSelect />
+                        <BoldItalicUnderlineToggles />
+                        <InsertTable />
+                        <ListsToggle />
+                        <CreateLink />
+                      </>
+                    )
+                  })
+                ]}
+                onChange={data => handleUpdate(data)}
               />
-            </div>
+              <div className="pt-1.5">
+                <FormSelect
+                  label="Seitenumbruch"
+                  items={pagebreakOptions}
+                  itemValue="value"
+                  itemName="label"
+                  {...form.register('pagebreak')}
+                />
+              </div>
 
-            <div className="mt-4 flex items-center justify-between gap-2">
-              <div>
-                <Button
-                  icon={Delete03Icon}
-                  variant="ghost-destructive"
-                  size="icon"
-                  onClick={() => handleDelete(section)}
-                />
+              <div className="mt-4 flex items-center justify-between gap-2">
+                <div>
+                  <Button
+                    icon={Delete03Icon}
+                    variant="ghost-destructive"
+                    size="icon"
+                    onClick={() => handleDelete(section)}
+                  />
+                </div>
+                <div className="flex flex-1 items-center justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    title={cancelTitel}
+                    onClick={() => handleCancel(section)}
+                  />
+                  <Button type="submit" title="Speichern" />
+                </div>
               </div>
-              <div className="flex flex-1 items-center justify-end gap-2">
-                <Button
-                  variant="outline"
-                  title={cancelTitel}
-                  onClick={() => handleCancel(section)}
-                />
-                <Button type="submit" title="Speichern" />
-              </div>
-            </div>
-          </Form>
-        </div>
-      ) : (
-        <>
-          <div
-            role="button"
-            className={cn(
-              !isReadOnly ? 'cursor-pointer' : '',
-              'md-editor w-full flex-1 text-justify text-sm'
-            )}
-            {...pressProps}
-          >
-            <Markdown remarkPlugins={[remarkBreaks, remarkGfm]}>{section.content}</Markdown>
+            </Form>
           </div>
-          {canDrag && !isReadOnly && (
-            <div className="cursor-grab pl-4 active:cursor-grabbing" {...attributes} {...listeners}>
-              <Icon icon={DragDropHorizontalIcon} className="size-5 rotate-90 text-foreground/50" />
+        ) : (
+          <>
+            <div
+              role="button"
+              className={cn(
+                !isReadOnly ? 'cursor-pointer' : '',
+                'md-editor w-full flex-1 text-justify text-sm'
+              )}
+              {...pressProps}
+            >
+              <Markdown remarkPlugins={[remarkBreaks, remarkGfm]}>{section.content}</Markdown>
             </div>
-          )}
-        </>
-      )}
+            {canDrag && !isReadOnly && (
+              <div
+                className="cursor-grab pl-4 active:cursor-grabbing"
+                {...attributes}
+                {...listeners}
+              >
+                <Icon
+                  icon={DragDropHorizontalIcon}
+                  className="size-5 rotate-90 text-foreground/50"
+                />
+              </div>
+            )}
+          </>
+        )}
       </div>
       {(section.pagebreak === 'after' || section.pagebreak === 'both') && (
-        <div className="my-2 flex items-center gap-2 text-xs text-muted-foreground">
+        <div className="my-2 flex items-center gap-2 text-muted-foreground text-xs">
           <div className="h-px flex-1 bg-border" />
           <span>Seitenumbruch</span>
           <div className="h-px flex-1 bg-border" />
