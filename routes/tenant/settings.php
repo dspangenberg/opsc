@@ -10,6 +10,7 @@ use App\Http\Controllers\App\Setting\LetterheadController;
 use App\Http\Controllers\App\Setting\OfferSectionController;
 use App\Http\Controllers\App\Setting\PrintLayoutController;
 use App\Http\Controllers\App\Setting\TextModuleController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 
@@ -82,3 +83,5 @@ Route::post('/settings/bookkeeping/cost-centers', [CostCenterController::class, 
 Route::get('/settings/bookkeeping/cost-centers/{costCenter}/edit', [CostCenterController::class, 'edit'])->name('app.bookkeeping.cost-centers.edit')->middleware([HandlePrecognitiveRequests::class]);
 Route::put('/settings/bookkeeping/cost-centers/{costCenter}/edit', [CostCenterController::class, 'update'])->name('app.bookkeeping.cost-centers.update');
 
+Route::get('/profile', [ProfileController::class, 'edit'])->name('app.profile.edit')->middleware([HandlePrecognitiveRequests::class]);
+Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('app.profile.password-update')->middleware([HandlePrecognitiveRequests::class]);

@@ -26,7 +26,7 @@ return [
     'can'                    => 'Das Feld :attribute enthält einen nicht autorisierten Wert.',
     'confirmed'              => ':Attribute stimmt nicht mit der Bestätigung überein.',
     'contains'               => 'Dem Feld :attribute fehlt ein erforderlicher Wert.',
-    'current_password'       => 'Das Passwort ist falsch.',
+    'current_password'       => ':Attribute ist falsch.',
     'date'                   => ':Attribute muss ein gültiges Datum sein.',
     'date_equals'            => ':Attribute muss ein Datum gleich :date sein.',
     'date_format'            => ':Attribute entspricht nicht dem gültigen Format für :format.',
@@ -157,9 +157,11 @@ return [
     'uuid'                   => ':Attribute muss ein UUID sein.',
     'attributes'             => [
         'company_house_name' => 'Haus- oder Firmenname',
+        'current_password'   => 'Aktuelles Kennwort',
         'email'              => 'E-Mail-Adresse',
         'first_name'         => 'Vorname',
         'last_name'          => 'Name',
+        'password'           => 'Neues Kennwort',
         'zip'                => 'PLZ',
     ],
 ];

@@ -2,7 +2,7 @@ import type { FormDataConvertible } from '@inertiajs/core'
 import type { RequestMethod, SimpleValidationErrors, ValidationConfig } from 'laravel-precognition'
 import type React from 'react'
 import { createContext, type FormEvent, type HTMLAttributes, useContext } from 'react'
-import { useForm as internalUseForm } from '@/Hooks/use-twc-ui-form'
+import { type FormValidationOptions, useForm as internalUseForm } from '@/Hooks/use-twc-ui-form'
 import { cn } from '@/Lib/utils'
 import { FormErrors } from './form-errors'
 
@@ -17,7 +17,7 @@ type ExtendedForm<T extends FormSchema> = {
   className?: string
   method: RequestMethod
   action: string
-  config: ValidationConfig
+  config: ValidationConfig & FormValidationOptions
   isDirty: boolean
   reset: UseFormReturn<T>['reset']
   register: UseFormReturn<T>['register']
@@ -113,12 +113,16 @@ export const Form = <T extends FormSchema>({
         className={cn('w-full', className)}
         {...props}
       >
-        <FormErrors
-          className={errorClassName}
-          errors={form.errors}
-          title={errorTitle}
-          showErrors={errorVariant === 'form'}
-        />
+        {form.errors && (
+          <div className="mx-3">
+            <FormErrors
+              className={errorClassName}
+              errors={form.errors}
+              title={errorTitle}
+              showErrors={errorVariant === 'form'}
+            />
+          </div>
+        )}
         <fieldset disabled={form.processing}>{children}</fieldset>
       </form>
     </FormContext.Provider>
@@ -137,19 +141,22 @@ export const useFormContext = <T extends FormSchema = FormSchema>() => {
   }
 }
 
-export const useForm = <T extends FormSchema>(
+export function useForm<T extends FormSchema>(
   id: string,
   method: RequestMethod,
   action: string,
   data: T,
-  config: ValidationConfig = {},
+  configOrClassName?: (ValidationConfig & FormValidationOptions) | string,
   className?: string
-): ExtendedForm<T> => {
+): ExtendedForm<T> {
+  const config = typeof configOrClassName === 'string' ? {} : (configOrClassName ?? {})
+  const resolvedClassName =
+    typeof configOrClassName === 'string' ? configOrClassName : className
   const internalForm = internalUseForm(method, action, data, config)
 
   return {
     id,
-    className,
+    className: resolvedClassName,
     method,
     action,
     config,

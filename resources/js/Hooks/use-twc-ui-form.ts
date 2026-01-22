@@ -60,16 +60,29 @@ function convertErrorKey(key: string): string {
   return key.replace(/\.(\d+)\./g, '[$1].').replace(/\.(\d+)$/, '[$1]')
 }
 
+export type FormValidationMode = 'change' | 'blur' | 'both' | 'none'
+
+export interface FormValidationOptions {
+  validateOn?: FormValidationMode
+}
+
+type ValidationConfigWithOptions = ValidationConfig & FormValidationOptions
+
 export function useForm<T extends Record<string, FormDataConvertible>>(
   method: RequestMethod,
   url: string,
   data: T,
-  config?: ValidationConfig
+  config?: ValidationConfigWithOptions
 ) {
   // Capture the very first snapshot only once
   const initialDataRef = useRef({ ...data })
-  const form = useInertiaForm<T>(method, url, data, config)
+  const configValue = (config ?? {}) as ValidationConfigWithOptions
+  const { validateOn: configValidateOn, ...precognitionConfig } = configValue
+  const form = useInertiaForm<T>(method, url, data, precognitionConfig)
   const isDirty = !isEqual(initialDataRef.current, form.data)
+  const validateOn = configValidateOn ?? 'both'
+  const shouldValidateOnChange = validateOn === 'change' || validateOn === 'both'
+  const shouldValidateOnBlur = validateOn === 'blur' || validateOn === 'both'
 
   // Create a type-safe wrapper that bypasses Inertia's complex types
   // Now supports nested paths like 'phones[0].number'
@@ -102,7 +115,9 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
 
   const updateAndValidateWithoutEvent = (name: string, value: any) => {
     setFormData(name, value)
-    validateFormField(name)
+    if (shouldValidateOnChange) {
+      validateFormField(name)
+    }
   }
 
   function register(name: string) {
@@ -119,10 +134,14 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
       error,
       onChange: (value: any) => {
         setFormData(name, value)
-        validateFormField(name)
+        if (shouldValidateOnChange) {
+          validateFormField(name)
+        }
       },
       onBlur: () => {
-        validateFormField(name)
+        if (shouldValidateOnBlur) {
+          validateFormField(name)
+        }
       }
     } as const
   }
@@ -141,10 +160,14 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
       error,
       onChange: (e: ChangeEvent<InputElements>) => {
         setFormData(name, e.currentTarget.value)
-        validateFormField(name)
+        if (shouldValidateOnChange) {
+          validateFormField(name)
+        }
       },
       onBlur: () => {
-        validateFormField(name)
+        if (shouldValidateOnBlur) {
+          validateFormField(name)
+        }
       }
     } as const
   }
@@ -165,10 +188,14 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
       isSelected: Boolean(value),
       onChange: (checked: boolean) => {
         setFormData(name, checked)
-        validateFormField(name)
+        if (shouldValidateOnChange) {
+          validateFormField(name)
+        }
       },
       onBlur: () => {
-        validateFormField(name)
+        if (shouldValidateOnBlur) {
+          validateFormField(name)
+        }
       }
     } as const
   }
@@ -180,7 +207,9 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
     const newValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
     touchFormField(name)
     setFormData(name, newValue)
-    validateFormField(name)
+    if (shouldValidateOnChange) {
+      validateFormField(name)
+    }
   }
 
   // Hilfsfunktion: Konvertiert Datum vom konfigurierten Format zu ISO (yyyy-MM-dd) mit date-fns
@@ -266,18 +295,24 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
 
           setFormData(startFieldName, startFormatted)
           setFormData(endFieldName, endFormatted)
-          validateFormField(startFieldName)
-          validateFormField(endFieldName)
+          if (shouldValidateOnChange) {
+            validateFormField(startFieldName)
+            validateFormField(endFieldName)
+          }
         } else {
           setFormData(startFieldName, null)
           setFormData(endFieldName, null)
-          validateFormField(startFieldName)
-          validateFormField(endFieldName)
+          if (shouldValidateOnChange) {
+            validateFormField(startFieldName)
+            validateFormField(endFieldName)
+          }
         }
       },
       onBlur: () => {
-        validateFormField(startFieldName)
-        validateFormField(endFieldName)
+        if (shouldValidateOnBlur) {
+          validateFormField(startFieldName)
+          validateFormField(endFieldName)
+        }
       }
     } as const
   }
