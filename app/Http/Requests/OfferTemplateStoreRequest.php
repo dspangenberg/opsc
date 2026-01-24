@@ -19,6 +19,14 @@ class OfferTemplateStoreRequest extends FormRequest
         ];
     }
 
+    public function messages(): array
+    {
+        return [
+            'template_name.required' => 'Bitte einen Vorlagennamen angeben.',
+            'template_name.string' => 'Der Vorlagenname muss ein Text sein.',
+        ];
+    }
+
     public function authorize(): bool
     {
         return true;

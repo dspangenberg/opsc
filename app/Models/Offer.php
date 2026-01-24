@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Support\Facades\DB;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
@@ -94,7 +95,7 @@ class Offer extends Model implements MediableInterface
             'is_template' => 'boolean',
         ];
     }
-    
+
     /**
      * @throws Exception
      */
@@ -235,34 +236,38 @@ class Offer extends Model implements MediableInterface
     }
 
     public static function duplicate(Offer $offer): Offer {
-        $duplicatedOffer = $offer->replicate();
+        return DB::transaction(function () use ($offer) {
+            $duplicatedOffer = $offer->replicate();
 
-        $duplicatedOffer->issued_on = Carbon::now()->format('Y-m-d');
-        $duplicatedOffer->is_draft = true;
-        $duplicatedOffer->offer_number = null;
-        $duplicatedOffer->sent_at = null;
-        $duplicatedOffer->valid_until = $duplicatedOffer->issued_on->copy()->addDays(30);
-        $duplicatedOffer->save();
+            $duplicatedOffer->issued_on = Carbon::now()->format('Y-m-d');
+            $duplicatedOffer->is_draft = true;
+            $duplicatedOffer->offer_number = null;
+            $duplicatedOffer->sent_at = null;
+            $duplicatedOffer->valid_until = $duplicatedOffer->issued_on->copy()->addDays(30);
+            $duplicatedOffer->is_template = false;
+            $duplicatedOffer->template_name = null;
+            $duplicatedOffer->save();
 
-        $offer->lines()->each(function ($line) use ($duplicatedOffer) {
-            $replicatedLine = $line->replicate();
-            $replicatedLine->offer_id = $duplicatedOffer->id;
-            $replicatedLine->save();
+            $offer->lines()->each(function ($line) use ($duplicatedOffer) {
+                $replicatedLine = $line->replicate();
+                $replicatedLine->offer_id = $duplicatedOffer->id;
+                $replicatedLine->save();
+            });
+
+            $offer->sections()->each(function ($section) use ($duplicatedOffer) {
+                $replicatedSection = $section->replicate();
+                $replicatedSection->offer_id = $duplicatedOffer->id;
+                $replicatedSection->save();
+            });
+
+            $offer->attachments()->each(function ($attachment) use ($duplicatedOffer) {
+                $replicateAttachment = $attachment->replicate();
+                $replicateAttachment->attachable_id = $duplicatedOffer->id;
+                $replicateAttachment->save();
+            });
+
+            return $duplicatedOffer;
         });
-
-        $offer->sections()->each(function ($section) use ($duplicatedOffer) {
-            $replicatedSection = $section->replicate();
-            $replicatedSection->offer_id = $duplicatedOffer->id;
-            $replicatedSection->save();
-        });
-
-        $offer->attachments()->each(function ($attachment) use ($duplicatedOffer) {
-            $replicateAttachment = $attachment->replicate();
-            $replicateAttachment->attachable_id = $duplicatedOffer->id;
-            $replicateAttachment->save();
-        });
-
-        return $duplicatedOffer;
     }
 
     public function getFormatedOfferNumberAttribute(): string
@@ -356,6 +361,7 @@ class Offer extends Model implements MediableInterface
     {
         return match ($view) {
             'drafts' => $query->where('is_draft', true),
+            'template' => $query->where('is_template', true),
             default => $query->where('is_draft', false)
         };
     }

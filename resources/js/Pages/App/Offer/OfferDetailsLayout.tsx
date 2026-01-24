@@ -137,7 +137,6 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children, ...props 
   const handleSaveAsTemplate = async () => {
     const promise = await OfferSaveAsTemplate.call({ templateName: offer.template_name ?? '' })
     if (typeof promise === 'string' && promise.length > 0) {
-      console.log(promise)
       router.post(route('app.offer.save-as-template', { offer: offer.id }), {
         id: offer.id,
         template_name: promise

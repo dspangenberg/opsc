@@ -43,6 +43,7 @@ class OfferController extends Controller
     {
         $years = Offer::query()->selectRaw('DISTINCT YEAR(issued_on) as year')->orderByRaw('YEAR(issued_on) DESC')->get()->pluck('year');
         $currentYear = date('Y');
+        $view = $request->query('view', 'all');
 
         $year = $request->query('year');
         if ($year === null) {
@@ -60,6 +61,7 @@ class OfferController extends Controller
             ->withSum('lines', 'amount')
             ->withSum('lines', 'tax')
             ->byYear($year)
+            ->view($view)
             ->orderBy('issued_on', 'desc')
             ->orderBy('offer_number', 'desc')
             ->paginate(15);
@@ -118,8 +120,8 @@ class OfferController extends Controller
 
         $data = $request->safe()->except('template_id');
 
-        if ($request->validated()['template_id']) {
-            $template = Offer::find($request->validated()['template_id']);
+        if ($request->validated('template_id')) {
+            $template = Offer::firstOrFail($request->validated('template_id'));
             $offer = Offer::duplicate($template);
             $offer->contact_id = $data['contact_id'];
             $offer->project_id = $data['project_id'];
