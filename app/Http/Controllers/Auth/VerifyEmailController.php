@@ -16,6 +16,7 @@ class VerifyEmailController extends Controller
     public function __invoke(Request $request): RedirectResponse
     {
         $routeId = (int) $request->route('id');
+        $hash = (string) $request->route('hash');
         $authUser = $request->user();
 
         if (! $authUser && ! $request->hasValidSignature()) {
@@ -25,6 +26,10 @@ class VerifyEmailController extends Controller
 
         if ($authUser && $authUser->getKey() !== $routeId) {
             abort(403);
+        }
+
+        if (! hash_equals(sha1($user->getEmailForVerification()), $hash)) {
+            abort(403, 'Der Verifizierungslink ist ungültig.');
         }
 
         if ($user->hasVerifiedEmail()) {

@@ -230,8 +230,6 @@ class InvoiceController extends Controller
             $invoice->save();
         }
 
-        ds($request->validated());
-
         $invoice->update($request->validated());
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);

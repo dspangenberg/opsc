@@ -95,7 +95,7 @@ Route::middleware([
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
         ->name('password.reset');
 
-    Route::get('confirm-email/{id}', [VerifyEmailController::class, '__invoke'])
+    Route::get('confirm-email/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
         ->middleware(['signed', 'throttle:6,1'])
         ->name('email.verify');
 
