@@ -170,6 +170,7 @@ class InvoiceController extends Controller
             ->load('project')
             ->load('payment_deadline')
             ->load('parent_invoice')
+            ->load('offer')
             ->load('type')
             ->load([
                 'lines' => function ($query) {

@@ -11,14 +11,14 @@ import {
 import { StatsField } from '@/Components/StatsField'
 import { cn } from '@/Lib/utils'
 
-interface ContactDetailsOrgInfoBoxProps {
+interface InvoiceDetailsSideProps {
   invoice: App.Data.InvoiceData
   showSecondary?: boolean
 }
 
-export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
+export const InvoiceDetailsSide: FC<InvoiceDetailsSideProps> = ({
   invoice
-}: ContactDetailsOrgInfoBoxProps) => {
+}: InvoiceDetailsSideProps) => {
   const currencyFormatter = new Intl.NumberFormat('de-DE', {
     style: 'decimal',
     minimumFractionDigits: 2,
@@ -29,6 +29,16 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
     () => route('app.contact.details', { id: invoice.contact_id }),
     [invoice.contact_id]
   )
+
+  const offerRoute = useMemo(() => {
+    if (!invoice.offer_id) return '#'
+    return route('app.offer.details', { offer: invoice.offer_id })
+  }, [invoice.offer_id])
+
+  const parentInvoiceRoute = useMemo(() => {
+    if (!invoice.parent_id) return '#'
+    return route('app.invoice.details', { invoice: invoice.parent_id })
+  }, [invoice.parent_id])
 
   const title = `RG-${invoice.formated_invoice_number}`
 
@@ -69,11 +79,6 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
             value={invoice.type?.display_name}
           />
           <DataCardField variant="vertical" label="Umsatzsteuer" value={invoice.tax?.name} />
-          <DataCardField
-            variant="vertical"
-            label="Übergeordnete Rechnung"
-            value={invoice.parent_invoice?.formated_invoice_number}
-          />
         </DataCardSection>
         <DataCardSection>
           <DataCardField
@@ -90,6 +95,15 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
               invoice.service_provision
             )}
           </DataCardField>
+          <DataCardField
+            variant="vertical"
+            label="Übergeordnete Rechnung"
+            value={invoice.parent_id}
+          >
+            <Link href={parentInvoiceRoute} className="hover:underline">
+              {invoice.parent_invoice?.formated_invoice_number}
+            </Link>
+          </DataCardField>
 
           <DataCardField
             className="col-span-2"
@@ -97,6 +111,16 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
             label="Projekt"
             value={invoice.project?.name}
           />
+          <DataCardField
+            className="col-span-2"
+            variant="vertical"
+            label="Angebot"
+            value={invoice.offer?.formated_offer_number}
+          >
+            <Link href={offerRoute} className="hover:underline">
+              {invoice.offer?.formated_offer_number}
+            </Link>
+          </DataCardField>
         </DataCardSection>
 
         <DataCardSection title="Rechnungsempfänger">

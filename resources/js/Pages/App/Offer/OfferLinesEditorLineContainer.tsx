@@ -21,7 +21,7 @@ export const OfferLinesEditorLineContainer: React.FC<OfferLinesEditorLineContain
   children,
   offerLine
 }) => {
-  const { duplicateLine, removeLine } = useOfferTable()
+  const { duplicateLine, removeLine, updateLine } = useOfferTable()
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: offerLine.id ?? 0
@@ -33,6 +33,10 @@ export const OfferLinesEditorLineContainer: React.FC<OfferLinesEditorLineContain
     opacity: isDragging ? 0.5 : 1
   }
 
+  const changeLineType = (id: number, type_id: number) => {
+    updateLine(id, { type_id })
+  }
+
   return (
     <div ref={setNodeRef} style={style} className="flex">
       <div className="cursor-grab py-8 pl-4 active:cursor-grabbing" {...attributes} {...listeners}>
@@ -41,6 +45,20 @@ export const OfferLinesEditorLineContainer: React.FC<OfferLinesEditorLineContain
       <div className="flex flex-1">{children}</div>
       <div className="py-6 pr-2.5">
         <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
+          {offerLine.type_id === 1 && (
+            <MenuItem
+              title="In Überschreibaren Gesamtpreis umwandeln"
+              separator
+              onClick={() => changeLineType(offerLine.id as number, 3)}
+            />
+          )}
+          {offerLine.type_id === 3 && (
+            <MenuItem
+              title="In Standard-Rechnungsposition umwandeln"
+              separator
+              onClick={() => changeLineType(offerLine.id as number, 1)}
+            />
+          )}
           <MenuItem
             icon={Copy01Icon}
             title="Duplizieren"

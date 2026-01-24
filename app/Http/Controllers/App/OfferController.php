@@ -17,6 +17,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\OfferAttachmentSortUpdateRequest;
 use App\Http\Requests\OfferOfferSectionRequest;
 use App\Http\Requests\OfferStoreRequest;
+use App\Http\Requests\OfferTemplateStoreRequest;
 use App\Http\Requests\OfferTermsRequest;
 use App\Models\Attachment;
 use App\Models\Contact;
@@ -77,6 +78,7 @@ class OfferController extends Controller
         $taxes = Tax::query()->with('rates')->orderBy('is_default', 'DESC')->orderBy('name')->get();
         $projects = Project::query()->where('is_archived', false)->orderBy('name')->get();
         $contacts = Contact::query()->whereNotNull('debtor_number')->orderBy('name')->orderBy('first_name')->get();
+        $templates = Offer::where('is_template', true)->orderBy('template_name')->get();
 
         $offer = new Offer;
         $offer->contact_id = 0;
@@ -92,6 +94,7 @@ class OfferController extends Controller
                 'projects' => ProjectData::collect($projects),
                 'taxes' => TaxData::collect($taxes),
                 'contacts' => ContactData::collect($contacts),
+                'templates' => OfferData::collect($templates),
             ])->baseRoute('app.offer.index');
     }
 
@@ -112,10 +115,21 @@ class OfferController extends Controller
 
     public function store(OfferStoreRequest $request)
     {
-        $validatedData = $request->validated();
 
-        $validatedData['offer_number'] = null;
-        $offer = Offer::create($validatedData);
+        $data = $request->safe()->except('template_id');
+
+        if ($request->validated()['template_id']) {
+            $template = Offer::find($request->validated()['template_id']);
+            $offer = Offer::duplicate($template);
+            $offer->contact_id = $data['contact_id'];
+            $offer->project_id = $data['project_id'];
+            $offer->save();
+        } else {
+            $data['offer_number'] = null;
+            $data['template_id'] = null;
+            $offer = Offer::create($data);
+        }
+
         $offer->load('contact');
 
         $offer->address = $offer->contact->getInvoiceAddress()->full_address;
@@ -140,6 +154,7 @@ class OfferController extends Controller
         $invoice->type_id = 2;
         $invoice->payment_deadline_id = $offer->contact->payment_deadline_id;
         $invoice->tax_id = $offer->tax_id;
+        $invoice->offer_id = $offer->id;
         $invoice->save();
 
         $invoice->load('contact');
@@ -173,7 +188,7 @@ class OfferController extends Controller
             ->load('project')
             ->load([
                 'lines' => function ($query) {
-                    $query->orderBy('pos')->orderBy('id');
+                    $query->with('rate')->orderBy('pos')->orderBy('id');
                 },
             ])
             ->load([
@@ -234,32 +249,7 @@ class OfferController extends Controller
 
     public function duplicate(Offer $offer)
     {
-        $duplicatedOffer = $offer->replicate();
-
-        $duplicatedOffer->issued_on = Carbon::now()->format('Y-m-d');
-        $duplicatedOffer->is_draft = true;
-        $duplicatedOffer->offer_number = null;
-        $duplicatedOffer->sent_at = null;
-        $duplicatedOffer->valid_until = $duplicatedOffer->issued_on->copy()->addDays(30);
-        $duplicatedOffer->save();
-
-        $offer->lines()->each(function ($line) use ($duplicatedOffer) {
-            $replicatedLine = $line->replicate();
-            $replicatedLine->offer_id = $duplicatedOffer->id;
-            $replicatedLine->save();
-        });
-
-        $offer->sections()->each(function ($section) use ($duplicatedOffer) {
-            $replicatedSection = $section->replicate();
-            $replicatedSection->offer_id = $duplicatedOffer->id;
-            $replicatedSection->save();
-        });
-
-        $offer->attachments()->each(function ($attachment) use ($duplicatedOffer) {
-            $replicateAttachment = $attachment->replicate();
-            $replicateAttachment->attachable_id = $duplicatedOffer->id;
-            $replicateAttachment->save();
-        });
+        $duplicatedOffer = Offer::duplicate($offer);
 
         return redirect()->route('app.offer.details', ['offer' => $duplicatedOffer->id]);
     }
@@ -268,6 +258,14 @@ class OfferController extends Controller
     {
         $offer->release();
         return redirect()->route('app.offer.details', ['offer' => $offer->id]);
+    }
+
+    public function saveAsTemplate (OfferTemplateStoreRequest $request, Offer $offer) {
+        $offer->is_template = true;
+        $offer->template_name = $request->validated('template_name');
+        $offer->save();
+
+        return Inertia::flash('toast', ['type' => 'success', 'message' => 'Angebot wurde erfolgreich als Vorlage gespeichert.'])->back();
     }
 
     public function unrelease(Offer $offer)

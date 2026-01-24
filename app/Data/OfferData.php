@@ -64,6 +64,8 @@ class OfferData extends Data
 
         public readonly ?TaxData $tax,
 
+        public readonly ?bool $is_template,
+        public readonly ?string $template_name,
     ) {
     }
 

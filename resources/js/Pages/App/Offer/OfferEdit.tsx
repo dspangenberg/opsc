@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/react'
-import * as React from 'react'
+import type * as React from 'react'
 import { useState } from 'react'
 import { Button } from '@/Components/twc-ui/button'
 import { ExtendedDialog as Dialog } from '@/Components/twc-ui/extended-dialog'
@@ -15,17 +15,24 @@ interface Props extends PageProps {
   projects: App.Data.ProjectData[]
   taxes: App.Data.TaxData[]
   contacts: App.Data.ContactData[]
+  templates: App.Data.OfferData[]
 }
 
-const OfferEdit: React.FC<Props> = ({ offer, contacts, projects, taxes }) => {
-  const [isOpen, setIsOpen] = useState(true)
-  const ref = React.useRef<HTMLDivElement>(null)
+type OfferFormData = App.Data.OfferData & {
+  template_id: number
+}
 
-  const form = useForm<App.Data.OfferData>(
+const OfferEdit: React.FC<Props> = ({ offer, contacts, projects, taxes, templates }) => {
+  const [isOpen, setIsOpen] = useState(true)
+
+  const form = useForm<OfferFormData>(
     'form-offer-edit',
     offer.id ? 'put' : 'post',
     offer.id ? route('app.offer.update', { id: offer.id }) : route('app.offer.store'),
-    offer
+    {
+      template_id: 0,
+      ...offer
+    }
   )
 
   const handleClose = () => {
@@ -81,7 +88,19 @@ const OfferEdit: React.FC<Props> = ({ offer, contacts, projects, taxes }) => {
           <div className="col-span-8">
             <FormDatePicker label="Angebotsdatum" {...form.register('issued_on')} />
           </div>
-          <div className="col-span-16" />
+          <div className="col-span-4" />
+          <div className="col-span-12">
+            {!offer.id && (
+              <FormSelect<App.Data.OfferData>
+                label="Vorlage"
+                {...form.register('template_id')}
+                isOptional
+                optionalValue="(keine Vorlage)"
+                items={templates}
+                itemName="template_name"
+              />
+            )}
+          </div>
         </FormGrid>
         <FormGrid>
           <div className="col-span-12">

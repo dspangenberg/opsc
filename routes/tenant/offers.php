@@ -83,4 +83,6 @@ Route::delete('invoicing/offers/{offer}/terms/section/{offerSection}', [OfferCon
 Route::put('invoicing/offers/{offer}/terms/sort-sections', [OfferController::class, 'sortSections'])
     ->name('app.offer.sort-sections');
 
+Route::post('invoicing/offers/{offer}/save-as-template', [OfferController::class, 'saveAsTemplate'])->middleware([HandlePrecognitiveRequests::class])->name('app.offer.save-as-template');
+
 

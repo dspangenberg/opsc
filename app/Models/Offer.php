@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Facades\WeasyPdfService;
+use Carbon\Carbon;
 use Eloquent;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -66,6 +67,8 @@ class Offer extends Model implements MediableInterface
         'address',
         'tax_id',
         'sent_at',
+        'is_template',
+        'template_name',
     ];
 
     protected $attributes = [
@@ -81,6 +84,17 @@ class Offer extends Model implements MediableInterface
         'amount_open',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'issued_on' => 'date',
+            'valid_until' => 'date',
+            'sent_at' => 'datetime',
+            'is_draft' => 'boolean',
+            'is_template' => 'boolean',
+        ];
+    }
+    
     /**
      * @throws Exception
      */
@@ -220,6 +234,37 @@ class Offer extends Model implements MediableInterface
         }
     }
 
+    public static function duplicate(Offer $offer): Offer {
+        $duplicatedOffer = $offer->replicate();
+
+        $duplicatedOffer->issued_on = Carbon::now()->format('Y-m-d');
+        $duplicatedOffer->is_draft = true;
+        $duplicatedOffer->offer_number = null;
+        $duplicatedOffer->sent_at = null;
+        $duplicatedOffer->valid_until = $duplicatedOffer->issued_on->copy()->addDays(30);
+        $duplicatedOffer->save();
+
+        $offer->lines()->each(function ($line) use ($duplicatedOffer) {
+            $replicatedLine = $line->replicate();
+            $replicatedLine->offer_id = $duplicatedOffer->id;
+            $replicatedLine->save();
+        });
+
+        $offer->sections()->each(function ($section) use ($duplicatedOffer) {
+            $replicatedSection = $section->replicate();
+            $replicatedSection->offer_id = $duplicatedOffer->id;
+            $replicatedSection->save();
+        });
+
+        $offer->attachments()->each(function ($attachment) use ($duplicatedOffer) {
+            $replicateAttachment = $attachment->replicate();
+            $replicateAttachment->attachable_id = $duplicatedOffer->id;
+            $replicateAttachment->save();
+        });
+
+        return $duplicatedOffer;
+    }
+
     public function getFormatedOfferNumberAttribute(): string
     {
         if ($this->offer_number) {
@@ -313,15 +358,5 @@ class Offer extends Model implements MediableInterface
             'drafts' => $query->where('is_draft', true),
             default => $query->where('is_draft', false)
         };
-    }
-
-    protected function casts(): array
-    {
-        return [
-            'issued_on' => 'date',
-            'valid_until' => 'date',
-            'sent_at' => 'datetime',
-            'is_draft' => 'boolean',
-        ];
     }
 }

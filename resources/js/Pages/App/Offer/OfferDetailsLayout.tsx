@@ -7,6 +7,7 @@ import {
   FileEditIcon,
   FileEuroIcon,
   Files02Icon,
+  FloppyDiskIcon,
   MoreVerticalCircle01Icon,
   ParagraphIcon,
   Pdf02Icon,
@@ -25,6 +26,7 @@ import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
 import { Tab, TabList, Tabs } from '@/Components/twc-ui/tabs'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
 import { useFileDownload } from '@/Hooks/use-file-download'
+import { OfferSaveAsTemplate } from '@/Pages/App/Offer/OfferSaveAsTemplate'
 import { OfferTableProvider, useOfferTable } from './OfferTableProvider'
 
 interface Props {
@@ -131,6 +133,17 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children, ...props 
     ),
     [currentRoute, offer]
   )
+
+  const handleSaveAsTemplate = async () => {
+    const promise = await OfferSaveAsTemplate.call({ templateName: offer.template_name ?? '' })
+    if (typeof promise === 'string' && promise.length > 0) {
+      console.log(promise)
+      router.post(route('app.offer.save-as-template', { offer: offer.id }), {
+        id: offer.id,
+        template_name: promise
+      })
+    }
+  }
 
   const handelAddSection = () => {
     props?.onAddSection?.()
@@ -251,6 +264,12 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children, ...props 
             onAction={handleDelete}
           />
 
+          <MenuItem
+            icon={FloppyDiskIcon}
+            separator
+            title="Als Vorlage speichern"
+            onAction={handleSaveAsTemplate}
+          />
           <MenuItem icon={FileEuroIcon} title="Rechnung erstellen" onAction={handleCreateInvoice} />
         </DropdownButton>
       </Toolbar>
