@@ -2,9 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\RecurringInvoiceEmail;
 use App\Models\Invoice;
 use App\Models\Tenant;
+use Config;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
 
 class CreateRecurringInvoices extends Command
 {
@@ -71,7 +74,13 @@ class CreateRecurringInvoices extends Command
 
             foreach ($invoices as $invoice) {
                 try {
+                    $invoice->loadMissing('contact');
                     $newInvoice = Invoice::createRecurringInvoice($invoice);
+
+                    $mailFrom = Config::get('mail.from.address');
+
+                    Mail::to($mailFrom)->queue(new RecurringInvoiceEmail($newInvoice));
+
                     $this->info("  Created invoice {$newInvoice->id} from recurring invoice {$invoice->id}");
                 } catch (\Exception $e) {
                     $this->error("  Failed to create recurring invoice from {$invoice->id}: {$e->getMessage()}");

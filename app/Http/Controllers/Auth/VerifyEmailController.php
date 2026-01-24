@@ -15,7 +15,7 @@ class VerifyEmailController extends Controller
      */
     public function __invoke(Request $request): RedirectResponse
     {
-        $routeId = (int) $request->route('id');
+        $routeId = (string) $request->route('id');
         $hash = (string) $request->route('hash');
         $authUser = $request->user();
 
@@ -24,7 +24,7 @@ class VerifyEmailController extends Controller
         }
         $user = $authUser ?: User::findOrFail($routeId);
 
-        if ($authUser && $authUser->getKey() !== $routeId) {
+        if ($authUser && (string) $authUser->getKey() !== $routeId) {
             abort(403);
         }
 
