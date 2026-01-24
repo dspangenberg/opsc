@@ -168,13 +168,23 @@ const buildNavData = (isAdmin: boolean) => ({
         },
         {
           title: 'Angebote',
-          url: route('app.offer.index', {}, false),
+          url: route('app.offer.index', { _query: { view: 'all' } }, false),
           activePath: '/app/invoicing/offers',
           items: [
             {
               title: 'Alle Angebote',
-              url: route('app.offer.index', {}, false),
-              activePath: '/app/invoicing/offers'
+              url: route('app.offer.index', { _query: { view: 'all' } }, false),
+              activePath: '/app/invoicing/offers?view=all'
+            },
+            {
+              title: 'Entwürfe',
+              url: route('app.offer.index', { _query: { view: 'drafts' } }, false),
+              activePath: '/app/invoicing/offers?view=drafts'
+            },
+            {
+              title: 'Vorlagen',
+              url: route('app.offer.index', { _query: { view: 'templates' } }, false),
+              activePath: '/app/invoicing/offers?view=templates'
             }
           ]
         }

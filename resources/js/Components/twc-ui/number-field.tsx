@@ -54,7 +54,7 @@ const NumberFieldStepper = ({ className, ...props }: AriaButtonProps) => {
   return (
     <Button
       className={composeRenderProps(className, className =>
-        cn('w-auto grow rounded-none px-0.5 text-muted-foreground', className)
+        cn('aspect-auto w-auto grow rounded-none px-0.5 text-muted-foreground', className)
       )}
       variant={'ghost'}
       size={'icon'}
@@ -130,11 +130,5 @@ const NumberField = ({
   )
 }
 
-export {
-  BaseNumberField,
-  NumberFieldInput,
-  NumberFieldSteppers,
-  NumberFieldStepper,
-  NumberField
-}
+export { BaseNumberField, NumberFieldInput, NumberFieldSteppers, NumberFieldStepper, NumberField }
 export type { NumberFieldProps }

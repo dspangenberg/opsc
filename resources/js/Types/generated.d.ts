@@ -341,6 +341,8 @@ project: App.Data.ProjectData | null;
 payment_deadline: App.Data.PaymentDeadlineData | null;
 lines: Array<App.Data.InvoiceLineData> | null;
 tax: App.Data.TaxData | null;
+offer_id: number | null;
+offer: App.Data.OfferData | null;
 };
 export type InvoiceLineData = {
 id: number | null;
@@ -412,6 +414,8 @@ sections: Array<App.Data.OfferOfferSectionData> | null;
 lines: Array<App.Data.OfferLineData> | null;
 attachments: Array<App.Data.AttachmentData> | null;
 tax: App.Data.TaxData | null;
+is_template: boolean | null;
+template_name: string | null;
 };
 export type OfferLineData = {
 id: number | null;

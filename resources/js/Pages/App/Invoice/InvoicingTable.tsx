@@ -154,22 +154,14 @@ export interface TableMarkdownCellProps extends TableCellProps {
 export const TableMarkdownCell: React.FC<TableMarkdownCellProps> = ({
   className = '',
   value,
-  service_period_begin = '',
-  service_period_end = ',',
   ...props
 }) => {
   return (
     <TableCell className={className} {...props}>
       <Markdown remarkPlugins={[remarkBreaks]}>{value}</Markdown>
-      {service_period_begin && (
-        <div>
-          ({service_period_begin}-{service_period_end})
-        </div>
-      )}
     </TableCell>
   )
 }
-
 export interface InvoicingTableCommonRowProps {
   line: App.Data.InvoiceLineData
 }
@@ -280,9 +272,7 @@ export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
     return (
       <TableRow>
         <TableCell colSpan={3} />
-        <TableCell colSpan={3} className="font-medium">
-          {line.text}
-        </TableCell>
+        <TableMarkdownCell value={line.text} colSpan={3} />
         <TableCell colSpan={3} />
       </TableRow>
     )
@@ -290,9 +280,14 @@ export const InvoicingTableRow: React.FC<InvoicingTableRowProps> = ({
 
   if (line.type_id === 8) {
     return (
-      <TableRow>
-        <TableCell colSpan={3} />
-        <TableCell colSpan={7}>=== Seitenumbruch ====================</TableCell>
+      <TableRow className="border-t [&_th]:border-t [&_th]:border-dashed">
+        <TableHead align="right">Pos</TableHead>
+        <TableHead colSpan={2}>Menge</TableHead>
+        <TableHead>Beschreibung</TableHead>
+        <TableHead align="right">Einzelpreis</TableHead>
+        <TableHead align="right">Gesamt</TableHead>
+        <TableHead align="center">USt.</TableHead>
+        <TableHead />
       </TableRow>
     )
   }

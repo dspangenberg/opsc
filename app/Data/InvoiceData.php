@@ -104,6 +104,9 @@ class InvoiceData extends Data
         /** @var TaxData */
         public readonly ?object $tax,
 
+        public readonly ?int $offer_id,
+        public readonly ?OfferData $offer,
+
     ) {
     }
 
