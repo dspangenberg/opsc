@@ -361,7 +361,7 @@ class Offer extends Model implements MediableInterface
     {
         return match ($view) {
             'drafts' => $query->where('is_draft', true),
-            'template' => $query->where('is_template', true),
+            'templates' => $query->where('is_template', true),
             default => $query->where('is_draft', false)
         };
     }
