@@ -17,6 +17,10 @@ class VerifyEmailController extends Controller
     {
         $routeId = (int) $request->route('id');
         $authUser = $request->user();
+
+        if (! $authUser && ! $request->hasValidSignature()) {
+            abort(403);
+        }
         $user = $authUser ?: User::findOrFail($routeId);
 
         if ($authUser && $authUser->getKey() !== $routeId) {

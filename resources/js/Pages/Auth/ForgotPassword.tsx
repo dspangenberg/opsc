@@ -69,6 +69,12 @@ const ForgotPassword: React.FC<LoginProps> = ({ status }) => {
             >
               Kennwort zurücksetzen
             </Button>
+            <Link
+              href={route('login')}
+              className="mx-auto mt-3 text-center text-blue-500 text-sm hover:underline"
+            >
+              Zurück zum Login
+            </Link>
           </div>
         </FormGrid>
       </Form>

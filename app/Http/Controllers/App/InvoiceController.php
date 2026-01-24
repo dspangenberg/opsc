@@ -435,7 +435,7 @@ class InvoiceController extends Controller
             ->load('type')
             ->load([
                 'lines' => function ($query) {
-                    $query->load('linked_invoice')->orderBy('pos')->orderBy('id');
+                    $query->with('linked_invoice')->orderBy('pos')->orderBy('id');
                 },
             ])
             ->load('tax')

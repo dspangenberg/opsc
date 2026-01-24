@@ -20,16 +20,16 @@ class VerifyEmailAddressForCloudRegistrationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected static User $user;
-    protected static string $verificationUrl;
+    protected User $user;
+    protected string $verificationUrl;
 
     /**
      * Create a new message instance.
      */
     public function __construct(User $user, string $verificationUrl)
     {
-        self::$user = $user;
-        self::$verificationUrl = $verificationUrl;
+        $this->user = $user;
+        $this->verificationUrl = $verificationUrl;
     }
 
     /**
@@ -47,15 +47,15 @@ class VerifyEmailAddressForCloudRegistrationMail extends Mailable
      */
     public function content(): Content
     {
-        $user = VerifyEmailAddressForCloudRegistrationMail::$user;
+        $user = $this->user;
 
         return new Content(
 
             view: 'generated.verify-email',
             with: [
                 'title' => 'opsc.cloud - E-Mail-Adresse bestätigen',
-                'name' => $user['first_name'], // .' '.$tenant['last_name'],
-                'verificationUrl' => VerifyEmailAddressForCloudRegistrationMail::$verificationUrl,
+                'name' => $user->first_name,
+                'verificationUrl' => $this->verificationUrl,
             ],
         );
     }
