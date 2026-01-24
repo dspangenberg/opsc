@@ -121,7 +121,7 @@ class OfferController extends Controller
         $data = $request->safe()->except('template_id');
 
         if ($request->validated('template_id')) {
-            $template = Offer::firstOrFail($request->validated('template_id'));
+            $template = Offer::findOrFail($request->validated('template_id'));
             $offer = Offer::duplicate($template);
             $offer->contact_id = $data['contact_id'];
             $offer->project_id = $data['project_id'];
