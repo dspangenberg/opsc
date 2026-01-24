@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Mail\RecurringInvoiceEmail;
-use App\Mail\VerifyEmailAddressForCloudRegistrationMail;
 use App\Models\Invoice;
 use App\Models\Tenant;
 use Config;
@@ -80,7 +79,7 @@ class CreateRecurringInvoices extends Command
 
                     $mailFrom = Config::get('mail.from.address');
 
-                    Mail::to($mailFrom)->send(new RecurringInvoiceEmail($newInvoice));
+                    Mail::to($mailFrom)->queue(new RecurringInvoiceEmail($newInvoice));
 
                     $this->info("  Created invoice {$newInvoice->id} from recurring invoice {$invoice->id}");
                 } catch (\Exception $e) {

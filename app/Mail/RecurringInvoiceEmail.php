@@ -4,7 +4,6 @@ namespace App\Mail;
 
 use App\Models\Invoice;
 use Illuminate\Bus\Queueable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -23,7 +22,7 @@ class RecurringInvoiceEmail extends Mailable
     {
         $invoice = $this->invoice;
 
-        return $this->subject('opsc.cloud - Neue E-Mail-Adresse bestaetigen')
+        return $this->subject('opsc.cloud - Neue wiederkehrende Rechnung wurde erstellt')
             ->view('generated.recurring-invoice', [
                 'invoice' => $invoice
             ]);

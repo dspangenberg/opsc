@@ -38,7 +38,7 @@ preheader: Transactional email template
 
                 <p class="m-0 mb-6 text-base/6 text-slate-600">
                   Rechnungsnr.: @{{ $invoice->formated_invoice_number}}<br/>
-                  Kunde: @{{ $invoice->contact()->full_name }}
+                  Kunde: @{{ $invoice->contact->full_name }}
                 </p>
 
                 <x-divider />
