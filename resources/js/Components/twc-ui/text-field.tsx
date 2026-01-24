@@ -84,4 +84,4 @@ const TextField = ({
 }
 
 export { Input, TextField, BaseTextField }
-export type { TextFieldProps }
+export type { TextFieldProps, AriaInputProps as InputProps }

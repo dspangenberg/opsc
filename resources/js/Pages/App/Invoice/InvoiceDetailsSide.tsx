@@ -69,6 +69,11 @@ export const InvoiceDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
             value={invoice.type?.display_name}
           />
           <DataCardField variant="vertical" label="Umsatzsteuer" value={invoice.tax?.name} />
+          <DataCardField
+            variant="vertical"
+            label="Übergeordnete Rechnung"
+            value={invoice.parent_invoice?.formated_invoice_number}
+          />
         </DataCardSection>
         <DataCardSection>
           <DataCardField

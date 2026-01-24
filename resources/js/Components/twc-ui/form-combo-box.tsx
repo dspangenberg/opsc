@@ -1,11 +1,12 @@
 import { ComboBox, type ComboBoxProps } from './combo-box'
 import { useFormContext } from './form'
-import { FormFieldError } from './form-errors'
+import { FormFieldError, getFormError } from './form-errors'
 
 const FormComboBox = <T extends Record<string, unknown>>({ ...props }: ComboBoxProps<T>) => {
   const form = useFormContext()
-  const realError = form?.errors?.[props.name]
-  return <ComboBox<T> error={realError} {...props} errorComponent={FormFieldError} />
+  const errorFromProps = (props as { error?: string }).error
+  const error = errorFromProps ?? getFormError(form?.errors, props.name as string | undefined)
+  return <ComboBox<T> error={error} {...props} errorComponent={FormFieldError} />
 }
 
 export { FormComboBox }

@@ -325,8 +325,9 @@ amount_gross: number;
 payable_sum_amount: number | null;
 amount_open: number | null;
 is_recurring: boolean;
-recurring_interval_days: number;
+recurring_interval_units: number;
 additional_text: string | null;
+recurring_interval: App.Enums.InvoiceRecurringEnum | null;
 parent_id: number | null;
 tax_id: number | null;
 parent_invoice: App.Data.InvoiceData | null;
@@ -677,5 +678,6 @@ email_verified_at: string | null;
 };
 }
 declare namespace App.Enums {
+export type InvoiceRecurringEnum = 'days' | 'weeks' | 'months' | 'years';
 export type PagebreakEnum = 'after' | 'before' | 'both' | 'none';
 }

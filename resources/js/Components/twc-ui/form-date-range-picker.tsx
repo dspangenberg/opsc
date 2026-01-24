@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useDateRangeConversion } from '@/Hooks/use-date-conversion'
 import { DateRangePicker, type DateRangePickerProps } from './date-range-picker'
 import { useFormContext } from './form'
-import { FormFieldError } from './form-errors'
+import { FormFieldError, getFormError } from './form-errors'
 
 interface FormDateRangePickerProps extends Omit<DateRangePickerProps, 'value' | 'onChange'> {
   value?: RangeValue<string> | null
@@ -14,7 +14,7 @@ interface FormDateRangePickerProps extends Omit<DateRangePickerProps, 'value' | 
 
 const FormDateRangePicker = ({ value, onChange, ...props }: FormDateRangePickerProps) => {
   const form = useFormContext()
-  const error = form?.errors?.[props.name as string]
+  const error = getFormError(form?.errors, props.name as string | undefined)
   const { parsedDate, handleChange } = useDateRangeConversion(value, onChange)
 
   // Use internal state to prevent resets during typing

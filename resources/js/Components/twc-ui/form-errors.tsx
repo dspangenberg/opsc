@@ -7,8 +7,20 @@ import { Alert } from './alert'
 import { FieldError } from './field'
 import { useFormContext } from './form'
 
+export type FormErrorsMap = Partial<Record<string, string>>
+
+export const getFormError = (errors: FormErrorsMap | undefined, name?: string) => {
+  if (!errors || !name) return undefined
+
+  const directError = errors[name]
+  if (directError) return directError
+
+  const laravelName = name.replace(/\[(\d+)]/g, '.$1')
+  return errors[laravelName]
+}
+
 interface Props {
-  errors: Partial<Record<string, string>>
+  errors: FormErrorsMap
   className?: string
   title?: string
   showErrors?: boolean

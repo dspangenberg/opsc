@@ -28,7 +28,6 @@ use App\Models\Project;
 use App\Models\Tax;
 use App\Models\Time;
 use App\Models\Transaction;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -170,6 +169,7 @@ class InvoiceController extends Controller
             ->load('contact')
             ->load('project')
             ->load('payment_deadline')
+            ->load('parent_invoice')
             ->load('type')
             ->load([
                 'lines' => function ($query) {
@@ -262,20 +262,7 @@ class InvoiceController extends Controller
 
     public function duplicate(Invoice $invoice)
     {
-        $duplicatedInvoice = $invoice->replicate();
-
-        $duplicatedInvoice->issued_on = Carbon::now()->format('Y-m-d');
-        $duplicatedInvoice->is_draft = 1;
-        $duplicatedInvoice->invoice_number = null;
-        $duplicatedInvoice->number_range_document_numbers_id = null;
-        $duplicatedInvoice->sent_at = null;
-        $duplicatedInvoice->save();
-
-        $invoice->lines()->each(function ($line) use ($duplicatedInvoice) {
-            $replicatedLine = $line->replicate();
-            $replicatedLine->invoice_id = $duplicatedInvoice->id;
-            $replicatedLine->save();
-        });
+        $duplicatedInvoice = Invoice::duplicateInvoice($invoice);
 
         return redirect()->route('app.invoice.details', ['invoice' => $duplicatedInvoice->id]);
     }
@@ -295,6 +282,14 @@ class InvoiceController extends Controller
 
         $invoice->invoice_number = null;
         $invoice->is_draft = true;
+
+        if ($invoice->is_recurring) {
+            if ($invoice->issued_on?->toDateString() === $invoice->recurring_begin_on?->toDateString()) {
+                $invoice->recurring_begin_on = null;
+            }
+            $invoice->recurring_next_billing_date = null;
+        }
+
         $invoice->save();
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
@@ -438,10 +433,9 @@ class InvoiceController extends Controller
             ->load('type')
             ->load([
                 'lines' => function ($query) {
-                    $query->orderBy('pos')->orderBy('id');
+                    $query->with('linked_invoice')->orderBy('pos')->orderBy('id');
                 },
             ])
-            ->load('lines.linked_invoice')
             ->load('tax')
             ->load('tax.rates')
             ->loadSum('lines', 'amount')

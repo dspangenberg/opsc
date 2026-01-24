@@ -24,6 +24,7 @@
     "ploi/ploi-php-sdk": "^1.9.5",
     "pontedilana/php-weasyprint": "^2.3",
     "predis/predis": "^3.2",
+    "protonemedia/laravel-verify-new-email": "^1.13",
     "rikudou/euqrpayment": "^1.4",
     "smalot/pdfparser": "^2.12",
     "spatie/enum": "^3.13",

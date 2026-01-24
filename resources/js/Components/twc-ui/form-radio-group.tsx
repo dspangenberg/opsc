@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import type { ValidationResult } from 'react-aria-components'
-import { FormFieldError } from './form-errors'
+import { FormFieldError, getFormError } from './form-errors'
 import { useFormContext } from './form'
 import { RadioGroup, type RadioGroupProps } from './radio-group'
 
@@ -33,7 +33,7 @@ const FormRadioGroup = <T extends Record<string, unknown>>({
   ...props
 }: FormRadioGroupProps<T>) => {
   const form = useFormContext()
-  const error = form?.errors?.[props.name as string]
+  const error = getFormError(form?.errors, props.name as string | undefined)
   const handleChange = useRadioGroupChange(onChange)
 
   return (

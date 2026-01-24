@@ -105,5 +105,11 @@ export const columns: ColumnDef<App.Data.OfferData>[] = [
     cell: ({ row }) => (
       <div className="text-right">{currencyFormatter.format(row.original.amount_gross)}</div>
     )
+  },
+  {
+    accessorKey: 'valid_until',
+    header: 'Gültig bis',
+    size: 100,
+    cell: ({ row, getValue }) => <span>{getValue() as string}</span>
   }
 ]

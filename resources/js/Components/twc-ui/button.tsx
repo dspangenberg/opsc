@@ -13,12 +13,12 @@ import { Tooltip, TooltipTrigger } from './tooltip'
 
 const buttonVariants = cva(
   [
-    'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors pressed:ring-offset-2 pressed:ring-1',
+    'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors pressed:translate-y-px pressed:brightness-95 pressed:shadow-inner pressed:shadow-black/20',
     /* Disabled */
     'data-[disabled]:pointer-events-none data-[disabled]:opacity-50 ',
     /* Focus Visible */
     'focus-visible:border-ring focus-visible:ring-ring/20 focus-visible:ring-[3px]',
-    'pressed:ring-[3px]',
+    'pressed:shadow-black/20',
     /* Resets */
     'focus-visible:outline-none ring-offset-1'
   ],
@@ -26,32 +26,32 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-primary text-primary-foreground data-[hovered]:bg-primary/90 pressed:ring-primary/50 pressed:ring-primary/50 focus-visible:ring-primary/20',
+          'bg-primary text-primary-foreground data-[hovered]:bg-primary/90 focus-visible:ring-primary/20',
         destructive:
-          'bg-destructive text-destructive-foreground text-white data-[hovered]:bg-destructive/90 border pressed:ring-destructive/50 focus-visible:ring-destructive/20 focus-visible:border-destructive/20 ',
+          'bg-destructive text-destructive-foreground text-white data-[hovered]:bg-destructive/90 border focus-visible:ring-destructive/20 focus-visible:border-destructive/20 ',
         outline:
-          'border border-input bg-background selected:bg-accent  data-[hovered]:bg-accent data-[hovered]:text-accent-foreground focus-visible:ring-ring/20 pressed:ring-ring/50',
+          'border border-input bg-background selected:bg-accent  data-[hovered]:bg-accent data-[hovered]:text-accent-foreground focus-visible:ring-ring/20',
         secondary:
-          'bg-secondary/90 text-secondary-foreground border-transparent border focus-visible:border-input focus-visible:border data-[hovered]:bg-secondary/20 pressed:ring-ring/50',
+          'bg-secondary/90 text-secondary-foreground border-transparent border focus-visible:border-input focus-visible:border data-[hovered]:bg-secondary/20',
         ghost:
-          'data-[hovered]:bg-accent/80 data-[hovered]:border-border  selected:bg-muted data-[hovered]:text-accent-foreground focus-visible:border border border-transparent focus-visible:border-input focus-visible:ring-ring/20 pressed:ring-ring/50 text-sm',
+          'data-[hovered]:bg-accent/80 data-[hovered]:border-border  selected:bg-muted data-[hovered]:text-accent-foreground focus-visible:border border border-transparent focus-visible:border-input focus-visible:ring-ring/20 text-sm',
         link: 'text-primary underline-offset-4 data-[hovered]:underline',
         'ghost-destructive':
-          'data-[hovered]:bg-accent data-[hovered]:border-border data-[hovered]:text-destructive-foreground focus-visible:border border border-transparent focus-visible:border-input focus-visible:ring-ring/20 pressed:ring-ring/50 text-sm',
+          'data-[hovered]:bg-accent data-[hovered]:border-border data-[hovered]:text-destructive-foreground focus-visible:border border border-transparent focus-visible:border-input focus-visible:ring-ring/20 text-sm',
         toolbar:
-          'data-[hovered]:bg-accent data-[hovered]:border-border border border-transparent text-primary selected:bg-accent pressed:ring-ring/50 active:ring-ring/50 focus-visible:border focus-visible:border-primary focus-visible:ring-ring/20  text-sm',
+          'data-[hovered]:bg-accent data-[hovered]:border-border border border-transparent text-primary selected:bg-accent active:ring-ring/50 focus-visible:border focus-visible:border-primary focus-visible:ring-ring/20  text-sm',
         'toolbar-default':
-          'border border-input bg-background  data-[hovered]:bg-accent data-[hovered]:text-accent-foreground focus-visible:ring-ring/20 pressed:ring-ring/50 text-sm'
+          'border border-input bg-background  data-[hovered]:bg-accent data-[hovered]:text-accent-foreground focus-visible:ring-ring/20 text-sm'
       },
       size: {
         default: 'h-9 px-4 py-2',
         full: 'h-9 w-full px-4 py-2',
         sm: 'h-8 rounded-md px-3 text-xs',
         lg: 'h-10 rounded-md px-8',
-        icon: 'size-9',
+        icon: 'size-9 aspect-square p-0',
         auto: 'h-9 w-auto py-2 px-2',
-        'icon-xs': 'size-6',
-        'icon-sm': 'size-7'
+        'icon-xs': 'size-6 aspect-square p-0',
+        'icon-sm': 'size-7 aspect-square p-0'
       }
     },
     defaultVariants: {
@@ -67,6 +67,7 @@ export interface ButtonProps extends AriaButtonProps, VariantProps<typeof button
   icon?: IconType
   iconClassName?: string
   slot?: string | null
+  tabIndex?: number
   title?: string
   tooltip?: string
   tooltipPlacement?: TooltipProps['placement']

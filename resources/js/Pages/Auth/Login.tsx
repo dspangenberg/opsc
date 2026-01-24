@@ -10,6 +10,7 @@ import { Button } from '@/Components/twc-ui/button'
 import { Checkbox } from '@/Components/twc-ui/checkbox'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormPasswordField } from '@/Components/twc-ui/form-password-field'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import Logo from '@/Components/twc-ui/logo'
 import GuestLayout from '@/Layouts/GuestLayout'
@@ -20,11 +21,17 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
-  const form = useForm<App.Data.LoginData>('auth-login-form', 'post', route('login'), {
-    email: '',
-    password: '',
-    remember: false
-  })
+  const form = useForm<App.Data.LoginData>(
+    'auth-login-form',
+    'post',
+    route('login'),
+    {
+      email: '',
+      password: '',
+      remember: false
+    },
+    { validateOn: 'blur' }
+  )
 
   const loginContent = (
     <AuthContainer
@@ -45,12 +52,7 @@ const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
           </div>
 
           <div className="col-span-24">
-            <FormTextField
-              autoComplete="current-password"
-              type="password"
-              label="Kennwort"
-              {...form.register('password')}
-            />
+            <FormPasswordField label="Kennwort" {...form.register('password')} />
 
             <div className="mt-1">
               <Checkbox {...form.registerCheckbox('remember')} className="pt-1.5">

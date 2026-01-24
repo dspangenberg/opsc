@@ -2,11 +2,16 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\App\Bookkeeping\BookkeepingAcountsController;
+use App\Http\Controllers\App\Bookkeeping\BookkeepingRulesController;
+use App\Http\Controllers\App\Bookkeeping\CostCenterController;
 use App\Http\Controllers\App\Setting\DocumentTypeController;
 use App\Http\Controllers\App\Setting\LetterheadController;
 use App\Http\Controllers\App\Setting\OfferSectionController;
 use App\Http\Controllers\App\Setting\PrintLayoutController;
 use App\Http\Controllers\App\Setting\TextModuleController;
+use App\Http\Controllers\App\Setting\UserController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 
@@ -57,3 +62,49 @@ Route::post('/settings/documents/document-types', [DocumentTypeController::class
 Route::get('/settings/documents/document-types/{documentType}/edit', [DocumentTypeController::class, 'edit'])->name('app.setting.document_type.edit')->middleware([HandlePrecognitiveRequests::class]);
 Route::put('/settings/documents/document-types/{documentType}/edit', [DocumentTypeController::class, 'update'])->name('app.setting.document_type.update')->middleware([HandlePrecognitiveRequests::class]);
 
+
+Route::redirect('settings/bookkeeping', '/app/settings/bookkeeping/accounts')->name('app.setting.bookkeeping');
+Route::get('/settings/bookkeeping/accounts', [BookkeepingAcountsController::class, 'index'])->name('app.bookkeeping.accounts.index');
+
+Route::get('/settings/bookkeeping/rules', [BookkeepingRulesController::class, 'index'])->name('app.bookkeeping.rules.index');
+Route::get('/settings/bookkeeping/rules/{rule}/edit', [BookkeepingRulesController::class, 'edit'])->name('app.bookkeeping.rules.edit');
+
+Route::put('/settings/bookkeeping/rules/{rule}/update', [BookkeepingRulesController::class, 'update'])->name('app.bookkeeping.rules.update')->middleware([HandlePrecognitiveRequests::class]);
+Route::delete('/settings/bookkeeping/rules/{rule}', [BookkeepingRulesController::class, 'destroy'])->name('app.bookkeeping.rules.destroy');
+Route::get('/settings/bookkeeping/rules/create', [BookkeepingRulesController::class, 'create'])->name('app.bookkeeping.rules.create');
+Route::post('/settings/bookkeeping/rules/store', [BookkeepingRulesController::class, 'store'])->name('app.bookkeeping.rules.store')->middleware([HandlePrecognitiveRequests::class]);
+
+Route::get('/settings/bookkeeping/cost-centers', [CostCenterController::class, 'index'])->name('app.bookkeeping.cost-centers.index');
+Route::get('/settings/bookkeeping/cost-centers/create', [CostCenterController::class, 'create'])->name('app.bookkeeping.cost-centers.create');
+
+Route::post('/settings/bookkeeping/cost-centers', [CostCenterController::class, 'store'])
+    ->middleware([HandlePrecognitiveRequests::class])
+    ->name('app.bookkeeping.cost-centers.store');
+
+Route::get('/settings/bookkeeping/cost-centers/{costCenter}/edit', [CostCenterController::class, 'edit'])->name('app.bookkeeping.cost-centers.edit')->middleware([HandlePrecognitiveRequests::class]);
+Route::put('/settings/bookkeeping/cost-centers/{costCenter}/edit', [CostCenterController::class, 'update'])->name('app.bookkeeping.cost-centers.update');
+
+Route::get('/profile', [ProfileController::class, 'edit'])->name('app.profile.edit')->middleware([HandlePrecognitiveRequests::class]);
+Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('app.profile.password-update')->middleware([HandlePrecognitiveRequests::class]);
+
+Route::redirect('settings/system', '/app/settings/system/users')
+    ->middleware(['admin'])
+    ->name('app.setting.system');
+Route::get('/settings/system/users', [UserController::class, 'index'])
+    ->middleware(['admin'])
+    ->name('app.setting.system.user.index');
+Route::get('/settings/system/users/create', [UserController::class, 'create'])
+    ->middleware(['admin'])
+    ->name('app.setting.system.user.create');
+Route::post('/settings/system/users', [UserController::class, 'store'])
+    ->middleware(['admin', HandlePrecognitiveRequests::class])
+    ->name('app.setting.system.user.store');
+Route::get('/settings/system/users/{user}/edit', [UserController::class, 'edit'])
+    ->middleware(['admin'])
+    ->name('app.setting.system.user.edit');
+Route::put('/settings/system/users/{user}/edit', [UserController::class, 'update'])
+    ->middleware(['admin', HandlePrecognitiveRequests::class])
+    ->name('app.setting.system.user.update');
+Route::delete('/settings/system/users/{user}/delete', [UserController::class, 'destroy'])
+    ->middleware(['admin'])
+    ->name('app.setting.system.user.delete');

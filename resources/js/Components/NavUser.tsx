@@ -48,8 +48,13 @@ export function NavUser({ user }: { user: App.Data.UserData }) {
         <ThemeSwitch />
       </BaseMenuItem>
       <MenuSeparator />
-      <MenuItem icon={UserIcon} title="Profil + Sicherheit" ellipsis />
-      <MenuItem icon={Settings05Icon} title="Einstellungen" ellipsis separator />
+      <MenuItem
+        icon={UserIcon}
+        title="Profil + Sicherheit"
+        ellipsis
+        separator
+        href={route('app.profile.edit')}
+      />
       <MenuItem icon={Logout02Icon} title="Logout" onAction={() => handleLogout()} />
     </DropdownButton>
   )

@@ -475,8 +475,8 @@ packages:
     resolution: {integrity: sha512-aN97NXWF6AWBTahfVOIrB/NShkzi5H7F9r1s9mD3cDj4Ko5f2qhhVoYMibXF7GlLveb/D2ioWay8lxI97Ven3g==}
     engines: {node: '>=0.12'}
 
-  entities@7.0.0:
-    resolution: {integrity: sha512-FDWG5cmEYf2Z00IkYRhbFrwIwvdFKH07uV8dvNy0omp/Qb1xcyCWp2UDtcwJF4QZZvk0sLudP6/hAu42TaqVhQ==}
+  entities@7.0.1:
+    resolution: {integrity: sha512-TWrgLOFUQTH994YUyl1yT4uyavY5nNB5muff+RtWaqNVCAK408b5ZnnbNAUEWLTCpum9w6arT70i1XdQ4UeOPA==}
     engines: {node: '>=0.12'}
 
   es-define-property@1.0.1:
@@ -776,11 +776,11 @@ packages:
   linkify-it@5.0.0:
     resolution: {integrity: sha512-5aHCbzQRADcdP+ATqnDuhhJ/MRIqDkZX5pyjFHRRysS8vZ5AbqGEoFIb6pYHPZ+L/OC2Lc+xT8uHVVR5CAK/wQ==}
 
-  lodash-es@4.17.22:
-    resolution: {integrity: sha512-XEawp1t0gxSi9x01glktRZ5HDy0HXqrM0x5pXQM98EaI0NxO6jVM7omDOxsuEo5UIASAnm2bRp1Jt/e0a2XU8Q==}
+  lodash-es@4.17.23:
+    resolution: {integrity: sha512-kVI48u3PZr38HdYz98UmfPnXl2DXrpdctLrFLCd3kOx1xUkOmpFPx7gCWWM5MPkL/fD8zb+Ph0QzjGFs4+hHWg==}
 
-  lodash@4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+  lodash@4.17.23:
+    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
 
   log-symbols@6.0.0:
     resolution: {integrity: sha512-i24m8rpwhmPIS4zscNzK6MSEhk0DUWa/8iYQWxhffV8jkI4Phvs3F+quL5xvS0gdQR0FyTCMMH33Y78dDTzzIw==}
@@ -1659,7 +1659,7 @@ snapshots:
       is-url-superb: 6.1.0
       istextorbinary: 9.5.0
       juice: 11.1.0-2
-      lodash-es: 4.17.22
+      lodash-es: 4.17.23
       morphdom: 2.7.7
       ora: 8.2.0
       pathe: 2.0.3
@@ -2070,7 +2070,7 @@ snapshots:
 
   entities@6.0.1: {}
 
-  entities@7.0.0: {}
+  entities@7.0.1: {}
 
   es-define-property@1.0.1: {}
 
@@ -2370,7 +2370,7 @@ snapshots:
     dependencies:
       cheerio: 1.0.0
       commander: 12.1.0
-      entities: 7.0.0
+      entities: 7.0.1
       mensch: 0.3.4
       slick: 1.12.2
       web-resource-inliner: 8.0.0
@@ -2389,9 +2389,9 @@ snapshots:
     dependencies:
       uc.micro: 2.1.0
 
-  lodash-es@4.17.22: {}
+  lodash-es@4.17.23: {}
 
-  lodash@4.17.21: {}
+  lodash@4.17.23: {}
 
   log-symbols@6.0.0:
     dependencies:
@@ -2682,7 +2682,7 @@ snapshots:
 
   posthtml-component@2.2.2:
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       posthtml: 0.16.7
       posthtml-attrs-parser: 1.1.2
       posthtml-expressions: 1.11.4
@@ -2993,7 +2993,7 @@ snapshots:
       '@types/lodash-es': 4.17.12
       codsen-utils: 1.7.0
       html-entities: 2.6.0
-      lodash-es: 4.17.22
+      lodash-es: 4.17.23
       ranges-apply: 7.1.0
       ranges-push: 7.1.0
       string-left-right: 6.1.0

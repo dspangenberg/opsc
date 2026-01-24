@@ -9,6 +9,7 @@ namespace App\Models;
 
 use Database\Factories\UserFactory;
 use Eloquent;
+use App\Notifications\ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -16,6 +17,10 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Plank\Mediable\Exceptions\MediaUrlException;
+use Plank\Mediable\Mediable;
+use ProtoneMedia\LaravelVerifyNewEmail\MustVerifyNewEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 /**
  * @property int $id
@@ -49,10 +54,10 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|User whereUpdatedAt($value)
  * @mixin Eloquent
  */
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory;
+    use HasFactory, Mediable, MustVerifyNewEmail;
 
     use Notifiable;
     protected $fillable = [
@@ -76,6 +81,7 @@ class User extends Authenticatable
         'full_name',
         'reverse_full_name',
         'initials',
+        'avatar_url',
     ];
 
     public function getFullNameAttribute(): string
@@ -84,7 +90,7 @@ class User extends Authenticatable
             return trim("$this->first_name $this->last_name");
         }
 
-        return $this->last_name;
+        return $this->last_name ?? '';
     }
 
     public function getInitialsAttribute(): string
@@ -102,7 +108,17 @@ class User extends Authenticatable
             return "$this->last_name, $this->first_name";
         }
 
-        return $this->last_name;
+        return $this->last_name ?? '';
+    }
+
+    public function getAvatarUrlAttribute(): ?string
+    {
+        try {
+            $media = $this->firstMedia('avatar');
+            return $media?->getUrl();
+        } catch (MediaUrlException $e) {
+            return null;
+        }
     }
 
     protected function casts(): array
@@ -111,5 +127,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }

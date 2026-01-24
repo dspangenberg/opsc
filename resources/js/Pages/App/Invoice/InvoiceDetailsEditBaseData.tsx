@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Button } from '@/Components/twc-ui/button'
 import { Checkbox } from '@/Components/twc-ui/checkbox'
 import { ExtendedDialog as Dialog } from '@/Components/twc-ui/extended-dialog'
@@ -9,6 +9,7 @@ import { FormComboBox } from '@/Components/twc-ui/form-combo-box'
 import { FormDatePicker } from '@/Components/twc-ui/form-date-picker'
 import { FormDateRangePicker } from '@/Components/twc-ui/form-date-range-picker'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormNumberField } from '@/Components/twc-ui/form-number-field'
 import { FormRadioGroup } from '@/Components/twc-ui/form-radio-group'
 import { FormSelect } from '@/Components/twc-ui/form-select'
 
@@ -38,6 +39,16 @@ export const InvoiceDetailsEditBaseData: React.FC<Props> = ({
     setIsOpen(false)
     router.get(route('app.invoice.details', { invoice: invoice.id }))
   }
+
+  const recurringIntervalOptions = useMemo(
+    () => [
+      { name: 'Tage', id: 'days' },
+      { name: 'Wochen', id: 'weeks' },
+      { name: 'Monate', id: 'months' },
+      { name: 'Jahre', id: 'years' }
+    ],
+    []
+  )
 
   return (
     <Dialog
@@ -70,10 +81,10 @@ export const InvoiceDetailsEditBaseData: React.FC<Props> = ({
           </div>
         </FormGrid>
         <FormGrid>
-          <div className="col-span-8">
+          <div className="col-span-6">
             <FormDatePicker label="Rechnungsdatum" {...form.register('issued_on')} />
           </div>
-          <div className="col-span-4" />
+          <div className="col-span-6" />
 
           <div className="col-span-12">
             <FormDateRangePicker
@@ -109,6 +120,30 @@ export const InvoiceDetailsEditBaseData: React.FC<Props> = ({
               Wiederkehrende Rechnung
             </Checkbox>
           </div>
+          {form.data.is_recurring && (
+            <>
+              <div className="col-span-4">
+                <FormNumberField
+                  label="Anzahl"
+                  formatOptions={{ minimumFractionDigits: 0, maximumFractionDigits: 0 }}
+                  {...form.register('recurring_interval_units')}
+                />
+              </div>
+              <div className="col-span-8">
+                <FormSelect
+                  items={recurringIntervalOptions}
+                  label="Interval"
+                  {...form.register('recurring_interval')}
+                />
+              </div>
+              <div className="col-span-6">
+                <FormDatePicker label="Startdatum" {...form.register('recurring_begin_on')} />
+              </div>
+              <div className="col-span-6">
+                <FormDatePicker label="Enddatum" {...form.register('recurring_end_on')} />
+              </div>
+            </>
+          )}
         </FormGrid>
       </Form>
     </Dialog>

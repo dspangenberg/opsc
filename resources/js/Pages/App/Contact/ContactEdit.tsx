@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
@@ -8,12 +8,10 @@ import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import type { PageProps } from '@/Types'
 import '@mdxeditor/editor/style.css'
-import { Pressable } from 'react-aria-components'
 import { Alert } from '@/Components/twc-ui/alert'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
-import { Avatar } from '@/Components/twc-ui/avatar'
+import { AvatarUpload } from '@/Components/twc-ui/avatar-upload'
 import { Checkbox } from '@/Components/twc-ui/checkbox'
-import { FileTrigger } from '@/Components/twc-ui/file-trigger'
 import { FormCard } from '@/Components/twc-ui/form-card'
 import { FormComboBox } from '@/Components/twc-ui/form-combo-box'
 import { FormDatePicker } from '@/Components/twc-ui/form-date-picker'
@@ -119,10 +117,6 @@ const ContactEdit: React.FC<Props> = ({
     has_dunning_block: contact.has_dunning_block
   }
 
-  const [droppedImage, setDroppedImage] = useState<string | undefined>(
-    contact.avatar_url as string | undefined
-  )
-
   const addEmailAddress = () => {
     const defaultCategoryId = mail_categories[0]?.id || 1
     const newMail: App.Data.ContactMailData = {
@@ -206,14 +200,6 @@ const ContactEdit: React.FC<Props> = ({
 
   const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Zurück'
 
-  useEffect(() => {
-    return () => {
-      if (droppedImage) {
-        URL.revokeObjectURL(droppedImage)
-      }
-    }
-  }, [droppedImage])
-
   const isOrganization = !!form.data.is_org
 
   const breadcrumbs = useMemo(() => {
@@ -223,26 +209,6 @@ const ContactEdit: React.FC<Props> = ({
       { title: 'Bearbeiten' }
     ]
   }, [contact.full_name, contact.id])
-
-  async function onSelectHandler(e: FileList | null) {
-    if (!e || e.length === 0) return
-
-    try {
-      const item = e[0]
-
-      if (item) {
-        if (droppedImage?.startsWith('blob:')) {
-          URL.revokeObjectURL(droppedImage)
-        }
-
-        setDroppedImage(URL.createObjectURL(item))
-        form.setData('avatar', item)
-      }
-    } catch (error) {
-      console.error('Fehler beim Verarbeiten des Bildes:', error)
-      // Optional: Benutzer-Feedback anzeigen
-    }
-  }
 
   const handleCancel = async () => {
     if (form.isDirty) {
@@ -288,21 +254,11 @@ const ContactEdit: React.FC<Props> = ({
           <FormGrid>
             <div className="col-span-2 inline-flex items-center justify-center">
               <div>
-                <FileTrigger
-                  acceptedFileTypes={['image/png', 'image/jpeg', 'image/webp']}
-                  onSelect={onSelectHandler}
-                >
-                  <Pressable>
-                    <Avatar
-                      role="button"
-                      aria-label="Avatar ändern"
-                      fullname={contact.full_name}
-                      src={droppedImage}
-                      size="lg"
-                      className="cursor-pointer"
-                    />
-                  </Pressable>
-                </FileTrigger>
+                <AvatarUpload
+                  avatarUrl={contact.avatar_url}
+                  fullName={contact.full_name}
+                  onChanged={item => form.setData('avatar', item)}
+                />
               </div>
             </div>
             {!contact.is_org ? (
