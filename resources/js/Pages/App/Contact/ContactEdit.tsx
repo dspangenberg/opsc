@@ -241,7 +241,7 @@ const ContactEdit: React.FC<Props> = ({
       breadcrumbs={breadcrumbs}
     >
       <FormCard
-        className="max-w-4xl"
+        className="mx-auto max-w-3xl"
         innerClassName="bg-background"
         footer={
           <div className="flex flex-none items-center justify-end gap-2 px-4 py-2">
@@ -263,7 +263,7 @@ const ContactEdit: React.FC<Props> = ({
             </div>
             {!contact.is_org ? (
               <>
-                <div className="col-span-2">
+                <div className="col-span-3">
                   <FormSelect
                     label="Anrede"
                     items={salutations}
@@ -272,7 +272,7 @@ const ContactEdit: React.FC<Props> = ({
                     {...form.register('salutation_id')}
                   />
                 </div>
-                <div className="col-span-4">
+                <div className="col-span-3">
                   <FormSelect
                     label="Titel"
                     isOptional
@@ -305,13 +305,13 @@ const ContactEdit: React.FC<Props> = ({
           {contact.is_org === false && (
             <FormGrid>
               <div className="col-span-2" />
-              <div className="col-span-9">
+              <div className="col-span-8">
                 <FormTextField label="Position" {...form.register('position')} />
               </div>
-              <div className="col-span-9">
+              <div className="col-span-8">
                 <FormTextField label="Abteilung" {...form.register('department')} />
               </div>
-              <div className="col-span-4">
+              <div className="col-span-6">
                 <FormDatePicker label="Geburtsdatum" {...form.register('dob')} />
               </div>
             </FormGrid>

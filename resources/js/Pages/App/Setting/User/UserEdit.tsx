@@ -100,8 +100,12 @@ const UserEdit: React.FC<Props> = ({ user }) => {
             <div className="col-span-2" />
             <div className="col-span-11">
               <FormTextField label="E-Mail" isRequired {...form.register('email')} />
-              <div className="pt-1.5">
+              <div className="flex gap-2 pt-1.5">
                 <FormCheckbox label="Administrator" {...form.registerCheckbox('is_admin')} />
+                <FormCheckbox
+                  label="Account ist gesperrt"
+                  {...form.registerCheckbox('is_locked')}
+                />
               </div>
             </div>
           </FormGrid>

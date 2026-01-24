@@ -58,7 +58,7 @@ const OfferEdit: React.FC<Props> = ({ offer, contacts, projects, taxes, template
       onClosed={handleClose}
       title="Angebot erstellen"
       confirmClose={form.isDirty}
-      footer={dialogRenderProps => (
+      footer={_dialogRenderProps => (
         <div className="mx-0 flex w-full gap-2">
           <div className="flex flex-1 justify-start" />
           <div className="flex flex-none gap-2">
@@ -114,7 +114,6 @@ const OfferEdit: React.FC<Props> = ({ offer, contacts, projects, taxes, template
             <FormSelect<App.Data.ProjectData>
               label="Projekt"
               {...form.register('project_id')}
-              isOptional
               optionalValue="(kein Projekt)"
               items={projects}
             />

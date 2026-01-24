@@ -81,6 +81,10 @@ class ProjectController extends Controller
                 ->upload();
 
             $project->attachMedia($media, 'avatar');
+        } else {
+            if ($project->firstMedia('avatar')) {
+                $project->detachMediaTags('avatar');
+            }
         }
 
         return redirect()->route('app.project.details', ['project' => $project->id]);

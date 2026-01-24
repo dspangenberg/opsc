@@ -3,7 +3,7 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Logout02Icon, Settings05Icon, UserIcon } from '@hugeicons/core-free-icons'
+import { LockPasswordIcon, Logout02Icon, UserEdit01Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import { Pressable } from 'react-aria-components'
 import { ThemeSwitch } from '@/Components/theme-switch'
@@ -48,12 +48,20 @@ export function NavUser({ user }: { user: App.Data.UserData }) {
         <ThemeSwitch />
       </BaseMenuItem>
       <MenuSeparator />
+
       <MenuItem
-        icon={UserIcon}
-        title="Profil + Sicherheit"
+        icon={UserEdit01Icon}
+        title="Profil ändern"
+        ellipsis
+        href={route('app.profile.edit')}
+      />
+
+      <MenuItem
+        icon={LockPasswordIcon}
+        title="Kennwort ändern"
         ellipsis
         separator
-        href={route('app.profile.edit')}
+        href={route('app.profile.change-password')}
       />
       <MenuItem icon={Logout02Icon} title="Logout" onAction={() => handleLogout()} />
     </DropdownButton>

@@ -264,6 +264,10 @@ class ContactController extends Controller
                 ->upload();
 
             $contact->attachMedia($media, 'avatar');
+        }  else {
+            if ($contact->firstMedia('avatar')) {
+                $contact->detachMediaTags('avatar');
+            }
         }
 
         $contact->load(['mails', 'title', 'salutation', 'addresses', 'phones']);

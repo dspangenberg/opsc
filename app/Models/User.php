@@ -68,6 +68,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_admin',
         'password',
         'email_verified_at',
+        'is_locked',
     ];
 
     protected $hidden = [
@@ -83,6 +84,21 @@ class User extends Authenticatable implements MustVerifyEmail
         'initials',
         'avatar_url',
     ];
+    protected $attributes = [
+        'is_admin' => false,
+        'is_locked' => false,
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_admin' => 'boolean',
+            'is_locked' => 'boolean',
+            'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
 
     public function getFullNameAttribute(): string
     {
@@ -121,13 +137,6 @@ class User extends Authenticatable implements MustVerifyEmail
         }
     }
 
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
 
     public function sendPasswordResetNotification($token): void
     {

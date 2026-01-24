@@ -6,6 +6,7 @@ use App\Data\UserData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserUpdateRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
@@ -60,6 +61,7 @@ class UserController extends Controller
         if ($data['email'] !== $user->email) {
             $user->newEmail($data['email']);
             unset($data['email']);
+            $data['email_verified_at'] = null;
         }
 
         $user->update($data);
@@ -72,16 +74,17 @@ class UserController extends Controller
                 ->upload();
 
             $user->attachMedia($media, 'avatar');
+        } else {
+            if ($user->firstMedia('avatar')) {
+                $user->detachMediaTags('avatar');
+            }
         }
 
-        /*
-        Password::sendResetLink(
-            $request->only('email')
-        );
-        $url = URL::temporarySignedRoute('initial-password', now()->addHours(24), ['id' => $user->id]);
-
-        Mail::to($user->email)->send(new VerifyEmailAddressForCloudRegistrationMail($user,$url));
-        */
+        if ($user->is_locked) {
+            DB::table('sessions')
+                ->where('user_id', $user->getAuthIdentifier())
+                ->delete();
+        }
 
         return redirect()->route('app.setting.system.user.index');
     }
@@ -123,5 +126,15 @@ class UserController extends Controller
         }
 
         return redirect()->route('app.setting.system.user.index');
+    }
+
+    public function resetPassword(User $user) {
+
+        Password::sendResetLink(
+            ['email' => $user->email,]
+        );
+
+        return Inertia::flash('toast', ['type' => 'success', 'message' => 'E-Mail zum Zurücksetzen des Passworts wurde gesendet.'])->back();
+
     }
 }
