@@ -5,12 +5,13 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type * as React from 'react'
+import { useState } from 'react'
 import { BreadcrumbProvider } from '@/Components/BreadcrumbProvider'
 import { ThemeContainerProvider } from '@/Components/theme-container-provider'
 import { ThemeProvider } from '@/Components/theme-provider'
 import { NuqsAdapter } from '@/Lib/nuqs-inertia-adapter'
 export function AppProvider(props: React.PropsWithChildren) {
-  const queryClient = new QueryClient()
+  const [queryClient] = useState(() => new QueryClient())
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
       <NuqsAdapter>

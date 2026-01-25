@@ -56,7 +56,7 @@ class UserController extends Controller
      * @throws ConfigurationException
      */
     public function update(UserUpdateRequest $request, User $user) {
-        $data = $request->safe()->except('avatar');
+        $data = $request->safe()->except('avatar', 'remove_avatar');
 
         if ($data['email'] !== $user->email) {
             $user->newEmail($data['email']);
@@ -75,8 +75,10 @@ class UserController extends Controller
 
             $user->attachMedia($media, 'avatar');
         } else {
-            if ($user->firstMedia('avatar')) {
-                $user->detachMediaTags('avatar');
+            if ($request->input('remove_avatar', false)) {
+                if ($user->firstMedia('avatar')) {
+                    $user->detachMediaTags('avatar');
+                }
             }
         }
 

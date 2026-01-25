@@ -19,6 +19,7 @@ class UserUpdateRequest extends FormRequest
             'is_admin' => ['required', 'boolean'],
             'is_locked' => ['required', 'boolean'],
             'avatar' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:51200'],
+            'remove_avatar' => ['nullable', 'boolean'],
         ];
     }
 

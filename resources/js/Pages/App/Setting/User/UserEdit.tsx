@@ -19,6 +19,7 @@ interface Props extends PageProps {
 
 type UserFormData = App.Data.UserData & {
   avatar: File | null
+  remove_avatar: boolean
 }
 
 const UserEdit: React.FC<Props> = ({ user }) => {
@@ -33,6 +34,7 @@ const UserEdit: React.FC<Props> = ({ user }) => {
     }),
     {
       ...user,
+      remove_avatar: false,
       avatar: null
     }
   )
@@ -47,6 +49,14 @@ const UserEdit: React.FC<Props> = ({ user }) => {
       { title }
     ]
   }, [])
+
+  const handleAvatarChange = (avatar: File | undefined) => {
+    if (avatar) {
+      form.setData('avatar', avatar)
+    } else {
+      form.setData('remove_avatar', true)
+    }
+  }
 
   const handleCancel = async () => {
     if (form.isDirty) {
@@ -87,7 +97,7 @@ const UserEdit: React.FC<Props> = ({ user }) => {
                 <AvatarUpload
                   avatarUrl={user.avatar_url}
                   fullName={user.full_name}
-                  onChanged={item => form.setData('avatar', item)}
+                  onChanged={item => handleAvatarChange(item)}
                 />
               </div>
             </div>

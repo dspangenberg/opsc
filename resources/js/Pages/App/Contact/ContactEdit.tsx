@@ -58,6 +58,7 @@ type FormData = Omit<
   phones: App.Data.ContactPhoneData[]
   addresses: App.Data.ContactAddressData[]
   avatar: File | null
+  remove_avatar: boolean
 }
 
 const ContactEdit: React.FC<Props> = ({
@@ -114,7 +115,8 @@ const ContactEdit: React.FC<Props> = ({
     avatar: null,
     dob: contact.dob,
     note: contact.note,
-    has_dunning_block: contact.has_dunning_block
+    has_dunning_block: contact.has_dunning_block,
+    remove_avatar: false
   }
 
   const addEmailAddress = () => {
@@ -180,6 +182,15 @@ const ContactEdit: React.FC<Props> = ({
   const removePhone = (index: number) => {
     const updatedPhones = form.data.phones.filter((_, i) => i !== index)
     form.setData('phones', updatedPhones)
+  }
+
+  const handleAvatarChange = (avatar: File | undefined) => {
+    console.log(avatar)
+    if (avatar) {
+      form.setData('avatar', avatar)
+    } else {
+      form.setData('remove_avatar', true)
+    }
   }
 
   const form = useForm<FormData>(
@@ -257,7 +268,7 @@ const ContactEdit: React.FC<Props> = ({
                 <AvatarUpload
                   avatarUrl={contact.avatar_url}
                   fullName={contact.full_name}
-                  onChanged={item => form.setData('avatar', item)}
+                  onChanged={item => handleAvatarChange(item)}
                 />
               </div>
             </div>

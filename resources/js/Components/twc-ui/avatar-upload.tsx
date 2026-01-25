@@ -10,7 +10,7 @@ interface Props {
   avatarUrl: string | null
   fullName: string
   initials?: string
-  onChanged: (avatar: File) => void
+  onChanged: (avatar: File | undefined) => void
 }
 
 export const AvatarUpload: React.FC<Props> = ({ avatarUrl, fullName, initials, onChanged }) => {
@@ -38,11 +38,16 @@ export const AvatarUpload: React.FC<Props> = ({ avatarUrl, fullName, initials, o
         }
 
         setDroppedImage(URL.createObjectURL(item))
-        onChanged(item)
       }
+      onChanged(item)
     } catch (error) {
       console.error('Fehler beim Verarbeiten des Bildes:', error)
     }
+  }
+
+  const removeAvatar = () => {
+    setDroppedImage(undefined)
+    onChanged(undefined)
   }
 
   return (
@@ -70,7 +75,7 @@ export const AvatarUpload: React.FC<Props> = ({ avatarUrl, fullName, initials, o
           className="size-4 rounded-full"
           iconClassName="size-3"
           icon={MultiplicationSignIcon}
-          onClick={() => setDroppedImage(undefined)}
+          onClick={removeAvatar}
         />
       </div>
     </div>

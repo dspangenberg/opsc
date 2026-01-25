@@ -16,13 +16,23 @@ interface Props extends PageProps {
 
 type UserFormData = App.Data.UserData & {
   avatar: File | null
+  remove_avatar: boolean
 }
 
 const ProfilEdit: React.FC<Props> = ({ user }) => {
   const form = useForm<UserFormData>('form-user-edit', 'put', route('app.profile.update'), {
     ...user,
-    avatar: null
+    avatar: null,
+    remove_avatar: false
   })
+
+  const handleAvatarChange = (avatar: File | undefined) => {
+    if (avatar) {
+      form.setData('avatar', avatar)
+    } else {
+      form.setData('remove_avatar', true)
+    }
+  }
 
   const breadcrumbs = [{ title: 'Profil ändern' }]
 
@@ -52,7 +62,7 @@ const ProfilEdit: React.FC<Props> = ({ user }) => {
                 <AvatarUpload
                   avatarUrl={user.avatar_url}
                   fullName={user.full_name}
-                  onChanged={item => form.setData('avatar', item)}
+                  onChanged={item => handleAvatarChange(item)}
                 />
               </div>
             </div>

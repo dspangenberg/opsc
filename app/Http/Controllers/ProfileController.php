@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
+use Plank\Mediable\Facades\MediaUploader;
 
 class ProfileController extends Controller
 {
@@ -41,7 +42,7 @@ class ProfileController extends Controller
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
-        $data = $request->safe()->except('avatar', 'email');
+        $data = $request->safe()->except('avatar', 'email', 'remove_avatar');
         $user->fill($data);
         $newEmail = $request->validated('email');
 
@@ -50,6 +51,22 @@ class ProfileController extends Controller
         }
 
         $user->save();
+
+        if ($request->hasFile('avatar')) {
+            $user->detachMediaTags('avatar');
+
+            $media = MediaUploader::fromSource($request->file('avatar'))
+                ->toDestination('s3', 'avatars/contacts')
+                ->upload();
+
+            $user->attachMedia($media, 'avatar');
+        }  else {
+            if ($request->input('remove_avatar', false)) {
+                if ($user->firstMedia('avatar')) {
+                    $user->detachMediaTags('avatar');
+                }
+            }
+        }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Dein Profil wurde erfolgreich geändert']);
         return Redirect::route('app.profile.edit');

@@ -22,6 +22,7 @@ interface Props extends PageProps {
 
 type ProjectFormData = App.Data.ProjectData & {
   avatar: File | null
+  remove_avatar: boolean
 }
 
 const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
@@ -36,9 +37,18 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
     }),
     {
       ...project,
-      avatar: null
+      avatar: null,
+      remove_avatar: false
     }
   )
+
+  const handleAvatarChange = (avatar: File | undefined) => {
+    if (avatar) {
+      form.setData('avatar', avatar)
+    } else {
+      form.setData('remove_avatar', true)
+    }
+  }
 
   const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Zurück'
 
@@ -102,7 +112,7 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
                   avatarUrl={project.avatar_url}
                   fullName={project.name}
                   initials={project.name.substring(0, 1).toUpperCase()}
-                  onChanged={item => form.setData('avatar', item)}
+                  onChanged={item => handleAvatarChange(item)}
                 />
               </div>
             </div>
