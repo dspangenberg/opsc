@@ -113,7 +113,6 @@ Route::delete('/settings/system/users/{user}/delete', [UserController::class, 'd
     ->middleware(['admin'])
     ->name('app.setting.system.user.delete');
 
-Route::put('/settings/system/users/{user}/reset-password', [UserController::class, 'update'])
+Route::put('/settings/system/users/{user}/reset-password', [UserController::class, 'resetPassword'])
     ->middleware(['admin'])
-    ->name('app.setting.system.user.update');
-Route::put('/settings/system/users/{user}/delete', [UserController::class, 'resetPassword'])->name('app.setting.system.user.reset-password');
+    ->name('app.setting.system.user.reset-password');

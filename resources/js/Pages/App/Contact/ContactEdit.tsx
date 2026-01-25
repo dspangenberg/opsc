@@ -185,7 +185,6 @@ const ContactEdit: React.FC<Props> = ({
   }
 
   const handleAvatarChange = (avatar: File | undefined) => {
-    console.log(avatar)
     if (avatar) {
       form.setData('avatar', avatar)
     } else {

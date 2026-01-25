@@ -111,7 +111,7 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
                 <AvatarUpload
                   avatarUrl={project.avatar_url}
                   fullName={project.name}
-                  initials={project.name.substring(0, 1).toUpperCase()}
+                  initials={project.name ? project.name.substring(0, 1).toUpperCase() : undefined}
                   onChanged={item => handleAvatarChange(item)}
                 />
               </div>

@@ -70,7 +70,7 @@ class UserController extends Controller
             $user->detachMediaTags('avatar');
 
             $media = MediaUploader::fromSource($request->file('avatar'))
-                ->toDestination('s3', 'avatars/projects')
+                ->toDestination('s3', 'avatars/users')
                 ->upload();
 
             $user->attachMedia($media, 'avatar');

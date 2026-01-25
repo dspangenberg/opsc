@@ -56,7 +56,7 @@ class ProfileController extends Controller
             $user->detachMediaTags('avatar');
 
             $media = MediaUploader::fromSource($request->file('avatar'))
-                ->toDestination('s3', 'avatars/contacts')
+                ->toDestination('s3', 'avatars/users')
                 ->upload();
 
             $user->attachMedia($media, 'avatar');
@@ -86,8 +86,4 @@ class ProfileController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Dein Kennwort wurde erfolgreich geändert']);
         return Redirect::route('app.profile.change-password');
     }
-
-    /**
-     * Delete the user's account.
-     */
 }

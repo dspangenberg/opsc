@@ -1,4 +1,4 @@
-import { router } from '@inertiajs/react'
+import { router, usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
@@ -24,7 +24,8 @@ type UserFormData = App.Data.UserData & {
 
 const UserEdit: React.FC<Props> = ({ user }) => {
   const title = user.id ? 'Benutzerkonto bearbeiten' : 'Benutzerkonto hinzufügen'
-
+  const authUser = usePage().props.auth.user as App.Data.UserData
+  console.log(authUser)
   const form = useForm<UserFormData>(
     'form-user-edit',
     user.id ? 'put' : 'post',
@@ -114,6 +115,7 @@ const UserEdit: React.FC<Props> = ({ user }) => {
                 <FormCheckbox label="Administrator" {...form.registerCheckbox('is_admin')} />
                 <FormCheckbox
                   label="Account ist gesperrt"
+                  isDisabled={authUser.id === user.id}
                   {...form.registerCheckbox('is_locked')}
                 />
               </div>
