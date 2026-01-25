@@ -673,11 +673,13 @@ first_name: string;
 last_name: string;
 avatar_url: string | null;
 is_admin: boolean;
+is_locked: boolean;
 email: string;
 full_name: string;
 reverse_full_name: string;
 initials: string;
 user_agent: string | null;
+last_login_at: string | null;
 email_verified_at: string | null;
 };
 }

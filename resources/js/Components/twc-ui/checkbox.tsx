@@ -143,6 +143,7 @@ const Checkbox = ({
   hasError = false,
   isSelected,
   isIndeterminate = false,
+  isDisabled = false,
   onChange,
   onBlur,
   checked,
@@ -159,6 +160,7 @@ const Checkbox = ({
       isIndeterminate={isIndeterminate}
       autoFocus={autoFocus}
       name={name}
+      isDisabled={isDisabled}
       className={composeRenderProps(className, className =>
         cn(
           'group/checkbox flex items-center gap-x-2',

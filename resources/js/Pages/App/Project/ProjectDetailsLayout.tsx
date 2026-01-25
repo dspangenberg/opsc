@@ -58,7 +58,12 @@ export const ProjectDetailsLayout: React.FC<Props> = ({ children, project }) => 
     () => (
       <div className="flex items-center gap-2">
         <div className="flex-none">
-          <Avatar fullname={project.name} src={project.avatar_url} size="lg" />
+          <Avatar
+            fullname={project.name}
+            initials={project.name.substring(0, 1).toUpperCase()}
+            src={project.avatar_url}
+            size="lg"
+          />
         </div>
         <div className="flex flex-1 flex-col">
           <div className="max-w-lg flex-1 truncate font-bold text-xl">{project.name}</div>

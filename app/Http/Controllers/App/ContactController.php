@@ -231,7 +231,7 @@ class ContactController extends Controller
     public function update(ContactUpdateRequest $request, Contact $contact)
     {
         DB::transaction(function () use ($request, $contact) {
-            $data = $request->safe()->except('avatar', 'mails', 'phones', 'addresses');
+            $data = $request->safe()->except('avatar', 'mails', 'phones', 'addresses', 'remove_avatar');
 
             // Convert empty strings to appropriate values for optional foreign key fields
             if (isset($data['outturn_account_id']) && ($data['outturn_account_id'] === '' || $data['outturn_account_id'] === null)) {
@@ -264,6 +264,12 @@ class ContactController extends Controller
                 ->upload();
 
             $contact->attachMedia($media, 'avatar');
+        }  else {
+            if ($request->input('remove_avatar', false)) {
+                if ($contact->firstMedia('avatar')) {
+                    $contact->detachMediaTags('avatar');
+                }
+            }
         }
 
         $contact->load(['mails', 'title', 'salutation', 'addresses', 'phones']);

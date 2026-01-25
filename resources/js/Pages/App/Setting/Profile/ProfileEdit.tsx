@@ -1,91 +1,89 @@
-import type { FormDataConvertible } from '@inertiajs/core'
 import type * as React from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
-import { FormCard } from '@/Components/twc-ui/form-card'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
-import { FormPasswordField } from '@/Components/twc-ui/form-password-field'
+import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import type { PageProps } from '@/Types'
+import '@mdxeditor/editor/style.css'
+import { AvatarUpload } from '@/Components/twc-ui/avatar-upload'
+import { FormCard } from '@/Components/twc-ui/form-card'
 
 interface Props extends PageProps {
   user: App.Data.UserData
+  status: string
 }
 
-interface PasswordChangeProps extends Record<string, FormDataConvertible> {
-  email: string
-  current_password: string
-  password: string
-  password_confirmation: string
+type UserFormData = App.Data.UserData & {
+  avatar: File | null
+  remove_avatar: boolean
 }
 
-const ProfileEdit: React.FC<Props> = ({ user }) => {
-  const form = useForm<PasswordChangeProps>(
-    'form-update-password',
-    'put',
-    route('app.profile.password-update'),
-    {
-      email: user.email,
-      current_password: '',
-      password: '',
-      password_confirmation: ''
-    },
-    { validateOn: 'blur' }
-  )
+const ProfilEdit: React.FC<Props> = ({ user }) => {
+  const form = useForm<UserFormData>('form-user-edit', 'put', route('app.profile.update'), {
+    ...user,
+    avatar: null,
+    remove_avatar: false
+  })
 
-  const breadcrumbs = [{ title: 'Profil ändern', url: route('app.setting') }]
+  const handleAvatarChange = (avatar: File | undefined) => {
+    if (avatar) {
+      form.setData('avatar', avatar)
+    } else {
+      form.setData('remove_avatar', true)
+    }
+  }
+
+  const breadcrumbs = [{ title: 'Profil ändern' }]
+
   return (
     <PageContainer
-      title="Profil + Sicherheit"
+      title="Profil ändern"
       width="6xl"
       className="flex overflow-hidden"
       breadcrumbs={breadcrumbs}
     >
       <FormCard
-        className="z-10 flex max-w-4xl flex-1 overflow-y-hidden"
-        innerClassName="bg-background z-10"
+        className="mx-auto flex max-w-3xl flex-1 overflow-y-hidden"
+        innerClassName="bg-white"
         footer={
           <div className="flex flex-none items-center justify-end gap-2 px-4 py-2">
-            <Button variant="default" form={form.id} type="submit" title="Kennwort ändern" />
+            {form.isDirty && (
+              <Button variant="outline" onClick={() => form.reset()} title="Zurücksetzen" />
+            )}
+            <Button variant="default" form={form.id} type="submit" title="Speichern" />
           </div>
         }
       >
-        <Form form={form}>
+        <Form form={form} errorClassName="w-auto m-3">
           <FormGrid>
-            <div className="col-span-8">
-              <input
-                type="text"
-                name="username"
-                value={form.data.email}
-                readOnly
-                tabIndex={-1}
-                autoComplete="username"
-                aria-hidden="true"
-                className="sr-only"
-              />
-
-              <FormPasswordField
+            <div className="col-span-2 inline-flex items-center justify-center">
+              <div>
+                <AvatarUpload
+                  avatarUrl={user.avatar_url}
+                  fullName={user.full_name}
+                  onChanged={item => handleAvatarChange(item)}
+                />
+              </div>
+            </div>
+            <div className="col-span-11">
+              <FormTextField
                 autoFocus
-                label="Aktuelles Kennwort"
-                {...form.register('current_password')}
+                label="Vorname"
+                isRequired
+                {...form.register('first_name')}
               />
             </div>
-          </FormGrid>
-          <FormGrid>
-            <div className="col-span-8">
-              <FormPasswordField
-                label="Neues Kennwort"
-                showStrength
-                showHint
-                autoComplete="new-password"
-                {...form.register('password')}
-              />
+            <div className="col-span-11">
+              <FormTextField label="Nachname" isRequired {...form.register('last_name')} />
             </div>
-            <div className="col-span-8">
-              <FormPasswordField
-                label="Kennwort-Wiederholung"
-                autoComplete="new-password"
-                {...form.register('password_confirmation')}
+            <div className="col-span-2" />
+            <div className="col-span-11">
+              <FormTextField
+                label="E-Mail"
+                isRequired
+                {...form.register('email')}
+                description="Die Änderung der E-Mail-Adresse wird erst nach Bestätigung wirksam."
               />
             </div>
           </FormGrid>
@@ -95,4 +93,4 @@ const ProfileEdit: React.FC<Props> = ({ user }) => {
   )
 }
 
-export default ProfileEdit
+export default ProfilEdit

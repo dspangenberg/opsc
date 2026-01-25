@@ -1,4 +1,4 @@
-import { router } from '@inertiajs/react'
+import { router, usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
@@ -19,11 +19,13 @@ interface Props extends PageProps {
 
 type UserFormData = App.Data.UserData & {
   avatar: File | null
+  remove_avatar: boolean
 }
 
 const UserEdit: React.FC<Props> = ({ user }) => {
   const title = user.id ? 'Benutzerkonto bearbeiten' : 'Benutzerkonto hinzufügen'
-
+  const authUser = usePage().props.auth.user as App.Data.UserData
+  console.log(authUser)
   const form = useForm<UserFormData>(
     'form-user-edit',
     user.id ? 'put' : 'post',
@@ -33,6 +35,7 @@ const UserEdit: React.FC<Props> = ({ user }) => {
     }),
     {
       ...user,
+      remove_avatar: false,
       avatar: null
     }
   )
@@ -47,6 +50,14 @@ const UserEdit: React.FC<Props> = ({ user }) => {
       { title }
     ]
   }, [])
+
+  const handleAvatarChange = (avatar: File | undefined) => {
+    if (avatar) {
+      form.setData('avatar', avatar)
+    } else {
+      form.setData('remove_avatar', true)
+    }
+  }
 
   const handleCancel = async () => {
     if (form.isDirty) {
@@ -87,7 +98,7 @@ const UserEdit: React.FC<Props> = ({ user }) => {
                 <AvatarUpload
                   avatarUrl={user.avatar_url}
                   fullName={user.full_name}
-                  onChanged={item => form.setData('avatar', item)}
+                  onChanged={item => handleAvatarChange(item)}
                 />
               </div>
             </div>
@@ -100,8 +111,13 @@ const UserEdit: React.FC<Props> = ({ user }) => {
             <div className="col-span-2" />
             <div className="col-span-11">
               <FormTextField label="E-Mail" isRequired {...form.register('email')} />
-              <div className="pt-1.5">
+              <div className="flex gap-2 pt-1.5">
                 <FormCheckbox label="Administrator" {...form.registerCheckbox('is_admin')} />
+                <FormCheckbox
+                  label="Account ist gesperrt"
+                  isDisabled={authUser.id === user.id}
+                  {...form.registerCheckbox('is_locked')}
+                />
               </div>
             </div>
           </FormGrid>

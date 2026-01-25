@@ -17,7 +17,9 @@ class UserUpdateRequest extends FormRequest
                 'unique:users,email,' . ($this->route('user')?->id ?? 'NULL'),
             ],
             'is_admin' => ['required', 'boolean'],
+            'is_locked' => ['required', 'boolean'],
             'avatar' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:51200'],
+            'remove_avatar' => ['nullable', 'boolean'],
         ];
     }
 

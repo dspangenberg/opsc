@@ -1,5 +1,7 @@
+import { router } from '@inertiajs/react'
 import type React from 'react'
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import { RouterProvider } from 'react-aria-components'
 import { Logo } from '@/Components/twc-ui/logo'
 
 interface ApplicationProviderState {
@@ -42,6 +44,10 @@ const ApplicationContext = createContext<ApplicationProviderState>(initialState)
 
 export function ApplicationProvider({ children }: React.PropsWithChildren) {
   const [state, setState] = useState<ApplicationProviderState>(initialState)
+  const navigate = useCallback(
+    (to: string, options?: Parameters<typeof router.visit>[1]) => router.visit(to, options),
+    []
+  )
 
   const setTitle = useCallback((title: string) => {
     setState(prev => ({ ...prev, title }))
@@ -96,9 +102,11 @@ export function ApplicationProvider({ children }: React.PropsWithChildren) {
   }
 
   return (
-    <ApplicationContext.Provider value={value}>
-      <div className="overflow-hidden">{children}</div>
-    </ApplicationContext.Provider>
+    <RouterProvider navigate={navigate}>
+      <ApplicationContext.Provider value={value}>
+        <div className="overflow-hidden">{children}</div>
+      </ApplicationContext.Provider>
+    </RouterProvider>
   )
 }
 

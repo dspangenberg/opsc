@@ -22,6 +22,7 @@ interface Props extends PageProps {
 
 type ProjectFormData = App.Data.ProjectData & {
   avatar: File | null
+  remove_avatar: boolean
 }
 
 const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
@@ -36,9 +37,18 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
     }),
     {
       ...project,
-      avatar: null
+      avatar: null,
+      remove_avatar: false
     }
   )
+
+  const handleAvatarChange = (avatar: File | undefined) => {
+    if (avatar) {
+      form.setData('avatar', avatar)
+    } else {
+      form.setData('remove_avatar', true)
+    }
+  }
 
   const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Zurück'
 
@@ -85,7 +95,7 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
       breadcrumbs={breadcrumbs}
     >
       <FormCard
-        className="flex w-4xl flex-1 overflow-y-hidden"
+        className="flex max-w-4xl flex-1 overflow-y-hidden"
         innerClassName="bg-white"
         footer={
           <div className="flex flex-none items-center justify-end gap-2 px-4 py-2">
@@ -101,12 +111,13 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
                 <AvatarUpload
                   avatarUrl={project.avatar_url}
                   fullName={project.name}
-                  onChanged={item => form.setData('avatar', item)}
+                  initials={project.name ? project.name.substring(0, 1).toUpperCase() : undefined}
+                  onChanged={item => handleAvatarChange(item)}
                 />
               </div>
             </div>
             <div className="col-span-8">
-              <FormTextField label="Bezeichnung" isRequired {...form.register('name')} />
+              <FormTextField autoFocus label="Bezeichnung" isRequired {...form.register('name')} />
             </div>
             <div className="col-span-6">
               <FormSelect

@@ -15,6 +15,7 @@ class ProjectRequest extends FormRequest
             'manager_contact_id' => ['nullable', 'exists_if_not_empty:contacts,id'],
             'website' => ['nullable', 'url'],
             'avatar' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:51200'],
+            'remove_avatar' => ['nullable', 'boolean'],
         ];
     }
 

@@ -3,7 +3,13 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Crown03Icon, Delete03Icon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
+import {
+  Crown03Icon,
+  Delete03Icon,
+  MailLock01Icon,
+  MoreVerticalCircle01Icon,
+  SquareLock02Icon
+} from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/core'
 import { Link, usePage } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
@@ -29,12 +35,22 @@ const handleDelete = async (row: App.Data.UserData) => {
   }
 }
 
+const handleResetPassword = async (row: App.Data.UserData) => {
+  router.put(route('app.setting.system.user.reset-password', { user: row.id }))
+}
+
 const RowActions = ({ row }: { row: Row<App.Data.UserData> }) => {
   const { auth } = usePage<PageProps>().props
   const currentUser = auth.user
   return (
     <div className="mx-auto">
       <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
+        <MenuItem
+          icon={MailLock01Icon}
+          title="Kennwort zurücksetzen"
+          separator
+          onAction={() => handleResetPassword(row.original)}
+        />
         <MenuItem
           icon={Delete03Icon}
           title="Löschen"
@@ -83,11 +99,15 @@ export const columns: ColumnDef<App.Data.UserData>[] = [
             initials={row.original.initials}
             fullname={row.original.full_name}
             src={row.original.avatar_url}
-            size="lg"
           />
           {row.original.is_admin && (
-            <div className="absolute -right-1 -bottom-1 rounded-full border-2 border-background bg-orange-200 text-orange-700">
-              <Icon icon={Crown03Icon} className="size-5 p-1" />
+            <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-2 border-background bg-blue-300">
+              <Icon icon={Crown03Icon} className="size-3 text-white" strokeWidth={2} />
+            </div>
+          )}
+          {row.original.is_locked && (
+            <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-2 border-background bg-red-500">
+              <Icon icon={SquareLock02Icon} className="size-3 text-white" strokeWidth={2} />
             </div>
           )}
         </div>
@@ -116,6 +136,18 @@ export const columns: ColumnDef<App.Data.UserData>[] = [
         {getValue() as string}
       </a>
     )
+  },
+  {
+    accessorKey: 'email_verified_at',
+    header: 'E-Mail-Bestätigung',
+    size: 100,
+    cell: ({ getValue }) => <span>{getValue() as string}</span>
+  },
+  {
+    accessorKey: 'last_login_at',
+    header: 'Letzter Login',
+    size: 100,
+    cell: ({ getValue }) => <span>{getValue() as string}</span>
   },
   {
     id: 'actions',

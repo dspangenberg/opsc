@@ -70,7 +70,7 @@ class ProjectController extends Controller
      * @throws ConfigurationException
      */
     public function update(ProjectRequest $request, Project $project) {
-        $data = $request->safe()->except('avatar');
+        $data = $request->safe()->except('avatar', 'remove_avatar');
         $project->update($data);
 
         if ($request->hasFile('avatar')) {
@@ -81,6 +81,12 @@ class ProjectController extends Controller
                 ->upload();
 
             $project->attachMedia($media, 'avatar');
+        } else {
+            if ($request->input('remove_avatar', false)) {
+                if ($project->firstMedia('avatar')) {
+                    $project->detachMediaTags('avatar');
+                }
+            }
         }
 
         return redirect()->route('app.project.details', ['project' => $project->id]);

@@ -58,6 +58,7 @@ type FormData = Omit<
   phones: App.Data.ContactPhoneData[]
   addresses: App.Data.ContactAddressData[]
   avatar: File | null
+  remove_avatar: boolean
 }
 
 const ContactEdit: React.FC<Props> = ({
@@ -114,7 +115,8 @@ const ContactEdit: React.FC<Props> = ({
     avatar: null,
     dob: contact.dob,
     note: contact.note,
-    has_dunning_block: contact.has_dunning_block
+    has_dunning_block: contact.has_dunning_block,
+    remove_avatar: false
   }
 
   const addEmailAddress = () => {
@@ -182,6 +184,14 @@ const ContactEdit: React.FC<Props> = ({
     form.setData('phones', updatedPhones)
   }
 
+  const handleAvatarChange = (avatar: File | undefined) => {
+    if (avatar) {
+      form.setData('avatar', avatar)
+    } else {
+      form.setData('remove_avatar', true)
+    }
+  }
+
   const form = useForm<FormData>(
     'contact-form',
     'put',
@@ -241,7 +251,7 @@ const ContactEdit: React.FC<Props> = ({
       breadcrumbs={breadcrumbs}
     >
       <FormCard
-        className="max-w-4xl"
+        className="mx-auto max-w-3xl"
         innerClassName="bg-background"
         footer={
           <div className="flex flex-none items-center justify-end gap-2 px-4 py-2">
@@ -257,13 +267,13 @@ const ContactEdit: React.FC<Props> = ({
                 <AvatarUpload
                   avatarUrl={contact.avatar_url}
                   fullName={contact.full_name}
-                  onChanged={item => form.setData('avatar', item)}
+                  onChanged={item => handleAvatarChange(item)}
                 />
               </div>
             </div>
             {!contact.is_org ? (
               <>
-                <div className="col-span-2">
+                <div className="col-span-3">
                   <FormSelect
                     label="Anrede"
                     items={salutations}
@@ -272,7 +282,7 @@ const ContactEdit: React.FC<Props> = ({
                     {...form.register('salutation_id')}
                   />
                 </div>
-                <div className="col-span-4">
+                <div className="col-span-3">
                   <FormSelect
                     label="Titel"
                     isOptional
@@ -305,13 +315,13 @@ const ContactEdit: React.FC<Props> = ({
           {contact.is_org === false && (
             <FormGrid>
               <div className="col-span-2" />
-              <div className="col-span-9">
+              <div className="col-span-8">
                 <FormTextField label="Position" {...form.register('position')} />
               </div>
-              <div className="col-span-9">
+              <div className="col-span-8">
                 <FormTextField label="Abteilung" {...form.register('department')} />
               </div>
-              <div className="col-span-4">
+              <div className="col-span-6">
                 <FormDatePicker label="Geburtsdatum" {...form.register('dob')} />
               </div>
             </FormGrid>

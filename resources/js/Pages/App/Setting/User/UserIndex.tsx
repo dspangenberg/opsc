@@ -30,7 +30,7 @@ const UserIndex: React.FC<UserIndexPageProps> = ({ users }) => {
         <Button
           variant="toolbar-default"
           icon={Add01Icon}
-          title="Neuers Benutzerkonto"
+          title="Neues Benutzerkonto"
           onClick={handleUserAdd}
         />
       </Toolbar>

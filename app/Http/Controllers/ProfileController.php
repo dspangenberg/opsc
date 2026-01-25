@@ -13,18 +13,26 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
+use Plank\Mediable\Facades\MediaUploader;
 
 class ProfileController extends Controller
 {
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): Response
+    public function editPassword(Request $request): Response
     {
-        return Inertia::render('App/Setting/Profile/ProfileEdit', [
+        return Inertia::render('App/Setting/Profile/ChangePassword', [
             'user' => Auth::user(),
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+        ]);
+    }
+
+    public function edit(Request $request): Response
+    {
+        return Inertia::render('App/Setting/Profile/ProfileEdit', [
+            'user' => Auth::user()
         ]);
     }
 
@@ -33,15 +41,35 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $data = $request->safe()->except('avatar', 'email', 'remove_avatar');
+        $user->fill($data);
+        $newEmail = $request->validated('email');
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($newEmail !== $user->email) {
+            $user->newEmail($newEmail);
         }
 
-        $request->user()->save();
+        $user->save();
 
-        return Redirect::route('profile.edit');
+        if ($request->hasFile('avatar')) {
+            $user->detachMediaTags('avatar');
+
+            $media = MediaUploader::fromSource($request->file('avatar'))
+                ->toDestination('s3', 'avatars/users')
+                ->upload();
+
+            $user->attachMedia($media, 'avatar');
+        }  else {
+            if ($request->input('remove_avatar', false)) {
+                if ($user->firstMedia('avatar')) {
+                    $user->detachMediaTags('avatar');
+                }
+            }
+        }
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Dein Profil wurde erfolgreich geändert']);
+        return Redirect::route('app.profile.edit');
     }
 
     public function updatePassword(PasswordUpdateRequest $request): RedirectResponse
@@ -56,27 +84,6 @@ class ProfileController extends Controller
             ->delete();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Dein Kennwort wurde erfolgreich geändert']);
-        return Redirect::route('app.profile.edit');
-    }
-
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'password' => ['required', 'current_password'],
-        ]);
-
-        $user = $request->user();
-
-        Auth::logout();
-
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        return Redirect::route('app.profile.change-password');
     }
 }

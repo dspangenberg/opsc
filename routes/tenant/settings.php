@@ -84,8 +84,12 @@ Route::post('/settings/bookkeeping/cost-centers', [CostCenterController::class, 
 Route::get('/settings/bookkeeping/cost-centers/{costCenter}/edit', [CostCenterController::class, 'edit'])->name('app.bookkeeping.cost-centers.edit')->middleware([HandlePrecognitiveRequests::class]);
 Route::put('/settings/bookkeeping/cost-centers/{costCenter}/edit', [CostCenterController::class, 'update'])->name('app.bookkeeping.cost-centers.update');
 
-Route::get('/profile', [ProfileController::class, 'edit'])->name('app.profile.edit')->middleware([HandlePrecognitiveRequests::class]);
+Route::get('/profile/password', [ProfileController::class, 'editPassword'])->name('app.profile.change-password')->middleware([HandlePrecognitiveRequests::class]);
 Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('app.profile.password-update')->middleware([HandlePrecognitiveRequests::class]);
+
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('app.profile.edit')->middleware([HandlePrecognitiveRequests::class]);
+Route::put('/profile/edit', [ProfileController::class, 'update'])->name('app.profile.update')->middleware([HandlePrecognitiveRequests::class]);
+
 
 Route::redirect('settings/system', '/app/settings/system/users')
     ->middleware(['admin'])
@@ -108,3 +112,7 @@ Route::put('/settings/system/users/{user}/edit', [UserController::class, 'update
 Route::delete('/settings/system/users/{user}/delete', [UserController::class, 'destroy'])
     ->middleware(['admin'])
     ->name('app.setting.system.user.delete');
+
+Route::put('/settings/system/users/{user}/reset-password', [UserController::class, 'resetPassword'])
+    ->middleware(['admin'])
+    ->name('app.setting.system.user.reset-password');

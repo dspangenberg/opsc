@@ -4,7 +4,6 @@
  */
 
 import type { FormDataConvertible } from '@inertiajs/core'
-import { Link } from '@inertiajs/react'
 import type React from 'react'
 import { AuthContainer } from '@/Components/AuthContainer'
 import { Alert } from '@/Components/twc-ui/alert'
@@ -12,6 +11,7 @@ import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
+import { LinkButton } from '@/Components/twc-ui/link-button'
 import Logo from '@/Components/twc-ui/logo'
 import GuestLayout from '@/Layouts/GuestLayout'
 
@@ -57,7 +57,7 @@ const ForgotPassword: React.FC<LoginProps> = ({ status }) => {
             />
           </div>
 
-          <div className="col-span-24">
+          <div className="col-span-24 space-y-2">
             <Button
               isLoading={form.processing}
               form={form.id}
@@ -67,12 +67,7 @@ const ForgotPassword: React.FC<LoginProps> = ({ status }) => {
             >
               Kennwort zurücksetzen
             </Button>
-            <Link
-              href={route('login')}
-              className="mx-auto mt-3 text-center text-blue-500 text-sm hover:underline"
-            >
-              Zurück zum Login
-            </Link>
+            <LinkButton href={route('login')} size="full" variant="link" title="Zurück zum Login" />
           </div>
         </FormGrid>
       </Form>

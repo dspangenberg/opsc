@@ -77,6 +77,12 @@ export const OfferDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
             label="Projekt"
             value={offer.project?.name}
           />
+          <DataCardField
+            className="col-span-2"
+            variant="vertical"
+            label="Vorlage"
+            value={offer.template_name}
+          />
         </DataCardSection>
       </DataCardContent>
     </DataCard>
