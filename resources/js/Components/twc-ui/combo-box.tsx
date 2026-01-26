@@ -88,6 +88,7 @@ interface ComboBoxProps<T extends object> {
   description?: string
   itemName?: keyof T & string
   itemValue?: keyof T & string
+  isDisabled?: boolean
   defaultSelectedKey?: Key
   hasError?: boolean
   onChange: (value: string | number | null) => void

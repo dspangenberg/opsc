@@ -265,9 +265,11 @@ const ContactEdit: React.FC<Props> = ({
             <div className="col-span-2 inline-flex items-center justify-center">
               <div>
                 <AvatarUpload
-                  avatarUrl={contact.avatar_url}
-                  fullName={contact.full_name}
-                  onChanged={item => handleAvatarChange(item)}
+                  src={contact.avatar_url}
+                  initials={contact.initials}
+                  fullname={contact.full_name}
+                  size="lg"
+                  onSelect={item => handleAvatarChange(item)}
                 />
               </div>
             </div>

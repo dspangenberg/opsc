@@ -1,4 +1,3 @@
-import type { VariantProps } from 'class-variance-authority'
 import {
   Link as AriaLink,
   type LinkProps as AriaLinkProps,
@@ -6,8 +5,9 @@ import {
   type TooltipProps,
   TooltipTrigger
 } from 'react-aria-components'
+import type { VariantProps } from 'tailwind-variants'
 import { cn } from '@/Lib/utils'
-import { buttonVariants } from './button'
+import { buttonVariants, resolveButtonLabeling } from './button'
 import { Icon, type IconType } from './icon'
 import { Tooltip } from './tooltip'
 
@@ -32,65 +32,38 @@ export const LinkButton = ({
   icon,
   ...props
 }: ToggleButtonProps) => {
-  const ariaLabel = title || tooltip
-
-  const iconSizeClass = {
-    default: 'size-5',
-    full: 'size-5',
-    sm: 'size-5',
-    lg: 'size-5',
-    icon: 'size-5',
-    'icon-sm': 'size-4',
-    'icon-xs': 'size-3',
-    auto: 'size-5'
-  }[size || 'icon']
-  const isToolbar = variant === 'toolbar' || variant === 'toolbar-default'
-
-  if (variant === 'toolbar-default') {
-    size = 'auto'
-    forceTitle = true
-  }
-
-  if (variant === 'toolbar') {
-    tooltip = title
-    title = ''
-    size = 'icon'
-  }
-
-  if (!forceTitle && title && !tooltip && ['icon', 'icon-sm', 'icon-xs'].includes(size as string)) {
-    tooltip = title
-    title = ''
-  }
+  const {
+    ariaLabel,
+    title: resolvedTitle,
+    tooltip: resolvedTooltip,
+    size: resolvedSize,
+    isToolbar
+  } = resolveButtonLabeling({ title, tooltip, size, variant, forceTitle })
+  const styles = buttonVariants({ variant, size: resolvedSize })
 
   return (
     <TooltipTrigger>
       <AriaLink
         {...props}
         aria-label={ariaLabel}
-        className={composeRenderProps(props.className, (className: any, renderProps) =>
-          cn(
-            'gap-2',
-            buttonVariants({
-              ...renderProps,
-              variant,
-              size
-            }),
-            className
-          )
+        className={composeRenderProps(props.className, className =>
+          styles.base({ className: cn('gap-2', className) })
         )}
       >
         {() => (
           <>
-            {icon && <Icon icon={icon} className={iconSizeClass} />}
-            {title && <span>{title}</span>}
+            {icon && <Icon icon={icon} className={styles.icon()} />}
+            {resolvedTitle && <span>{resolvedTitle}</span>}
           </>
         )}
       </AriaLink>
-      {tooltip && (
+      {(resolvedTooltip || resolvedTitle) && (
         <Tooltip placement={tooltipPlacement}>
-          {title && variant !== 'toolbar' && (
-            <div className={cn(isToolbar ? 'hidden md:flex' : '')}>{title}</div>
-          )}
+          {resolvedTooltip
+            ? resolvedTooltip
+            : resolvedTitle && (
+                <div className={cn(isToolbar ? 'hidden md:flex' : '')}>{resolvedTitle}</div>
+              )}
         </Tooltip>
       )}
     </TooltipTrigger>

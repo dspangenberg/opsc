@@ -5,12 +5,12 @@
         @endif
     </td>
     <td class="right">
-        @if($line->type_id !== 2)
+        @if($line->type_id === 1)
             {{ number_format($line->quantity, 2, ',', '.') }}
         @endif
     </td>
     <td style="text-align:center;">
-        @if($line->type_id !== 2)
+        @if($line->type_id === 1)
             {{ $line->unit }}
         @endif
     </td>

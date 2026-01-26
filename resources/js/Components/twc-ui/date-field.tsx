@@ -1,5 +1,4 @@
 import type { DateValue } from '@internationalized/date'
-import type { VariantProps } from 'class-variance-authority'
 import type React from 'react'
 import {
   DateField as AriaDateField,
@@ -13,6 +12,7 @@ import {
   Text,
   type ValidationResult
 } from 'react-aria-components'
+import type { VariantProps } from 'tailwind-variants'
 import { cn } from '@/Lib/utils'
 import { FieldError, fieldGroupVariants, Label } from './field'
 

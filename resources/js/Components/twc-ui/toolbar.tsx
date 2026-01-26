@@ -1,4 +1,3 @@
-import { cva, type VariantProps } from 'class-variance-authority'
 import type React from 'react'
 import { createContext, useContext } from 'react'
 import {
@@ -6,10 +5,11 @@ import {
   type ToolbarProps as AriaToolbarProps,
   composeRenderProps
 } from 'react-aria-components'
-import { cn } from '@/Lib/utils'
+import { tv, type VariantProps } from 'tailwind-variants'
 import { Button, type ButtonProps } from './button'
 
-const toolbarVariants = cva('flex gap-1.5 data-[orientation=vertical]:flex-col py-1', {
+const toolbarVariants = tv({
+  base: 'flex gap-1.5 py-1 data-[orientation=vertical]:flex-col',
   variants: {
     variant: {
       default: '[&>button_svg]:text-primary',
@@ -50,7 +50,7 @@ export const Toolbar = ({ variant, isDisabled, ...props }: ToolbarProps) => {
       <AriaToolbar
         {...props}
         className={composeRenderProps(props.className, className =>
-          cn(toolbarVariants({ variant }), className)
+          toolbarVariants({ variant, className })
         )}
       />
     </ToolbarContext.Provider>

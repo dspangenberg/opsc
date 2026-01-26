@@ -99,6 +99,7 @@ class Invoice extends Model implements MediableInterface
         'tax_id',
         'service_period_end',
         'sent_at',
+        'additional_text',
     ];
 
     protected $attributes = [
@@ -129,6 +130,7 @@ class Invoice extends Model implements MediableInterface
         $invoice = Invoice::query()
             ->with('contact')
             ->with('project')
+            ->with('parent_invoice')
             ->with('project.manager')
             ->with('contact.tax')
             ->with('payment_deadline')

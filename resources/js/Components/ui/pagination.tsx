@@ -58,8 +58,8 @@ function PaginationLink({
         className={cn(
           buttonVariants({
             variant: isActive ? 'outline' : 'ghost',
-            size
-          }),
+            size: 'auto'
+          }).base(),
           'pointer-events-none',
           disabled && 'opacity-50',
           className
@@ -71,17 +71,17 @@ function PaginationLink({
   }
 
   return (
-    <Link
-      {...commonProps}
-      className={cn(
-        buttonVariants({
-          variant: isActive ? 'outline' : 'ghost',
-          size
-        }),
-        className
-      )}
-      {...props}
-    >
+      <Link
+        {...commonProps}
+        className={cn(
+          buttonVariants({
+            variant: isActive ? 'outline' : 'ghost',
+            size
+          }).base(),
+          className
+        )}
+        {...props}
+      >
       {children}
     </Link>
   )

@@ -106,13 +106,13 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
 
   const validateFormField = (name: string) => {
     // Convert array notation to dot notation for Laravel validation
-  const laravelName = name.replace(/\[(\d+)]/g, '.$1')
+    const laravelName = name.replace(/\[(\d+)]/g, '.$1')
     ;(form as any).validate(laravelName)
   }
 
   const touchFormField = (name: string) => {
     // Convert array notation to dot notation for Laravel validation
-  const laravelName = name.replace(/\[(\d+)]/g, '.$1')
+    const laravelName = name.replace(/\[(\d+)]/g, '.$1')
     ;(form as any).touched(laravelName)
   }
 

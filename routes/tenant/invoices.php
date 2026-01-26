@@ -59,10 +59,6 @@ Route::put('invoicing/invoices/lines-update/{invoice}', [InvoiceController::clas
     ->name('app.invoice.lines-update')
     ->middleware([HandlePrecognitiveRequests::class]);
 
-Route::post('invoicing/invoices/{invoice}/line-update/store', [InvoiceController::class, 'storeLine'])
-    ->name('app.invoice.line-store')
-    ->middleware([HandlePrecognitiveRequests::class]);
-
 Route::get('invoicing/invoices/{invoice}/create_booking', [InvoiceController::class, 'createBooking'])
     ->name('app.invoice.booking-create');
 
@@ -80,3 +76,7 @@ Route::get('invoicing/invoices/{invoice}/duplicate', [InvoiceController::class, 
 
 Route::get('invoicing/invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])
     ->name('app.invoice.pdf');
+
+Route::post('invoicing/invoices/{invoice}/cancel', [InvoiceController::class, 'cancel'])
+    ->name('app.invoice.cancel')
+    ->middleware([HandlePrecognitiveRequests::class]);

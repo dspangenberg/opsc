@@ -1,4 +1,3 @@
-import { cva, type VariantProps } from 'class-variance-authority'
 import {
   FieldError as AriaFieldError,
   type FieldErrorProps as AriaFieldErrorProps,
@@ -10,15 +9,18 @@ import {
   type TextProps as AriaTextProps,
   composeRenderProps
 } from 'react-aria-components'
+import { tv, type VariantProps } from 'tailwind-variants'
 import { cn } from '@/Lib/utils'
 
-const labelVariants = cva([
-  'text-sm font-normal leading-none',
-  /* Disabled */
-  'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70',
-  /* Invalid */
-  'group-data-[invalid]:text-destructive'
-])
+const labelVariants = tv({
+  base: [
+    'font-normal text-sm leading-none',
+    /* Disabled */
+    'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70',
+    /* Invalid */
+    'group-data-[invalid]:text-destructive'
+  ]
+})
 
 interface LabelProps extends AriaLabelProps {
   isRequired?: boolean
@@ -59,14 +61,14 @@ function FieldError({ className, ...props }: AriaFieldErrorProps) {
   )
 }
 
-const fieldGroupVariants = cva('', {
+const fieldGroupVariants = tv({
   variants: {
     variant: {
       default: [
-        'relative flex h-9 w-full items-center overflow-hidden rounded-sm border border-input bg-background px-3 py-1 text-base font-medium shadow-none transition-colors',
+        'relative flex h-9 w-full items-center overflow-hidden rounded-sm border border-input bg-background px-3 py-1 font-medium text-base shadow-none transition-colors',
         /* Focus Within */
-        'focus:border-primary focus-within:border-primary focus-within:ring-[3px] focus-within:ring-primary/20',
-        'data-[invalid]:focus-within:ring-destructive/20  data-[invalid]:focus-within:border-destructive  data-[invalid]:border-destructive',
+        'focus-within:border-primary focus-within:ring-[3px] focus-within:ring-primary/20 focus:border-primary',
+        'data-[invalid]:border-destructive data-[invalid]:focus-within:border-destructive data-[invalid]:focus-within:ring-destructive/20',
         /* Disabled */
         'data-[disabled]:opacity-50'
       ],
@@ -84,18 +86,11 @@ function FieldGroup({ className, variant, ...props }: GroupProps) {
   return (
     <AriaGroup
       className={composeRenderProps(className, className =>
-        cn(fieldGroupVariants({ variant }), className)
+        fieldGroupVariants({ variant, className })
       )}
       {...props}
     />
   )
 }
 
-export {
-  Label,
-  labelVariants,
-  FieldGroup,
-  fieldGroupVariants,
-  FieldError,
-  FieldDescription
-}
+export { Label, labelVariants, FieldGroup, fieldGroupVariants, FieldError, FieldDescription }

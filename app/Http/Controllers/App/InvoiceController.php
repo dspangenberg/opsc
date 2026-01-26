@@ -32,6 +32,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceController extends Controller
 {
@@ -45,7 +46,7 @@ class InvoiceController extends Controller
             $year = $currentYear;
         }
 
-        if ($year && ! $years->contains($year)) {
+        if ($year && !$years->contains($year)) {
             $years->push($year);
         }
 
@@ -211,27 +212,33 @@ class InvoiceController extends Controller
         $projects = Project::where('is_archived', false)->orderBy('name')->get();
         $taxes = Tax::with('rates')->orderBy('name')->get();
         $paymentDeadlines = PaymentDeadline::orderBy('name')->get();
+        $contacts = Contact::whereNotNull('debtor_number')->orderBy('name')->orderBy('first_name')->get();
 
-        return Inertia::modal('App/Invoice/InvoiceDetailsEditBaseData')
+        return Inertia::render('App/Invoice/InvoiceDetailsEditBaseData')
             ->with([
                 'invoice' => InvoiceData::from($invoice),
                 'invoice_types' => InvoiceTypeData::collect($invoiceTypes),
                 'projects' => ProjectData::collect($projects),
                 'taxes' => TaxData::collect($taxes),
                 'payment_deadlines' => PaymentDeadlineData::collect($paymentDeadlines),
-            ])->baseRoute('app.invoice.details', [
-                'invoice' => $invoice->id,
+                'contacts' => ContactData::collect($contacts),
             ]);
     }
 
     public function update(InvoiceDetailsBaseUpdateRequest $request, Invoice $invoice)
     {
+        $oldContactId = $invoice->contact_id;
         if ($request->validated('project_id') === -1) {
             $invoice->project_id = 0;
             $invoice->save();
         }
 
         $invoice->update($request->validated());
+        if ($request->validated('contact_id') !== $oldContactId) {
+            $invoice->load('contact');
+            $invoice->address = $invoice->contact->getInvoiceAddress()->full_address;
+            $invoice->save();
+        }
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
@@ -268,6 +275,40 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $duplicatedInvoice->id]);
     }
 
+    /**
+     * @throws \Throwable
+     */
+    public function cancel(Invoice $invoice)
+    {
+        $existing = Invoice::query()
+            ->where('parent_id', $invoice->id)
+            ->where('type_id', 5)
+            ->first();
+
+        if ($existing) {
+            return redirect()->route('app.invoice.details', ['invoice' => $existing->id]);
+        }
+        $duplicatedInvoice = DB::transaction(function () use ($invoice) {
+            $duplicatedInvoice = Invoice::duplicateInvoice($invoice);
+            $duplicatedInvoice->load('lines');
+            $duplicatedInvoice->type_id = 5;
+            $duplicatedInvoice->parent_id = $invoice->id;
+            $duplicatedInvoice->is_recurring = false;
+            $duplicatedInvoice->save();
+
+            $duplicatedInvoice->lines->each(function ($line) {
+                $line->quantity = $line->quantity * -1;
+                $line->tax = $line->tax * -1;
+                $line->amount = $line->amount * -1;
+                $line->save();
+            });
+
+            return $duplicatedInvoice;
+        });
+
+        return redirect()->route('app.invoice.details', ['invoice' => $duplicatedInvoice->id]);
+    }
+
     public function release(Invoice $invoice)
     {
         $invoice->release();
@@ -298,7 +339,7 @@ class InvoiceController extends Controller
 
     public function markAsSent(Invoice $invoice)
     {
-        if (! $invoice->sent_at) {
+        if (!$invoice->sent_at) {
             $invoice->sent_at = now();
             $invoice->save();
 
@@ -346,7 +387,7 @@ class InvoiceController extends Controller
 
     public function createBooking(Invoice $invoice)
     {
-        if (! $invoice->sent_at) {
+        if (!$invoice->sent_at) {
             $invoice->sent_at = now();
             $invoice->save();
         }
@@ -497,7 +538,8 @@ class InvoiceController extends Controller
             ->load('tax.rates');
 
         $duplicatedLine = $invoiceLine->replicate();
-        $duplicatedLine->pos = InvoiceLine::query()->where('invoice_id', $invoice->id)->where('pos', '<>', 999)->max('pos') + 1;
+        $duplicatedLine->pos = InvoiceLine::query()->where('invoice_id', $invoice->id)->where('pos', '<>',
+                999)->max('pos') + 1;
 
         return Inertia::modal('App/Invoice/InvoiceDetailsEditLine')
             ->with([

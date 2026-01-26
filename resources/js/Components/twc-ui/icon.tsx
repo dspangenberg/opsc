@@ -1,7 +1,7 @@
-import { cn } from '@/Lib/utils'
-import { type LucideProps } from 'lucide-react'
-import { type ComponentType } from 'react'
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react'
+import type { LucideProps } from 'lucide-react'
+import type { ComponentType } from 'react'
+import { cn } from '@/Lib/utils'
 
 export type IconType = ComponentType<LucideProps> | IconSvgElement
 
