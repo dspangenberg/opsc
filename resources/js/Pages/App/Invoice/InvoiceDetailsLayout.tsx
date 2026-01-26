@@ -12,7 +12,6 @@ import {
   MoreVerticalCircle01Icon,
   Pdf02Icon,
   PrinterIcon,
-  RepeatIcon,
   Sent02Icon,
   UnavailableIcon
 } from '@hugeicons/core-free-icons'
@@ -268,7 +267,6 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
                   separator
                   onAction={handleDuplicate}
                 />
-                <MenuItem icon={RepeatIcon} title="Wiederkehrende Rechnung" separator ellipsis />
                 <MenuItem
                   icon={FileEditIcon}
                   title="Rechnung korrigieren"

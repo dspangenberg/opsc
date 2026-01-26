@@ -235,7 +235,7 @@ class InvoiceController extends Controller
 
         $invoice->update($request->validated());
         if ($request->validated('contact_id') !== $oldContactId) {
-
+            $invoice->load('contact');
             $invoice->address = $invoice->contact->getInvoiceAddress()->full_address;
             $invoice->save();
         }

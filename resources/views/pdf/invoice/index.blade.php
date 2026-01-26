@@ -32,9 +32,12 @@
         <h2>Rechnung</h2>
     @endif
 
-    @if($invoice->parent_id && !$invoice->is_recurring)
+    @if($invoice->parent_invoice && ! $invoice->is_recurring)
         <div style="margin-top: -10px;">
-            <strong>zur Rechnung Nr. {{$invoice->parent_invoice->formated_invoice_number}} vom {{$invoice->parent_invoice->issued_on->format('d.m.Y')}}</strong><br/><br/>
+            <strong>
+                zur Rechnung Nr. {{ $invoice->parent_invoice->formated_invoice_number }} vom {{ $invoice->parent_invoice->issued_on?->format('d.m.Y') }}
+            </strong>
+            <br/><br/>
         </div>
     @endif
 
