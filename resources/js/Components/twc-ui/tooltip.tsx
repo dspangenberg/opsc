@@ -13,7 +13,7 @@ export interface TooltipProps extends Omit<AriaTooltipProps, 'children'> {
 }
 
 const tooltipVariants = tv({
-  base: 'group rounded-md bg-foreground px-3 pt-1.5 pt-1.5 pb-1 text-sm text-white will-change-transform',
+  base: 'group rounded-md bg-foreground px-3 pt-1.5 pb-1 text-sm text-white will-change-transform',
   variants: {
     isEntering: {
       true: 'fade-in animate-in duration-200'
@@ -43,7 +43,7 @@ export function Tooltip({ children, ...props }: TooltipProps) {
           height={8}
           data-placement={props.placement}
           viewBox="0 0 8 8"
-          className="fill-bg-foreground stroke-foreground data-[placement=bottom]:rotate-180 data-[placement=left]:-rotate-90 data-[placement=right]:rotate-90"
+          className="placement-bottom:rotate-180 placement-left:-rotate-90 placement-right:rotate-90 fill-foreground stroke-foreground"
         >
           <title>Tooltip-Arrow</title>
           <path d="M0 0 L4 4 L8 0" />

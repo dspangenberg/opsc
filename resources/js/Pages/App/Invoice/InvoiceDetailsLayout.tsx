@@ -117,8 +117,16 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
     router.post(route('app.invoice.unrelease', { id: invoice.id }))
   }
 
-  const handleCancel = () => {
-    router.put(route('app.invoice.cancel', { id: invoice.id }))
+  const handleCancel = async () => {
+    const promise = await AlertDialog.call({
+      title: 'Rechnung stornieren',
+      message: 'Möchtest Du die Rechnung wirklich stornieren?',
+      buttonTitle: 'Rechnung stornieren',
+      variant: 'destructive'
+    })
+    if (promise) {
+      router.post(route('app.invoice.cancel', { id: invoice.id }))
+    }
   }
 
   const currentRoute = route().current()

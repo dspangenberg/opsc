@@ -72,7 +72,7 @@ export const InvoiceDetailsEditBaseData: React.FC<Props> = ({
     <InvoiceDetailsLayout invoice={invoice}>
       <FormCard
         className="flex max-w-4xl flex-1 overflow-y-hidden"
-        innerClassName="bg-white"
+        innerClassName="bg-background"
         footer={
           <div className="flex flex-none items-center justify-end gap-2 px-4 py-2">
             <Button variant="outline" onClick={handleCancel} title={cancelButtonTitle} />
@@ -113,6 +113,7 @@ export const InvoiceDetailsEditBaseData: React.FC<Props> = ({
               <FormComboBox<App.Data.ContactData>
                 label="Debitor"
                 isDisabled={!invoice.is_draft}
+                itemName="reverse_full_name"
                 {...form.register('contact_id')}
                 items={contacts}
               />

@@ -1,5 +1,3 @@
-'use client'
-
 import {
   Link as AriaLink,
   type LinkProps as AriaLinkProps,
@@ -59,11 +57,13 @@ export const LinkButton = ({
           </>
         )}
       </AriaLink>
-      {resolvedTooltip && (
+      {(resolvedTooltip || resolvedTitle) && (
         <Tooltip placement={tooltipPlacement}>
-          {resolvedTitle && variant !== 'toolbar' && (
-            <div className={cn(isToolbar ? 'hidden md:flex' : '')}>{resolvedTitle}</div>
-          )}
+          {resolvedTooltip
+            ? resolvedTooltip
+            : resolvedTitle && (
+                <div className={cn(isToolbar ? 'hidden md:flex' : '')}>{resolvedTitle}</div>
+              )}
         </Tooltip>
       )}
     </TooltipTrigger>

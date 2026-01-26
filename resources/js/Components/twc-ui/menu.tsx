@@ -58,9 +58,7 @@ const menuItemVariants = tv({
   variants: {
     variant: {
       default: ['data-[focused]:bg-accent data-[focused]:text-accent-foreground'],
-      destructive: [
-        'data-[focused]:bg-destructive/10 data-[focused]:text-destructive data-[focused]:text-destructive-foreground'
-      ]
+      destructive: ['data-[focused]:bg-destructive/10 data-[focused]:text-destructive-foreground']
     }
   },
   defaultVariants: {

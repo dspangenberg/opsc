@@ -32,6 +32,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceController extends Controller
 {
@@ -45,7 +46,7 @@ class InvoiceController extends Controller
             $year = $currentYear;
         }
 
-        if ($year && ! $years->contains($year)) {
+        if ($year && !$years->contains($year)) {
             $years->push($year);
         }
 
@@ -274,20 +275,35 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $duplicatedInvoice->id]);
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function cancel(Invoice $invoice)
     {
-        $duplicatedInvoice = Invoice::duplicateInvoice($invoice);
-        $duplicatedInvoice->load('lines');
-        $duplicatedInvoice->type_id = 5;
-        $duplicatedInvoice->parent_id = $invoice->id;
-        $duplicatedInvoice->is_recurring = false;
-        $duplicatedInvoice->save();
+        $existing = Invoice::query()
+            ->where('parent_id', $invoice->id)
+            ->where('type_id', 5)
+            ->first();
 
-        $duplicatedInvoice->lines->each(function ($line) {
-            $line->quantity = $line->quantity * -1;
-            $line->tax = $line->tax * -1;
-            $line->amount = $line->amount * -1;
-            $line->save();
+        if ($existing) {
+            return redirect()->route('app.invoice.details', ['invoice' => $existing->id]);
+        }
+        $duplicatedInvoice = DB::transaction(function () use ($invoice) {
+            $duplicatedInvoice = Invoice::duplicateInvoice($invoice);
+            $duplicatedInvoice->load('lines');
+            $duplicatedInvoice->type_id = 5;
+            $duplicatedInvoice->parent_id = $invoice->id;
+            $duplicatedInvoice->is_recurring = false;
+            $duplicatedInvoice->save();
+
+            $duplicatedInvoice->lines->each(function ($line) {
+                $line->quantity = $line->quantity * -1;
+                $line->tax = $line->tax * -1;
+                $line->amount = $line->amount * -1;
+                $line->save();
+            });
+
+            return $duplicatedInvoice;
         });
 
         return redirect()->route('app.invoice.details', ['invoice' => $duplicatedInvoice->id]);
@@ -323,7 +339,7 @@ class InvoiceController extends Controller
 
     public function markAsSent(Invoice $invoice)
     {
-        if (! $invoice->sent_at) {
+        if (!$invoice->sent_at) {
             $invoice->sent_at = now();
             $invoice->save();
 
@@ -371,7 +387,7 @@ class InvoiceController extends Controller
 
     public function createBooking(Invoice $invoice)
     {
-        if (! $invoice->sent_at) {
+        if (!$invoice->sent_at) {
             $invoice->sent_at = now();
             $invoice->save();
         }
@@ -522,7 +538,8 @@ class InvoiceController extends Controller
             ->load('tax.rates');
 
         $duplicatedLine = $invoiceLine->replicate();
-        $duplicatedLine->pos = InvoiceLine::query()->where('invoice_id', $invoice->id)->where('pos', '<>', 999)->max('pos') + 1;
+        $duplicatedLine->pos = InvoiceLine::query()->where('invoice_id', $invoice->id)->where('pos', '<>',
+                999)->max('pos') + 1;
 
         return Inertia::modal('App/Invoice/InvoiceDetailsEditLine')
             ->with([
