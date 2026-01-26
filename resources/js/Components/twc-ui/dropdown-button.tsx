@@ -1,11 +1,12 @@
-import type { VariantProps } from 'class-variance-authority'
 import type * as React from 'react'
 import type { AriaMenuTriggerProps } from 'react-aria'
 import type { PopoverProps } from 'react-aria-components'
+import type { VariantProps } from 'tailwind-variants'
 import { cn } from '@/Lib/utils'
-import { Button, type buttonVariants } from './button'
+import type { buttonVariants } from './button'
+import { Button } from './button'
 import type { IconType } from './icon'
-import { type AriaMenuProps, Menu, MenuPopover, MenuTrigger } from './menu'
+import { type AriaMenuProps, Menu, MenuItem, MenuPopover, MenuTrigger } from './menu'
 
 interface DropdownButtonProps<T>
   extends AriaMenuProps<T>,
@@ -68,5 +69,5 @@ function DropdownButton<T extends object>({
   )
 }
 
-export { DropdownButton }
+export { DropdownButton, MenuItem }
 export type { DropdownButtonProps }

@@ -109,10 +109,11 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
             <div className="col-span-2 inline-flex items-center justify-center">
               <div>
                 <AvatarUpload
-                  avatarUrl={project.avatar_url}
-                  fullName={project.name}
+                  src={project.avatar_url}
+                  fullname={project.name}
                   initials={project.name ? project.name.substring(0, 1).toUpperCase() : undefined}
-                  onChanged={item => handleAvatarChange(item)}
+                  size="lg"
+                  onSelect={item => handleAvatarChange(item)}
                 />
               </div>
             </div>

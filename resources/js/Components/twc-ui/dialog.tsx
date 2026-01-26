@@ -1,4 +1,3 @@
-import { cva, type VariantProps } from 'class-variance-authority'
 import { X } from 'lucide-react'
 import type React from 'react'
 import { type ReactNode, useEffect, useState } from 'react'
@@ -14,31 +13,30 @@ import {
   type ModalOverlayProps as AriaModalOverlayProps,
   composeRenderProps
 } from 'react-aria-components'
+import { tv, type VariantProps } from 'tailwind-variants'
 import { cn } from '@/Lib/utils'
 
 export type ReactNodeOrString = ReactNode | string
 
-const sheetVariants = cva(
-  [
-    'fixed z-50 gap-4 bg-background shadow-lg transition ease-in-out ',
+const sheetVariants = tv({
+  base: [
+    'fixed z-50 gap-4 bg-background shadow-lg transition ease-in-out',
     /* Entering */
-    'data-[entering]:duration-500 data-[entering]:animate-in',
+    'data-[entering]:animate-in data-[entering]:duration-500',
     /* Exiting */
-    'data-[exiting]:duration-300  data-[exiting]:animate-out'
+    'data-[exiting]:animate-out data-[exiting]:duration-300'
   ],
-  {
-    variants: {
-      side: {
-        top: 'inset-x-0 top-0 border-b data-[entering]:slide-in-from-top data-[exiting]:slide-out-to-top',
-        bottom:
-          'inset-x-0 bottom-0 border-t data-[entering]:slide-in-from-bottom data-[exiting]:slide-out-to-bottom rounded-t-lg max-h-3/4',
-        left: 'inset-y-0 left-0 h-full w-3/4 border-r data-[entering]:slide-in-from-left data-[exiting]:slide-out-to-left sm:max-w-sm',
-        right:
-          'inset-y-0 right-0 h-full w-3/4  border-l data-[entering]:slide-in-from-right data-[exiting]:slide-out-to-right sm:max-w-sm'
-      }
+  variants: {
+    side: {
+      top: 'data-[entering]:slide-in-from-top data-[exiting]:slide-out-to-top inset-x-0 top-0 border-b',
+      bottom:
+        'data-[entering]:slide-in-from-bottom data-[exiting]:slide-out-to-bottom inset-x-0 bottom-0 max-h-3/4 rounded-t-lg border-t',
+      left: 'data-[entering]:slide-in-from-left data-[exiting]:slide-out-to-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm',
+      right:
+        'data-[entering]:slide-in-from-right data-[exiting]:slide-out-to-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm'
     }
   }
-)
+})
 
 const DialogTrigger = AriaDialogTrigger
 

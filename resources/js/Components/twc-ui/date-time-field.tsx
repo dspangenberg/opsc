@@ -1,5 +1,3 @@
-'use client'
-
 import type { DateValue } from '@internationalized/date'
 import type React from 'react'
 import {

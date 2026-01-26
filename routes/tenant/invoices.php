@@ -80,3 +80,7 @@ Route::get('invoicing/invoices/{invoice}/duplicate', [InvoiceController::class, 
 
 Route::get('invoicing/invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])
     ->name('app.invoice.pdf');
+
+Route::put('invoicing/invoices/{invoice}/cancel', [InvoiceController::class, 'cancel'])
+    ->name('app.invoice.cancel')
+    ->middleware([HandlePrecognitiveRequests::class]);

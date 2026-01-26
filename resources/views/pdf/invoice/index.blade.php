@@ -32,6 +32,12 @@
         <h2>Rechnung</h2>
     @endif
 
+    @if($invoice->parent_id && !$invoice->is_recurring)
+        <div style="margin-top: -10px;">
+            <strong>zur Rechnung Nr. {{$invoice->parent_invoice->formated_invoice_number}} vom {{$invoice->parent_invoice->issued_on->format('d.m.Y')}}</strong><br/><br/>
+        </div>
+    @endif
+
 
 
     @if($invoice->project_id)
@@ -246,7 +252,7 @@
         @endif
 
         @if($invoice->additional_text)
-            <p>{!!  md($invoice->additional_text) !!}</p>
+            {!!  md($invoice->additional_text) !!}
         @endif
 
         @if($invoice->amount_gross > 0)

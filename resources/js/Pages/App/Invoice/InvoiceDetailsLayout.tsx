@@ -117,6 +117,10 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
     router.post(route('app.invoice.unrelease', { id: invoice.id }))
   }
 
+  const handleCancel = () => {
+    router.put(route('app.invoice.cancel', { id: invoice.id }))
+  }
+
   const currentRoute = route().current()
 
   const tabs = useMemo(
@@ -180,14 +184,15 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
         <ToolbarButton icon={Pdf02Icon} title="PDF-Vorschau" onClick={() => onShowPdf()} />
 
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} isDisabled={editMode}>
+          <MenuItem
+            icon={Edit03Icon}
+            title="Stammdaten bearbeiten"
+            ellipsis
+            separator
+            onAction={handleEditBaseDataButtonClick}
+          />
           {invoice.is_draft && (
             <>
-              <MenuItem
-                icon={Edit03Icon}
-                title="Stammdaten bearbeiten"
-                ellipsis
-                onAction={handleEditBaseDataButtonClick}
-              />
               <MenuItem
                 icon={EditTableIcon}
                 title="Positionen bearbeiten"
@@ -262,7 +267,13 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
                   onAction={handleUnrelease}
                   isDisabled={!invoice.is_draft && !!invoice.sent_at}
                 />
-                <MenuItem icon={FileRemoveIcon} title="Rechnung stornieren" separator />
+                <MenuItem
+                  icon={FileRemoveIcon}
+                  title="Rechnung stornieren"
+                  separator
+                  onAction={handleCancel}
+                  isDisabled={!invoice.sent_at}
+                />
                 <MenuItem
                   icon={Delete02Icon}
                   title="Rechnung löschen"

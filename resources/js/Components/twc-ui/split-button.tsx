@@ -1,7 +1,11 @@
 import { ChevronDown } from 'lucide-react'
 import { Group } from 'react-aria-components'
-import { Button } from './button'
+import { Button, type ButtonProps } from './button'
 import { DropdownButton, type DropdownButtonProps } from './dropdown-button'
+
+type SplitButtonProps<T extends object> = Omit<DropdownButtonProps<T>, 'onClick'> & {
+  onClick?: ButtonProps['onClick']
+}
 
 function SplitButton<T extends object>({
   title,
@@ -14,7 +18,7 @@ function SplitButton<T extends object>({
   size = 'default',
   onClick,
   ...props
-}: DropdownButtonProps<T>) {
+}: SplitButtonProps<T>) {
   return (
     <Group className="group flex items-center rounded-md border border-input focus-within:ring-[3px] focus-within:ring-ring/20">
       <Button
@@ -22,14 +26,20 @@ function SplitButton<T extends object>({
         size={size}
         icon={props.icon}
         title={title}
-        onClick={onClick as any}
-        className="rounded-r-none! border-0 border-r border-r-transparent! focus-visible:ring-0 group-hover:border-r-border!"
+        onClick={onClick}
+        className="rounded-r-none! border-0 border-r focus-visible:ring-0 group-hover:border-r-border!"
       />
       <DropdownButton
-        variant={variant}
+        variant="ghost"
         size="icon"
         icon={ChevronDown}
         className="rounded-l-none border-l! border-y-0 border-r-0"
+        iconClassName="size-4"
+        placement={placement}
+        selectionMode={selectionMode}
+        selectedKeys={selectedKeys}
+        onSelectionChange={onSelectionChange}
+        menuClassName={props.menuClassName}
       >
         {children}
       </DropdownButton>

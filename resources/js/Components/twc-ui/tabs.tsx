@@ -1,4 +1,3 @@
-import { cva, type VariantProps } from 'class-variance-authority'
 import { createContext, useContext } from 'react'
 import {
   Tab as AriaTab,
@@ -11,46 +10,36 @@ import {
   type TabsProps as AriaTabsProps,
   type Key
 } from 'react-aria-components'
+import { tv, type VariantProps } from 'tailwind-variants'
 import { cn } from '@/Lib/utils'
 
-const tabsVariants = cva('', {
+const tabsStyles = tv({
+  slots: {
+    base: '',
+    list: 'flex',
+    tab: 'cursor-pointer text-sm disabled:cursor-not-allowed disabled:text-muted-foreground disabled:opacity-50 data-[selected]:font-medium',
+    panel: 'my-2'
+  },
   variants: {
     variant: {
-      classic: '',
-      underlined: '',
-      default: ''
+      underlined: {
+        list: 'w-full gap-4',
+        tab: 'border-transparent border-b-2 py-1 data-[selected]:border-primary data-[hovered]:text-foreground data-[selected]:text-foreground'
+      },
+      default: {
+        list: 'w-fit rounded-lg bg-muted p-1',
+        tab: 'rounded-md px-3 py-1 data-[selected]:bg-background data-[selected]:text-foreground data-[selected]:shadow'
+      },
+      classic: {
+        list: 'w-full rounded-none border-border border-b',
+        tab: 'rounded-none border border-transparent border-b-0 px-4 py-2 data-[selected]:-mb-px data-[selected]:rounded-t-md data-[selected]:border-border data-[selected]:border-b-background data-[selected]:bg-background'
+      }
     }
   },
   defaultVariants: {
     variant: 'default'
   }
 })
-
-const tabListVariants = cva('flex', {
-  variants: {
-    variant: {
-      underlined: 'gap-4 w-full',
-      default: 'bg-muted rounded-lg p-1 w-fit',
-      classic: 'w-full rounded-none border-b border-border'
-    }
-  }
-})
-
-const tabVariants = cva(
-  'cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:text-muted-foreground data-[selected]:font-medium text-sm',
-  {
-    variants: {
-      variant: {
-        underlined:
-          'border-b-2 py-1 border-transparent data-[selected]:border-primary data-[selected]:text-foreground data-[hovered]:text-foreground',
-        default:
-          'rounded-md px-3 py-1 data-[selected]:bg-background data-[selected]:text-foreground data-[selected]:shadow',
-        classic:
-          'px-4 py-2 rounded-none border border-transparent border-b-0 data-[selected]:border-border data-[selected]:border-b-background data-[selected]:rounded-t-md data-[selected]:bg-background data-[selected]:-mb-px'
-      }
-    }
-  }
-)
 
 type TabsContextType = {
   variant: 'underlined' | 'classic' | 'default' | null | undefined
@@ -74,7 +63,7 @@ const useTabsContext = () => {
 
 export interface TabsProps
   extends Omit<AriaTabsProps, 'onSelectionChange'>,
-    VariantProps<typeof tabsVariants> {
+    VariantProps<typeof tabsStyles> {
   className?: string
   tabClassName?: string
   panelClassName?: string
@@ -90,10 +79,12 @@ export const Tabs = ({
   children,
   ...props
 }: TabsProps) => {
+  const styles = tabsStyles({ variant })
+
   return (
     <TabsContext.Provider value={{ variant, tabClassName, panelClassName }}>
       <AriaTabs
-        className={cn(tabsVariants({ variant }), className)}
+        className={styles.base({ className })}
         onSelectionChange={onSelectionChange}
         {...props}
       >
@@ -109,13 +100,9 @@ export interface TabListProps<T extends object = object> extends AriaTabListProp
 
 export function TabList<T extends object = object>({ className, ...props }: TabListProps<T>) {
   const { variant } = useTabsContext()
+  const styles = tabsStyles({ variant: variant ?? 'default' })
 
-  return (
-    <AriaTabList<T>
-      className={cn(tabListVariants({ variant: variant ?? 'default' }), className)}
-      {...props}
-    />
-  )
+  return <AriaTabList<T> className={styles.list({ className })} {...props} />
 }
 
 export interface TabProps extends AriaTabProps {
@@ -125,13 +112,9 @@ export interface TabProps extends AriaTabProps {
 
 export const Tab = ({ className, ...props }: TabProps) => {
   const { variant, tabClassName } = useTabsContext()
+  const styles = tabsStyles({ variant: variant ?? 'default' })
 
-  return (
-    <AriaTab
-      className={cn(tabVariants({ variant: variant ?? 'default' }), tabClassName, className)}
-      {...props}
-    />
-  )
+  return <AriaTab className={styles.tab({ className: cn(tabClassName, className) })} {...props} />
 }
 
 export interface TabPanelProps extends AriaTabPanelProps {
@@ -139,6 +122,12 @@ export interface TabPanelProps extends AriaTabPanelProps {
 }
 
 export const TabPanel = ({ className, ...props }: TabPanelProps) => {
-  const { panelClassName } = useTabsContext()
-  return <AriaTabPanel className={cn('my-2', panelClassName, className)} {...props} />
+  const { variant, panelClassName } = useTabsContext()
+  const styles = tabsStyles({ variant: variant ?? 'default' })
+  return (
+    <AriaTabPanel
+      className={styles.panel({ className: cn(panelClassName, className) })}
+      {...props}
+    />
+  )
 }

@@ -1,4 +1,3 @@
-import { cva, type VariantProps } from 'class-variance-authority'
 import { Check, ChevronRight, Dot } from 'lucide-react'
 import type * as React from 'react'
 import {
@@ -15,6 +14,7 @@ import {
   composeRenderProps,
   type PopoverProps
 } from 'react-aria-components'
+import { tv, type VariantProps } from 'tailwind-variants'
 import { cn } from '@/Lib/utils'
 import { Icon, type IconType } from './icon'
 import { ListBoxCollection, ListBoxSection } from './list-box'
@@ -47,28 +47,26 @@ const Menu = <T extends object>({ className, ...props }: AriaMenuProps<T>) => (
   />
 )
 
-const menuItemVariants = cva(
-  [
+const menuItemVariants = tv({
+  base: [
     'relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors',
     /* Disabled */
     'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
     /* Selection Mode */
     'data-[selection-mode]:pl-8'
   ],
-  {
-    variants: {
-      variant: {
-        default: ['data-[focused]:bg-accent data-[focused]:text-accent-foreground'],
-        destructive: [
-          'data-[focused]:text-destructive data-[focused]:text-destructive-foreground data-[focused]:bg-destructive/10'
-        ]
-      }
-    },
-    defaultVariants: {
-      variant: 'default'
+  variants: {
+    variant: {
+      default: ['data-[focused]:bg-accent data-[focused]:text-accent-foreground'],
+      destructive: [
+        'data-[focused]:bg-destructive/10 data-[focused]:text-destructive data-[focused]:text-destructive-foreground'
+      ]
     }
+  },
+  defaultVariants: {
+    variant: 'default'
   }
-)
+})
 
 interface MenuItemProps extends AriaMenuItemProps, VariantProps<typeof menuItemVariants> {
   icon?: IconType
@@ -85,7 +83,7 @@ interface BaseMenuItemProps extends AriaMenuItemProps, VariantProps<typeof menuI
 const BaseMenuItem = ({ children, variant, ...props }: BaseMenuItemProps) => (
   <AriaMenuItem
     className={composeRenderProps(props.className, className =>
-      cn(menuItemVariants({ variant }), className)
+      menuItemVariants({ variant, className })
     )}
     {...props}
   >
@@ -110,7 +108,7 @@ const MenuItem = ({
       textValue={props.textValue || (typeof children === 'string' ? children : undefined)}
       isDisabled={isDisabled}
       className={composeRenderProps(className, className =>
-        cn(menuItemVariants({ variant }), className)
+        menuItemVariants({ variant, className })
       )}
       {...props}
     >

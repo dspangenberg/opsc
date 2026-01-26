@@ -7,16 +7,21 @@ import { Button } from './button'
 import { FileTrigger } from './file-trigger'
 
 interface Props {
-  avatarUrl: string | null
-  fullName: string
+  src: string | null
+  fullname: string
   initials?: string
-  onChanged: (avatar: File | undefined) => void
+  size?: 'sm' | 'md' | 'lg'
+  onSelect: (avatar: File | undefined) => void
 }
 
-export const AvatarUpload: React.FC<Props> = ({ avatarUrl, fullName, initials, onChanged }) => {
-  const [droppedImage, setDroppedImage] = useState<string | undefined>(
-    avatarUrl as string | undefined
-  )
+export const AvatarUpload: React.FC<Props> = ({
+  fullname,
+  initials,
+  size = 'md',
+  src,
+  onSelect
+}) => {
+  const [droppedImage, setDroppedImage] = useState<string | undefined>(src as string | undefined)
 
   useEffect(() => {
     return () => {
@@ -25,6 +30,15 @@ export const AvatarUpload: React.FC<Props> = ({ avatarUrl, fullName, initials, o
       }
     }
   }, [droppedImage])
+
+  useEffect(() => {
+    setDroppedImage(prev => {
+      if (prev?.startsWith('blob:') && prev !== src) {
+        URL.revokeObjectURL(prev)
+      }
+      return src ?? undefined
+    })
+  }, [src])
 
   async function onSelectHandler(e: FileList | null) {
     if (!e || e.length === 0) return
@@ -39,15 +53,15 @@ export const AvatarUpload: React.FC<Props> = ({ avatarUrl, fullName, initials, o
 
         setDroppedImage(URL.createObjectURL(item))
       }
-      onChanged(item)
+      onSelect(item)
     } catch (error) {
-      console.error('Fehler beim Verarbeiten des Bildes:', error)
+      console.error('Something went wrong:', error)
     }
   }
 
   const removeAvatar = () => {
     setDroppedImage(undefined)
-    onChanged(undefined)
+    onSelect(undefined)
   }
 
   return (
@@ -59,9 +73,9 @@ export const AvatarUpload: React.FC<Props> = ({ avatarUrl, fullName, initials, o
         <Pressable>
           <Avatar
             role="button"
-            fullname={fullName}
+            fullname={fullname}
             src={droppedImage}
-            size="lg"
+            size={size}
             initials={initials}
             className="cursor-pointer"
             aria-label="Avatar ändern"
@@ -73,6 +87,7 @@ export const AvatarUpload: React.FC<Props> = ({ avatarUrl, fullName, initials, o
           variant="outline"
           size="icon-xs"
           className="size-4 rounded-full"
+          aria-label="Remove avatar"
           iconClassName="size-3"
           icon={MultiplicationSignIcon}
           onClick={removeAvatar}

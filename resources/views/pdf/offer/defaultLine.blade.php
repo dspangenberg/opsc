@@ -14,7 +14,7 @@
         &nbsp;
     </td>
     <td colspan="2" class="mdx-cell">
-        {!! md($line->text)  !!}
+        {!! md(nl2br($line->text))  !!}
     </td>
     <td class="right">
         @if($line->type_id === 1)

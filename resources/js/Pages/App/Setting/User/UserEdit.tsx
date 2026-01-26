@@ -25,7 +25,7 @@ type UserFormData = App.Data.UserData & {
 const UserEdit: React.FC<Props> = ({ user }) => {
   const title = user.id ? 'Benutzerkonto bearbeiten' : 'Benutzerkonto hinzufügen'
   const authUser = usePage().props.auth.user as App.Data.UserData
-  console.log(authUser)
+
   const form = useForm<UserFormData>(
     'form-user-edit',
     user.id ? 'put' : 'post',
@@ -96,9 +96,11 @@ const UserEdit: React.FC<Props> = ({ user }) => {
             <div className="col-span-2 inline-flex items-center justify-center">
               <div>
                 <AvatarUpload
-                  avatarUrl={user.avatar_url}
-                  fullName={user.full_name}
-                  onChanged={item => handleAvatarChange(item)}
+                  src={user.avatar_url}
+                  fullname={user.full_name}
+                  initials={user.initials}
+                  size="lg"
+                  onSelect={item => handleAvatarChange(item)}
                 />
               </div>
             </div>
@@ -112,7 +114,11 @@ const UserEdit: React.FC<Props> = ({ user }) => {
             <div className="col-span-11">
               <FormTextField label="E-Mail" isRequired {...form.register('email')} />
               <div className="flex gap-2 pt-1.5">
-                <FormCheckbox label="Administrator" {...form.registerCheckbox('is_admin')} />
+                <FormCheckbox
+                  isDisabled={authUser.id === user.id}
+                  label="Administrator"
+                  {...form.registerCheckbox('is_admin')}
+                />
                 <FormCheckbox
                   label="Account ist gesperrt"
                   isDisabled={authUser.id === user.id}

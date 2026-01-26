@@ -60,9 +60,11 @@ const ProfilEdit: React.FC<Props> = ({ user }) => {
             <div className="col-span-2 inline-flex items-center justify-center">
               <div>
                 <AvatarUpload
-                  avatarUrl={user.avatar_url}
-                  fullName={user.full_name}
-                  onChanged={item => handleAvatarChange(item)}
+                  src={user.avatar_url}
+                  fullname={user.full_name}
+                  initials={user.initials}
+                  size="lg"
+                  onSelect={item => handleAvatarChange(item)}
                 />
               </div>
             </div>

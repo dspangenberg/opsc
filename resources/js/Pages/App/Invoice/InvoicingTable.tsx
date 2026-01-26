@@ -154,11 +154,18 @@ export interface TableMarkdownCellProps extends TableCellProps {
 export const TableMarkdownCell: React.FC<TableMarkdownCellProps> = ({
   className = '',
   value,
+  service_period_begin,
+  service_period_end = '',
   ...props
 }) => {
   return (
     <TableCell className={className} {...props}>
       <Markdown remarkPlugins={[remarkBreaks]}>{value}</Markdown>
+      {service_period_begin && (
+        <span>
+          ({service_period_begin} - {service_period_end})
+        </span>
+      )}
     </TableCell>
   )
 }
