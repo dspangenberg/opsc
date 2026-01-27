@@ -108,9 +108,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return app('impersonate')->isImpersonating();
     }
 
-    public function getImpersonatorAttribute(): string
+    public function getImpersonatorAttribute(): ?string
     {
-        return app('impersonate')->getImpersonator()?->email ?? '';
+        return app('impersonate')->getImpersonator()?->email;
     }
 
     public function canImpersonate(): bool
