@@ -75,7 +75,7 @@ export function NavUser({ user }: { user: App.Data.UserData }) {
       {user.is_impersonating ? (
         <MenuItem
           icon={UserSwitchIcon}
-          title="Zurück zum Admin-Account"
+          title={`Zurück zu ${user.impersonator}`}
           onAction={() => handleLeaveImpersonating()}
         />
       ) : (
