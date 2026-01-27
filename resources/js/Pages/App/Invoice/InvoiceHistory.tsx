@@ -15,7 +15,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
   return (
     <InvoiceDetailsLayout invoice={invoice}>
       <div className="flex-1">History</div>
-      <div className="h-fit w-sm flex-none space-y-6 px-1">
+      <div className="h-fit w-full max-w-sm flex-none px-1">
         <InvoiceDetailsSide invoice={invoice} />
       </div>
     </InvoiceDetailsLayout>

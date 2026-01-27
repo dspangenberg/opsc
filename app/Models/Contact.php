@@ -475,6 +475,7 @@ class Contact extends Model
         $sales = ['currentYear' => 0, 'allTime' => 0];
         $invoices = Invoice::query()
             ->where('contact_id', $this->id)
+            ->where('is_draft', false)
             ->withSum('lines', 'amount')
             ->get();
 

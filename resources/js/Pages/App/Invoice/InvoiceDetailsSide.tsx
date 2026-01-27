@@ -145,13 +145,8 @@ export const InvoiceDetailsSide: FC<InvoiceDetailsSideProps> = ({
             <ArrayTextField lines={invoice.invoice_address} />
           </DataCardField>
         </DataCardSection>
-        <DataCardSection>
-          <DataCardField
-            variant="vertical"
-            label="Zusatztext"
-            value={invoice.additional_text}
-            className="line-clamp-2 truncate"
-          />
+        <DataCardSection suppressEmptyText>
+          <DataCardField variant="vertical" label="Zusatztext" value={invoice.additional_text} />
         </DataCardSection>
       </DataCardContent>
     </DataCard>
