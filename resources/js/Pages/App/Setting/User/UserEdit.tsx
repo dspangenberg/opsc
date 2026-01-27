@@ -8,6 +8,7 @@ import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import type { PageProps } from '@/Types'
 import '@mdxeditor/editor/style.css'
+import { Alert } from '@/Components/twc-ui/alert'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { AvatarUpload } from '@/Components/twc-ui/avatar-upload'
 import { FormCard } from '@/Components/twc-ui/form-card'
@@ -23,7 +24,7 @@ type UserFormData = App.Data.UserData & {
 }
 
 const UserEdit: React.FC<Props> = ({ user }) => {
-  const title = user.id ? 'Benutzerkonto bearbeiten' : 'Benutzerkonto hinzufügen'
+  const title = user.id ? 'Benutzer*in bearbeiten' : 'Benutzer*in hinzufügen'
   const authUser = usePage().props.auth.user as App.Data.UserData
 
   const form = useForm<UserFormData>(
@@ -46,7 +47,7 @@ const UserEdit: React.FC<Props> = ({ user }) => {
     return [
       { title: 'Einstellungen', url: route('app.setting') },
       { title: 'System', url: route('app.setting.system') },
-      { title: 'Benutzerkonten', url: route('app.setting.system.user.index') },
+      { title: 'Benutzer:innen', url: route('app.setting.system.user.index') },
       { title }
     ]
   }, [])
@@ -74,6 +75,10 @@ const UserEdit: React.FC<Props> = ({ user }) => {
     }
   }
 
+  const handleResendVerificationEmail = async () => {
+    router.post(route('user.verfication.send', { user: user.id }))
+  }
+
   return (
     <PageContainer
       title={title}
@@ -82,8 +87,7 @@ const UserEdit: React.FC<Props> = ({ user }) => {
       breadcrumbs={breadcrumbs}
     >
       <FormCard
-        className="flex max-w-4xl flex-1 overflow-y-hidden"
-        innerClassName="bg-white"
+        className="mx-auto flex max-w-4xl flex-1 overflow-y-hidden"
         footer={
           <div className="flex flex-none items-center justify-end gap-2 px-4 py-2">
             <Button variant="outline" onClick={handleCancel} title={cancelButtonTitle} />
@@ -91,7 +95,23 @@ const UserEdit: React.FC<Props> = ({ user }) => {
           </div>
         }
       >
-        <Form form={form} errorClassName="w-auto m-3">
+        {user.pendingEmail && (
+          <Alert
+            variant="info"
+            actions={
+              <Button
+                variant="link"
+                size="auto"
+                title="E-Mail erneut senden"
+                className="text-yellow-700"
+                onClick={handleResendVerificationEmail}
+              />
+            }
+          >
+            Neue E-Mail-Adresse <strong>{user.pendingEmail}</strong> wurde noch nicht bestätigt.
+          </Alert>
+        )}
+        <Form form={form}>
           <FormGrid>
             <div className="col-span-2 inline-flex items-center justify-center">
               <div>

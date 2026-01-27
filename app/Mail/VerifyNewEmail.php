@@ -6,8 +6,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class VerifyNewEmail extends Mailable
+class VerifyNewEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -24,7 +25,7 @@ class VerifyNewEmail extends Mailable
         $name = $user?->first_name ?: ($user?->full_name ?? $user?->email ?? '');
 
         return $this->subject('opsc.cloud - Neue E-Mail-Adresse bestaetigen')
-            ->view('generated.verify-email', [
+            ->view('generated.verify-new-email', [
                 'name' => $name,
                 'verificationUrl' => $this->pendingUserEmail->verificationUrl(),
             ]);

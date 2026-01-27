@@ -21,7 +21,7 @@ use Plank\Mediable\Exceptions\MediaUrlException;
 use Plank\Mediable\Mediable;
 use ProtoneMedia\LaravelVerifyNewEmail\MustVerifyNewEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-
+use Lab404\Impersonate\Models\Impersonate;
 /**
  * @property int $id
  * @property string $name
@@ -57,7 +57,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Mediable, MustVerifyNewEmail;
+    use HasFactory, Mediable, MustVerifyNewEmail, Impersonate;
 
     use Notifiable;
     protected $fillable = [
@@ -83,6 +83,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'reverse_full_name',
         'initials',
         'avatar_url',
+        'pending_email',
     ];
     protected $attributes = [
         'is_admin' => false,
@@ -98,6 +99,21 @@ class User extends Authenticatable implements MustVerifyEmail
             'last_login_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getIsImpersonatingAttribute(): string
+    {
+        return app('impersonate')->isImpersonating();
+    }
+
+    public function canImpersonate(): bool
+    {
+        return $this->is_admin;
+    }
+
+    public function canBeImpersonated(): bool
+    {
+        return ! $this->is_impersonating;
     }
 
     public function getFullNameAttribute(): string
@@ -137,6 +153,10 @@ class User extends Authenticatable implements MustVerifyEmail
         }
     }
 
+    public function getPendingEmailAttribute(): string | null
+    {
+        return $this->getPendingEmail();
+    }
 
     public function sendPasswordResetNotification($token): void
     {

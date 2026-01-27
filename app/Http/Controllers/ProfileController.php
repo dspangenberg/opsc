@@ -31,9 +31,19 @@ class ProfileController extends Controller
 
     public function edit(Request $request): Response
     {
+        $user = Auth::user();
+
         return Inertia::render('App/Setting/Profile/ProfileEdit', [
-            'user' => Auth::user()
+            'user' => $user,
+            'pendingEmail' => $user->getPendingEmail()
         ]);
+    }
+
+    public function resendVerificationEmail(Request $request): RedirectResponse
+    {
+        $request->user()->resendPendingEmailVerificationMail();
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Bestätigungs-E-Mail wurde erneut gesendet.']);
+        return Redirect::back();
     }
 
     /**
@@ -48,6 +58,7 @@ class ProfileController extends Controller
 
         if ($newEmail !== $user->email) {
             $user->newEmail($newEmail);
+            $user->email_verified_at = null;
         }
 
         $user->save();

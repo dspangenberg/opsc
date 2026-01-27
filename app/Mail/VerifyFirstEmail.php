@@ -6,8 +6,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class VerifyFirstEmail extends Mailable
+class VerifyFirstEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

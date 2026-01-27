@@ -9,7 +9,6 @@ namespace App\Http\Controllers\App;
 
 use App\Data\ContactData;
 use App\Data\InvoiceData;
-use App\Data\InvoiceLineData;
 use App\Data\InvoiceTypeData;
 use App\Data\PaymentDeadlineData;
 use App\Data\ProjectData;

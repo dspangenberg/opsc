@@ -6,9 +6,11 @@
 import {
   Crown03Icon,
   Delete03Icon,
+  Loading01Icon,
   MailLock01Icon,
   MoreVerticalCircle01Icon,
-  SquareLock02Icon
+  SquareLock02Icon,
+  UserSwitchIcon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/core'
 import { Link, usePage } from '@inertiajs/react'
@@ -35,8 +37,16 @@ const handleDelete = async (row: App.Data.UserData) => {
   }
 }
 
+const currentMail = (row: App.Data.UserData) => row.pendingEmail ?? row.email
+
 const handleResetPassword = async (row: App.Data.UserData) => {
   router.put(route('app.setting.system.user.reset-password', { user: row.id }))
+}
+
+const handleImpersonate = (id: number | null) => () => {
+  if (id) {
+    router.get(route('impersonate', { id }))
+  }
 }
 
 const RowActions = ({ row }: { row: Row<App.Data.UserData> }) => {
@@ -50,6 +60,13 @@ const RowActions = ({ row }: { row: Row<App.Data.UserData> }) => {
           title="Kennwort zurücksetzen"
           separator
           onAction={() => handleResetPassword(row.original)}
+        />
+        <MenuItem
+          icon={UserSwitchIcon}
+          title="Als Benutzer*in anmelden"
+          separator
+          isDisabled={row.original.id === currentUser?.id}
+          onAction={handleImpersonate(row.original.id)}
         />
         <MenuItem
           icon={Delete03Icon}
@@ -131,9 +148,12 @@ export const columns: ColumnDef<App.Data.UserData>[] = [
     accessorKey: 'email',
     header: 'E-Mail',
     size: 200,
-    cell: ({ getValue }) => (
-      <a href={mailLink(getValue() as string)} className="hover:underline">
-        {getValue() as string}
+    cell: ({ getValue, row }) => (
+      <a href={mailLink(getValue() as string)} className="flex items-center gap-2 hover:underline">
+        {currentMail(row.original)}
+        {row.original.pendingEmail ? (
+          <Icon icon={Loading01Icon} className="text-yellow-700" />
+        ) : null}
       </a>
     )
   },

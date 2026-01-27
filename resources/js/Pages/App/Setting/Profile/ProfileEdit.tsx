@@ -6,12 +6,17 @@ import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import type { PageProps } from '@/Types'
 import '@mdxeditor/editor/style.css'
+import { InformationCircleIcon } from '@hugeicons/core-free-icons'
+import { router } from '@inertiajs/core'
+import { Alert } from '@/Components/twc-ui/alert'
 import { AvatarUpload } from '@/Components/twc-ui/avatar-upload'
 import { FormCard } from '@/Components/twc-ui/form-card'
+import { Icon } from '@/Components/twc-ui/icon'
 
 interface Props extends PageProps {
   user: App.Data.UserData
   status: string
+  pendingEmail: string | null
 }
 
 type UserFormData = App.Data.UserData & {
@@ -19,7 +24,7 @@ type UserFormData = App.Data.UserData & {
   remove_avatar: boolean
 }
 
-const ProfilEdit: React.FC<Props> = ({ user }) => {
+const ProfilEdit: React.FC<Props> = ({ pendingEmail, user }) => {
   const form = useForm<UserFormData>('form-user-edit', 'put', route('app.profile.update'), {
     ...user,
     avatar: null,
@@ -32,6 +37,10 @@ const ProfilEdit: React.FC<Props> = ({ user }) => {
     } else {
       form.setData('remove_avatar', true)
     }
+  }
+
+  const handleResendVerificationEmail = () => {
+    router.post(route('verification.send'))
   }
 
   const breadcrumbs = [{ title: 'Profil ändern' }]
@@ -55,7 +64,23 @@ const ProfilEdit: React.FC<Props> = ({ user }) => {
           </div>
         }
       >
-        <Form form={form} errorClassName="w-auto m-3">
+        {pendingEmail && (
+          <Alert
+            variant="info"
+            actions={
+              <Button
+                variant="link"
+                title="E-Mail erneut senden"
+                className="text-yellow-700"
+                onClick={handleResendVerificationEmail}
+              />
+            }
+          >
+            Bevor Deine neue E-Mail-Adresse <strong>{pendingEmail}</strong> aktiv wird, musst Du die
+            Änderung bestätigen.
+          </Alert>
+        )}
+        <Form form={form}>
           <FormGrid>
             <div className="col-span-2 inline-flex items-center justify-center">
               <div>
@@ -81,12 +106,7 @@ const ProfilEdit: React.FC<Props> = ({ user }) => {
             </div>
             <div className="col-span-2" />
             <div className="col-span-11">
-              <FormTextField
-                label="E-Mail"
-                isRequired
-                {...form.register('email')}
-                description="Die Änderung der E-Mail-Adresse wird erst nach Bestätigung wirksam."
-              />
+              <FormTextField label="E-Mail" isRequired {...form.register('email')} />
             </div>
           </FormGrid>
         </Form>

@@ -2431,6 +2431,33 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
+         * Log a user into the application without firing the Login event.
+         *
+         * @param \Illuminate\Contracts\Auth\Authenticatable $user
+         * @return void
+         * @static
+         */
+        public static function quietLogin($user)
+        {
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
+            $instance->quietLogin($user);
+        }
+
+        /**
+         * Logout the user without updating remember_token
+         * and without firing the Logout event.
+         *
+         * @param void
+         * @return void
+         * @static
+         */
+        public static function quietLogout()
+        {
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
+            $instance->quietLogout();
+        }
+
+        /**
          * Get the currently authenticated user.
          *
          * @return \App\Models\User|null
@@ -2438,7 +2465,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function user()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->user();
         }
 
@@ -2450,7 +2478,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function id()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->id();
         }
 
@@ -2463,7 +2492,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function once($credentials = [])
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->once($credentials);
         }
 
@@ -2476,7 +2506,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function onceUsingId($id)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->onceUsingId($id);
         }
 
@@ -2489,7 +2520,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function validate($credentials = [])
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->validate($credentials);
         }
 
@@ -2504,7 +2536,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function basic($field = 'email', $extraConditions = [])
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->basic($field, $extraConditions);
         }
 
@@ -2519,7 +2552,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function onceBasic($field = 'email', $extraConditions = [])
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->onceBasic($field, $extraConditions);
         }
 
@@ -2533,7 +2567,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function attempt($credentials = [], $remember = false)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->attempt($credentials, $remember);
         }
 
@@ -2548,7 +2583,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function attemptWhen($credentials = [], $callbacks = null, $remember = false)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->attemptWhen($credentials, $callbacks, $remember);
         }
 
@@ -2562,7 +2598,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function loginUsingId($id, $remember = false)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->loginUsingId($id, $remember);
         }
 
@@ -2576,7 +2613,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function login($user, $remember = false)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             $instance->login($user, $remember);
         }
 
@@ -2589,7 +2627,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function hashPasswordForCookie($passwordHash)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->hashPasswordForCookie($passwordHash);
         }
 
@@ -2601,7 +2640,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function logout()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             $instance->logout();
         }
 
@@ -2615,7 +2655,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function logoutCurrentDevice()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             $instance->logoutCurrentDevice();
         }
 
@@ -2631,7 +2672,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function logoutOtherDevices($password)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->logoutOtherDevices($password);
         }
 
@@ -2644,7 +2686,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function attempting($callback)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             $instance->attempting($callback);
         }
 
@@ -2656,7 +2699,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getLastAttempted()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getLastAttempted();
         }
 
@@ -2668,7 +2712,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getName()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getName();
         }
 
@@ -2680,7 +2725,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getRecallerName()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getRecallerName();
         }
 
@@ -2692,7 +2738,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function viaRemember()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->viaRemember();
         }
 
@@ -2700,12 +2747,13 @@ namespace Illuminate\Support\Facades {
          * Set the number of minutes the remember me cookie should be valid for.
          *
          * @param int $minutes
-         * @return \Illuminate\Auth\SessionGuard
+         * @return \Lab404\Impersonate\Guard\SessionGuard
          * @static
          */
         public static function setRememberDuration($minutes)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->setRememberDuration($minutes);
         }
 
@@ -2718,7 +2766,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getCookieJar()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getCookieJar();
         }
 
@@ -2731,7 +2780,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function setCookieJar($cookie)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             $instance->setCookieJar($cookie);
         }
 
@@ -2743,7 +2793,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getDispatcher()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getDispatcher();
         }
 
@@ -2756,7 +2807,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function setDispatcher($events)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             $instance->setDispatcher($events);
         }
 
@@ -2768,7 +2820,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getSession()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getSession();
         }
 
@@ -2780,7 +2833,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getUser()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getUser();
         }
 
@@ -2788,12 +2842,13 @@ namespace Illuminate\Support\Facades {
          * Set the current user.
          *
          * @param \Illuminate\Contracts\Auth\Authenticatable $user
-         * @return \Illuminate\Auth\SessionGuard
+         * @return \Lab404\Impersonate\Guard\SessionGuard
          * @static
          */
         public static function setUser($user)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->setUser($user);
         }
 
@@ -2805,7 +2860,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getRequest()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getRequest();
         }
 
@@ -2813,12 +2869,13 @@ namespace Illuminate\Support\Facades {
          * Set the current request instance.
          *
          * @param \Symfony\Component\HttpFoundation\Request $request
-         * @return \Illuminate\Auth\SessionGuard
+         * @return \Lab404\Impersonate\Guard\SessionGuard
          * @static
          */
         public static function setRequest($request)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->setRequest($request);
         }
 
@@ -2830,7 +2887,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getTimebox()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getTimebox();
         }
 
@@ -2843,7 +2901,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function authenticate()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->authenticate();
         }
 
@@ -2855,7 +2914,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function hasUser()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->hasUser();
         }
 
@@ -2867,7 +2927,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function check()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->check();
         }
 
@@ -2879,19 +2940,21 @@ namespace Illuminate\Support\Facades {
          */
         public static function guest()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->guest();
         }
 
         /**
          * Forget the current user.
          *
-         * @return \Illuminate\Auth\SessionGuard
+         * @return \Lab404\Impersonate\Guard\SessionGuard
          * @static
          */
         public static function forgetUser()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->forgetUser();
         }
 
@@ -2903,7 +2966,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getProvider()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getProvider();
         }
 
@@ -2916,7 +2980,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function setProvider($provider)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             $instance->setProvider($provider);
         }
 
@@ -2931,7 +2996,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function macro($name, $macro)
         {
-            \Illuminate\Auth\SessionGuard::macro($name, $macro);
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            \Lab404\Impersonate\Guard\SessionGuard::macro($name, $macro);
         }
 
         /**
@@ -2945,7 +3011,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function mixin($mixin, $replace = true)
         {
-            \Illuminate\Auth\SessionGuard::mixin($mixin, $replace);
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            \Lab404\Impersonate\Guard\SessionGuard::mixin($mixin, $replace);
         }
 
         /**
@@ -2957,7 +3024,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function hasMacro($name)
         {
-            return \Illuminate\Auth\SessionGuard::hasMacro($name);
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            return \Lab404\Impersonate\Guard\SessionGuard::hasMacro($name);
         }
 
         /**
@@ -2968,7 +3036,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function flushMacros()
         {
-            \Illuminate\Auth\SessionGuard::flushMacros();
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            \Lab404\Impersonate\Guard\SessionGuard::flushMacros();
         }
 
             }
@@ -18074,6 +18143,15 @@ namespace Illuminate\Support\Facades {
             return \Illuminate\Routing\Router::inertia($uri, $component, $props);
         }
 
+        /**
+         * @see \Lab404\Impersonate\ImpersonateServiceProvider::registerRoutesMacro()
+         * @static
+         */
+        public static function impersonate()
+        {
+            return \Illuminate\Routing\Router::impersonate();
+        }
+
             }
     /**
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes withoutOverlapping(int $expiresAt = 1440)
@@ -23260,598 +23338,6 @@ namespace Illuminate\Support\Facades {
             }
     }
 
-namespace Barryvdh\Debugbar\Facades {
-    /**
-     * @method static void alert(mixed $message)
-     * @method static void critical(mixed $message)
-     * @method static void debug(mixed $message)
-     * @method static void emergency(mixed $message)
-     * @method static void error(mixed $message)
-     * @method static void info(mixed $message)
-     * @method static void log(mixed $message)
-     * @method static void notice(mixed $message)
-     * @method static void warning(mixed $message)
-     * @see \Barryvdh\Debugbar\LaravelDebugbar
-     */
-    class Debugbar extends \DebugBar\DebugBar {
-        /**
-         * Returns the HTTP driver
-         * 
-         * If no http driver where defined, a PhpHttpDriver is automatically created
-         *
-         * @return \DebugBar\HttpDriverInterface
-         * @static
-         */
-        public static function getHttpDriver()
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->getHttpDriver();
-        }
-
-        /**
-         * Enable the Debugbar and boot, if not already booted.
-         *
-         * @static
-         */
-        public static function enable()
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->enable();
-        }
-
-        /**
-         * Boot the debugbar (add collectors, renderer and listener)
-         *
-         * @static
-         */
-        public static function boot()
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->boot();
-        }
-
-        /**
-         * @static
-         */
-        public static function shouldCollect($name, $default = false)
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->shouldCollect($name, $default);
-        }
-
-        /**
-         * Adds a data collector
-         *
-         * @param \DebugBar\DataCollector\DataCollectorInterface $collector
-         * @throws DebugBarException
-         * @return \Barryvdh\Debugbar\LaravelDebugbar
-         * @static
-         */
-        public static function addCollector($collector)
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->addCollector($collector);
-        }
-
-        /**
-         * Handle silenced errors
-         *
-         * @param $level
-         * @param $message
-         * @param string $file
-         * @param int $line
-         * @param array $context
-         * @throws \ErrorException
-         * @static
-         */
-        public static function handleError($level, $message, $file = '', $line = 0, $context = [])
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->handleError($level, $message, $file, $line, $context);
-        }
-
-        /**
-         * Starts a measure
-         *
-         * @param string $name Internal name, used to stop the measure
-         * @param string $label Public name
-         * @param string|null $collector
-         * @param string|null $group
-         * @static
-         */
-        public static function startMeasure($name, $label = null, $collector = null, $group = null)
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->startMeasure($name, $label, $collector, $group);
-        }
-
-        /**
-         * Stops a measure
-         *
-         * @param string $name
-         * @static
-         */
-        public static function stopMeasure($name)
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->stopMeasure($name);
-        }
-
-        /**
-         * Adds an exception to be profiled in the debug bar
-         *
-         * @param \Exception $e
-         * @deprecated in favor of addThrowable
-         * @static
-         */
-        public static function addException($e)
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->addException($e);
-        }
-
-        /**
-         * Adds an exception to be profiled in the debug bar
-         *
-         * @param \Throwable $e
-         * @static
-         */
-        public static function addThrowable($e)
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->addThrowable($e);
-        }
-
-        /**
-         * Returns a JavascriptRenderer for this instance
-         *
-         * @param string $baseUrl
-         * @param string $basePath
-         * @return \Barryvdh\Debugbar\JavascriptRenderer
-         * @static
-         */
-        public static function getJavascriptRenderer($baseUrl = null, $basePath = null)
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->getJavascriptRenderer($baseUrl, $basePath);
-        }
-
-        /**
-         * Modify the response and inject the debugbar (or data in headers)
-         *
-         * @param \Symfony\Component\HttpFoundation\Request $request
-         * @param \Symfony\Component\HttpFoundation\Response $response
-         * @return \Symfony\Component\HttpFoundation\Response
-         * @static
-         */
-        public static function modifyResponse($request, $response)
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->modifyResponse($request, $response);
-        }
-
-        /**
-         * Check if the Debugbar is enabled
-         *
-         * @return boolean
-         * @static
-         */
-        public static function isEnabled()
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->isEnabled();
-        }
-
-        /**
-         * Collects the data from the collectors
-         *
-         * @return array
-         * @static
-         */
-        public static function collect()
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->collect();
-        }
-
-        /**
-         * Injects the web debug toolbar into the given Response.
-         *
-         * @param \Symfony\Component\HttpFoundation\Response $response A Response instance
-         * Based on https://github.com/symfony/WebProfilerBundle/blob/master/EventListener/WebDebugToolbarListener.php
-         * @static
-         */
-        public static function injectDebugbar($response)
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->injectDebugbar($response);
-        }
-
-        /**
-         * Checks if there is stacked data in the session
-         *
-         * @return boolean
-         * @static
-         */
-        public static function hasStackedData()
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->hasStackedData();
-        }
-
-        /**
-         * Returns the data stacked in the session
-         *
-         * @param boolean $delete Whether to delete the data in the session
-         * @return array
-         * @static
-         */
-        public static function getStackedData($delete = true)
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->getStackedData($delete);
-        }
-
-        /**
-         * Disable the Debugbar
-         *
-         * @static
-         */
-        public static function disable()
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->disable();
-        }
-
-        /**
-         * Adds a measure
-         *
-         * @param string $label
-         * @param float $start
-         * @param float $end
-         * @param array|null $params
-         * @param string|null $collector
-         * @param string|null $group
-         * @static
-         */
-        public static function addMeasure($label, $start, $end, $params = [], $collector = null, $group = null)
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->addMeasure($label, $start, $end, $params, $collector, $group);
-        }
-
-        /**
-         * Utility function to measure the execution of a Closure
-         *
-         * @param string $label
-         * @param \Closure $closure
-         * @param string|null $collector
-         * @param string|null $group
-         * @return mixed
-         * @static
-         */
-        public static function measure($label, $closure, $collector = null, $group = null)
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->measure($label, $closure, $collector, $group);
-        }
-
-        /**
-         * Collect data in a CLI request
-         *
-         * @return array
-         * @static
-         */
-        public static function collectConsole()
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->collectConsole();
-        }
-
-        /**
-         * Adds a message to the MessagesCollector
-         * 
-         * A message can be anything from an object to a string
-         *
-         * @param mixed $message
-         * @param string $label
-         * @static
-         */
-        public static function addMessage($message, $label = 'info')
-        {
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->addMessage($message, $label);
-        }
-
-        /**
-         * Checks if a data collector has been added
-         *
-         * @param string $name
-         * @return boolean
-         * @static
-         */
-        public static function hasCollector($name)
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->hasCollector($name);
-        }
-
-        /**
-         * Returns a data collector
-         *
-         * @param string $name
-         * @return \DebugBar\DataCollector\DataCollectorInterface
-         * @throws DebugBarException
-         * @static
-         */
-        public static function getCollector($name)
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->getCollector($name);
-        }
-
-        /**
-         * Returns an array of all data collectors
-         *
-         * @return array[DataCollectorInterface]
-         * @static
-         */
-        public static function getCollectors()
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->getCollectors();
-        }
-
-        /**
-         * Sets the request id generator
-         *
-         * @param \DebugBar\RequestIdGeneratorInterface $generator
-         * @return \Barryvdh\Debugbar\LaravelDebugbar
-         * @static
-         */
-        public static function setRequestIdGenerator($generator)
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->setRequestIdGenerator($generator);
-        }
-
-        /**
-         * @return \DebugBar\RequestIdGeneratorInterface
-         * @static
-         */
-        public static function getRequestIdGenerator()
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->getRequestIdGenerator();
-        }
-
-        /**
-         * Returns the id of the current request
-         *
-         * @return string
-         * @static
-         */
-        public static function getCurrentRequestId()
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->getCurrentRequestId();
-        }
-
-        /**
-         * Sets the storage backend to use to store the collected data
-         *
-         * @param \DebugBar\StorageInterface $storage
-         * @return \Barryvdh\Debugbar\LaravelDebugbar
-         * @static
-         */
-        public static function setStorage($storage = null)
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->setStorage($storage);
-        }
-
-        /**
-         * @return \DebugBar\StorageInterface
-         * @static
-         */
-        public static function getStorage()
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->getStorage();
-        }
-
-        /**
-         * Checks if the data will be persisted
-         *
-         * @return boolean
-         * @static
-         */
-        public static function isDataPersisted()
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->isDataPersisted();
-        }
-
-        /**
-         * Sets the HTTP driver
-         *
-         * @param \DebugBar\HttpDriverInterface $driver
-         * @return \Barryvdh\Debugbar\LaravelDebugbar
-         * @static
-         */
-        public static function setHttpDriver($driver)
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->setHttpDriver($driver);
-        }
-
-        /**
-         * Returns collected data
-         * 
-         * Will collect the data if none have been collected yet
-         *
-         * @return array
-         * @static
-         */
-        public static function getData()
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->getData();
-        }
-
-        /**
-         * Returns an array of HTTP headers containing the data
-         *
-         * @param string $headerName
-         * @param integer $maxHeaderLength
-         * @return array
-         * @static
-         */
-        public static function getDataAsHeaders($headerName = 'phpdebugbar', $maxHeaderLength = 4096, $maxTotalHeaderLength = 250000)
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->getDataAsHeaders($headerName, $maxHeaderLength, $maxTotalHeaderLength);
-        }
-
-        /**
-         * Sends the data through the HTTP headers
-         *
-         * @param bool $useOpenHandler
-         * @param string $headerName
-         * @param integer $maxHeaderLength
-         * @return \Barryvdh\Debugbar\LaravelDebugbar
-         * @static
-         */
-        public static function sendDataInHeaders($useOpenHandler = null, $headerName = 'phpdebugbar', $maxHeaderLength = 4096)
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->sendDataInHeaders($useOpenHandler, $headerName, $maxHeaderLength);
-        }
-
-        /**
-         * Stacks the data in the session for later rendering
-         *
-         * @static
-         */
-        public static function stackData()
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->stackData();
-        }
-
-        /**
-         * Sets the key to use in the $_SESSION array
-         *
-         * @param string $ns
-         * @return \Barryvdh\Debugbar\LaravelDebugbar
-         * @static
-         */
-        public static function setStackDataSessionNamespace($ns)
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->setStackDataSessionNamespace($ns);
-        }
-
-        /**
-         * Returns the key used in the $_SESSION array
-         *
-         * @return string
-         * @static
-         */
-        public static function getStackDataSessionNamespace()
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->getStackDataSessionNamespace();
-        }
-
-        /**
-         * Sets whether to only use the session to store stacked data even
-         * if a storage is enabled
-         *
-         * @param boolean $enabled
-         * @return \Barryvdh\Debugbar\LaravelDebugbar
-         * @static
-         */
-        public static function setStackAlwaysUseSessionStorage($enabled = true)
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->setStackAlwaysUseSessionStorage($enabled);
-        }
-
-        /**
-         * Checks if the session is always used to store stacked data
-         * even if a storage is enabled
-         *
-         * @return boolean
-         * @static
-         */
-        public static function isStackAlwaysUseSessionStorage()
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->isStackAlwaysUseSessionStorage();
-        }
-
-        /**
-         * @static
-         */
-        public static function offsetSet($key, $value)
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->offsetSet($key, $value);
-        }
-
-        /**
-         * @static
-         */
-        public static function offsetGet($key)
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->offsetGet($key);
-        }
-
-        /**
-         * @static
-         */
-        public static function offsetExists($key)
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->offsetExists($key);
-        }
-
-        /**
-         * @static
-         */
-        public static function offsetUnset($key)
-        {
-            //Method inherited from \DebugBar\DebugBar 
-            /** @var \Barryvdh\Debugbar\LaravelDebugbar $instance */
-            return $instance->offsetUnset($key);
-        }
-
-            }
-    }
-
 namespace MohamedSaid\Notable\Facades {
     /**
      * @see \MohamedSaid\Notable\Notable
@@ -27867,6 +27353,707 @@ namespace MohamedSaid\Notable\Facades {
             }
     }
 
+namespace Fruitcake\LaravelDebugbar\Facades {
+    /**
+     * @method static void            alert(mixed $message)
+     * @method static void            critical(mixed $message)
+     * @method static void            debug(mixed $message)
+     * @method static void            emergency(mixed $message)
+     * @method static void            error(mixed $message)
+     * @method static void            info(mixed $message)
+     * @method static void            log(mixed $message)
+     * @method static void            notice(mixed $message)
+     * @method static void            warning(mixed $message)
+     * @see \Fruitcake\LaravelDebugbar\LaravelDebugbar
+     */
+    class Debugbar extends \DebugBar\DebugBar {
+        /**
+         * @static
+         */
+        public static function setApplication($app)
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->setApplication($app);
+        }
+
+        /**
+         * @static
+         */
+        public static function setRequest($request)
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->setRequest($request);
+        }
+
+        /**
+         * @static
+         */
+        public static function setProcessingJob($job)
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->setProcessingJob($job);
+        }
+
+        /**
+         * @static
+         */
+        public static function getProcessingJob()
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->getProcessingJob();
+        }
+
+        /**
+         * @static
+         */
+        public static function getHttpDriver()
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->getHttpDriver();
+        }
+
+        /**
+         * @static
+         */
+        public static function getRequestIdGenerator()
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->getRequestIdGenerator();
+        }
+
+        /**
+         * @static
+         */
+        public static function getTimeCollector()
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->getTimeCollector();
+        }
+
+        /**
+         * @static
+         */
+        public static function getMessagesCollector()
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->getMessagesCollector();
+        }
+
+        /**
+         * @static
+         */
+        public static function getExceptionsCollector()
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->getExceptionsCollector();
+        }
+
+        /**
+         * @static
+         */
+        public static function isCollecting()
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->isCollecting();
+        }
+
+        /**
+         * Enable the Debugbar and boot, if not already booted.
+         *
+         * @static
+         */
+        public static function enable()
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->enable();
+        }
+
+        /**
+         * Boot the debugbar (add collectors, renderer and listener)
+         *
+         * @static
+         */
+        public static function boot()
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->boot();
+        }
+
+        /**
+         * @static
+         */
+        public static function booted()
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->booted();
+        }
+
+        /**
+         * @static
+         */
+        public static function getJavascriptRenderer($baseUrl = null, $basePath = null)
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->getJavascriptRenderer($baseUrl, $basePath);
+        }
+
+        /**
+         * @static
+         */
+        public static function shouldCollect($name, $default = true)
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->shouldCollect($name, $default);
+        }
+
+        /**
+         * Handle silenced errors
+         *
+         * @static
+         */
+        public static function handleError($level, $message, $file = '', $line = 0, $context = [])
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->handleError($level, $message, $file, $line, $context);
+        }
+
+        /**
+         * Starts a measure
+         *
+         * @param string $name Internal name, used to stop the measure
+         * @param string|null $label Public name
+         * @static
+         */
+        public static function startMeasure($name, $label = null, $collector = null, $group = null)
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->startMeasure($name, $label, $collector, $group);
+        }
+
+        /**
+         * Stops a measure
+         *
+         * @static
+         */
+        public static function stopMeasure($name)
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->stopMeasure($name);
+        }
+
+        /**
+         * Alias for addThrowable
+         *
+         * @static
+         */
+        public static function addException($e)
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->addException($e);
+        }
+
+        /**
+         * Adds an exception to be profiled in the debug bar
+         *
+         * @static
+         */
+        public static function addThrowable($e)
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->addThrowable($e);
+        }
+
+        /**
+         * Modify the response and inject the debugbar (or data in headers)
+         *
+         * @static
+         */
+        public static function handleResponse($request, $response)
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->handleResponse($request, $response);
+        }
+
+        /**
+         * Check if the Debugbar is enabled
+         *
+         * @static
+         */
+        public static function isEnabled()
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->isEnabled();
+        }
+
+        /**
+         * @static
+         */
+        public static function requestIsExcluded($request)
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->requestIsExcluded($request);
+        }
+
+        /**
+         * Collects the data from the collectors
+         *
+         * @static
+         */
+        public static function collect()
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->collect();
+        }
+
+        /**
+         * @static
+         */
+        public static function terminate()
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->terminate();
+        }
+
+        /**
+         * Injects the web debug toolbar into the given Response.
+         * 
+         * Based on https://github.com/symfony/WebProfilerBundle/blob/master/EventListener/WebDebugToolbarListener.php
+         *
+         * @static
+         */
+        public static function injectDebugbar($response)
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->injectDebugbar($response);
+        }
+
+        /**
+         * Disable the Debugbar
+         *
+         * @static
+         */
+        public static function disable()
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->disable();
+        }
+
+        /**
+         * @static
+         */
+        public static function reset()
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->reset();
+        }
+
+        /**
+         * Adds a measure
+         *
+         * @static
+         */
+        public static function addMeasure($label, $start, $end = null, $params = [], $collector = null, $group = null)
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->addMeasure($label, $start, $end, $params, $collector, $group);
+        }
+
+        /**
+         * Utility function to measure the execution of a Closure
+         *
+         * @static
+         */
+        public static function measure($label, $closure, $collector = null, $group = null)
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->measure($label, $closure, $collector, $group);
+        }
+
+        /**
+         * Adds a message to the MessagesCollector
+         * 
+         * A message can be anything from an object to a string
+         *
+         * @static
+         */
+        public static function addMessage($message, $label = 'info', $context = [])
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->addMessage($message, $label, $context);
+        }
+
+        /**
+         * Check the version of Laravel
+         *
+         * @static
+         */
+        public static function checkVersion($version, $operator = '>=')
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->checkVersion($version, $operator);
+        }
+
+        /**
+         * Adds a data collector
+         *
+         * @throws DebugBarException
+         * @return \Fruitcake\LaravelDebugbar\LaravelDebugbar
+         * @static
+         */
+        public static function addCollector($collector)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->addCollector($collector);
+        }
+
+        /**
+         * Checks if a data collector has been added
+         *
+         * @return boolean
+         * @static
+         */
+        public static function hasCollector($name)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->hasCollector($name);
+        }
+
+        /**
+         * @static
+         */
+        public static function getCollector($name)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->getCollector($name);
+        }
+
+        /**
+         * @static
+         */
+        public static function removeCollector($name)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->removeCollector($name);
+        }
+
+        /**
+         * Returns an array of all data collectors
+         *
+         * @return array|\DebugBar\DataCollector\DataCollectorInterface[]
+         * @static
+         */
+        public static function getCollectors()
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->getCollectors();
+        }
+
+        /**
+         * Sets the request id generator
+         *
+         * @return \Fruitcake\LaravelDebugbar\LaravelDebugbar
+         * @static
+         */
+        public static function setRequestIdGenerator($generator)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->setRequestIdGenerator($generator);
+        }
+
+        /**
+         * Returns the id of the current request
+         *
+         * @static
+         */
+        public static function getCurrentRequestId()
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->getCurrentRequestId();
+        }
+
+        /**
+         * Sets the storage backend to use to store the collected data
+         *
+         * @return \Fruitcake\LaravelDebugbar\LaravelDebugbar
+         * @static
+         */
+        public static function setStorage($storage = null)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->setStorage($storage);
+        }
+
+        /**
+         * @static
+         */
+        public static function getStorage()
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->getStorage();
+        }
+
+        /**
+         * Checks if the data will be persisted
+         *
+         * @return boolean
+         * @static
+         */
+        public static function isDataPersisted()
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->isDataPersisted();
+        }
+
+        /**
+         * Sets the HTTP driver
+         *
+         * @return \Fruitcake\LaravelDebugbar\LaravelDebugbar
+         * @static
+         */
+        public static function setHttpDriver($driver)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->setHttpDriver($driver);
+        }
+
+        /**
+         * Returns collected data
+         * 
+         * Will collect the data if none have been collected yet
+         *
+         * @static
+         */
+        public static function getData()
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->getData();
+        }
+
+        /**
+         * Returns an array of HTTP headers containing the data
+         *
+         * @param integer $maxHeaderLength
+         * @return array<string, string>
+         * @static
+         */
+        public static function getDataAsHeaders($headerName = 'phpdebugbar', $maxHeaderLength = 4096, $maxTotalHeaderLength = 250000)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->getDataAsHeaders($headerName, $maxHeaderLength, $maxTotalHeaderLength);
+        }
+
+        /**
+         * Sends the data through the HTTP headers
+         *
+         * @param integer $maxHeaderLength
+         * @return \Fruitcake\LaravelDebugbar\LaravelDebugbar
+         * @static
+         */
+        public static function sendDataInHeaders($useOpenHandler = null, $headerName = 'phpdebugbar', $maxHeaderLength = 4096)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->sendDataInHeaders($useOpenHandler, $headerName, $maxHeaderLength);
+        }
+
+        /**
+         * Stacks the data in the session for later rendering
+         *
+         * @static
+         */
+        public static function stackData()
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->stackData();
+        }
+
+        /**
+         * Checks if there is stacked data in the session
+         *
+         * @return boolean
+         * @static
+         */
+        public static function hasStackedData()
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->hasStackedData();
+        }
+
+        /**
+         * Returns the data stacked in the session
+         *
+         * @param boolean $delete Whether to delete the data in the session
+         * @return array[]
+         * @static
+         */
+        public static function getStackedData($delete = true)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->getStackedData($delete);
+        }
+
+        /**
+         * @static
+         */
+        public static function getStackedIds($delete = true)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->getStackedIds($delete);
+        }
+
+        /**
+         * Sets the key to use in the $_SESSION array
+         *
+         * @return \Fruitcake\LaravelDebugbar\LaravelDebugbar
+         * @static
+         */
+        public static function setStackDataSessionNamespace($ns)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->setStackDataSessionNamespace($ns);
+        }
+
+        /**
+         * Returns the key used in the $_SESSION array
+         *
+         * @static
+         */
+        public static function getStackDataSessionNamespace()
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->getStackDataSessionNamespace();
+        }
+
+        /**
+         * Sets whether to only use the session to store stacked data even
+         * if a storage is enabled
+         *
+         * @param boolean $enabled
+         * @return \Fruitcake\LaravelDebugbar\LaravelDebugbar
+         * @static
+         */
+        public static function setStackAlwaysUseSessionStorage($enabled = true)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->setStackAlwaysUseSessionStorage($enabled);
+        }
+
+        /**
+         * Checks if the session is always used to store stacked data
+         * even if a storage is enabled
+         *
+         * @return boolean
+         * @static
+         */
+        public static function isStackAlwaysUseSessionStorage()
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->isStackAlwaysUseSessionStorage();
+        }
+
+        /**
+         * Set the editor globally, e.g., `vscode`
+         *
+         * @static
+         */
+        public static function setEditor($editor)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->setEditor($editor);
+        }
+
+        /**
+         * Set the editor link template globally,
+         * `%f` = file, `%l` = line, e.g., `vscode://file/%f:%l`
+         *
+         * @static
+         */
+        public static function setEditorTemplate($editorLinkTemplate, $shouldUseAjax = false)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->setEditorTemplate($editorLinkTemplate, $shouldUseAjax);
+        }
+
+        /**
+         * Set server path replacements, server paths will be mapped to local paths
+         * e.g., `['/var/www/remote/' => '/home/local/']`,
+         * '/var/www/remote/app/path' will become to '/home/local/app/path'
+         *
+         * @static
+         */
+        public static function setRemoteReplacements($remotePathReplacements)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->setRemoteReplacements($remotePathReplacements);
+        }
+
+        /**
+         * @static
+         */
+        public static function offsetSet($offset, $value)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->offsetSet($offset, $value);
+        }
+
+        /**
+         * @static
+         */
+        public static function offsetGet($offset)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->offsetGet($offset);
+        }
+
+        /**
+         * @static
+         */
+        public static function offsetExists($offset)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->offsetExists($offset);
+        }
+
+        /**
+         * @static
+         */
+        public static function offsetUnset($offset)
+        {
+            //Method inherited from \DebugBar\DebugBar 
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->offsetUnset($offset);
+        }
+
+            }
+    }
+
 namespace Plank\Mediable\Facades {
     /**
      * Facade for Media Uploader.
@@ -29736,7 +29923,8 @@ namespace Illuminate\Support {
      */
     class Collection {
         /**
-         * @see \Barryvdh\Debugbar\ServiceProvider::register()
+         * @see \Fruitcake\LaravelDebugbar\ServiceProvider::register()
+         * @return \Illuminate\Support\Collection
          * @static
          */
         public static function debug()
@@ -29863,6 +30051,15 @@ namespace Illuminate\Routing {
         public static function inertia($uri, $component, $props = [])
         {
             return \Illuminate\Routing\Router::inertia($uri, $component, $props);
+        }
+
+        /**
+         * @see \Lab404\Impersonate\ImpersonateServiceProvider::registerRoutesMacro()
+         * @static
+         */
+        public static function impersonate()
+        {
+            return \Illuminate\Routing\Router::impersonate();
         }
 
             }
@@ -35011,8 +35208,8 @@ namespace  {
     class Validator extends \Illuminate\Support\Facades\Validator {}
     class View extends \Illuminate\Support\Facades\View {}
     class Vite extends \Illuminate\Support\Facades\Vite {}
-    class Debugbar extends \Barryvdh\Debugbar\Facades\Debugbar {}
     class Notable extends \MohamedSaid\Notable\Facades\Notable {}
+    class Debugbar extends \Fruitcake\LaravelDebugbar\Facades\Debugbar {}
     class MediaUploader extends \Plank\Mediable\Facades\MediaUploader {}
     class ImageManipulator extends \Plank\Mediable\Facades\ImageManipulator {}
     class Tenancy extends \Stancl\Tenancy\Facades\Tenancy {}

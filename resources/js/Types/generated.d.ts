@@ -679,6 +679,8 @@ full_name: string;
 reverse_full_name: string;
 initials: string;
 user_agent: string | null;
+pendingEmail: string | null;
+is_impersonating: boolean | null;
 last_login_at: string | null;
 email_verified_at: string | null;
 };

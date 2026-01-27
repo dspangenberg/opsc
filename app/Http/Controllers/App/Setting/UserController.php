@@ -130,6 +130,13 @@ class UserController extends Controller
         return redirect()->route('app.setting.system.user.index');
     }
 
+    public function resendVerificationEmail(User $user)
+    {
+        $user->resendPendingEmailVerificationMail();
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Bestätigungs-E-Mail wurde erneut gesendet.']);
+        return redirect()->back();
+    }
+
     public function resetPassword(User $user) {
 
         Password::sendResetLink(

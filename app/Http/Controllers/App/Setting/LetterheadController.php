@@ -74,7 +74,7 @@ class LetterheadController extends Controller
      */
     public function update(LetterheadRequest $request, Letterhead $letterhead)
     {
-        $data = $request->validated()->except('file');
+        $data = $request->safe()->except('file');
         $letterhead->update($data);
 
         if ($request->hasFile('file')) {

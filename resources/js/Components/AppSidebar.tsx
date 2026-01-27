@@ -314,7 +314,7 @@ const buildNavData = (isAdmin: boolean) => ({
                 activePath: '/app/settings/system',
                 items: [
                   {
-                    title: 'Benutzerkonten',
+                    title: 'Benutzer*innen',
                     url: route('app.setting.system.user.index', {}, false),
                     activePath: '/app/settings/system/users'
                   }

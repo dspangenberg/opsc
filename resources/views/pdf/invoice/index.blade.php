@@ -251,7 +251,7 @@
             <p>{{ nl2br($invoice->contact->tax->invoice_text) }}</p>
         @endif
 
-        @if($invoice->tax->needs_vat_id || $invoice->amount_gross < 0)
+        @if($invoice->tax?->needs_vat_id || $invoice->amount_gross < 0)
         <p>
             USt-IdNr. des Auftraggebers:
             @if($invoice->vat_id)

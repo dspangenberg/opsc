@@ -18,7 +18,7 @@ interface UserIndexPageProps extends PageProps {
 const UserIndex: React.FC<UserIndexPageProps> = ({ users }) => {
   const [selectedRows, setSelectedRows] = useState<App.Data.UserData[]>([])
 
-  const breadcrumbs = useMemo(() => [{ title: 'System' }, { title: 'Benuterkonten' }], [])
+  const breadcrumbs = useMemo(() => [{ title: 'System' }, { title: 'Benutzer*innen' }], [])
 
   const handleUserAdd = () => {
     router.visit(route('app.setting.system.user.create'))
@@ -30,7 +30,7 @@ const UserIndex: React.FC<UserIndexPageProps> = ({ users }) => {
         <Button
           variant="toolbar-default"
           icon={Add01Icon}
-          title="Neues Benutzerkonto"
+          title="Benutzer*in hinzufügen"
           onClick={handleUserAdd}
         />
       </Toolbar>
@@ -60,7 +60,7 @@ const UserIndex: React.FC<UserIndexPageProps> = ({ users }) => {
 
   return (
     <PageContainer
-      title="Benutzerkonten"
+      title="Benutzer*innen"
       width="7xl"
       breadcrumbs={breadcrumbs}
       className="flex overflow-hidden"
