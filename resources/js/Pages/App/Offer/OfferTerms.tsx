@@ -128,7 +128,9 @@ const OfferTerms: React.FC<OfferTermsProps> = ({ offerSections, offer, textModul
         </DndContext>
       </div>
       <div className="h-fit w-sm flex-none space-y-6 px-1">
-        <OfferDetailsSide offer={offer} />
+        <div className="fixed">
+          <OfferDetailsSide offer={offer} />
+        </div>
       </div>
     </OfferDetailsLayout>
   )

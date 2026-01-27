@@ -158,6 +158,7 @@ class InvoiceController extends Controller
         $invoice->load('contact');
 
         $invoice->address = $invoice->contact->getInvoiceAddress()->full_address;
+        $invoice->vat_id = $invoice->contact->vat_id;
         $invoice->save();
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
@@ -237,6 +238,7 @@ class InvoiceController extends Controller
         if ($request->validated('contact_id') !== $oldContactId) {
             $invoice->load('contact');
             $invoice->address = $invoice->contact->getInvoiceAddress()->full_address;
+            $invoice->vat_id = $invoice->contact->vat_id;
             $invoice->save();
         }
 
@@ -368,6 +370,7 @@ class InvoiceController extends Controller
             ->load('contact')
             ->load('project')
             ->load('payment_deadline')
+            ->load('parent_invoice')
             ->load('type')
             ->load([
                 'lines' => function ($query) {
@@ -529,24 +532,5 @@ class InvoiceController extends Controller
         }
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
-    }
-
-    public function duplicateLine(Invoice $invoice, InvoiceLine $invoiceLine)
-    {
-        $invoice
-            ->load('tax')
-            ->load('tax.rates');
-
-        $duplicatedLine = $invoiceLine->replicate();
-        $duplicatedLine->pos = InvoiceLine::query()->where('invoice_id', $invoice->id)->where('pos', '<>',
-                999)->max('pos') + 1;
-
-        return Inertia::modal('App/Invoice/InvoiceDetailsEditLine')
-            ->with([
-                'invoice' => InvoiceData::from($invoice),
-                'invoiceLine' => InvoiceLineData::from($duplicatedLine),
-            ])->baseRoute('app.invoice.details', [
-                'invoice' => $invoice->id,
-            ]);
     }
 }

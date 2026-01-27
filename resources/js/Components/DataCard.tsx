@@ -281,7 +281,7 @@ export const DataCardFieldVertical: FC<DataCardFieldCommonProps> = ({
   return (
     <div className={cn('block w-full flex-1', className)}>
       <DataCardFieldLabel className="block" label={label} />
-      <div className="block font-medium text-foreground text-sm">{children || value}</div>
+      <div className="block truncate font-medium text-foreground text-sm">{children || value}</div>
     </div>
   )
 }

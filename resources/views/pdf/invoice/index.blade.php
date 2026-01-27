@@ -249,9 +249,17 @@
 
         @if($invoice->contact->tax_id && $invoice->contact->tax->invoice_text)
             <p>{{ nl2br($invoice->contact->tax->invoice_text) }}</p>
-            <p>
-                USt-IdNr. des Auftraggebers: {{ $invoice->contact->vat_id }}
-            </p>
+        @endif
+
+        @if($invoice->tax->needs_vat_id || $invoice->amount_gross < 0)
+        <p>
+            USt-IdNr. des Auftraggebers:
+            @if($invoice->vat_id)
+                {{ $invoice->vat_id }}
+            @else
+                {{ $invoice->contact->vat_id }}
+            @endif
+        </p>
         @endif
 
         @if($invoice->additional_text)

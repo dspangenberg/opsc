@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 return [
     'failed'   => 'Diese Kombination aus Zugangsdaten wurde nicht in unserer Datenbank gefunden.',
+    'locked'   => 'Dein Konto wurde gesperrt.',
     'password' => 'Das Passwort ist falsch.',
     'throttle' => 'Zu viele Loginversuche. Versuchen Sie es bitte in :seconds Sekunden nochmal.',
-    'locked' => 'Dein Konto wurde gesperrt.',
 ];

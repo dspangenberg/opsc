@@ -43,9 +43,11 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ children }) => {
   return (
     <OfferDetailsLayout offer={offer}>
       <OfferDetailsContent>{children}</OfferDetailsContent>
-      <div className="h-fit w-sm flex-none space-y-6 px-1">
-        <OfferDetailsSide offer={offer} />
-        <OfferDetailsAttachments offer={offer} />
+      <div className="h-fit w-sm flex-none px-1">
+        <div className="fixed space-y-6">
+          <OfferDetailsSide offer={offer} />
+          <OfferDetailsAttachments offer={offer} />
+        </div>
       </div>
     </OfferDetailsLayout>
   )

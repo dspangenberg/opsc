@@ -51,10 +51,6 @@ Route::post('invoicing/invoices/{invoice}/release', [InvoiceController::class, '
 Route::post('invoicing/invoices/{invoice}/mark-as-sent', [InvoiceController::class, 'markAsSent'])
     ->name('app.invoice.mark-as-sent');
 
-Route::get('invoicing/invoices/{invoice}/line-duplicate/{invoiceLine}', [InvoiceController::class, 'duplicateLine'])
-    ->name('app.invoice.line-duplicate')
-    ->middleware([HandlePrecognitiveRequests::class]);
-
 Route::put('invoicing/invoices/lines-update/{invoice}', [InvoiceController::class, 'updateLines'])
     ->name('app.invoice.lines-update')
     ->middleware([HandlePrecognitiveRequests::class]);

@@ -26,7 +26,7 @@ return [
     'can'                    => 'Das Feld :attribute enthält einen nicht autorisierten Wert.',
     'confirmed'              => ':Attribute stimmt nicht mit der Bestätigung überein.',
     'contains'               => 'Dem Feld :attribute fehlt ein erforderlicher Wert.',
-    'current_password'       => ':Attribute ist falsch.',
+    'current_password'       => 'Das Passwort ist falsch.',
     'date'                   => ':Attribute muss ein gültiges Datum sein.',
     'date_equals'            => ':Attribute muss ein Datum gleich :date sein.',
     'date_format'            => ':Attribute entspricht nicht dem gültigen Format für :format.',
