@@ -31,6 +31,7 @@ class UserData extends Data
         public readonly ?string $user_agent,
         public readonly ?string $pending_email,
         public readonly ?bool $is_impersonating,
+        public readonly ?string $impersonator,
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]
         public readonly ?DateTime $last_login_at,

@@ -85,6 +85,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'initials',
         'avatar_url',
         'pending_email',
+        'impersonator',
     ];
     protected $attributes = [
         'is_admin' => false,
@@ -107,6 +108,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return app('impersonate')->isImpersonating();
     }
 
+    public function getImpersonatorAttribute(): ?string
+    {
+        return app('impersonate')->getImpersonator()?->email;
+    }
+
     public function canImpersonate(): bool
     {
         return $this->is_admin;
@@ -115,6 +121,18 @@ class User extends Authenticatable implements MustVerifyEmail
     public function canBeImpersonated(): bool
     {
         return ! $this->is_admin;
+    }
+
+    public static function impersonator(): ?self
+    {
+        $impersonator = app('impersonate')->getImpersonator();
+
+        return $impersonator instanceof self ? $impersonator : null;
+    }
+
+    public static function impersonatorId(): ?int
+    {
+        return app('impersonate')->getImpersonatorId();
     }
 
     public function getFullNameAttribute(): string

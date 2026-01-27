@@ -30,6 +30,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "rollup-plugin-visualizer": "^6.0.5",
+    "shadcn": "^3.7.0",
     "tailwind-merge": "^3.4.0",
     "tailwind-variants": "^3.2.2",
     "tailwindcss": "^4.1.18",
@@ -102,7 +103,6 @@
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
     "safe-strings": "^1.0.4",
-    "shadcn": "^3.7.0",
     "sonner": "^2.0.7",
     "tailwind-scrollbar": "^4.0.2",
     "tailwind-scrollbar-hide": "^4.0.0",
@@ -113,6 +113,12 @@
   },
   "packageManager": "pnpm@10.28.0",
   "pnpm": {
+    "overrides": {
+      "hono": "4.11.4"
+    },
+    "overridesNotes": {
+      "hono": "Security pin to 4.11.4 to address JWT algorithm-confusion (CVE-2026-22817, CVE-2026-22818; affects <4.11.4). 4.11.4 is a breaking change requiring explicit \"alg\" option configuration in JWT/JWK middleware."
+    },
     "onlyBuiltDependencies": [
       "canvas"
     ]
