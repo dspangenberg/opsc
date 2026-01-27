@@ -116,6 +116,9 @@
     "overrides": {
       "hono": "4.11.4"
     },
+    "overridesNotes": {
+      "hono": "Security pin to 4.11.4 to address JWT algorithm-confusion (CVE-2026-22817, CVE-2026-22818; affects <4.11.4). 4.11.4 is a breaking change requiring explicit \"alg\" option configuration in JWT/JWK middleware."
+    },
     "onlyBuiltDependencies": [
       "canvas"
     ]
