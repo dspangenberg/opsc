@@ -5953,16 +5953,16 @@
         },
         {
             "name": "spatie/holidays",
-            "version": "1.23.0",
+            "version": "1.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/holidays.git",
-                "reference": "dff9f522ce5431447618ba5551834090b8c58d34"
+                "reference": "8a7e326e3a1189e6bb271be08f7689ef0730c7d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/holidays/zipball/dff9f522ce5431447618ba5551834090b8c58d34",
-                "reference": "dff9f522ce5431447618ba5551834090b8c58d34",
+                "url": "https://api.github.com/repos/spatie/holidays/zipball/8a7e326e3a1189e6bb271be08f7689ef0730c7d0",
+                "reference": "8a7e326e3a1189e6bb271be08f7689ef0730c7d0",
                 "shasum": ""
             },
             "require": {
@@ -6011,7 +6011,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/holidays/issues",
-                "source": "https://github.com/spatie/holidays/tree/1.23.0"
+                "source": "https://github.com/spatie/holidays/tree/1.24.0"
             },
             "funding": [
                 {
@@ -6019,7 +6019,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-11-06T14:48:17+00:00"
+            "time": "2026-01-22T17:04:12+00:00"
         },
         {
             "name": "spatie/image-optimizer",
@@ -9270,16 +9270,16 @@
         },
         {
             "name": "symfony/translation",
-            "version": "v8.0.3",
+            "version": "v8.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation.git",
-                "reference": "60a8f11f0e15c48f2cc47c4da53873bb5b62135d"
+                "reference": "db70c8ce7db74fd2da7b1d268db46b2a8ce32c10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation/zipball/60a8f11f0e15c48f2cc47c4da53873bb5b62135d",
-                "reference": "60a8f11f0e15c48f2cc47c4da53873bb5b62135d",
+                "url": "https://api.github.com/repos/symfony/translation/zipball/db70c8ce7db74fd2da7b1d268db46b2a8ce32c10",
+                "reference": "db70c8ce7db74fd2da7b1d268db46b2a8ce32c10",
                 "shasum": ""
             },
             "require": {
@@ -9339,7 +9339,7 @@
             "description": "Provides tools to internationalize your application",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/translation/tree/v8.0.3"
+                "source": "https://github.com/symfony/translation/tree/v8.0.4"
             },
             "funding": [
                 {
@@ -9359,7 +9359,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-12-21T10:59:45+00:00"
+            "time": "2026-01-13T13:06:50+00:00"
         },
         {
             "name": "symfony/translation-contracts",
@@ -15576,5 +15576,5 @@
         "php": "^8.4"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }
