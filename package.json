@@ -24,6 +24,7 @@
     "axios": "^1.13.3",
     "clsx": "^2.1.1",
     "concurrently": "^9.2.1",
+    "hono": "4.11.4",
     "jsdom": "^27.4.0",
     "laravel-vite-plugin": "^2.1.0",
     "patch-package": "^8.0.1",
