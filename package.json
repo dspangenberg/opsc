@@ -24,7 +24,7 @@
     "axios": "^1.13.3",
     "clsx": "^2.1.1",
     "concurrently": "^9.2.1",
-    "hono": "4.11.4",
+    "hono": "4.11.7",
     "jsdom": "^27.4.0",
     "laravel-vite-plugin": "^2.1.0",
     "patch-package": "^8.0.1",
@@ -115,10 +115,10 @@
   "packageManager": "pnpm@10.28.0",
   "pnpm": {
     "overrides": {
-      "hono": "4.11.4"
+      "hono": "4.11.7"
     },
     "overridesNotes": {
-      "hono": "Security pin to 4.11.4 to address JWT algorithm-confusion (CVE-2026-22817, CVE-2026-22818; affects <4.11.4). 4.11.4 is a breaking change requiring explicit \"alg\" option configuration in JWT/JWK middleware."
+      "hono": "Security pin to 4.11.7 to address JWT algorithm-confusion (CVE-2026-22817, CVE-2026-22818; affects <4.11.4). 4.11.4+ is a breaking change requiring explicit \"alg\" option configuration in JWT/JWK middleware."
     },
     "onlyBuiltDependencies": [
       "canvas"
