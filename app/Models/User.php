@@ -81,6 +81,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $appends = [
         'full_name',
         'reverse_full_name',
+        'is_impersonating',
         'initials',
         'avatar_url',
         'pending_email',
@@ -101,7 +102,7 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    public function getIsImpersonatingAttribute(): string
+    public function getIsImpersonatingAttribute(): bool
     {
         return app('impersonate')->isImpersonating();
     }

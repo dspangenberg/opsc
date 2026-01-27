@@ -23,7 +23,7 @@ const alertStyles = tv({
         icon: 'text-destructive'
       },
       info: {
-        base: 'border-yellow-200 bg-yellow-50',
+        base: 'border-yellow-200 bg-yellow-50 dark:border-yellow-900/40 dark:bg-yellow-950/40',
         description: 'text-yellow-700',
         icon: 'text-yellow-700'
       }

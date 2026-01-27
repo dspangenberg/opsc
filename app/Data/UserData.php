@@ -29,7 +29,7 @@ class UserData extends Data
         public readonly string $reverse_full_name,
         public readonly string $initials,
         public readonly ?string $user_agent,
-        public readonly ?string $pendingEmail,
+        public readonly ?string $pending_email,
         public readonly ?bool $is_impersonating,
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]

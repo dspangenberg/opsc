@@ -13,6 +13,13 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
+use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
+use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
+use Plank\Mediable\Exceptions\MediaUpload\FileNotFoundException;
+use Plank\Mediable\Exceptions\MediaUpload\FileNotSupportedException;
+use Plank\Mediable\Exceptions\MediaUpload\FileSizeException;
+use Plank\Mediable\Exceptions\MediaUpload\ForbiddenException;
+use Plank\Mediable\Exceptions\MediaUpload\InvalidHashException;
 use Plank\Mediable\Facades\MediaUploader;
 
 class ProfileController extends Controller
@@ -29,13 +36,10 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function edit(Request $request): Response
+    public function edit(): Response
     {
-        $user = Auth::user();
-
         return Inertia::render('App/Setting/Profile/ProfileEdit', [
-            'user' => $user,
-            'pendingEmail' => $user->getPendingEmail()
+            'user' => Auth::user(),
         ]);
     }
 
@@ -48,6 +52,15 @@ class ProfileController extends Controller
 
     /**
      * Update the user's profile information.
+     * @param  ProfileUpdateRequest  $request
+     * @return RedirectResponse
+     * @throws ConfigurationException
+     * @throws FileExistsException
+     * @throws FileNotFoundException
+     * @throws FileNotSupportedException
+     * @throws FileSizeException
+     * @throws ForbiddenException
+     * @throws InvalidHashException
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {

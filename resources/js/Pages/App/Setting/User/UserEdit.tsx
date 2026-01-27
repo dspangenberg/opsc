@@ -76,7 +76,7 @@ const UserEdit: React.FC<Props> = ({ user }) => {
   }
 
   const handleResendVerificationEmail = async () => {
-    router.post(route('user.verfication.send', { user: user.id }))
+    router.post(route('user.verification.send', { user: user.id }))
   }
 
   return (
@@ -95,7 +95,7 @@ const UserEdit: React.FC<Props> = ({ user }) => {
           </div>
         }
       >
-        {user.pendingEmail && (
+        {user.pending_email && (
           <Alert
             variant="info"
             actions={
@@ -108,7 +108,7 @@ const UserEdit: React.FC<Props> = ({ user }) => {
               />
             }
           >
-            Neue E-Mail-Adresse <strong>{user.pendingEmail}</strong> wurde noch nicht bestätigt.
+            Neue E-Mail-Adresse <strong>{user.pending_email}</strong> wurde noch nicht bestätigt.
           </Alert>
         )}
         <Form form={form}>

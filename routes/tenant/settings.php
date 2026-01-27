@@ -114,7 +114,7 @@ Route::delete('/settings/system/users/{user}/delete', [UserController::class, 'd
     ->middleware(['admin'])
     ->name('app.setting.system.user.delete');
 
-Route::post('/settings/system/users/{user}/verification-notification', [UserController::class, 'resendVerificationEmail'])->name('user.verfication.send')->middleware(['admin']);
+Route::post('/settings/system/users/{user}/verification-notification', [UserController::class, 'resendVerificationEmail'])->name('user.verification.send')->middleware(['admin']);
 
 Route::put('/settings/system/users/{user}/reset-password', [UserController::class, 'resetPassword'])
     ->middleware(['admin'])

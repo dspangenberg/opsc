@@ -37,7 +37,7 @@ const handleDelete = async (row: App.Data.UserData) => {
   }
 }
 
-const currentMail = (row: App.Data.UserData) => row.pendingEmail ?? row.email
+const currentMail = (row: App.Data.UserData) => row.pending_email ?? row.email
 
 const handleResetPassword = async (row: App.Data.UserData) => {
   router.put(route('app.setting.system.user.reset-password', { user: row.id }))
@@ -148,10 +148,13 @@ export const columns: ColumnDef<App.Data.UserData>[] = [
     accessorKey: 'email',
     header: 'E-Mail',
     size: 200,
-    cell: ({ getValue, row }) => (
-      <a href={mailLink(getValue() as string)} className="flex items-center gap-2 hover:underline">
+    cell: ({ row }) => (
+      <a
+        href={mailLink(currentMail(row.original))}
+        className="flex items-center gap-2 hover:underline"
+      >
         {currentMail(row.original)}
-        {row.original.pendingEmail ? (
+        {row.original.pending_email ? (
           <Icon icon={Loading01Icon} className="text-yellow-700" />
         ) : null}
       </a>

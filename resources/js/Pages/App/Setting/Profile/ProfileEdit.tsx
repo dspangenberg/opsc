@@ -1,22 +1,18 @@
+import { router } from '@inertiajs/core'
 import type * as React from 'react'
 import { PageContainer } from '@/Components/PageContainer'
+import { Alert } from '@/Components/twc-ui/alert'
+import { AvatarUpload } from '@/Components/twc-ui/avatar-upload'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
+import { FormCard } from '@/Components/twc-ui/form-card'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import type { PageProps } from '@/Types'
-import '@mdxeditor/editor/style.css'
-import { InformationCircleIcon } from '@hugeicons/core-free-icons'
-import { router } from '@inertiajs/core'
-import { Alert } from '@/Components/twc-ui/alert'
-import { AvatarUpload } from '@/Components/twc-ui/avatar-upload'
-import { FormCard } from '@/Components/twc-ui/form-card'
-import { Icon } from '@/Components/twc-ui/icon'
 
 interface Props extends PageProps {
   user: App.Data.UserData
   status: string
-  pendingEmail: string | null
 }
 
 type UserFormData = App.Data.UserData & {
@@ -24,7 +20,7 @@ type UserFormData = App.Data.UserData & {
   remove_avatar: boolean
 }
 
-const ProfilEdit: React.FC<Props> = ({ pendingEmail, user }) => {
+const ProfilEdit: React.FC<Props> = ({ user }) => {
   const form = useForm<UserFormData>('form-user-edit', 'put', route('app.profile.update'), {
     ...user,
     avatar: null,
@@ -64,7 +60,7 @@ const ProfilEdit: React.FC<Props> = ({ pendingEmail, user }) => {
           </div>
         }
       >
-        {pendingEmail && (
+        {user.pending_email && (
           <Alert
             variant="info"
             actions={
@@ -76,8 +72,8 @@ const ProfilEdit: React.FC<Props> = ({ pendingEmail, user }) => {
               />
             }
           >
-            Bevor Deine neue E-Mail-Adresse <strong>{pendingEmail}</strong> aktiv wird, musst Du die
-            Änderung bestätigen.
+            Bevor Deine neue E-Mail-Adresse <strong>{user.pending_email}</strong> aktiv wird, musst
+            Du die Änderung bestätigen.
           </Alert>
         )}
         <Form form={form}>
