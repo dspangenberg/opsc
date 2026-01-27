@@ -114,7 +114,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function canBeImpersonated(): bool
     {
-        return ! $this->is_impersonating;
+        return ! $this->is_admin;
     }
 
     public function getFullNameAttribute(): string
