@@ -3,7 +3,12 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { LockPasswordIcon, Logout02Icon, UserEdit01Icon } from '@hugeicons/core-free-icons'
+import {
+  LockPasswordIcon,
+  Logout02Icon,
+  UserEdit01Icon,
+  UserSwitchIcon
+} from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import { Pressable } from 'react-aria-components'
 import { ThemeSwitch } from '@/Components/theme-switch'
@@ -15,6 +20,10 @@ export function NavUser({ user }: { user: App.Data.UserData }) {
   const handleLogout = () => {
     router.post(route('app.logout', {}, false))
   }
+  const handleLeaveImpersonating = () => {
+    router.get(route('impersonate.leave'))
+  }
+
   return (
     <DropdownButton
       menuClassName="min-w-64"
@@ -63,7 +72,15 @@ export function NavUser({ user }: { user: App.Data.UserData }) {
         separator
         href={route('app.profile.change-password')}
       />
-      <MenuItem icon={Logout02Icon} title="Logout" onAction={() => handleLogout()} />
+      {user.is_impersonating ? (
+        <MenuItem
+          icon={UserSwitchIcon}
+          title="Zurück zum Admin-Account"
+          onAction={() => handleLeaveImpersonating()}
+        />
+      ) : (
+        <MenuItem icon={Logout02Icon} title="Logout" onAction={() => handleLogout()} />
+      )}
     </DropdownButton>
   )
 }

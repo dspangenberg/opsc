@@ -1,13 +1,14 @@
+import { router } from '@inertiajs/core'
 import type * as React from 'react'
 import { PageContainer } from '@/Components/PageContainer'
+import { Alert } from '@/Components/twc-ui/alert'
+import { AvatarUpload } from '@/Components/twc-ui/avatar-upload'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
+import { FormCard } from '@/Components/twc-ui/form-card'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import type { PageProps } from '@/Types'
-import '@mdxeditor/editor/style.css'
-import { AvatarUpload } from '@/Components/twc-ui/avatar-upload'
-import { FormCard } from '@/Components/twc-ui/form-card'
 
 interface Props extends PageProps {
   user: App.Data.UserData
@@ -34,6 +35,10 @@ const ProfilEdit: React.FC<Props> = ({ user }) => {
     }
   }
 
+  const handleResendVerificationEmail = () => {
+    router.post(route('verification.send'))
+  }
+
   const breadcrumbs = [{ title: 'Profil ändern' }]
 
   return (
@@ -55,7 +60,23 @@ const ProfilEdit: React.FC<Props> = ({ user }) => {
           </div>
         }
       >
-        <Form form={form} errorClassName="w-auto m-3">
+        {user.pending_email && (
+          <Alert
+            variant="info"
+            actions={
+              <Button
+                variant="link"
+                title="E-Mail erneut senden"
+                className="text-yellow-700"
+                onClick={handleResendVerificationEmail}
+              />
+            }
+          >
+            Bevor Deine neue E-Mail-Adresse <strong>{user.pending_email}</strong> aktiv wird, musst
+            Du die Änderung bestätigen.
+          </Alert>
+        )}
+        <Form form={form}>
           <FormGrid>
             <div className="col-span-2 inline-flex items-center justify-center">
               <div>
@@ -81,12 +102,7 @@ const ProfilEdit: React.FC<Props> = ({ user }) => {
             </div>
             <div className="col-span-2" />
             <div className="col-span-11">
-              <FormTextField
-                label="E-Mail"
-                isRequired
-                {...form.register('email')}
-                description="Die Änderung der E-Mail-Adresse wird erst nach Bestätigung wirksam."
-              />
+              <FormTextField label="E-Mail" isRequired {...form.register('email')} />
             </div>
           </FormGrid>
         </Form>

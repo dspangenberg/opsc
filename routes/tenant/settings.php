@@ -89,7 +89,8 @@ Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->n
 
 Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('app.profile.edit')->middleware([HandlePrecognitiveRequests::class]);
 Route::put('/profile/edit', [ProfileController::class, 'update'])->name('app.profile.update')->middleware([HandlePrecognitiveRequests::class]);
-
+Route::post('profile/verification-notification', [ProfileController::class, 'resendVerificationEmail'])->name('verification.send');
+Route::impersonate();
 
 Route::redirect('settings/system', '/app/settings/system/users')
     ->middleware(['admin'])
@@ -112,6 +113,8 @@ Route::put('/settings/system/users/{user}/edit', [UserController::class, 'update
 Route::delete('/settings/system/users/{user}/delete', [UserController::class, 'destroy'])
     ->middleware(['admin'])
     ->name('app.setting.system.user.delete');
+
+Route::post('/settings/system/users/{user}/verification-notification', [UserController::class, 'resendVerificationEmail'])->name('user.verification.send')->middleware(['admin']);
 
 Route::put('/settings/system/users/{user}/reset-password', [UserController::class, 'resetPassword'])
     ->middleware(['admin'])

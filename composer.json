@@ -12,6 +12,7 @@
     "endroid/qr-code": "^6.0.8",
     "erusev/parsedown": "^1.7",
     "inertiajs/inertia-laravel": "^2.0",
+    "lab404/laravel-impersonate": "^1.7",
     "laravel/framework": "^12",
     "laravel/sanctum": "^4.1.1",
     "laravel/tinker": "^2.10.1",
@@ -43,9 +44,9 @@
     "zanysoft/laravel-zip": "^3.0"
   },
   "require-dev": {
-    "barryvdh/laravel-debugbar": "^3.15.4",
     "barryvdh/laravel-ide-helper": "^3.5.5",
     "fakerphp/faker": "^1.24.1",
+    "fruitcake/laravel-debugbar": "^4.0",
     "kitloong/laravel-migrations-generator": "^7.1",
     "laradumps/laradumps": "^5.0",
     "larastan/larastan": "^3.0",

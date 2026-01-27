@@ -114,14 +114,12 @@ export const Form = <T extends FormSchema>({
         {...props}
       >
         {form.errors && (
-          <div className="mx-3">
-            <FormErrors
-              className={errorClassName}
-              errors={form.errors}
-              title={errorTitle}
-              showErrors={errorVariant === 'form'}
-            />
-          </div>
+          <FormErrors
+            className={errorClassName}
+            errors={form.errors}
+            title={errorTitle}
+            showErrors={errorVariant === 'form'}
+          />
         )}
         <fieldset disabled={form.processing}>{children}</fieldset>
       </form>
