@@ -225,9 +225,9 @@
         <th>Kreditor</th>
         <th>Referenz</th>
         <th>Kostenstelle</th>
-        <th class="right">Betrag (brutto)</th>
-        <th class="right">Offen</th>
-        <th class="right">Bezahlt am</th>
+        <th class="right" style="width: 25mm;">Betrag (brutto)</th>
+        <th class="right" style="width: 20mm;">Offen</th>
+        <th class="right" style="width: 20mm;">Bezahlt am</th>
       </tr>
     </thead>
     <tbody>
@@ -235,7 +235,7 @@
       <tr>
         <td>{{ $receipt->issued_on->format('d.m.Y') }}</td>
         <td>{{ $receipt->document_number }}</td>
-        <td>{{ $receipt->contact->fullname }}</td>
+        <td class="truncate">{{ $receipt->contact->fullname }}</td>
         <td class="truncate">{{ $receipt->reference }}</td>
         <td class="truncate">{{ $receipt->cost_center?->name }}</td>
         <td class="right">{{ number_format($receipt->amount, 2, ',', '.')}} EUR</td>
