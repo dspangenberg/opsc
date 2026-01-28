@@ -102,31 +102,36 @@ export const InvoiceReportDialog = {
       document.body.appendChild(container)
       const root = createRoot(container)
 
+      let cleaned = false
       const cleanup = () => {
+        if (cleaned) return
+        cleaned = true
         root.unmount()
         if (container.parentNode) {
           container.parentNode.removeChild(container)
         }
       }
 
+      const timeoutId = window.setTimeout(() => {
+        cleanup()
+        resolve(false)
+      }, 500000)
+
       root.render(
         <InvoiceReportDialogComponent
           {...params}
           onConfirm={(range: RangeValue<DateValue> | null, withPayments: boolean) => {
+            clearTimeout(timeoutId)
             cleanup()
             resolve({ range, withPayments })
           }}
           onCancel={() => {
+            clearTimeout(timeoutId)
             cleanup()
             resolve(false)
           }}
         />
       )
-
-      setTimeout(() => {
-        cleanup()
-        resolve(false)
-      }, 500000)
     })
   },
 

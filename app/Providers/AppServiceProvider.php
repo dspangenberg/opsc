@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Stancl\Tenancy\Events\TenancyInitialized;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,8 +32,13 @@ class AppServiceProvider extends ServiceProvider
             Mail::alwaysTo('danny.spangenberg@twiceware.de');
         }
         Vite::prefetch(concurrency: 3);
-        Response::macro('inlineFile', function (string $path, string $filename, array $headers = []) {
-            $disposition = 'inline; filename="'.$filename.'"';
+        Response::macro('inlineFile', function (string $path, string $filename, array $headers = []): BinaryFileResponse {
+            $fallback = preg_replace('/[^\x20-\x7E]/', '', $filename) ?: 'file.pdf';
+            $disposition = (new ResponseHeaderBag)->makeDisposition(
+                ResponseHeaderBag::DISPOSITION_INLINE,
+                $filename,
+                $fallback
+            );
 
             return response()->file($path, array_merge($headers, [
                 'Content-Disposition' => $disposition,

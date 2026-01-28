@@ -13,7 +13,7 @@ test('inlineFile response macro sets the inline filename header', function () {
 
     expect($response)->toBeInstanceOf(BinaryFileResponse::class)
         ->and($response->headers->get('Content-Disposition'))
-        ->toBe('inline; filename="report.pdf"');
+        ->toBe('inline; filename=report.pdf');
 
     unlink($path);
 });

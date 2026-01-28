@@ -18,7 +18,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children, invoice }) =>
         <DataTable columns={columns} data={payable} itemName="Keine Zahlungen gefunden." />
       </div>
       <div className="h-fit w-full max-w-sm flex-none px-1">
-        <div className="fixed w-full space-y-6">
+        <div className="fixed w-full max-w-sm space-y-6">
           <InvoiceDetailsSide invoice={invoice} />
         </div>
       </div>
