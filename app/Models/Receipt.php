@@ -21,6 +21,7 @@ use Plank\Mediable\MediableCollection;
  * @property-read Collection<int, Media> $media
  * @property-read int|null $media_count
  * @property-read NumberRangeDocumentNumber|null $numberRangeDocumentNumber
+ *
  * @method static MediableCollection<int, static> all($columns = ['*'])
  * @method static MediableCollection<int, static> get($columns = ['*'])
  * @method static Builder<static>|Receipt newModelQuery()
@@ -32,12 +33,14 @@ use Plank\Mediable\MediableCollection;
  * @method static Builder<static>|Receipt withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static Builder<static>|Receipt withMediaAndVariantsMatchAll($tags = [])
  * @method static Builder<static>|Receipt withMediaMatchAll(bool $tags = [], bool $withVariants = false)
+ *
  * @property-read BookkeepingBooking|null $booking
  * @property-read CostCenter|null $cost_center
  * @property-read float $open_amount
  * @property-read Collection<int, Payment> $payable
  * @property-read int|null $payable_count
  * @property-read NumberRangeDocumentNumber|null $range_document_number
+ *
  * @mixin Eloquent
  */
 class Receipt extends Model
@@ -46,7 +49,7 @@ class Receipt extends Model
 
     protected $appends = [
         'document_number',
-        'open_amount'
+        'open_amount',
     ];
 
     protected $attributes = [
@@ -79,7 +82,7 @@ class Receipt extends Model
         'text',
         'data',
         'file_created_at',
-        'duplicate_of'
+        'duplicate_of',
     ];
 
     public function getDocumentNumberAttribute(): string
@@ -94,9 +97,15 @@ class Receipt extends Model
 
     public function getOpenAmountAttribute(): float
     {
-        return ($this->amount + $this->payable_sum_amount );
+        return $this->amount + $this->payable_sum_amount;
     }
 
+    public function getOriginalFilename(): string
+    {
+        $media = $this->firstMedia('file');
+
+        return $media?->filename ?? $this->org_filename;
+    }
 
     public function cost_center(): BelongsTo
     {
@@ -127,6 +136,7 @@ class Receipt extends Model
     {
         return $this->morphMany(Payment::class, 'payable');
     }
+
     public function booking(): MorphOne
     {
         return $this->morphOne(BookkeepingBooking::class, 'bookable');
@@ -148,7 +158,7 @@ class Receipt extends Model
         );
         $name = strtoupper($accounts['name']);
         $bookingTextSuffix = $receipt->org_currency !== 'EUR' ? '(originär '.number_format($receipt->org_amount, 2, ',',
-                '.').' '.$receipt->org_currency.')' : '';
+            '.').' '.$receipt->org_currency.')' : '';
 
         $booking->booking_text = "Rechnungseingang|$name|$receipt->reference|$bookingTextSuffix";
         $booking->save();

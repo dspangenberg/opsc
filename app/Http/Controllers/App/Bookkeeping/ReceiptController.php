@@ -8,8 +8,6 @@ use App\Data\CurrencyData;
 use App\Data\ReceiptData;
 use App\Data\TransactionData;
 use App\Facades\BookeepingRuleService;
-use App\Facades\DownloadService;
-use App\Facades\FileHelperService;
 use App\Facades\WeasyPdfService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReceiptReportRequest;
@@ -26,13 +24,9 @@ use App\Models\NumberRange;
 use App\Models\Payment;
 use App\Models\Receipt;
 use App\Models\Transaction;
-use App\Services\BookingService;
-use App\Services\PaymentService;
-use App\Services\ReceiptService;
 use Exception;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Plank\Mediable\Exceptions\MediaMoveException;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
@@ -49,7 +43,6 @@ use Throwable;
 
 class ReceiptController extends Controller
 {
-
     public function index()
     {
         $receipts = Receipt::query()
@@ -57,7 +50,7 @@ class ReceiptController extends Controller
                 'account',
                 'range_document_number',
                 'contact',
-                'cost_center'
+                'cost_center',
             ])
             ->withAggregate(
                 ['payable' => function ($query) {
@@ -74,7 +67,7 @@ class ReceiptController extends Controller
                 'min'
             )
             // ->orderBy('payable_min_issued_on', 'asc')  // Sortierung nach Zahlungsdatum
-            //->orderByRaw('payable_min_issued_on IS NULL, payable_min_issued_on ASC')
+            // ->orderByRaw('payable_min_issued_on IS NULL, payable_min_issued_on ASC')
             ->orderBy('issued_on')
             ->paginate();
 
@@ -94,6 +87,7 @@ class ReceiptController extends Controller
     public function streamPdf(Receipt $receipt)
     {
         $media = $receipt->firstMedia('file');
+
         return response()->streamDownload(
             function () use ($media) {
                 $stream = $media->stream();
@@ -104,7 +98,7 @@ class ReceiptController extends Controller
             $media->basename,
             [
                 'Content-Type' => $media->mime_type,
-                'Content-Length' => $media->size
+                'Content-Length' => $media->size,
             ]
         );
     }
@@ -114,7 +108,7 @@ class ReceiptController extends Controller
         $receipt = Receipt::query()->where('is_confirmed', false)->orderBy('issued_on')->first();
 
         // Prüfung, ob unbestätigte Receipts existieren
-        if (!$receipt) {
+        if (! $receipt) {
             // Redirect zur Hauptseite oder zeige eine Nachricht an, wenn keine Receipts zu bestätigen sind
             return redirect()->route('app.bookkeeping.receipts.index')
                 ->with('message', 'Alle Belege sind bereits bestätigt.');
@@ -157,13 +151,12 @@ class ReceiptController extends Controller
         $receipt->contact_id = $request->validated('contact_id');
         $receipt->cost_center_id = $request->validated('cost_center_id');
 
-
         $shouldConfirm = $request->query('confirm', false);
         $shouldLoadNext = $request->query('load_next', true);
 
         $receipt->save();
 
-        if (!$receipt->is_confirmed) {
+        if (! $receipt->is_confirmed) {
             $receipt->is_confirmed = true;
             $receipt->duplicate_of = null;
             $receipt->save();
@@ -186,10 +179,8 @@ class ReceiptController extends Controller
         return redirect()->route('app.bookkeeping.receipts.confirm', ['receipt' => $receipt->id]);
     }
 
-    /**
-     */
-
-    public function createPayments(Receipt $receipt) {
+    public function createPayments(Receipt $receipt)
+    {
         $receipt->load(['account', 'range_document_number', 'contact']);
 
         $transactions = null;
@@ -204,7 +195,7 @@ class ReceiptController extends Controller
         return Inertia::modal('App/Bookkeeping/Receipt/ReceiptLinkTransactions', [])
             ->with([
                 'receipt' => ReceiptData::from($receipt),
-                'transactions' => $transactions ? transactionData::collect($transactions) : null
+                'transactions' => $transactions ? transactionData::collect($transactions) : null,
             ])->baseRoute('app.bookkeeping.receipts.confirm', ['receipt' => $receipt->id]);
     }
 
@@ -216,7 +207,7 @@ class ReceiptController extends Controller
 
         $transaction = Transaction::whereIn('id', $ids)->first();
 
-        if (!$transaction->is_locked) {
+        if (! $transaction->is_locked) {
             Transaction::createBooking($transaction);
         }
 
@@ -225,13 +216,10 @@ class ReceiptController extends Controller
         $payment->transaction_id = $transaction->id;
         $payment->issued_on = $transaction->booked_on;
         $payment->is_currency_difference = false;
-        $payment->amount = 0-$receipt->amount;
+        $payment->amount = 0 - $receipt->amount;
         $payment->save();
 
         ReceiptController::checkForCurrencyDifference($receipt, $payment, $transaction);
-
-
-
 
         return redirect()->route('app.bookkeeping.receipts.edit', ['receipt' => $receipt->id]);
 
@@ -275,7 +263,7 @@ class ReceiptController extends Controller
         $currencies = Currency::query()->orderBy('name')->get();
         $costCenters = CostCenter::query()->orderBy('name')->get();
 
-        $receipt->org_filename = $receipt->getMedia('file')->first()->filename;
+        $receipt->org_filename = $receipt->getOriginalFilename();
 
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptEdit', [
             'receipt' => ReceiptData::from($receipt),
@@ -284,6 +272,7 @@ class ReceiptController extends Controller
             'currencies' => CurrencyData::collect($currencies),
         ]);
     }
+
     public function confirm(Receipt $receipt)
     {
         $receipt->load(['account', 'range_document_number', 'contact']);
@@ -314,7 +303,6 @@ class ReceiptController extends Controller
         $currencies = Currency::query()->orderBy('name')->get();
         $costCenters = CostCenter::query()->orderBy('name')->get();
 
-
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptConfirm', [
             'receipt' => ReceiptData::from($receipt),
             'nextReceipt' => $nextReceipt ? route('app.bookkeeping.receipts.confirm',
@@ -344,17 +332,19 @@ class ReceiptController extends Controller
 
         DownloadJob::dispatch($download->id, auth()->user());
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Dein Download wird erstellt.']);
+
         return redirect()->back();
 
     }
 
-    public function createReport (ReceiptReportRequest $request): BinaryFileResponse {
+    public function createReport(ReceiptReportRequest $request): BinaryFileResponse
+    {
         $receipts = Receipt::query()
             ->with([
                 'account',
                 'range_document_number',
                 'contact',
-                'cost_center'
+                'cost_center',
             ])
             ->withAggregate(
                 ['payable' => function ($query) {
@@ -380,7 +370,9 @@ class ReceiptController extends Controller
                 'begin_on' => $request->validated('begin_on'),
                 'end_on' => $request->validated('end_on'),
             ]);
-        return response()->file($pdf);
+        $filename = now()->format('Y-m-d-H-i').'-Auswertung-Eingangsrechnungen.pdf';
+
+        return response()->inlineFile($pdf, $filename);
     }
 
     public function lock(Request $request)
@@ -409,12 +401,12 @@ class ReceiptController extends Controller
             'receipts' => Inertia::deepMerge($receipts)->matchOn('id'),
         ]);
     }
+
     public function runRules(Request $request)
     {
 
         $ids = $request->query('ids');
         $receiptIds = explode(',', $ids);
-
 
         BookeepingRuleService::run('receipts', new Receipt, $receiptIds);
         $receipts = Receipt::whereIn('id', $receiptIds)->get();
@@ -423,7 +415,7 @@ class ReceiptController extends Controller
         ]);
     }
 
-// Die Datei existiert bereits und kann direkt verwendet werden
+    // Die Datei existiert bereits und kann direkt verwendet werden
     /**
      * @throws FileNotSupportedException
      * @throws FileExistsException
@@ -439,86 +431,85 @@ class ReceiptController extends Controller
         $files = $request->file('files');
         $uploadedReceipts = [];
 
+        foreach ($files as $file) {
+            $receipt = new Receipt;
+            $receipt->org_filename = $file->getClientOriginalName();
+            $receipt->file_size = $file->getSize();
 
-            foreach ($files as $file) {
-                $receipt = new Receipt;
-                $receipt->org_filename = $file->getClientOriginalName();
-                $receipt->file_size = $file->getSize();
+            if ($file->getMimeType() === 'application/zip') {
+                $tempPath = $file->store('temp/zip-uploads');
+                $fullPath = storage_path('app/'.$tempPath);
 
-                if ($file->getMimeType() === 'application/zip') {
-                    $tempPath = $file->store('temp/zip-uploads');
-                    $fullPath = storage_path('app/' . $tempPath);
+                ReceiptUploadJob::dispatch($fullPath);
 
+                return redirect()->route('app.bookkeeping.receipts.confirm-first');
+            }
 
-                    ReceiptUploadJob::dispatch($fullPath);
-                    return redirect()->route('app.bookkeeping.receipts.confirm-first');
-                }
+            try {
+                $parser = new Parser;
+                $pdf = $parser->parseFile($file);
+                $metadata = $pdf->getDetails();
 
-                try {
-                    $parser = new Parser();
-                    $pdf = $parser->parseFile($file);
-                    $metadata = $pdf->getDetails();
+                $receipt->file_created_at = $metadata['CreationDate'] ?? $file->getMTime();
+                $receipt->pages = $metadata['Pages'] ?? 1;
+                $receipt->text = $pdf->getText();
+            } catch (Exception) {
+                $receipt->file_created_at = $file->getMTime();
+                $receipt->pages = 1;
+                $receipt->text = '';
+            }
 
-                    $receipt->file_created_at = $metadata['CreationDate'] ?? $file->getMTime();
-                    $receipt->pages = $metadata['Pages'] ?? 1;
-                    $receipt->text = $pdf->getText();
-                } catch (Exception) {
-                    $receipt->file_created_at = $file->getMTime();
-                    $receipt->pages = 1;
-                    $receipt->text = '';
-                }
+            $receipt->checksum = hash_file('sha256', $file->getRealPath());
+            $receipt->issued_on = $receipt->file_created_at;
 
-                $receipt->checksum = hash_file('sha256', $file->getRealPath());
-                $receipt->issued_on = $receipt->file_created_at;
-
-                if ($receipt->text) {
-                    // IBAN Pattern für deutsche/europäische IBANs
-                    $ibanPattern = '/\bDE\s?[0-9]{2}(?:\s?[A-Z0-9]{4}){4}\s?[A-Z0-9]{2}\b/';
-                    preg_match($ibanPattern, $receipt->text, $matches);
-                    if (!empty($matches)) {
-                        foreach ($matches as $match) {
-                            $cleanIban = preg_replace('/\s/', '', $match);
-                            $contact = Contact::query()->where('iban', $cleanIban)->first();
-                            if ($contact) {
-                                $receipt->contact_id = $contact->id;
-                                if ($contact->cost_center_id) {
-                                    $receipt->cost_center_id = $contact->cost_center_id;
-                                }
+            if ($receipt->text) {
+                // IBAN Pattern für deutsche/europäische IBANs
+                $ibanPattern = '/\bDE\s?[0-9]{2}(?:\s?[A-Z0-9]{4}){4}\s?[A-Z0-9]{2}\b/';
+                preg_match($ibanPattern, $receipt->text, $matches);
+                if (! empty($matches)) {
+                    foreach ($matches as $match) {
+                        $cleanIban = preg_replace('/\s/', '', $match);
+                        $contact = Contact::query()->where('iban', $cleanIban)->first();
+                        if ($contact) {
+                            $receipt->contact_id = $contact->id;
+                            if ($contact->cost_center_id) {
+                                $receipt->cost_center_id = $contact->cost_center_id;
                             }
                         }
                     }
                 }
-
-                $receipt->save();
-
-                BookeepingRuleService::run('receipts', new Receipt, [$receipt->id]);
-
-                $receipt->refresh();
-                if ($receipt->contact_id && !$receipt->cost_center_id) {
-                    $receipt->cost_center_id = Contact::find($receipt->contact_id)->cost_center_id;
-                    $receipt->save();
-                }
-
-                $media = MediaUploader::fromSource($file)
-                    ->toDestination('s3_private', 'uploads/'.$receipt->issued_on->format('Y/m/'))
-                    ->upload();
-
-                $receipt->attachMedia($media, 'file');
-
-                $duplicatedReceipt = Receipt::query()
-                    ->where('id', '!=', $receipt->id)
-                    ->where('checksum', $receipt->checksum)
-                    ->where('org_filename', $receipt->org_filename)
-                    ->where('file_size', $receipt->file_size)
-                    ->first();
-
-                if ($duplicatedReceipt) {
-                    $receipt->duplicate_of = $duplicatedReceipt->id;
-                    $receipt->save();
-                }
-
-                $uploadedReceipts[] = $receipt;
             }
+
+            $receipt->save();
+
+            BookeepingRuleService::run('receipts', new Receipt, [$receipt->id]);
+
+            $receipt->refresh();
+            if ($receipt->contact_id && ! $receipt->cost_center_id) {
+                $receipt->cost_center_id = Contact::find($receipt->contact_id)->cost_center_id;
+                $receipt->save();
+            }
+
+            $media = MediaUploader::fromSource($file)
+                ->toDestination('s3_private', 'uploads/'.$receipt->issued_on->format('Y/m/'))
+                ->upload();
+
+            $receipt->attachMedia($media, 'file');
+
+            $duplicatedReceipt = Receipt::query()
+                ->where('id', '!=', $receipt->id)
+                ->where('checksum', $receipt->checksum)
+                ->where('org_filename', $receipt->org_filename)
+                ->where('file_size', $receipt->file_size)
+                ->first();
+
+            if ($duplicatedReceipt) {
+                $receipt->duplicate_of = $duplicatedReceipt->id;
+                $receipt->save();
+            }
+
+            $uploadedReceipts[] = $receipt;
+        }
 
         return redirect()->route('app.bookkeeping.receipts.confirm-first');
     }

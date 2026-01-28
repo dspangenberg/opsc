@@ -11,7 +11,8 @@ import {
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/core'
 import { usePage } from '@inertiajs/react'
-import { getYear } from 'date-fns'
+import { getLocalTimeZone } from '@internationalized/date'
+import { endOfYear, getYear, startOfYear } from 'date-fns'
 import { debounce, sumBy } from 'lodash'
 import * as React from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -22,12 +23,15 @@ import { StatsField } from '@/Components/StatsField'
 import { Button } from '@/Components/twc-ui/button'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { MenuItem } from '@/Components/twc-ui/menu'
+import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
 import { Select } from '@/Components/twc-ui/select'
 import { Separator } from '@/Components/twc-ui/separator'
 import { ToggleButton } from '@/Components/twc-ui/toggle-button'
 import { Toolbar } from '@/Components/twc-ui/toolbar'
 import { BorderedBox } from '@/Components/twcui/bordered-box'
 import { Badge } from '@/Components/ui/badge'
+import { formatDate, toDateValue } from '@/Lib/DateHelper'
+import { InvoiceReportDialog } from '@/Pages/App/Invoice/InvoiceReportDialog'
 import type { PageProps } from '@/Types'
 import { columns } from './InvoiceIndexColumns'
 
@@ -141,6 +145,29 @@ const InvoiceIndex: React.FC = () => {
     router.visit(route('app.invoice.create'))
   }, [])
 
+  const handleCreateReport = async () => {
+    const result = await InvoiceReportDialog.call({
+      defaultRange: { start: toDateValue(startOfYear(year)), end: toDateValue(endOfYear(year)) }
+    })
+    if (!result) return
+    const startDate = result.range?.start
+      ? formatDate(result.range.start.toDate(getLocalTimeZone()), 'yyyy-MM-dd')
+      : ''
+    const endDate = result.range?.end
+      ? formatDate(result.range.end.toDate(getLocalTimeZone()), 'yyyy-MM-dd')
+      : ''
+
+    const url = route('app.invoice.report', {
+      begin_on: startDate,
+      end_on: endDate,
+      with_payments: result.withPayments
+    })
+
+    await PdfViewer.call({
+      file: url
+    })
+  }
+
   const toolbar = useMemo(
     () => (
       <Toolbar>
@@ -150,7 +177,7 @@ const InvoiceIndex: React.FC = () => {
           title="Neue Rechnung"
           onClick={handleInvoiceCreateClicked}
         />
-        <Button variant="toolbar" icon={PrinterIcon} title="Drucken" disabled={true} />
+        <Button variant="toolbar" icon={PrinterIcon} title="Drucken" onClick={handleCreateReport} />
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} title="Weitere Optionen">
           <MenuItem icon={Add01Icon} title="Rechnung hinzufügen" ellipsis separator />
           <MenuItem icon={PrinterIcon} title="Auswertung drucken" ellipsis />

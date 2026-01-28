@@ -53,7 +53,6 @@ const ProfilEdit: React.FC<Props> = ({ user }) => {
     >
       <FormCard
         className="mx-auto flex max-w-3xl flex-1 overflow-y-hidden"
-        innerClassName="bg-white"
         footer={
           <div className="flex flex-none items-center justify-end gap-2 px-4 py-2">
             {form.isDirty && (

@@ -1,24 +1,30 @@
 import { useCallback } from 'react'
+import type { MouseEvent } from 'react'
+import { extractFilenameFromContentDisposition } from '@/Lib/file-download'
 
 interface FileDownloadProps {
-  route: string
+  route?: string
   filename?: string
 }
 
-export const useFileDownload = ({ route, filename }: FileDownloadProps) => {
-  const handleDownload = useCallback(() => {
-    fetch(route as unknown as string)
+type HandleDownload = (route?: string | MouseEvent, filename?: string) => void
+
+export const useFileDownload = (options?: FileDownloadProps): { handleDownload: HandleDownload } => {
+  const { route: defaultRoute, filename: defaultFilename } = options ?? {}
+  const handleDownload = useCallback<HandleDownload>((route, filename) => {
+    const resolvedRoute = typeof route === 'string' ? route : defaultRoute
+    const resolvedFilename = filename ?? defaultFilename
+
+    if (!resolvedRoute) {
+      console.error('Error downloading file: missing route')
+      return
+    }
+
+    fetch(resolvedRoute as unknown as string)
       .then(async res => {
         // Dateinamen aus dem Content-Disposition Header extrahieren
         const contentDisposition = res.headers.get('Content-Disposition')
-        let serverFilename = filename
-
-        if (contentDisposition) {
-          const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
-          if (filenameMatch?.[1]) {
-            serverFilename = filenameMatch[1].replace(/['"]/g, '')
-          }
-        }
+        const serverFilename = extractFilenameFromContentDisposition(contentDisposition) ?? resolvedFilename
 
         const blob = await res.blob()
         return {
@@ -40,7 +46,7 @@ export const useFileDownload = ({ route, filename }: FileDownloadProps) => {
         console.error('Error downloading file:', error)
         // You might want to add some error handling here, like showing a notification to the user
       })
-  }, [filename, route])
+  }, [defaultFilename, defaultRoute])
 
   return { handleDownload }
 }

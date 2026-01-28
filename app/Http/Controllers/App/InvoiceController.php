@@ -14,8 +14,10 @@ use App\Data\PaymentDeadlineData;
 use App\Data\ProjectData;
 use App\Data\TaxData;
 use App\Data\TransactionData;
+use App\Facades\WeasyPdfService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceDetailsBaseUpdateRequest;
+use App\Http\Requests\InvoiceReportRequest;
 use App\Http\Requests\InvoiceStoreRequest;
 use App\Models\Contact;
 use App\Models\Invoice;
@@ -525,6 +527,48 @@ class InvoiceController extends Controller
         });
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
+    }
+
+    public function createReport(InvoiceReportRequest $request): BinaryFileResponse
+    {
+        $invoices = Invoice::query()
+            ->where('is_draft', false)
+            ->with('invoice_contact')
+            ->with('contact')
+            ->with('project')
+            ->with('payment_deadline')
+            ->with('parent_invoice')
+            ->with('offer')
+            ->with('type')
+            ->with([
+                'lines' => function ($query) {
+                    $query->with('linked_invoice')->with('rate')->orderBy('pos')->orderBy('id');
+                },
+            ])
+            ->with('booking')
+            ->with('tax')
+            ->with('tax.rates')
+            ->withSum('lines', 'amount')
+            ->withSum('lines', 'tax')
+            ->withSum('payable', 'amount')
+            ->with(['payable', function ($query) {
+                $query->orderBy('issued_on', 'asc');
+            }])
+            ->with('payable.transaction')
+            ->whereBetween('issued_on', [$request->validated('begin_on'), $request->validated('end_on')])
+            ->orderBy('issued_on', 'asc')
+            ->get();
+
+        $pdf = WeasyPdfService::createPdf('receipt-report', 'pdf.invoice.report',
+            [
+                'invoices' => $invoices,
+                'begin_on' => $request->validated('begin_on'),
+                'end_on' => $request->validated('end_on'),
+                'with_payments' => $request->validated('with_payments'),
+            ]);
+        $filename = now()->format('Y-m-d-H-i').'-Auswertung-Ausgangsrechnungen.pdf';
+
+        return response()->inlineFile($pdf, $filename);
     }
 
     public function deleteLine(Invoice $invoice, InvoiceLine $invoiceLine)

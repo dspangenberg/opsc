@@ -6,6 +6,7 @@ use App\Services\WeasyPdfService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Stancl\Tenancy\Events\TenancyInitialized;
@@ -29,6 +30,13 @@ class AppServiceProvider extends ServiceProvider
             Mail::alwaysTo('danny.spangenberg@twiceware.de');
         }
         Vite::prefetch(concurrency: 3);
+        Response::macro('inlineFile', function (string $path, string $filename, array $headers = []) {
+            $disposition = 'inline; filename="'.$filename.'"';
+
+            return response()->file($path, array_merge($headers, [
+                'Content-Disposition' => $disposition,
+            ]));
+        });
 
         // Tenant-aware settings cache - listen to tenancy events
         Event::listen(TenancyInitialized::class, function (TenancyInitialized $event) {
