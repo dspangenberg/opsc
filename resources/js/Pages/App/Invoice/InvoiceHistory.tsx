@@ -1,7 +1,8 @@
-import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
+import { DataTable } from '@/Components/DataTable'
 import { InvoiceDetailsLayout } from '@/Pages/App/Invoice/InvoiceDetailsLayout'
 import { InvoiceDetailsSide } from '@/Pages/App/Invoice/InvoiceDetailsSide'
+import { columns } from '@/Pages/App/Invoice/InvoicePaymentColumns'
 import type { PageProps } from '@/Types'
 
 interface InvoiceDetailsProps extends PageProps {
@@ -9,12 +10,13 @@ interface InvoiceDetailsProps extends PageProps {
   children?: React.ReactNode
 }
 
-const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
-  const { invoice } = usePage<InvoiceDetailsProps>().props
-
+const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children, invoice }) => {
+  const payable = Array.isArray(invoice?.payable) ? invoice.payable : []
   return (
     <InvoiceDetailsLayout invoice={invoice}>
-      <div className="flex-1">History</div>
+      <div className="flex-1">
+        <DataTable columns={columns} data={payable} itemName="Keine Zahlungen gefunden." />
+      </div>
       <div className="h-fit w-full max-w-sm flex-none px-1">
         <InvoiceDetailsSide invoice={invoice} />
       </div>
