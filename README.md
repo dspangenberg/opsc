@@ -31,7 +31,7 @@ If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Lar
 
 ## MCP Configuration
 
-Copy `.junie/mcp/mcp.json.example` to `.junie/mcp/mcp.json` and replace the placeholder paths (especially `herd.command`, `herd.args`, and `herd.env.SITE_PATH`) with your local paths.
+Copy `.ai/mcp/mcp.json.example` to `.ai/mcp/mcp.json` and replace the placeholders (or set `HERD_COMMAND`, `HERD_ARGS`, and `SITE_PATH` in your environment). If you need multiple Herd args, split them into separate array entries.
 
 ## Laravel Sponsors
 

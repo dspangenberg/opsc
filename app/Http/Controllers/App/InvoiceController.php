@@ -29,9 +29,9 @@ use App\Models\Time;
 use App\Models\Transaction;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Illuminate\Support\Facades\DB;
 
 class InvoiceController extends Controller
 {
@@ -45,7 +45,7 @@ class InvoiceController extends Controller
             $year = $currentYear;
         }
 
-        if ($year && !$years->contains($year)) {
+        if ($year && ! $years->contains($year)) {
             $years->push($year);
         }
 
@@ -340,7 +340,7 @@ class InvoiceController extends Controller
 
     public function markAsSent(Invoice $invoice)
     {
-        if (!$invoice->sent_at) {
+        if (! $invoice->sent_at) {
             $invoice->sent_at = now();
             $invoice->save();
 
@@ -383,7 +383,8 @@ class InvoiceController extends Controller
             ->loadSum('lines', 'amount')
             ->loadSum('lines', 'tax')
             ->loadSum('payable', 'amount')
-            ->load('payable.transaction')->get();
+            ->load('payable.transaction');
+
         return Inertia::render('App/Invoice/InvoiceHistory', [
             'invoice' => InvoiceData::from($invoice),
         ]);
@@ -391,7 +392,7 @@ class InvoiceController extends Controller
 
     public function createBooking(Invoice $invoice)
     {
-        if (!$invoice->sent_at) {
+        if (! $invoice->sent_at) {
             $invoice->sent_at = now();
             $invoice->save();
         }

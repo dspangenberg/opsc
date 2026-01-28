@@ -23,6 +23,7 @@ yarn-error.log
 /.vscode
 /.zed
 .junie/mcp/mcp.json
+.ai/mcp/mcp.json
 .npmrc
 /storage/system/pdfs
 /storage/system/invoices

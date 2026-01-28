@@ -29,7 +29,7 @@ export const columns: ColumnDef<App.Data.PaymentData>[] = [
     }
   },
   {
-    accessorKey: 'amount',
+    accessorKey: 'transaction.amount',
     header: () => <div className="text-right">angewiesen</div>,
     size: 80,
     cell: ({ row }) => (
