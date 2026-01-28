@@ -50,12 +50,17 @@ class DownloadService
         }
 
         $zip->close();
-        $media = MediaUploader::fromSource($zipFileName)
-            ->toDestination('s3_private', 'download/'.$documentDownload->id.'.zip')
-            ->upload();
 
-        Mail::to($user->email)->send(new DownloadEmail($user,
-            $media->getTemporaryUrl(Carbon::now()->addMinutes(60))));
+        try {
+            $media = MediaUploader::fromSource($zipFileName)
+                ->toDestination('s3_private', 'download/'.$documentDownload->id.'.zip')
+                ->upload();
+
+            Mail::to($user->email)->send(new DownloadEmail($user,
+                $media->getTemporaryUrl(Carbon::now()->addMinutes(60))));
+        } finally {
+            unlink($zipFileName);
+        }
 
     }
 }
