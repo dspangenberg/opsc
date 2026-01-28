@@ -2,9 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Facades\DownloadService;
+use App\Services\DownloadService;
 use App\Models\User;
-use App\Services\ReceiptService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Exception;

@@ -80,7 +80,7 @@ const UserEdit: React.FC<Props> = ({ user }) => {
   }
 
   const handleClearPendingMailAddress = async () => {
-    router.post(route('profile.clear-pending-mail-address', { user: user.id }))
+    router.post(route('user.clear-pending-mail-address', { user: user.id }))
   }
 
   return (
