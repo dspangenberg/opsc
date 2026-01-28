@@ -384,9 +384,7 @@ class InvoiceController extends Controller
             ->loadSum('lines', 'amount')
             ->loadSum('lines', 'tax');
 
-        ds($invoice->toArray());
-
-        return Inertia::render('App/Invoice/InvoiceHistory', [
+        sreturn Inertia::render('App/Invoice/InvoiceHistory', [
             'invoice' => InvoiceData::from($invoice),
         ]);
     }
