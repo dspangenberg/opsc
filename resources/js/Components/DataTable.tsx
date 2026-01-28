@@ -54,10 +54,10 @@ export function DataTable<TData, TValue>({
     <div className="flex h-full flex-1 flex-col overflow-hidden">
       <div className="mx-2 flex-none">{header}</div>
 
-      <div className="relative flex max-h-fit flex-1 flex-col overflow-hidden rounded-lg border border-border/80 bg-page-content p-1.5">
+      <div className="relative flex max-h-fit w-full flex-1 flex-col gap-1.5 overflow-hidden rounded-lg border border-border/80 bg-page-content p-1.5">
         {filterBar}
         <ScrollArea
-          className="absolute top-0 right-0 bottom-0 left-0 max-h-fit flex-1 overflow-scroll rounded-md border bg-page-content"
+          className="flex-1 min-h-0 rounded-md border bg-page-content"
           scroll-region=""
         >
           <Table className="table-fixed border-spacing-0 border-b-0 bg-background [&_td]:border-border [&_tfoot_td]:border-t [&_th]:border-border [&_th]:border-b [&_tr:not(:last-child)_td]:border-b [&_tr]:border-none">
