@@ -10,29 +10,40 @@ export const columns: ColumnDef<App.Data.PaymentData>[] = [
   {
     accessorKey: 'issued_on',
     header: 'Datum',
-    size: 40,
+    size: 60,
     cell: ({ row, getValue }) => <span>{getValue() as string}</span>
   },
   {
-    accessorKey: 'transaction.name',
-    header: 'Kontoinhaber',
-    size: 50,
-    cell: ({ row, getValue }) => <div className="w-25 truncate">{getValue() as string}</div>
+    accessorKey: 'bookkeeping_text',
+    header: 'Buchungstext',
+    size: 400,
+    cell: ({ row, getValue }) => {
+      const [_bookingType, name, purpose] = row.original.transaction.bookkeeping_text.split('|')
+
+      return (
+        <div>
+          <div>{name}</div>
+          <div className="truncate text-xs">{purpose}</div>
+        </div>
+      )
+    }
   },
   {
-    accessorKey: 'transaction.purpose',
-    header: 'Verwendungszweck',
-    size: 200,
-    cell: ({ getValue, row }) => <div>{getValue() as string}</div>
-  },
-  {
-    accessorKey: 'amount',
-    header: 'Betrag',
+    accessorKey: 'transaction.amount',
+    header: () => <div className="text-right">angewiesen</div>,
     size: 80,
     cell: ({ row }) => (
       <div className="text-right">
-        {currencyFormatter.format(row.original.amount as number)}&nbsp;&nbsp;
+        {currencyFormatter.format(row.original.transaction.amount as number)}
       </div>
+    )
+  },
+  {
+    accessorKey: 'amount',
+    header: () => <div className="text-right">verrechnet</div>,
+    size: 80,
+    cell: ({ row }) => (
+      <div className="text-right">{currencyFormatter.format(row.original.amount as number)}</div>
     )
   }
 ]
