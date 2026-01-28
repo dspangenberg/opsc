@@ -1,11 +1,20 @@
 {
     "mcpServers": {
         "laravel-boost": {
-            "command": "php",
+            "command": "/Users/dspangenberg/Library/Application Support/Herd/bin/php84",
             "args": [
-                "/home/dspangenberg/Projects/twiceware.cloud/opsc/artisan",
+                "/Users/dspangenberg/Projects/twiceware.cloud/opsc/artisan",
                 "boost:mcp"
             ]
+        },
+        "herd": {
+            "command": "/Users/dspangenberg/Library/Application Support/Herd/bin/php84",
+            "args": [
+                "/Applications/Herd.app/Contents/Resources/herd-mcp.phar"
+            ],
+            "env": {
+                "SITE_PATH": "/Users/dspangenberg/Projects/twiceware.cloud/opsc"
+            }
         }
     }
 }

@@ -32,3 +32,4 @@ yarn-error.log
 /storage/system/cache
 laradumps.yaml
 laradumps.yaml
+package-lock.json

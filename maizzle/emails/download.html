@@ -38,16 +38,16 @@ preheader: Transactional email template
                 </h1>
 
                 <p class="m-0 mb-6 text-base/6 text-slate-600">
-                  Bevor Deine neue E-Mail-Adresse aktiv wird, musst Du die Änderung bestätigen.
+                  Dein Download ist bereit. Klicke auf den Button, um den Download zu starten.
                 </p>
-                
+
                 <p class="text-center flex items-center justify-center w-full">
                   <x-button
                     align="center"
                     class="bg-blue-500 hover:bg-blue-800 font-medium"
                     href="@{{ $verificationUrl }}"
                   >
-                    E-Mail-Adresse bestätigen
+                    Download
                   </x-button>
 
                 </p>
@@ -61,7 +61,7 @@ preheader: Transactional email template
                 <x-divider />
 
                 <p class="m-0 p-4 round-md border-t shadow-sm text-sm/5 text-slate-600 mso-break-all bg-stone-50">
-                  Falls Du Probleme mit dem "E-Mail-Adresse bestätigen"-Button hast, kopiere und füge die folgende URL
+                  Falls Du Probleme mit dem "Download"-Button hast, kopiere und füge die folgende URL
                   in Deinem Browser ein:
                   <a class="text-slate-800 underline" href="@{{ $verificationUrl }}">@{{ $verificationUrl }}</a>
                 </p>

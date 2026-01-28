@@ -50,6 +50,13 @@ class ProfileController extends Controller
         return Redirect::back();
     }
 
+    public function clearPendingMailAddress(Request $request)
+    {
+        $request->user()->clearPendingEmail();
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Die Änderung der E-Mail-Adresse wurde zurückgesetzt.']);
+        return redirect()->back();
+    }
+
     /**
      * Update the user's profile information.
      * @param  ProfileUpdateRequest  $request

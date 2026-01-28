@@ -1,0 +1,17 @@
+{
+    "_hash": "5905119d6eb8d06880047b46c827127b6ad87bce6524d411f17bd9cf029b7bb8",
+    "patches": {
+        "pestphp/pest": [
+            {
+                "package": "pestphp/pest",
+                "description": "Remove PHPUnit version conflict to allow security updates",
+                "url": "patches/pest-remove-phpunit-conflict.patch",
+                "sha256": "4463cb86b2850b982239a51451d01f8f149d671217aa716ca73ab956c2abe6b1",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ]
+    }
+}

@@ -48,6 +48,7 @@ Route::middleware([
     })->name('app.dashboard');
 
     // Domain routes
+    require __DIR__.'/tenant/admin.php';
     require __DIR__.'/tenant/bookkeeping.php';
     require __DIR__.'/tenant/contacts.php';
     require __DIR__.'/tenant/documents.php';

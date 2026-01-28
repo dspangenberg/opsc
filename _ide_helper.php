@@ -30192,6 +30192,40 @@ namespace Stancl\Tenancy {
             }
     }
 
+namespace Lab404\Impersonate\Guard {
+    /**
+     */
+    class SessionGuard extends \Illuminate\Auth\SessionGuard {
+            }
+    }
+
+namespace Illuminate\Auth {
+    /**
+     */
+    class SessionGuard {
+        /**
+         * @see \App\Providers\AuthServiceProvider::boot()
+         * @return \App\Models\User|null
+         * @static
+         */
+        public static function impersonator()
+        {
+            return \Illuminate\Auth\SessionGuard::impersonator();
+        }
+
+        /**
+         * @see \App\Providers\AuthServiceProvider::boot()
+         * @return int|null
+         * @static
+         */
+        public static function impersonatorId()
+        {
+            return \Illuminate\Auth\SessionGuard::impersonatorId();
+        }
+
+            }
+    }
+
 
 namespace  {
     class App extends \Illuminate\Support\Facades\App {}
