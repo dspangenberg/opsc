@@ -31,7 +31,7 @@ export const columns: ColumnDef<App.Data.PaymentData>[] = [
     size: 80,
     cell: ({ row }) => (
       <div className="text-right">
-        {currencyFormatter.format(row.original.transaction.amount)}&nbsp;&nbsp;
+        {currencyFormatter.format(row.original.amount as number)}&nbsp;&nbsp;
       </div>
     )
   }
