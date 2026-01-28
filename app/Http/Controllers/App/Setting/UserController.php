@@ -137,6 +137,13 @@ class UserController extends Controller
         return redirect()->back();
     }
 
+    public function clearPendingMailAddress(User $user)
+    {
+        $user->clearPendingEmail();
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Die Änderung der E-Mail-Adresse wurde zurückgesetzt.']);
+        return redirect()->back();
+    }
+
     public function resetPassword(User $user) {
 
         Password::sendResetLink(

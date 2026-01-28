@@ -83,7 +83,7 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
   const { validateOn: configValidateOn, ...precognitionConfig } = configValue
   const form = useInertiaForm<T>(method, url, data, precognitionConfig)
   const isDirty = !isEqual(initialDataRef.current, form.data)
-  const validateOn = configValidateOn ?? 'both'
+  const validateOn = configValidateOn ?? 'blur'
   const shouldValidateOnChange = validateOn === 'change' || validateOn === 'both'
   const shouldValidateOnBlur = validateOn === 'blur' || validateOn === 'both'
 

@@ -79,6 +79,10 @@ const UserEdit: React.FC<Props> = ({ user }) => {
     router.post(route('user.verification.send', { user: user.id }))
   }
 
+  const handleClearPendingMailAddress = async () => {
+    router.post(route('user.clear-pending-mail-address', { user: user.id }))
+  }
+
   return (
     <PageContainer
       title={title}
@@ -99,16 +103,26 @@ const UserEdit: React.FC<Props> = ({ user }) => {
           <Alert
             variant="info"
             actions={
-              <Button
-                variant="link"
-                size="auto"
-                title="E-Mail erneut senden"
-                className="text-yellow-700"
-                onClick={handleResendVerificationEmail}
-              />
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="link"
+                  size="auto"
+                  title="Erneut senden"
+                  className="text-yellow-700"
+                  onClick={handleResendVerificationEmail}
+                />
+                <Button
+                  variant="link"
+                  size="auto"
+                  title="Undo"
+                  className="text-yellow-700"
+                  onClick={handleClearPendingMailAddress}
+                />
+              </div>
             }
           >
-            Neue E-Mail-Adresse <strong>{user.pending_email}</strong> wurde noch nicht bestätigt.
+            Die geänderte E-Mail-Adresse <strong>{user.pending_email}</strong> wurde noch nicht
+            bestätigt.
           </Alert>
         )}
         <Form form={form}>
@@ -125,7 +139,12 @@ const UserEdit: React.FC<Props> = ({ user }) => {
               </div>
             </div>
             <div className="col-span-11">
-              <FormTextField label="Vorname" isRequired {...form.register('first_name')} />
+              <FormTextField
+                autoFocus
+                label="Vorname"
+                isRequired
+                {...form.register('first_name')}
+              />
             </div>
             <div className="col-span-11">
               <FormTextField label="Name" isRequired {...form.register('last_name')} />

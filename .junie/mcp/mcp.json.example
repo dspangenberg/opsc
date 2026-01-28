@@ -1,19 +1,19 @@
 {
     "mcpServers": {
         "laravel-boost": {
-            "command": "php",
+            "command": "/path/to/php",
             "args": [
-                "artisan",
+                "/path/to/project/artisan",
                 "boost:mcp"
             ]
         },
         "herd": {
-            "command": "php",
+            "command": "/path/to/php",
             "args": [
-                "/Applications/Herd.app/Contents/Resources/herd-mcp.phar"
+                "/path/to/herd-mcp.phar"
             ],
             "env": {
-                "SITE_PATH": "${SITE_PATH}"
+                "SITE_PATH": "/path/to/project"
             }
         }
     }

@@ -22,6 +22,7 @@ yarn-error.log
 /.idea
 /.vscode
 /.zed
+.junie/mcp/mcp.json
 .npmrc
 /storage/system/pdfs
 /storage/system/invoices
@@ -32,3 +33,4 @@ yarn-error.log
 /storage/system/cache
 laradumps.yaml
 laradumps.yaml
+package-lock.json

@@ -38,6 +38,9 @@ const ProfilEdit: React.FC<Props> = ({ user }) => {
   const handleResendVerificationEmail = () => {
     router.post(route('verification.send'))
   }
+  const handleClearPendingMailAddress = async () => {
+    router.post(route('profile.clear-pending-mail-address'))
+  }
 
   const breadcrumbs = [{ title: 'Profil ändern' }]
 
@@ -64,16 +67,27 @@ const ProfilEdit: React.FC<Props> = ({ user }) => {
           <Alert
             variant="info"
             actions={
-              <Button
-                variant="link"
-                title="E-Mail erneut senden"
-                className="text-yellow-700"
-                onClick={handleResendVerificationEmail}
-              />
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="link"
+                  title="Erneut senden"
+                  tooltip="Bestätigungs-E-Mail erneut senden"
+                  className="text-yellow-700"
+                  onClick={handleResendVerificationEmail}
+                />
+                <Button
+                  variant="link"
+                  size="auto"
+                  title="Undo"
+                  tooltip="Änderung der E-Mail-Adresse rückgängig machen"
+                  className="text-yellow-700"
+                  onClick={handleClearPendingMailAddress}
+                />
+              </div>
             }
           >
-            Bevor Deine neue E-Mail-Adresse <strong>{user.pending_email}</strong> aktiv wird, musst
-            Du die Änderung bestätigen.
+            Bitte bestätige die Änderung Deiner E-Mail-Adresse <strong>{user.pending_email}</strong>
+            .
           </Alert>
         )}
         <Form form={form}>

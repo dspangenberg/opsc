@@ -1,5 +1,6 @@
 import {
   Csv02Icon,
+  FileDownloadIcon,
   FileExportIcon,
   FileScriptIcon,
   MagicWand01Icon,
@@ -41,6 +42,13 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({ receipts }) => {
   const handleBulkRuleClicked = () => {
     const ids = selectedRows.map(row => row.id).join(',')
     router.get(route('app.bookkeeping.receipts.rule', { _query: { ids } }), {
+      preserveScroll: true
+    })
+  }
+
+  const handleBulkDownloadClicked = () => {
+    const ids = selectedRows.map(row => row.id).join(',')
+    router.get(route('app.bookkeeping.bulk-download', { _query: { ids } }), {
       preserveScroll: true
     })
   }
@@ -95,6 +103,13 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({ receipts }) => {
           icon={MagicWand01Icon}
           title="Regeln anwenden"
           onClick={handleBulkRuleClicked}
+        />
+        <Button
+          variant="ghost"
+          size="auto"
+          icon={FileDownloadIcon}
+          title="Download"
+          onClick={handleBulkDownloadClicked}
         />
         <div className="flex-1 text-right font-medium text-sm">{selectedAmount}</div>
       </Toolbar>

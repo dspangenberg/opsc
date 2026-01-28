@@ -92,30 +92,6 @@ Route::put('/profile/edit', [ProfileController::class, 'update'])->name('app.pro
 Route::post('profile/verification-notification', [ProfileController::class, 'resendVerificationEmail'])->name('verification.send');
 Route::impersonate();
 
-Route::redirect('settings/system', '/app/settings/system/users')
-    ->middleware(['admin'])
-    ->name('app.setting.system');
-Route::get('/settings/system/users', [UserController::class, 'index'])
-    ->middleware(['admin'])
-    ->name('app.setting.system.user.index');
-Route::get('/settings/system/users/create', [UserController::class, 'create'])
-    ->middleware(['admin'])
-    ->name('app.setting.system.user.create');
-Route::post('/settings/system/users', [UserController::class, 'store'])
-    ->middleware(['admin', HandlePrecognitiveRequests::class])
-    ->name('app.setting.system.user.store');
-Route::get('/settings/system/users/{user}/edit', [UserController::class, 'edit'])
-    ->middleware(['admin'])
-    ->name('app.setting.system.user.edit');
-Route::put('/settings/system/users/{user}/edit', [UserController::class, 'update'])
-    ->middleware(['admin', HandlePrecognitiveRequests::class])
-    ->name('app.setting.system.user.update');
-Route::delete('/settings/system/users/{user}/delete', [UserController::class, 'destroy'])
-    ->middleware(['admin'])
-    ->name('app.setting.system.user.delete');
+Route::post('/profile/clear-pending-mail-address',
+    [ProfileController::class, 'clearPendingMailAddress'])->name('profile.clear-pending-mail-address');
 
-Route::post('/settings/system/users/{user}/verification-notification', [UserController::class, 'resendVerificationEmail'])->name('user.verification.send')->middleware(['admin']);
-
-Route::put('/settings/system/users/{user}/reset-password', [UserController::class, 'resetPassword'])
-    ->middleware(['admin'])
-    ->name('app.setting.system.user.reset-password');

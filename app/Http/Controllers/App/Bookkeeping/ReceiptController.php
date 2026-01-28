@@ -8,15 +8,18 @@ use App\Data\CurrencyData;
 use App\Data\ReceiptData;
 use App\Data\TransactionData;
 use App\Facades\BookeepingRuleService;
+use App\Facades\DownloadService;
 use App\Facades\FileHelperService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReceiptUpdateRequest;
 use App\Http\Requests\ReceiptUploadRequest;
+use App\Jobs\DownloadJob;
 use App\Jobs\ReceiptUploadJob;
 use App\Models\Contact;
 use App\Models\ConversionRate;
 use App\Models\CostCenter;
 use App\Models\Currency;
+use App\Models\DocumentDownload;
 use App\Models\NumberRange;
 use App\Models\Payment;
 use App\Models\Receipt;
@@ -326,6 +329,21 @@ class ReceiptController extends Controller
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptUpload');
     }
 
+    public function bulkDownload(Request $request)
+    {
+        $ids = $request->query('ids');
+        $ids = $ids ? explode(',', $ids) : [];
+
+        $download = DocumentDownload::create([
+            'type' => 'receipt',
+            'ids' => $ids,
+        ]);
+
+        DownloadJob::dispatch($download->id, auth()->user());
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Dein Download wird erstellt.']);
+        return redirect()->back();
+
+    }
 
     public function lock(Request $request)
     {
