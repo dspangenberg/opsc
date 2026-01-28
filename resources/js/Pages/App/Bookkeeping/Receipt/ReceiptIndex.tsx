@@ -2,12 +2,13 @@ import {
   Csv02Icon,
   FileDownloadIcon,
   FileExportIcon,
-  FileScriptIcon,
   MagicWand01Icon,
   MoreVerticalCircle01Icon,
+  TableIcon,
   Tick01Icon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
+import { getLocalTimeZone } from '@internationalized/date'
 import { sumBy } from 'lodash'
 import type * as React from 'react'
 import { useMemo, useState } from 'react'
@@ -19,6 +20,9 @@ import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { Menu, MenuItem, MenuPopover, MenuSubTrigger } from '@/Components/twc-ui/menu'
 import { Toolbar } from '@/Components/twc-ui/toolbar'
 import { Badge } from '@/Components/ui/badge'
+import { useFileDownload } from '@/Hooks/use-file-download'
+import { formatDate } from '@/Lib/DateHelper'
+import { ReceiptReportDialog } from '@/Pages/App/Bookkeeping/Receipt/ReceiptReportDialog'
 import type { PageProps } from '@/Types'
 import { columns } from './ReceiptIndexColumns'
 
@@ -53,26 +57,34 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({ receipts }) => {
     })
   }
 
+  const handleCreateReport = async () => {
+    const result = await ReceiptReportDialog.call()
+    if (!result) return
+    const startDate = result.start
+      ? formatDate(result.start.toDate(getLocalTimeZone()), 'yyyy-MM-dd')
+      : ''
+    const endDate = result.end
+      ? formatDate(result.end.toDate(getLocalTimeZone()), 'yyyy-MM-dd')
+      : ''
+
+    const url = route('app.bookkeeping.receipts.report', {
+      begin_on: startDate,
+      end_on: endDate
+    })
+    window.open(url, '_blank', 'noopener,noreferrer')
+  }
+
   const toolbar = useMemo(
     () => (
       <Toolbar>
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon}>
-          <MenuSubTrigger>
-            <MenuItem title="Daten importieren" />
-            <MenuPopover>
-              <Menu>
-                <MenuItem
-                  icon={FileScriptIcon}
-                  title="MoneyMoney JSON-Datei importieren"
-                  ellipsis
-                  separator
-                />
-                <MenuItem icon={Csv02Icon} title="CSV-Datei importieren" ellipsis />
-              </Menu>
-            </MenuPopover>
-          </MenuSubTrigger>
-          <MenuItem icon={FileExportIcon} title="CSV-Export" separator />
-          <MenuItem title="Regeln auf unbestägite Transaktionen anwenden" ellipsis />
+          <MenuItem
+            icon={TableIcon}
+            title="Report erstellen"
+            ellipsis
+            onClick={handleCreateReport}
+            separator
+          />
         </DropdownButton>
       </Toolbar>
     ),

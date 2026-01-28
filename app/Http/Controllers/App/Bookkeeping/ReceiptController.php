@@ -10,7 +10,9 @@ use App\Data\TransactionData;
 use App\Facades\BookeepingRuleService;
 use App\Facades\DownloadService;
 use App\Facades\FileHelperService;
+use App\Facades\WeasyPdfService;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ReceiptReportRequest;
 use App\Http\Requests\ReceiptUpdateRequest;
 use App\Http\Requests\ReceiptUploadRequest;
 use App\Jobs\DownloadJob;
@@ -42,6 +44,7 @@ use Plank\Mediable\Exceptions\MediaUpload\ForbiddenException;
 use Plank\Mediable\Exceptions\MediaUpload\InvalidHashException;
 use Plank\Mediable\Facades\MediaUploader;
 use Smalot\PdfParser\Parser;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Throwable;
 
 class ReceiptController extends Controller
@@ -343,6 +346,41 @@ class ReceiptController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Dein Download wird erstellt.']);
         return redirect()->back();
 
+    }
+
+    public function createReport (ReceiptReportRequest $request): BinaryFileResponse {
+        $receipts = Receipt::query()
+            ->with([
+                'account',
+                'range_document_number',
+                'contact',
+                'cost_center'
+            ])
+            ->withAggregate(
+                ['payable' => function ($query) {
+                    $query->where('is_currency_difference', false);
+                }],
+                'amount',
+                'sum'
+            )
+            ->withAggregate(
+                ['payable' => function ($query) {
+                    $query->where('is_currency_difference', false);
+                }],
+                'issued_on',
+                'min'
+            )
+            ->whereBetween('issued_on', [$request->validated('begin_on'), $request->validated('end_on')])
+            ->orderBy('issued_on')
+            ->get();
+
+        $pdf = WeasyPdfService::createPdf('receipt-report', 'pdf.receipts.report',
+            [
+                'receipts' => $receipts,
+                'begin_on' => $request->validated('begin_on'),
+                'end_on' => $request->validated('end_on'),
+            ]);
+        return response()->file($pdf);
     }
 
     public function lock(Request $request)

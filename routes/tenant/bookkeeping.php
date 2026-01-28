@@ -52,3 +52,4 @@ Route::get('/bookkeeping/receipts/{receipt}/payments-store', [ReceiptController:
 Route::get('/bookkeeping/receipts/confirm/{receipt}', [ReceiptController::class, 'confirm'])->name('app.bookkeeping.receipts.confirm');
 Route::get('/bookkeeping/receipts/{receipt}/edit', [ReceiptController::class, 'edit'])->name('app.bookkeeping.receipts.edit');
 Route::get('/bookkeeping/receipts/bulk-download/', [ReceiptController::class, 'bulkDownload'])->name('app.bookkeeping.bulk-download');
+Route::get('/bookkeeping/receipts/create-report/', [ReceiptController::class, 'createReport'])->name('app.bookkeeping.receipts.report');

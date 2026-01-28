@@ -53,7 +53,8 @@ class DownloadService
 
         try {
             $media = MediaUploader::fromSource($zipFileName)
-                ->toDestination('s3_private', 'download/'.$documentDownload->id.'.zip')
+                ->toDestination('s3_private', 'downloads')
+                ->useFilename('Belege-'.Carbon::now()->format('Y-m-d_H-i-s'))
                 ->upload();
 
             Mail::to($user->email)->send(new DownloadEmail($user,
