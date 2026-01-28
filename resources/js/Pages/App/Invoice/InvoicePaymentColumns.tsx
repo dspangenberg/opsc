@@ -26,7 +26,7 @@ export const columns: ColumnDef<App.Data.PaymentData>[] = [
     cell: ({ getValue, row }) => <div>{getValue() as string}</div>
   },
   {
-    accessorKey: 'transaction.amount',
+    accessorKey: 'amount',
     header: 'Betrag',
     size: 80,
     cell: ({ row }) => (
