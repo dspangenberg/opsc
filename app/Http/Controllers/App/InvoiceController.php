@@ -379,8 +379,12 @@ class InvoiceController extends Controller
             ->load('lines.linked_invoice')
             ->load('tax')
             ->load('tax.rates')
+            ->load('payable')
+            ->load('payable.transaction')
             ->loadSum('lines', 'amount')
             ->loadSum('lines', 'tax');
+
+        ds($invoice->toArray());
 
         return Inertia::render('App/Invoice/InvoiceHistory', [
             'invoice' => InvoiceData::from($invoice),

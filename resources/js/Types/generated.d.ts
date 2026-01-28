@@ -328,6 +328,7 @@ is_recurring: boolean;
 recurring_interval_units: number;
 additional_text: string | null;
 recurring_interval: App.Enums.InvoiceRecurringEnum | null;
+payable: App.Data.PaymentData | null;
 parent_id: number | null;
 tax_id: number | null;
 parent_invoice: App.Data.InvoiceData | null;
