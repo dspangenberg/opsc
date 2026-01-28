@@ -370,19 +370,20 @@ class InvoiceController extends Controller
             ->load('project')
             ->load('payment_deadline')
             ->load('parent_invoice')
+            ->load('offer')
             ->load('type')
             ->load([
                 'lines' => function ($query) {
-                    $query->orderBy('pos');
+                    $query->with('linked_invoice')->with('rate')->orderBy('pos')->orderBy('id');
                 },
             ])
-            ->load('lines.linked_invoice')
+            ->load('booking')
             ->load('tax')
             ->load('tax.rates')
-            ->load('payable')
-            ->load('payable.transaction')
             ->loadSum('lines', 'amount')
-            ->loadSum('lines', 'tax');
+            ->loadSum('lines', 'tax')
+            ->loadSum('payable', 'amount')
+            ->load('payable.transaction')->get();
         return Inertia::render('App/Invoice/InvoiceHistory', [
             'invoice' => InvoiceData::from($invoice),
         ]);
