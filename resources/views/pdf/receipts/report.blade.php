@@ -236,8 +236,8 @@
         <td>{{ $receipt->issued_on->format('d.m.Y') }}</td>
         <td>{{ $receipt->document_number }}</td>
         <td>{{ $receipt->contact->fullname }}</td>
-        <td>{{ $receipt->reference }}</td>
-        <td>{{ $receipt->cost_center?->name }}</td>
+        <td class="truncate">{{ $receipt->reference }}</td>
+        <td class="truncate">{{ $receipt->cost_center?->name }}</td>
         <td class="right">{{ number_format($receipt->amount, 2, ',', '.')}} EUR</td>
         <td class="right">{{ number_format($receipt->open_amount, 2, ',', '.')}} EUR</td>
         <td class="right">
