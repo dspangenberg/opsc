@@ -551,7 +551,7 @@ class InvoiceController extends Controller
             ->withSum('lines', 'amount')
             ->withSum('lines', 'tax')
             ->withSum('payable', 'amount')
-            ->with(['payable', function ($query) {
+            ->with(['payable' => function ($query) {
                 $query->orderBy('issued_on', 'asc');
             }])
             ->with('payable.transaction')
