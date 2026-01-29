@@ -12,6 +12,7 @@ default:
 
 variables:
   PNPM_STORE_PATH: .pnpm-store
+  NODE_OPTIONS: "--max-old-space-size=4096"
 
 pnpm_build:
   stage: build
