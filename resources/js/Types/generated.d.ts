@@ -1,9 +1,4 @@
 declare namespace App.Data {
-export type AccommodationTypeData = {
-id: number;
-description: string;
-title: string;
-};
 export type AddressCategoryData = {
 id: number | null;
 name: string;
