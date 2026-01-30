@@ -32,8 +32,6 @@ reviews:
     labels: []
     drafts: false
     base_branches:
-      - dev
-      - develop
       - main
   tools:
     shellcheck:
