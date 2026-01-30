@@ -1,6 +1,27 @@
 import { useCallback } from 'react'
 import type { MouseEvent } from 'react'
-import { extractFilenameFromContentDisposition } from '@/Lib/file-download'
+
+export const extractFilenameFromContentDisposition = (
+  contentDisposition?: string | null
+): string | undefined => {
+  if (!contentDisposition) return undefined
+
+  const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+
+  return filenameMatch?.[1]?.replace(/['"]/g, '')
+}
+
+export const extractFilenameFromUrl = (url: string, fallback = 'unbekannt.pdf'): string => {
+  try {
+    const parsedUrl = new URL(url, window.location.origin)
+    const pathname = parsedUrl.pathname
+    const parts = pathname.split('/')
+    const lastPart = parts[parts.length - 1]
+    return lastPart || fallback
+  } catch {
+    return fallback
+  }
+}
 
 interface FileDownloadProps {
   route?: string
@@ -24,7 +45,9 @@ export const useFileDownload = (options?: FileDownloadProps): { handleDownload: 
       .then(async res => {
         // Dateinamen aus dem Content-Disposition Header extrahieren
         const contentDisposition = res.headers.get('Content-Disposition')
-        const serverFilename = extractFilenameFromContentDisposition(contentDisposition) ?? resolvedFilename
+        const serverFilename = extractFilenameFromContentDisposition(contentDisposition)
+          ?? resolvedFilename
+          ?? extractFilenameFromUrl(resolvedRoute as string)
 
         const blob = await res.blob()
         return {

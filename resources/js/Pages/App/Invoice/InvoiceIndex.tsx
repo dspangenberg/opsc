@@ -24,11 +24,11 @@ import { Button } from '@/Components/twc-ui/button'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { MenuItem } from '@/Components/twc-ui/menu'
 import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
+import { ScrollCard } from '@/Components/twc-ui/scroll-card'
 import { Select } from '@/Components/twc-ui/select'
 import { Separator } from '@/Components/twc-ui/separator'
 import { ToggleButton } from '@/Components/twc-ui/toggle-button'
 import { Toolbar } from '@/Components/twc-ui/toolbar'
-import { BorderedBox } from '@/Components/twcui/bordered-box'
 import { Badge } from '@/Components/ui/badge'
 import { formatDate, toDateValue } from '@/Lib/DateHelper'
 import { InvoiceReportDialog } from '@/Pages/App/Invoice/InvoiceReportDialog'
@@ -149,7 +149,10 @@ const InvoiceIndex: React.FC = () => {
     const yearToUse = year === 0 ? localCurrentYear : year
     const yearDate = new Date(yearToUse, 0, 1)
     const result = await InvoiceReportDialog.call({
-      defaultRange: { start: toDateValue(startOfYear(yearDate)), end: toDateValue(endOfYear(yearDate)) }
+      defaultRange: {
+        start: toDateValue(startOfYear(yearDate)),
+        end: toDateValue(endOfYear(yearDate))
+      }
     })
     if (!result) return
     const startDate = result.range?.start
@@ -222,7 +225,7 @@ const InvoiceIndex: React.FC = () => {
   const header = useMemo(
     () => (
       <div className="flex flex-col">
-        <BorderedBox className="mx-auto mb-3 flex-none">
+        <ScrollCard className="mx-auto mb-3 flex-none">
           <div className="mx-auto flex justify-center gap-4 divide-y bg-background px-2 py-2.5 lg:divide-x lg:divide-y-0">
             <StatsField label="netto" value={currencyFormatter.format(stats.total_net)} />
             <StatsField label="USt." value={currencyFormatter.format(stats.total_tax)} />
@@ -238,7 +241,7 @@ const InvoiceIndex: React.FC = () => {
               />
             )}
           </div>
-        </BorderedBox>
+        </ScrollCard>
 
         <div className="flex flex-none items-center space-x-2 p-2">
           <Toolbar variant="secondary" className="flex flex-1">

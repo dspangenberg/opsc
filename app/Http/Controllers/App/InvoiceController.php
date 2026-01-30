@@ -34,6 +34,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Throwable;
 
 class InvoiceController extends Controller
 {
@@ -279,7 +280,7 @@ class InvoiceController extends Controller
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function cancel(Invoice $invoice)
     {
@@ -364,7 +365,7 @@ class InvoiceController extends Controller
         return response()->file($pdfFile);
     }
 
-    public function history(Invoice $invoice, ?int $line = null)
+    public function history(Invoice $invoice)
     {
         $invoice
             ->load('invoice_contact')

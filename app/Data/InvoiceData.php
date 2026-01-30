@@ -63,7 +63,7 @@ class InvoiceData extends Data
         public readonly ?float $amount_open,
 
         public readonly bool $is_recurring,
-        public readonly int $recurring_interval_units,
+        public readonly ?int $recurring_interval_units,
 
         public readonly ?string $additional_text,
 
@@ -112,8 +112,7 @@ class InvoiceData extends Data
         public readonly ?int $offer_id,
         public readonly ?OfferData $offer,
 
-    ) {
-    }
+    ) {}
 
     public function defaultWrap(): string
     {

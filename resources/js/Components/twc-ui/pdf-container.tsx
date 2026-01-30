@@ -18,8 +18,7 @@ import {
   SquareArrowDiagonal02Icon
 } from '@hugeicons/core-free-icons'
 import { TextCursor } from 'lucide-react'
-import { useFileDownload } from '@/Hooks/use-file-download'
-import { extractFilenameFromContentDisposition, extractFilenameFromUrl } from '@/Lib/file-download'
+import { extractFilenameFromContentDisposition, extractFilenameFromUrl, useFileDownload } from '@/Hooks/use-file-download'
 import { cn } from '@/Lib/utils'
 import { Button } from './button'
 import { DropdownButton } from './dropdown-button'

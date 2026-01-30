@@ -2,17 +2,13 @@ import type React from 'react'
 import { cn } from '@/Lib/utils'
 import { ScrollArea } from './scroll-area'
 
-interface BorderedBoxProps {
+interface ScrollCardProps {
   className?: string
   innerClassName?: string
   children: React.ReactNode
 }
 
-export const BorderedBox: React.FC<BorderedBoxProps> = ({
-  children,
-  className,
-  innerClassName
-}) => {
+export const ScrollCard: React.FC<ScrollCardProps> = ({ children, className, innerClassName }) => {
   return (
     <div
       className={cn(

@@ -1,13 +1,17 @@
 {
     "agents": [
         "claude_code",
-        "codex",
-        "phpstorm"
+        "opencode",
+        "junie"
     ],
-    "editors": [
-        "claude_code",
-        "phpstorm"
-    ],
-    "guidelines": [],
-    "herd_mcp": true
+    "guidelines": true,
+    "herd_mcp": true,
+    "mcp": true,
+    "sail": false,
+    "skills": [
+        "wayfinder-development",
+        "pest-testing",
+        "inertia-react-development",
+        "tailwindcss-development"
+    ]
 }

@@ -1,18 +1,23 @@
 {
-    "mcpServers": {
+    "$schema": "https://opencode.ai/config.json",
+    "mcp": {
         "laravel-boost": {
-            "command": "php",
-            "args": [
+            "type": "local",
+            "enabled": true,
+            "command": [
+                "php",
                 "artisan",
                 "boost:mcp"
             ]
         },
         "herd": {
-            "command": "php",
-            "args": [
+            "type": "local",
+            "enabled": true,
+            "command": [
+                "php",
                 "/Applications/Herd.app/Contents/Resources/herd-mcp.phar"
             ],
-            "env": {
+            "environment": {
                 "SITE_PATH": "/Users/dspangenberg/Projects/twiceware.cloud/opsc"
             }
         }
