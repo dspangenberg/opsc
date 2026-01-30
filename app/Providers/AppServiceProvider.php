@@ -33,10 +33,11 @@ class AppServiceProvider extends ServiceProvider
         }
         Vite::prefetch(concurrency: 3);
         Response::macro('inlineFile', function (string $path, string $filename, array $headers = []): BinaryFileResponse {
-            $fallback = preg_replace('/[^\x20-\x7E]/', '', $filename) ?: 'file.pdf';
+            $safeName = $filename !== '' ? $filename : 'file.pdf';
+            $fallback = preg_replace('/[^\x20-\x7E]/', '', $safeName) ?: 'file.pdf';
             $disposition = (new ResponseHeaderBag)->makeDisposition(
                 ResponseHeaderBag::DISPOSITION_INLINE,
-                $filename,
+                $safeName,
                 $fallback
             );
 
