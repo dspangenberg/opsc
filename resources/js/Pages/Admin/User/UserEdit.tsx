@@ -62,7 +62,7 @@ const UserEdit: React.FC<Props> = ({ user }) => {
   const handleCancel = async () => {
     if (form.isDirty) {
       const promise = await AlertDialog.call({
-        title: 'Änderungen verwerfen',
+        title: 'Änderungen verwerfens',
         message: `Möchtest Du die Änderungen verwerfen?`,
         buttonTitle: 'Verwerfen'
       })
