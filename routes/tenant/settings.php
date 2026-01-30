@@ -10,7 +10,6 @@ use App\Http\Controllers\App\Setting\LetterheadController;
 use App\Http\Controllers\App\Setting\OfferSectionController;
 use App\Http\Controllers\App\Setting\PrintLayoutController;
 use App\Http\Controllers\App\Setting\TextModuleController;
-use App\Http\Controllers\App\Setting\UserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;

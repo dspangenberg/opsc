@@ -13,6 +13,9 @@ Route::get('invoicing/invoices/create', [InvoiceController::class, 'create'])
 Route::get('invoicing/invoices', [InvoiceController::class, 'index'])
     ->name('app.invoice.index');
 
+Route::get('invoicing/invoices/report', [InvoiceController::class, 'createReport'])
+    ->name('app.invoice.report');
+
 Route::get('invoicing/invoices/{invoice}', [InvoiceController::class, 'show'])
     ->name('app.invoice.details');
 

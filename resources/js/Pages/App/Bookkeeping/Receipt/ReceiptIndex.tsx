@@ -18,9 +18,9 @@ import { Pagination } from '@/Components/Pagination'
 import { Button } from '@/Components/twc-ui/button'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { Menu, MenuItem, MenuPopover, MenuSubTrigger } from '@/Components/twc-ui/menu'
+import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
 import { Toolbar } from '@/Components/twc-ui/toolbar'
 import { Badge } from '@/Components/ui/badge'
-import { useFileDownload } from '@/Hooks/use-file-download'
 import { formatDate } from '@/Lib/DateHelper'
 import { ReceiptReportDialog } from '@/Pages/App/Bookkeeping/Receipt/ReceiptReportDialog'
 import type { PageProps } from '@/Types'
@@ -71,7 +71,10 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({ receipts }) => {
       begin_on: startDate,
       end_on: endDate
     })
-    window.open(url, '_blank', 'noopener,noreferrer')
+
+    await PdfViewer.call({
+      file: url
+    })
   }
 
   const toolbar = useMemo(

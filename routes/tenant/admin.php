@@ -2,38 +2,45 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\App\Setting\UserController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
+use Stancl\Tenancy\Middleware;
+
 Route::middleware([
+    'web',
+    'auth',
     'admin',
-])->group(function () {
+    Middleware\InitializeTenancyByDomainOrSubdomain::class,
+    Middleware\PreventAccessFromUnwantedDomains::class,
+    Middleware\ScopeSessions::class,
+])->prefix('admin')->group(function () {
 
-    Route::redirect('settings/system', '/app/settings/system/users')
-        ->name('app.setting.system');
-    Route::get('/settings/system/users', [UserController::class, 'index'])
-        ->name('app.setting.system.user.index');
-    Route::get('/settings/system/users/create', [UserController::class, 'create'])
-        ->name('app.setting.system.user.create');
-    Route::post('/settings/system/users', [UserController::class, 'store'])
+    Route::redirect('/', '/admin/users')
+        ->name('admin');
+    Route::get('/users', [UserController::class, 'index'])
+        ->name('admin.user.index');
+    Route::get('users/create', [UserController::class, 'create'])
+        ->name('admin.user.create');
+    Route::post('/users', [UserController::class, 'store'])
         ->middleware([HandlePrecognitiveRequests::class])
-        ->name('app.setting.system.user.store');
-    Route::get('/settings/system/users/{user}/edit', [UserController::class, 'edit'])
-        ->name('app.setting.system.user.edit');
-    Route::put('/settings/system/users/{user}/edit', [UserController::class, 'update'])
+        ->name('admin.user.store');
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])
+        ->name('admin.user.edit');
+    Route::put('/users/{user}/edit', [UserController::class, 'update'])
         ->middleware([HandlePrecognitiveRequests::class])
-        ->name('app.setting.system.user.update');
-    Route::delete('/settings/system/users/{user}/delete', [UserController::class, 'destroy'])
-        ->name('app.setting.system.user.delete');
+        ->name('admin.user.update');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])
+        ->name('admin.user.delete');
 
-    Route::post('/settings/system/users/{user}/verification-notification',
-        [UserController::class, 'resendVerificationEmail'])->name('user.verification.send');
+    Route::post('users/{user}/verification-notification',
+        [UserController::class, 'resendVerificationEmail'])->name('admin.user.verification.send');
 
-    Route::post('/settings/system/users/{user}/clear-pending-mail-address',
-        [UserController::class, 'clearPendingMailAddress'])->name('user.clear-pending-mail-address');
+    Route::post('users/{user}/clear-pending-mail-address',
+        [UserController::class, 'clearPendingMailAddress'])->name('admin.user.clear-pending-mail-address');
 
 
-        Route::put('/settings/system/users/{user}/reset-password', [UserController::class, 'resetPassword'])
-        ->name('app.setting.system.user.reset-password');
+        Route::put('users/{user}/reset-password', [UserController::class, 'resetPassword'])
+        ->name('admin.user.reset-password');
 
 });

@@ -23,7 +23,7 @@ import { MenuItem } from '@/Components/twc-ui/menu'
 import { Checkbox } from '@/Components/ui/checkbox'
 import type { PageProps } from '@/Types'
 
-const editUrl = (id: number | null) => (id ? route('app.setting.system.user.edit', { id }) : '#')
+const editUrl = (id: number | null) => (id ? route('admin.user.edit', { user: id }) : '#')
 const mailLink = (mail: string) => `mailto:${mail}`
 
 const handleDelete = async (row: App.Data.UserData) => {
@@ -33,14 +33,14 @@ const handleDelete = async (row: App.Data.UserData) => {
     buttonTitle: 'Benutzerkonto löschen'
   })
   if (promise) {
-    router.delete(route('app.setting.system.user.delete', { user: row.id }))
+    router.delete(route('admin.user.delete', { user: row.id }))
   }
 }
 
 const currentMail = (row: App.Data.UserData) => row.pending_email ?? row.email
 
 const handleResetPassword = async (row: App.Data.UserData) => {
-  router.put(route('app.setting.system.user.reset-password', { user: row.id }))
+  router.put(route('admin.user.reset-password', { user: row.id }))
 }
 
 const handleImpersonate = (id: number | null) => () => {

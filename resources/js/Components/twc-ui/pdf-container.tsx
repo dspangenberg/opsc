@@ -19,6 +19,7 @@ import {
 } from '@hugeicons/core-free-icons'
 import { TextCursor } from 'lucide-react'
 import { useFileDownload } from '@/Hooks/use-file-download'
+import { extractFilenameFromContentDisposition, extractFilenameFromUrl } from '@/Lib/file-download'
 import { cn } from '@/Lib/utils'
 import { Button } from './button'
 import { DropdownButton } from './dropdown-button'
@@ -89,18 +90,10 @@ export const PdfContainer: React.FC<Props> = ({
   hideFilename = false,
   onFilenameChange
 }) => {
-  const defaultFilename = useMemo(() => {
+  const baseFilename = useMemo(() => {
     if (filename) return filename
-    try {
-      const url = new URL(file, window.location.origin)
-      const pathname = url.pathname
-      const parts = pathname.split('/')
-      const lastPart = parts[parts.length - 1]
-      return lastPart || 'unbekannt.pdf'
-    } catch {
-      return 'unbekannt.pdf'
-    }
-  }, [file])
+    return extractFilenameFromUrl(file)
+  }, [file, filename])
 
   const divRef = useRef<HTMLDivElement>(null)
   const [show, toggle] = useToggle(false)
@@ -108,9 +101,41 @@ export const PdfContainer: React.FC<Props> = ({
     onClose: () => toggle(false)
   })
 
+  const [resolvedFilename, setResolvedFilename] = useState(baseFilename)
+
   useEffect(() => {
-    onFilenameChange?.(defaultFilename)
-  }, [defaultFilename, onFilenameChange])
+    setResolvedFilename(baseFilename)
+  }, [baseFilename])
+
+  useEffect(() => {
+    if (filename) return
+    if (file.startsWith('blob:') || file.startsWith('data:')) return
+
+    let isMounted = true
+
+    const fetchFilename = async () => {
+      try {
+        const response = await fetch(file, { method: 'HEAD' })
+        const contentDisposition = response.headers.get('Content-Disposition')
+        const headerFilename = extractFilenameFromContentDisposition(contentDisposition)
+        if (headerFilename && isMounted) {
+          setResolvedFilename(headerFilename)
+        }
+      } catch {
+        // Ignore filename lookup failures.
+      }
+    }
+
+    void fetchFilename()
+
+    return () => {
+      isMounted = false
+    }
+  }, [file, filename])
+
+  useEffect(() => {
+    onFilenameChange?.(resolvedFilename)
+  }, [resolvedFilename, onFilenameChange])
 
   const pdfRef = useRef<PDFDocumentProxy | null>(null)
   const [numPages, setNumPages] = useState<number>(1)
@@ -199,7 +224,7 @@ export const PdfContainer: React.FC<Props> = ({
 
   const { handleDownload } = useFileDownload({
     route: file,
-    filename: defaultFilename
+    filename: resolvedFilename
   })
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -421,7 +446,7 @@ export const PdfContainer: React.FC<Props> = ({
       >
         {!hideFilename && (
           <div className="my-2 text-center font-medium text-base">
-            {defaultFilename} &mdash; Seite {pageNumber}/{numPages}
+            {resolvedFilename} &mdash; Seite {pageNumber}/{numPages}
           </div>
         )}
         {toolbar}

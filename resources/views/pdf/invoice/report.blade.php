@@ -1,0 +1,278 @@
+<x-layout :config="$config" :styles="$styles" :footer="$pdf_footer">
+<style>
+
+  body {
+    font-family: facit, serif;
+    font-size: 10pt;
+    hyphens: auto;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+  }
+
+  h2 {
+    font-size: 14pt;
+    line-height: 1.5;
+  }
+
+
+  header {
+    font-size: 10pt;
+  }
+
+  body {
+    font-size: 10pt;
+    color: #000;
+  }
+
+  p {
+    margin: 0;
+    padding:0;
+  }
+
+
+  p {
+    text-align: justify;
+    line-height: 1.5;
+    font-size: 10pt;
+    hyphens: auto;
+  }
+
+  table p {
+    margin-left: -1.6em;
+  }
+
+
+  table {
+    vertical-align: bottom;
+    font-size: 9pt;
+    width: 100%;
+    padding: 0;
+    border-collapse: collapse;
+    margin: 0 0 5mm;
+  }
+
+  h2 {
+    font-size: 14pt;
+    line-height: 1;
+    margin:0;
+    padding: 0 0 1mm;
+
+  }
+
+  h4 {
+    font-size: 11pt;
+    font-weight: 600;
+    margin-bottom: 4mm;
+  }
+
+
+  h3 {
+    font-size: 11pt;
+    margin:0;
+    padding: 0 0 3mm;
+  }
+
+  h1 {
+    font-size: 16pt;
+    font-weight: bold;
+    color: #444;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+  }
+
+
+  table {
+    table-layout: fixed;
+  }
+
+  table tbody tr th {
+    border-top: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
+    border-collapse: collapse;
+    vertical-align: bottom;
+  }
+
+  table tbody tr th, table tbody tr td {
+    padding: 2px;
+    text-align: left;
+  }
+
+  table tbody tr td.time {
+    width: 20mm !important;
+    max-width: 20mm !important;
+  }
+
+  .truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  table tbody tr td.category {
+    text-align: left;
+  }
+
+  table tbody tr.day th.date {
+  }
+
+  table tr th.duration, table tr td.duration {
+    width: 18mm;
+    text-align: right
+  }
+
+
+
+  table tbody tr td.sep {
+    height: 24px;
+    text-align: center;
+  }
+
+  table tr td {
+    vertical-align: top;
+    font-weight: 400;
+  }
+
+  table tr th.right, table tr td.right {
+    text-align: right
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin:0;
+  }
+
+  ul li ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0 0.5cm;
+  }
+
+  a {
+    color: #000;
+    text-decoration: none;
+  }
+
+  table tr.day th {
+    font-weight: bold;
+    border-top: none;
+  }
+
+  table tbody tr.summary td {
+    background-color: #eee;
+    border-bottom: 1px solid #aaa;
+  }
+
+  table tr.day, tr.day th {
+    font-weight: bold;
+  }
+
+  ul > li:before {
+    content: "–"; /* en dash here */
+    position: absolute;
+    margin-left: -1.1em;
+  }
+
+  table tbody tr td.note {
+    font-weight: 400;
+    text-align: left;
+    border-bottom: 1px solid #aaa;
+    padding-left: 5mm;
+  }
+
+
+  table tbody th.project-sum {
+    border-bottom: none;
+  }
+
+
+  div.note {
+    line-height: 1.5;
+    font-size: 9pt;
+
+
+    margin-left: 20px;
+    margin-right: 20px;
+
+    page-break-inside: avoid;
+  }
+
+  tr.strong th {
+    background-color: #eee;
+  }
+
+  table tr.border td {
+    border-top: 1px solid #aaa;
+  }
+
+</style>
+
+
+  <h2>Auswertung Eingangsrechnungen</h2>
+  vom {{ $begin_on ? \Illuminate\Support\Carbon::parse($begin_on)->format('d.m.Y') : '' }}
+  bis {{ $end_on ? \Illuminate\Support\Carbon::parse($end_on)->format('d.m.Y') : '' }}
+
+
+
+  <table border-spacing="0" cellspacing="0" style="margin-top: 5mm; margin-bottom: 5mm;">
+    <thead>
+      <tr>
+        <th style="width: 20mm;">Datum</th>
+        <th style="width: 25mm;">Rechnungsnr.</th>
+        <th>Debitor</th>
+        <th>Projekt</th>
+        <th class="right" style="width: 25mm;">netto</th>
+        <th class="right" style="width: 25mm;">USt.</th>
+        <th class="right" style="width: 20mm;">brutto</th>
+        <th class="right" style="width: 20mm;">offen</th>
+      </tr>
+    </thead>
+    <tbody>
+    @foreach ($invoices as $invoice)
+      <tr style="background-color: #eee;">
+        <td>{{ $invoice->issued_on->format('d.m.Y') }}</td>
+        <td>{{ $invoice->formated_invoice_number }}</td>
+        <td class="truncate">{{ $invoice->contact->fullname }}</td>
+        <td class="truncate">{{ $invoice->project?->name }}</td>
+
+        <td class="right">{{ number_format($invoice->amount_net, 2, ',', '.')}} EUR</td>
+        <td class="right">{{ number_format($invoice->amount_tax, 2, ',', '.')}} EUR</td>
+        <td class="right">{{ number_format($invoice->amount_gross, 2, ',', '.')}} EUR</td>
+        <td class="right">{{ number_format($invoice->amount_open, 2, ',', '.')}} EUR</td>
+      </tr>
+      @if($invoice->payable)
+        @foreach ($invoice->payable as $payment)
+        <tr >
+
+          <td style="border-bottom: 1px solid #eee;"></td>
+          <td style="border-bottom: 1px solid #eee;">{{$payment->issued_on->format('d.m.Y') }}</td>
+          <td style="border-bottom: 1px solid #eee;" colspan="2">
+            {{ $payment->transaction->purpose }}
+          </td>
+
+
+
+
+                  <td class="right" style="border-bottom: 1px solid #eee;">
+                    @if($payment->amount !== $payment->transaction->amount)
+                    ({{ number_format( $payment->transaction->amount, 2, ',', '.')}} EUR)
+                    @endif
+                  </td>
+          <td style="border-bottom: 1px solid #eee;"></td>
+                  <td class="right" style="border-bottom: 1px solid #eee;">{{ number_format( $payment->amount, 2, ',', '.')}} EUR</td>
+          <td style="border-bottom: 1px solid #eee;"></td>
+        </tr>
+
+
+          @endforeach
+      @endif
+    @endforeach
+
+    </tbody>
+  </table>
+
+
+</x-layout>

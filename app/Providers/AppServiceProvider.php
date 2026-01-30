@@ -6,9 +6,12 @@ use App\Services\WeasyPdfService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Stancl\Tenancy\Events\TenancyInitialized;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,6 +32,19 @@ class AppServiceProvider extends ServiceProvider
             Mail::alwaysTo('danny.spangenberg@twiceware.de');
         }
         Vite::prefetch(concurrency: 3);
+        Response::macro('inlineFile', function (string $path, string $filename, array $headers = []): BinaryFileResponse {
+            $safeName = $filename !== '' ? $filename : 'file.pdf';
+            $fallback = preg_replace('/[^\x20-\x7E]/', '', $safeName) ?: 'file.pdf';
+            $disposition = (new ResponseHeaderBag)->makeDisposition(
+                ResponseHeaderBag::DISPOSITION_INLINE,
+                $safeName,
+                $fallback
+            );
+
+            return response()->file($path, array_merge($headers, [
+                'Content-Disposition' => $disposition,
+            ]));
+        });
 
         // Tenant-aware settings cache - listen to tenancy events
         Event::listen(TenancyInitialized::class, function (TenancyInitialized $event) {

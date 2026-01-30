@@ -1,0 +1,28 @@
+stages:
+  - build
+
+default:
+  image: node:20
+  cache:
+    key:
+      files:
+        - pnpm-lock.yaml
+    paths:
+      - .pnpm-store
+
+variables:
+  PNPM_STORE_PATH: .pnpm-store
+  NODE_OPTIONS: "--max-old-space-size=4096"
+
+pnpm_build:
+  stage: build
+  tags:
+    - Build
+  script:
+    - corepack enable
+    - pnpm install --frozen-lockfile
+    - pnpm run build
+  artifacts:
+    paths:
+      - public/build
+    expire_in: 1 week

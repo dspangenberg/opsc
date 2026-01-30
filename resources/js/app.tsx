@@ -44,7 +44,7 @@ createInertiaApp({
     )
 
     // @ts-expect-error
-    page.default.layout = name.startsWith('App') ? page => <AppLayout>{page}</AppLayout> : undefined
+    page.default.layout = (name.startsWith('App') || name.startsWith('Admin')) ? page => <AppLayout>{page}</AppLayout> : undefined
 
     return page
   },

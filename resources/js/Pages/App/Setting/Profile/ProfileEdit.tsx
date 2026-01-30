@@ -53,7 +53,6 @@ const ProfilEdit: React.FC<Props> = ({ user }) => {
     >
       <FormCard
         className="mx-auto flex max-w-3xl flex-1 overflow-y-hidden"
-        innerClassName="bg-white"
         footer={
           <div className="flex flex-none items-center justify-end gap-2 px-4 py-2">
             {form.isDirty && (
@@ -86,8 +85,7 @@ const ProfilEdit: React.FC<Props> = ({ user }) => {
               </div>
             }
           >
-            Bitte bestätige die Änderung Deiner E-Mail-Adresse <strong>{user.pending_email}</strong>
-            .
+            Bitte bestätige {user.pending_email} als Deine neue E-Mail-Adresse.
           </Alert>
         )}
         <Form form={form}>

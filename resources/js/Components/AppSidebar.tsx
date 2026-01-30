@@ -5,12 +5,13 @@
 
 import {
   AbacusIcon,
-  Configuration01Icon,
+  AccountSetting03Icon,
   ContactBookIcon,
   DashboardSpeed02Icon,
   FileEuroIcon,
   FolderFileStorageIcon,
   KanbanIcon,
+  Settings05Icon,
   TimeScheduleIcon
 } from '@hugeicons/core-free-icons'
 import { usePage } from '@inertiajs/react'
@@ -230,7 +231,7 @@ const buildNavData = (isAdmin: boolean) => ({
     {
       title: 'Einstellungen',
       url: route('app.setting', {}, false),
-      icon: Configuration01Icon,
+      icon: Settings05Icon,
       activePath: '/app/settings',
       items: [
         {
@@ -305,25 +306,26 @@ const buildNavData = (isAdmin: boolean) => ({
               activePath: '/app/settings/printing-system/layouts'
             }
           ]
-        },
-        ...(isAdmin
-          ? [
+        }
+      ]
+    },
+    ...(isAdmin
+      ? [
+          {
+            title: 'Administration',
+            url: route('admin', {}, false),
+            icon: AccountSetting03Icon,
+            activePath: '/admin',
+            items: [
               {
-                title: 'System',
-                url: route('app.setting.system', {}, false),
-                activePath: '/app/settings/system',
-                items: [
-                  {
-                    title: 'Benutzer*innen',
-                    url: route('app.setting.system.user.index', {}, false),
-                    activePath: '/app/settings/system/users'
-                  }
-                ]
+                title: 'Benutzer*innen',
+                url: route('admin.user.index', {}, false),
+                activePath: '/admin/users'
               }
             ]
-          : [])
-      ]
-    }
+          }
+        ]
+      : [])
   ]
 })
 

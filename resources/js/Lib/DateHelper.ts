@@ -3,6 +3,7 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
+import { parseDate as parseDateValue } from '@internationalized/date'
 import { format, minutesToHours, parse } from 'date-fns'
 
 export const parseAndFormatDate = (date: string, formatString = 'dd.MM.yyyy') => {
@@ -77,4 +78,8 @@ export const minutesUntilNow = (date: string) => {
   const now = new Date()
   const diff = now.getTime() - parsedDate.getTime()
   return minutesToHoursExtended(Math.floor(diff / 1000 / 60))
+}
+
+export const toDateValue = (date: Date) => {
+  return parseDateValue(format(date, 'yyyy-MM-dd'))
 }
