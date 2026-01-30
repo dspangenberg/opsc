@@ -85,8 +85,7 @@ const ProfilEdit: React.FC<Props> = ({ user }) => {
               </div>
             }
           >
-            Bitte bestätige die Änderung Deiner E-Mail-Adresse <strong>{user.pending_email}</strong>
-            .
+            Bitte bestätige {user.pending_email} als Deine neue E-Mail-Adresse.
           </Alert>
         )}
         <Form form={form}>

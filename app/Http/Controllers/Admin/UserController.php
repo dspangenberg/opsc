@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\App\Setting;
+namespace App\Http\Controllers\Admin;
 
 use App\Data\UserData;
 use App\Http\Controllers\Controller;
@@ -24,7 +24,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::query()->orderBy('last_name')->orderBy('first_name')->paginate();
-        return Inertia::render('App/Setting/User/UserIndex', [
+        return Inertia::render('Admin/User/UserIndex', [
             'users' => UserData::collect($users),
         ]);
     }
@@ -35,13 +35,13 @@ class UserController extends Controller
         $user->last_name = '';
         $user->email = '';
         $user->is_admin = false;
-        return Inertia::render('App/Setting/User/UserEdit', [
+        return Inertia::render('Admin/User/UserEdit', [
             'user' => UserData::from($user),
         ]);
     }
 
     public function edit(User $user) {
-        return Inertia::render('App/Setting/User/UserEdit', [
+        return Inertia::render('Admin/User/UserEdit', [
             'user' => UserData::from($user),
         ]);
     }
@@ -88,16 +88,16 @@ class UserController extends Controller
                 ->delete();
         }
 
-        return redirect()->route('app.setting.system.user.index');
+        return redirect()->route('admin.user.index');
     }
 
     public function destroy(User $user) {
         if ($user->id === auth()->id()) {
             Inertia::flash('toast', ['type' => 'error', 'message' => 'Du kannst Dich nicht selbst löschen.']);
-            return redirect()->route('app.setting.system.user.index');
+            return redirect()->route('admin.user.index');
         }
         $user->delete();
-        return redirect()->route('app.setting.system.user.index');
+        return redirect()->route('admin.user.index');
     }
 
     /**
@@ -127,7 +127,7 @@ class UserController extends Controller
             $user->attachMedia($media, 'avatar');
         }
 
-        return redirect()->route('app.setting.system.user.index');
+        return redirect()->route('admin.user.index');
     }
 
     public function resendVerificationEmail(User $user)

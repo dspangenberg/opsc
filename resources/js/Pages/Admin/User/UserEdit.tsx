@@ -30,7 +30,7 @@ const UserEdit: React.FC<Props> = ({ user }) => {
   const form = useForm<UserFormData>(
     'form-user-edit',
     user.id ? 'put' : 'post',
-    route(user.id ? 'app.setting.system.user.update' : 'app.setting.system.user.store', {
+    route(user.id ? 'admin.user.update' : 'admin.user.store', {
       user: user.id,
       _method: user.id ? 'put' : 'post'
     }),
@@ -45,9 +45,8 @@ const UserEdit: React.FC<Props> = ({ user }) => {
 
   const breadcrumbs = useMemo(() => {
     return [
-      { title: 'Einstellungen', url: route('app.setting') },
-      { title: 'System', url: route('app.setting.system') },
-      { title: 'Benutzer:innen', url: route('app.setting.system.user.index') },
+      { title: 'Administration', url: route('admin') },
+      { title: 'Benutzer:innen', url: route('admin.user.index') },
       { title }
     ]
   }, [])
@@ -68,19 +67,19 @@ const UserEdit: React.FC<Props> = ({ user }) => {
         buttonTitle: 'Verwerfen'
       })
       if (promise) {
-        router.visit(route('app.setting.system.user.index'))
+        router.visit(route('admin.user.index'))
       }
     } else {
-      router.visit(route('app.setting.system.user.index'))
+      router.visit(route('admin.user.index'))
     }
   }
 
   const handleResendVerificationEmail = async () => {
-    router.post(route('user.verification.send', { user: user.id }))
+    router.post(route('admin.user.verification.send', { user: user.id }))
   }
 
   const handleClearPendingMailAddress = async () => {
-    router.post(route('user.clear-pending-mail-address', { user: user.id }))
+    router.post(route('admin.user.clear-pending-mail-address', { user: user.id }))
   }
 
   return (

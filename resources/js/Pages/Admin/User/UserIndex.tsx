@@ -18,10 +18,10 @@ interface UserIndexPageProps extends PageProps {
 const UserIndex: React.FC<UserIndexPageProps> = ({ users }) => {
   const [selectedRows, setSelectedRows] = useState<App.Data.UserData[]>([])
 
-  const breadcrumbs = useMemo(() => [{ title: 'System' }, { title: 'Benutzer*innen' }], [])
+  const breadcrumbs = useMemo(() => [{ title: 'Admin' }, { title: 'Benutzer*innen' }], [])
 
   const handleUserAdd = () => {
-    router.visit(route('app.setting.system.user.create'))
+    router.visit(route('admin.user.create'))
   }
 
   const toolbar = useMemo(
