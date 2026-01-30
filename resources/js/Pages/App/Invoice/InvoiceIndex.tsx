@@ -146,8 +146,10 @@ const InvoiceIndex: React.FC = () => {
   }, [])
 
   const handleCreateReport = async () => {
+    const yearToUse = year === 0 ? localCurrentYear : year
+    const yearDate = new Date(yearToUse, 0, 1)
     const result = await InvoiceReportDialog.call({
-      defaultRange: { start: toDateValue(startOfYear(year)), end: toDateValue(endOfYear(year)) }
+      defaultRange: { start: toDateValue(startOfYear(yearDate)), end: toDateValue(endOfYear(yearDate)) }
     })
     if (!result) return
     const startDate = result.range?.start

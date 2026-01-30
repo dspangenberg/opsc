@@ -34,6 +34,7 @@ class Payment extends Model
         'is_confirmed',
         'is_private',
         'rank',
+        'id',
     ];
     public static function createCurrencyDifferenceBookings(Payment $payment): void
     {

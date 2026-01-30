@@ -151,9 +151,6 @@ class ReceiptController extends Controller
         $receipt->contact_id = $request->validated('contact_id');
         $receipt->cost_center_id = $request->validated('cost_center_id');
 
-        $shouldConfirm = $request->query('confirm', false);
-        $shouldLoadNext = $request->query('load_next', true);
-
         $receipt->save();
 
         if (! $receipt->is_confirmed) {
@@ -192,10 +189,10 @@ class ReceiptController extends Controller
                 ->get();
         }
 
-        return Inertia::modal('App/Bookkeeping/Receipt/ReceiptLinkTransactions', [])
+        return Inertia::modal('App/Bookkeeping/Receipt/ReceiptLinkTransactions')
             ->with([
                 'receipt' => ReceiptData::from($receipt),
-                'transactions' => $transactions ? transactionData::collect($transactions) : null,
+                'transactions' => $transactions ? TransactionData::collect($transactions) : null,
             ])->baseRoute('app.bookkeeping.receipts.confirm', ['receipt' => $receipt->id]);
     }
 
@@ -337,6 +334,9 @@ class ReceiptController extends Controller
 
     }
 
+    /**
+     * @throws Exception
+     */
     public function createReport(ReceiptReportRequest $request): BinaryFileResponse
     {
         $receipts = Receipt::query()
@@ -429,7 +429,6 @@ class ReceiptController extends Controller
     public function upload(ReceiptUploadRequest $request)
     {
         $files = $request->file('files');
-        $uploadedReceipts = [];
 
         foreach ($files as $file) {
             $receipt = new Receipt;
@@ -507,8 +506,6 @@ class ReceiptController extends Controller
                 $receipt->duplicate_of = $duplicatedReceipt->id;
                 $receipt->save();
             }
-
-            $uploadedReceipts[] = $receipt;
         }
 
         return redirect()->route('app.bookkeeping.receipts.confirm-first');

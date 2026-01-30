@@ -6,7 +6,6 @@
 import {
   AbacusIcon,
   AccountSetting03Icon,
-  Configuration01Icon,
   ContactBookIcon,
   DashboardSpeed02Icon,
   FileEuroIcon,

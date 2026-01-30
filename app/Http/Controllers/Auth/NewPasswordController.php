@@ -56,7 +56,6 @@ class NewPasswordController extends Controller
 
                 if (!$user->email_verified_at) {
                     $user->markEmailAsVerified();
-                    // $user->save();
                 }
 
                 DB::table('sessions')

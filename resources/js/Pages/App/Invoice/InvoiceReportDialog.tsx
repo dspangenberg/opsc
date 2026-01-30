@@ -56,6 +56,7 @@ const InvoiceReportDialogComponent: React.FC<InvoiceReportDialogComponentProps> 
 
           <Button
             variant="default"
+            disabled={!dateRange?.start || !dateRange?.end}
             onClick={() => {
               setTimeout(() => {
                 onConfirm(dateRange, withPayments)
