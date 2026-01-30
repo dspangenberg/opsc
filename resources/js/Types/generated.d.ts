@@ -320,7 +320,7 @@ amount_gross: number;
 payable_sum_amount: number | null;
 amount_open: number | null;
 is_recurring: boolean;
-recurring_interval_units: number;
+recurring_interval_units: number | null;
 additional_text: string | null;
 recurring_interval: App.Enums.InvoiceRecurringEnum | null;
 payable: App.Data.PaymentData | null;

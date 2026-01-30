@@ -6,7 +6,7 @@
 import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import type React from 'react'
 import { useEffect } from 'react'
-import { ScrollArea } from '@/Components/ui/scroll-area'
+import { ScrollArea } from '@/Components/twc-ui/scroll-area'
 import {
   Table,
   TableBody,
@@ -56,10 +56,7 @@ export function DataTable<TData, TValue>({
 
       <div className="relative flex max-h-fit w-full flex-1 flex-col gap-1.5 overflow-hidden rounded-lg border border-border/80 bg-page-content p-1.5">
         {filterBar}
-        <ScrollArea
-          className="flex-1 min-h-0 rounded-md border bg-page-content"
-          scroll-region=""
-        >
+        <ScrollArea className="min-h-0 flex-1 rounded-md border bg-page-content" scroll-region="">
           <Table className="table-fixed border-spacing-0 border-b-0 bg-background [&_td]:border-border [&_tfoot_td]:border-t [&_th]:border-border [&_th]:border-b [&_tr:not(:last-child)_td]:border-b [&_tr]:border-none">
             <TableHeader className="rounded-t-md bg-sidebar">
               {table.getHeaderGroups().map(headerGroup => (

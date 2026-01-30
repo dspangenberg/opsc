@@ -4,8 +4,8 @@
  */
 
 import React, { Children, type FC, type ReactElement, type ReactNode } from 'react'
+import { ScrollCard } from '@/Components/twc-ui/scroll-card'
 import { cn } from '@/Lib/utils'
-import { BorderedBox } from './twcui/bordered-box'
 
 export interface DataCardProps {
   title?: string
@@ -20,12 +20,12 @@ export const DataCard: FC<DataCardProps> = ({
   className = ''
 }: DataCardProps) => {
   return (
-    <BorderedBox className="flex flex-1 overflow-y-hidden" innerClassName="overflow-y-hidden">
+    <ScrollCard className="flex flex-1 overflow-y-hidden" innerClassName="overflow-y-hidden">
       <div className={cn('flex w-full max-w-sm flex-1 flex-col rounded-lg', className)}>
         {title && <DataCardHeader title={title} />}
         <div className="flex-1 overflow-y-auto rounded-lg px-2">{children}</div>
       </div>
-    </BorderedBox>
+    </ScrollCard>
   )
 }
 

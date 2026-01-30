@@ -13,7 +13,7 @@
                 "/Applications/Herd.app/Contents/Resources/herd-mcp.phar"
             ],
             "env": {
-                "SITE_PATH": "${SITE_PATH}"
+                "SITE_PATH": "/Users/dspangenberg/Projects/twiceware.cloud/opsc"
             }
         }
     }

@@ -14,8 +14,8 @@ import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { StatsField } from '@/Components/StatsField'
 import { Button } from '@/Components/twc-ui/button'
+import { ScrollCard } from '@/Components/twc-ui/scroll-card'
 import { Toolbar } from '@/Components/twc-ui/toolbar'
-import { BorderedBox } from '@/Components/twcui/bordered-box'
 import { Badge } from '@/Components/ui/badge'
 import { getNextWeek, getPrevWeek, minutesToHoursExtended } from '@/Lib/DateHelper'
 import type { PageProps } from '@/Types'
@@ -175,7 +175,7 @@ const TimeIndex: React.FC = () => {
             onClick={handleCurrentWeekClicked}
           />
         </div>
-        <BorderedBox className="mx-auto mb-3 flex-none">
+        <ScrollCard className="mx-auto mb-3 flex-none">
           <div className="mx-auto flex justify-center gap-4 divide-y bg-white px-2 py-2.5 lg:divide-x lg:divide-y-0">
             {(() => {
               const weekdayOrder = [1, 2, 3, 4, 5, 6, 0] // Mo..So (Carbon: 0=So, 1=Mo, ...)
@@ -190,7 +190,7 @@ const TimeIndex: React.FC = () => {
             })()}
             <StatsField label="Woche" value={minutesToHoursExtended(grouped_times.sum)} />
           </div>
-        </BorderedBox>
+        </ScrollCard>
       </div>
     ),
     [grouped_times.sum, week, startDate, endDate, isNextWeekDisabled]

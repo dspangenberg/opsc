@@ -5,11 +5,11 @@ import type { FC } from 'react'
 import { useEffect, useRef } from 'react'
 import { useDragAndDrop, useListData } from 'react-aria-components'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
-import { BorderedBox } from '@/Components/twc-ui/bordered-box'
 import { Button } from '@/Components/twc-ui/button'
 import { GridList, GridListItem } from '@/Components/twc-ui/grid-list'
 import { Icon } from '@/Components/twc-ui/icon'
 import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
+import { ScrollCard } from '@/Components/twc-ui/scroll-card'
 import { DocumentSelector } from '@/Pages/App/Document/Document/DocumentSelector'
 
 interface OfferDetailsAttachmentsProps {
@@ -105,7 +105,7 @@ export const OfferDetailsAttachments: FC<OfferDetailsAttachmentsProps> = ({
   })
 
   return (
-    <BorderedBox>
+    <ScrollCard>
       <div className="p-2 text-sm">
         <div className="flex items-center px-2 pb-1">
           <div className="flex-1 font-medium">Anhänge</div>
@@ -161,6 +161,6 @@ export const OfferDetailsAttachments: FC<OfferDetailsAttachmentsProps> = ({
           </GridList>
         </div>
       </div>
-    </BorderedBox>
+    </ScrollCard>
   )
 }

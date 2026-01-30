@@ -26,8 +26,8 @@ import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { MenuItem } from '@/Components/twc-ui/menu'
+import { ScrollCard } from '@/Components/twc-ui/scroll-card'
 import { SplitButton } from '@/Components/twc-ui/split-button'
-import { BorderedBox } from '@/Components/twcui/bordered-box'
 import { InvoiceLinesEditorDefaultLine } from '@/Pages/App/Invoice/InvoiceLinesEditorDefaultLine'
 import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 import { InvoiceLinesEditorCaptionLine } from './InvoiceLinesEditorCaptionLine'
@@ -129,7 +129,7 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
 
   return (
     <div className="flex flex-1 flex-col">
-      <BorderedBox className="flex flex-1 overflow-y-hidden" innerClassName="bg-white">
+      <ScrollCard className="flex flex-1 overflow-y-hidden" innerClassName="bg-white">
         <div className="grid grid-cols-24 gap-x-3 border-b bg-sidebar px-13 py-2.5 font-medium text-sm">
           <div className="col-span-3">Menge</div>
           <div className="col-span-2">Einheit</div>
@@ -196,7 +196,7 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
             </SortableContext>
           </DndContext>
         </Form>
-      </BorderedBox>
+      </ScrollCard>
       <div className="flex flex-1 p-4">
         <div className="flex flex-1 items-center">
           <SplitButton
