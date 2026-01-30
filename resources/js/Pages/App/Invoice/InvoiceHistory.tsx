@@ -10,12 +10,12 @@ interface InvoiceDetailsProps extends PageProps {
   children?: React.ReactNode
 }
 
-const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children, invoice }) => {
+const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ invoice }) => {
   const payable = Array.isArray(invoice?.payable) ? invoice.payable : []
   return (
     <InvoiceDetailsLayout invoice={invoice}>
       <div className="flex-1">
-        <DataTable columns={columns} data={payable} itemName="Keine Zahlungen gefunden." />
+        <DataTable columns={columns} data={payable} itemName="Zahlungen" />
       </div>
       <div className="h-fit w-full max-w-sm flex-none px-1">
         <div className="fixed w-full max-w-sm space-y-6">

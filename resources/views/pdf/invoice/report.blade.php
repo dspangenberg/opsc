@@ -243,7 +243,7 @@
         <td class="right">{{ number_format($invoice->amount_gross, 2, ',', '.')}} EUR</td>
         <td class="right">{{ number_format($invoice->amount_open, 2, ',', '.')}} EUR</td>
       </tr>
-      @if($invoice->payable)
+      @if($with_payments && $invoice->payable)
         @foreach ($invoice->payable as $payment)
         <tr >
 
