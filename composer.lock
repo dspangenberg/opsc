@@ -278,16 +278,16 @@
         },
         {
             "name": "brick/math",
-            "version": "0.14.2",
+            "version": "0.14.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brick/math.git",
-                "reference": "55c950aa71a2cabc1d8f2bec1f8a7020bd244aa2"
+                "reference": "a8b53e6cc4d3a336543f042a4dfa0e3f2f2356a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brick/math/zipball/55c950aa71a2cabc1d8f2bec1f8a7020bd244aa2",
-                "reference": "55c950aa71a2cabc1d8f2bec1f8a7020bd244aa2",
+                "url": "https://api.github.com/repos/brick/math/zipball/a8b53e6cc4d3a336543f042a4dfa0e3f2f2356a4",
+                "reference": "a8b53e6cc4d3a336543f042a4dfa0e3f2f2356a4",
                 "shasum": ""
             },
             "require": {
@@ -326,7 +326,7 @@
             ],
             "support": {
                 "issues": "https://github.com/brick/math/issues",
-                "source": "https://github.com/brick/math/tree/0.14.2"
+                "source": "https://github.com/brick/math/tree/0.14.4"
             },
             "funding": [
                 {
@@ -334,7 +334,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-30T14:03:11+00:00"
+            "time": "2026-02-02T16:57:31+00:00"
         },
         {
             "name": "calebporzio/sushi",
@@ -11910,16 +11910,16 @@
         },
         {
             "name": "laravel-lang/lang",
-            "version": "15.27.0",
+            "version": "15.28.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Laravel-Lang/lang.git",
-                "reference": "1684701b49401eb98c250e1b9a6b09fa768dfecb"
+                "reference": "ebaf8597718660484c4de216778982e8ef9dac98"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Laravel-Lang/lang/zipball/1684701b49401eb98c250e1b9a6b09fa768dfecb",
-                "reference": "1684701b49401eb98c250e1b9a6b09fa768dfecb",
+                "url": "https://api.github.com/repos/Laravel-Lang/lang/zipball/ebaf8597718660484c4de216778982e8ef9dac98",
+                "reference": "ebaf8597718660484c4de216778982e8ef9dac98",
                 "shasum": ""
             },
             "require": {
@@ -11980,7 +11980,7 @@
                     "type": "yoomoney"
                 }
             ],
-            "time": "2026-01-23T19:22:49+00:00"
+            "time": "2026-02-03T08:09:58+00:00"
         },
         {
             "name": "laravel-lang/locale-list",
