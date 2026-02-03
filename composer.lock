@@ -278,16 +278,16 @@
         },
         {
             "name": "brick/math",
-            "version": "0.14.2",
+            "version": "0.14.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brick/math.git",
-                "reference": "55c950aa71a2cabc1d8f2bec1f8a7020bd244aa2"
+                "reference": "a8b53e6cc4d3a336543f042a4dfa0e3f2f2356a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brick/math/zipball/55c950aa71a2cabc1d8f2bec1f8a7020bd244aa2",
-                "reference": "55c950aa71a2cabc1d8f2bec1f8a7020bd244aa2",
+                "url": "https://api.github.com/repos/brick/math/zipball/a8b53e6cc4d3a336543f042a4dfa0e3f2f2356a4",
+                "reference": "a8b53e6cc4d3a336543f042a4dfa0e3f2f2356a4",
                 "shasum": ""
             },
             "require": {
@@ -326,7 +326,7 @@
             ],
             "support": {
                 "issues": "https://github.com/brick/math/issues",
-                "source": "https://github.com/brick/math/tree/0.14.2"
+                "source": "https://github.com/brick/math/tree/0.14.4"
             },
             "funding": [
                 {
@@ -334,7 +334,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-30T14:03:11+00:00"
+            "time": "2026-02-02T16:57:31+00:00"
         },
         {
             "name": "calebporzio/sushi",
@@ -11833,16 +11833,16 @@
         },
         {
             "name": "laravel-lang/http-statuses",
-            "version": "3.11.1",
+            "version": "3.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Laravel-Lang/http-statuses.git",
-                "reference": "ca1bce0952f67577c646bd91529d12b159be90e6"
+                "reference": "dead768b87963c9819264df7adf601f2bef365bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Laravel-Lang/http-statuses/zipball/ca1bce0952f67577c646bd91529d12b159be90e6",
-                "reference": "ca1bce0952f67577c646bd91529d12b159be90e6",
+                "url": "https://api.github.com/repos/Laravel-Lang/http-statuses/zipball/dead768b87963c9819264df7adf601f2bef365bb",
+                "reference": "dead768b87963c9819264df7adf601f2bef365bb",
                 "shasum": ""
             },
             "require": {
@@ -11894,7 +11894,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Laravel-Lang/http-statuses/issues",
-                "source": "https://github.com/Laravel-Lang/http-statuses/tree/3.11.1"
+                "source": "https://github.com/Laravel-Lang/http-statuses/tree/3.12.0"
             },
             "funding": [
                 {
@@ -11906,7 +11906,7 @@
                     "type": "yoomoney"
                 }
             ],
-            "time": "2026-01-14T22:00:52+00:00"
+            "time": "2026-01-23T19:06:09+00:00"
         },
         {
             "name": "laravel-lang/lang",
