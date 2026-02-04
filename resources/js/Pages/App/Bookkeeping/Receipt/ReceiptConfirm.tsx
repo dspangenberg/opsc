@@ -1,7 +1,7 @@
 import { ArrowLeft01Icon, ArrowRight01Icon, Delete02Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { Alert } from '@/Components/twc-ui/alert'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
@@ -48,9 +48,14 @@ const ReceiptConfirm: React.FC<Props> = ({
 
   const form = useForm<App.Data.ReceiptData>('update-receipt', 'put', actionUrl, receipt, {})
 
+  // Reset form data when receipt changes
+  useEffect(() => {
+    form.setData(receipt)
+  }, [receipt.id])
+
   const handleNextReceipt = () => {
     if (nextReceipt) {
-      router.visit(nextReceipt)
+      router.visit(nextReceipt, { preserveState: false })
     } else {
       router.visit(route('app.bookkeeping.receipts.index'))
     }
@@ -58,7 +63,7 @@ const ReceiptConfirm: React.FC<Props> = ({
 
   const handlePrevReceipt = () => {
     if (prevReceipt) {
-      router.visit(prevReceipt)
+      router.visit(prevReceipt, { preserveState: false })
     } else {
       router.visit(route('app.bookkeeping.receipts.index'))
     }

@@ -15,7 +15,7 @@ class ReceiptUploadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'files' => 'required|array|min:1|max:10', // Maximal 10 Dateien
+            'files' => 'required|array|min:1|max:50', // Maximal 10 Dateien
             'files.*' => 'required|file|mimes:pdf,txt,zip|max:51200', // Jede Datei validieren
         ];
     }

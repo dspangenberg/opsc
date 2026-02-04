@@ -13,7 +13,6 @@ const alertStyles = tv({
     base: 'relative flex w-full items-center gap-2.5 rounded-md border px-4 py-2 text-sm',
     title: 'font-medium tracking-tight',
     icon: 'size-5 shrink-0 text-background',
-    iconContainer: 'shrink-0 rounded-full bg-muted p-1.5',
     description: 'w-full text-muted-foreground text-sm leading-normal',
     actions: 'flex-none justify-end'
   },
@@ -25,26 +24,22 @@ const alertStyles = tv({
       destructive: {
         base: 'm-0 border-destructive/20 bg-destructive/5 text-destructive *:data-[slot=alert-description]:text-destructive/90 [&>svg]:text-current',
         description: 'text-destructive',
-        icon: 'text-destructive',
-        iconContainer: 'rounded-full bg-destructive/20'
+        icon: 'text-destructive'
       },
       info: {
-        base: 'border-info/20 bg-[oklch(0.45_0.15_257.292)/5] text-info',
-        description: 'text-info',
-        icon: 'text-info',
-        iconContainer: 'rounded-full bg-info/20'
+        base: 'border-info/20 bg-info/5 text-info',
+        description: 'text-info-foreground',
+        icon: 'text-info'
       },
       warning: {
-        base: 'border-yellow-200 bg-[#fefce8] text-yellow-700',
-        description: 'text-yellow-700',
-        icon: 'text-yellow-700',
-        iconContainer: 'rounded-full bg-yellow-200'
+        base: 'border-warning bg-warning text-warning-foreground',
+        description: 'text-warning-foreground',
+        icon: 'text-warning-foreground'
       },
       success: {
         base: 'border-success/20 bg-success/5 text-success',
         description: 'text-success',
-        icon: 'text-success',
-        iconContainer: 'rounded-full bg-success/20'
+        icon: 'text-success'
       }
     }
   },
