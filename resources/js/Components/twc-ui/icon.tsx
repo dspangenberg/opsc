@@ -16,6 +16,7 @@ function isHugeIcon(icon: IconType): icon is IconSvgElement {
 
 export function Icon({ icon, className, strokeWidth = 1.5, ...props }: IconProps) {
   if (isHugeIcon(icon)) {
+    console.log('Rendering as HugeIcon')
     return (
       <HugeiconsIcon
         icon={icon}
@@ -26,6 +27,7 @@ export function Icon({ icon, className, strokeWidth = 1.5, ...props }: IconProps
     )
   }
 
+  console.log('Rendering as Lucide component')
   const IconComponent = icon as ComponentType<LucideProps>
   return <IconComponent className={cn('h-4 w-4', className)} strokeWidth={strokeWidth} {...props} />
 }

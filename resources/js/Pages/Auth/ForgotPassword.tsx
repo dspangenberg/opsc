@@ -43,7 +43,7 @@ const ForgotPassword: React.FC<LoginProps> = ({ status }) => {
     >
       <Form form={form}>
         {status && (
-          <Alert className="bg-green-50 text-green-600" title="Kennwort zurückgesetzt">
+          <Alert variant="success" title="Kennwort zurückgesetzt">
             {status}
           </Alert>
         )}

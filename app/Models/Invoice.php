@@ -620,6 +620,8 @@ class Invoice extends Model implements MediableInterface
         return $this->morphMany(Payment::class, 'payable');
     }
 
+
+
     public function contact(): HasOne
     {
         return $this->hasOne(Contact::class, 'id', 'contact_id');

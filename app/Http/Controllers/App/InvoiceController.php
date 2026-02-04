@@ -97,7 +97,7 @@ class InvoiceController extends Controller
 
         // Optimize by combining related data and reducing N+1 queries
         $invoices = Invoice::query()
-            ->with(['invoice_contact', 'contact', 'project', 'payment_deadline', 'type'])
+            ->with(['invoice_contact', 'contact', 'project', 'payment_deadline', 'type', 'booking'])
             ->view($view)
             ->withSum('lines', 'amount')
             ->withSum('lines', 'tax')

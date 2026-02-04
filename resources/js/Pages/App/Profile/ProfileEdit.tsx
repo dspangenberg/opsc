@@ -64,7 +64,7 @@ const ProfilEdit: React.FC<Props> = ({ user }) => {
       >
         {user.pending_email && (
           <Alert
-            variant="info"
+            variant="warning"
             actions={
               <div className="flex items-center gap-2">
                 <Button
