@@ -80,6 +80,16 @@ const RowActions = ({ row }: { row: Row<App.Data.UserData> }) => {
   )
 }
 
+const getBadge = (row: App.Data.UserData) => {
+  if (row.is_locked) {
+    return <Icon icon={SquareLock02Icon} className="size-3" strokeWidth={2} />
+  }
+  if (row.is_admin) {
+    return <Icon icon={Crown03Icon} className="size-3" strokeWidth={2} />
+  }
+  return null
+}
+
 export const columns: ColumnDef<App.Data.UserData>[] = [
   {
     id: 'select',
@@ -108,25 +118,18 @@ export const columns: ColumnDef<App.Data.UserData>[] = [
   {
     accessorKey: 'initials',
     header: '',
-    size: 30,
+    size: 40,
     cell: ({ row }) => (
       <div className="flex items-center">
         <div className="relative flex items-center">
           <Avatar
             initials={row.original.initials}
             fullname={row.original.full_name}
+            size="lg"
             src={row.original.avatar_url}
+            variant={row.original.is_locked ? 'destructive' : 'info'}
+            badge={getBadge(row.original)}
           />
-          {row.original.is_admin && (
-            <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-2 border-background bg-blue-300">
-              <Icon icon={Crown03Icon} className="size-3 text-white" strokeWidth={2} />
-            </div>
-          )}
-          {row.original.is_locked && (
-            <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-2 border-background bg-red-500">
-              <Icon icon={SquareLock02Icon} className="size-3 text-white" strokeWidth={2} />
-            </div>
-          )}
         </div>
       </div>
     )

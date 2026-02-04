@@ -30,7 +30,7 @@ export const columns: ColumnDef<App.Data.PaymentData>[] = [
   },
   {
     accessorKey: 'transaction.amount',
-    header: () => <div className="text-right">angewiesen</div>,
+    header: () => <div className="text-right">Überwiesen</div>,
     size: 80,
     cell: ({ row }) => (
       <div className="text-right">
@@ -40,7 +40,7 @@ export const columns: ColumnDef<App.Data.PaymentData>[] = [
   },
   {
     accessorKey: 'amount',
-    header: () => <div className="text-right">verrechnet</div>,
+    header: () => <div className="text-right">Verrechnet</div>,
     size: 80,
     cell: ({ row }) => (
       <div className="text-right">{currencyFormatter.format(row.original.amount as number)}</div>

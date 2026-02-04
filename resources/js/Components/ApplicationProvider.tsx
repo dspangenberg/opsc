@@ -102,11 +102,11 @@ export function ApplicationProvider({ children }: React.PropsWithChildren) {
   }
 
   return (
-    <RouterProvider navigate={navigate}>
-      <ApplicationContext.Provider value={value}>
+    <ApplicationContext.Provider value={value}>
+      <RouterProvider navigate={navigate}>
         <div className="overflow-hidden">{children}</div>
-      </ApplicationContext.Provider>
-    </RouterProvider>
+      </RouterProvider>
+    </ApplicationContext.Provider>
   )
 }
 
