@@ -29,7 +29,7 @@ class ProfileController extends Controller
      */
     public function editPassword(Request $request): Response
     {
-        return Inertia::render('App/Setting/Profile/ChangePassword', [
+        return Inertia::render('App/Profile/ChangePassword', [
             'user' => Auth::user(),
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
@@ -38,7 +38,7 @@ class ProfileController extends Controller
 
     public function edit(): Response
     {
-        return Inertia::render('App/Setting/Profile/ProfileEdit', [
+        return Inertia::render('App/Profile/ProfileEdit', [
             'user' => Auth::user(),
         ]);
     }
