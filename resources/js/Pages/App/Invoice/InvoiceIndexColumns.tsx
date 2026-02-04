@@ -47,7 +47,7 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
   {
     accessorKey: 'booking',
     header: '',
-    size,
+    size: 30,
     cell: ({ row, getValue }) => {
       if (row.original.booking?.id) {
         return (
