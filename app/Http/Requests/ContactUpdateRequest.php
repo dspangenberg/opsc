@@ -31,6 +31,8 @@ class ContactUpdateRequest extends FormRequest
             'outturn_account_id' => ['nullable', 'exists_if_not_empty:bookkeeping_accounts,account_number'],
             'cost_center_id' => ['nullable', 'exists_if_not_empty:cost_centers,id'],
             'is_primary' => ['nullable', 'boolean'],
+            'is_debtor' => ['required', 'boolean'],
+            'is_creditor' => ['required', 'boolean'],
             'dob' => ['nullable', 'date'],
             'note' => ['nullable', 'string'],
             'avatar' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:51200'],

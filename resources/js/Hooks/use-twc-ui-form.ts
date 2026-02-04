@@ -56,13 +56,6 @@ function setNestedValue(obj: any, path: string, value: any): any {
   return obj
 }
 
-/**
- * Convert Laravel error key format (phones.0.number) to array notation (phones[0].number)
- */
-function convertErrorKey(key: string): string {
-  return key.replace(/\.(\d+)\./g, '[$1].').replace(/\.(\d+)$/, '[$1]')
-}
-
 export type FormValidationMode = 'change' | 'blur' | 'both' | 'none'
 
 export interface FormValidationOptions {

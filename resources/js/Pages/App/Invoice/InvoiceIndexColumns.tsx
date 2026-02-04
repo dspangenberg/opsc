@@ -2,6 +2,8 @@ import { Link } from '@inertiajs/react'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
+import { Icon } from '@/Components/twc-ui/icon'
+import { Tick01Icon } from '@hugeicons/core-free-icons'
 
 const editUrl = (id: number | null) => (id ? route('app.invoice.details', { id }) : '#')
 const contactUrl = (id: number | null) => (id ? route('app.contact.details', { id }) : '#')
@@ -39,8 +41,22 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
   {
     accessorKey: 'issued_on',
     header: 'Datum',
-    size: 100,
+    size: 80,
     cell: ({ row, getValue }) => <span>{getValue() as string}</span>
+  },
+  {
+    accessorKey: 'booking',
+    header: '',
+    size,
+    cell: ({ row, getValue }) => {
+      if (row.original.booking?.id) {
+        return (
+          <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-green-500">
+            <Icon icon={Tick01Icon} className="size-3.5 text-white" stroke="3" />
+          </div>
+        )
+      }
+    }
   },
   {
     accessorKey: 'formated_invoice_number',
