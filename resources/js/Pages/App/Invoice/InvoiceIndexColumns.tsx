@@ -1,9 +1,12 @@
+import { Tick01Icon } from '@hugeicons/core-free-icons'
 import { Link } from '@inertiajs/react'
 import type { ColumnDef } from '@tanstack/react-table'
+import { Pressable } from 'react-aria-components'
+import { HoverCard } from '@/Components/twc-ui/hover-card'
+import { Icon } from '@/Components/twc-ui/icon'
 import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
-import { Icon } from '@/Components/twc-ui/icon'
-import { Tick01Icon } from '@hugeicons/core-free-icons'
+import { InvoiceIndexHoverCard } from '@/Pages/App/Invoice/InvoiceIndexHoverCard'
 
 const editUrl = (id: number | null) => (id ? route('app.invoice.details', { id }) : '#')
 const contactUrl = (id: number | null) => (id ? route('app.contact.details', { id }) : '#')
@@ -48,11 +51,17 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
     accessorKey: 'booking',
     header: '',
     size: 30,
-    cell: ({ row, getValue }) => {
+    cell: ({ row }) => {
       if (row.original.booking?.id) {
         return (
           <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-green-500">
-            <Icon icon={Tick01Icon} className="size-3.5 text-white" stroke="3" />
+            <HoverCard>
+              <Pressable>
+                <Icon icon={Tick01Icon} className="size-3.5 text-white" stroke="3" role="button" />
+              </Pressable>
+
+              <InvoiceIndexHoverCard invoice={row.original} />
+            </HoverCard>
           </div>
         )
       }

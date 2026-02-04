@@ -82,7 +82,7 @@ export const Upload = () => {
 
   const [fileState, fileActions] = useFileUpload({
     multiple: true, // Mehrere Dateien erlauben
-    maxFiles: 20, // Maximal 10 Dateien
+    maxFiles: 50, // Maximal 10 Dateien
     maxSize: 50 * 1024 * 1024, // 50MB pro Datei
     accept: '.pdf,.txt,.zip', // Nur PDF und TXT
     onFilesChange: files => {

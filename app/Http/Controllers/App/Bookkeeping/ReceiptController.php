@@ -171,6 +171,19 @@ class ReceiptController extends Controller
             $filename = $receipt->issued_on->format('Y-m-d').'-'.$media->filename;
             $receipt->org_filename = $media->filename;
             $media->move($folder, $filename);
+
+            // Nach Bestätigung zum nächsten unbestätigten Beleg weiterleiten
+            $nextReceipt = Receipt::query()
+                ->where('is_confirmed', false)
+                ->orderBy('issued_on')
+                ->first();
+
+            if ($nextReceipt) {
+                return redirect()->route('app.bookkeeping.receipts.confirm', ['receipt' => $nextReceipt->id]);
+            }
+
+            return redirect()->route('app.bookkeeping.receipts.index')
+                ->with('message', 'Alle Belege sind bereits bestätigt.');
         }
 
         return redirect()->route('app.bookkeeping.receipts.confirm', ['receipt' => $receipt->id]);
