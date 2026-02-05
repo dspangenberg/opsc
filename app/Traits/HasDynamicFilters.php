@@ -61,6 +61,84 @@ trait HasDynamicFilters
     }
 
     /**
+     * Get active filter labels as human-readable strings
+     */
+    public function getActiveFilterLabels(Request $request, array $searchFields = []): array
+    {
+        $activeFilters = [];
+        $search = $request->input('search', '');
+
+        if ($search) {
+            $label = ! empty($searchFields) ? implode('/', $searchFields) : 'Suche';
+            $activeFilters[] = $label.': '.$search;
+        }
+
+        $filtersData = $this->getParsedFilters($request);
+
+        if (isset($filtersData['filters']) && is_array($filtersData['filters'])) {
+            foreach ($filtersData['filters'] as $key => $filter) {
+                $value = $filter['value'] ?? null;
+                if ($value === null) {
+                    continue;
+                }
+
+                $label = $this->getFilterLabel($key, $value);
+                if ($label) {
+                    $activeFilters[] = $label;
+                }
+            }
+        }
+
+        return $activeFilters;
+    }
+
+    /**
+     * Get human-readable label for a specific filter
+     * Should be overridden in the model for custom labels
+     */
+    protected function getFilterLabel(string $key, mixed $value): ?string
+    {
+        return null;
+    }
+
+    /**
+     * Parse filters into internal format
+     */
+    public function getParsedFilters(Request $request, array $options = []): array
+    {
+        $filtersInput = $request->input('filters', []);
+        $filtersData = [];
+
+        if (is_string($filtersInput)) {
+            $filtersData = json_decode($filtersInput, true) ?? [];
+        } elseif (is_array($filtersInput)) {
+            $filtersData = $filtersInput;
+        }
+
+        // Acceptance of both wrapped and unwrapped filter payloads
+        if (! isset($filtersData['filters']) || ! is_array($filtersData['filters'])) {
+            $looksLikeFiltersMap = true;
+            foreach ($filtersData as $k => $v) {
+                if (! is_string($k) || ! is_array($v) || ! isset($v['operator'])) {
+                    $looksLikeFiltersMap = false;
+                    break;
+                }
+            }
+            if ($looksLikeFiltersMap && ! empty($filtersData)) {
+                $filtersData = [
+                    'filters' => $filtersData,
+                    'boolean' => $request->input('boolean', 'AND'),
+                ];
+            }
+        }
+
+        return [
+            'filters' => $filtersData['filters'] ?? [],
+            'boolean' => $filtersData['boolean'] ?? $request->input('boolean', 'AND'),
+        ];
+    }
+
+    /**
      * Apply dynamic filters to query based on request
      */
     public function scopeApplyDynamicFilters(Builder $query, Request $request, array $options = []): Builder
@@ -149,7 +227,6 @@ trait HasDynamicFilters
      */
     protected function parseFilters(array $filtersData, array $options = []): array
     {
-
         // Accept both wrapped and unwrapped filter payloads
         if (! isset($filtersData['filters']) || ! is_array($filtersData['filters'])) {
             // If the payload itself looks like the inner "filters" map, wrap it

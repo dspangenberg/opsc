@@ -23,15 +23,19 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Payment> $payments
  * @property-read int|null $payments_count
  * @property-read NumberRangeDocumentNumber|null $range_document_number
+ *
  * @method static Builder<static>|Transaction newModelQuery()
  * @method static Builder<static>|Transaction newQuery()
  * @method static Builder<static>|Transaction query()
+ *
  * @property-read BookkeepingAccount|null $account
  * @property-read float $remaining_amount
+ *
  * @method static Builder<static>|Transaction applyDynamicFilters(\Illuminate\Http\Request $request, array $options = [])
  * @method static Builder<static>|Transaction applyFiltersFromObject(array|string $filters, array $options = [])
  * @method static Builder<static>|Transaction search($searchText)
  * @method static Builder<static>|Transaction hidePrivate()
+ *
  * @mixin Eloquent
  */
 class Transaction extends Model
@@ -81,15 +85,15 @@ class Transaction extends Model
         'booking_text' => '',
     ];
 
-
     public function scopeSearch(Builder $query, $searchText): Builder
     {
         if ($searchText) {
             $searchText = '%'.$searchText.'%';
+
             return $query
-                ->whereLike('name',$searchText)
-                ->orWhereLike('purpose',$searchText)
-                ->orWhereLike('account_number',$searchText);
+                ->whereLike('name', $searchText)
+                ->orWhereLike('purpose', $searchText)
+                ->orWhereLike('account_number', $searchText);
         }
 
         return $query;
@@ -97,13 +101,35 @@ class Transaction extends Model
 
     public function scopeHidePrivate(Builder $query): Builder
     {
-        return $query->whereNotIn('counter_account_id', [1890,1800]);
+        return $query->whereNotIn('counter_account_id', [1890, 1800]);
+    }
+
+    public function scopeIssuedBetween(Builder $query, $from, $to): Builder
+    {
+        return $query->whereBetween('booked_on', [$from, $to]);
+    }
+
+    public function scopeHideTransit(Builder $query): Builder
+    {
+        return $query->whereNotIn('counter_account_id', [1360]);
+    }
+
+    protected function getFilterLabel(string $key, mixed $value): ?string
+    {
+        return match ($key) {
+            'issuedBetween' => is_array($value) && count($value) >= 2
+                ? 'Zeitraum: '.\Illuminate\Support\Carbon::parse($value[0])->format('d.m.Y').' - '.\Illuminate\Support\Carbon::parse($value[1])->format('d.m.Y')
+                : null,
+            'counter_account_id' => (int) $value === 0 ? 'ohne Gegenkonto' : 'Konto: '.$value,
+            'is_locked' => 'nur unbestätigt',
+            'hide_private' => 'private Transaktionen ausblenden',
+            'hide_transit' => 'Geldtransit ausblenden',
+            default => null,
+        };
     }
 
     public static function createBooking(Transaction $transaction, $dryRun = false): array
     {
-
-
 
         $transaction->load('bank_account');
 
@@ -112,7 +138,6 @@ class Transaction extends Model
                 'booked_on', $transaction->bank_account->prefix);
             $transaction->save();
         }
-
 
         $booking = BookkeepingBooking::whereMorphedTo('bookable', Transaction::class)->where('bookable_id', $transaction->id)->limit(5)->first();
 

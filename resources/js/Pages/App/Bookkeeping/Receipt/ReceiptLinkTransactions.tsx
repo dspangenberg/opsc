@@ -1,31 +1,55 @@
-import { router } from '@inertiajs/react'
+import { FileDownloadIcon, MagicWand01Icon, Tick01Icon } from '@hugeicons/core-free-icons'
+import { router, usePage } from '@inertiajs/react'
+import { sumBy } from 'lodash'
 import type * as React from 'react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { DataTable } from '@/Components/DataTable'
-
+import { PageContainer } from '@/Components/PageContainer'
+import { Pagination } from '@/Components/Pagination'
 import { Button } from '@/Components/twc-ui/button'
 import { Checkbox } from '@/Components/twc-ui/checkbox'
+import { DatePicker } from '@/Components/twc-ui/date-picker'
 import { ExtendedDialog as Dialog } from '@/Components/twc-ui/extended-dialog'
+import { FormCard } from '@/Components/twc-ui/form-card'
+import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { NumberField } from '@/Components/twc-ui/number-field'
+import { TextField } from '@/Components/twc-ui/text-field'
+import { Toolbar } from '@/Components/twc-ui/toolbar'
+import { Badge } from '@/Components/ui/badge'
+import { useDateConversion } from '@/Hooks/use-date-conversion'
 import { columns } from './ReceiptTransactionColumns'
 
 interface Props {
   receipt: App.Data.ReceiptData
-  transactions: App.Data.TransactionData[]
+  transactions: App.Data.Paginated.PaginationMeta<App.Data.TransactionData[]>
 }
 
 export const ReceiptLinkTransactions: React.FC<Props> = ({ receipt, transactions }) => {
-  const [isOpen, setIsOpen] = useState(true)
+  const [selectedAmount, setSelectedAmount] = useState<number>(0)
+
   const [selectedRows, setSelectedRows] = useState<App.Data.TransactionData[]>([])
 
   const [remainingAmountIsCurrencyDifference, setRemainingAmountIsCurrencyDifference] =
     useState<boolean>(false)
-  const handleOnClosed = () => {
-    setIsOpen(false)
-  }
+
+  const currencyFormatter = new Intl.NumberFormat('de-DE', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2
+  })
+
+  const breadcrumbs = useMemo(
+    () => [
+      { title: 'Buchhaltung' },
+      { title: 'Belege', url: route('app.bookkeeping.receipts.index') },
+      { title: receipt.id, url: route('app.bookkeeping.receipts.edit', { receipt: receipt.id }) },
+      { title: 'Zahlungen zuweisen' }
+    ],
+    [receipt.id]
+  )
 
   const handleSaveClicked = () => {
     const ids = selectedRows.map(row => row.id).join(',')
-    setIsOpen(false)
     router.get(
       route('app.bookkeeping.receipts.payments-store', {
         receipt: receipt.id,
@@ -37,51 +61,81 @@ export const ReceiptLinkTransactions: React.FC<Props> = ({ receipt, transactions
     )
   }
 
-  return (
-    <Dialog
-      isOpen={isOpen}
-      title="Zahlungen zuordnen"
-      confirmationVariant="destructive"
-      onClosed={handleOnClosed}
-      width="5xl"
-      bodyPadding
-      description="Rechnungstammdaten wie Rechnungsnummer, Rechnungsdatum, Leistungsdatum, Rechnungsart, Projekt, Umsatzsteuer, etc. bearbeiten"
-      footer={renderProps => (
-        <div className="flex items-center justify-around gap-2">
-          <div className="flex-none">
-            <Checkbox
-              name="remainingAmountIsCurrencyDifference"
-              checked={remainingAmountIsCurrencyDifference}
-              onChange={setRemainingAmountIsCurrencyDifference}
-            >
-              Restbetrag als Währungsdifferenz buchen
-            </Checkbox>
-          </div>
-          <div className="flex flex-1 items-center gap-2">
-            <Button id="dialog-cancel-button" variant="outline" onClick={() => renderProps.close()}>
-              Abbrechen
-            </Button>
+  const footer = useMemo(() => {
+    return <Pagination data={transactions} />
+  }, [])
 
-            <Button type="button" onClick={handleSaveClicked}>
-              Speichern
-            </Button>
-          </div>
+  const actionBar = useMemo(() => {
+    const sum = sumBy(selectedRows, 'amount')
+    setSelectedAmount(sum)
+
+    return (
+      <Toolbar variant="secondary" className="items-center px-4 pt-2">
+        <div className="self-center text-sm">
+          <Badge variant="outline" className="mr-1.5 bg-background">
+            {selectedRows.length}
+          </Badge>
+          ausgewählte Datensätze
         </div>
-      )}
+        <div>
+          <Checkbox
+            label="Restbetrag als Währungsdifferenz buchen"
+            name="remainingAmountIsCurrencyDifference"
+            onChange={setRemainingAmountIsCurrencyDifference}
+            isSelected={remainingAmountIsCurrencyDifference}
+          />
+        </div>
+        <div>
+          <Button variant="default" title="Zahlungen zuweisen" onClick={handleSaveClicked} />
+        </div>
+        <div className="flex-1 text-right font-medium text-sm">
+          {currencyFormatter.format(selectedAmount)}
+        </div>
+      </Toolbar>
+    )
+  }, [selectedRows, selectedAmount, remainingAmountIsCurrencyDifference])
+
+  return (
+    <PageContainer
+      title="Zahlung zu Beleg hinzufügen"
+      width="7xl"
+      className="flex overflow-hidden"
+      breadcrumbs={breadcrumbs}
     >
-      <div className="overflow-hidden">
-        {transactions?.length ? (
-          <DataTable<App.Data.TransactionData, unknown>
+      <div className="flex w-full flex-col space-y-3">
+        <div>
+          <FormCard innerClassName="bg-muted">
+            <FormGrid>
+              <div className="col-span-3">
+                <TextField label="Belegdatum" value={receipt.issued_on} isDisabled />
+              </div>
+              <div className="col-span-7">
+                <TextField label="Kreditor" value={receipt.contact?.full_name} isDisabled />
+              </div>
+              <div className="col-span-8">
+                <TextField label="Referenz" value={receipt.reference} isDisabled />
+              </div>
+              <div className="col-span-3">
+                <NumberField label="Betrag" value={receipt.amount} isDisabled />
+              </div>
+              <div className="col-span-3">
+                <NumberField label="Offener Betrag" value={receipt.open_amount} isDisabled />
+              </div>
+            </FormGrid>
+          </FormCard>
+        </div>
+        <div className="overflow-hidden">
+          <DataTable
             columns={columns}
+            actionBar={actionBar}
             onSelectedRowsChange={setSelectedRows}
-            data={transactions}
+            footer={footer}
+            data={transactions.data}
             itemName="Transaktionen"
           />
-        ) : (
-          'Keine Transaktionen gefunden'
-        )}
+        </div>
       </div>
-    </Dialog>
+    </PageContainer>
   )
 }
 

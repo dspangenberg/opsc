@@ -33,6 +33,9 @@ type PaginationLinkProps = {
   isActive?: boolean
   size?: 'default' | 'sm' | 'lg' | 'icon'
   disabled?: boolean
+  preserveState?: boolean
+  preserveScroll?: boolean
+  only?: string[]
 } & Omit<React.ComponentProps<typeof Link>, 'size'>
 
 function PaginationLink({
@@ -40,6 +43,9 @@ function PaginationLink({
   isActive,
   disabled = false,
   size = 'default',
+  preserveState,
+  preserveScroll,
+  only,
   children,
   ...props
 }: PaginationLinkProps) {
@@ -71,17 +77,20 @@ function PaginationLink({
   }
 
   return (
-      <Link
-        {...commonProps}
-        className={cn(
-          buttonVariants({
-            variant: isActive ? 'outline' : 'ghost',
-            size
-          }).base(),
-          className
-        )}
-        {...props}
-      >
+    <Link
+      {...commonProps}
+      className={cn(
+        buttonVariants({
+          variant: isActive ? 'outline' : 'ghost',
+          size
+        }).base(),
+        className
+      )}
+      preserveState={preserveState}
+      preserveScroll={preserveScroll}
+      only={only}
+      {...props}
+    >
       {children}
     </Link>
   )

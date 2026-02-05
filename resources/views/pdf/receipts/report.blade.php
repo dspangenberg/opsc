@@ -211,9 +211,11 @@
 </style>
 
 
-  <h2>Auswertung Eingangsrechnungen</h2>
-  vom {{ $begin_on ? \Illuminate\Support\Carbon::parse($begin_on)->format('d.m.Y') : '' }}
-  bis {{ $end_on ? \Illuminate\Support\Carbon::parse($end_on)->format('d.m.Y') : '' }}
+  <h2>Belege</h2>
+
+  @if(!empty($activeFilters))
+      {!! implode('<br/>', $activeFilters) !!}
+  @endif
 
 
 
@@ -225,6 +227,7 @@
         <th>Kreditor</th>
         <th>Referenz</th>
         <th>Kostenstelle</th>
+        <th class="right"  style="width: 20m;">Fremdwährung</th>
         <th class="right" style="width: 25mm;">Betrag (brutto)</th>
         <th class="right" style="width: 20mm;">Offen</th>
         <th class="right" style="width: 20mm;">Bezahlt am</th>
@@ -238,6 +241,11 @@
         <td class="truncate">{{ $receipt->contact->fullname }}</td>
         <td class="truncate">{{ $receipt->reference }}</td>
         <td class="truncate">{{ $receipt->cost_center?->name }}</td>
+        <td class="right">
+          @if($receipt->org_currency !== 'EUR')
+          {{ number_format($receipt->org_amount, 2, ',', '.')}} {{ $receipt->org_currency }}
+          @endif
+        </td>
         <td class="right">{{ number_format($receipt->amount, 2, ',', '.')}} EUR</td>
         <td class="right">{{ number_format($receipt->open_amount, 2, ',', '.')}} EUR</td>
         <td class="right">

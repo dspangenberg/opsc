@@ -34,6 +34,9 @@ const ReceiptConfirm: React.FC<Props> = ({
   cost_centers,
   currencies
 }) => {
+  if (!receipt) {
+    return null
+  }
   const actionUrl = route(
     'app.bookkeeping.receipts.update',
     {

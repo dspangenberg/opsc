@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasDynamicFilters;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Support\Carbon;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
@@ -45,6 +47,7 @@ use Plank\Mediable\MediableCollection;
  */
 class Receipt extends Model
 {
+    use HasDynamicFilters;
     use Mediable;
 
     protected $appends = [
@@ -140,6 +143,48 @@ class Receipt extends Model
     public function booking(): MorphOne
     {
         return $this->morphOne(BookkeepingBooking::class, 'bookable');
+    }
+
+    public function scopeSearch(Builder $query, $searchText): Builder
+    {
+        if ($searchText) {
+            $searchText = '%'.$searchText.'%';
+
+            return $query
+                ->whereLike('reference', $searchText);
+        }
+
+        return $query;
+    }
+
+    public function scopeIssuedBetween(Builder $query, $from, $to): Builder
+    {
+        return $query->whereBetween('issued_on', [$from, $to]);
+    }
+
+    public function scopeIsUnpaid(Builder $query): Builder
+    {
+        $sql = 'receipts.amount + COALESCE((SELECT SUM(amount) FROM payments WHERE payable_type = ? AND payable_id = receipts.id AND is_currency_difference = false), 0) != 0';
+
+        return $query->whereRaw($sql, [self::class]);
+    }
+
+    protected function getFilterLabel(string $key, mixed $value): ?string
+    {
+        return match ($key) {
+            'is_unpaid' => 'nur unbezahlte',
+            'issuedBetween' => is_array($value) && count($value) >= 2
+                ? 'Zeitraum: '.Carbon::parse($value[0])->format('d.m.Y').' - '.Carbon::parse($value[1])->format('d.m.Y')
+                : null,
+            'contact_id' => ($contact = Contact::find($value))
+                ? 'Kreditor: '.($contact->reverse_full_name ?? $value)
+                : 'Kreditor: '.$value,
+            'cost_center_id' => ($costCenter = CostCenter::find($value))
+                ? 'Kostenstelle: '.($costCenter->name ?? $value)
+                : 'Kostenstelle: '.$value,
+            'org_currency' => 'Währung: '.$value,
+            default => null,
+        };
     }
 
     public static function createBooking($receipt): void
