@@ -42,7 +42,10 @@ export const ReceiptLinkTransactions: React.FC<Props> = ({ receipt, transactions
     () => [
       { title: 'Buchhaltung' },
       { title: 'Belege', url: route('app.bookkeeping.receipts.index') },
-      { title: receipt.id, url: route('app.bookkeeping.receipts.edit', { receipt: receipt.id }) },
+      {
+        title: String(receipt.id),
+        url: route('app.bookkeeping.receipts.edit', { receipt: receipt.id })
+      },
       { title: 'Zahlungen zuweisen' }
     ],
     [receipt.id]

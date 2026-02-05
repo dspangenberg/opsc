@@ -7,7 +7,7 @@ export interface FilterItem {
 
 export type FilterConfig = {
   filters: Record<string, FilterItem>
-  boolean?: 'AND' | 'OR'.
+  boolean?: 'AND' | 'OR'
 }
 
 export const parseFilterDateRange = (issuedBetween: any) => {
