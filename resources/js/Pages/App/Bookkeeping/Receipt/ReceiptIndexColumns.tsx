@@ -98,14 +98,20 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
   {
     accessorKey: 'reference',
     header: 'Referenz ',
-    size: 200,
+    size: 150,
     cell: ({ row }) => <div className="truncate">{row.original.reference as string}</div>
   },
   {
     accessorKey: 'contact.cost_center_id',
     header: 'Kostenstelle ',
-    size: 200,
+    size: 150,
     cell: ({ row }) => <div className="truncate">{row.original.cost_center?.name as string}</div>
+  },
+  {
+    accessorKey: 'org_currency',
+    header: 'Währung',
+    size: 60,
+    cell: ({ getValue }) => <div>{getValue() as string}</div>
   },
   {
     accessorKey: 'amount',
@@ -123,7 +129,6 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
       <div className="text-right">{currencyFormatter.format(row.original.open_amount ?? 0)}</div>
     )
   },
-
   {
     accessorKey: 'payable_min_issued_on',
     header: 'bezahlt',

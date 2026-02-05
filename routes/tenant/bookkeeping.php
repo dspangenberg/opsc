@@ -3,9 +3,6 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\App\Bookkeeping\BookingController;
-use App\Http\Controllers\App\Bookkeeping\BookkeepingAcountsController;
-use App\Http\Controllers\App\Bookkeeping\BookkeepingRulesController;
-use App\Http\Controllers\App\Bookkeeping\CostCenterController;
 use App\Http\Controllers\App\Bookkeeping\ReceiptController;
 use App\Http\Controllers\App\Bookkeeping\TransactionController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
@@ -37,7 +34,8 @@ Route::match(['GET', 'POST'], 'bookkeeping/transactions/{bank_account?}', [Trans
 
 Route::post('/bookkeeping/receipts/upload', [ReceiptController::class, 'upload'])->name('app.bookkeeping.receipts.upload')->middleware([HandlePrecognitiveRequests::class]);
 Route::get('/bookkeeping/receipts/upload-form', [ReceiptController::class, 'uploadForm'])->name('app.bookkeeping.receipts.upload-form');
-Route::get('/bookkeeping/receipts', [ReceiptController::class, 'index'])->name('app.bookkeeping.receipts.index');
+Route::match(['GET', 'POST'], '/bookkeeping/receipts', [ReceiptController::class, 'index'])->name('app.bookkeeping.receipts.index');
+Route::get('/bookkeeping/receipts/report', [ReceiptController::class, 'printReport'])->name('app.bookkeeping.receipts.print');
 
 Route::get('/bookkeeping/receipts/lock/', [ReceiptController::class, 'lock'])->name('app.bookkeeping.receipts.lock');
 Route::get('/bookkeeping/receipts/rule/', [ReceiptController::class, 'runRules'])->name('app.bookkeeping.receipts.rule');

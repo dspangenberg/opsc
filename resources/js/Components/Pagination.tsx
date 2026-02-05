@@ -12,13 +12,23 @@ interface PaginatorProps<T> {
   data: App.Data.Paginated.PaginationMeta<T>
   itemName?: string
   selected?: number
+  preserveState?: boolean
+  preserveScroll?: boolean
+  only?: string[]
 }
 
 export const Pagination = <T,>({
   data,
   itemName = 'Datensätze',
-  selected = 0
+  selected = 0,
+  preserveState,
+  preserveScroll,
+  only
 }: PaginatorProps<T>) => {
+  if (!data || !data.links) {
+    return null
+  }
+
   const pages = data.links.slice(1, -1) // Remove first and last elements
 
   return (
@@ -40,6 +50,9 @@ export const Pagination = <T,>({
               <PaginationPrevious
                 href={data.prev_page_url || '#'}
                 disabled={data.current_page === 1}
+                preserveState={preserveState}
+                preserveScroll={preserveScroll}
+                only={only}
               />
             </PaginationItem>
             {pages.map((link, index) => (
@@ -47,7 +60,13 @@ export const Pagination = <T,>({
                 {link.label === '...' ? (
                   <PaginationEllipsis />
                 ) : (
-                  <PaginationLink href={link.url || '#'} isActive={link.active}>
+                  <PaginationLink
+                    href={link.url || '#'}
+                    isActive={link.active}
+                    preserveState={preserveState}
+                    preserveScroll={preserveScroll}
+                    only={only}
+                  >
                     {link.label}
                   </PaginationLink>
                 )}
@@ -57,6 +76,9 @@ export const Pagination = <T,>({
               <PaginationNext
                 href={data.next_page_url || '#'}
                 disabled={data.current_page === data.last_page}
+                preserveState={preserveState}
+                preserveScroll={preserveScroll}
+                only={only}
               />
             </PaginationItem>
           </PaginationContent>

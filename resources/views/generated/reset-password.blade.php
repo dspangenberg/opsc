@@ -95,27 +95,28 @@
                 <td class="sm-p-6" style="border-top-left-radius: 8px; border-top-right-radius: 8px; background-color: #fffffe; padding: 24px 36px; text-align: left; border: 1px solid #e2e8f0">
                   <div role="separator" style="line-height: 24px">&zwj;</div>
                   <h1 style="margin: 0 0 24px; font-size: 1.2rem; line-height: 32px; font-weight: 600; color: #0f172a;">
-                    Willkommen in der opsc.cloud, {{ $name }}!
+                    Willkommen in der opsc.cloud von twiceware, {{ $name }}!
                   </h1>
                   <p style="margin: 0 0 24px; font-size: 1.0rem; line-height: 24px; color: #475569;">
-                    Bevor es richtig losgeht, musst Du Deine E-Mail-Adresse bestätitgen und ein neues Kennwort festlegen.
+                    Bevor es richtig losgeht, musst Du Deine E-Mail-Adresse bestätigen und ein Kennwort für Deinen Account festlegen.
                   </p>
                   <p style="display: flex; width: 100%; align-items: center; justify-content: center; text-align: center;"></p>
                   <div style="text-align: center;">
                     <a href="{{ $resetUrl }}" style="display: inline-block; text-decoration: none; padding: 16px 24px; font-size: 16px; line-height: 1; border-radius: 4px; color: #fffffe; background-color: #3b82f6; font-weight: 600;" class="hover-bg-blue-800">
                       <!--[if mso]><i style="mso-font-width: 150%; mso-text-raise: 31px;" hidden>&emsp;</i><![endif]-->
-                      <span style="mso-text-raise: 16px">Kennwort zurücksetzen</span>
+                      <span style="mso-text-raise: 16px">Kennwort festlegen</span>
                       <!--[if mso]><i hidden style="mso-font-width: 150%;">&emsp;&#8203;</i><![endif]-->
                     </a>
                   </div>
                   <p></p>
                   <div role="separator" style="line-height: 24px">&zwj;</div>
                   <p style="margin: 0; font-size: 1.0rem; line-height: 24px; color: #475569;">
-                    Dein <span style="font-weight: 600;">opsc.cloud</span>-Team
+                    Freundliche Grüße aus Bonn<br>
+                    twiceware solutions e. K.
                   </p>
                   <div role="separator" style="height: 1px; line-height: 1px; background-color: #cbd5e1; margin-top: 24px; margin-bottom: 24px">&zwj;</div>
                   <p class="mso-break-all" style="margin: 0; border-top-width: 1px; background-color: #fafaf9; padding: 16px; font-size: 0.9rem; line-height: 20px; color: #475569; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
-                    Falls Du Probleme mit dem "Kennwort zurücksetzen"-Button hast, kopiere und füge die folgende URL
+                    Falls Du Probleme mit dem Button hast, kopiere und füge die folgende URL
                     in Deinem Browser ein:
                     <a href="{{ $resetUrl }}" style="color: #1e293b; text-decoration: underline;">{{ $resetUrl }}</a>
                   </p>

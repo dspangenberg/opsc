@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\App\Bookkeeping;
 
 use App\Data\CompanyData;
+use App\Data\ContactData;
 use App\Data\CostCenterData;
 use App\Data\CurrencyData;
 use App\Data\ReceiptData;
@@ -43,9 +44,17 @@ use Throwable;
 
 class ReceiptController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->input('search', '');
+
         $receipts = Receipt::query()
+            ->applyDynamicFilters($request, [
+                'allowed_filters' => ['contact_id', 'org_currency', 'cost_center_id'],
+                'allowed_operators' => ['=', '!=', 'like', 'scope'],
+                'allowed_scopes' => ['is_unpaid', 'issuedBetween'],
+            ])
+            ->search($search)
             ->with([
                 'account',
                 'range_document_number',
@@ -66,14 +75,75 @@ class ReceiptController extends Controller
                 'issued_on',
                 'min'
             )
-            // ->orderBy('payable_min_issued_on', 'asc')  // Sortierung nach Zahlungsdatum
-            // ->orderByRaw('payable_min_issued_on IS NULL, payable_min_issued_on ASC')
-            ->orderBy('issued_on')
+            ->orderByDesc('issued_on')
             ->paginate();
+
+        $contacts = Contact::where('is_creditor', true)->where('is_archived', false)->orderBy('name')->get();
+        $currencies = Currency::query()->orderBy('name')->get();
+        $costCenters = CostCenter::query()->orderBy('name')->get();
+
+        if ($request->isMethod('POST')) {
+            $receipts->appends($request->only(['filters', 'search']));
+        } else {
+            $receipts->appends($_GET)->links();
+        }
 
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptIndex', [
             'receipts' => ReceiptData::collect($receipts),
+            'contacts' => ContactData::collect($contacts),
+            'currencies' => CurrencyData::collect($currencies),
+            'cost_centers' => CostCenterData::collect($costCenters),
+            'currentFilters' => (new Receipt)->getParsedFilters($request),
+            'currentSearch' => $search,
         ]);
+    }
+
+    public function printReport(Request $request)
+    {
+        $search = $request->input('search', '');
+
+        $receipts = Receipt::query()
+            ->applyDynamicFilters($request, [
+                'allowed_filters' => ['contact_id', 'org_currency', 'cost_center_id'],
+                'allowed_operators' => ['=', '!=', 'like', 'scope'],
+                'allowed_scopes' => ['is_unpaid', 'issuedBetween'],
+            ])
+            ->search($search)
+            ->with([
+                'account',
+                'range_document_number',
+                'contact',
+                'cost_center',
+            ])
+            ->withAggregate(
+                ['payable' => function ($query) {
+                    $query->where('is_currency_difference', false);
+                }],
+                'amount',
+                'sum'
+            )
+            ->withAggregate(
+                ['payable' => function ($query) {
+                    $query->where('is_currency_difference', false);
+                }],
+                'issued_on',
+                'min'
+            )
+            ->orderByDesc('issued_on')
+            ->get();
+
+        $activeFilters = (new Receipt)->getActiveFilterLabels($request, ['Suche']);
+
+        $pdf = WeasyPdfService::createPdf('receipt-report', 'pdf.receipts.report',
+            [
+                'receipts' => $receipts,
+                'begin_on' => $receipts->first()?->issued_on,
+                'end_on' => $receipts->last()?->issued_on,
+                'activeFilters' => $activeFilters,
+            ]);
+        $filename = now()->format('Y-m-d-H-i').'-Auswertung-Eingangsrechnungen.pdf';
+
+        return response()->inlineFile($pdf, $filename);
     }
 
     public function destroy(Receipt $receipt)
@@ -107,9 +177,7 @@ class ReceiptController extends Controller
     {
         $receipt = Receipt::query()->where('is_confirmed', false)->orderBy('issued_on')->first();
 
-        // Prüfung, ob unbestätigte Receipts existieren
         if (! $receipt) {
-            // Redirect zur Hauptseite oder zeige eine Nachricht an, wenn keine Receipts zu bestätigen sind
             return redirect()->route('app.bookkeeping.receipts.index')
                 ->with('message', 'Alle Belege sind bereits bestätigt.');
         }
@@ -191,22 +259,26 @@ class ReceiptController extends Controller
 
     public function createPayments(Receipt $receipt)
     {
-        $receipt->load(['account', 'range_document_number', 'contact']);
+        $receipt->load(['account', 'range_document_number', 'contact', 'payable.transaction'])->loadSum('payable', 'amount');
 
-        $transactions = null;
+        $query = Transaction::query()
+            ->orderByDesc('booked_on')
+            ->whereRaw('amount - COALESCE((SELECT SUM(amount) FROM payments WHERE transaction_id = transactions.id), 0) < 0.00');
+
         if ($receipt->contact_id) {
-            $transactions = Transaction::query()
-                ->where('counter_account_id', $receipt->contact->creditor_number)
-                ->orderBy('booked_on')
-                ->whereRaw('amount - COALESCE((SELECT SUM(amount) FROM payments WHERE transaction_id = transactions.id), 0) < 0.00')
-                ->get();
+            $query->where('counter_account_id', $receipt->contact->creditor_number)
+                ->whereBetween('booked_on', [$receipt->issued_on->copy()->subMonth(2), $receipt->issued_on->copy()->addMonth(2)]);
+        } else {
+            $query->whereRaw('1 = 0');
         }
 
-        return Inertia::modal('App/Bookkeeping/Receipt/ReceiptLinkTransactions')
+        $transactions = $query->paginate(5);
+
+        return Inertia::render('App/Bookkeeping/Receipt/ReceiptLinkTransactions')
             ->with([
                 'receipt' => ReceiptData::from($receipt),
-                'transactions' => $transactions ? TransactionData::collect($transactions) : null,
-            ])->baseRoute('app.bookkeeping.receipts.confirm', ['receipt' => $receipt->id]);
+                'transactions' => TransactionData::collect($transactions),
+            ]);
     }
 
     public function storePayments(Request $request, Receipt $receipt)
@@ -267,7 +339,7 @@ class ReceiptController extends Controller
 
     public function edit(Receipt $receipt)
     {
-        $receipt->load(['account', 'range_document_number', 'contact', 'payable.transaction']);
+        $receipt->load(['account', 'range_document_number', 'contact', 'payable.transaction'])->loadSum('payable', 'amount');
 
         $contacts = Contact::where('is_creditor', true)->orderBy('name')->get();
         $currencies = Currency::query()->orderBy('name')->get();

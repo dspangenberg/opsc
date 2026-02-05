@@ -39,14 +39,13 @@ class TransactionController extends Controller
         $bank_accounts = BankAccount::orderBy('pos')->get();
 
         // POST-Daten für Filter verwenden, mit Fallback auf GET für initiale Seitenaufrufe
-        $filters = $request->input('filters', []);
         $search = $request->input('search', '');
         $transactions = Transaction::query()
             ->where('bank_account_id', $bank_account->id)
-            ->applyFiltersFromObject($filters, [
+            ->applyDynamicFilters($request, [
                 'allowed_filters' => ['is_locked', 'counter_account_id'],
                 'allowed_operators' => ['=', '!=', 'like', 'scope'],
-                'allowed_scopes' => ['hide_private'],
+                'allowed_scopes' => ['hide_private', 'hide_transit', 'issuedBetween'],
             ])
             ->search($search)
             ->with('bank_account')
@@ -73,7 +72,7 @@ class TransactionController extends Controller
             'bank_accounts' => BankAccountData::collect($bank_accounts),
             'bookkeeping_accounts' => BookkeepingAccountData::collect($bookkeeping_accounts),
             // Aktuelle Filter und Search-Parameter an Frontend zurückgeben
-            'currentFilters' => $filters,
+            'currentFilters' => (new Transaction)->getParsedFilters($request),
             'currentSearch' => $search,
         ]);
     }

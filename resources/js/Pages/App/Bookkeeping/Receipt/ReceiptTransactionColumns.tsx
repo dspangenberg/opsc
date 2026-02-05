@@ -93,7 +93,7 @@ export const columns: ColumnDef<App.Data.TransactionData>[] = [
   {
     accessorKey: 'booked_on',
     header: 'Buchung',
-    size: 30,
+    size: 50,
     cell: ({ row, getValue }) => <span>{getValue() as string}</span>
   },
   {

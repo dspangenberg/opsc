@@ -271,7 +271,6 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
           filters={filters}
           onFiltersChange={handleFiltersChange}
           bankAccountId={bank_account.id as number}
-          currentSearch={search}
         />
       </div>
     ),

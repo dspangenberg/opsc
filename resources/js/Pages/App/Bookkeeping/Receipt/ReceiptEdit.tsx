@@ -26,7 +26,10 @@ interface Props extends PageProps {
   currencies: App.Data.CurrencyData[]
   file: string
 }
-const ReceiptConfirm: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_centers }) => {
+const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_centers }) => {
+  if (!receipt) {
+    return null
+  }
   const actionUrl = route(
     'app.bookkeeping.receipts.update',
     {
@@ -35,7 +38,7 @@ const ReceiptConfirm: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_
     },
     false
   )
-
+  const form = useForm<App.Data.ReceiptData>('update-receipt', 'put', actionUrl, receipt, {})
   const handleLinkPayments = () => {
     router.visit(route('app.bookkeeping.receipts.payments', { id: receipt.id }))
   }
@@ -45,7 +48,6 @@ const ReceiptConfirm: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_
     currency: 'EUR',
     minimumFractionDigits: 2
   })
-  const form = useForm<App.Data.ReceiptData>('update-receipt', 'put', actionUrl, receipt, {})
 
   const handleNextReceipt = () => {
     if (nextReceipt) {
@@ -209,4 +211,4 @@ const ReceiptConfirm: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_
   )
 }
 
-export default ReceiptConfirm
+export default ReceiptEdit
