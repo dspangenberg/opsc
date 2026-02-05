@@ -25,7 +25,7 @@ export function useModal(resolverCallback: CallableFunction | null = null) {
   const resetHeaders = () => {
     const headers = ['X-Inertia-Modal-Key', 'X-Inertia-Modal-Redirect']
 
-    headers.forEach(key =>
+    headers.forEach(([key, value]) =>
       ['get', 'post', 'put', 'patch', 'delete'].forEach(method => {
         /** @ts-expect-error */
         delete axios.defaults.headers[method][key]
