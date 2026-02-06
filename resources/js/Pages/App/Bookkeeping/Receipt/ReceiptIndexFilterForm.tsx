@@ -71,7 +71,7 @@ export const ReceiptIndexFilterForm: React.FC<Props> = ({
 
   return (
     <PopoverTrigger>
-      <Button variant="outline" size="lg" icon={FilterHorizontalIcon}>
+      <Button variant="outline" size="lg" icon={FilterHorizontalIcon} className="h-9">
         Filter
         {activeFiltersCount > 0 && (
           <Badge variant="secondary" className="ml-1 h-5 w-5 rounded-full p-0 text-xs">

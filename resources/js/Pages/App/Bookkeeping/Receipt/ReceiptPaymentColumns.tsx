@@ -4,16 +4,15 @@
  */
 
 import type { ColumnDef } from '@tanstack/react-table'
-import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
-import { cn } from '@/Lib/utils'
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
   style: 'currency',
   currency: 'EUR',
   minimumFractionDigits: 2
 })
-export const columns: ColumnDef<App.Data.TransactionData>[] = [
+
+export const paymentColumns: ColumnDef<App.Data.PaymentData>[] = [
   {
     id: 'select',
     size: 20,
@@ -39,8 +38,8 @@ export const columns: ColumnDef<App.Data.TransactionData>[] = [
     )
   },
   {
-    accessorKey: 'booked_on',
-    header: 'Buchung',
+    accessorKey: 'issued_on',
+    header: 'Datum',
     size: 50,
     cell: ({ getValue }) => <span>{getValue() as string}</span>
   },
@@ -48,33 +47,27 @@ export const columns: ColumnDef<App.Data.TransactionData>[] = [
     accessorKey: 'bookkeeping_text',
     header: 'Buchung',
     cell: ({ row }) => {
-      const [bookingType, name, purpose] = row.original.bookkeeping_text.split('|')
-      return (
-        <div>
-          <div className="flex items-center gap-2 text-xs">
-            {bookingType}
-            {row.original.is_private && <Badge variant="light-blue">privat</Badge>}
-            {row.original.is_transit && <Badge variant="light-purple">Transit</Badge>}
-            {!!row.original.contact_id && (
-              <Badge variant="secondary">{row.original.contact?.full_name}</Badge>
-            )}
-          </div>
-          <div className="font-medium">{name}</div>
-          <div className="truncate">{purpose}</div>
-          {row.original.account_number && (
-            <div className="text-muted-foreground text-xs">{row.original.account_number}</div>
-          )}
-        </div>
-      )
+      if (row.original.is_currency_difference) {
+        return <span>Währungsdifferenz</span>
+      }
+      return <div>{row.original.transaction.bookkeeping_text.split('|').join(' ')}</div>
     }
   },
   {
-    accessorKey: 'amount_tax',
+    accessorKey: 'amount',
     header: () => <div className="text-right">Betrag</div>,
     size: 130,
     cell: ({ row }) => (
-      <div className={cn(row.original.amount < 0 ? 'text-red-500' : '', 'text-right')}>
-        <div className="font-medium">{currencyFormatter.format(row.original.remaining_amount)}</div>
+      <div className="font-medium">{currencyFormatter.format(row.original.amount || 0)}</div>
+    )
+  },
+  {
+    accessorKey: 'transaction.amount',
+    header: () => <div className="text-right">Betrag</div>,
+    size: 130,
+    cell: ({ row }) => (
+      <div className="font-medium">
+        {currencyFormatter.format(row.original.transaction.amount || 0)}
       </div>
     )
   }

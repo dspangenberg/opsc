@@ -260,7 +260,7 @@ const ContactEdit: React.FC<Props> = ({
           </div>
         }
       >
-        <Form form={form} className="max-w-4xl" errorClassName="w-auto m-3">
+        <Form form={form} className="max-w-4xl">
           <FormGrid>
             <div className="col-span-2 inline-flex items-center justify-center">
               <div>

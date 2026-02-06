@@ -25,8 +25,6 @@ const DateSegment = ({ className, ...props }: AriaDateSegmentProps) => (
         'inline rounded p-0.5 type-literal:px-0 caret-transparent outline-0',
         /* Placeholder */
         'data-placeholder:text-muted-foreground',
-        /* Disabled */
-        'data-disabled:cursor-not-allowed data-disabled:opacity-50',
         /* Focused */
         'data-focused:bg-accent data-focused:text-accent-foreground',
         className

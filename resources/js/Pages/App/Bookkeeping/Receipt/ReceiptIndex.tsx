@@ -1,13 +1,10 @@
 import {
   FileDownloadIcon,
   MagicWand01Icon,
-  MoreVerticalCircle01Icon,
   PrinterIcon,
-  TableIcon,
   Tick01Icon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
-import { getLocalTimeZone } from '@internationalized/date'
 import { sumBy } from 'lodash'
 import type * as React from 'react'
 import { useCallback, useMemo, useRef, useState } from 'react'
@@ -15,14 +12,11 @@ import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
 import { Button } from '@/Components/twc-ui/button'
-import { DropdownButton, MenuItem } from '@/Components/twc-ui/dropdown-button'
 import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
 import { SearchField } from '@/Components/twc-ui/search-field'
 import { Toolbar } from '@/Components/twc-ui/toolbar'
 import { Badge } from '@/Components/ui/badge'
-import { formatDate } from '@/Lib/DateHelper'
 import { ReceiptIndexFilterForm } from '@/Pages/App/Bookkeeping/Receipt/ReceiptIndexFilterForm'
-import { ReceiptReportDialog } from '@/Pages/App/Bookkeeping/Receipt/ReceiptReportDialog'
 import type { PageProps } from '@/Types'
 import { columns } from './ReceiptIndexColumns'
 
@@ -91,26 +85,6 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
     })
   }, [search, filters.filters, filters.boolean])
 
-  const handleCreateReport = useCallback(async () => {
-    const result = await ReceiptReportDialog.call()
-    if (!result) return
-    const startDate = result.start
-      ? formatDate(result.start.toDate(getLocalTimeZone()), 'yyyy-MM-dd')
-      : ''
-    const endDate = result.end
-      ? formatDate(result.end.toDate(getLocalTimeZone()), 'yyyy-MM-dd')
-      : ''
-
-    const url = route('app.bookkeeping.receipts.report', {
-      begin_on: startDate,
-      end_on: endDate
-    })
-
-    await PdfViewer.call({
-      file: url
-    })
-  }, [])
-
   const handleFiltersChange = useCallback(
     (newFilters: FilterConfig) => {
       router.post(
@@ -168,18 +142,9 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
     () => (
       <Toolbar>
         <Button variant="ghost" icon={PrinterIcon} title="Drucken" onClick={handlePrint} />
-        <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon}>
-          <MenuItem
-            icon={TableIcon}
-            title="Report erstellen"
-            ellipsis
-            onClick={handleCreateReport}
-            separator
-          />
-        </DropdownButton>
       </Toolbar>
     ),
-    [handlePrint, handleCreateReport]
+    [handlePrint]
   )
   const actionBar = useMemo(() => {
     const sum = sumBy(selectedRows, 'amount')
@@ -227,7 +192,7 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
 
   const filterBar = useMemo(
     () => (
-      <div className="flex">
+      <div className="flex gap-2">
         <SearchField
           aria-label="Suchen"
           placeholder="Nach Referenz suchen"

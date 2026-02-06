@@ -37,7 +37,7 @@ Route::get('/bookkeeping/receipts/upload-form', [ReceiptController::class, 'uplo
 Route::match(['GET', 'POST'], '/bookkeeping/receipts', [ReceiptController::class, 'index'])->name('app.bookkeeping.receipts.index');
 Route::get('/bookkeeping/receipts/report', [ReceiptController::class, 'printReport'])->name('app.bookkeeping.receipts.print');
 
-Route::get('/bookkeeping/receipts/lock/', [ReceiptController::class, 'lock'])->name('app.bookkeeping.receipts.lock');
+Route::put('/bookkeeping/receipts/lock/{receipt?}', [ReceiptController::class, 'lock'])->name('app.bookkeeping.receipts.lock');
 Route::get('/bookkeeping/receipts/rule/', [ReceiptController::class, 'runRules'])->name('app.bookkeeping.receipts.rule');
 
 Route::get('/bookkeeping/receipts/confirm/', [ReceiptController::class, 'confirmFirst'])->name('app.bookkeeping.receipts.confirm-first');
@@ -50,4 +50,4 @@ Route::get('/bookkeeping/receipts/{receipt}/payments-store', [ReceiptController:
 Route::get('/bookkeeping/receipts/confirm/{receipt}', [ReceiptController::class, 'confirm'])->name('app.bookkeeping.receipts.confirm');
 Route::get('/bookkeeping/receipts/{receipt}/edit', [ReceiptController::class, 'edit'])->name('app.bookkeeping.receipts.edit');
 Route::get('/bookkeeping/receipts/bulk-download/', [ReceiptController::class, 'bulkDownload'])->name('app.bookkeeping.bulk-download');
-Route::get('/bookkeeping/receipts/create-report/', [ReceiptController::class, 'createReport'])->name('app.bookkeeping.receipts.report');
+Route::put('/bookkeeping/receipts/{receipt}/unlock', [ReceiptController::class, 'unlock'])->name('app.bookkeeping.receipts.unlock');

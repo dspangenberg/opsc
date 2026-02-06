@@ -11,7 +11,6 @@ use App\Data\TransactionData;
 use App\Facades\BookeepingRuleService;
 use App\Facades\WeasyPdfService;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ReceiptReportRequest;
 use App\Http\Requests\ReceiptUpdateRequest;
 use App\Http\Requests\ReceiptUploadRequest;
 use App\Jobs\DownloadJob;
@@ -27,8 +26,10 @@ use App\Models\Receipt;
 use App\Models\Transaction;
 use Exception;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 use Plank\Mediable\Exceptions\MediaMoveException;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
 use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
@@ -44,17 +45,14 @@ use Throwable;
 
 class ReceiptController extends Controller
 {
-    public function index(Request $request)
+    private function applyReceiptQueryFilters($query, Request $request, ?string $search = ''): void
     {
-        $search = $request->input('search', '');
-
-        $receipts = Receipt::query()
-            ->applyDynamicFilters($request, [
-                'allowed_filters' => ['contact_id', 'org_currency', 'cost_center_id'],
-                'allowed_operators' => ['=', '!=', 'like', 'scope'],
-                'allowed_scopes' => ['is_unpaid', 'issuedBetween'],
-            ])
-            ->search($search)
+        $query->applyDynamicFilters($request, [
+            'allowed_filters' => ['contact_id', 'org_currency', 'cost_center_id'],
+            'allowed_operators' => ['=', '!=', 'like', 'scope'],
+            'allowed_scopes' => ['is_unpaid', 'issuedBetween'],
+        ])
+            ->search($search ?? '')
             ->with([
                 'account',
                 'range_document_number',
@@ -62,21 +60,45 @@ class ReceiptController extends Controller
                 'cost_center',
             ])
             ->withAggregate(
-                ['payable' => function ($query) {
-                    $query->where('is_currency_difference', false);
-                }],
+                ['payable' => fn ($query) => $query->where('is_currency_difference', false)],
                 'amount',
                 'sum'
             )
             ->withAggregate(
-                ['payable' => function ($query) {
-                    $query->where('is_currency_difference', false);
-                }],
+                ['payable' => fn ($query) => $query->where('is_currency_difference', false)],
                 'issued_on',
                 'min'
             )
-            ->orderByDesc('issued_on')
-            ->paginate();
+            ->orderByDesc('issued_on');
+    }
+
+    private function loadReceiptWithPayments(Receipt $receipt): void
+    {
+        $receipt->load([
+            'account',
+            'booking',
+            'range_document_number',
+            'contact',
+            'payable' => fn ($query) => $query->where('is_currency_difference', false)->with('transaction'),
+        ])->loadSum('payableWithoutCurrencyDifference as payable_sum', 'amount');
+    }
+
+    private function getFormData(): array
+    {
+        return [
+            'contacts' => CompanyData::collect(Contact::where('is_creditor', true)->orderBy('name')->get()),
+            'cost_centers' => CostCenterData::collect(CostCenter::query()->orderBy('name')->get()),
+            'currencies' => CurrencyData::collect(Currency::query()->orderBy('name')->get()),
+        ];
+    }
+
+    public function index(Request $request)
+    {
+        $search = $request->input('search', '');
+
+        $query = Receipt::query();
+        $this->applyReceiptQueryFilters($query, $request, $search);
+        $receipts = $query->paginate();
 
         $contacts = Contact::where('is_creditor', true)->where('is_archived', false)->orderBy('name')->get();
         $currencies = Currency::query()->orderBy('name')->get();
@@ -98,47 +120,22 @@ class ReceiptController extends Controller
         ]);
     }
 
-    public function printReport(Request $request)
+    /**
+     * @throws Exception
+     */
+    public function printReport(Request $request): BinaryFileResponse
     {
         $search = $request->input('search', '');
 
-        $receipts = Receipt::query()
-            ->applyDynamicFilters($request, [
-                'allowed_filters' => ['contact_id', 'org_currency', 'cost_center_id'],
-                'allowed_operators' => ['=', '!=', 'like', 'scope'],
-                'allowed_scopes' => ['is_unpaid', 'issuedBetween'],
-            ])
-            ->search($search)
-            ->with([
-                'account',
-                'range_document_number',
-                'contact',
-                'cost_center',
-            ])
-            ->withAggregate(
-                ['payable' => function ($query) {
-                    $query->where('is_currency_difference', false);
-                }],
-                'amount',
-                'sum'
-            )
-            ->withAggregate(
-                ['payable' => function ($query) {
-                    $query->where('is_currency_difference', false);
-                }],
-                'issued_on',
-                'min'
-            )
-            ->orderByDesc('issued_on')
-            ->get();
+        $query = Receipt::query();
+        $this->applyReceiptQueryFilters($query, $request, $search);
+        $receipts = $query->get();
 
         $activeFilters = (new Receipt)->getActiveFilterLabels($request, ['Suche']);
 
         $pdf = WeasyPdfService::createPdf('receipt-report', 'pdf.receipts.report',
             [
                 'receipts' => $receipts,
-                'begin_on' => $receipts->first()?->issued_on,
-                'end_on' => $receipts->last()?->issued_on,
                 'activeFilters' => $activeFilters,
             ]);
         $filename = now()->format('Y-m-d-H-i').'-Auswertung-Eingangsrechnungen.pdf';
@@ -254,12 +251,14 @@ class ReceiptController extends Controller
                 ->with('message', 'Alle Belege sind bereits bestätigt.');
         }
 
-        return redirect()->route('app.bookkeeping.receipts.confirm', ['receipt' => $receipt->id]);
+        return redirect()->back();
+
+        // return redirect()->route('app.bookkeeping.receipts.confirm', ['receipt' => $receipt->id]);
     }
 
     public function createPayments(Receipt $receipt)
     {
-        $receipt->load(['account', 'range_document_number', 'contact', 'payable.transaction'])->loadSum('payable', 'amount');
+        $this->loadReceiptWithPayments($receipt);
 
         $query = Transaction::query()
             ->orderByDesc('booked_on')
@@ -267,7 +266,7 @@ class ReceiptController extends Controller
 
         if ($receipt->contact_id) {
             $query->where('counter_account_id', $receipt->contact->creditor_number)
-                ->whereBetween('booked_on', [$receipt->issued_on->copy()->subMonth(2), $receipt->issued_on->copy()->addMonth(2)]);
+                ->whereBetween('booked_on', [$receipt->issued_on->copy()->subMonths(2), $receipt->issued_on->copy()->addMonths(2)]);
         } else {
             $query->whereRaw('1 = 0');
         }
@@ -337,25 +336,18 @@ class ReceiptController extends Controller
         return null;
     }
 
-    public function edit(Receipt $receipt)
+    public function edit(Receipt $receipt): Response
     {
-        $receipt->load(['account', 'range_document_number', 'contact', 'payable.transaction'])->loadSum('payable', 'amount');
-
-        $contacts = Contact::where('is_creditor', true)->orderBy('name')->get();
-        $currencies = Currency::query()->orderBy('name')->get();
-        $costCenters = CostCenter::query()->orderBy('name')->get();
-
+        $this->loadReceiptWithPayments($receipt);
         $receipt->org_filename = $receipt->getOriginalFilename();
 
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptEdit', [
             'receipt' => ReceiptData::from($receipt),
-            'contacts' => CompanyData::collect($contacts),
-            'cost_centers' => CostCenterData::collect($costCenters),
-            'currencies' => CurrencyData::collect($currencies),
+            ...$this->getFormData(),
         ]);
     }
 
-    public function confirm(Receipt $receipt)
+    public function confirm(Receipt $receipt): Response|RedirectResponse
     {
         $receipt->load(['account', 'range_document_number', 'contact']);
 
@@ -364,10 +356,8 @@ class ReceiptController extends Controller
             return $item->id === $receipt->id;
         });
 
-        // Prüfung, ob der Receipt in der Collection gefunden wurde
         if ($currentIndex === false) {
-            // Falls der Receipt bereits bestätigt ist oder nicht in der Liste steht,
-            // redirect zum ersten unbestätigten Receipt oder zur Hauptseite
+
             $firstUnconfirmed = $receipts->first();
 
             if ($firstUnconfirmed) {
@@ -381,28 +371,22 @@ class ReceiptController extends Controller
         $nextReceipt = $currentIndex < $receipts->count() - 1 ? $receipts[$currentIndex + 1] : null;
         $prevReceipt = $currentIndex > 0 ? $receipts[$currentIndex - 1] : null;
 
-        $contacts = Contact::where('is_creditor', true)->orderBy('name')->get();
-        $currencies = Currency::query()->orderBy('name')->get();
-        $costCenters = CostCenter::query()->orderBy('name')->get();
-
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptConfirm', [
             'receipt' => ReceiptData::from($receipt),
             'nextReceipt' => $nextReceipt ? route('app.bookkeeping.receipts.confirm',
                 ['receipt' => $nextReceipt->id]) : null,
             'prevReceipt' => $prevReceipt ? route('app.bookkeeping.receipts.confirm',
                 ['receipt' => $prevReceipt->id]) : null,
-            'contacts' => CompanyData::collect($contacts),
-            'cost_centers' => CostCenterData::collect($costCenters),
-            'currencies' => CurrencyData::collect($currencies),
+            ...$this->getFormData(),
         ]);
     }
 
-    public function uploadForm()
+    public function uploadForm(): Response
     {
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptUpload');
     }
 
-    public function bulkDownload(Request $request)
+    public function bulkDownload(Request $request): RedirectResponse
     {
         $ids = $request->query('ids');
         $ids = $ids ? explode(',', $ids) : [];
@@ -422,48 +406,21 @@ class ReceiptController extends Controller
     /**
      * @throws Exception
      */
-    public function createReport(ReceiptReportRequest $request): BinaryFileResponse
+    public function unlock(Receipt $receipt): RedirectResponse
     {
-        $receipts = Receipt::query()
-            ->with([
-                'account',
-                'range_document_number',
-                'contact',
-                'cost_center',
-            ])
-            ->withAggregate(
-                ['payable' => function ($query) {
-                    $query->where('is_currency_difference', false);
-                }],
-                'amount',
-                'sum'
-            )
-            ->withAggregate(
-                ['payable' => function ($query) {
-                    $query->where('is_currency_difference', false);
-                }],
-                'issued_on',
-                'min'
-            )
-            ->whereBetween('issued_on', [$request->validated('begin_on'), $request->validated('end_on')])
-            ->orderBy('issued_on')
-            ->get();
+        $receipt->load('booking');
+        if (! $receipt->booking->is_locked) {
+            $receipt->is_locked = false;
+            $receipt->save();
+        }
 
-        $pdf = WeasyPdfService::createPdf('receipt-report', 'pdf.receipts.report',
-            [
-                'receipts' => $receipts,
-                'begin_on' => $request->validated('begin_on'),
-                'end_on' => $request->validated('end_on'),
-            ]);
-        $filename = now()->format('Y-m-d-H-i').'-Auswertung-Eingangsrechnungen.pdf';
-
-        return response()->inlineFile($pdf, $filename);
+        return redirect()->back();
     }
 
-    public function lock(Request $request)
+    public function lock(Request $request, ?Receipt $receipt): RedirectResponse|Response
     {
 
-        $ids = $request->query('ids');
+        $ids = $receipt ? $receipt->id : $request->query('ids');
         $receiptIds = explode(',', $ids);
         $receipts = Receipt::whereIn('id', $receiptIds)->orderBy('issued_on')->get();
 
@@ -481,8 +438,13 @@ class ReceiptController extends Controller
             }
         });
 
+        if ($receipt) {
+            return redirect()->back();
+        }
+
         $receipts = Receipt::whereIn('id', $receiptIds)->get();
-        Inertia::render('App/Bookkeeping/Receipt/ReceiptIndex', [
+
+        return Inertia::render('App/Bookkeeping/Receipt/ReceiptIndex', [
             'receipts' => Inertia::deepMerge($receipts)->matchOn('id'),
         ]);
     }

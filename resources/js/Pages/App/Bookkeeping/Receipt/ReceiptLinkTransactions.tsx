@@ -1,5 +1,4 @@
-import { FileDownloadIcon, MagicWand01Icon, Tick01Icon } from '@hugeicons/core-free-icons'
-import { router, usePage } from '@inertiajs/react'
+import { router } from '@inertiajs/react'
 import { sumBy } from 'lodash'
 import type * as React from 'react'
 import { useMemo, useState } from 'react'
@@ -8,15 +7,13 @@ import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
 import { Button } from '@/Components/twc-ui/button'
 import { Checkbox } from '@/Components/twc-ui/checkbox'
-import { DatePicker } from '@/Components/twc-ui/date-picker'
-import { ExtendedDialog as Dialog } from '@/Components/twc-ui/extended-dialog'
 import { FormCard } from '@/Components/twc-ui/form-card'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { NumberField } from '@/Components/twc-ui/number-field'
 import { TextField } from '@/Components/twc-ui/text-field'
 import { Toolbar } from '@/Components/twc-ui/toolbar'
 import { Badge } from '@/Components/ui/badge'
-import { useDateConversion } from '@/Hooks/use-date-conversion'
+import { paymentColumns } from './ReceiptPaymentColumns'
 import { columns } from './ReceiptTransactionColumns'
 
 interface Props {
@@ -38,17 +35,19 @@ export const ReceiptLinkTransactions: React.FC<Props> = ({ receipt, transactions
     minimumFractionDigits: 2
   })
 
+  const openAmout = receipt.amount - -1 * (receipt.payable_sum || 0)
+
   const breadcrumbs = useMemo(
     () => [
       { title: 'Buchhaltung' },
       { title: 'Belege', url: route('app.bookkeeping.receipts.index') },
       {
-        title: String(receipt.id),
+        title: String(receipt.document_number || receipt.id),
         url: route('app.bookkeeping.receipts.edit', { receipt: receipt.id })
       },
       { title: 'Zahlungen zuweisen' }
     ],
-    [receipt.id]
+    [receipt.id, receipt.document_number]
   )
 
   const handleSaveClicked = () => {
@@ -66,7 +65,7 @@ export const ReceiptLinkTransactions: React.FC<Props> = ({ receipt, transactions
 
   const footer = useMemo(() => {
     return <Pagination data={transactions} />
-  }, [])
+  }, [transactions])
 
   const actionBar = useMemo(() => {
     const sum = sumBy(selectedRows, 'amount')
@@ -122,10 +121,17 @@ export const ReceiptLinkTransactions: React.FC<Props> = ({ receipt, transactions
                 <NumberField label="Betrag" value={receipt.amount} isDisabled />
               </div>
               <div className="col-span-3">
-                <NumberField label="Offener Betrag" value={receipt.open_amount} isDisabled />
+                <NumberField label="Offener Betrag" value={openAmout} isDisabled />
               </div>
             </FormGrid>
           </FormCard>
+        </div>
+        <div className="overflow-hidden">
+          <DataTable<App.Data.PaymentData, unknown>
+            columns={paymentColumns}
+            data={receipt.payable || []}
+            itemName="Zahlungen"
+          />
         </div>
         <div className="overflow-hidden">
           <DataTable
