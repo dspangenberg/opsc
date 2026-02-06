@@ -59,11 +59,7 @@ class ReceiptController extends Controller
                 'contact',
                 'cost_center',
             ])
-            ->withAggregate(
-                ['payable' => fn ($query) => $query->where('is_currency_difference', false)],
-                'amount',
-                'sum'
-            )
+            ->withSum('payableWithoutCurrencyDifference as payable_sum', 'amount')
             ->withAggregate(
                 ['payable' => fn ($query) => $query->where('is_currency_difference', false)],
                 'issued_on',
