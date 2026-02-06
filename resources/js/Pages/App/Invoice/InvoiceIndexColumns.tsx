@@ -16,8 +16,6 @@ const currencyFormatter = new Intl.NumberFormat('de-DE', {
   currency: 'EUR',
   minimumFractionDigits: 2
 })
-const mailLink = (mail: string) => `mailto:${mail}`
-
 export const columns: ColumnDef<App.Data.InvoiceData>[] = [
   {
     id: 'select',
@@ -45,7 +43,7 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
     accessorKey: 'issued_on',
     header: 'Datum',
     size: 80,
-    cell: ({ row, getValue }) => <span>{getValue() as string}</span>
+    cell: ({ getValue }) => <span>{getValue() as string}</span>
   },
   {
     accessorKey: 'booking',
@@ -78,7 +76,7 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
           className="truncate align-middle font-medium hover:underline"
         >
           <span>
-            {row.original.type?.abbreviation}-{getValue() as string}
+            {row.original.type?.abbreviation || 'RG'}-{getValue() as string}
           </span>
         </Link>
       </div>
@@ -101,7 +99,7 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
     accessorKey: 'project_id',
     header: 'Projekt',
     size: 200,
-    cell: ({ getValue, row }) => (
+    cell: ({ row }) => (
       <Link
         href={contactUrl(row.original.contact_id)}
         className="truncate align-middle hover:underline"

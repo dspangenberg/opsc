@@ -51,6 +51,9 @@ export function useModal(resolverCallback: CallableFunction | null = null) {
     if (typeof resolver !== 'function') {
       throw Error("Resolver function not defined. You have to define it at Inertia's entrypoint.")
     }
+    if (nonce === modal?.nonce || !modal?.component) {
+      return close()
+    }
 
     const component = modal?.component ? await resolver(modal.component) : null
 
@@ -81,20 +84,7 @@ export function useModal(resolverCallback: CallableFunction | null = null) {
 
   useEffect(() => {
     if (modal?.nonce !== nonce) {
-      console.log('useModal: nonce changed, resolving component')
       resolveComponent()
-    } else if (show) {
-      // If nonce is the same but modal props changed (e.g. partial reload),
-      // we might need to re-render the component with new props
-      console.log('useModal: nonce same, but modal changed. Re-rendering component with new props:', props)
-      const resolveAndRender = async () => {
-        const component = modal?.component ? await resolver(modal.component) : null
-        if (component && component.default) {
-          const ComponentToRender = component.default
-          setVnode(<ComponentToRender key={key} {...props} />)
-        }
-      }
-      resolveAndRender()
     }
   }, [modal])
 

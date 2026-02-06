@@ -294,7 +294,7 @@ const InvoiceIndex: React.FC = () => {
   return (
     <PageContainer
       title="Rechnungen"
-      width="7xl"
+      width="8xl"
       breadcrumbs={breadcrumbs}
       className="flex overflow-hidden"
       toolbar={toolbar}

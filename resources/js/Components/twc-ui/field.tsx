@@ -16,7 +16,7 @@ const labelVariants = tv({
   base: [
     'font-normal text-sm leading-none',
     /* Disabled */
-    'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70',
+    'data-disabled:cursor-not-allowed data-disabled:opacity-50',
     /* Invalid */
     'group-data-[invalid]:text-destructive'
   ]
@@ -70,7 +70,7 @@ const fieldGroupVariants = tv({
         'focus-within:border-primary focus-within:ring-[3px] focus-within:ring-primary/20 focus:border-primary',
         'data-[invalid]:border-destructive data-[invalid]:focus-within:border-destructive data-[invalid]:focus-within:ring-destructive/20',
         /* Disabled */
-        'data-[disabled]:opacity-50'
+        'data-disabled:cursor-not-allowed data-disabled:opacity-50'
       ],
       ghost: 'w-full data-[invalid]:border-destructive'
     }

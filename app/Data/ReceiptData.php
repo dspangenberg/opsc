@@ -49,7 +49,7 @@ class ReceiptData extends Data
         public readonly ?int $duplicate_of,
         public readonly ?bool $is_foreign_currency,
         public readonly ?bool $is_confirmed,
-        public readonly ?bool $is_locked,
+        public readonly bool $is_locked,
 
         public readonly ?string $iban,
         public readonly ?int $number_range_document_number_id,
@@ -61,9 +61,12 @@ class ReceiptData extends Data
         public readonly ?string $text,
         public readonly ?array $data,
 
+        public readonly ?float $payable_sum,
+
         /** @var PaymentData[] */
         public readonly ?array $payable,
 
+        public readonly ?BookkeepingBookingData $booking,
 
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d H:i:s')]
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i:s')]

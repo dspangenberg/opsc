@@ -1,12 +1,19 @@
-import { Delete02Icon, EuroSendIcon, FileDownloadIcon } from '@hugeicons/core-free-icons'
+import {
+  Delete02Icon,
+  EuroSendIcon,
+  FileDownloadIcon,
+  SquareLock02Icon,
+  SquareUnlock01Icon
+} from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { Alert } from '@/Components/twc-ui/alert'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
+import { FormCard } from '@/Components/twc-ui/form-card'
 import { FormComboBox } from '@/Components/twc-ui/form-combo-box'
 import { FormDatePicker } from '@/Components/twc-ui/form-date-picker'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
@@ -27,26 +34,8 @@ interface Props extends PageProps {
   file: string
 }
 const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_centers }) => {
-  if (!receipt) {
-    return null
-  }
-  const actionUrl = route(
-    'app.bookkeeping.receipts.update',
-    {
-      receipt: receipt.id,
-      _query: { confirm: 1, load_next: 1 }
-    },
-    false
-  )
-  const form = useForm<App.Data.ReceiptData>('update-receipt', 'put', actionUrl, receipt, {})
-  const handleLinkPayments = () => {
-    router.visit(route('app.bookkeeping.receipts.payments', { id: receipt.id }))
-  }
-
-  const currencyFormatter = new Intl.NumberFormat('de-DE', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 2
+  const { handleDownload } = useFileDownload({
+    route: route('app.bookkeeping.receipts.pdf', { receipt: receipt.id })
   })
 
   const handleNextReceipt = () => {
@@ -54,17 +43,6 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
       router.visit(nextReceipt)
     } else {
       router.visit(route('app.bookkeeping.receipts.index'))
-    }
-  }
-
-  const handleContactChange = (contactId: string | number | null) => {
-    if (contactId === null) return
-    const numericId = typeof contactId === 'number' ? contactId : Number(contactId)
-    const contact = contacts.find(contact => contact.id === numericId)
-    form.updateAndValidateWithoutEvent('contact_id', numericId)
-
-    if (contact?.cost_center_id) {
-      form.updateAndValidateWithoutEvent('cost_center_id', contact.cost_center_id)
     }
   }
 
@@ -82,104 +60,101 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
     }
   }, [receipt.id])
 
-  const { handleDownload } = useFileDownload({
-    route: route('app.bookkeeping.receipts.pdf', { receipt: receipt.id })
+  const breadcrumbs = useMemo(
+    () => [
+      { title: 'Buchhaltung' },
+      { title: 'Belege', url: route('app.bookkeeping.receipts.index') },
+      {
+        title: String(receipt.document_number || receipt.id)
+      }
+    ],
+    [receipt.id, receipt.document_number]
+  )
+
+  const form = useForm<App.Data.ReceiptData>(
+    'update-receipt',
+    'put',
+    route(
+      'app.bookkeeping.receipts.update',
+      {
+        receipt: receipt.id,
+        _query: { confirm: 1, load_next: 1 }
+      },
+      false
+    ),
+    receipt,
+    {}
+  )
+
+  if (!receipt) {
+    return null
+  }
+
+  const handleLinkPayments = () => {
+    router.visit(route('app.bookkeeping.receipts.payments', { id: receipt.id }))
+  }
+
+  const currencyFormatter = new Intl.NumberFormat('de-DE', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2
   })
 
+  const handleContactChange = (contactId: string | number | null) => {
+    if (contactId === null) return
+    const numericId = typeof contactId === 'number' ? contactId : Number(contactId)
+    const contact = contacts.find(contact => contact.id === numericId)
+    form.updateAndValidateWithoutEvent('contact_id', numericId)
+
+    if (contact?.cost_center_id) {
+      form.updateAndValidateWithoutEvent('cost_center_id', contact.cost_center_id)
+    }
+  }
+
+  const handleUnlock = (isLocked: boolean) => {
+    if (isLocked) {
+      router.put(
+        route('app.bookkeeping.receipts.unlock', { receipt: receipt.id }),
+        {},
+        { preserveState: false }
+      )
+    } else {
+      router.put(route('app.bookkeeping.receipts.lock', { receipt: receipt.id }))
+    }
+  }
+
+  const isDeleteDisabled = !!(receipt.is_locked || receipt.booking?.id)
+
   return (
-    <PageContainer title="Beleg bearbeiten" width="7xl" className="flex overflow-hidden">
+    <PageContainer
+      title="Beleg bearbeiten"
+      width="7xl"
+      className="flex overflow-hidden"
+      breadcrumbs={breadcrumbs}
+    >
       <PdfContainer
         file={route('app.bookkeeping.receipts.pdf', { receipt: receipt.id })}
         filename={receipt.org_filename}
       />
-      <Form form={form} className="flex-1">
-        {receipt.duplicate_of && <Alert variant="info">Mögliches Duplikat.</Alert>}
-        <FormGrid>
-          <div className="col-span-8">
-            <FormDatePicker label="Rechnungsdatum" {...form.register('issued_on')} autoFocus />
-          </div>
-
-          <div className="col-span-8">
-            <FormNumberField
-              label="Bruttobetrag"
-              {...form.register('amount')}
-              formatOptions={{
-                style: 'currency',
-                currency: 'EUR',
-                currencyDisplay: 'code',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              }}
-            />
-          </div>
-          <div className="col-span-8">
-            {form.data.org_currency !== 'EUR' && (
-              <FormNumberField
-                label="Ursprungsbetrag"
-                isDisabled
-                {...form.register('org_amount')}
-                formatOptions={{
-                  style: 'currency',
-                  currency: form.data.org_currency as string,
-                  currencyDisplay: 'code',
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                }}
-              />
-            )}
-          </div>
-          <div className="col-span-24">
-            <FormTextField label="Referenz" {...form.register('reference')} />
-          </div>
-
-          <div className="col-span-24">
-            <FormComboBox<App.Data.ContactData>
-              {...form.register('contact_id')}
-              label="Kreditor"
-              itemName="full_name"
-              items={contacts}
-              onChange={handleContactChange}
-            />
-          </div>
-          <div className="col-span-24">
-            <FormComboBox<App.Data.CostCenterData>
-              {...form.register('cost_center_id')}
-              label="Kostenstelle"
-              items={cost_centers}
-            />
-          </div>
-          <div className="col-span-24">
-            <Table className="w-full">
-              <TableBody>
-                {receipt.payable?.map(payable =>
-                  payable.is_currency_difference ? (
-                    <TableRow key={payable.id}>
-                      <TableCell>{payable.issued_on}</TableCell>
-                      <TableCell>Währungsdifferenz</TableCell>
-                      <TableCell className="text-right">
-                        {currencyFormatter.format(payable.amount || 0)}
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    <TableRow key={payable.id}>
-                      <TableCell>{payable.transaction.booked_on}</TableCell>
-                      <TableCell>{payable.transaction.purpose}</TableCell>
-                      <TableCell className="text-right">
-                        {currencyFormatter.format(payable.amount || 0)}
-                      </TableCell>
-                    </TableRow>
-                  )
-                )}
-              </TableBody>
-            </Table>
-          </div>
-          <div className="col-span-24 flex justify-between gap-2">
+      <FormCard
+        footerClassName="justify-between py-1.5"
+        footer={
+          <>
             <div className="flex flex-1 justify-start gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                icon={receipt.is_locked ? SquareLock02Icon : SquareUnlock01Icon}
+                isDisabled={receipt.booking?.is_locked}
+                tooltip="Beleg entsperren"
+                onClick={() => handleUnlock(receipt.is_locked)}
+              />
               <Button
                 variant="ghost-destructive"
                 size="icon"
                 icon={Delete02Icon}
                 tooltip="Beleg löschen"
+                isDisabled={isDeleteDisabled}
                 onClick={handleDelete}
               />
               <Button
@@ -197,16 +172,118 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
                 onClick={handleDownload}
               />
             </div>
-            <Button
-              variant="default"
-              form={form.id}
-              type="submit"
-              isLoading={form.processing}
-              title="Speichern"
-            />
-          </div>
-        </FormGrid>
-      </Form>
+            <div className="flex flex-1 justify-end gap-2">
+              {receipt.is_confirmed && <Button variant="outline" title="Zurück" />}
+              <Button
+                variant="default"
+                form={form.id}
+                type="submit"
+                isLoading={form.processing}
+                isDisabled={receipt.is_locked as boolean}
+                title="Speichern"
+              />
+            </div>
+          </>
+        }
+      >
+        <Form form={form} className="flex-1">
+          {receipt.duplicate_of && <Alert variant="info">Mögliches Duplikat.</Alert>}
+          <FormGrid>
+            <div className="col-span-8">
+              <FormDatePicker
+                label="Rechnungsdatum"
+                {...form.register('issued_on')}
+                autoFocus
+                isDisabled={receipt.is_locked as boolean}
+              />
+            </div>
+
+            <div className="col-span-8">
+              <FormNumberField
+                label="Bruttobetrag"
+                {...form.register('amount')}
+                isDisabled={receipt.is_locked as boolean}
+                formatOptions={{
+                  style: 'currency',
+                  currency: 'EUR',
+                  currencyDisplay: 'code',
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                }}
+              />
+            </div>
+            <div className="col-span-8">
+              {form.data.org_currency && form.data.org_currency !== 'EUR' && (
+                <FormNumberField
+                  label="Ursprungsbetrag"
+                  isDisabled
+                  {...form.register('org_amount')}
+                  formatOptions={{
+                    style: 'currency',
+                    currency: form.data.org_currency as string,
+                    currencyDisplay: 'code',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  }}
+                />
+              )}
+            </div>
+            <div className="col-span-24">
+              <FormTextField
+                label="Referenz"
+                {...form.register('reference')}
+                isDisabled={receipt.is_locked as boolean}
+              />
+            </div>
+
+            <div className="col-span-24">
+              <FormComboBox<App.Data.ContactData>
+                {...form.register('contact_id')}
+                isDisabled={receipt.is_locked as boolean}
+                label="Kreditor"
+                itemName="full_name"
+                items={contacts}
+                onChange={handleContactChange}
+              />
+            </div>
+            <div className="col-span-24">
+              <FormComboBox<App.Data.CostCenterData>
+                {...form.register('cost_center_id')}
+                isDisabled={receipt.is_locked as boolean}
+                label="Kostenstelle"
+                items={cost_centers}
+              />
+            </div>
+          </FormGrid>
+          <FormGrid border>
+            <div className="col-span-24">
+              <Table className="w-full border-0">
+                <TableBody className="[&_tr:last-child]:border-b-0">
+                  {receipt.payable?.map(payable =>
+                    payable.is_currency_difference ? (
+                      <TableRow key={payable.id}>
+                        <TableCell>{payable.issued_on}</TableCell>
+                        <TableCell>Währungsdifferenz</TableCell>
+                        <TableCell className="text-right">
+                          {currencyFormatter.format(payable.amount || 0)}
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      <TableRow key={payable.id} className="border-b-0!">
+                        <TableCell>{payable.transaction.booked_on}</TableCell>
+                        <TableCell>{payable.transaction.purpose}</TableCell>
+                        <TableCell className="text-right">
+                          {currencyFormatter.format(payable.amount || 0)}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </FormGrid>
+        </Form>
+      </FormCard>
     </PageContainer>
   )
 }

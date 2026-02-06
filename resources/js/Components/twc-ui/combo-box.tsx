@@ -34,7 +34,6 @@ const ComboBoxInput = ({ autoFocus, className, ...props }: AriaInputProps) => {
       className={composeRenderProps(className, className =>
         cn(
           'flex h-9 w-full border-input bg-background px-3 py-2 text-sm outline-none file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground',
-          'data-disabled:cursor-not-allowed data-disabled:opacity-50',
           className
         )
       )}
@@ -141,7 +140,7 @@ const ComboBox = <T extends Record<string, unknown>>({
         onChange(numericKey === NUMERIC_NULL_SENTINEL ? null : numericKey)
       }
     },
-    [onChange, isStringValue]
+    [onChange]
   )
 
   const itemsWithPlaceholder = useMemo(
@@ -170,7 +169,7 @@ const ComboBox = <T extends Record<string, unknown>>({
         const itemVal = isStringValue ? String(item[itemValue]) : Number(item[itemValue])
         return itemVal === selectedKey
       }),
-    [itemsWithPlaceholder, selectedKey, itemValue, isStringValue]
+    [itemsWithPlaceholder, itemValue]
   )
 
   const filteredItems: T[] = useMemo(

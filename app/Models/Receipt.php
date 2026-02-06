@@ -100,7 +100,7 @@ class Receipt extends Model
 
     public function getOpenAmountAttribute(): float
     {
-        return $this->amount + $this->payable_sum_amount;
+        return ($this->amount + $this->payable_sum );
     }
 
     public function getOriginalFilename(): string
@@ -108,6 +108,11 @@ class Receipt extends Model
         $media = $this->firstMedia('file');
 
         return $media?->filename ?? $this->org_filename;
+    }
+
+    public function payableWithoutCurrencyDifference(): MorphMany
+    {
+        return $this->payable()->where('is_currency_difference', false);
     }
 
     public function cost_center(): BelongsTo

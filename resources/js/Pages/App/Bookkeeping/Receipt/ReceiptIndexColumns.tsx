@@ -3,7 +3,12 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Delete03Icon, MoreVerticalCircle01Icon, Tick01Icon } from '@hugeicons/core-free-icons'
+import {
+  Delete03Icon,
+  EuroSendIcon,
+  MoreVerticalCircle01Icon,
+  Tick01Icon
+} from '@hugeicons/core-free-icons'
 import { Link } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
@@ -15,8 +20,7 @@ import { Checkbox } from '@/Components/ui/checkbox'
 const editUrl = (id: number | null) => (id ? route('app.bookkeeping.receipts.edit', { id }) : '#')
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
-  style: 'currency',
-  currency: 'EUR',
+  style: 'decimal',
   minimumFractionDigits: 2
 })
 
@@ -24,6 +28,12 @@ const RowActions = ({ row }: { row: Row<App.Data.ReceiptData> }) => {
   return (
     <div className="mx-auto">
       <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
+        <MenuItem
+          icon={EuroSendIcon}
+          separator
+          title="Mit Transaktion verknüpfen"
+          href={route('app.bookkeeping.receipts.payments', { id: row.original.id })}
+        />
         <MenuItem icon={Delete03Icon} title="Löschen" variant="destructive" />
       </DropdownButton>
     </div>
@@ -59,7 +69,7 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
     accessorKey: 'is_locked',
     header: '',
     size: 30,
-    cell: ({ row, getValue }) => {
+    cell: ({ getValue }) => {
       if (getValue() === true) {
         return (
           <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-green-500">
@@ -85,7 +95,7 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
   {
     accessorKey: 'contact.full_name',
     header: 'Kreditor ',
-    size: 250,
+    size: 220,
     cell: ({ row, getValue }) => (
       <div className="flex items-center gap-3">
         {getValue() as string}
@@ -104,21 +114,28 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
   {
     accessorKey: 'contact.cost_center_id',
     header: 'Kostenstelle ',
-    size: 150,
+    size: 100,
     cell: ({ row }) => <div className="truncate">{row.original.cost_center?.name as string}</div>
   },
   {
-    accessorKey: 'org_currency',
-    header: 'Währung',
-    size: 60,
-    cell: ({ getValue }) => <div>{getValue() as string}</div>
+    accessorKey: 'is_foreign_currency',
+    header: () => <div className="text-right">Fremdwährung</div>,
+    size: 80,
+    cell: ({ row }) => {
+      if (!row.original.is_foreign_currency) return null
+      return (
+        <div className="text-right">
+          {currencyFormatter.format(row.original.org_amount ?? 0)} {row.original.org_currency}
+        </div>
+      )
+    }
   },
   {
     accessorKey: 'amount',
     header: () => <div className="text-right">Brutto</div>,
     size: 80,
     cell: ({ row }) => (
-      <div className="text-right">{currencyFormatter.format(row.original.amount ?? 0)}</div>
+      <div className="text-right">{currencyFormatter.format(row.original.amount ?? 0)} EUR</div>
     )
   },
   {
@@ -126,14 +143,16 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
     header: () => <div className="text-right">Offen</div>,
     size: 80,
     cell: ({ row }) => (
-      <div className="text-right">{currencyFormatter.format(row.original.open_amount ?? 0)}</div>
+      <div className="text-right">
+        {currencyFormatter.format(row.original.open_amount ?? 0)} EUR
+      </div>
     )
   },
   {
     accessorKey: 'payable_min_issued_on',
     header: 'bezahlt',
     size: 80,
-    cell: ({ row, getValue }) => <span>{getValue() as string}</span>
+    cell: ({ getValue }) => <span>{getValue() as string}</span>
   },
   {
     id: 'actions',
