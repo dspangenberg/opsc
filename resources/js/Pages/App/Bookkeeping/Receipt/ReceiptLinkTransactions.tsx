@@ -35,8 +35,6 @@ export const ReceiptLinkTransactions: React.FC<Props> = ({ receipt, transactions
     minimumFractionDigits: 2
   })
 
-  const openAmout = receipt.amount - -1 * (receipt.payable_sum || 0)
-
   const breadcrumbs = useMemo(
     () => [
       { title: 'Buchhaltung' },
@@ -121,7 +119,7 @@ export const ReceiptLinkTransactions: React.FC<Props> = ({ receipt, transactions
                 <NumberField label="Betrag" value={receipt.amount} isDisabled />
               </div>
               <div className="col-span-3">
-                <NumberField label="Offener Betrag" value={openAmout} isDisabled />
+                <NumberField label="Offener Betrag" value={receipt.open_amount} isDisabled />
               </div>
             </FormGrid>
           </FormCard>

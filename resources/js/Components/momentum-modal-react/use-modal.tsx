@@ -51,7 +51,7 @@ export function useModal(resolverCallback: CallableFunction | null = null) {
     if (typeof resolver !== 'function') {
       throw Error("Resolver function not defined. You have to define it at Inertia's entrypoint.")
     }
-    if (nonce == modal?.nonce || !modal?.component) {
+    if (nonce === modal?.nonce || !modal?.component) {
       return close()
     }
 

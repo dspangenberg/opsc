@@ -100,7 +100,7 @@ class Receipt extends Model
 
     public function getOpenAmountAttribute(): float
     {
-        return ($this->amount + $this->payable_sum_amount );
+        return ($this->amount + $this->payable_sum );
     }
 
     public function getOriginalFilename(): string
@@ -110,7 +110,7 @@ class Receipt extends Model
         return $media?->filename ?? $this->org_filename;
     }
 
-    public function payableWithoutCurrencyDifference()
+    public function payableWithoutCurrencyDifference(): MorphMany
     {
         return $this->payable()->where('is_currency_difference', false);
     }
@@ -169,7 +169,7 @@ class Receipt extends Model
 
     public function scopeIsUnpaid(Builder $query): Builder
     {
-        $sql = 'receipts.amount + COALESCE((SELECT SUM(amount) FROM payments WHERE payable_type = ? AND payable_id = receipts.id), 0) != 0';
+        $sql = 'receipts.amount + COALESCE((SELECT SUM(amount) FROM payments WHERE payable_type = ? AND payable_id = receipts.id AND is_currency_difference = false), 0) != 0';
 
         return $query->whereRaw($sql, [self::class]);
     }

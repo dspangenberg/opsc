@@ -31,7 +31,7 @@ const RowActions = ({ row }: { row: Row<App.Data.ReceiptData> }) => {
         <MenuItem
           icon={EuroSendIcon}
           separator
-          title="Mit Transaktion verknüfen"
+          title="Mit Transaktion verknüpfen"
           href={route('app.bookkeeping.receipts.payments', { id: row.original.id })}
         />
         <MenuItem icon={Delete03Icon} title="Löschen" variant="destructive" />
@@ -144,7 +144,7 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
     size: 80,
     cell: ({ row }) => (
       <div className="text-right">
-        {currencyFormatter.format(row.original.open_amount ?? 0)} EUR{' '}
+        {currencyFormatter.format(row.original.open_amount ?? 0)} EUR
       </div>
     )
   },

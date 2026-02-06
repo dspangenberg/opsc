@@ -50,7 +50,7 @@ export const paymentColumns: ColumnDef<App.Data.PaymentData>[] = [
       if (row.original.is_currency_difference) {
         return <span>Währungsdifferenz</span>
       }
-      return <div>{row.original.transaction.bookkeeping_text.split('|').join(' ')}</div>
+      return <div>{(row.original.transaction?.bookkeeping_text ?? '').split('|').join(' ')}</div>
     }
   },
   {

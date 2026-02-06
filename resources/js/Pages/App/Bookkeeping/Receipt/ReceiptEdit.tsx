@@ -38,6 +38,14 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
     route: route('app.bookkeeping.receipts.pdf', { receipt: receipt.id })
   })
 
+  const handleNextReceipt = () => {
+    if (nextReceipt) {
+      router.visit(nextReceipt)
+    } else {
+      router.visit(route('app.bookkeeping.receipts.index'))
+    }
+  }
+
   const handleDelete = useCallback(async () => {
     const promise = await AlertDialog.call({
       title: 'Beleg löschen',
@@ -92,14 +100,6 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
     minimumFractionDigits: 2
   })
 
-  const handleNextReceipt = () => {
-    if (nextReceipt) {
-      router.visit(nextReceipt)
-    } else {
-      router.visit(route('app.bookkeeping.receipts.index'))
-    }
-  }
-
   const handleContactChange = (contactId: string | number | null) => {
     if (contactId === null) return
     const numericId = typeof contactId === 'number' ? contactId : Number(contactId)
@@ -123,7 +123,7 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
     }
   }
 
-  const isDeleteAble = (receipt.is_locked || receipt.booking?.id) as boolean
+  const isDeleteDisabled = !!(receipt.is_locked || receipt.booking?.id)
 
   return (
     <PageContainer
@@ -154,7 +154,7 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
                 size="icon"
                 icon={Delete02Icon}
                 tooltip="Beleg löschen"
-                isDisabled={isDeleteAble}
+                isDisabled={isDeleteDisabled}
                 onClick={handleDelete}
               />
               <Button
@@ -213,7 +213,7 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
               />
             </div>
             <div className="col-span-8">
-              {form.data.org_currency !== 'EUR' && (
+              {form.data.org_currency && form.data.org_currency !== 'EUR' && (
                 <FormNumberField
                   label="Ursprungsbetrag"
                   isDisabled

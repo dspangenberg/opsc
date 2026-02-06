@@ -52,7 +52,7 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
 
   const handleBulkConfirmationClicked = useCallback(() => {
     const ids = selectedRows.map(row => row.id).join(',')
-    router.get(route('app.bookkeeping.receipts.lock', { _query: { ids } }), {
+    router.put(route('app.bookkeeping.receipts.lock', { _query: { ids } }), {
       preserveScroll: true
     })
   }, [selectedRows])
