@@ -79,6 +79,7 @@ export const Form = <T extends FormSchema>({
     return new Promise((resolve, reject) => {
       form.submit({
         preserveScroll: true,
+        preserveState: false,
         onError: errors => {
           // Convert Inertia errors (string[]) to SimpleValidationErrors (string)
           const simpleErrors = Object.entries(errors).reduce((acc, [key, value]) => {

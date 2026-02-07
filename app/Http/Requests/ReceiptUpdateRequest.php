@@ -14,7 +14,7 @@ class ReceiptUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'reference' => 'required|string',
             'issued_on' => ['required', 'date', 'date_format:d.m.Y'],
             'org_currency' => 'required',
@@ -22,6 +22,14 @@ class ReceiptUpdateRequest extends FormRequest
             'contact_id' => ['required', 'exists:contacts,id'],
             'cost_center_id' => ['required', 'exists:cost_centers,id'],
             'is_confirmed' => ['nullable', 'boolean'],
+            'is_reconversion' => ['nullable', 'boolean'],
         ];
+
+        // Nur validieren wenn is_reconversion true ist
+        if ($this->boolean('is_reconversion')) {
+            $rules['org_amount'] = ['required', 'numeric', 'gt:0'];
+        }
+
+        return $rules;
     }
 }

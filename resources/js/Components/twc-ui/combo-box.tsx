@@ -163,14 +163,10 @@ const ComboBox = <T extends Record<string, unknown>>({
   const selectedKey = value ?? null
 
   // Find the selected item to display its name
-  const selectedItem = useMemo(
-    () =>
-      itemsWithPlaceholder.find(item => {
-        const itemVal = isStringValue ? String(item[itemValue]) : Number(item[itemValue])
-        return itemVal === selectedKey
-      }),
-    [itemsWithPlaceholder, itemValue]
-  )
+  const selectedItem = itemsWithPlaceholder.find(item => {
+    const itemVal = isStringValue ? String(item[itemValue]) : Number(item[itemValue])
+    return itemVal === selectedKey
+  })
 
   const filteredItems: T[] = useMemo(
     () => itemsWithPlaceholder.filter(item => contains(String(item[itemName]), inputValue)),

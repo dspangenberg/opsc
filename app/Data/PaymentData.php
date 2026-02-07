@@ -20,9 +20,11 @@ class PaymentData extends Data
         public readonly ?int $id,
 
         public readonly string $payable_type,
+        public readonly int $payable_id,
         public readonly ?int $days,
         public readonly ?float $amount,
         public readonly ?bool $is_currency_difference,
+        public readonly int $transaction_id,
         public readonly TransactionData $transaction,
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]

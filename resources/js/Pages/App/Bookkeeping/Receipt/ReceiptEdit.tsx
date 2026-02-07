@@ -7,13 +7,14 @@ import {
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { Alert } from '@/Components/twc-ui/alert'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormCard } from '@/Components/twc-ui/form-card'
+import { FormCheckbox } from '@/Components/twc-ui/form-checkbox'
 import { FormComboBox } from '@/Components/twc-ui/form-combo-box'
 import { FormDatePicker } from '@/Components/twc-ui/form-date-picker'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
@@ -33,6 +34,11 @@ interface Props extends PageProps {
   currencies: App.Data.CurrencyData[]
   file: string
 }
+
+type ReceiptForm = App.Data.ReceiptData & {
+  is_reconversion: boolean
+}
+
 const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_centers }) => {
   const { handleDownload } = useFileDownload({
     route: route('app.bookkeeping.receipts.pdf', { receipt: receipt.id })
@@ -71,7 +77,7 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
     [receipt.id, receipt.document_number]
   )
 
-  const form = useForm<App.Data.ReceiptData>(
+  const form = useForm<ReceiptForm>(
     'update-receipt',
     'put',
     route(
@@ -82,9 +88,19 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
       },
       false
     ),
-    receipt,
-    {}
+    {
+      ...receipt,
+      is_reconversion: false
+    }
   )
+
+  // Form-Daten aktualisieren wenn sich receipt Props ändern
+  useEffect(() => {
+    form.setData({
+      ...receipt,
+      is_reconversion: false
+    })
+  }, [receipt.id, receipt.amount, receipt.org_amount, receipt.exchange_rate])
 
   if (!receipt) {
     return null
@@ -124,6 +140,10 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
   }
 
   const isDeleteDisabled = !!(receipt.is_locked || receipt.booking?.id)
+  const handleOnSubmitted = () => {
+    console.log('submitted')
+    // router.reload() // Lädt nur receipt Props neu
+  }
 
   return (
     <PageContainer
@@ -186,7 +206,7 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
           </>
         }
       >
-        <Form form={form} className="flex-1">
+        <Form form={form} onSubmitted={handleOnSubmitted} className="flex-1">
           {receipt.duplicate_of && <Alert variant="info">Mögliches Duplikat.</Alert>}
           <FormGrid>
             <div className="col-span-8">
@@ -216,7 +236,7 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
               {form.data.org_currency && form.data.org_currency !== 'EUR' && (
                 <FormNumberField
                   label="Ursprungsbetrag"
-                  isDisabled
+                  isDisabled={!form.data.is_reconversion}
                   {...form.register('org_amount')}
                   formatOptions={{
                     style: 'currency',
@@ -228,6 +248,15 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
                 />
               )}
             </div>
+            {form.data.is_foreign_currency && (
+              <div className="col-span-24 -mt-3">
+                <FormCheckbox
+                  isDisabled={form.data.is_locked}
+                  label="Urprungsbetrag korrigieren + neu umrechnen"
+                  {...form.registerCheckbox('is_reconversion')}
+                />
+              </div>
+            )}
             <div className="col-span-24">
               <FormTextField
                 label="Referenz"
