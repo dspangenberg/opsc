@@ -92,7 +92,7 @@ class TransactionController extends Controller
 
     public function runRules(Request $request): Response
     {
-        $transactionIds = explode(',', $request->input('ids'));
+        $transactionIds = explode(',', $request->input('ids', ''));
         BookeepingRuleService::run('transactions', new Transaction, $transactionIds);
 
         $transactions = Transaction::whereIn('id', $transactionIds)->get();

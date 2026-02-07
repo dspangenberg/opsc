@@ -138,17 +138,17 @@ class BookkeepingRulesController extends Controller
             ->filter()
             ->toArray();
 
-        // Lösche Conditions, die nicht mehr in den Daten enthalten sind
+        // Lösche Condition, die nicht mehr in den Daten enthalten sind
         if (!empty($incomingIds)) {
             $rule->actions()
                 ->whereNotIn('id', $incomingIds)
                 ->delete();
         } else {
-            // Wenn keine IDs vorhanden sind, lösche alle bestehenden Conditions
+            // Wenn keine IDs vorhanden sind, lösche alle bestehenden Condition
             $rule->actions()->delete();
         }
 
-        // Erstelle oder aktualisiere Conditions
+        // Erstelle oder aktualisiere Condition
         foreach ($actionsData as $index => $actionData) {
             $actionAttributes = [
                 'bookkeeping_rule_id' => $rule->id,
