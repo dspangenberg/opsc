@@ -54,7 +54,7 @@ const ReceiptConfirm: React.FC<Props> = ({
   // Reset form data when receipt changes
   useEffect(() => {
     form.setData(receipt)
-  }, [receipt.id])
+  }, [receipt.id, receipt.amount, receipt.contact_id, receipt.cost_center_id, receipt.reference])
 
   const handleNextReceipt = () => {
     if (nextReceipt) {

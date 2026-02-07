@@ -39,6 +39,7 @@ use Plank\Mediable\Exceptions\MediaUpload\FileSizeException;
 use Plank\Mediable\Exceptions\MediaUpload\ForbiddenException;
 use Plank\Mediable\Exceptions\MediaUpload\InvalidHashException;
 use Plank\Mediable\Facades\MediaUploader;
+use Plank\Mediable\Media;
 use Smalot\PdfParser\Parser;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Throwable;
@@ -141,10 +142,11 @@ class ReceiptController extends Controller
 
     public function destroy(Receipt $receipt)
     {
-
         $media = $receipt->firstMedia('file');
-        $media->delete();
+        $media?->delete();
         $receipt->delete();
+
+        return redirect()->route('app.bookkeeping.receipts.index');
     }
 
     public function streamPdf(Receipt $receipt)
@@ -184,54 +186,60 @@ class ReceiptController extends Controller
      */
     public function update(ReceiptUpdateRequest $request, Receipt $receipt)
     {
+        $validated = $request->safe()->except('is_reconversion', 'org_amount');
+        $wasConfirmed = $receipt->is_confirmed;
 
-        $receipt->amount = $request->validated('amount');
-        $receipt->org_currency = $request->validated('org_currency');
+        $receipt->update($validated);
 
-        if ($receipt->org_currency !== 'EUR' && (is_null($receipt->org_amount) || $receipt->org_amount == 0)) {
-            $receipt->org_amount = $request->validated('amount');
-            $receipt->is_foreign_currency = $receipt->org_currency !== 'EUR';
-            $conversion = ConversionRate::convertAmount($receipt->amount, $request->validated('org_currency'), $receipt->issued_on);
+
+        if ($wasConfirmed && $request->validated('is_reconversion')) {
+            $receipt->org_amount = $request->validated('org_amount');
+            $conversion = ConversionRate::convertAmount($receipt->org_amount, $receipt->org_currency, $receipt->issued_on);
             if ($conversion) {
                 $receipt->amount = $conversion['amount'];
                 $receipt->exchange_rate = $conversion['rate'];
+                $receipt->save();
             }
         }
 
-        if ($receipt->issued_on !== $request->validated('issued_on') && $receipt->org_currency !== 'EUR') {
-            $conversion = ConversionRate::convertAmount($receipt->amount, $request->validated('org_currency'), $request->validated('issued_on'));
-            if ($conversion) {
-                $receipt->amount = $conversion['amount'];
-                $receipt->exchange_rate = $conversion['rate'];
+        if (! $wasConfirmed) {
+            if ($validated['org_currency'] !== 'EUR') {
+                $receipt->is_foreign_currency = $receipt->org_currency !== 'EUR';
+                $receipt->org_amount = $request->validated('amount');
+                $conversion = ConversionRate::convertAmount($receipt->amount, $request->validated('org_currency'),
+                    $receipt->issued_on);
+                if ($conversion) {
+                    $receipt->amount = $conversion['amount'];
+                    $receipt->exchange_rate = $conversion['rate'];
+                }
             }
-        }
 
-        $receipt->issued_on = $request->validated('issued_on');
-
-        $receipt->reference = $request->validated('reference');
-        $receipt->contact_id = $request->validated('contact_id');
-        $receipt->cost_center_id = $request->validated('cost_center_id');
-
-        $receipt->save();
-
-        if (! $receipt->is_confirmed) {
             $receipt->is_confirmed = true;
             $receipt->duplicate_of = null;
             $receipt->save();
-            /*
-            if (!$receipt->number_range_document_numbers_id) {
-                $receipt->number_range_document_numbers_id = NumberRange::createDocumentNumber($receipt, 'issued_on');
-                $receipt->save();
 
-                $receipt->load('range_document_number');
-            }
-            Receipt::createBooking($receipt);
-            */
             $media = $receipt->firstMedia('file');
             $folder = '/bookkeeping/receipts/'.$receipt->issued_on->format('Y/m/');
-            $filename = $receipt->issued_on->format('Y-m-d').'-'.$media->filename;
+
+            // Basis-Filename (Media->filename ist bereits OHNE Extension!)
+            $baseFilename = $receipt->issued_on->format('Y-m-d').'-'.$media->filename;
+            $filename = $baseFilename;
+            $counter = 1;
+
+            // Eindeutigen Dateinamen generieren, falls bereits vorhanden
+            while (Media::where('disk', $media->disk)
+                ->where('directory', trim($folder, '/'))
+                ->where('filename', $filename)
+                ->where('extension', $media->extension)
+                ->where('id', '!=', $media->id)
+                ->exists()) {
+                $filename = $baseFilename . '-' . $counter;
+                $counter++;
+            }
+
             $receipt->org_filename = $media->filename;
-            $media->move($folder, $filename);
+            // move() erwartet filename MIT Extension
+            $media->move($folder, $filename . '.' . $media->extension);
 
             // Nach Bestätigung zum nächsten unbestätigten Beleg weiterleiten
             $nextReceipt = Receipt::query()
@@ -247,9 +255,19 @@ class ReceiptController extends Controller
                 ->with('message', 'Alle Belege sind bereits bestätigt.');
         }
 
-        return redirect()->back();
+        // Receipt neu aus DB laden, um aktualisierte Daten zu bekommen
+        return back();
+    }
 
-        // return redirect()->route('app.bookkeeping.receipts.confirm', ['receipt' => $receipt->id]);
+    public function destroyPayment(Receipt $receipt, Transaction $transaction)
+    {
+
+        Payment::where('payable_type', Receipt::class)
+            ->where('payable_id', $receipt->id)
+            ->where('transaction_id', $transaction->id)
+            ->forceDelete();
+
+        return back();
     }
 
     public function createPayments(Receipt $receipt)
@@ -298,8 +316,10 @@ class ReceiptController extends Controller
 
         ReceiptController::checkForCurrencyDifference($receipt, $payment, $transaction);
 
-        return redirect()->route('app.bookkeeping.receipts.edit', ['receipt' => $receipt->id]);
+        // Receipt komplett neu aus DB laden, um gecachte Relations zu umgehen
+        $freshReceipt = Receipt::find($receipt->id);
 
+        return $this->edit($freshReceipt);
     }
 
     public static function checkForCurrencyDifference(Receipt $receipt, Payment $payment, Transaction $transaction): ?Payment

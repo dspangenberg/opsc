@@ -51,3 +51,4 @@ Route::get('/bookkeeping/receipts/confirm/{receipt}', [ReceiptController::class,
 Route::get('/bookkeeping/receipts/{receipt}/edit', [ReceiptController::class, 'edit'])->name('app.bookkeeping.receipts.edit');
 Route::get('/bookkeeping/receipts/bulk-download/', [ReceiptController::class, 'bulkDownload'])->name('app.bookkeeping.bulk-download');
 Route::put('/bookkeeping/receipts/{receipt}/unlock', [ReceiptController::class, 'unlock'])->name('app.bookkeeping.receipts.unlock');
+Route::delete('/bookkeeping/receipts/{receipt}/payment/{transaction}', [ReceiptController::class, 'destroyPayment'])->name('app.bookkeeping.receipts.delete-payment');

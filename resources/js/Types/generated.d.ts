@@ -446,9 +446,11 @@ pagebreak: App.Enums.PagebreakEnum | null;
 export type PaymentData = {
 id: number | null;
 payable_type: string;
+payable_id: number;
 days: number | null;
 amount: number | null;
 is_currency_difference: boolean | null;
+transaction_id: number;
 transaction: App.Data.TransactionData;
 issued_on: string;
 };
