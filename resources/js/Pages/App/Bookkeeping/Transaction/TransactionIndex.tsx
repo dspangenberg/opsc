@@ -149,14 +149,9 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
     }
   }
 
-  const handlePaymentAction = (transaction: App.Data.TransactionData) => {
-    router.get(route('app.bookkeeping.transactions.pay-invoice', { id: transaction.id }))
-  }
-
   const columns = useMemo(
     () =>
       createColumns({
-        onPaymentAction: handlePaymentAction,
         onSetCounterAccountAction: handeSetCounterAccountAction,
         currentFilters: filters,
         currentSearch: search,

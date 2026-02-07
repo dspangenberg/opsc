@@ -4,7 +4,6 @@
  */
 
 import {
-  FileEuroIcon,
   MoreVerticalCircle01Icon,
   CheckUnread01Icon,
   ProfileIcon,
@@ -27,7 +26,6 @@ const currencyFormatter = new Intl.NumberFormat('de-DE', {
 
 interface ColumnOptions {
   onSetCounterAccountAction?: (row: App.Data.TransactionData) => void
-  onPaymentAction?: (row: App.Data.TransactionData) => void
   currentFilters?: any
   currentSearch?: string
   bankAccountId?: number
@@ -35,7 +33,7 @@ interface ColumnOptions {
 
 
 export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.TransactionData>[] => {
-  const handleConfirmClicked = async (row: App.Data.TransactionData) => {
+  const handleConfirmClicked = (row: App.Data.TransactionData) => {
     router.put(
       route('app.bookkeeping.transactions.confirm', { transaction: row.id }),
       {
@@ -48,7 +46,7 @@ export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.Trans
     )
   }
 
-  const handleUnconfirmClicked = async (row: App.Data.TransactionData) => {
+  const handleUnconfirmClicked = (row: App.Data.TransactionData) => {
     router.put(
       route('app.bookkeeping.transactions.unconfirm', { transaction: row.id }),
       {
@@ -90,15 +88,6 @@ export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.Trans
             separator
             isDisabled={row.original.is_locked}
             onAction={() => options?.onSetCounterAccountAction?.(row.original)}
-          />
-
-          <MenuItem
-            icon={FileEuroIcon}
-            title="Zahlung auf Ausgangsrechnung anwenden"
-            ellipsis
-            separator
-            isDisabled={row.original.account?.type !== 'd'}
-            onAction={() => options?.onPaymentAction?.(row.original)}
           />
         </DropdownButton>
       </div>

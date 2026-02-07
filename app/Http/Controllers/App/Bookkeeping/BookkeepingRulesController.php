@@ -2,47 +2,32 @@
 
 namespace App\Http\Controllers\App\Bookkeeping;
 
-use App\Data\BookkeepingAccountData;
 use App\Data\BookkeepingRuleData;
-use App\Data\CostCenterData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BookkeepingRuleStoreRequest;
 use App\Http\Requests\BookkeepingRuleUpdateRequest;
-use App\Http\Requests\CostCenterRequest;
-use App\Models\BookkeepingAccount;
 use App\Models\BookkeepingBooking;
 use App\Models\BookkeepingRule;
 use App\Models\BookkeepingRuleAction;
 use App\Models\BookkeepingRuleCondition;
-use App\Models\CostCenter;
 use App\Models\Payment;
 use App\Models\Receipt;
 use App\Models\Transaction;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class BookkeepingRulesController extends Controller
 {
-    public function getFields(string $table)
+    public function getFields(string $table): array
     {
-
-
-        $fields = null;
-        switch ($table) {
-            case 'transactions':
-                $fields = Transaction::getModel()->getFillable();
-                break;
-            case 'receipts':
-                $fields = Receipt::getModel()->getFillable();
-                break;
-            case 'payments':
-                $fields = Payment::getModel()->getFillable();
-                break;
-            case 'bookings':
-                $fields = BookkeepingBooking::getModel()->getFillable();
-                break;
-        }
-
-        return $fields;
+        return match ($table) {
+            'transactions' => Transaction::getModel()->getFillable(),
+            'receipts' => Receipt::getModel()->getFillable(),
+            'payments' => Payment::getModel()->getFillable(),
+            'bookings' => BookkeepingBooking::getModel()->getFillable(),
+            default => [],
+        };
     }
 
 
@@ -69,10 +54,10 @@ class BookkeepingRulesController extends Controller
         ])->baseRoute('app.bookkeeping.rules.index');
     }
 
-    public function update(BookkeepingRuleUpdateRequest $request, BookkeepingRule $rule)
+    public function update(BookkeepingRuleUpdateRequest $request, BookkeepingRule $rule): RedirectResponse
     {
 
-        $ruleData = $request->except(['conditions', 'actions']);
+        $ruleData = collect($request->validated())->except(['conditions', 'actions'])->toArray();
         $rule->update($ruleData);
         if ($request->has('conditions')) {
             $this->updateRuleConditions($rule, $request->input('conditions', []));
@@ -83,7 +68,7 @@ class BookkeepingRulesController extends Controller
         return redirect()->route('app.bookkeeping.rules.index');
     }
 
-    public function destroy(BookkeepingRule $rule)
+    public function destroy(BookkeepingRule $rule): RedirectResponse
     {
         $rule->conditions()->delete();
         $rule->actions()->delete();
@@ -91,7 +76,7 @@ class BookkeepingRulesController extends Controller
         return redirect()->route('app.bookkeeping.rules.index');
     }
 
-    public function create()
+    public function create(): Response
     {
         $rule = new BookkeepingRule();
         return Inertia::modal('App/Bookkeeping/Rule/BookkeepingRuleCreate', [
@@ -100,7 +85,7 @@ class BookkeepingRulesController extends Controller
     }
 
 
-    public function store(BookkeepingRuleStoreRequest $request)
+    public function store(BookkeepingRuleStoreRequest $request): RedirectResponse
     {
         $rule = BookkeepingRule::create($request->validated());
         return redirect()->route('app.bookkeeping.rules.edit', ['rule' => $rule]);
