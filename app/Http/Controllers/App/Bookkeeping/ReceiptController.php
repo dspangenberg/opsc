@@ -433,10 +433,11 @@ class ReceiptController extends Controller
         return redirect()->back();
     }
 
+
     public function lock(Request $request, ?Receipt $receipt): RedirectResponse|Response
     {
+        $ids = $receipt?->id ? $receipt->id : $request->input('ids');
 
-        $ids = $receipt ? $receipt->id : $request->query('ids');
         $receiptIds = explode(',', $ids);
         $receipts = Receipt::whereIn('id', $receiptIds)->orderBy('issued_on')->get();
 

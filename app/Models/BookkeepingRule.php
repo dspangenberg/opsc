@@ -47,6 +47,9 @@ class BookkeepingRule extends Model
         'priority',
         'logical_operator',
         'is_active',
+        'table',
+        'type',
+        'action_type',
     ];
 
     protected $attributes = [

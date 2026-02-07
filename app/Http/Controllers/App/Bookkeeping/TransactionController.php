@@ -77,10 +77,32 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function confirm(Request $request)
+    public function unconfirm(Request $request, Transaction $transaction)
     {
-        $ids = $request->query('ids');
-        $transactionIds = explode(',', $ids);
+        $transaction->load('booking', 'bank_account');
+        if (! $transaction->booking || ! $transaction->booking->is_locked) {
+            $transaction->is_locked = false;
+            $transaction->save();
+        }
+
+        // Direkt die index Methode mit den Filtern aufrufen
+        return $this->index($request, $transaction->bank_account);
+    }
+
+    public function runRules(Request $request) {
+        $transactionIds = explode(',', $request->input('ids'));
+        BookeepingRuleService::run('transactions', new Transaction, $transactionIds);
+
+        $transactions = Transaction::whereIn('id', $transactionIds)->get();
+        $bankAccount = $transactions->first()?->bank_account ?? BankAccount::query()->orderBy('pos')->first();
+
+        return $this->index($request, $bankAccount);
+    }
+
+    public function confirm(Request $request, ?Transaction $transaction = null)
+    {
+        $ids = $transaction?->id ? $transaction->id : $request->input('ids');
+        $transactionIds = is_array($ids) ? $ids : explode(',', $ids);
         $transactions = Transaction::whereIn('id', $transactionIds)->with('bank_account')->orderBy('booked_on')->get();
 
         $transactions->each(function ($transaction) {
@@ -97,11 +119,10 @@ class TransactionController extends Controller
             }
         });
 
-        $transactions = Transaction::whereIn('id', $transactionIds)->get();
+        // Bank Account aus der ersten Transaction holen
+        $bankAccount = $transactions->first()?->bank_account ?? BankAccount::query()->orderBy('pos')->first();
 
-        Inertia::render('App/Bookkeeping/Transaction/TransactionIndex', [
-            'transactions' => Inertia::deepMerge($transactions)->matchOn('id'),
-        ]);
+        return $this->index($request, $bankAccount);
     }
 
     public function setCounterAccount(Request $request)

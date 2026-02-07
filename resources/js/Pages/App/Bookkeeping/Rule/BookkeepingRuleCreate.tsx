@@ -101,7 +101,7 @@ const BookkeepingRuleCreate: React.FC<Props> = ({ rule }) => {
           {form.data.table === 'transactions' && (
             <div className="col-span-4">
               <FormSelect<Options>
-                {...form.register('amount_type')}
+                {...form.register('type')}
                 label="Buchungsart"
                 itemValue="id"
                 items={amountTypes}

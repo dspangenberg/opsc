@@ -56,5 +56,6 @@ class TransactionData extends Data
         public readonly ?object $contact,
         /** @var BookkeepingAccountData */
         public readonly ?object $account,
+        public readonly ?BookkeepingBookingData $booking,
     ) {}
 }

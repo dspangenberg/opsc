@@ -52,7 +52,7 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
 
   const handleBulkConfirmationClicked = useCallback(() => {
     const ids = selectedRows.map(row => row.id).join(',')
-    router.put(route('app.bookkeeping.receipts.lock', { _query: { ids } }), {
+    router.put(route('app.bookkeeping.receipts.lock'), {ids}, {
       preserveScroll: true
     })
   }, [selectedRows])
@@ -77,8 +77,6 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
       boolean: filters.boolean || 'AND',
       search: search
     })
-
-    console.log('url', url)
 
     await PdfViewer.call({
       file: url

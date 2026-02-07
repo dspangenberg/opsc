@@ -20,30 +20,30 @@ use App\Models\Receipt;
 use App\Models\Transaction;
 use Inertia\Inertia;
 
-    class BookkeepingRulesController extends Controller
+class BookkeepingRulesController extends Controller
 {
-        public function getFields(String $table)
-        {
+    public function getFields(string $table)
+    {
 
 
-            $fields = null;
-            switch ($table) {
-                case 'transactions':
-                    $fields = Transaction::getModel()->getFillable();
-                    break;
-                case 'receipts':
-                    $fields = Receipt::getModel()->getFillable();
-                    break;
-                case 'payments':
-                    $fields = Payment::getModel()->getFillable();
-                    break;
-                case 'bookings':
-                    $fields = BookkeepingBooking::getModel()->getFillable();
-                    break;
-            }
-
-            return $fields;
+        $fields = null;
+        switch ($table) {
+            case 'transactions':
+                $fields = Transaction::getModel()->getFillable();
+                break;
+            case 'receipts':
+                $fields = Receipt::getModel()->getFillable();
+                break;
+            case 'payments':
+                $fields = Payment::getModel()->getFillable();
+                break;
+            case 'bookings':
+                $fields = BookkeepingBooking::getModel()->getFillable();
+                break;
         }
+
+        return $fields;
+    }
 
 
     public function index()
@@ -59,7 +59,8 @@ use Inertia\Inertia;
         ]);
     }
 
-    public function edit(BookkeepingRule $rule) {
+    public function edit(BookkeepingRule $rule)
+    {
 
         $rule->load('conditions', 'actions');
         return Inertia::modal('App/Bookkeeping/Rule/BookkeepingRuleEdit', [
@@ -68,9 +69,10 @@ use Inertia\Inertia;
         ])->baseRoute('app.bookkeeping.rules.index');
     }
 
-    public function update(BookkeepingRuleUpdateRequest $request, BookkeepingRule $rule) {
+    public function update(BookkeepingRuleUpdateRequest $request, BookkeepingRule $rule)
+    {
 
-        $ruleData = $request->except(['conditions','actions']);
+        $ruleData = $request->except(['conditions', 'actions']);
         $rule->update($ruleData);
         if ($request->has('conditions')) {
             $this->updateRuleConditions($rule, $request->input('conditions', []));
@@ -81,29 +83,32 @@ use Inertia\Inertia;
         return redirect()->route('app.bookkeeping.rules.index');
     }
 
-    public function destroy(BookkeepingRule $rule) {
+    public function destroy(BookkeepingRule $rule)
+    {
         $rule->conditions()->delete();
         $rule->actions()->delete();
         $rule->delete();
         return redirect()->route('app.bookkeeping.rules.index');
     }
 
-        public function create() {
-            $rule = new BookkeepingRule();
-            return Inertia::modal('App/Bookkeeping/Rule/BookkeepingRuleCreate', [
-                'rule' => BookkeepingRuleData::from($rule),
-            ])->baseRoute('app.bookkeeping.rules.index');
-        }
+    public function create()
+    {
+        $rule = new BookkeepingRule();
+        return Inertia::modal('App/Bookkeeping/Rule/BookkeepingRuleCreate', [
+            'rule' => BookkeepingRuleData::from($rule),
+        ])->baseRoute('app.bookkeeping.rules.index');
+    }
 
 
-        public function store(BookkeepingRuleStoreRequest $request) {
+    public function store(BookkeepingRuleStoreRequest $request)
+    {
         $rule = BookkeepingRule::create($request->validated());
         return redirect()->route('app.bookkeeping.rules.edit', ['rule' => $rule]);
     }
 
-        private function updateRuleConditions(BookkeepingRule $rule, array $conditionsData): void
-        {
-            // Sammle alle IDs aus den eingehenden Daten
+    private function updateRuleConditions(BookkeepingRule $rule, array $conditionsData): void
+    {
+        // Sammle alle IDs aus den eingehenden Daten
         $incomingIds = collect($conditionsData)
             ->pluck('id')
             ->filter()
@@ -139,41 +144,42 @@ use Inertia\Inertia;
             }
         }
     }
-        private function updateRuleActions(BookkeepingRule $rule, array $actionsData): void
-        {
-            // Sammle alle IDs aus den eingehenden Daten
-            $incomingIds = collect($actionsData)
-                ->pluck('id')
-                ->filter()
-                ->toArray();
 
-            // Lösche Conditions, die nicht mehr in den Daten enthalten sind
-            if (!empty($incomingIds)) {
-                $rule->actions()
-                    ->whereNotIn('id', $incomingIds)
-                    ->delete();
+    private function updateRuleActions(BookkeepingRule $rule, array $actionsData): void
+    {
+        // Sammle alle IDs aus den eingehenden Daten
+        $incomingIds = collect($actionsData)
+            ->pluck('id')
+            ->filter()
+            ->toArray();
+
+        // Lösche Conditions, die nicht mehr in den Daten enthalten sind
+        if (!empty($incomingIds)) {
+            $rule->actions()
+                ->whereNotIn('id', $incomingIds)
+                ->delete();
+        } else {
+            // Wenn keine IDs vorhanden sind, lösche alle bestehenden Conditions
+            $rule->actions()->delete();
+        }
+
+        // Erstelle oder aktualisiere Conditions
+        foreach ($actionsData as $index => $actionData) {
+            $actionAttributes = [
+                'bookkeeping_rule_id' => $rule->id,
+                'field' => $actionData['field'],
+                'value' => $actionData['value'] ?? $index,
+            ];
+
+            if (!empty($actionData['id'])) {
+                // Bestehende Condition aktualisieren
+                BookkeepingRuleAction::where('id', $actionData['id'])
+                    ->where('bookkeeping_rule_id', $rule->id)
+                    ->update($actionAttributes);
             } else {
-                // Wenn keine IDs vorhanden sind, lösche alle bestehenden Conditions
-                $rule->actions()->delete();
-            }
-
-            // Erstelle oder aktualisiere Conditions
-            foreach ($actionsData as $index => $actionData) {
-                $actionAttributes = [
-                    'bookkeeping_rule_id' => $rule->id,
-                    'field' => $actionData['field'],
-                    'value' => $actionData['value'] ?? $index,
-                ];
-
-                if (!empty($actionData['id'])) {
-                    // Bestehende Condition aktualisieren
-                    BookkeepingRuleAction::where('id', $actionData['id'])
-                        ->where('bookkeeping_rule_id', $rule->id)
-                        ->update($actionAttributes);
-                } else {
-                    // Neue Condition erstellen
-                    BookkeepingRuleAction::create($actionAttributes);
-                }
+                // Neue Condition erstellen
+                BookkeepingRuleAction::create($actionAttributes);
             }
         }
+    }
 }
