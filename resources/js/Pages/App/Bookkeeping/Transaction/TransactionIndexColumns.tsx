@@ -4,15 +4,13 @@
  */
 
 import {
-  FileEuroIcon,
   MoreVerticalCircle01Icon,
+  CheckUnread01Icon,
   ProfileIcon,
   Tick01Icon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
-import { useFilter } from 'react-aria-components'
-import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { Icon } from '@/Components/twc-ui/icon'
 import { MenuItem } from '@/Components/twc-ui/menu'
@@ -26,76 +24,77 @@ const currencyFormatter = new Intl.NumberFormat('de-DE', {
   minimumFractionDigits: 2
 })
 
-const editUrl = (row: App.Data.TransactionData) => {
-  return row.id ? route('app.time.edit', { id: row.id }) : '#'
-}
-
-const handleConfirmClicked = async (row: App.Data.TransactionData) => {
-  router.get(route('app.bookkeeping.transactions.confirm', { _query: { ids: row.id } }), {
-    preserveScroll: true
-  })
-}
-
-const handleDeleteClicked = async (row: App.Data.TransactionData) => {
-  const promise = await AlertDialog.call({
-    title: 'Löschen bestätigen',
-    message: 'Möchtest Du den Eintrag wirklich löschen?',
-    buttonTitle: 'Eintrag löschen',
-    variant: 'destructive'
-  })
-  if (promise) {
-    router.delete(route('app.times.delete', { id: row.id }))
-  }
-}
-
 interface ColumnOptions {
   onSetCounterAccountAction?: (row: App.Data.TransactionData) => void
-  onPaymentAction?: (row: App.Data.TransactionData) => void
+  currentFilters?: any
+  currentSearch?: string
+  bankAccountId?: number
 }
 
-const RowActions = ({
-  row,
-  options
-}: {
-  row: Row<App.Data.TransactionData>
-  options?: ColumnOptions
-}) => {
-  const { contains } = useFilter({ sensitivity: 'base' })
 
-  return (
-    <div className="mx-auto">
-      <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
-        <MenuItem
-          icon={Tick01Icon}
-          title="Transaktion als bestätigt markieren"
-          isDisabled={row.original.is_locked}
-          separator
-          onAction={() => handleConfirmClicked(row.original)}
-        />
+export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.TransactionData>[] => {
+  const handleConfirmClicked = (row: App.Data.TransactionData) => {
+    router.put(
+      route('app.bookkeeping.transactions.confirm', { transaction: row.id }),
+      {
+        filters: options?.currentFilters,
+        search: options?.currentSearch
+      },
+      {
+        preserveScroll: true
+      }
+    )
+  }
 
-        <MenuItem
-          icon={ProfileIcon}
-          title="Gegenkonto"
-          ellipsis
-          separator
-          isDisabled={row.original.is_locked}
-          onAction={() => options?.onSetCounterAccountAction?.(row.original)}
-        />
+  const handleUnconfirmClicked = (row: App.Data.TransactionData) => {
+    router.put(
+      route('app.bookkeeping.transactions.unconfirm', { transaction: row.id }),
+      {
+        filters: options?.currentFilters,
+        search: options?.currentSearch
+      },
+      {
+        preserveScroll: true
+      }
+    )
+  }
 
-        <MenuItem
-          icon={FileEuroIcon}
-          title="Zahlung auf Ausgangsrechnung anwenden"
-          ellipsis
-          separator
-          isDisabled={row.original.account?.type !== 'd'}
-          onAction={() => options?.onPaymentAction?.(row.original)}
-        />
-      </DropdownButton>
-    </div>
-  )
-}
+  const RowActions = ({
+    row
+  }: {
+    row: Row<App.Data.TransactionData>
+  }) => {
+    return (
+      <div className="mx-auto">
+        <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
+          {row.original.is_locked && <MenuItem
+            icon={CheckUnread01Icon}
+            title="Transaktion als unbestätigt markieren"
+            separator
+            onAction={() => handleUnconfirmClicked(row.original)}
+          />}
 
-export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.TransactionData>[] => [
+          {!row.original.is_locked && <MenuItem
+            icon={Tick01Icon}
+            title="Transaktion als bestätigt markieren"
+            separator
+            onAction={() => handleConfirmClicked(row.original)}
+          />}
+
+          <MenuItem
+            icon={ProfileIcon}
+            title="Gegenkonto"
+            ellipsis
+            separator
+            isDisabled={row.original.is_locked}
+            onAction={() => options?.onSetCounterAccountAction?.(row.original)}
+          />
+        </DropdownButton>
+      </div>
+    )
+  }
+
+  return [
   {
     id: 'select',
     size: 30,
@@ -124,7 +123,7 @@ export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.Trans
     accessorKey: 'booked_on',
     header: 'Buchung',
     size: 50,
-    cell: ({ row, getValue }) => (
+    cell: ({ getValue }) => (
       <div>
         <span>{getValue() as string}</span>
       </div>
@@ -134,13 +133,13 @@ export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.Trans
     accessorKey: 'valued_on',
     header: 'Wertstellung',
     size: 50,
-    cell: ({ row, getValue }) => <span>{getValue() as string}</span>
+    cell: ({ getValue }) => <span>{getValue() as string}</span>
   },
   {
     accessorKey: 'is_locked',
     header: '',
     size: 5,
-    cell: ({ row, getValue }) => {
+    cell: ({ getValue }) => {
       if (getValue() === true) {
         return (
           <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-green-500">
@@ -154,7 +153,7 @@ export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.Trans
     accessorKey: 'bookkeeping_text',
     header: 'Buchung',
     size: 400,
-    cell: ({ row, getValue }) => {
+    cell: ({ row }) => {
       const [bookingType, name, purpose] = row.original.bookkeeping_text.split('|')
       let variant: BadgeVariant
 
@@ -209,10 +208,11 @@ export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.Trans
     id: 'actions',
     size: 30,
     header: () => <span className="sr-only">Actions</span>,
-    cell: ({ row }) => <RowActions row={row} options={options} />,
+    cell: ({ row }) => <RowActions row={row} />,
     enableHiding: false
   }
-]
+  ]
+}
 
 // Für Rückwärtskompatibilität
 export const columns = createColumns()

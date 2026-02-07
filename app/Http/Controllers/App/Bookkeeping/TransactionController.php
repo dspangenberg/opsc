@@ -23,6 +23,7 @@ use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 use League\Csv\Exception;
 use League\Csv\Reader;
 use League\Csv\SyntaxError;
@@ -32,7 +33,7 @@ class TransactionController extends Controller
 {
     public function index(Request $request, ?BankAccount $bank_account = null)
     {
-        if (! $bank_account) {
+        if (!$bank_account) {
             $bank_account = BankAccount::query()->orderBy('pos')->first();
         }
 
@@ -77,17 +78,40 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function confirm(Request $request)
+    public function unconfirm(Request $request, Transaction $transaction)
     {
-        $ids = $request->query('ids');
-        $transactionIds = explode(',', $ids);
+        $transaction->load('booking', 'bank_account');
+        if (!$transaction->booking || !$transaction->booking->is_locked) {
+            $transaction->is_locked = false;
+            $transaction->save();
+        }
+
+        // Direkt die index Methode mit den Filtern aufrufen
+        return $this->index($request, $transaction->bank_account);
+    }
+
+    public function runRules(Request $request): Response
+    {
+        $transactionIds = explode(',', $request->input('ids', ''));
+        BookeepingRuleService::run('transactions', new Transaction, $transactionIds);
+
+        $transactions = Transaction::whereIn('id', $transactionIds)->get();
+        $bankAccount = $transactions->first()?->bank_account ?? BankAccount::query()->orderBy('pos')->first();
+
+        return $this->index($request, $bankAccount);
+    }
+
+    public function confirm(Request $request, ?Transaction $transaction = null): Response
+    {
+        $ids = $transaction?->id ? $transaction->id : $request->input('ids');
+        $transactionIds = is_array($ids) ? $ids : explode(',', $ids);
         $transactions = Transaction::whereIn('id', $transactionIds)->with('bank_account')->orderBy('booked_on')->get();
 
         $transactions->each(function ($transaction) {
-            if (! $transaction->is_locked) {
+            if (!$transaction->is_locked) {
                 $transaction->is_locked = true;
 
-                if (! $transaction->number_range_document_numbers_id) {
+                if (!$transaction->number_range_document_numbers_id) {
                     $transaction->number_range_document_numbers_id = NumberRange::createDocumentNumber($transaction,
                         'booked_on', $transaction->bank_account->prefix);
                 }
@@ -97,14 +121,13 @@ class TransactionController extends Controller
             }
         });
 
-        $transactions = Transaction::whereIn('id', $transactionIds)->get();
+        // Bank Account aus der ersten Transaction holen
+        $bankAccount = $transactions->first()?->bank_account ?? BankAccount::query()->orderBy('pos')->first();
 
-        Inertia::render('App/Bookkeeping/Transaction/TransactionIndex', [
-            'transactions' => Inertia::deepMerge($transactions)->matchOn('id'),
-        ]);
+        return $this->index($request, $bankAccount);
     }
 
-    public function setCounterAccount(Request $request)
+    public function setCounterAccount(Request $request): Response
     {
         $ids = $request->query('ids');
         $counterAccount = $request->query('counter_account');
@@ -113,7 +136,7 @@ class TransactionController extends Controller
         $transactions = Transaction::whereIn('id', $transactionIds)->with('bank_account')->get();
 
         $transactions->each(function ($transaction) use ($counterAccount) {
-            if (! $transaction->is_locked) {
+            if (!$transaction->is_locked) {
                 $transaction->counter_account_id = $counterAccount;
                 $transaction->save();
             }
@@ -121,7 +144,7 @@ class TransactionController extends Controller
 
         $transactions = Transaction::whereIn('id', $transactionIds)->get();
 
-        Inertia::render('App/Bookkeeping/Transaction/TransactionIndex', [
+        return Inertia::render('App/Bookkeeping/Transaction/TransactionIndex', [
             'transactions' => Inertia::deepMerge($transactions)->matchOn('id'),
         ]);
     }
@@ -147,7 +170,7 @@ class TransactionController extends Controller
         foreach ($csv->getRecords() as $record) {
             if ($counter > 0) {
                 $transaction = Transaction::firstOrNew(['mm_ref' => $record[8]]);
-                if (! $transaction->is_locked) {
+                if (!$transaction->is_locked) {
                     $transaction->mm_ref = $record[8];
                     $transaction->bank_account_id = $validatedData['bank_account_id'];
                     $transaction->valued_on = Carbon::createFromLocaleFormat('d.m.Y', 'de', $record[0],

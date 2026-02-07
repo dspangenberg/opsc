@@ -9,8 +9,14 @@ use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 
 // Bookkeeping
-Route::get('bookkeeping/transactions/confirm/', [TransactionController::class, 'confirm'])
+Route::put('bookkeeping/transactions/confirm/{transaction?}', [TransactionController::class, 'confirm'])
     ->name('app.bookkeeping.transactions.confirm');
+
+Route::put('bookkeeping/transactions/{transaction}/unconfirm/', [TransactionController::class, 'unconfirm'])
+    ->name('app.bookkeeping.transactions.unconfirm');
+
+Route::put('bookkeeping/transactions/run-rules/', [TransactionController::class, 'runRules'])
+    ->name('app.bookkeeping.transactions.run-rules');
 
 Route::get('bookkeeping/transactions/set-counter-account/', [TransactionController::class, 'setCounterAccount'])
     ->name('app.bookkeeping.transactions.set-counter-account');

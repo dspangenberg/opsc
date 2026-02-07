@@ -18,7 +18,8 @@ class BookkeepingRuleStoreRequest extends FormRequest
             'priority' => ['nullable', 'integer'],
             'table' => ['required', 'string'],
             'logical_operator' => ['required', 'string'],
-            'amount_type' => ['required_if:table,transactions', 'string'],
+            'type' => ['required_if:table,transactions', 'string'],
+            'action_type' => ['nullable', 'string'],
         ];
     }
 

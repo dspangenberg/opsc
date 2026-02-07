@@ -3,6 +3,7 @@ import {
   FileExportIcon,
   FileScriptIcon,
   MoreVerticalCircle01Icon,
+  AiBeautifyIcon,
   Tick01Icon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
@@ -148,22 +149,37 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
     }
   }
 
-  const handlePaymentAction = (transaction: App.Data.TransactionData) => {
-    router.get(route('app.bookkeeping.transactions.pay-invoice', { id: transaction.id }))
-  }
-
   const columns = useMemo(
     () =>
       createColumns({
-        onPaymentAction: handlePaymentAction,
-        onSetCounterAccountAction: handeSetCounterAccountAction
+        onSetCounterAccountAction: handeSetCounterAccountAction,
+        currentFilters: filters,
+        currentSearch: search,
+        bankAccountId: bank_account.id as number
       }),
-    []
+    [filters, search, bank_account.id]
   )
+
+  //
 
   const handleBulkConfirmationClicked = () => {
     const ids = selectedRows.map(row => row.id).join(',')
-    router.get(route('app.bookkeeping.transactions.confirm', { _query: { ids } }), {
+    router.put(route('app.bookkeeping.transactions.confirm'), {
+      ids,
+      filters,
+      search
+    }, {
+      preserveScroll: true
+    })
+  }
+
+  const handleRunRulesClicked = () => {
+    const ids = selectedRows.map(row => row.id).join(',')
+    router.put(route('app.bookkeeping.transactions.run-rules'), {
+      ids,
+      filters,
+      search
+    }, {
       preserveScroll: true
     })
   }
@@ -248,6 +264,13 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
           icon={Tick01Icon}
           title="als bestätigt markieren"
           onClick={handleBulkConfirmationClicked}
+        />
+        <Button
+          variant="ghost"
+          size="auto"
+          icon={AiBeautifyIcon}
+          title="Regeln anwenden"
+          onClick={handleRunRulesClicked}
         />
         <div className="flex-1 text-right font-medium text-sm">{selectedAmount}</div>
       </Toolbar>

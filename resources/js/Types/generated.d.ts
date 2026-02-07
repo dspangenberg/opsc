@@ -666,6 +666,7 @@ is_locked: boolean;
 bookkeeping_text: string;
 contact: App.Data.ContactData | null;
 account: App.Data.BookkeepingAccountData | null;
+booking: App.Data.BookkeepingBookingData | null;
 };
 export type UserData = {
 id: number | null;
