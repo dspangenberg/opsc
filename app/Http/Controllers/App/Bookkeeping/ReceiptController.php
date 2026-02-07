@@ -143,7 +143,7 @@ class ReceiptController extends Controller
     public function destroy(Receipt $receipt)
     {
         $media = $receipt->firstMedia('file');
-        $media->delete();
+        $media?->delete();
         $receipt->delete();
 
         return redirect()->route('app.bookkeeping.receipts.index');
@@ -192,7 +192,7 @@ class ReceiptController extends Controller
         $receipt->update($validated);
 
 
-        if ($request->validated('is_reconversion')) {
+        if ($wasConfirmed && $request->validated('is_reconversion')) {
             $receipt->org_amount = $request->validated('org_amount');
             $conversion = ConversionRate::convertAmount($receipt->org_amount, $receipt->org_currency, $receipt->issued_on);
             if ($conversion) {

@@ -56,6 +56,7 @@ interface FormProps<T extends FormSchema> extends BaseFormProps {
   className?: string
   errorVariant?: 'form' | 'field'
   errorClassName?: string
+  preserveState?: boolean
 }
 
 export const Form = <T extends FormSchema>({
@@ -66,6 +67,7 @@ export const Form = <T extends FormSchema>({
   errorClassName,
   onSubmitted,
   className,
+  preserveState = true,
   ...props
 }: FormProps<T>) => {
   if (!form) {
@@ -79,7 +81,7 @@ export const Form = <T extends FormSchema>({
     return new Promise((resolve, reject) => {
       form.submit({
         preserveScroll: true,
-        preserveState: false,
+        preserveState,
         onError: errors => {
           // Convert Inertia errors (string[]) to SimpleValidationErrors (string)
           const simpleErrors = Object.entries(errors).reduce((acc, [key, value]) => {

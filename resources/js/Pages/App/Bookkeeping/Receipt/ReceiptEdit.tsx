@@ -140,10 +140,6 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
   }
 
   const isDeleteDisabled = !!(receipt.is_locked || receipt.booking?.id)
-  const handleOnSubmitted = () => {
-    console.log('submitted')
-    // router.reload() // Lädt nur receipt Props neu
-  }
 
   return (
     <PageContainer
@@ -206,7 +202,7 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
           </>
         }
       >
-        <Form form={form} onSubmitted={handleOnSubmitted} className="flex-1">
+        <Form form={form} preserveState={false} className="flex-1">
           {receipt.duplicate_of && <Alert variant="info">Mögliches Duplikat.</Alert>}
           <FormGrid>
             <div className="col-span-8">
@@ -252,7 +248,7 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
               <div className="col-span-24 -mt-3">
                 <FormCheckbox
                   isDisabled={form.data.is_locked}
-                  label="Urprungsbetrag korrigieren + neu umrechnen"
+                  label="Ursprungsbetrag korrigieren + neu umrechnen"
                   {...form.registerCheckbox('is_reconversion')}
                 />
               </div>

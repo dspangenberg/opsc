@@ -18,12 +18,12 @@ const currencyFormatter = new Intl.NumberFormat('de-DE', {
 })
 
 const handleRemovePayment = async (row: App.Data.PaymentData) => {
-  const promise = await AlertDialog.call({
+  const confirmed = await AlertDialog.call({
     title: 'Zahlung löschen',
     message: `Möchtest Du die Zahlung vom ${row.transaction.booked_on} wirklich löschen?`,
     buttonTitle: 'Zahlung löschen'
   })
-  if (promise) {
+  if (confirmed) {
     router.delete(route('app.bookkeeping.receipts.delete-payment', {
       receipt: row.payable_id,
       transaction: row.transaction_id
