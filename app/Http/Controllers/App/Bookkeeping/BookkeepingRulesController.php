@@ -16,6 +16,7 @@ use App\Models\Transaction;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
+use Momentum\Modal\Modal;
 
 class BookkeepingRulesController extends Controller
 {
@@ -76,7 +77,7 @@ class BookkeepingRulesController extends Controller
         return redirect()->route('app.bookkeeping.rules.index');
     }
 
-    public function create(): Response
+    public function create(): Modal
     {
         $rule = new BookkeepingRule();
         return Inertia::modal('App/Bookkeeping/Rule/BookkeepingRuleCreate', [
