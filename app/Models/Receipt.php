@@ -101,7 +101,7 @@ class Receipt extends Model
 
     public function getOpenAmountAttribute(): float
     {
-        return ($this->amount + $this->payable_sum );
+        return $this->amount + $this->payable_sum;
     }
 
     public function getOriginalFilename(): string
@@ -157,7 +157,8 @@ class Receipt extends Model
             $searchText = '%'.$searchText.'%';
 
             return $query
-                ->whereLike('reference', $searchText);
+                ->whereLike('reference', $searchText)
+                ->orWhereRelation('contact', 'name', 'like', $searchText);
         }
 
         return $query;

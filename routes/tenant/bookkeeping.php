@@ -21,7 +21,7 @@ Route::put('bookkeeping/transactions/run-rules/', [TransactionController::class,
 Route::get('bookkeeping/transactions/set-counter-account/', [TransactionController::class, 'setCounterAccount'])
     ->name('app.bookkeeping.transactions.set-counter-account');
 
-Route::match(['GET', 'POST'],'bookkeeping/bookings', [BookingController::class, 'index'])
+Route::match(['GET', 'POST'], 'bookkeeping/bookings', [BookingController::class, 'index'])
     ->name('app.bookkeeping.bookings.index');
 
 Route::get('bookkeeping/bookings/export', [BookingController::class, 'exportCSV'])
@@ -58,3 +58,5 @@ Route::get('/bookkeeping/receipts/{receipt}/edit', [ReceiptController::class, 'e
 Route::get('/bookkeeping/receipts/bulk-download/', [ReceiptController::class, 'bulkDownload'])->name('app.bookkeeping.bulk-download');
 Route::put('/bookkeeping/receipts/{receipt}/unlock', [ReceiptController::class, 'unlock'])->name('app.bookkeeping.receipts.unlock');
 Route::delete('/bookkeeping/receipts/{receipt}/payment/{transaction}', [ReceiptController::class, 'destroyPayment'])->name('app.bookkeeping.receipts.delete-payment');
+
+Route::get('bookings/account/{accountNumber}', [BookingController::class, 'indexForAccount'])->name('app.bookkeeping.bookings.account');

@@ -6,6 +6,7 @@
  */
 
 namespace App\Data;
+
 use DateTime;
 use Spatie\LaravelData\Attributes\WithTransformer;
 use Spatie\LaravelData\Data;
@@ -39,6 +40,11 @@ class BookkeepingBookingData extends Data
         public readonly ?string $document_number,
         public readonly ?string $created_at,
         public readonly ?string $updated_at,
+
+        public readonly ?float $balance,
+        public readonly ?string $balance_type,
+        public readonly ?int $counter_account,
+        public readonly ?string $counter_account_label,
 
         /** @var BookkeepingAccountData */
         public readonly ?object $account_credit,

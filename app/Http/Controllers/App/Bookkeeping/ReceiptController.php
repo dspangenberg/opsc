@@ -191,7 +191,6 @@ class ReceiptController extends Controller
 
         $receipt->update($validated);
 
-
         if ($wasConfirmed && $request->validated('is_reconversion')) {
             $receipt->org_amount = $request->validated('org_amount');
             $conversion = ConversionRate::convertAmount($receipt->org_amount, $receipt->org_currency, $receipt->issued_on);
@@ -233,13 +232,13 @@ class ReceiptController extends Controller
                 ->where('extension', $media->extension)
                 ->where('id', '!=', $media->id)
                 ->exists()) {
-                $filename = $baseFilename . '-' . $counter;
+                $filename = $baseFilename.'-'.$counter;
                 $counter++;
             }
 
             $receipt->org_filename = $media->filename;
             // move() erwartet filename MIT Extension
-            $media->move($folder, $filename . '.' . $media->extension);
+            $media->move($folder, $filename.'.'.$media->extension);
 
             // Nach Bestätigung zum nächsten unbestätigten Beleg weiterleiten
             $nextReceipt = Receipt::query()
@@ -356,6 +355,7 @@ class ReceiptController extends Controller
     {
         $this->loadReceiptWithPayments($receipt);
         $receipt->org_filename = $receipt->getOriginalFilename();
+
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptEdit', [
             'receipt' => ReceiptData::from($receipt),
             ...$this->getFormData(),
@@ -424,7 +424,7 @@ class ReceiptController extends Controller
     public function unlock(Receipt $receipt): RedirectResponse
     {
         $receipt->load('bookings');
-        $hasLockedBooking = $receipt->bookings->contains(fn($booking) => $booking->is_locked);
+        $hasLockedBooking = $receipt->bookings->contains(fn ($booking) => $booking->is_locked);
 
         if (! $hasLockedBooking) {
             $receipt->is_locked = false;
@@ -434,12 +434,15 @@ class ReceiptController extends Controller
         return back();
     }
 
-
     public function lock(Request $request, ?Receipt $receipt): RedirectResponse|Response
     {
-        $ids = $receipt?->id ? $receipt->id : $request->input('ids');
+        $ids = $receipt?->id ?? $request->input('ids');
 
-        $receiptIds = explode(',', $ids);
+        if (empty($ids)) {
+            return back();
+        }
+
+        $receiptIds = is_array($ids) ? $ids : explode(',', $ids);
         $receipts = Receipt::whereIn('id', $receiptIds)->orderBy('issued_on')->get();
 
         $receipts->each(function ($receipt) {
@@ -456,15 +459,7 @@ class ReceiptController extends Controller
             }
         });
 
-        if ($receipt) {
-            return redirect()->back();
-        }
-
-        $receipts = Receipt::whereIn('id', $receiptIds)->get();
-
-        return Inertia::render('App/Bookkeeping/Receipt/ReceiptIndex', [
-            'receipts' => Inertia::deepMerge($receipts)->matchOn('id'),
-        ]);
+        return back();
     }
 
     public function runRules(Request $request)

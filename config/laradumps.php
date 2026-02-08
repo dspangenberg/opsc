@@ -1,0 +1,31 @@
+<?php
+
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Enable LaraDumps
+    |--------------------------------------------------------------------------
+    |
+    | Set to false to completely disable LaraDumps and prevent memory issues
+    |
+    */
+    'enabled' => env('LARADUMPS_ENABLED', false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ignored Queries Patterns
+    |--------------------------------------------------------------------------
+    |
+    | Define patterns for SQL queries and routes that LaraDumps should ignore.
+    | Useful for preventing logs of repetitive or unnecessary queries/routes.
+    |
+    */
+    'queries' => [
+        'ignore_sql_patterns' => [
+        ],
+        'ignore_routes_patterns' => [
+            'horizon/*',
+            'telescope/*',
+        ],
+    ],
+];

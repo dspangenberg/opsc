@@ -4,11 +4,13 @@ namespace App\Models;
 
 use App\Traits\HasDynamicFilters;
 use Eloquent;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 /**
  * @property-read BookkeepingAccount|null $account_credit
@@ -17,10 +19,12 @@ use Illuminate\Support\Carbon;
  * @property-read string $document_number
  * @property-read NumberRangeDocumentNumber|null $range_document_number
  * @property-read Tax|null $tax
+ *
  * @method static Builder<static>|BookkeepingBooking newModelQuery()
  * @method static Builder<static>|BookkeepingBooking newQuery()
  * @method static Builder<static>|BookkeepingBooking query()
  * @method static Builder<static>|BookkeepingBooking search($search)
+ *
  * @mixin Eloquent
  */
 class BookkeepingBooking extends Model
@@ -61,9 +65,9 @@ class BookkeepingBooking extends Model
             $query
                 ->where('booking_text', 'like', "%$search%");
         }
+
         return $query;
     }
-
 
     protected function getFilterLabel(string $key, mixed $value): ?string
     {
@@ -87,6 +91,249 @@ class BookkeepingBooking extends Model
         return $query->whereBetween('date', [$from, $to]);
     }
 
+    /**
+     * Konvertiert deutsche Datumsformate zu MySQL Format
+     */
+    protected static function convertDateFormat(string $date): string
+    {
+        if (preg_match('/^\d{2}\.\d{2}\.\d{4}$/', $date)) {
+            return Carbon::createFromFormat('d.m.Y', $date)->format('Y-m-d');
+        }
+
+        return $date;
+    }
+
+    /**
+     * Wendet Datumsfilter auf Query an
+     */
+    protected static function applyDateFilters(Builder $query, array $filters): Builder
+    {
+        if (isset($filters['date_from']) && isset($filters['date_to'])) {
+            $dateFrom = self::convertDateFormat($filters['date_from']);
+            $dateTo = self::convertDateFormat($filters['date_to']);
+            $query->whereBetween('date', [$dateFrom, $dateTo]);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Erstellt Query für bestimmtes Konto
+     */
+    protected static function queryForAccount(string $accountNumber): Builder
+    {
+        return self::query()
+            ->where(function ($q) use ($accountNumber) {
+                $q->where('account_id_debit', $accountNumber)
+                    ->orWhere('account_id_credit', $accountNumber);
+            });
+    }
+
+    /**
+     * Lädt Account-Labels für Buchungen
+     */
+    protected static function loadAccountLabels($bookings): Collection
+    {
+        $accountIds = $bookings->pluck('account_id_debit')
+            ->merge($bookings->pluck('account_id_credit'))
+            ->unique()
+            ->filter()
+            ->values();
+
+        return BookkeepingAccount::whereIn('account_number', $accountIds)
+            ->get()
+            ->keyBy('account_number')
+            ->map(fn($account) => $account->label);
+    }
+
+    /**
+     * Fügt Balance-Informationen zu Buchungen hinzu
+     */
+    protected static function addBalanceInfo(
+        $bookings,
+        int $accountNumberInt,
+        $accountLabels,
+        float $startBalance = 0
+    ): float {
+        $balance = $startBalance;
+
+        foreach ($bookings as $booking) {
+            $isDebit = $booking->account_id_debit == $accountNumberInt;
+            $isCredit = $booking->account_id_credit == $accountNumberInt;
+
+            if ($isDebit) {
+                $balance += $booking->amount;
+                $booking->balance_type = 'debit';
+                $booking->counter_account = $booking->account_id_credit;
+                $booking->counter_account_label = $accountLabels->get($booking->account_id_credit, '');
+            }
+            if ($isCredit) {
+                $balance -= $booking->amount;
+                $booking->balance_type = 'credit';
+                $booking->counter_account = $booking->account_id_debit;
+                $booking->counter_account_label = $accountLabels->get($booking->account_id_debit, '');
+            }
+            $booking->balance = $balance;
+        }
+
+        return $balance; // Rückgabe des finalen Saldos
+    }
+
+    /**
+     * Calculate balance for a specific account
+     *
+     * @param  string  $accountNumber  Account number to calculate balance for
+     * @param  array  $filters  Optional filters (e.g., date range)
+     * @return float Balance (positive = debit exceeds credit, negative = credit exceeds debit)
+     */
+    public static function calculateBalanceForAccount(string $accountNumber, array $filters = []): float
+    {
+        $query = self::query();
+        self::applyDateFilters($query, $filters);
+
+        $debitSum = (clone $query)
+            ->where('account_id_debit', $accountNumber)
+            ->sum('amount');
+
+        $creditSum = (clone $query)
+            ->where('account_id_credit', $accountNumber)
+            ->sum('amount');
+
+        return $debitSum - $creditSum;
+    }
+
+    /**
+     * Get running balance for bookings ordered by date
+     * Returns collection with balance field added to each booking
+     *
+     * @param  string  $accountNumber  Account number to calculate running balance for
+     * @param  array  $filters  Optional filters (e.g., date range)
+     * @return Collection
+     */
+    public static function getRunningBalanceForAccount(string $accountNumber, array $filters = []): Collection
+    {
+        $query = self::queryForAccount($accountNumber);
+        self::applyDateFilters($query, $filters);
+
+        $bookings = $query
+            ->with(['account_debit', 'account_credit', 'tax', 'range_document_number'])
+            ->orderBy('date')
+            ->orderBy('id')
+            ->get();
+
+        $accountNumberInt = (int) $accountNumber;
+        $accountLabels = self::loadAccountLabels($bookings);
+        self::addBalanceInfo($bookings, $accountNumberInt, $accountLabels);
+
+        return $bookings;
+    }
+
+    /**
+     * Get running balance for paginated bookings
+     * Berechnet den korrekten Startsaldo für paginierte Ergebnisse
+     *
+     * @param  string  $accountNumber  Account number to calculate running balance for
+     * @param  array  $filters  Optional filters (e.g., date range)
+     * @param  int  $perPage  Items per page
+     * @param  string  $sortDirection
+     * @return LengthAwarePaginator
+     */
+    public static function getRunningBalanceForAccountPaginated(
+        string $accountNumber,
+        array $filters = [],
+        int $perPage = 15,
+        string $sortDirection = 'desc'
+    ): LengthAwarePaginator {
+        $baseQuery = self::queryForAccount($accountNumber);
+        self::applyDateFilters($baseQuery, $filters);
+
+        // Für absteigende Sortierung: Paginiere absteigend
+        $bookings = (clone $baseQuery)
+            ->with(['account_debit', 'account_credit', 'tax', 'range_document_number'])
+            ->orderBy('date', $sortDirection)
+            ->orderBy('id', $sortDirection)
+            ->paginate($perPage);
+
+        $accountNumberInt = (int) $accountNumber;
+
+        // Berechne Balance für jede Buchung
+        // Bei DESC: Zeige Saldo nach jeder Buchung, beginnend mit dem aktuellen Gesamtsaldo
+        if ($sortDirection === 'desc') {
+            // Berechne den Saldo NACH der ersten (neuesten) Buchung auf dieser Seite
+            // Das ist der Gesamtsaldo aller Buchungen bis einschließlich dieser Buchung
+            $firstBookingOnPage = $bookings->first();
+            if ($firstBookingOnPage) {
+                $balanceAfterFirst = (clone $baseQuery)
+                    ->where(function ($q) use ($firstBookingOnPage) {
+                        $q->where('date', '<', $firstBookingOnPage->date)
+                            ->orWhere(function ($q2) use ($firstBookingOnPage) {
+                                $q2->where('date', '=', $firstBookingOnPage->date)
+                                    ->where('id', '<=', $firstBookingOnPage->id);
+                            });
+                    })
+                    ->selectRaw('SUM(CASE
+                        WHEN account_id_debit = ? THEN amount
+                        WHEN account_id_credit = ? THEN -amount
+                        ELSE 0
+                    END) as balance', [$accountNumberInt, $accountNumberInt])
+                    ->value('balance') ?? 0;
+            } else {
+                $balanceAfterFirst = 0;
+            }
+
+            $accountLabels = self::loadAccountLabels($bookings);
+
+            // Zeige Saldo NACH jeder Buchung, gehe rückwärts durch die Zeit
+            $balance = $balanceAfterFirst;
+            foreach ($bookings as $booking) {
+                $isDebit = $booking->account_id_debit == $accountNumberInt;
+                $isCredit = $booking->account_id_credit == $accountNumberInt;
+
+                // Zeige den Saldo NACH dieser Buchung
+                $booking->balance = $balance;
+
+                if ($isDebit) {
+                    $booking->balance_type = 'debit';
+                    $booking->counter_account = $booking->account_id_credit;
+                    $booking->counter_account_label = $accountLabels->get($booking->account_id_credit, '');
+                    // Gehe rückwärts: ziehe den Betrag ab für die nächste (ältere) Buchung
+                    $balance -= $booking->amount;
+                }
+                if ($isCredit) {
+                    $booking->balance_type = 'credit';
+                    $booking->counter_account = $booking->account_id_debit;
+                    $booking->counter_account_label = $accountLabels->get($booking->account_id_debit, '');
+                    // Gehe rückwärts: addiere den Betrag für die nächste (ältere) Buchung
+                    $balance += $booking->amount;
+                }
+            }
+        } else {
+            // Aufsteigende Sortierung: wie vorher
+            $startBalance = 0;
+            if ($bookings->currentPage() > 1) {
+                $previousBookings = (clone $baseQuery)
+                    ->orderBy('date')
+                    ->orderBy('id')
+                    ->limit(($bookings->currentPage() - 1) * $perPage)
+                    ->get();
+
+                foreach ($previousBookings as $booking) {
+                    if ($booking->account_id_debit == $accountNumberInt) {
+                        $startBalance += $booking->amount;
+                    }
+                    if ($booking->account_id_credit == $accountNumberInt) {
+                        $startBalance -= $booking->amount;
+                    }
+                }
+            }
+
+            $accountLabels = self::loadAccountLabels($bookings);
+            self::addBalanceInfo($bookings, $accountNumberInt, $accountLabels, $startBalance);
+        }
+
+        return $bookings;
+    }
+
     public static function createBooking(
         $parent,
         $dateField,
@@ -104,7 +351,7 @@ class BookkeepingBooking extends Model
             ]);
 
             return null;
-        };
+        }
 
         if ($bookingId) {
             $booking = BookkeepingBooking::find($bookingId);

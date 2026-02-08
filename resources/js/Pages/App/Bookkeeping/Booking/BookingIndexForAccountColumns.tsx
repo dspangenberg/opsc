@@ -6,11 +6,9 @@
 import { MoreVerticalCircle01Icon, Tick01Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
-import { Focusable } from 'react-aria-components'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { Icon } from '@/Components/twc-ui/icon'
 import { MenuItem } from '@/Components/twc-ui/menu'
-import { Tooltip, TooltipTrigger } from '@/Components/twc-ui/tooltip'
 import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
 
@@ -42,8 +40,7 @@ const RowActions = ({ row }: { row: Row<App.Data.BookkeepingBookingData> }) => {
   )
 }
 
-const accountIndexUrl = (accoutNumber: number) => (accoutNumber ? route('app.bookkeeping.bookings.account', { accountNumber: accoutNumber }) : '#')
-
+const accountIndexUrl = (accountNumber: number) => (accountNumber ? route('app.bookkeeping.bookings.account', { accountNumber }) : '#')
 export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
   {
     id: 'select',
@@ -136,29 +133,13 @@ export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
     cell: ({ row }) => <div className="text-right">{row.original.tax?.value || 0} %</div>
   },
   {
-    accessorKey: 'account_id_debit',
-    header: 'Sollkonto',
-    size: 70,
+    accessorKey: 'counter_account_label',
+    header: 'Gegenkonto',
+    size: 140,
     cell: ({ row }) => (
-      <TooltipTrigger>
-        <Focusable aria-role="label">
-          <a href={accountIndexUrl(row.original.account_debit?.account_number as number)} className="truncate">{row.original.account_debit?.label}</a>
-        </Focusable>
-        <Tooltip>{row.original.account_debit?.label}</Tooltip>
-      </TooltipTrigger>
-    )
-  },
-  {
-    accessorKey: 'account_id_credit',
-    header: 'Habenkonto',
-    size: 70,
-    cell: ({ row }) => (
-      <TooltipTrigger>
-        <Focusable>
-          <a href={accountIndexUrl(row.original.account_credit?.account_number as number)} className="truncate">{row.original.account_credit?.label}</a>
-        </Focusable>
-        <Tooltip>{row.original.account_credit?.label}</Tooltip>
-      </TooltipTrigger>
+
+      <a href={accountIndexUrl(row.original.counter_account as number)} className="truncate">{row.original.counter_account_label}</a>
+
     )
   },
   {
@@ -175,6 +156,14 @@ export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
     size: 50,
     cell: ({ row }) => (
       <div className="text-right">{currencyFormatter.format(row.original.tax_credit)}</div>
+    )
+  },
+  {
+    accessorKey: 'balance',
+    header: () => <div className="text-right">Saldo</div>,
+    size: 50,
+    cell: ({ row }) => (
+      <div className="text-right">{currencyFormatter.format(row.original.balance ?? 0)}</div>
     )
   },
   {

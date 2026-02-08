@@ -54,6 +54,46 @@ class BookingController extends Controller
         ]);
     }
 
+    public function indexForAccount(Request $request, string $accountNumber)
+    {
+        $search = $request->input('search', '');
+        $filters = [];
+
+        $account = BookkeepingAccount::query()->where('account_number', $accountNumber)->first();
+
+        // Extrahiere Datumsfilter aus dem Request
+        $parsedFilters = (new BookkeepingBooking)->getParsedFilters($request);
+        if (isset($parsedFilters['issuedBetween'])) {
+            $dates = $parsedFilters['issuedBetween'];
+            if (is_array($dates) && count($dates) >= 2) {
+                $filters['date_from'] = $dates[0];
+                $filters['date_to'] = $dates[1];
+            }
+        }
+
+        // Nutze die neue Balance-Methode mit Pagination
+        $bookings = BookkeepingBooking::getRunningBalanceForAccountPaginated(
+            $accountNumber,
+            $filters,
+            10
+        );
+
+        // Bei POST-Requests sollten wir die aktuellen Filter/Search-Parameter für die Paginierung beibehalten
+        if ($request->isMethod('POST')) {
+            $bookings->appends($request->only(['filters', 'search']));
+        } else {
+            $bookings->appends($request->query());
+        }
+
+        return Inertia::render('App/Bookkeeping/Booking/BookingIndexForAccount', [
+            'bookings' => BookkeepingBookingData::collect($bookings),
+            'account' => BookkeepingAccountData::from($account),
+            'accountNumber' => $accountNumber,
+            'currentSearch' => $search,
+            'currentFilters' => $parsedFilters,
+        ]);
+    }
+
     /**
      * @throws CannotInsertRecord
      */
