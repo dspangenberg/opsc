@@ -261,17 +261,12 @@ class BookkeepingBooking extends Model
                                     ->where('id', '<=', $firstBookingOnPage->id);
                             });
                     })
-                    ->get()
-                    ->reduce(function ($balance, $booking) use ($accountNumberInt) {
-                        if ($booking->account_id_debit == $accountNumberInt) {
-                            $balance += $booking->amount;
-                        }
-                        if ($booking->account_id_credit == $accountNumberInt) {
-                            $balance -= $booking->amount;
-                        }
-
-                        return $balance;
-                    }, 0);
+                    ->selectRaw('SUM(CASE
+                        WHEN account_id_debit = ? THEN amount
+                        WHEN account_id_credit = ? THEN -amount
+                        ELSE 0
+                    END) as balance', [$accountNumberInt, $accountNumberInt])
+                    ->value('balance') ?? 0;
             } else {
                 $balanceAfterFirst = 0;
             }

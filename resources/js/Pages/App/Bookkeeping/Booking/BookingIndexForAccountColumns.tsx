@@ -40,7 +40,7 @@ const RowActions = ({ row }: { row: Row<App.Data.BookkeepingBookingData> }) => {
   )
 }
 
-const accountIndexUrl = (accoutNumber: number) => (accoutNumber ? route('app.bookkeeping.bookings.account', { accountNumber: accoutNumber }) : '#')
+const accountIndexUrl = (accountNumber: number) => (accountNumber ? route('app.bookkeeping.bookings.account', { accountNumber }) : '#')
 export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
   {
     id: 'select',
