@@ -147,9 +147,9 @@ class Receipt extends Model
         return $this->morphMany(Payment::class, 'payable');
     }
 
-    public function booking(): MorphOne
+    public function bookings(): MorphMany
     {
-        return $this->morphOne(BookkeepingBooking::class, 'bookable');
+        return $this->MorphMany(BookkeepingBooking::class, 'bookable');
     }
 
     public function scopeSearch(Builder $query, $searchText): Builder

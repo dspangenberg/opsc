@@ -307,6 +307,24 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
               </Table>
             </div>
           </FormGrid>
+          <FormGrid border>
+            <div className="col-span-24">
+              <Table className="w-full border-0">
+                <TableBody className="[&_tr:last-child]:border-b-0">
+                  {receipt.bookings?.map(booking =>
+
+                      <TableRow key={booking.id} className="border-b-0!">
+                        <TableCell>{booking.date}</TableCell>
+                        <TableCell>{booking.booking_text}</TableCell>
+                        <TableCell className="text-right">
+                          {currencyFormatter.format(booking.amount || 0)}
+                        </TableCell>
+                      </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </FormGrid>
         </Form>
       </FormCard>
     </PageContainer>

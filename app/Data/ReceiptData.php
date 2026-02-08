@@ -66,7 +66,8 @@ class ReceiptData extends Data
         /** @var PaymentData[] */
         public readonly ?array $payable,
 
-        public readonly ?BookkeepingBookingData $booking,
+        /** @var BookkeepingBookingData[] */
+        public readonly ?array $bookings,
 
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d H:i:s')]
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i:s')]
