@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Carbon;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
@@ -149,7 +148,7 @@ class Receipt extends Model
 
     public function bookings(): MorphMany
     {
-        return $this->MorphMany(BookkeepingBooking::class, 'bookable');
+        return $this->morphMany(BookkeepingBooking::class, 'bookable');
     }
 
     public function scopeSearch(Builder $query, $searchText): Builder

@@ -139,7 +139,8 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
     }
   }
 
-  const isDeleteDisabled = !!(receipt.is_locked || receipt.booking?.id)
+  const hasLockedBookings = receipt.bookings?.some(booking => booking.is_locked)
+  const isDeleteDisabled = !!(receipt.is_locked || hasLockedBookings)
 
   return (
     <PageContainer
@@ -161,7 +162,7 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
                 variant="ghost"
                 size="icon"
                 icon={receipt.is_locked ? SquareLock02Icon : SquareUnlock01Icon}
-                isDisabled={receipt.booking?.is_locked}
+                isDisabled={hasLockedBookings}
                 tooltip="Beleg entsperren"
                 onClick={() => handleUnlock(receipt.is_locked)}
               />
