@@ -424,12 +424,14 @@ class ReceiptController extends Controller
     public function unlock(Receipt $receipt): RedirectResponse
     {
         $receipt->load('bookings');
-        if (! $receipt->booking[0] || ! $receipt->booking[0]->is_locked) {
+        $hasLockedBooking = $receipt->bookings->contains(fn($booking) => $booking->is_locked);
+
+        if (! $hasLockedBooking) {
             $receipt->is_locked = false;
             $receipt->save();
         }
 
-        return redirect()->back();
+        return back();
     }
 
 
