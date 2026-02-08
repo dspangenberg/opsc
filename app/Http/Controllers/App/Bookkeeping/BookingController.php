@@ -59,6 +59,8 @@ class BookingController extends Controller
         $search = $request->input('search', '');
         $filters = [];
 
+        $account = BookkeepingAccount::query()->where('account_number', $accountNumber)->first();
+
         // Extrahiere Datumsfilter aus dem Request
         $parsedFilters = (new BookkeepingBooking)->getParsedFilters($request);
         if (isset($parsedFilters['issuedBetween'])) {
@@ -85,6 +87,7 @@ class BookingController extends Controller
 
         return Inertia::render('App/Bookkeeping/Booking/BookingIndexForAccount', [
             'bookings' => BookkeepingBookingData::collect($bookings),
+            'account' => BookkeepingAccountData::from($account),
             'accountNumber' => $accountNumber,
             'currentSearch' => $search,
             'currentFilters' => $parsedFilters,

@@ -22,10 +22,11 @@ interface TransactionsPageProps extends PageProps {
   accounts: App.Data.BookkeepingAccountData[]
   currentSearch?: string
   currentFilters?: FilterConfig
+  account: App.Data.BookkeepingAccountData
 }
 
 
-const BookingIndexForAccount: React.FC<TransactionsPageProps> = ({ accounts, bookings, currentFilters = { filters: {}, boolean: 'AND' }, currentSearch }) => {
+const BookingIndexForAccount: React.FC<TransactionsPageProps> = ({ account, accounts, bookings, currentFilters = { filters: {}, boolean: 'AND' }, currentSearch }) => {
   const [selectedRows, setSelectedRows] = useState<App.Data.BookkeepingBookingData[]>([])
   const [search, setSearch] = useState(currentSearch)
   const breadcrumbs = useMemo(() => [{ title: 'Buchhaltung' }], [])
@@ -34,6 +35,7 @@ const BookingIndexForAccount: React.FC<TransactionsPageProps> = ({ accounts, boo
   const { handleDownload } = useFileDownload({
     route: route('app.bookkeeping.bookings.export', { filters: filters })
   })
+
 
   const toolbar = useMemo(
     () => (
@@ -131,7 +133,7 @@ const BookingIndexForAccount: React.FC<TransactionsPageProps> = ({ accounts, boo
   )
   return (
     <PageContainer
-      title="Buchungen"
+      title={`${account.label} Buchungen`}
       width="7xl"
       breadcrumbs={breadcrumbs}
       className="flex overflow-hidden"

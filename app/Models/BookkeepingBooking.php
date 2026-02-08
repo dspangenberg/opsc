@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 /**
  * @property-read BookkeepingAccount|null $account_credit
@@ -131,7 +132,7 @@ class BookkeepingBooking extends Model
     /**
      * Lädt Account-Labels für Buchungen
      */
-    protected static function loadAccountLabels($bookings): \Illuminate\Support\Collection
+    protected static function loadAccountLabels($bookings): Collection
     {
         $accountIds = $bookings->pluck('account_id_debit')
             ->merge($bookings->pluck('account_id_credit'))
@@ -142,14 +143,18 @@ class BookkeepingBooking extends Model
         return BookkeepingAccount::whereIn('account_number', $accountIds)
             ->get()
             ->keyBy('account_number')
-            ->map(fn ($account) => $account->label);
+            ->map(fn($account) => $account->label);
     }
 
     /**
      * Fügt Balance-Informationen zu Buchungen hinzu
      */
-    protected static function addBalanceInfo($bookings, int $accountNumberInt, $accountLabels, float $startBalance = 0)
-    {
+    protected static function addBalanceInfo(
+        $bookings,
+        int $accountNumberInt,
+        $accountLabels,
+        float $startBalance = 0
+    ): float {
         $balance = $startBalance;
 
         foreach ($bookings as $booking) {
@@ -203,9 +208,9 @@ class BookkeepingBooking extends Model
      *
      * @param  string  $accountNumber  Account number to calculate running balance for
      * @param  array  $filters  Optional filters (e.g., date range)
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
-    public static function getRunningBalanceForAccount(string $accountNumber, array $filters = [])
+    public static function getRunningBalanceForAccount(string $accountNumber, array $filters = []): Collection
     {
         $query = self::queryForAccount($accountNumber);
         self::applyDateFilters($query, $filters);
@@ -230,10 +235,15 @@ class BookkeepingBooking extends Model
      * @param  string  $accountNumber  Account number to calculate running balance for
      * @param  array  $filters  Optional filters (e.g., date range)
      * @param  int  $perPage  Items per page
+     * @param  string  $sortDirection
      * @return LengthAwarePaginator
      */
-    public static function getRunningBalanceForAccountPaginated(string $accountNumber, array $filters = [], int $perPage = 15, string $sortDirection = 'desc')
-    {
+    public static function getRunningBalanceForAccountPaginated(
+        string $accountNumber,
+        array $filters = [],
+        int $perPage = 15,
+        string $sortDirection = 'desc'
+    ): LengthAwarePaginator {
         $baseQuery = self::queryForAccount($accountNumber);
         self::applyDateFilters($baseQuery, $filters);
 
@@ -333,11 +343,11 @@ class BookkeepingBooking extends Model
         $documentNumberPrefix = '',
         $bookingId = null
     ): ?BookkeepingBooking {
-        if (! $debit_account || ! $credit_account) {
+        if (!$debit_account || !$credit_account) {
             BookkeepingLog::create([
                 'parent_model' => $parent::class,
                 'parent_id' => $parent->id,
-                'text' => ! $debit_account ? 'Sollkonto nicht gefunden' : 'Habenkonto nicht gefunden',
+                'text' => !$debit_account ? 'Sollkonto nicht gefunden' : 'Habenkonto nicht gefunden',
             ]);
 
             return null;
@@ -354,7 +364,7 @@ class BookkeepingBooking extends Model
             $booking->date = $parent[$dateField];
         }
 
-        if (! $booking->number_range_document_numbers_id) {
+        if (!$booking->number_range_document_numbers_id) {
             $booking->number_range_document_numbers_id = $parent->number_range_document_numbers_id;
         }
 
