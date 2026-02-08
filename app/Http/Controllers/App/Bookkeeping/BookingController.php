@@ -7,8 +7,10 @@
 
 namespace App\Http\Controllers\App\Bookkeeping;
 
+use App\Data\BookkeepingAccountData;
 use App\Data\BookkeepingBookingData;
 use App\Http\Controllers\Controller;
+use App\Models\BookkeepingAccount;
 use App\Models\BookkeepingBooking;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -20,22 +22,35 @@ class BookingController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search', '');
+        $accounts = BookkeepingAccount::query()->orderBy('account_number')->get();
 
         $bookings = BookkeepingBooking::query()
-            ->with('account_credit')
+            ->applyDynamicFilters($request, [
+                'allowed_filters' => ['is_locked', 'account_id_credit', 'account_id_debit'],
+                'allowed_operators' => ['=', '!=', 'like', 'scope'],
+                'allowed_scopes' => ['issuedBetween'],
+            ])
             ->search($search)
             ->with('account_debit')
+            ->with('account_credit')
             ->with('tax')
             ->with('range_document_number')
             ->orderBy('date', 'DESC')
             ->orderBy('id', 'DESC')
             ->paginate(10);
 
-        $bookings->appends($_GET)->links();
+        // Bei POST-Requests sollten wir die aktuellen Filter/Search-Parameter für die Paginierung beibehalten
+        if ($request->isMethod('POST')) {
+            $bookings->appends($request->only(['filters', 'search']));
+        } else {
+            $bookings->appends($request->query());
+        }
 
         return Inertia::render('App/Bookkeeping/Booking/BookingIndex', [
             'bookings' => BookkeepingBookingData::collect($bookings),
+            'accounts' => BookkeepingAccountData::collect($accounts),
             'currentSearch' => $search,
+            'currentFilters' => (new BookkeepingBooking)->getParsedFilters($request),
         ]);
     }
 
@@ -44,9 +59,17 @@ class BookingController extends Controller
      */
     public function exportCSV(Request $request)
     {
+        $search = $request->input('search', '');
+
         $bookings = BookkeepingBooking::query()
-            ->with('account_credit')
+            ->applyDynamicFilters($request, [
+                'allowed_filters' => ['is_locked', 'account_id_credit', 'account_id_debit'],
+                'allowed_operators' => ['=', '!=', 'like', 'scope'],
+                'allowed_scopes' => ['issuedBetween'],
+            ])
+            ->search($search)
             ->with('account_debit')
+            ->with('account_credit')
             ->with('tax')
             ->with('range_document_number')
             ->orderBy('date', 'DESC')

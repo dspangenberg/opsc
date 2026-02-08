@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasDynamicFilters;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property-read BookkeepingAccount|null $account_credit
@@ -23,6 +25,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class BookkeepingBooking extends Model
 {
+    use HasDynamicFilters;
+
     protected $fillable = [
         'account_id_credit',
         'account_id_debit',
@@ -58,6 +62,29 @@ class BookkeepingBooking extends Model
                 ->where('booking_text', 'like', "%$search%");
         }
         return $query;
+    }
+
+
+    protected function getFilterLabel(string $key, mixed $value): ?string
+    {
+        return match ($key) {
+            'issuedBetween' => is_array($value) && count($value) >= 2
+                ? 'Zeitraum: '.Carbon::parse($value[0])->format('d.m.Y').' - '.Carbon::parse($value[1])->format('d.m.Y')
+                : null,
+            'account_id_credit' => ($account = BookkeepingAccount::where('account_number', $value)->first())
+                ? 'Habenkonto: '.($account->label ?? $value)
+                : 'Habenkonto: '.$value,
+            'account_id_debit' => ($account = BookkeepingAccount::where('account_number', $value)->first())
+                ? 'Sollkonto: '.($account->label ?? $value)
+                : 'Sollkonto: '.$value,
+            'is_locked' => 'nur unbestätigt',
+            default => null,
+        };
+    }
+
+    public function scopeIssuedBetween(Builder $query, $from, $to): Builder
+    {
+        return $query->whereBetween('date', [$from, $to]);
     }
 
     public static function createBooking(
