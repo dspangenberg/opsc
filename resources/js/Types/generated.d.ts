@@ -533,7 +533,7 @@ text: string | null;
 data: Array<any> | null;
 payable_sum: number | null;
 payable: Array<App.Data.PaymentData> | null;
-booking: App.Data.BookkeepingBookingData | null;
+bookings: Array<App.Data.BookkeepingBookingData> | null;
 created_at: string;
 updated_at: string;
 };

@@ -139,7 +139,8 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
     }
   }
 
-  const isDeleteDisabled = !!(receipt.is_locked || receipt.booking?.id)
+  const hasLockedBookings = receipt.bookings?.some(booking => booking.is_locked)
+  const isDeleteDisabled = !!(receipt.is_locked || hasLockedBookings)
 
   return (
     <PageContainer
@@ -161,7 +162,7 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
                 variant="ghost"
                 size="icon"
                 icon={receipt.is_locked ? SquareLock02Icon : SquareUnlock01Icon}
-                isDisabled={receipt.booking?.is_locked}
+                isDisabled={hasLockedBookings}
                 tooltip="Beleg entsperren"
                 onClick={() => handleUnlock(receipt.is_locked)}
               />
@@ -302,6 +303,24 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
                         </TableCell>
                       </TableRow>
                     )
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </FormGrid>
+          <FormGrid border>
+            <div className="col-span-24">
+              <Table className="w-full border-0">
+                <TableBody className="[&_tr:last-child]:border-b-0">
+                  {receipt.bookings?.map(booking =>
+
+                      <TableRow key={booking.id} className="border-b-0!">
+                        <TableCell>{booking.date}</TableCell>
+                        <TableCell>{booking.booking_text}</TableCell>
+                        <TableCell className="text-right">
+                          {currencyFormatter.format(booking.amount || 0)}
+                        </TableCell>
+                      </TableRow>
                   )}
                 </TableBody>
               </Table>

@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Carbon;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
@@ -74,9 +73,11 @@ class Receipt extends Model
     protected $fillable = [
         'reference',
         'contact_id',
+        'issued_on',
         'bookkeeping_account_id',
         'cost_center_id',
         'org_currency',
+        'cost_center_id',
         'org_amount',
         'amount',
         'is_confirmed',
@@ -145,9 +146,9 @@ class Receipt extends Model
         return $this->morphMany(Payment::class, 'payable');
     }
 
-    public function booking(): MorphOne
+    public function bookings(): MorphMany
     {
-        return $this->morphOne(BookkeepingBooking::class, 'bookable');
+        return $this->morphMany(BookkeepingBooking::class, 'bookable');
     }
 
     public function scopeSearch(Builder $query, $searchText): Builder

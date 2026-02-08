@@ -73,7 +73,7 @@ class ReceiptController extends Controller
     {
         $receipt->load([
             'account',
-            'booking',
+            'bookings',
             'range_document_number',
             'contact',
             'payable' => fn ($query) => $query->where('is_currency_difference', false)->with('transaction'),
@@ -356,7 +356,6 @@ class ReceiptController extends Controller
     {
         $this->loadReceiptWithPayments($receipt);
         $receipt->org_filename = $receipt->getOriginalFilename();
-
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptEdit', [
             'receipt' => ReceiptData::from($receipt),
             ...$this->getFormData(),
