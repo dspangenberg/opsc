@@ -71,10 +71,10 @@ class BookkeepingBooking extends Model
             'issuedBetween' => is_array($value) && count($value) >= 2
                 ? 'Zeitraum: '.Carbon::parse($value[0])->format('d.m.Y').' - '.Carbon::parse($value[1])->format('d.m.Y')
                 : null,
-            'account_id_credit' => ($account = BookkeepingAccount::find($value))
+            'account_id_credit' => ($account = BookkeepingAccount::where('account_number', $value)->first())
                 ? 'Habenkonto: '.($account->label ?? $value)
                 : 'Habenkonto: '.$value,
-            'account_id_debit' => ($account = BookkeepingAccount::find($value))
+            'account_id_debit' => ($account = BookkeepingAccount::where('account_number', $value)->first())
                 ? 'Sollkonto: '.($account->label ?? $value)
                 : 'Sollkonto: '.$value,
             'is_locked' => 'nur unbestätigt',

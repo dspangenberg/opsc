@@ -14,13 +14,8 @@ import { Badge } from '@/Components/ui/badge'
 import { useFileDownload } from '@/Hooks/use-file-download'
 import type { PageProps } from '@/Types'
 import { columns } from './BookingIndexColumns'
-import { BookingIndexFilterForm } from '@/Pages/App/Bookkeeping/Booking/BookingtIndexFilterForm'
-
-type FilterConfig = {
-  filters: Record<string, { operator: string; value: any }>
-  boolean?: 'AND' | 'OR'
-}
-
+import { BookingIndexFilterForm } from '@/Pages/App/Bookkeeping/Booking/BookingIndexFilterForm'
+import { type FilterConfig } from '@/Lib/FilterHelper'
 
 interface TransactionsPageProps extends PageProps {
   bookings: App.Data.Paginated.PaginationMeta<App.Data.BookkeepingBookingData[]>
@@ -73,9 +68,9 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({ accounts, bookings, cur
       router.post(
         route('app.bookkeeping.bookings.index'),
         {
-          filters: filters,
+          ...filters,
           search: newSearch
-        },
+        } as any,
         {
           preserveScroll: true,
           preserveState: true,
@@ -89,9 +84,9 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({ accounts, bookings, cur
     router.post(
       route('app.bookkeeping.bookings.index'),
       {
-        filters: newFilters,
+        ...newFilters,
         search: search
-      },
+      } as any,
       {
         preserveScroll: true,
         preserveState: true,

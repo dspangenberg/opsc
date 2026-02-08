@@ -12,7 +12,6 @@ use App\Data\BookkeepingBookingData;
 use App\Http\Controllers\Controller;
 use App\Models\BookkeepingAccount;
 use App\Models\BookkeepingBooking;
-use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Laracsv\Export;
@@ -44,7 +43,7 @@ class BookingController extends Controller
         if ($request->isMethod('POST')) {
             $bookings->appends($request->only(['filters', 'search']));
         } else {
-            $bookings->appends($_GET)->links();
+            $bookings->appends($request->query());
         }
 
         return Inertia::render('App/Bookkeeping/Booking/BookingIndex', [

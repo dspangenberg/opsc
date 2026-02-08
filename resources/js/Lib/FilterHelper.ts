@@ -78,9 +78,9 @@ export const getFilterBadgeLabel = (
     case 'hide_transit':
       return 'Geldtransit ausblenden'
     case 'account_id_credit':
-      return `Habenkonto: ${options.accounts?.find(cc => cc.id === filter.value)?.name || filter.value}`
+       return `Habenkonto: ${options.accounts?.find(a => a.account_number === filter.value)?.name || filter.value}`
     case 'account_id_debit':
-      return `Sollkonto: ${options.accounts?.find(cc => cc.id === filter.value)?.name || filter.value}`
+      return `Sollkonto: ${options.accounts?.find(a => a.account_number === filter.value)?.name || filter.value}`
     default:
       return `${key}: ${filter.value}`
   }
