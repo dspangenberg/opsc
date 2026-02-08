@@ -74,9 +74,11 @@ class Receipt extends Model
     protected $fillable = [
         'reference',
         'contact_id',
+        'issued_on',
         'bookkeeping_account_id',
         'cost_center_id',
         'org_currency',
+        'cost_center_id',
         'org_amount',
         'amount',
         'is_confirmed',
