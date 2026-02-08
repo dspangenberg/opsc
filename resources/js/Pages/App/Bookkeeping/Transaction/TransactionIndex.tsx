@@ -116,20 +116,6 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
     }
   }, [])
 
-  const handleFilter = () => {
-    const newFilters = {
-      filters: {
-        ...filters.filters,
-        is_locked: {
-          operator: '=',
-          value: 0
-        }
-      },
-      boolean: 'AND' as const
-    }
-    handleFiltersChange(newFilters)
-  }
-
   const breadcrumbs = useMemo(() => [{ title: 'Buchhaltung' }], [])
 
   const handeSetCounterAccountAction = async (transaction: App.Data.TransactionData) => {
@@ -188,7 +174,6 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
     () => (
       <Toolbar>
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon}>
-          <MenuItem title="Filter" onClick={handleFilter} />
           <MenuSubTrigger>
             <MenuItem title="Daten importieren" />
             <MenuPopover>

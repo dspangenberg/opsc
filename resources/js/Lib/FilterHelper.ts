@@ -53,6 +53,7 @@ export const getFilterBadgeLabel = (
   filter: FilterItem,
   options: {
     contacts?: App.Data.ContactData[]
+    accounts?: App.Data.BookkeepingAccountData[]
     cost_centers?: App.Data.CostCenterData[]
     currencies?: App.Data.CurrencyData[]
   } = {}
@@ -76,6 +77,10 @@ export const getFilterBadgeLabel = (
       return 'private Transaktionen ausblenden'
     case 'hide_transit':
       return 'Geldtransit ausblenden'
+    case 'account_id_credit':
+      return `Habenkonto: ${options.accounts?.find(cc => cc.id === filter.value)?.name || filter.value}`
+    case 'account_id_debit':
+      return `Sollkonto: ${options.accounts?.find(cc => cc.id === filter.value)?.name || filter.value}`
     default:
       return `${key}: ${filter.value}`
   }

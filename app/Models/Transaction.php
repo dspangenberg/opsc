@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Support\Carbon;
 
 #[ObservedBy([TransactionObserver::class])]
 /**
@@ -118,7 +119,7 @@ class Transaction extends Model
     {
         return match ($key) {
             'issuedBetween' => is_array($value) && count($value) >= 2
-                ? 'Zeitraum: '.\Illuminate\Support\Carbon::parse($value[0])->format('d.m.Y').' - '.\Illuminate\Support\Carbon::parse($value[1])->format('d.m.Y')
+                ? 'Zeitraum: '.Carbon::parse($value[0])->format('d.m.Y').' - '.Carbon::parse($value[1])->format('d.m.Y')
                 : null,
             'counter_account_id' => (int) $value === 0 ? 'ohne Gegenkonto' : 'Konto: '.$value,
             'is_locked' => 'nur unbestätigt',
@@ -149,27 +150,6 @@ class Transaction extends Model
         $accounts['creditId'] = $transaction->counter_account_id;
         $accounts['debitId'] = $transaction->bank_account->bookkeeping_account_id;
 
-        /*
-        if ($transaction->is_private) {
-            $accounts['creditId'] = $transaction->amount < 0 ? 1800 : 1890;
-            $accounts['debitId'] = $transaction->bank_account->bookkeeping_account_id;
-        }
-
-        if ($transaction->is_transit) {
-            $accounts['creditId'] = 1360;
-            if ($transaction->bank_account) {
-                $accounts['debitId'] = $transaction->bank_account->bookkeeping_account_id;
-            } else {
-                if (str_starts_with('HOL', $transaction->document_number)) {
-                    $accounts['debitId'] = 1250;
-                }
-
-                if (str_starts_with('PP', $transaction->document_number)) {
-                    $accounts['debitId'] = 1297;
-                }
-            }
-        }
-      */
 
         $accountDebit = BookkeepingAccount::where('account_number', $accounts['debitId'])->first();
         $accountCredit = BookkeepingAccount::where('account_number', $accounts['creditId'])->first();

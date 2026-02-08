@@ -14,19 +14,30 @@ import { Badge } from '@/Components/ui/badge'
 import { useFileDownload } from '@/Hooks/use-file-download'
 import type { PageProps } from '@/Types'
 import { columns } from './BookingIndexColumns'
+import { BookingIndexFilterForm } from '@/Pages/App/Bookkeeping/Booking/BookingtIndexFilterForm'
+
+type FilterConfig = {
+  filters: Record<string, { operator: string; value: any }>
+  boolean?: 'AND' | 'OR'
+}
+
 
 interface TransactionsPageProps extends PageProps {
   bookings: App.Data.Paginated.PaginationMeta<App.Data.BookkeepingBookingData[]>
+  accounts: App.Data.BookkeepingAccountData[]
   currentSearch?: string
+  currentFilters?: FilterConfig
 }
 
-const BookingIndex: React.FC<TransactionsPageProps> = ({ bookings, currentSearch }) => {
+
+const BookingIndex: React.FC<TransactionsPageProps> = ({ accounts, bookings, currentFilters = { filters: {}, boolean: 'AND' }, currentSearch }) => {
   const [selectedRows, setSelectedRows] = useState<App.Data.BookkeepingBookingData[]>([])
   const [search, setSearch] = useState(currentSearch)
   const breadcrumbs = useMemo(() => [{ title: 'Buchhaltung' }], [])
+  const [filters, setFilters] = useState<FilterConfig>(currentFilters)
 
   const { handleDownload } = useFileDownload({
-    route: route('app.bookkeeping.bookings.export')
+    route: route('app.bookkeeping.bookings.export', { filters: filters })
   })
 
   const toolbar = useMemo(
@@ -59,22 +70,38 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({ bookings, currentSearch
     }
 
     searchTimeoutRef.current = setTimeout(() => {
-      router.get(
+      router.post(
         route('app.bookkeeping.bookings.index'),
         {
+          filters: filters,
           search: newSearch
         },
         {
           preserveScroll: true,
           preserveState: true,
-          only: ['bookings'],
-          onSuccess: () => {
-            // Update wird durch die props vom Controller gemacht
-          }
+          only: ['bookings']
         }
       )
     }, 500) // 500ms Debounce
-  }, [])
+  }, [filters])
+
+  const handleFiltersChange = (newFilters: FilterConfig) => {
+    router.post(
+      route('app.bookkeeping.bookings.index'),
+      {
+        filters: newFilters,
+        search: search
+      },
+      {
+        preserveScroll: true,
+        preserveState: true,
+        only: ['bookings'],
+        onSuccess: () => {
+          setFilters(newFilters)
+        }
+      }
+    )
+  }
 
   const actionBar = useMemo(() => {
     return (
@@ -94,7 +121,7 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({ bookings, currentSearch
   const footer = useMemo(() => <Pagination data={bookings} />, [bookings])
   const filterBar = useMemo(
     () => (
-      <div className="flex p-2 pt-0">
+      <div className="flex p-2 pt-0 gap-2">
         <SearchField
           aria-label="Suchen"
           placeholder="Im Buchungstext suchen"
@@ -102,9 +129,10 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({ bookings, currentSearch
           onChange={handleSearchInputChange}
           className="w-sm"
         />
+        <BookingIndexFilterForm accounts={accounts} filters={filters} onFiltersChange={handleFiltersChange} />
       </div>
     ),
-    [search]
+    [search, accounts, filters]
   )
   return (
     <PageContainer
