@@ -62,3 +62,6 @@ Route::delete('/bookkeeping/receipts/{receipt}/payment/{transaction}', [ReceiptC
 Route::match(['GET', 'POST'],'bookkeeping/bookings/account/{accountNumber}', [BookingController::class, 'indexForAccount'])->name('app.bookkeeping.bookings.account');
 Route::put('bookkeeping/bookings/correct', [BookingController::class, 'correctBookings'])
     ->name('app.bookkeeping.bookings.correct');
+
+Route::put('bookkeeping/bookings/confirm', [BookingController::class, 'confirm'])
+    ->name('app.bookkeeping.bookings.confirm');

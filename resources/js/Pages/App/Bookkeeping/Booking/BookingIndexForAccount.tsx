@@ -106,8 +106,38 @@ const BookingIndexForAccount: React.FC<TransactionsPageProps> = ({
           // Reload the current page with filters and page
           router.post(
             route('app.bookkeeping.bookings.account', {
-              accountId: account.account_number,
+              accountNumber: account.account_number,
               page: bookings.current_page
+            }),
+            {
+              filters: filters as any,
+              search: search
+            },
+            {
+              preserveScroll: true,
+              preserveState: true,
+              replace: true
+            }
+          )
+        }
+      }
+    )
+  }
+
+  const handleConfirm = () => {
+    router.put(
+      route('app.bookkeeping.bookings.confirm'),
+      {
+        ids: selectedRows.map(row => row.id).join(',')
+      },
+      {
+        preserveScroll: true,
+        onSuccess: () => {
+          // Reload the current page with filters and page
+          router.post(
+            route('app.bookkeeping.bookings.account', {
+              page: bookings.current_page,
+              accountId: account.account_number
             }),
             {
               filters: filters as any,
@@ -140,7 +170,13 @@ const BookingIndexForAccount: React.FC<TransactionsPageProps> = ({
           title="Buchungen korrigieren"
           onClick={() => handleCorrectBookings()}
         />
-        <Button variant="ghost" size="auto" icon={Tick01Icon} title="als bestätigt markieren" />
+        <Button
+          variant="ghost"
+          size="auto"
+          icon={Tick01Icon}
+          title="als bestätigt markieren"
+          onClick={() => handleConfirm()}
+        />
         <div className="flex-1 text-right font-medium text-sm">x</div>
       </Toolbar>
     )

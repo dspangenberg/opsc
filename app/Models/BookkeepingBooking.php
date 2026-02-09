@@ -499,7 +499,10 @@ class BookkeepingBooking extends Model
 
     public function scopeHideTransit(Builder $query): Builder
     {
-        return $query->where('account_id_debit', '<>', 1360)->where('account_id_credit', '<>', 1360);
+        $transitAccounts = [1360];
+
+        return $query->whereNotIn('account_id_debit', $transitAccounts)
+            ->whereNotIn('account_id_credit', $transitAccounts);
     }
 
     protected function casts(): array
