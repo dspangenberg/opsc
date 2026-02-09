@@ -397,8 +397,6 @@ class Contact extends Model
     {
         $contact = static::find($id);
 
-
-
         if ($contact === null) {
             return [
                 'subledgerAccount' => null,
@@ -420,8 +418,8 @@ class Contact extends Model
         }
 
         $accountNumber = $is_invoice ? $contact->debtor_number : $contact->creditor_number;
-        $bookkeepingAccount = BookkeepingAccount::where('account_number', $accountNumber)->first();
 
+        $bookkeepingAccount = BookkeepingAccount::where('account_number', $accountNumber)->first();
         if (! $bookkeepingAccount || ! $accountNumber) {
             if (! $createAccountIfNotExists) {
                 throw new ContactWithoutAccountException;
@@ -457,7 +455,6 @@ class Contact extends Model
                 : $outturnAccount; //
 
         }
-
 
         return [
             'subledgerAccount' => $bookkeepingAccount,

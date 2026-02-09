@@ -153,6 +153,11 @@ class Receipt extends Model
         return $this->morphMany(BookkeepingBooking::class, 'bookable');
     }
 
+    public function scopeWithoutBookings(Builder $query): Builder
+    {
+        return $query->whereDoesntHave('bookings');
+    }
+
     public function scopeSearch(Builder $query, $searchText): Builder
     {
         if ($searchText) {
@@ -199,8 +204,15 @@ class Receipt extends Model
     public static function createBooking($receipt): void
     {
         $accounts = Contact::getAccounts(false, $receipt->contact_id);
+        $receipt->load('cost_center');
 
-        $booking = BookkeepingBooking::whereMorphedTo('bookable', Receipt::class)->where('bookable_id',
+        if (!$accounts['outturnAccount']) {
+            if ($receipt->cost_center->bookkeeping_account_id) {
+                $accounts['outturnAccount'] = BookkeepingAccount::find($receipt->cost_center->bookkeeping_account_id);
+            }
+        }
+
+        $booking = BookkeepingBooking::whereMorphedTo('bookable', Receipt::class)->where('bookable_id'  ,
             $receipt->id)->first();
         $booking = BookkeepingBooking::createBooking(
             $receipt, 'issued_on',
