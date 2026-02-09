@@ -54,8 +54,8 @@ class TransactionController extends Controller
             ->with('account')
             ->with('range_document_number')
             ->with('booking')
-            ->orderBy('booked_on', 'DESC')
-            ->orderBy('id', 'DESC')
+            ->orderBy('booked_on', 'ASC')
+            ->orderBy('id', 'ASC')
             ->paginate(10);
 
         // Bei POST-Requests sollten wir die aktuellen Filter/Search-Parameter für die Paginierung beibehalten
