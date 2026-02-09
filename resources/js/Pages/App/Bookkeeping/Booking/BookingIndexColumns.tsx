@@ -42,9 +42,18 @@ const RowActions = ({ row }: { row: Row<App.Data.BookkeepingBookingData> }) => {
   )
 }
 
-const accountIndexUrl = (accoutNumber: number) => (accoutNumber ? route('app.bookkeeping.bookings.account', { accountNumber: accoutNumber }) : '#')
+const accountIndexUrl = (accountNumber: number, filters?: any) => {
+  if (!accountNumber) return '#'
 
-export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
+  const params: any = { accountNumber }
+  if (filters?.filters?.issuedBetween) {
+    params._query = { filters }
+  }
+
+  return route('app.bookkeeping.bookings.account', params)
+}
+
+export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBookingData>[] => [
   {
     id: 'select',
     size: 30,
@@ -83,9 +92,10 @@ export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
     accessorKey: 'document_number',
     header: '',
     size: 80,
-    cell: ({ getValue }) => (
+    cell: ({ getValue, row }) => (
       <div className="text-xs">
         <Badge variant="outline">{getValue() as string}</Badge>
+        <div>{row.original.id}</div>
       </div>
     )
   },
@@ -142,7 +152,7 @@ export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
     cell: ({ row }) => (
       <TooltipTrigger>
         <Focusable aria-role="label">
-          <a href={accountIndexUrl(row.original.account_debit?.account_number as number)} className="truncate">{row.original.account_debit?.label}</a>
+          <a href={accountIndexUrl(row.original.account_debit?.account_number as number, filters)} className="truncate">{row.original.account_debit?.label}</a>
         </Focusable>
         <Tooltip>{row.original.account_debit?.label}</Tooltip>
       </TooltipTrigger>
@@ -155,7 +165,7 @@ export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
     cell: ({ row }) => (
       <TooltipTrigger>
         <Focusable>
-          <a href={accountIndexUrl(row.original.account_credit?.account_number as number)} className="truncate">{row.original.account_credit?.label}</a>
+          <a href={accountIndexUrl(row.original.account_credit?.account_number as number, filters)} className="truncate">{row.original.account_credit?.label}</a>
         </Focusable>
         <Tooltip>{row.original.account_credit?.label}</Tooltip>
       </TooltipTrigger>
@@ -185,3 +195,6 @@ export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
     enableHiding: false
   }
 ]
+
+// Backward compatibility export
+export const columns = createColumns()

@@ -40,8 +40,18 @@ const RowActions = ({ row }: { row: Row<App.Data.BookkeepingBookingData> }) => {
   )
 }
 
-const accountIndexUrl = (accountNumber: number) => (accountNumber ? route('app.bookkeeping.bookings.account', { accountNumber }) : '#')
-export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
+const accountIndexUrl = (accountNumber: number, filters?: any) => {
+  if (!accountNumber) return '#'
+
+  const params: any = { accountNumber }
+  if (filters?.filters?.issuedBetween) {
+    params._query = { filters }
+  }
+
+  return route('app.bookkeeping.bookings.account', params)
+}
+
+export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBookingData>[] => [
   {
     id: 'select',
     size: 30,
@@ -119,28 +129,99 @@ export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
     }
   },
   {
+    accessorKey: 'counter_account_label',
+    header: 'GK-Nr. ',
+    size: 50,
+    cell: ({ row }) => (
+      <a
+        href={accountIndexUrl(row.original.counter_account as number, filters)}
+        className="truncate"
+      >
+        {row.original.counter_account}
+      </a>
+    )
+  },
+  {
     accessorKey: 'amount',
     header: () => <div className="text-right">Brutto</div>,
     size: 70,
     cell: ({ row }) => (
-      <div className="text-right">{currencyFormatter.format(row.original.amount)}</div>
+      <div className="text-right">
+        {currencyFormatter.format(row.original.amount)}{' '}
+        {row.original.balance_type === 'debit' ? 'S' : 'H'}
+      </div>
     )
+  },
+  {
+    accessorKey: 'amount',
+    header: () => <div className="text-right">Netto</div>,
+    size: 70,
+    cell: ({ row }) => {
+      // Bei §13b (Reverse Charge): beide Steuern gesetzt und gleich → Netto = Brutto
+      // Bei §19a: keine Steuer → Netto = Brutto
+      // Bei normaler USt: nur eine Steuer → Netto = Brutto - Steuer
+      const taxDebit = row.original.tax_debit || 0
+      const taxCredit = row.original.tax_credit || 0
+
+      // Wenn beide Steuern gesetzt sind (§13b) oder keine Steuer (§19a): Netto = Brutto
+      const isReverseCharge = taxDebit > 0 && taxCredit > 0
+      const hasNoTax = taxDebit === 0 && taxCredit === 0
+
+      const amountNet =
+        isReverseCharge || hasNoTax
+          ? row.original.amount
+          : row.original.amount - (taxDebit || taxCredit)
+
+      return (
+        <div className="text-right">
+          {currencyFormatter.format(amountNet)} {row.original.balance_type === 'debit' ? 'S' : 'H'}
+        </div>
+      )
+    }
+  },
+  {
+    accessorKey: 'balance',
+    header: () => <div className="text-right">Saldo</div>,
+    size: 70,
+    cell: ({ row }) => {
+      const balance = row.original.balance ?? 0
+      const absBalance = Math.abs(balance)
+      const indicator = balance >= 0 ? 'S' : 'H'
+
+      return (
+        <div className="text-right font-medium">
+          {currencyFormatter.format(absBalance)} {indicator}
+        </div>
+      )
+    }
+  },
+  {
+    accessorKey: 'amount',
+    header: () => <div className="text-right">Soll</div>,
+    size: 70,
+    cell: ({ row }) => {
+      // Zeige Betrag nur wenn dieses Konto im Soll steht
+      if (row.original.balance_type !== 'debit') return null
+
+      return <div className="text-right">{currencyFormatter.format(row.original.amount)}</div>
+    }
+  },
+  {
+    accessorKey: 'amount',
+    header: () => <div className="text-right">Haben</div>,
+    size: 70,
+    cell: ({ row }) => {
+      // Zeige Betrag nur wenn dieses Konto im Haben steht
+      if (row.original.balance_type !== 'credit') return null
+
+      return <div className="text-right">{currencyFormatter.format(row.original.amount)}</div>
+    }
   },
   {
     accessorKey: 'tax',
     header: () => <div className="text-right">USt.</div>,
     size: 40,
     cell: ({ row }) => <div className="text-right">{row.original.tax?.value || 0} %</div>
-  },
-  {
-    accessorKey: 'counter_account_label',
-    header: 'Gegenkonto',
-    size: 140,
-    cell: ({ row }) => (
-
-      <a href={accountIndexUrl(row.original.counter_account as number)} className="truncate">{row.original.counter_account_label}</a>
-
-    )
   },
   {
     accessorKey: 'tax_debit',
@@ -159,14 +240,6 @@ export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
     )
   },
   {
-    accessorKey: 'balance',
-    header: () => <div className="text-right">Saldo</div>,
-    size: 50,
-    cell: ({ row }) => (
-      <div className="text-right">{currencyFormatter.format(row.original.balance ?? 0)}</div>
-    )
-  },
-  {
     id: 'actions',
     size: 30,
     header: () => <span className="sr-only">Actions</span>,
@@ -174,3 +247,6 @@ export const columns: ColumnDef<App.Data.BookkeepingBookingData>[] = [
     enableHiding: false
   }
 ]
+
+// Backward compatibility export
+export const columns = createColumns()

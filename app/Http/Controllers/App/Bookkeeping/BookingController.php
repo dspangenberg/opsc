@@ -10,8 +10,11 @@ namespace App\Http\Controllers\App\Bookkeeping;
 use App\Data\BookkeepingAccountData;
 use App\Data\BookkeepingBookingData;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CorrectBookingsRequest;
 use App\Models\BookkeepingAccount;
 use App\Models\BookkeepingBooking;
+use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Laracsv\Export;
@@ -63,8 +66,9 @@ class BookingController extends Controller
 
         // Extrahiere Datumsfilter aus dem Request
         $parsedFilters = (new BookkeepingBooking)->getParsedFilters($request);
-        if (isset($parsedFilters['issuedBetween'])) {
-            $dates = $parsedFilters['issuedBetween'];
+
+        if (isset($parsedFilters['filters']['issuedBetween']['value'])) {
+            $dates = $parsedFilters['filters']['issuedBetween']['value'];
             if (is_array($dates) && count($dates) >= 2) {
                 $filters['date_from'] = $dates[0];
                 $filters['date_to'] = $dates[1];
@@ -75,7 +79,8 @@ class BookingController extends Controller
         $bookings = BookkeepingBooking::getRunningBalanceForAccountPaginated(
             $accountNumber,
             $filters,
-            10
+            10,
+            'asc'
         );
 
         // Bei POST-Requests sollten wir die aktuellen Filter/Search-Parameter für die Paginierung beibehalten
@@ -135,5 +140,35 @@ class BookingController extends Controller
         return response()->streamDownload(function () use ($csvExporter) {
             echo $csvExporter->getWriter();
         }, 'buchungen.csv', ['Content-Type' => 'text/csv']);
+    }
+
+    public function correctBookings(CorrectBookingsRequest $request): RedirectResponse
+    {
+        $bookingIds = $request->getBookingIds();
+        $successes = [];
+        $failures = [];
+
+        foreach ($bookingIds as $bookingId) {
+            try {
+                BookkeepingBooking::correctBooking($bookingId);
+                $successes[] = $bookingId;
+            } catch (Exception $e) {
+                $failures[] = [
+                    'id' => $bookingId,
+                    'error' => $e->getMessage(),
+                ];
+            }
+        }
+
+        // Prepare flash message
+        if (count($failures) === 0) {
+            session()->flash('success', count($successes).' Buchung(en) erfolgreich korrigiert.');
+        } elseif (count($successes) === 0) {
+            session()->flash('error', 'Alle Buchungen konnten nicht korrigiert werden.');
+        } else {
+            session()->flash('warning', count($successes).' Buchung(en) korrigiert, '.count($failures).' fehlgeschlagen.');
+        }
+
+        return back();
     }
 }
