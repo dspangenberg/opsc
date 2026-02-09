@@ -142,11 +142,9 @@ class TransactionController extends Controller
             }
         });
 
-        $transactions = Transaction::whereIn('id', $transactionIds)->get();
+        $bankAccount = $transactions->first()?->bank_account ?? BankAccount::query()->orderBy('pos')->first();
 
-        return Inertia::render('App/Bookkeeping/Transaction/TransactionIndex', [
-            'transactions' => Inertia::deepMerge($transactions)->matchOn('id'),
-        ]);
+        return $this->index($request, $bankAccount);
     }
 
     /**
