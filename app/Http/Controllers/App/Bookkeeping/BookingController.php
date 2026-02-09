@@ -142,6 +142,19 @@ class BookingController extends Controller
         }, 'buchungen.csv', ['Content-Type' => 'text/csv']);
     }
 
+    public function confirm(CorrectBookingsRequest $request) {
+        $bookingIds = $request->getBookingIds();
+        foreach ($bookingIds as $bookingId) {
+            $booking = BookkeepingBooking::query()->findOrFail($bookingId);
+            if ($booking && ! $booking->is_locked) {
+                $booking->is_locked = true;
+                $booking->save();
+            }
+        }
+
+        return back();
+    }
+
     public function correctBookings(CorrectBookingsRequest $request): RedirectResponse
     {
         $bookingIds = $request->getBookingIds();

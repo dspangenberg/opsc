@@ -145,6 +145,33 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({
     )
   }
 
+  const handleConfirm = () => {
+    router.put(
+      route('app.bookkeeping.bookings.confirm'),
+      {
+        ids: selectedRows.map(row => row.id).join(',')
+      },
+      {
+        preserveScroll: true,
+        onSuccess: () => {
+          // Reload the current page with filters and page
+          router.post(
+            route('app.bookkeeping.bookings.index', { page: bookings.current_page }),
+            {
+              filters: filters as any,
+              search: search
+            },
+            {
+              preserveScroll: true,
+              preserveState: true,
+              replace: true
+            }
+          )
+        }
+      }
+    )
+  }
+
   const actionBar = useMemo(() => {
     return (
       <Toolbar variant="secondary" className="px-4 pt-2">
@@ -161,7 +188,13 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({
           title="Buchungen korrigieren"
           onClick={() => handleCorrectBookings()}
         />
-        <Button variant="ghost" size="auto" icon={Tick01Icon} title="als bestätigt markieren" />
+        <Button
+          variant="ghost"
+          size="auto"
+          icon={Tick01Icon}
+          title="als bestätigt markieren"
+          onClick={() => handleConfirm()}
+        />
         <div className="flex-1 text-right font-medium text-sm">x</div>
       </Toolbar>
     )
