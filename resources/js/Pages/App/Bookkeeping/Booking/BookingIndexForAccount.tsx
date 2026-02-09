@@ -45,12 +45,17 @@ const BookingIndexForAccount: React.FC<TransactionsPageProps> = ({
   const breadcrumbs = useMemo(
     () => [
       { title: 'Buchhaltung', url: route('app.bookkeeping.bookings.index') },
-      { title: 'Buchungen', url: route('app.bookkeeping.bookings.index') },
+      {
+        title: 'Buchungen',
+        url: route('app.bookkeeping.bookings.index', {
+          _query: filters
+        })
+      },
       {
         title: account.label
       }
     ],
-    [account.label]
+    [account.label, filters]
   )
 
   const toolbar = useMemo(
