@@ -128,6 +128,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
         route('app.bookkeeping.transactions.set-counter-account', {
           _query: { ids: transaction.id, counter_account: promise }
         }),
+        {},
         {
           preserveScroll: true
         }
