@@ -275,7 +275,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
 
   const filterBar = useMemo(
     () => (
-      <div className="flex">
+      <div className="flex gap-2">
         <SearchField
           aria-label="Suchen"
           placeholder="Nach Namen, Verwendungszweck oder IBAN suchen"
