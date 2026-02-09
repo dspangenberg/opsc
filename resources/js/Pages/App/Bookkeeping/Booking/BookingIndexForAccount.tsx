@@ -106,7 +106,7 @@ const BookingIndexForAccount: React.FC<TransactionsPageProps> = ({
           // Reload the current page with filters and page
           router.post(
             route('app.bookkeeping.bookings.account', {
-              accountId: account.account_number,
+              accountNumber: account.account_number,
               page: bookings.current_page
             }),
             {
