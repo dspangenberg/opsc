@@ -83,6 +83,7 @@ const ContactIndex: React.FC<ContactIndexProps> = ({ currentSearch }) => {
       <div className="flex p-2 pt-0">
         <SearchField
           aria-label="Suchen"
+          autoFocus
           placeholder="Nach Vor- oder Nachnamen suchen"
           value={search}
           onChange={handleSearchInputChange}

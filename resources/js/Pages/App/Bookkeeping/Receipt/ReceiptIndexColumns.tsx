@@ -21,6 +21,9 @@ import { Checkbox } from '@/Components/ui/checkbox'
 const editUrl = (id: number | null) =>
   id ? route('app.bookkeeping.receipts.edit', { receipt: id }) : '#'
 
+const creditorUrl = (id: string) =>
+  id ? route('app.bookkeeping.bookings.account', { accountNumber: id }) : '#'
+
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
   style: 'decimal',
   minimumFractionDigits: 2
@@ -114,8 +117,12 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
     size: 220,
     cell: ({ row, getValue }) => (
       <div className="flex items-center gap-3">
-        {getValue() as string}
-
+        <Link
+          href={creditorUrl(row.original.contact?.creditor_number as string)}
+          className="hover:underline"
+        >
+          {getValue() as string}
+        </Link>
         <Badge variant="outline">{row.original.document_number}</Badge>
         {row.original.duplicate_of && <Badge variant="destructive">D</Badge>}
       </div>

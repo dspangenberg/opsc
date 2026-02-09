@@ -34,20 +34,20 @@ const buildNavData = (isAdmin: boolean) => ({
     },
     {
       title: 'Kontakte',
-      url: route('app.contact.index', { view: 'favorites' }, false),
+      url: route('app.contact.index', { view: 'all' }, false),
       icon: ContactBookIcon,
       activePath: '/app/contacts',
       tooltip: 'Kontakte',
       items: [
         {
-          title: 'Favoriten',
-          url: route('app.contact.index', { view: 'favorites' }, false),
-          activePath: '/app/contacts?view=favorites'
-        },
-        {
           title: 'Alle',
           url: route('app.contact.index', { view: 'all' }, false),
           activePath: '/app/contacts?view=all'
+        },
+        {
+          title: 'Favoriten',
+          url: route('app.contact.index', { view: 'favorites' }, false),
+          activePath: '/app/contacts?view=favorites'
         },
         {
           title: 'Debitoren',
