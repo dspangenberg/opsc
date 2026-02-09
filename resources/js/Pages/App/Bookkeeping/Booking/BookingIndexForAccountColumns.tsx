@@ -136,7 +136,7 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
     size: 50,
     cell: ({ row }) => (
       <TooltipTrigger>
-        <Focusable aria-role="Gegenkonto">
+        <Focusable aria-label="Gegenkonto">
           <Link
             href={accountIndexUrl(row.original.counter_account as number, filters)}
             className="truncate hover:underline"

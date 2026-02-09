@@ -172,7 +172,7 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
     size: 70,
     cell: ({ row }) => (
       <TooltipTrigger>
-        <Focusable aria-role="Sollkonto">
+        <Focusable aria-label="Sollkonto">
           <Link
             href={accountIndexUrl(row.original.account_debit?.account_number as number, filters)}
             className="truncate hover:underline"
@@ -190,7 +190,7 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
     size: 70,
     cell: ({ row }) => (
       <TooltipTrigger>
-        <Focusable aria-role="Habenkonto">
+        <Focusable aria-label="Habenkonto">
           <Link
             href={accountIndexUrl(row.original.account_credit?.account_number as number, filters)}
             className="truncate hover:underline"

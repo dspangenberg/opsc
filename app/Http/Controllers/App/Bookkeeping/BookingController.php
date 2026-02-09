@@ -160,13 +160,12 @@ class BookingController extends Controller
             }
         }
 
-        // Prepare flash message
         if (count($failures) === 0) {
-            session()->flash('success', count($successes).' Buchung(en) erfolgreich korrigiert.');
+            Inertia::flash('toast', ['type' => 'success', 'message' => count($successes).' Buchung(en) erfolgreich korrigiert']);
         } elseif (count($successes) === 0) {
-            session()->flash('error', 'Alle Buchungen konnten nicht korrigiert werden.');
+            Inertia::flash('toast', ['type' => 'error', 'message' => 'Keine Buchungen konnten korrigiert werden.']);
         } else {
-            session()->flash('warning', count($successes).' Buchung(en) korrigiert, '.count($failures).' fehlgeschlagen.');
+            Inertia::flash('toast', ['type' => 'success', 'message' => count($successes).' Buchung(en) konnten nicht korrigiert werden.']);
         }
 
         return back();
