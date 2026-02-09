@@ -141,10 +141,11 @@ class ReceiptController extends Controller
         return response()->inlineFile($pdf, $filename);
     }
 
-    public function destroy(Receipt $receipt)
+    /**
+     * Soft-delete receipt while preserving linked media for potential restoration.
+     */
+    public function destroy(Receipt $receipt): RedirectResponse
     {
-        $media = $receipt->firstMedia('file');
-        $media?->delete();
         $receipt->delete();
 
         return redirect()->route('app.bookkeeping.receipts.index');
@@ -463,12 +464,14 @@ class ReceiptController extends Controller
         return redirect()->back();
     }
 
-    public function bulkDelete(ReceiptsBulkDeleteRequest $request): RedirectResponse {
+    /**
+     * Soft-delete multiple receipts while preserving linked media for potential restoration.
+     */
+    public function bulkDelete(ReceiptsBulkDeleteRequest $request): RedirectResponse
+    {
         $ids = $request->getReceiptIds();
-        $receipts = Receipt::whereIn('id', $ids)->get();
-        forEach($receipts as $receipt) {
-            $receipt->delete();
-        }
+        Receipt::whereIn('id', $ids)->where('is_locked', false)->delete();
+
         return redirect()->back();
     }
 
