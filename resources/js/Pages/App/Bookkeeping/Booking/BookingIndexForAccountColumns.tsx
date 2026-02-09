@@ -34,13 +34,17 @@ const handleConfirmClicked = async (row: App.Data.BookkeepingBookingData) => {
 const handleCancelClicked = async (row: App.Data.BookkeepingBookingData) => {
   const confirmed = await AlertDialog.call({
     title: 'Ausgewählte Buchung stornieren',
-    message: `Möchtest Du die Buchung  (${row.document_number}) Belege wirklich stornieren?`,
+    message: `Möchtest Du die Buchung  (${row.document_number}) wirklich stornieren?`,
     buttonTitle: 'Stornieren'
   })
   if (confirmed) {
-    router.put(route('app.bookkeeping.bookings.cancel', { booking: row.id }), {
-      preserveScroll: true
-    })
+    router.put(
+      route('app.bookkeeping.bookings.cancel', { booking: row.id }),
+      {},
+      {
+        preserveScroll: true
+      }
+    )
   }
 }
 
@@ -120,14 +124,14 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
       if (row.original.is_canceled) {
         return (
           <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-red-500">
-            <Icon icon={CancelCircleHalfDotIcon} className="size-3.5 text-white" stroke="4" />
+            <Icon icon={CancelCircleHalfDotIcon} className="size-3.5 text-white" strokeWidth={4} />
           </div>
         )
       }
       if (row.original.is_locked) {
         return (
           <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-green-500">
-            <Icon icon={Tick01Icon} className="size-3.5 text-white" stroke="4" />
+            <Icon icon={Tick01Icon} className="size-3.5 text-white" strokeWidth={4} />
           </div>
         )
       }

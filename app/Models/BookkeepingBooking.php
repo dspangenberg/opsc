@@ -59,6 +59,7 @@ class BookkeepingBooking extends Model
 
     protected $appends = [
         'document_number',
+        'document_number_range_prefix',
     ];
 
     public function scopeSearch($query, $search): Builder
@@ -460,6 +461,15 @@ class BookkeepingBooking extends Model
         }
 
         return $this->bookable ? $this->bookable->document_number : '';
+    }
+
+    public function getDocumentNumberRangePrefixAttribute(): string
+    {
+        if ($this->range_document_number) {
+            return $this->range_document_number->range->prefix ?? '';
+        }
+
+        return '';
     }
 
     /**
