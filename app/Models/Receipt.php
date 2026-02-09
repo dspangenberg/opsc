@@ -207,7 +207,7 @@ class Receipt extends Model
         $receipt->load('cost_center');
 
         if (!$accounts['outturnAccount']) {
-            if ($receipt->cost_center->bookkeeping_account_id) {
+            if ($receipt->cost_center?->bookkeeping_account_id) {
                 $accounts['outturnAccount'] = BookkeepingAccount::find($receipt->cost_center->bookkeeping_account_id);
             }
         }

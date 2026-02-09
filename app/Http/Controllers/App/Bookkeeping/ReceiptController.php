@@ -98,8 +98,6 @@ class ReceiptController extends Controller
         $this->applyReceiptQueryFilters($query, $request, $search);
         $receipts = $query->paginate();
 
-        ds($receipts->toArray());
-
         $contacts = Contact::where('is_creditor', true)->where('is_archived', false)->orderBy('name')->get();
         $currencies = Currency::query()->orderBy('name')->get();
         $costCenters = CostCenter::query()->orderBy('name')->get();
