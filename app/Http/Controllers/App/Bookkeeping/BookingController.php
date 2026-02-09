@@ -31,7 +31,7 @@ class BookingController extends Controller
             ->applyDynamicFilters($request, [
                 'allowed_filters' => ['is_locked', 'account_id_credit', 'account_id_debit'],
                 'allowed_operators' => ['=', '!=', 'like', 'scope'],
-                'allowed_scopes' => ['issuedBetween'],
+                'allowed_scopes' => ['issuedBetween', 'hide_private', 'hide_transit'],
             ])
             ->search($search)
             ->with('account_debit')
