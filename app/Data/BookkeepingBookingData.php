@@ -41,7 +41,7 @@ class BookkeepingBookingData extends Data
         public readonly ?string $created_at,
         public readonly ?string $updated_at,
         public readonly bool $is_canceled,
-        public readonly int $canceled_id,
+        public readonly ?int $canceled_id,
 
         public readonly ?float $balance,
         public readonly ?string $balance_type,

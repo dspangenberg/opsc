@@ -9,7 +9,8 @@ return new class extends Migration {
     {
         Schema::table('bookkeeping_bookings', function (Blueprint $table) {
             $table->boolean('is_canceled')->default(false);
-            $table->integer('canceled_id')->default(0);
+            $table->unsignedBigInteger('canceled_id')->nullable();
+            $table->foreign('canceled_id')->references('id')->on('bookkeeping_bookings')->nullOnDelete();
         });
     }
 
@@ -17,6 +18,7 @@ return new class extends Migration {
     {
         Schema::table('bookkeeping_bookings', function (Blueprint $table) {
             $table->dropColumn('is_canceled');
+            $table->dropForeign(['canceled_id']);
             $table->dropColumn('canceled_id');
         });
     }

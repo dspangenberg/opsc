@@ -143,7 +143,7 @@ class BookingController extends Controller
         }, 'buchungen.csv', ['Content-Type' => 'text/csv']);
     }
 
-    public function cancellation(Request $request, BookkeepingBooking $booking): RedirectResponse
+    public function cancellation(BookkeepingBooking $booking): RedirectResponse
     {
 
         if ($booking->is_canceled) {
@@ -215,7 +215,7 @@ class BookingController extends Controller
             Inertia::flash('toast', ['type' => 'error', 'message' => 'Keine Buchungen konnten korrigiert werden.']);
         } else {
             Inertia::flash('toast',
-                ['type' => 'success', 'message' => count($successes).' Buchung(en) konnten nicht korrigiert werden.']);
+                ['type' => 'warning', 'message' => count($successes).' Buchung(en) konnten nicht korrigiert werden.']);
         }
 
         return back();
