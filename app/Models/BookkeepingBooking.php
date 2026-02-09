@@ -46,6 +46,7 @@ class BookkeepingBooking extends Model
         'document_number',
         'is_split',
         'split_id',
+        'is_canceled',
         'note',
         'tax_credit',
         'tax_debit',
@@ -53,10 +54,12 @@ class BookkeepingBooking extends Model
         'is_marked',
         'bookable_type',
         'bookable_id',
+        'canceled_id'
     ];
 
     protected $appends = [
         'document_number',
+        'document_number_range_prefix',
     ];
 
     public function scopeSearch($query, $search): Builder
@@ -460,6 +463,15 @@ class BookkeepingBooking extends Model
         return $this->bookable ? $this->bookable->document_number : '';
     }
 
+    public function getDocumentNumberRangePrefixAttribute(): string
+    {
+        if ($this->range_document_number) {
+            return $this->range_document_number->range->prefix ?? '';
+        }
+
+        return '';
+    }
+
     /**
      * Calculate the net amount based on tax rules.
      *
@@ -509,6 +521,7 @@ class BookkeepingBooking extends Model
     {
         return [
             'date' => 'date',
+            'is_canceled' => 'boolean',
         ];
     }
 }

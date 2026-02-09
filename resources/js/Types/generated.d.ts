@@ -73,6 +73,8 @@ number_range_document_numbers_id: number;
 document_number: string | null;
 created_at: string | null;
 updated_at: string | null;
+is_canceled: boolean;
+canceled_id: number | null;
 balance: number | null;
 balance_type: string | null;
 counter_account: number | null;

@@ -135,11 +135,48 @@ class BookingController extends Controller
             'booking_text' => 'Buchungstext',
             'amount' => 'Betrag',
             'document_number' => 'Beleg',
+            'document_number_range_prefix' => 'Belegkreis',
         ]);
 
         return response()->streamDownload(function () use ($csvExporter) {
             echo $csvExporter->getWriter();
         }, 'buchungen.csv', ['Content-Type' => 'text/csv']);
+    }
+
+    public function cancellation(BookkeepingBooking $booking): RedirectResponse
+    {
+
+        if ($booking->is_canceled) {
+            return back();
+        }
+
+        $stornoBooking = new BookkeepingBooking;
+        $stornoBooking->bookable()->associate($booking->bookable);
+        $stornoBooking->date = $booking->date;
+        $stornoBooking->amount = $booking->amount;
+
+        // Konten tauschen für Storno
+        $stornoBooking->account_id_debit = $booking->account_id_credit;
+        $stornoBooking->account_id_credit = $booking->account_id_debit;
+
+        $stornoBooking->number_range_document_numbers_id = $booking->number_range_document_numbers_id;
+        $stornoBooking->booking_text = 'STORNIERUNG '.$booking->booking_text;
+        $stornoBooking->is_locked = true;
+
+        // Steuern übernehmen
+        $stornoBooking->tax_credit = $booking->tax_debit;
+        $stornoBooking->tax_debit = $booking->tax_credit;
+        $stornoBooking->tax_id = $booking->tax_id;
+        $stornoBooking->is_canceled = false;
+        $stornoBooking->canceled_id = $booking->id;
+
+        $stornoBooking->save();
+
+        $booking->is_canceled = true;
+        $booking->is_locked = true;
+        $booking->save();
+
+        return back();
     }
 
     public function confirm(CorrectBookingsRequest $request): RedirectResponse
@@ -172,11 +209,13 @@ class BookingController extends Controller
         }
 
         if (count($failures) === 0) {
-            Inertia::flash('toast', ['type' => 'success', 'message' => count($successes).' Buchung(en) erfolgreich korrigiert']);
+            Inertia::flash('toast',
+                ['type' => 'success', 'message' => count($successes).' Buchung(en) erfolgreich korrigiert']);
         } elseif (count($successes) === 0) {
             Inertia::flash('toast', ['type' => 'error', 'message' => 'Keine Buchungen konnten korrigiert werden.']);
         } else {
-            Inertia::flash('toast', ['type' => 'success', 'message' => count($successes).' Buchung(en) konnten nicht korrigiert werden.']);
+            Inertia::flash('toast',
+                ['type' => 'warning', 'message' => count($successes).' Buchung(en) konnten nicht korrigiert werden.']);
         }
 
         return back();
