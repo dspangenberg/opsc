@@ -142,11 +142,14 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
     accessorKey: 'open_amount',
     header: () => <div className="text-right">Offen</div>,
     size: 80,
-    cell: ({ row }) => (
-      <div className="text-right">
-        {currencyFormatter.format(row.original.open_amount ?? 0)} EUR
-      </div>
-    )
+    cell: ({ row }) => {
+      if (row.original.open_amount === 0) return null
+      return (
+        <div className="text-right">
+          {currencyFormatter.format(row.original.open_amount ?? 0)} EUR
+        </div>
+      )
+    }
   },
   {
     accessorKey: 'payable_min_issued_on',
