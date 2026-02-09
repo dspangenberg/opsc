@@ -18,7 +18,7 @@ Route::put('bookkeeping/transactions/{transaction}/unconfirm/', [TransactionCont
 Route::put('bookkeeping/transactions/run-rules/', [TransactionController::class, 'runRules'])
     ->name('app.bookkeeping.transactions.run-rules');
 
-Route::get('bookkeeping/transactions/set-counter-account/', [TransactionController::class, 'setCounterAccount'])
+Route::put('bookkeeping/transactions/set-counter-account/', [TransactionController::class, 'setCounterAccount'])
     ->name('app.bookkeeping.transactions.set-counter-account');
 
 Route::match(['GET', 'POST'], 'bookkeeping/bookings', [BookingController::class, 'index'])
