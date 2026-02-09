@@ -83,6 +83,8 @@ class BookkeepingBooking extends Model
                 ? 'Sollkonto: '.($account->label ?? $value)
                 : 'Sollkonto: '.$value,
             'is_locked' => 'nur unbestätigt',
+            'hide_private' => 'private Buchungen ausblenden',
+            'hide_transit' => 'Geldtransit ausblenden',
             default => null,
         };
     }
@@ -485,6 +487,19 @@ class BookkeepingBooking extends Model
     public function range_document_number(): HasOne
     {
         return $this->hasOne(NumberRangeDocumentNumber::class, 'id', 'number_range_document_numbers_id');
+    }
+
+    public function scopeHidePrivate(Builder $query): Builder
+    {
+        $privateAccounts = [1800, 1890];
+
+        return $query->whereNotIn('account_id_debit', $privateAccounts)
+            ->whereNotIn('account_id_credit', $privateAccounts);
+    }
+
+    public function scopeHideTransit(Builder $query): Builder
+    {
+        return $query->where('account_id_debit', '<>', 1360)->where('account_id_credit', '<>', 1360);
     }
 
     protected function casts(): array
