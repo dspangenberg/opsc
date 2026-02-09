@@ -65,3 +65,6 @@ Route::put('bookkeeping/bookings/correct', [BookingController::class, 'correctBo
 
 Route::put('bookkeeping/bookings/confirm', [BookingController::class, 'confirm'])
     ->name('app.bookkeeping.bookings.confirm');
+
+Route::delete('bookkeeping/receipts/bulk-delete', [ReceiptController::class, 'bulkDelete'])
+    ->name('app.bookkeeping.receipts.bulk-delete');

@@ -11,6 +11,7 @@ use App\Data\TransactionData;
 use App\Facades\BookeepingRuleService;
 use App\Facades\WeasyPdfService;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ReceiptsBulkDeleteRequest;
 use App\Http\Requests\ReceiptUpdateRequest;
 use App\Http\Requests\ReceiptUploadRequest;
 use App\Jobs\DownloadJob;
@@ -66,7 +67,7 @@ class ReceiptController extends Controller
                 'issued_on',
                 'min'
             )
-            ->orderByDesc('issued_on');
+            ->orderBy('issued_on');
     }
 
     private function loadReceiptWithPayments(Receipt $receipt): void
@@ -140,10 +141,11 @@ class ReceiptController extends Controller
         return response()->inlineFile($pdf, $filename);
     }
 
-    public function destroy(Receipt $receipt)
+    /**
+     * Soft-delete receipt while preserving linked media for potential restoration.
+     */
+    public function destroy(Receipt $receipt): RedirectResponse
     {
-        $media = $receipt->firstMedia('file');
-        $media?->delete();
         $receipt->delete();
 
         return redirect()->route('app.bookkeeping.receipts.index');
@@ -459,7 +461,18 @@ class ReceiptController extends Controller
             }
         });
 
-        return back();
+        return redirect()->back();
+    }
+
+    /**
+     * Soft-delete multiple receipts while preserving linked media for potential restoration.
+     */
+    public function bulkDelete(ReceiptsBulkDeleteRequest $request): RedirectResponse
+    {
+        $ids = $request->getReceiptIds();
+        Receipt::whereIn('id', $ids)->where('is_locked', false)->delete();
+
+        return redirect()->back();
     }
 
     public function runRules(Request $request)
