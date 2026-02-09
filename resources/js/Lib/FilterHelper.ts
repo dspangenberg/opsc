@@ -77,6 +77,8 @@ export const getFilterBadgeLabel = (
       return 'private Transaktionen ausblenden'
     case 'hide_transit':
       return 'Geldtransit ausblenden'
+    case 'withoutBookings':
+      return 'ohne Buchung'
     case 'account_id_credit':
       return `Habenkonto: ${options.accounts?.find(a => a.account_number === filter.value)?.name || filter.value}`
     case 'account_id_debit':

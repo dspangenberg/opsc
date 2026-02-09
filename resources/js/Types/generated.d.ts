@@ -527,6 +527,7 @@ duplicate_of: number | null;
 is_foreign_currency: boolean | null;
 is_confirmed: boolean | null;
 is_locked: boolean;
+bookings_count: number | null;
 iban: string | null;
 number_range_document_number_id: number | null;
 account: App.Data.BookkeepingAccountData | null;

@@ -4,6 +4,7 @@
  */
 
 import {
+  AlertCircleIcon,
   Delete03Icon,
   EuroSendIcon,
   MoreVerticalCircle01Icon,
@@ -75,6 +76,20 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
         return (
           <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-green-500">
             <Icon icon={Tick01Icon} className="size-3.5 text-white" stroke="3" />
+          </div>
+        )
+      }
+    }
+  },
+  {
+    accessorKey: 'bookings_count',
+    header: '',
+    size: 30,
+    cell: ({ row }) => {
+      if ((row.original.bookings_count as number) < 1) {
+        return (
+          <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-red-500">
+            <Icon icon={AlertCircleIcon} className="size-3.5 text-white" stroke="3" />
           </div>
         )
       }

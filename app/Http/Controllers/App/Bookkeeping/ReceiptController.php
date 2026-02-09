@@ -52,7 +52,7 @@ class ReceiptController extends Controller
         $query->applyDynamicFilters($request, [
             'allowed_filters' => ['contact_id', 'org_currency', 'cost_center_id'],
             'allowed_operators' => ['=', '!=', 'like', 'scope'],
-            'allowed_scopes' => ['is_unpaid', 'issuedBetween'],
+            'allowed_scopes' => ['is_unpaid', 'issuedBetween', 'withoutBookings'],
         ])
             ->search($search ?? '')
             ->with([
@@ -94,7 +94,7 @@ class ReceiptController extends Controller
     {
         $search = $request->input('search', '');
 
-        $query = Receipt::query();
+        $query = Receipt::query()->withCount('bookings');
         $this->applyReceiptQueryFilters($query, $request, $search);
         $receipts = $query->paginate();
 
@@ -558,7 +558,7 @@ class ReceiptController extends Controller
 
             $receipt->refresh();
             if ($receipt->contact_id && ! $receipt->cost_center_id) {
-                $receipt->cost_center_id = Contact::find($receipt->contact_id)->cost_center_id;
+                $receipt->cost_center_id = Contact::find($receipt->contact_id)?->cost_center_id;
                 $receipt->save();
             }
 

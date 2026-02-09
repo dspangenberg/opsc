@@ -51,6 +51,8 @@ class ReceiptData extends Data
         public readonly ?bool $is_confirmed,
         public readonly bool $is_locked,
 
+        public readonly ?int $bookings_count,
+
         public readonly ?string $iban,
         public readonly ?int $number_range_document_number_id,
         public readonly ?BookkeepingAccountData $account,
