@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\HasDynamicFilters;
 use Eloquent;
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -379,13 +380,56 @@ class BookkeepingBooking extends Model
             $booking->account_id_credit = $credit_account->account_number;
         }
 
-        $taxes = BookkeepingAccount::getTax($booking->account_id_credit, $booking->account_id_debit, $booking->amount);
-        $booking->tax_credit = $taxes['tax_credit'];
-        $booking->tax_debit = $taxes['tax_debit'];
-        $booking->tax_id = $taxes['tax_id'];
+        if (get_class($parent) !== Transaction::class) {
+            $taxes = BookkeepingAccount::getTax($booking->account_id_credit, $booking->account_id_debit, $booking->amount);
+            $booking->tax_credit = $taxes['tax_credit'];
+            $booking->tax_debit = $taxes['tax_debit'];
+            $booking->tax_id = $taxes['tax_id'];
+        } else {
+            $booking->tax_credit = 0;
+            $booking->tax_debit = 0;
+            $booking->tax_id = 0;
+        }
+
         $booking->booking_text = '';
 
         return $booking;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function correctBooking(int $bookingId): int
+    {
+        $booking = BookkeepingBooking::find($bookingId);
+        if (!$booking) {
+            throw new Exception("Booking not found");
+        }
+
+        if ($booking->is_locked) {
+            return 0;
+        }
+
+        switch ($booking->bookable_type) {
+            case 'App\Models\Receipt':
+                $receipt = Receipt::find($booking->bookable_id);
+                Receipt::createBooking($receipt);
+                // Lade die aktualisierte Buchung neu
+                $booking = BookkeepingBooking::whereMorphedTo('bookable', Receipt::class)
+                    ->where('bookable_id', $receipt->id)
+                    ->first();
+                break;
+            case 'App\Models\Invoice':
+                $invoice = Invoice::find($booking->bookable_id);
+                $booking = Invoice::createBooking($invoice);
+                break;
+            case 'App\Models\Transaction':
+                $transaction = Transaction::find($booking->bookable_id);
+                $booking = Transaction::createBooking($transaction);
+                break;
+        }
+
+        return $booking?->id ?? $bookingId;
     }
 
     public function bookable(): MorphTo

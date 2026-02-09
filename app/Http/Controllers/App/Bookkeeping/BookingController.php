@@ -12,8 +12,10 @@ use App\Data\BookkeepingBookingData;
 use App\Http\Controllers\Controller;
 use App\Models\BookkeepingAccount;
 use App\Models\BookkeepingBooking;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 use Laracsv\Export;
 use League\Csv\CannotInsertRecord;
 
@@ -63,8 +65,9 @@ class BookingController extends Controller
 
         // Extrahiere Datumsfilter aus dem Request
         $parsedFilters = (new BookkeepingBooking)->getParsedFilters($request);
-        if (isset($parsedFilters['issuedBetween'])) {
-            $dates = $parsedFilters['issuedBetween'];
+
+        if (isset($parsedFilters['filters']['issuedBetween']['value'])) {
+            $dates = $parsedFilters['filters']['issuedBetween']['value'];
             if (is_array($dates) && count($dates) >= 2) {
                 $filters['date_from'] = $dates[0];
                 $filters['date_to'] = $dates[1];
@@ -75,14 +78,23 @@ class BookingController extends Controller
         $bookings = BookkeepingBooking::getRunningBalanceForAccountPaginated(
             $accountNumber,
             $filters,
-            10
+            10,
+            'asc'
         );
 
         // Bei POST-Requests sollten wir die aktuellen Filter/Search-Parameter für die Paginierung beibehalten
         if ($request->isMethod('POST')) {
             $bookings->appends($request->only(['filters', 'search']));
         } else {
-            $bookings->appends($request->query());
+            // Merge query params with session data if available
+            $appendData = $request->query();
+            if (session()->has('booking_filters')) {
+                $appendData['filters'] = session()->get('booking_filters');
+            }
+            if (session()->has('booking_search')) {
+                $appendData['search'] = session()->get('booking_search');
+            }
+            $bookings->appends($appendData);
         }
 
         return Inertia::render('App/Bookkeeping/Booking/BookingIndexForAccount', [
@@ -135,5 +147,19 @@ class BookingController extends Controller
         return response()->streamDownload(function () use ($csvExporter) {
             echo $csvExporter->getWriter();
         }, 'buchungen.csv', ['Content-Type' => 'text/csv']);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function correctBookings(Request $request)
+    {
+        $bookingIds = explode(',', $request->input('ids', ''));
+        foreach ($bookingIds as $bookingId) {
+            BookkeepingBooking::correctBooking($bookingId);
+        }
+
+        // Just return back - frontend will reload with current filters
+        return back();
     }
 }
