@@ -60,7 +60,7 @@ const ReceiptReportDialogComponent: React.FC<ReceiptReportDialogComponentProps> 
       <div className="flex w-full flex-1 rounded-t-lg">
         <DateRangePicker
           autoFocus
-          label="Auswertungszeitraum"
+          label="Zeitraum"
           value={dateRange}
           onChange={value => setDateRange(value)}
         />

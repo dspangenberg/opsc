@@ -11,6 +11,7 @@ use App\Data\TransactionData;
 use App\Facades\BookeepingRuleService;
 use App\Facades\WeasyPdfService;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ReceiptsBulkDeleteRequest;
 use App\Http\Requests\ReceiptUpdateRequest;
 use App\Http\Requests\ReceiptUploadRequest;
 use App\Jobs\DownloadJob;
@@ -66,7 +67,7 @@ class ReceiptController extends Controller
                 'issued_on',
                 'min'
             )
-            ->orderByDesc('issued_on');
+            ->orderBy('issued_on');
     }
 
     private function loadReceiptWithPayments(Receipt $receipt): void
@@ -459,7 +460,16 @@ class ReceiptController extends Controller
             }
         });
 
-        return back();
+        return redirect()->back();
+    }
+
+    public function bulkDelete(ReceiptsBulkDeleteRequest $request): RedirectResponse {
+        $ids = $request->getReceiptIds();
+        $receipts = Receipt::whereIn('id', $ids)->get();
+        forEach($receipts as $receipt) {
+            $receipt->delete();
+        }
+        return redirect()->back();
     }
 
     public function runRules(Request $request)

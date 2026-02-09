@@ -1,4 +1,5 @@
 import {
+  Delete02Icon,
   FileDownloadIcon,
   MagicWand01Icon,
   PrinterIcon,
@@ -11,6 +12,7 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
+import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Button } from '@/Components/twc-ui/button'
 import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
 import { SearchField } from '@/Components/twc-ui/search-field'
@@ -52,7 +54,35 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
 
   const handleBulkConfirmationClicked = useCallback(() => {
     const ids = selectedRows.map(row => row.id).join(',')
-    router.put(route('app.bookkeeping.receipts.lock'), {ids}, {
+    router.put(
+      route('app.bookkeeping.receipts.lock'),
+      { ids },
+      {
+        preserveScroll: true,
+        onSuccess: () => {
+          setSelectedRows([])
+        }
+      }
+    )
+  }, [selectedRows])
+
+  const handleBulkDeleteClicked = useCallback(async () => {
+    const confirmed = await AlertDialog.call({
+      title: 'Ausgewählte Belege löschen',
+      message: `Möchtest Du die ausgewählten  (${selectedRows.length}) Belege wirklich in den Papierkorb verschieben?`,
+      buttonTitle: 'In Papierkorb verschieben'
+    })
+    if (confirmed) {
+      const ids = selectedRows.map(row => row.id).join(',')
+      router.delete(route('app.bookkeeping.receipts.bulk-delete', { _query: { ids } }), {
+        preserveScroll: true
+      })
+    }
+  }, [selectedRows])
+
+  const handleBulkDownloadClicked = useCallback(() => {
+    const ids = selectedRows.map(row => row.id).join(',')
+    router.get(route('app.bookkeeping.bulk-download', { _query: { ids } }), {
       preserveScroll: true
     })
   }, [selectedRows])
@@ -60,13 +90,6 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
   const handleBulkRuleClicked = useCallback(() => {
     const ids = selectedRows.map(row => row.id).join(',')
     router.get(route('app.bookkeeping.receipts.rule', { _query: { ids } }), {
-      preserveScroll: true
-    })
-  }, [selectedRows])
-
-  const handleBulkDownloadClicked = useCallback(() => {
-    const ids = selectedRows.map(row => row.id).join(',')
-    router.get(route('app.bookkeeping.bulk-download', { _query: { ids } }), {
       preserveScroll: true
     })
   }, [selectedRows])
@@ -177,6 +200,13 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
           title="Download"
           onClick={handleBulkDownloadClicked}
         />
+        <Button
+          variant="ghost-destructive"
+          size="auto"
+          icon={Delete02Icon}
+          title="Löschen"
+          onClick={handleBulkDeleteClicked}
+        />
         <div className="flex-1 text-right font-medium text-sm">{selectedAmount}</div>
       </Toolbar>
     )
@@ -185,6 +215,7 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
     selectedAmount,
     handleBulkConfirmationClicked,
     handleBulkRuleClicked,
+    handleBulkDeleteClicked,
     handleBulkDownloadClicked
   ])
 
