@@ -10,12 +10,13 @@ namespace App\Http\Controllers\App\Bookkeeping;
 use App\Data\BookkeepingAccountData;
 use App\Data\BookkeepingBookingData;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CorrectBookingsRequest;
 use App\Models\BookkeepingAccount;
 use App\Models\BookkeepingBooking;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Inertia\Response;
 use Laracsv\Export;
 use League\Csv\CannotInsertRecord;
 
@@ -86,15 +87,7 @@ class BookingController extends Controller
         if ($request->isMethod('POST')) {
             $bookings->appends($request->only(['filters', 'search']));
         } else {
-            // Merge query params with session data if available
-            $appendData = $request->query();
-            if (session()->has('booking_filters')) {
-                $appendData['filters'] = session()->get('booking_filters');
-            }
-            if (session()->has('booking_search')) {
-                $appendData['search'] = session()->get('booking_search');
-            }
-            $bookings->appends($appendData);
+            $bookings->appends($request->query());
         }
 
         return Inertia::render('App/Bookkeeping/Booking/BookingIndexForAccount', [
@@ -149,17 +142,33 @@ class BookingController extends Controller
         }, 'buchungen.csv', ['Content-Type' => 'text/csv']);
     }
 
-    /**
-     * @throws Exception
-     */
-    public function correctBookings(Request $request)
+    public function correctBookings(CorrectBookingsRequest $request): RedirectResponse
     {
-        $bookingIds = explode(',', $request->input('ids', ''));
+        $bookingIds = $request->getBookingIds();
+        $successes = [];
+        $failures = [];
+
         foreach ($bookingIds as $bookingId) {
-            BookkeepingBooking::correctBooking($bookingId);
+            try {
+                BookkeepingBooking::correctBooking($bookingId);
+                $successes[] = $bookingId;
+            } catch (Exception $e) {
+                $failures[] = [
+                    'id' => $bookingId,
+                    'error' => $e->getMessage(),
+                ];
+            }
         }
 
-        // Just return back - frontend will reload with current filters
+        // Prepare flash message
+        if (count($failures) === 0) {
+            session()->flash('success', count($successes).' Buchung(en) erfolgreich korrigiert.');
+        } elseif (count($successes) === 0) {
+            session()->flash('error', 'Alle Buchungen konnten nicht korrigiert werden.');
+        } else {
+            session()->flash('warning', count($successes).' Buchung(en) korrigiert, '.count($failures).' fehlgeschlagen.');
+        }
+
         return back();
     }
 }

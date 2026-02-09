@@ -133,10 +133,12 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
     header: 'GK-Nr. ',
     size: 50,
     cell: ({ row }) => (
-
-      <a href={accountIndexUrl(row.original.counter_account as number, filters)} className="truncate"
-      >{row.original.counter_account}</a>
-
+      <a
+        href={accountIndexUrl(row.original.counter_account as number, filters)}
+        className="truncate"
+      >
+        {row.original.counter_account}
+      </a>
     )
   },
   {
@@ -144,7 +146,10 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
     header: () => <div className="text-right">Brutto</div>,
     size: 70,
     cell: ({ row }) => (
-      <div className="text-right">{currencyFormatter.format(row.original.amount)}  {row.original.balance_type === 'debit' ? 'S' : 'H'}</div>
+      <div className="text-right">
+        {currencyFormatter.format(row.original.amount)}{' '}
+        {row.original.balance_type === 'debit' ? 'S' : 'H'}
+      </div>
     )
   },
   {
@@ -162,12 +167,15 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
       const isReverseCharge = taxDebit > 0 && taxCredit > 0
       const hasNoTax = taxDebit === 0 && taxCredit === 0
 
-      const amountNet = (isReverseCharge || hasNoTax)
-        ? row.original.amount
-        : row.original.amount - (taxDebit || taxCredit)
+      const amountNet =
+        isReverseCharge || hasNoTax
+          ? row.original.amount
+          : row.original.amount - (taxDebit || taxCredit)
 
       return (
-        <div className="text-right">{currencyFormatter.format(amountNet)} {row.original.balance_type === 'debit' ? 'S' : 'H'}</div>
+        <div className="text-right">
+          {currencyFormatter.format(amountNet)} {row.original.balance_type === 'debit' ? 'S' : 'H'}
+        </div>
       )
     }
   },
@@ -181,7 +189,9 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
       const indicator = balance >= 0 ? 'S' : 'H'
 
       return (
-        <div className="text-right font-medium">{currencyFormatter.format(absBalance)} {indicator}</div>
+        <div className="text-right font-medium">
+          {currencyFormatter.format(absBalance)} {indicator}
+        </div>
       )
     }
   },
@@ -193,9 +203,7 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
       // Zeige Betrag nur wenn dieses Konto im Soll steht
       if (row.original.balance_type !== 'debit') return null
 
-      return (
-        <div className="text-right">{currencyFormatter.format(row.original.amount)}</div>
-      )
+      return <div className="text-right">{currencyFormatter.format(row.original.amount)}</div>
     }
   },
   {
@@ -206,9 +214,7 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
       // Zeige Betrag nur wenn dieses Konto im Haben steht
       if (row.original.balance_type !== 'credit') return null
 
-      return (
-        <div className="text-right">{currencyFormatter.format(row.original.amount)}</div>
-      )
+      return <div className="text-right">{currencyFormatter.format(row.original.amount)}</div>
     }
   },
   {
