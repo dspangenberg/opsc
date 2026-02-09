@@ -3,10 +3,15 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { MoreVerticalCircle01Icon, Tick01Icon } from '@hugeicons/core-free-icons'
+import {
+  CancelCircleHalfDotIcon,
+  MoreVerticalCircle01Icon,
+  Tick01Icon
+} from '@hugeicons/core-free-icons'
 import { Link, router } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
 import { Focusable } from 'react-aria-components'
+import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { Icon } from '@/Components/twc-ui/icon'
 import { MenuItem } from '@/Components/twc-ui/menu'
@@ -37,9 +42,28 @@ const RowActions = ({ row }: { row: Row<App.Data.BookkeepingBookingData> }) => {
           separator
           onAction={() => handleConfirmClicked(row.original)}
         />
+        <MenuItem
+          icon={CancelCircleHalfDotIcon}
+          title="Buchung stornieren"
+          isDisabled={!!row.original.canceled_id || row.original.is_canceled}
+          onAction={() => handleCancelClicked(row.original)}
+        />
       </DropdownButton>
     </div>
   )
+}
+
+const handleCancelClicked = async (row: App.Data.BookkeepingBookingData) => {
+  const confirmed = await AlertDialog.call({
+    title: 'Ausgewählte Buchung stornieren',
+    message: `Möchtest Du die Buchung  (${row.document_number}) Belege wirklich stornieren?`,
+    buttonTitle: 'Stornieren'
+  })
+  if (confirmed) {
+    router.put(route('app.bookkeeping.bookings.cancel', { booking: row.id }), {
+      preserveScroll: true
+    })
+  }
 }
 
 const accountIndexUrl = (accountNumber: number, filters?: any) => {
@@ -89,9 +113,30 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
     )
   },
   {
+    accessorKey: 'is_locked',
+    header: '',
+    size: 5,
+    cell: ({ row }) => {
+      if (row.original.is_canceled) {
+        return (
+          <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-red-500">
+            <Icon icon={CancelCircleHalfDotIcon} className="size-3.5 text-white" stroke="4" />
+          </div>
+        )
+      }
+      if (row.original.is_locked) {
+        return (
+          <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-green-500">
+            <Icon icon={Tick01Icon} className="size-3.5 text-white" stroke="4" />
+          </div>
+        )
+      }
+    }
+  },
+  {
     accessorKey: 'document_number',
     header: '',
-    size: 80,
+    size: 90,
     cell: ({ getValue, row }) => {
       if (row.original.bookable_type === 'App\\Models\\Receipt') {
         return (
@@ -118,20 +163,6 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
           <Badge variant="outline">{getValue() as string}</Badge>
         </div>
       )
-    }
-  },
-  {
-    accessorKey: 'is_locked',
-    header: '',
-    size: 5,
-    cell: ({ getValue }) => {
-      if (getValue() === true) {
-        return (
-          <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-green-500">
-            <Icon icon={Tick01Icon} className="size-3.5 text-white" stroke="3" />
-          </div>
-        )
-      }
     }
   },
   {

@@ -27,6 +27,9 @@ Route::match(['GET', 'POST'], 'bookkeeping/bookings', [BookingController::class,
 Route::get('bookkeeping/bookings/export', [BookingController::class, 'exportCSV'])
     ->name('app.bookkeeping.bookings.export');
 
+Route::put('bookkeeping/bookings/{booking}/cancel', [BookingController::class, 'cancellation'])
+    ->name('app.bookkeeping.bookings.cancel');
+
 Route::post('bookkeeping/transactions/money-money-import', [TransactionController::class, 'moneyMoneyImport'])
     ->middleware([HandlePrecognitiveRequests::class])
     ->name('app.bookkeeping.transactions.money-money-import');

@@ -142,6 +142,37 @@ class BookingController extends Controller
         }, 'buchungen.csv', ['Content-Type' => 'text/csv']);
     }
 
+    public function cancellation(Request $request, BookkeepingBooking $booking): RedirectResponse
+    {
+        $stornoBooking = new BookkeepingBooking;
+        $stornoBooking->bookable()->associate($booking->bookable);
+        $stornoBooking->date = $booking->date;
+        $stornoBooking->amount = $booking->amount;
+
+        // Konten tauschen für Storno
+        $stornoBooking->account_id_debit = $booking->account_id_credit;
+        $stornoBooking->account_id_credit = $booking->account_id_debit;
+
+        $stornoBooking->number_range_document_numbers_id = $booking->number_range_document_numbers_id;
+        $stornoBooking->booking_text = 'STORNIERUNG '.$booking->booking_text;
+        $stornoBooking->is_locked = true;
+
+        // Steuern übernehmen
+        $stornoBooking->tax_credit = $booking->tax_credit;
+        $stornoBooking->tax_debit = $booking->tax_debit;
+        $stornoBooking->tax_id = $booking->tax_id;
+        $stornoBooking->is_canceled = false;
+        $stornoBooking->canceled_id = $booking->id;
+
+        $stornoBooking->save();
+
+        $booking->is_canceled = true;
+        $booking->is_locked = true;
+        $booking->save();
+
+        return back();
+    }
+
     public function confirm(CorrectBookingsRequest $request): RedirectResponse
     {
         $bookingIds = $request->getBookingIds();

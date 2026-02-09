@@ -46,6 +46,7 @@ class BookkeepingBooking extends Model
         'document_number',
         'is_split',
         'split_id',
+        'is_canceled',
         'note',
         'tax_credit',
         'tax_debit',
@@ -53,6 +54,7 @@ class BookkeepingBooking extends Model
         'is_marked',
         'bookable_type',
         'bookable_id',
+        'canceled_id'
     ];
 
     protected $appends = [
@@ -509,6 +511,7 @@ class BookkeepingBooking extends Model
     {
         return [
             'date' => 'date',
+            'is_canceled' => 'boolean',
         ];
     }
 }
