@@ -45,6 +45,7 @@ class BookkeepingBookingData extends Data
         public readonly ?string $balance_type,
         public readonly ?int $counter_account,
         public readonly ?string $counter_account_label,
+        public readonly ?float $amount_net,
 
         /** @var BookkeepingAccountData */
         public readonly ?object $account_credit,

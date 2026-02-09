@@ -461,6 +461,30 @@ class BookkeepingBooking extends Model
         return $this->bookable ? $this->bookable->document_number : '';
     }
 
+    /**
+     * Calculate the net amount based on tax rules.
+     *
+     * Bei §13b (Reverse Charge): beide Steuern gesetzt und gleich → Netto = Brutto
+     * Bei §19a: keine Steuer → Netto = Brutto
+     * Bei normaler USt: nur eine Steuer → Netto = Brutto - Steuer
+     */
+    public function getAmountNetAttribute(): float
+    {
+        $taxDebit = $this->tax_debit ?? 0;
+        $taxCredit = $this->tax_credit ?? 0;
+
+        // Wenn beide Steuern gesetzt sind (§13b) oder keine Steuer (§19a): Netto = Brutto
+        $isReverseCharge = $taxDebit > 0 && $taxCredit > 0;
+        $hasNoTax = $taxDebit === 0 && $taxCredit === 0;
+
+        if ($isReverseCharge || $hasNoTax) {
+            return $this->amount;
+        }
+
+        // Bei normaler USt: Brutto - Steuer
+        return $this->amount - ($taxDebit ?: $taxCredit);
+    }
+
     public function range_document_number(): HasOne
     {
         return $this->hasOne(NumberRangeDocumentNumber::class, 'id', 'number_range_document_numbers_id');

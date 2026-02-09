@@ -77,6 +77,7 @@ balance: number | null;
 balance_type: string | null;
 counter_account: number | null;
 counter_account_label: string | null;
+amount_net: number | null;
 account_credit: App.Data.BookkeepingAccountData | null;
 account_debit: App.Data.BookkeepingAccountData | null;
 tax: App.Data.TaxData | null;

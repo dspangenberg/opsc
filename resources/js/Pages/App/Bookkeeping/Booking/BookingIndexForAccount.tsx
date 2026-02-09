@@ -36,13 +36,22 @@ const BookingIndexForAccount: React.FC<TransactionsPageProps> = ({
 }) => {
   const [selectedRows, setSelectedRows] = useState<App.Data.BookkeepingBookingData[]>([])
   const [search, _setSearch] = useState(currentSearch)
-  const breadcrumbs = useMemo(() => [{ title: 'Buchhaltung' }], [])
   const [filters, setFilters] = useState<FilterConfig>(currentFilters)
   const columns = useMemo(() => createColumns(filters), [filters])
 
   const { handleDownload } = useFileDownload({
     route: route('app.bookkeeping.bookings.export', { filters: filters })
   })
+  const breadcrumbs = useMemo(
+    () => [
+      { title: 'Buchhaltung', url: route('app.bookkeeping.bookings.index') },
+      { title: 'Buchungen', url: route('app.bookkeeping.bookings.index') },
+      {
+        title: account.label
+      }
+    ],
+    [account.label]
+  )
 
   const toolbar = useMemo(
     () => (
@@ -143,8 +152,8 @@ const BookingIndexForAccount: React.FC<TransactionsPageProps> = ({
   )
   return (
     <PageContainer
-      title={`${account.label} Buchungen`}
-      width="7xl"
+      title={`${account.label} – Buchungen`}
+      width="8xl"
       breadcrumbs={breadcrumbs}
       className="flex overflow-hidden"
       toolbar={toolbar}
