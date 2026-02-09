@@ -491,7 +491,10 @@ class BookkeepingBooking extends Model
 
     public function scopeHidePrivate(Builder $query): Builder
     {
-        return $query->where('account_id_debit', '<>', 1800)->where('account_id_credit', '<>', 1890);
+        $privateAccounts = [1800, 1890];
+
+        return $query->whereNotIn('account_id_debit', $privateAccounts)
+            ->whereNotIn('account_id_credit', $privateAccounts);
     }
 
     public function scopeHideTransit(Builder $query): Builder
