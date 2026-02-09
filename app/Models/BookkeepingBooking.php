@@ -144,7 +144,7 @@ class BookkeepingBooking extends Model
         return BookkeepingAccount::whereIn('account_number', $accountIds)
             ->get()
             ->keyBy('account_number')
-            ->map(fn($account) => $account->label);
+            ->map(fn ($account) => $account->label);
     }
 
     /**
@@ -209,7 +209,6 @@ class BookkeepingBooking extends Model
      *
      * @param  string  $accountNumber  Account number to calculate running balance for
      * @param  array  $filters  Optional filters (e.g., date range)
-     * @return Collection
      */
     public static function getRunningBalanceForAccount(string $accountNumber, array $filters = []): Collection
     {
@@ -236,8 +235,6 @@ class BookkeepingBooking extends Model
      * @param  string  $accountNumber  Account number to calculate running balance for
      * @param  array  $filters  Optional filters (e.g., date range)
      * @param  int  $perPage  Items per page
-     * @param  string  $sortDirection
-     * @return LengthAwarePaginator
      */
     public static function getRunningBalanceForAccountPaginated(
         string $accountNumber,
@@ -344,11 +341,11 @@ class BookkeepingBooking extends Model
         $documentNumberPrefix = '',
         $bookingId = null
     ): ?BookkeepingBooking {
-        if (!$debit_account || !$credit_account) {
+        if (! $debit_account || ! $credit_account) {
             BookkeepingLog::create([
                 'parent_model' => $parent::class,
                 'parent_id' => $parent->id,
-                'text' => !$debit_account ? 'Sollkonto nicht gefunden' : 'Habenkonto nicht gefunden',
+                'text' => ! $debit_account ? 'Sollkonto nicht gefunden' : 'Habenkonto nicht gefunden',
             ]);
 
             return null;
@@ -365,7 +362,7 @@ class BookkeepingBooking extends Model
             $booking->date = $parent[$dateField];
         }
 
-        if (!$booking->number_range_document_numbers_id) {
+        if (! $booking->number_range_document_numbers_id) {
             $booking->number_range_document_numbers_id = $parent->number_range_document_numbers_id;
         }
 
@@ -402,8 +399,8 @@ class BookkeepingBooking extends Model
     public static function correctBooking(int $bookingId): int
     {
         $booking = BookkeepingBooking::find($bookingId);
-        if (!$booking) {
-            throw new Exception("Booking not found");
+        if (! $booking) {
+            throw new Exception('Booking not found');
         }
 
         if ($booking->is_locked) {
@@ -459,6 +456,30 @@ class BookkeepingBooking extends Model
         }
 
         return $this->bookable ? $this->bookable->document_number : '';
+    }
+
+    /**
+     * Calculate the net amount based on tax rules.
+     *
+     * Bei §13b (Reverse Charge): beide Steuern gesetzt und gleich → Netto = Brutto
+     * Bei §19a: keine Steuer → Netto = Brutto
+     * Bei normaler USt: nur eine Steuer → Netto = Brutto - Steuer
+     */
+    public function getAmountNetAttribute(): float
+    {
+        $taxDebit = (float) ($this->tax_debit ?? 0);
+        $taxCredit = (float) ($this->tax_credit ?? 0);
+
+        // Wenn beide Steuern gesetzt sind (§13b) oder keine Steuer (§19a): Netto = Brutto
+        $isReverseCharge = $taxDebit > 0 && $taxCredit > 0;
+        $hasNoTax = $taxDebit == 0 && $taxCredit == 0;
+
+        if ($isReverseCharge || $hasNoTax) {
+            return round($this->amount, 2);
+        }
+
+        // Bei normaler USt: Brutto - Steuer
+        return round($this->amount - ($taxDebit ?: $taxCredit), 2);
     }
 
     public function range_document_number(): HasOne

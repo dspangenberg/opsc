@@ -4,7 +4,7 @@
  */
 
 import { MoreVerticalCircle01Icon, Tick01Icon } from '@hugeicons/core-free-icons'
-import { router } from '@inertiajs/react'
+import { Link, router } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
 import { Focusable } from 'react-aria-components'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
@@ -92,12 +92,33 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
     accessorKey: 'document_number',
     header: '',
     size: 80,
-    cell: ({ getValue, row }) => (
-      <div className="text-xs">
-        <Badge variant="outline">{getValue() as string}</Badge>
-        <div>{row.original.id}</div>
-      </div>
-    )
+    cell: ({ getValue, row }) => {
+      if (row.original.bookable_type === 'App\\Models\\Receipt') {
+        return (
+          <Link
+            href={route('app.bookkeeping.receipts.edit', { receipt: row.original.bookable_id })}
+          >
+            <div className="text-xs">
+              <Badge variant="outline">{getValue() as string}</Badge>
+            </div>
+          </Link>
+        )
+      }
+      if (row.original.bookable_type === 'App\\Models\\Invoice') {
+        return (
+          <Link href={route('app.invoice.details', { invoice: row.original.bookable_id })}>
+            <div className="text-xs">
+              <Badge variant="outline">{getValue() as string}</Badge>
+            </div>
+          </Link>
+        )
+      }
+      return (
+        <div className="text-xs">
+          <Badge variant="outline">{getValue() as string}</Badge>
+        </div>
+      )
+    }
   },
   {
     accessorKey: 'is_locked',
@@ -151,8 +172,13 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
     size: 70,
     cell: ({ row }) => (
       <TooltipTrigger>
-        <Focusable aria-role="label">
-          <a href={accountIndexUrl(row.original.account_debit?.account_number as number, filters)} className="truncate">{row.original.account_debit?.label}</a>
+        <Focusable aria-label="Sollkonto">
+          <Link
+            href={accountIndexUrl(row.original.account_debit?.account_number as number, filters)}
+            className="truncate hover:underline"
+          >
+            {row.original.account_debit?.label}
+          </Link>
         </Focusable>
         <Tooltip>{row.original.account_debit?.label}</Tooltip>
       </TooltipTrigger>
@@ -164,9 +190,15 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
     size: 70,
     cell: ({ row }) => (
       <TooltipTrigger>
-        <Focusable>
-          <a href={accountIndexUrl(row.original.account_credit?.account_number as number, filters)} className="truncate">{row.original.account_credit?.label}</a>
+        <Focusable aria-label="Habenkonto">
+          <Link
+            href={accountIndexUrl(row.original.account_credit?.account_number as number, filters)}
+            className="truncate hover:underline"
+          >
+            {row.original.account_credit?.label}
+          </Link>
         </Focusable>
+
         <Tooltip>{row.original.account_credit?.label}</Tooltip>
       </TooltipTrigger>
     )
@@ -176,7 +208,10 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
     header: () => <div className="text-right">USt. S</div>,
     size: 50,
     cell: ({ row }) => (
-      <div className="text-right">{currencyFormatter.format(row.original.tax_debit)}</div>
+      <TooltipTrigger>
+        <div className="text-right">{currencyFormatter.format(row.original.tax_debit)}</div>
+        <Tooltip>{row.original.account_debit?.label}</Tooltip>
+      </TooltipTrigger>
     )
   },
   {

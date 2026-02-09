@@ -4,11 +4,13 @@
  */
 
 import { MoreVerticalCircle01Icon, Tick01Icon } from '@hugeicons/core-free-icons'
-import { router } from '@inertiajs/react'
+import { Link, router } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
+import { Focusable } from 'react-aria-components'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { Icon } from '@/Components/twc-ui/icon'
 import { MenuItem } from '@/Components/twc-ui/menu'
+import { Tooltip, TooltipTrigger } from '@/Components/twc-ui/tooltip'
 import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
 
@@ -79,7 +81,7 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
   {
     accessorKey: 'date',
     header: 'Datum',
-    size: 60,
+    size: 70,
     cell: ({ getValue }) => (
       <div>
         <span>{getValue() as string}</span>
@@ -133,12 +135,17 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
     header: 'GK-Nr. ',
     size: 50,
     cell: ({ row }) => (
-      <a
-        href={accountIndexUrl(row.original.counter_account as number, filters)}
-        className="truncate"
-      >
-        {row.original.counter_account}
-      </a>
+      <TooltipTrigger>
+        <Focusable aria-label="Gegenkonto">
+          <Link
+            href={accountIndexUrl(row.original.counter_account as number, filters)}
+            className="truncate hover:underline"
+          >
+            {row.original.counter_account}
+          </Link>
+        </Focusable>
+        <Tooltip>{row.original.counter_account_label}</Tooltip>
+      </TooltipTrigger>
     )
   },
   {
@@ -153,31 +160,15 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
     )
   },
   {
-    accessorKey: 'amount',
+    accessorKey: 'amount_net',
     header: () => <div className="text-right">Netto</div>,
     size: 70,
-    cell: ({ row }) => {
-      // Bei §13b (Reverse Charge): beide Steuern gesetzt und gleich → Netto = Brutto
-      // Bei §19a: keine Steuer → Netto = Brutto
-      // Bei normaler USt: nur eine Steuer → Netto = Brutto - Steuer
-      const taxDebit = row.original.tax_debit || 0
-      const taxCredit = row.original.tax_credit || 0
-
-      // Wenn beide Steuern gesetzt sind (§13b) oder keine Steuer (§19a): Netto = Brutto
-      const isReverseCharge = taxDebit > 0 && taxCredit > 0
-      const hasNoTax = taxDebit === 0 && taxCredit === 0
-
-      const amountNet =
-        isReverseCharge || hasNoTax
-          ? row.original.amount
-          : row.original.amount - (taxDebit || taxCredit)
-
-      return (
-        <div className="text-right">
-          {currencyFormatter.format(amountNet)} {row.original.balance_type === 'debit' ? 'S' : 'H'}
-        </div>
-      )
-    }
+    cell: ({ row }) => (
+      <div className="text-right">
+        {currencyFormatter.format(row.original.amount_net ?? 0)}{' '}
+        {row.original.balance_type === 'debit' ? 'S' : 'H'}
+      </div>
+    )
   },
   {
     accessorKey: 'balance',
