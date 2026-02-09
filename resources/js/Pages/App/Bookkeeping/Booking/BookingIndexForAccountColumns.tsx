@@ -92,11 +92,33 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
     accessorKey: 'document_number',
     header: '',
     size: 80,
-    cell: ({ getValue }) => (
-      <div className="text-xs">
-        <Badge variant="outline">{getValue() as string}</Badge>
-      </div>
-    )
+    cell: ({ getValue, row }) => {
+      if (row.original.bookable_type === 'App\\Models\\Receipt') {
+        return (
+          <Link
+            href={route('app.bookkeeping.receipts.edit', { receipt: row.original.bookable_id })}
+          >
+            <div className="text-xs">
+              <Badge variant="outline">{getValue() as string}</Badge>
+            </div>
+          </Link>
+        )
+      }
+      if (row.original.bookable_type === 'App\\Models\\Invoice') {
+        return (
+          <Link href={route('app.invoice.details', { invoice: row.original.bookable_id })}>
+            <div className="text-xs">
+              <Badge variant="outline">{getValue() as string}</Badge>
+            </div>
+          </Link>
+        )
+      }
+      return (
+        <div className="text-xs">
+          <Badge variant="outline">{getValue() as string}</Badge>
+        </div>
+      )
+    }
   },
   {
     accessorKey: 'is_locked',
