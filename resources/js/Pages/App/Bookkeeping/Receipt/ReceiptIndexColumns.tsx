@@ -17,7 +17,8 @@ import { MenuItem } from '@/Components/twc-ui/menu'
 import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
 
-const editUrl = (id: number | null) => (id ? route('app.bookkeeping.receipts.edit', { id }) : '#')
+const editUrl = (id: number | null) =>
+  id ? route('app.bookkeeping.receipts.edit', { receipt: id }) : '#'
 
 const currencyFormatter = new Intl.NumberFormat('de-DE', {
   style: 'decimal',
@@ -143,7 +144,7 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
     header: () => <div className="text-right">Offen</div>,
     size: 80,
     cell: ({ row }) => {
-      if (row.original.open_amount === 0) return null
+      if (!row.original.open_amount) return null
       return (
         <div className="text-right">
           {currencyFormatter.format(row.original.open_amount ?? 0)} EUR
