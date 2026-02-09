@@ -1,9 +1,9 @@
 import {
+  AiBeautifyIcon,
   Csv02Icon,
   FileExportIcon,
   FileScriptIcon,
   MoreVerticalCircle01Icon,
-  AiBeautifyIcon,
   Tick01Icon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
@@ -124,7 +124,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
       accounts: bookkeeping_accounts
     })
     if (promise !== false) {
-      router.get(
+      router.put(
         route('app.bookkeeping.transactions.set-counter-account', {
           _query: { ids: transaction.id, counter_account: promise }
         }),
@@ -150,24 +150,32 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
 
   const handleBulkConfirmationClicked = () => {
     const ids = selectedRows.map(row => row.id).join(',')
-    router.put(route('app.bookkeeping.transactions.confirm'), {
-      ids,
-      filters,
-      search
-    }, {
-      preserveScroll: true
-    })
+    router.put(
+      route('app.bookkeeping.transactions.confirm'),
+      {
+        ids,
+        filters,
+        search
+      },
+      {
+        preserveScroll: true
+      }
+    )
   }
 
   const handleRunRulesClicked = () => {
     const ids = selectedRows.map(row => row.id).join(',')
-    router.put(route('app.bookkeeping.transactions.run-rules'), {
-      ids,
-      filters,
-      search
-    }, {
-      preserveScroll: true
-    })
+    router.put(
+      route('app.bookkeeping.transactions.run-rules'),
+      {
+        ids,
+        filters,
+        search
+      },
+      {
+        preserveScroll: true
+      }
+    )
   }
 
   const toolbar = useMemo(
