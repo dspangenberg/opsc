@@ -31,6 +31,23 @@ const handleConfirmClicked = async (row: App.Data.BookkeepingBookingData) => {
   })
 }
 
+const handleCancelClicked = async (row: App.Data.BookkeepingBookingData) => {
+  const confirmed = await AlertDialog.call({
+    title: 'Ausgewählte Buchung stornieren',
+    message: `Möchtest Du die Buchung  (${row.document_number}) wirklich stornieren?`,
+    buttonTitle: 'Stornieren'
+  })
+  if (confirmed) {
+    router.put(
+      route('app.bookkeeping.bookings.cancel', { booking: row.id }),
+      {},
+      {
+        preserveScroll: true
+      }
+    )
+  }
+}
+
 const RowActions = ({ row }: { row: Row<App.Data.BookkeepingBookingData> }) => {
   return (
     <div className="mx-auto">
@@ -51,23 +68,6 @@ const RowActions = ({ row }: { row: Row<App.Data.BookkeepingBookingData> }) => {
       </DropdownButton>
     </div>
   )
-}
-
-const handleCancelClicked = async (row: App.Data.BookkeepingBookingData) => {
-  const confirmed = await AlertDialog.call({
-    title: 'Ausgewählte Buchung stornieren',
-    message: `Möchtest Du die Buchung  (${row.document_number}) wirklich stornieren?`,
-    buttonTitle: 'Stornieren'
-  })
-  if (confirmed) {
-    router.put(
-      route('app.bookkeeping.bookings.cancel', { booking: row.id }),
-      {},
-      {
-        preserveScroll: true
-      }
-    )
-  }
 }
 
 const accountIndexUrl = (accountNumber: number, filters?: any) => {
