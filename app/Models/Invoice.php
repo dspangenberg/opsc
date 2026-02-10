@@ -425,9 +425,11 @@ class Invoice extends Model implements MediableInterface
     public static function createBooking($invoice): BookkeepingBooking
     {
 
-        if (! $invoice->number_range_document_numbers_id) {
+        $invoice->load('range_document_number');
+        if (! $invoice->range_document_number) {
             $invoice->number_range_document_numbers_id = NumberRange::createDocumentNumber($invoice,
                 'issued_on');
+            $invoice->save();
         }
 
         $booking = BookkeepingBooking::whereMorphedTo('bookable', Invoice::class)->where('bookable_id',

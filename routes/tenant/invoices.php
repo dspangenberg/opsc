@@ -79,3 +79,6 @@ Route::get('invoicing/invoices/{invoice}/pdf', [InvoiceController::class, 'downl
 Route::post('invoicing/invoices/{invoice}/cancel', [InvoiceController::class, 'cancel'])
     ->name('app.invoice.cancel')
     ->middleware([HandlePrecognitiveRequests::class]);
+
+Route::put('invoicing/invoices/bulk-mark-as-sent', [InvoiceController::class, 'bulkMarkAsSent'])
+    ->name('app.invoice.bulk-mark-as-sent');

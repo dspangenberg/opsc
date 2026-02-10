@@ -19,6 +19,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceDetailsBaseUpdateRequest;
 use App\Http\Requests\InvoiceReportRequest;
 use App\Http\Requests\InvoiceStoreRequest;
+use App\Models\BookkeepingBooking;
 use App\Models\Contact;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
@@ -353,6 +354,30 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
+    public function bulkMarkAsSent(Request $request) {
+        $ids = $request->input('ids');
+        $ids = $ids ? explode(',', $ids) : [];
+
+        $invoices = Invoice::query()->whereIn('id', $ids)->get();
+
+        foreach ($invoices as $invoice) {
+            if (! $invoice->sent_at) {
+                $invoice->sent_at = now();
+                $invoice->save();
+            }
+
+            $hasBooking = BookkeepingBooking::whereMorphedTo('bookable', Invoice::class)
+                ->where('bookable_id', $invoice->id)
+                ->exists();
+
+            if (! $hasBooking) {
+                Invoice::createBooking($invoice);
+            }
+        }
+
+        return redirect()->back();
+    }
+
     /**
      * @throws Exception
      */
@@ -473,7 +498,8 @@ class InvoiceController extends Controller
             ->where('counter_account_id', $invoice->contact->debtor_number)
             ->whereRaw('amount - COALESCE((SELECT SUM(amount) FROM payments WHERE transaction_id = transactions.id), 0) > 0.01')
             ->where('is_locked', true)
-            ->get();
+            ->whereBetween('booked_on', [$invoice->issued_on->copy()->subMonths(2), $invoice->issued_on->copy()->addMonths(2)])
+        ->get();
 
         $invoice
             ->load('invoice_contact')

@@ -7,7 +7,8 @@ import {
   FilterIcon,
   FolderManagementIcon,
   MoreVerticalCircle01Icon,
-  PrinterIcon
+  PrinterIcon,
+  Tick01Icon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/core'
 import { usePage } from '@inertiajs/react'
@@ -141,6 +142,12 @@ const InvoiceIndex: React.FC = () => {
     []
   )
 
+  const handleMarkInvoicesAsSend = () => {
+    router.put(route('app.invoice.bulk-mark-as-sent'), {
+      ids: selectedRows.map(row => row.id).join(',')
+    })
+  }
+
   const handleInvoiceCreateClicked = useCallback(() => {
     router.visit(route('app.invoice.create'))
   }, [])
@@ -204,6 +211,13 @@ const InvoiceIndex: React.FC = () => {
           ausgewählte Datensätze
         </div>
         <Button variant="ghost" size="auto" icon={FileDownloadIcon} title="Herunterladen" />
+        <Button
+          variant="ghost"
+          size="auto"
+          icon={Tick01Icon}
+          title="Rechnungen als versendet markieren und buchen"
+          onClick={handleMarkInvoicesAsSend}
+        />
         <div className="w-32 flex-1 text-right font-medium text-sm">
           {currencyFormatter.format(selectedAmount)} €
         </div>

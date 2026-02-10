@@ -37,6 +37,16 @@ class ContactUpdateRequest extends FormRequest
             'note' => ['nullable', 'string'],
             'avatar' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:51200'],
 
+            'tax_id' => [
+                'required_if:is_debtor,true',
+                'required_if:is_creditor,true',
+                'nullable',
+                'exists:taxes,id'
+            ],
+
+            'payment_deadline_id' => ['nullable', 'exists_if_not_empty:payment_deadlines,id'],
+            'has_dunning_block' => ['required', 'boolean'],
+
             // E-Mail-Validierung hinzufügen
             'mails' => ['nullable', 'array'],
             'mails.*.id' => ['nullable', 'integer'],

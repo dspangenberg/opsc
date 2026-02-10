@@ -374,6 +374,15 @@ const ContactEdit: React.FC<Props> = ({
               />
             </TabPanel>
             <TabPanel id="finances">
+              <FormGrid title="Steuer">
+                <div className="col-span-9">
+                  <FormSelect<App.Data.TaxData>
+                    {...form.register('tax_id')}
+                    label="Umsatzsteuer"
+                    items={taxes}
+                  />
+                </div>
+              </FormGrid>
               {form.data.is_debtor && (
                 <FormGrid title="Debitordaten">
                   {!form.data.debtor_number && (
@@ -388,13 +397,6 @@ const ContactEdit: React.FC<Props> = ({
                       label="Debitor-Nr."
                       isReadOnly
                       {...form.register('formated_debtor_number')}
-                    />
-                  </div>
-                  <div className="col-span-9">
-                    <FormSelect<App.Data.TaxData>
-                      {...form.register('tax_id')}
-                      label="Umsatzsteuer"
-                      items={taxes}
                     />
                   </div>
                   <div className="col-span-9">

@@ -230,6 +230,9 @@ class ContactController extends Controller
      */
     public function update(ContactUpdateRequest $request, Contact $contact)
     {
+
+        $oldTaxId = $contact->tax_id;
+
         DB::transaction(function () use ($request, $contact) {
             $data = $request->safe()->except('avatar', 'mails', 'phones', 'addresses', 'remove_avatar');
 
@@ -277,13 +280,22 @@ class ContactController extends Controller
         if ($contact->is_creditor && ! $contact->creditor_number) {
             $contact->creditor_number = Contact::max('creditor_number') + 1;
             $contact->save();
-            $contact->createBookkeepingAccount(false);
+            $contact->createBookkeepingAccount($contact->creditor_number, $contact->tax_id);
         }
 
         if ($contact->is_debtor && ! $contact->debtor_number) {
             $contact->debtor_number = Contact::max('debtor_number') + 1;
             $contact->save();
-            $contact->createBookkeepingAccount();
+            $contact->createBookkeepingAccount($contact->debtor_number, $contact->tax_id);
+        }
+
+        if ($oldTaxId !== $contact->tax_id) {
+            if ($contact->debtor_number) {
+                $contact->setAccountTaxId($contact->debtor_number, $contact->tax_id);
+            }
+            if ($contact->creditor_number) {
+                $contact->setAccountTaxId($contact->creditor_number, $contact->tax_id);
+            }
         }
 
        return redirect(route('app.contact.details', ['contact' => $contact]));
