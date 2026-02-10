@@ -63,7 +63,6 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
             label="Zahlungsziel"
             value={contact.payment_deadline?.name}
           />
-          <DataCardField variant="vertical" label="Umsatzsteuer" value={contact.tax?.name} />
         </DataCardSection>
         <DataCardSection
           suppressEmptyText
@@ -81,6 +80,10 @@ export const ContactDetailsOrg: FC<ContactDetailsOrgInfoBoxProps> = ({
             label="Kostenstelle"
             value={contact.cost_center?.name}
           />
+        </DataCardSection>
+        <DataCardSection title="Umsatzsteuer" className="grid grid-cols-2">
+          <DataCardField variant="vertical" label="Umsatzsteuer" value={contact.tax?.name} />
+          <DataCardField variant="vertical" label="Umsatzsteuer-ID" value={contact.vat_id} />
         </DataCardSection>
         <DataCardSection
           title="Telefonnummern"

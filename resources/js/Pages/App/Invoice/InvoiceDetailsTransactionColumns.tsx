@@ -93,26 +93,17 @@ export const columns: ColumnDef<App.Data.TransactionData>[] = [
   {
     accessorKey: 'booked_on',
     header: 'Buchung',
-    size: 30,
+    size: 50,
     cell: ({ row, getValue }) => <span>{getValue() as string}</span>
   },
   {
     accessorKey: 'bookkeeping_text',
     header: 'Buchung',
     cell: ({ row, getValue }) => {
-      console.log(row.original.bookkeeping_text)
       const [bookingType, name, purpose] = row.original.bookkeeping_text.split('|')
-      console.log(bookingType, name, purpose)
       return (
         <div>
-          <div className="flex items-center gap-2 text-xs">
-            {bookingType}
-            {row.original.is_private && <Badge variant="light-blue">privat</Badge>}
-            {row.original.is_transit && <Badge variant="light-purple">Transit</Badge>}
-            {!!row.original.contact_id && (
-              <Badge variant="secondary">{row.original.contact?.full_name}</Badge>
-            )}
-          </div>
+          <div className="flex items-center gap-2 text-xs">{bookingType}</div>
           <div className="font-medium">{name}</div>
           <div className="truncate">{purpose}</div>
           {row.original.account_number && (

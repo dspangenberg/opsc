@@ -377,9 +377,8 @@ class Contact extends Model
         ];
     }
 
-    public function createBookkeepingAccount($isDebtor = true) {
+    public function createBookkeepingAccount($accountNumber, int $taxId) {
 
-        $accountNumber = $isDebtor ? $this->debtor_number : $this->creditor_number;
         $account = BookkeepingAccount::where('account_number', $accountNumber)->first();
         if ($account) {
             return $account;
@@ -387,10 +386,21 @@ class Contact extends Model
 
         $bookkeepingAccount = new BookkeepingAccount;
         $bookkeepingAccount->account_number = $accountNumber;
+        $bookkeepingAccount->tax_id = $taxId;
         $bookkeepingAccount->name = $this->full_name;
-        $bookkeepingAccount->type = $isDebtor ? 'd' : 'c';
+        $bookkeepingAccount->type = $accountNumber < 20000 ? 'd' : 'c';
         $bookkeepingAccount->save();
         return $bookkeepingAccount;
+    }
+
+    public function setAccountTaxId($accountNumber, $taxId) {
+        $bookkeepingAccount = BookkeepingAccount::where('account_number', $accountNumber)->first();
+        if ($bookkeepingAccount) {
+            $bookkeepingAccount->tax_id = $taxId;
+            $bookkeepingAccount->save();
+        } else {
+            $this->createBookkeepingAccount($accountNumber, $taxId);
+        }
     }
 
     public static function getAccounts(bool $is_invoice, int $id, bool $createAccountIfNotExists = true, bool $getDefaultOutturnAccount = false): array
