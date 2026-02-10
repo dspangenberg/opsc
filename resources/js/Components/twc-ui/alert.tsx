@@ -1,11 +1,11 @@
 import {
-  Alert02Icon,
   AlertCircleIcon,
-  AlertSquareIcon,
+  CancelCircleIcon,
   InformationCircleIcon
 } from '@hugeicons/core-free-icons'
 import type * as React from 'react'
 import { tv, type VariantProps } from 'tailwind-variants'
+import { cn } from '@/Lib/utils'
 import { Icon, type IconType } from './icon'
 
 const alertStyles = tv({
@@ -19,27 +19,28 @@ const alertStyles = tv({
   variants: {
     variant: {
       default: {
-        base: 'bg-card text-card-foreground'
+        base: 'bg-card text-card-foreground',
+        icon: 'rounded-full bg-card-foreground/50 text-white'
       },
       destructive: {
-        base: 'm-0 border-destructive/20 bg-destructive/5 text-destructive *:data-[slot=alert-description]:text-destructive/90 [&>svg]:text-current',
+        base: 'm-0 border-destructive/20 bg-destructive/5 text-destructive',
         description: 'text-destructive',
-        icon: 'text-destructive'
+        icon: 'rounded-full bg-destructive text-white'
       },
       info: {
         base: 'border-info/20 bg-info/5 text-info',
-        description: 'text-info-foreground',
-        icon: 'text-info'
+        description: 'text-info',
+        icon: 'rounded-full bg-info text-white'
       },
       warning: {
         base: 'border-warning bg-warning text-warning-foreground',
         description: 'text-warning-foreground',
-        icon: 'text-warning-foreground'
+        icon: 'rounded-full bg-warning-foreground text-white'
       },
       success: {
         base: 'border-success/20 bg-success/5 text-success',
         description: 'text-success',
-        icon: 'text-success'
+        icon: 'rounded-full bg-success text-white'
       }
     }
   },
@@ -52,6 +53,7 @@ interface AlertProps extends React.ComponentProps<'div'>, VariantProps<typeof al
   icon?: IconType | false | null
   title?: string
   actions?: React.ReactNode
+  iconClassName?: string
 }
 
 const Alert: React.FC<AlertProps> = ({
@@ -59,6 +61,7 @@ const Alert: React.FC<AlertProps> = ({
   className,
   variant,
   icon = null,
+  iconClassName,
   children,
   title,
   ...props
@@ -69,13 +72,13 @@ const Alert: React.FC<AlertProps> = ({
   if (!icon) {
     switch (variant) {
       case 'destructive':
-        realIcon = Alert02Icon
+        realIcon = CancelCircleIcon
         break
       case 'info':
         realIcon = InformationCircleIcon
         break
       case 'warning':
-        realIcon = AlertSquareIcon
+        realIcon = AlertCircleIcon
         break
       default:
         realIcon = AlertCircleIcon
@@ -88,9 +91,9 @@ const Alert: React.FC<AlertProps> = ({
   return (
     <div className="m-1 w-full">
       <div data-slot="alert" role="alert" className={styles.base({ className })} {...props}>
-        {realIcon && <Icon icon={realIcon} className={styles.icon()} />}
+        {realIcon && <Icon icon={realIcon} className={cn(styles.icon(), iconClassName)} />}
 
-        <div className="flex-1 space-y-1.5">
+        <div className="flex-1 space-y-0.5">
           {title && <AlertTitle variant={variant}>{title}</AlertTitle>}
           {children && (
             <AlertDescription className={styles.description()}>{children}</AlertDescription>

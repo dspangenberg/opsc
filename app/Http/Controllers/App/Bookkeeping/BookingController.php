@@ -138,9 +138,11 @@ class BookingController extends Controller
             'document_number_range_prefix' => 'Belegkreis',
         ]);
 
+        $filename = now()->format('Y-m-d-H-i').'-opsc-export-buchungen.csv';
+
         return response()->streamDownload(function () use ($csvExporter) {
             echo $csvExporter->getWriter();
-        }, 'buchungen.csv', ['Content-Type' => 'text/csv']);
+        }, $filename, ['Content-Type' => 'text/csv']);
     }
 
     public function cancellation(BookkeepingBooking $booking): RedirectResponse
