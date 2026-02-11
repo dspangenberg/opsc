@@ -20,7 +20,13 @@ interface Props extends PageProps {
   contacts: App.Data.ContactData[]
 }
 
-type ProjectFormData = App.Data.ProjectData & {
+type ProjectFormData = Omit<
+  App.Data.ProjectData,
+  'project_category_id' | 'owner_contact_id' | 'manager_contact_id'
+> & {
+  project_category_id: number | null
+  owner_contact_id: number | null
+  manager_contact_id: number | null
   avatar: File | null
   remove_avatar: boolean
 }
@@ -31,12 +37,14 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
   const form = useForm<ProjectFormData>(
     'form-project-edit',
     project.id ? 'put' : 'post',
-    route(project.id ? 'app.project.update' : 'app.project.store', {
-      project: project.id,
-      _method: project.id ? 'put' : 'post'
-    }),
+    project.id
+      ? route('app.project.update', { project: project.id, _method: 'put' })
+      : route('app.project.store'),
     {
       ...project,
+      project_category_id: project.project_category_id || null,
+      owner_contact_id: project.owner_contact_id || null,
+      manager_contact_id: project.manager_contact_id || null,
       avatar: null,
       remove_avatar: false
     }
@@ -122,7 +130,6 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
             </div>
             <div className="col-span-6">
               <FormSelect
-                isRequired
                 label="Kategorie"
                 items={categories}
                 {...form.register('project_category_id')}

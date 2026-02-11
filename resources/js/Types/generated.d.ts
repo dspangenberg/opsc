@@ -307,6 +307,8 @@ invoice_contact_id: number;
 type_id: number;
 invoice_number: number | null;
 payment_deadline_id: number;
+document_id: number | null;
+is_external: boolean;
 issued_on: string;
 due_on: string | null;
 service_period_begin: string | null;

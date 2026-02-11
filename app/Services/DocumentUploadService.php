@@ -6,7 +6,6 @@ use App\Models\Document;
 use Exception;
 use Plank\Mediable\Facades\MediaUploader;
 use Smalot\PdfParser\Parser;
-use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Pdf;
 
 class DocumentUploadService

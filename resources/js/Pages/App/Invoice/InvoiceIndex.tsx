@@ -7,6 +7,7 @@ import {
   FilterIcon,
   FolderManagementIcon,
   MoreVerticalCircle01Icon,
+  Pdf01Icon,
   PrinterIcon,
   Tick01Icon
 } from '@hugeicons/core-free-icons'
@@ -192,7 +193,12 @@ const InvoiceIndex: React.FC = () => {
         <Button variant="toolbar" icon={PrinterIcon} title="Drucken" onClick={handleCreateReport} />
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} title="Weitere Optionen">
           <MenuItem icon={Add01Icon} title="Rechnung hinzufügen" ellipsis separator />
-          <MenuItem icon={PrinterIcon} title="Auswertung drucken" ellipsis />
+          <MenuItem
+            icon={Pdf01Icon}
+            title="Externe Rechnung hinzufügen"
+            ellipsis
+            href={route('app.invoice.add-external')}
+          />
         </DropdownButton>
       </Toolbar>
     ),

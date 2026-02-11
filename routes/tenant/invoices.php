@@ -13,6 +13,18 @@ Route::get('invoicing/invoices/create', [InvoiceController::class, 'create'])
 Route::get('invoicing/invoices', [InvoiceController::class, 'index'])
     ->name('app.invoice.index');
 
+Route::get('invoicing/invoices/add-external', [InvoiceController::class, 'addExternalInvoice'])
+    ->name('app.invoice.add-external');
+
+Route::get('invoicing/invoices/create-external/{document}', [InvoiceController::class, 'createExternalInvoice'])->name('app.invoice.create-external');
+
+Route::post('invoicing/invoices/store-external', [InvoiceController::class, 'storeExternalInvoice'])
+    ->middleware([HandlePrecognitiveRequests::class])
+    ->name('app.invoice.store-external');
+
+
+
+
 Route::get('invoicing/invoices/report', [InvoiceController::class, 'createReport'])
     ->name('app.invoice.report');
 
@@ -82,3 +94,4 @@ Route::post('invoicing/invoices/{invoice}/cancel', [InvoiceController::class, 'c
 
 Route::put('invoicing/invoices/bulk-mark-as-sent', [InvoiceController::class, 'bulkMarkAsSent'])
     ->name('app.invoice.bulk-mark-as-sent');
+

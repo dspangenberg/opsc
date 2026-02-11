@@ -289,7 +289,7 @@ class ContactController extends Controller
             $contact->createBookkeepingAccount($contact->debtor_number, $contact->tax_id);
         }
 
-        if ($oldTaxId !== $contact->tax_id) {
+        if ((int) $oldTaxId !== (int) $contact->tax_id) {
             if ($contact->debtor_number) {
                 $contact->setAccountTaxId($contact->debtor_number, $contact->tax_id);
             }
