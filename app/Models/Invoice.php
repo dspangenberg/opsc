@@ -100,6 +100,8 @@ class Invoice extends Model implements MediableInterface
         'service_period_end',
         'sent_at',
         'additional_text',
+        'is_external',
+        'document_id'
     ];
 
     protected $attributes = [
@@ -121,6 +123,24 @@ class Invoice extends Model implements MediableInterface
         'amount_open',
         'amount_paid',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'issued_on' => 'date',
+            'due_on' => 'date',
+            'sent_at' => 'datetime',
+            'recurring_begin_on' => 'date',
+            'recurring_end_on' => 'date',
+            'recurring_next_billing_date' => 'date',
+            'service_period_begin' => 'date',
+            'service_period_end' => 'date',
+            'is_loss_of_receivables' => 'boolean',
+            'is_draft' => 'boolean',
+            'is_external' => 'boolean',
+            'recurring_interval' => InvoiceRecurringEnum::class,
+        ];
+    }
 
     /**
      * @throws Exception
@@ -629,6 +649,11 @@ class Invoice extends Model implements MediableInterface
         return $this->hasOne(Contact::class, 'id', 'contact_id');
     }
 
+    public function document(): HasOne
+    {
+        return $this->hasOne(Contact::class, 'id', 'document_id');
+    }
+
     public function parent_invoice(): HasOne
     {
         return $this->hasOne(Invoice::class, 'id', 'parent_id');
@@ -690,20 +715,4 @@ class Invoice extends Model implements MediableInterface
         };
     }
 
-    protected function casts(): array
-    {
-        return [
-            'issued_on' => 'date',
-            'due_on' => 'date',
-            'sent_at' => 'datetime',
-            'recurring_begin_on' => 'date',
-            'recurring_end_on' => 'date',
-            'recurring_next_billing_date' => 'date',
-            'service_period_begin' => 'date',
-            'service_period_end' => 'date',
-            'is_loss_of_receivables' => 'boolean',
-            'is_draft' => 'boolean',
-            'recurring_interval' => InvoiceRecurringEnum::class,
-        ];
-    }
 }

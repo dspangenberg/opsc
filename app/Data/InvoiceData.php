@@ -29,6 +29,8 @@ class InvoiceData extends Data
         public readonly ?int $invoice_number,
 
         public readonly int $payment_deadline_id,
+        public readonly ?int $document_id,
+        public readonly bool $is_external,
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
         public readonly DateTime $issued_on,

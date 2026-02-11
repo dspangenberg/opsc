@@ -1,3 +1,5 @@
+// TODO: Änderungen in twc-ui überführen:
+// - Optional chaining bei items[0] -> items?.[0] (Zeile ~127) für sicheren Array-Zugriff
 import { ChevronsUpDown } from 'lucide-react'
 import type React from 'react'
 import { useCallback, useMemo, useState } from 'react'

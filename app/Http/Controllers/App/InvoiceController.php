@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\App;
 
 use App\Data\ContactData;
+use App\Data\DocumentData;
 use App\Data\InvoiceData;
 use App\Data\InvoiceTypeData;
 use App\Data\PaymentDeadlineData;
@@ -18,9 +19,11 @@ use App\Facades\WeasyPdfService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceDetailsBaseUpdateRequest;
 use App\Http\Requests\InvoiceReportRequest;
+use App\Http\Requests\InvoiceStoreExternalRequest;
 use App\Http\Requests\InvoiceStoreRequest;
 use App\Models\BookkeepingBooking;
 use App\Models\Contact;
+use App\Models\Document;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
 use App\Models\InvoiceType;
@@ -28,13 +31,17 @@ use App\Models\Payment;
 use App\Models\PaymentDeadline;
 use App\Models\Project;
 use App\Models\Tax;
+use App\Models\TaxRate;
 use App\Models\Time;
 use App\Models\Transaction;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Inertia\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 class InvoiceController extends Controller
@@ -381,9 +388,27 @@ class InvoiceController extends Controller
     /**
      * @throws Exception
      */
-    public function downloadPdf(Invoice $invoice): BinaryFileResponse
+    public function downloadPdf(Invoice $invoice): BinaryFileResponse | StreamedResponse
     {
         // $file = '/Invoicing/Invoices/'.$invoice->issued_on->format('Y').'/'.$invoice->filename;
+
+        if ($invoice->is_external) {
+            $document = Document::find($invoice->document_id);
+            $media = $document->firstMedia('file');
+            return response()->streamDownload(
+                function () use ($media) {
+                    $stream = $media->stream();
+                    while ($bytes = $stream->read(1024)) {
+                        echo $bytes;
+                    }
+                },
+                $document->filename,
+                [
+                    'Content-Type' => $media->mime_type,
+                    'Content-Length' => $media->size
+                ]
+            );
+        }
 
         $pdfFile = Invoice::createOrGetPdf($invoice, false);
 
@@ -552,6 +577,91 @@ class InvoiceController extends Controller
                 $payment->save();
             }
         });
+
+        return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
+    }
+
+    public function addExternalInvoice(): Response
+    {
+
+        $documentIds = Invoice::whereNotNull('document_id')->pluck('document_id') ?? [];
+
+        $documents = Document::where('document_type_id', 12)
+            ->with('contact')
+            ->whereNotIn('id', $documentIds)
+            ->with('project')
+            ->orderBy('issued_on')
+            ->paginate();
+
+        return Inertia::render('App/Invoice/InvoiceAddExternalInvoice')
+            ->with([
+                'documents' => DocumentData::collect($documents),
+            ]);
+    }
+
+    public function createExternalInvoice(Document $document): Response {
+
+        $document->load('contact');
+
+        $invoiceTypes = InvoiceType::query()->orderBy('is_default', 'DESC')->orderBy('display_name')->get();
+        $paymentDeadlines = PaymentDeadline::query()->orderBy('is_default', 'DESC')->orderBy('name')->get();
+        $taxes = Tax::query()->with('rates')->orderBy('is_default', 'DESC')->orderBy('name')->get();
+
+        $counter = Invoice::whereYear('issued_on', $document->issued_on->year)->max('invoice_number');
+        if ($counter == 0) {
+            $counter = $document->issued_on->year * 100000;
+        }
+
+        $counter++;
+
+        // Create new invoice with default values from loaded collections
+        $invoice = new Invoice;
+        $invoice->contact_id = $document->contact_id;
+        $invoice->type_id = $invoiceTypes->first()?->id ?? 0;
+        $invoice->is_draft = false;
+        $invoice->issued_on = $document->issued_on;
+        $invoice->invoice_contact_id = 0;
+        $invoice->project_id = $document->project_id ?? 0;
+        $invoice->payment_deadline_id = $document->contact->payment_deadline_id ?? $paymentDeadlines->first()?->id ?? 0;
+        $invoice->tax_id = $document->contact->tax_id ?? $taxes->first()?->id ?? 0;
+        $invoice->is_recurring = false;
+        $invoice->recurring_interval_days = 0;
+        $invoice->invoice_number = $counter;
+        $invoice->document_id = $document->id;
+        $invoice->is_external = true;
+
+        return Inertia::render('App/Invoice/InvoiceCreateExternal')
+            ->with([
+                'invoice' => InvoiceData::from($invoice),
+                'taxes' => TaxData::collect($taxes),
+                'payment_deadlines' => PaymentDeadlineData::collect($paymentDeadlines),
+                'document' => DocumentData::from($document),
+            ]);
+
+    }
+
+    public function storeExternalInvoice(InvoiceStoreExternalRequest $request): RedirectResponse {
+        $data = $request->safe()->except('amount');
+
+        $tax = Tax::find($request->validated('tax_id'));
+
+        $taxRate = TaxRate::find($tax->default_rate_id);
+        $invoice = Invoice::create($data);
+        $invoice->lines()->create([
+            'pos' => 1,
+            'type_id' => 3,
+            'text' => 'Externe Rechnung',
+            'amount' => $request->validated('amount'),
+            'tax_id' => $tax->id,
+            'tax' => $request->validated('amount') / 100 * $taxRate->rate,
+            'tax_rate_id' => $taxRate->id
+        ]);
+
+        $invoice->setDueDate();
+        $invoice->sent_at = $invoice->issued_on;
+        $invoice->save();
+
+        Invoice::createBooking($invoice);
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }

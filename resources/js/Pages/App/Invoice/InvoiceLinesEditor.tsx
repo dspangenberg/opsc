@@ -69,7 +69,6 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
       // If line exists in form with user input, keep form values; otherwise use context values
       return existingFormLine || line
     })
-    // @ts-expect-error - Circular reference in InvoiceLineData.linked_invoice
     form.setData('lines', mergedLines)
   }, [lines])
 

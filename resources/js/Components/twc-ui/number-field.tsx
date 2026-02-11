@@ -1,3 +1,6 @@
+// TODO: Änderungen in twc-ui überführen:
+// - onBlur Support zu NumberFieldProps hinzugefügt
+// - onBlur an NumberFieldInput übergeben (funktioniert noch nicht korrekt bei initialem Wert 0)
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import type * as React from 'react'
 import {
@@ -21,7 +24,22 @@ const defaultFormatOptions: Intl.NumberFormatOptions = {
   currency: 'EUR'
 }
 
-const NumberFieldInput = ({ className, ...props }: AriaInputProps) => {
+interface NumberFieldInputProps extends AriaInputProps {
+  onBlur?: () => void
+}
+
+const NumberFieldInput = ({ className, onBlur, ...props }: NumberFieldInputProps) => {
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    // Call both the native onBlur from props (if any) and our custom onBlur
+    const nativeOnBlur = (props as any).onBlur
+    if (nativeOnBlur) {
+      nativeOnBlur(e)
+    }
+    if (onBlur) {
+      onBlur()
+    }
+  }
+
   return (
     <AriaInput
       className={composeRenderProps(className, className =>
@@ -31,6 +49,7 @@ const NumberFieldInput = ({ className, ...props }: AriaInputProps) => {
         )
       )}
       onFocus={event => event.target.select()}
+      onBlur={handleBlur}
       {...props}
     />
   )
@@ -70,6 +89,7 @@ interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'value' | 'onChang
   value?: number | null | undefined
   errorMessage?: string | undefined
   name?: string
+  onBlur?: () => void
   errorComponent?: React.ComponentType<{
     children?: React.ReactNode | ((validation: ValidationResult) => React.ReactNode)
   }>
@@ -83,6 +103,7 @@ const NumberField = ({
   isRequired = false,
   isInvalid = false,
   onChange,
+  onBlur,
   errorMessage = '',
   errorComponent: ErrorComponent = FieldError,
   value,
@@ -117,7 +138,7 @@ const NumberField = ({
     >
       {label && <Label value={label} isRequired={isRequired} />}
       <FieldGroup isInvalid={hasError}>
-        <NumberFieldInput />
+        <NumberFieldInput onBlur={onBlur} />
         <NumberFieldSteppers />
       </FieldGroup>
       {description && (

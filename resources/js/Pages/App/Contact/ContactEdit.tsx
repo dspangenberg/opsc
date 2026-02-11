@@ -202,7 +202,7 @@ const ContactEdit: React.FC<Props> = ({
   )
 
   // Transform empty strings to null for optional ID fields before submit
-  form.transform(data => ({
+  form.transform((data: any) => ({
     ...data,
     outturn_account_id: !data.outturn_account_id ? null : data.outturn_account_id,
     cost_center_id: !data.cost_center_id ? null : data.cost_center_id
