@@ -651,7 +651,7 @@ class Invoice extends Model implements MediableInterface
 
     public function document(): HasOne
     {
-        return $this->hasOne(Contact::class, 'id', 'document_id');
+        return $this->hasOne(Document::class, 'id', 'document_id');
     }
 
     public function parent_invoice(): HasOne

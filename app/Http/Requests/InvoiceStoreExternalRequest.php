@@ -14,8 +14,8 @@ class InvoiceStoreExternalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'issued_on' => ['required', 'date', 'date_format:d.m.Y'],
-            'service_period_begin' => ['nullable', 'date', 'date_format:d.m.Y'],
+            'issued_on' => ['required', 'date_format:d.m.Y'],
+            'service_period_begin' => ['nullable', 'date_format:d.m.Y'],
             'service_period_end' => [
                 'nullable',
                 'required_with:service_period_begin',

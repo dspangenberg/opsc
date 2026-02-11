@@ -38,7 +38,7 @@ export const columns: ColumnDef<App.Data.DocumentData>[] = [
   },
   {
     accessorKey: 'filename',
-    header: 'Dateiname.',
+    header: 'Dateiname',
     size: 140,
     cell: ({ getValue }) => <span>{getValue() as string}</span>
   },

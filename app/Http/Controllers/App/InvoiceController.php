@@ -56,7 +56,7 @@ class InvoiceController extends Controller
             $year = $currentYear;
         }
 
-        if ($year && ! $years->contains($year)) {
+        if ($year && !$years->contains($year)) {
             $years->push($year);
         }
 
@@ -105,7 +105,10 @@ class InvoiceController extends Controller
 
         // Optimize by combining related data and reducing N+1 queries
         $invoices = Invoice::query()
-            ->with(['invoice_contact', 'contact', 'project', 'payment_deadline', 'type', 'booking', 'booking.range_document_number', 'booking.account_credit', 'booking.account_debit'])
+            ->with([
+                'invoice_contact', 'contact', 'project', 'payment_deadline', 'type', 'booking',
+                'booking.range_document_number', 'booking.account_credit', 'booking.account_debit'
+            ])
             ->view($view)
             ->withSum('lines', 'amount')
             ->withSum('lines', 'tax')
@@ -351,7 +354,7 @@ class InvoiceController extends Controller
 
     public function markAsSent(Invoice $invoice)
     {
-        if (! $invoice->sent_at) {
+        if (!$invoice->sent_at) {
             $invoice->sent_at = now();
             $invoice->save();
 
@@ -361,14 +364,15 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function bulkMarkAsSent(Request $request) {
+    public function bulkMarkAsSent(Request $request)
+    {
         $ids = $request->input('ids');
         $ids = $ids ? explode(',', $ids) : [];
 
         $invoices = Invoice::query()->whereIn('id', $ids)->get();
 
         foreach ($invoices as $invoice) {
-            if (! $invoice->sent_at) {
+            if (!$invoice->sent_at) {
                 $invoice->sent_at = now();
                 $invoice->save();
             }
@@ -377,7 +381,7 @@ class InvoiceController extends Controller
                 ->where('bookable_id', $invoice->id)
                 ->exists();
 
-            if (! $hasBooking) {
+            if (!$hasBooking) {
                 Invoice::createBooking($invoice);
             }
         }
@@ -388,13 +392,19 @@ class InvoiceController extends Controller
     /**
      * @throws Exception
      */
-    public function downloadPdf(Invoice $invoice): BinaryFileResponse | StreamedResponse
+    public function downloadPdf(Invoice $invoice): BinaryFileResponse|StreamedResponse
     {
         // $file = '/Invoicing/Invoices/'.$invoice->issued_on->format('Y').'/'.$invoice->filename;
 
         if ($invoice->is_external) {
             $document = Document::find($invoice->document_id);
+            if (!$document) {
+                abort(404, 'Document not found');
+            }
             $media = $document->firstMedia('file');
+            if (!$media) {
+                abort(404, 'Document file not found');
+            }
             return response()->streamDownload(
                 function () use ($media) {
                     $stream = $media->stream();
@@ -445,7 +455,7 @@ class InvoiceController extends Controller
 
     public function createBooking(Invoice $invoice)
     {
-        if (! $invoice->sent_at) {
+        if (!$invoice->sent_at) {
             $invoice->sent_at = now();
             $invoice->save();
         }
@@ -523,8 +533,9 @@ class InvoiceController extends Controller
             ->where('counter_account_id', $invoice->contact->debtor_number)
             ->whereRaw('amount - COALESCE((SELECT SUM(amount) FROM payments WHERE transaction_id = transactions.id), 0) > 0.01')
             ->where('is_locked', true)
-            ->whereBetween('booked_on', [$invoice->issued_on->copy()->subMonths(2), $invoice->issued_on->copy()->addMonths(2)])
-        ->get();
+            ->whereBetween('booked_on',
+                [$invoice->issued_on->copy()->subMonths(2), $invoice->issued_on->copy()->addMonths(2)])
+            ->get();
 
         $invoice
             ->load('invoice_contact')
@@ -599,7 +610,8 @@ class InvoiceController extends Controller
             ]);
     }
 
-    public function createExternalInvoice(Document $document): Response {
+    public function createExternalInvoice(Document $document): Response
+    {
 
         $document->load('contact');
 
@@ -640,12 +652,13 @@ class InvoiceController extends Controller
 
     }
 
-    public function storeExternalInvoice(InvoiceStoreExternalRequest $request): RedirectResponse {
+    public function storeExternalInvoice(InvoiceStoreExternalRequest $request): RedirectResponse
+    {
         $data = $request->safe()->except('amount');
 
-        $tax = Tax::find($request->validated('tax_id'));
+        $tax = Tax::findOrFail($request->validated('tax_id'));
 
-        $taxRate = TaxRate::find($tax->default_rate_id);
+        $taxRate = TaxRate::findOrFail($tax->default_rate_id);
         $invoice = Invoice::create($data);
         $invoice->lines()->create([
             'pos' => 1,
@@ -688,9 +701,11 @@ class InvoiceController extends Controller
             ->withSum('lines', 'amount')
             ->withSum('lines', 'tax')
             ->withSum('payable', 'amount')
-            ->with(['payable' => function ($query) {
-                $query->orderBy('issued_on', 'asc');
-            }])
+            ->with([
+                'payable' => function ($query) {
+                    $query->orderBy('issued_on', 'asc');
+                }
+            ])
             ->with('payable.transaction')
             ->whereBetween('issued_on', [$request->validated('begin_on'), $request->validated('end_on')])
             ->orderBy('issued_on', 'asc')
