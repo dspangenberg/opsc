@@ -122,6 +122,7 @@ class Invoice extends Model implements MediableInterface
         'amount_gross',
         'amount_open',
         'amount_paid',
+        'document_number'
     ];
 
     protected function casts(): array
@@ -446,11 +447,16 @@ class Invoice extends Model implements MediableInterface
     {
 
         $invoice->load('range_document_number');
-        if (! $invoice->range_document_number) {
+
+        ds($invoice->range_document_number->toArray());
+
+        if (! $invoice->range_document_number || $invoice->range_document_number->number_range_id !== 1) {
             $invoice->number_range_document_numbers_id = NumberRange::createDocumentNumber($invoice,
                 'issued_on');
             $invoice->save();
         }
+
+        ds($invoice->toArray());
 
         $booking = BookkeepingBooking::whereMorphedTo('bookable', Invoice::class)->where('bookable_id',
             $invoice->id)->first();

@@ -318,7 +318,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
                 <MenuItem
                   icon={UnavailableIcon}
                   title="Als Forderungsverlust markieren"
-                  onClick={handleLostOfReceivables}
+                  onAction={handleLostOfReceivables}
                   isDisabled={invoice.is_draft}
                 />
               </Menu>
