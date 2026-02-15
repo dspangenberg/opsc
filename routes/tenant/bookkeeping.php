@@ -71,3 +71,6 @@ Route::put('bookkeeping/bookings/confirm', [BookingController::class, 'confirm']
 
 Route::delete('bookkeeping/receipts/bulk-delete', [ReceiptController::class, 'bulkDelete'])
     ->name('app.bookkeeping.receipts.bulk-delete');
+
+Route::put('bookkeeping/bookings/{booking}/edit-accounts', [BookingController::class, 'editAccounts'])
+   ->middleware([HandlePrecognitiveRequests::class])->name('app.bookkeeping.bookings.edit-accounts');

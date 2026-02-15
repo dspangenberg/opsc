@@ -25,63 +25,79 @@ const currencyFormatter = new Intl.NumberFormat('de-DE', {
   maximumFractionDigits: 2
 })
 
-const handleConfirmClicked = async (row: App.Data.BookkeepingBookingData) => {
-  router.get(route('app.bookkeeping.transactions.confirm', { _query: { ids: row.id } }), {
-    preserveScroll: true
-  })
+interface ColumnOptions {
+  onEditAccounts?: (row: App.Data.BookkeepingBookingData) => void
+  currentFilters?: any
+  currentSearch?: string
 }
 
-const handleCancelClicked = async (row: App.Data.BookkeepingBookingData) => {
-  const confirmed = await AlertDialog.call({
-    title: 'Ausgewählte Buchung stornieren',
-    message: `Möchtest Du die Buchung  (${row.document_number}) wirklich stornieren?`,
-    buttonTitle: 'Stornieren'
-  })
-  if (confirmed) {
-    router.put(
-      route('app.bookkeeping.bookings.cancel', { booking: row.id }),
-      {},
-      {
-        preserveScroll: true
-      }
+export const createColumns = (
+  options?: ColumnOptions
+): ColumnDef<App.Data.BookkeepingBookingData>[] => {
+  const handleConfirmClicked = async (row: App.Data.BookkeepingBookingData) => {
+    router.put(route('app.bookkeeping.bookings.confirm', { _query: { ids: row.id } }), {
+      preserveScroll: true
+    })
+  }
+
+  const handleCancelClicked = async (row: App.Data.BookkeepingBookingData) => {
+    const confirmed = await AlertDialog.call({
+      title: 'Ausgewählte Buchung stornieren',
+      message: `Möchtest Du die Buchung  (${row.document_number}) wirklich stornieren?`,
+      buttonTitle: 'Stornieren'
+    })
+    if (confirmed) {
+      router.put(
+        route('app.bookkeeping.bookings.cancel', { booking: row.id }),
+        {},
+        {
+          preserveScroll: true
+        }
+      )
+    }
+  }
+
+  const RowActions = ({ row }: { row: Row<App.Data.BookkeepingBookingData> }) => {
+    return (
+      <div className="mx-auto">
+        <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
+          <MenuItem
+            icon={Tick01Icon}
+            title="Buchung als bestätigt markieren"
+            isDisabled={row.original.is_locked}
+            separator
+            onAction={() => handleConfirmClicked(row.original)}
+          />
+          <MenuItem
+            icon={CancelCircleHalfDotIcon}
+            separator
+            title="Buchung stornieren"
+            isDisabled={!!row.original.canceled_id || row.original.is_canceled}
+            onAction={() => handleCancelClicked(row.original)}
+          />
+          <MenuItem
+            icon={CancelCircleHalfDotIcon}
+            separator
+            title="Konten bearbeiten"
+            onAction={() => options?.onEditAccounts?.(row.original)}
+          />
+        </DropdownButton>
+      </div>
     )
   }
-}
 
-const RowActions = ({ row }: { row: Row<App.Data.BookkeepingBookingData> }) => {
-  return (
-    <div className="mx-auto">
-      <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
-        <MenuItem
-          icon={Tick01Icon}
-          title="Buchung als bestätigt markieren"
-          isDisabled={row.original.is_locked}
-          separator
-          onAction={() => handleConfirmClicked(row.original)}
-        />
-        <MenuItem
-          icon={CancelCircleHalfDotIcon}
-          title="Buchung stornieren"
-          isDisabled={!!row.original.canceled_id || row.original.is_canceled}
-          onAction={() => handleCancelClicked(row.original)}
-        />
-      </DropdownButton>
-    </div>
-  )
-}
+  const accountIndexUrl = (accountNumber: number, filters?: any) => {
+    if (!accountNumber) return '#'
 
-const accountIndexUrl = (accountNumber: number, filters?: any) => {
-  if (!accountNumber) return '#'
+    const params: any = { accountNumber }
+    if (filters?.filters?.issuedBetween) {
+      params._query = { filters }
+    }
 
-  const params: any = { accountNumber }
-  if (filters?.filters?.issuedBetween) {
-    params._query = { filters }
+    return route('app.bookkeeping.bookings.account', params)
   }
 
-  return route('app.bookkeeping.bookings.account', params)
-}
-
-export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBookingData>[] => [
+  return [
   {
     id: 'select',
     size: 30,
@@ -195,7 +211,7 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
       <TooltipTrigger>
         <Focusable aria-label="Gegenkonto">
           <Link
-            href={accountIndexUrl(row.original.counter_account as number, filters)}
+            href={accountIndexUrl(row.original.counter_account as number, options?.currentFilters)}
             className="truncate hover:underline"
           >
             {row.original.counter_account}
@@ -294,7 +310,8 @@ export const createColumns = (filters?: any): ColumnDef<App.Data.BookkeepingBook
     cell: ({ row }) => <RowActions row={row} />,
     enableHiding: false
   }
-]
+  ]
+}
 
 // Backward compatibility export
 export const columns = createColumns()
