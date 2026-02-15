@@ -56,11 +56,7 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
     }),
     {
       ...invoice,
-      lines: lines.map(line => ({
-        ...line,
-        linked_invoice: null
-      })),
-      parent_invoice: null
+      lines
     }
   )
 
@@ -71,11 +67,7 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
     const mergedLines = lines.map((line, index) => {
       const existingFormLine = currentFormLines.find(fl => fl.id === line.id)
       // If line exists in form with user input, keep form values; otherwise use context values
-      const resultLine = existingFormLine || line
-      return {
-        ...resultLine,
-        linked_invoice: null
-      }
+      return existingFormLine || line
     })
     form.setData('lines', mergedLines)
   }, [lines])
@@ -96,7 +88,6 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
       // Update pos values to reflect new order
       const updatedLines = newLines.map((line, index) => ({
         ...line,
-        linked_invoice: null,
         pos: line.type_id === 9 ? 999 : index
       }))
 

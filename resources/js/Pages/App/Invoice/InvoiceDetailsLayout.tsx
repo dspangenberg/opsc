@@ -69,7 +69,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
         url: route('app.invoice.index')
       },
       {
-        title: String(year()),
+        title: year(),
         url: route('app.invoice.index', { year: year() })
       },
       {
@@ -146,7 +146,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
       variant: 'destructive'
     })
     if (promise) {
-      router.put(route('app.invoice.set-loss-of-receivables', { invoice: invoice.id }))
+      router.put(route('set-loss-of-receivables', { invoice: invoice.id }))
     }
   }
 
@@ -318,7 +318,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
                 <MenuItem
                   icon={UnavailableIcon}
                   title="Als Forderungsverlust markieren"
-                  onAction={handleLostOfReceivables}
+                  onClick={handleLostOfReceivables}
                   isDisabled={invoice.is_draft}
                 />
               </Menu>

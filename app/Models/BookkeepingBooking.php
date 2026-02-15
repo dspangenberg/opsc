@@ -62,7 +62,7 @@ class BookkeepingBooking extends Model
         'document_number_range_prefix',
     ];
 
-    public function scopeSearch(Builder $query, $search): Builder
+    public function scopeSearch($query, $search): Builder
     {
         $search = trim($search);
         if ($search) {
@@ -368,7 +368,7 @@ class BookkeepingBooking extends Model
             $booking->date = $parent[$dateField];
         }
 
-        if (! $booking->number_range_document_numbers_id !== $parent->number_range_document_numbers_id) {
+        if (! $booking->number_range_document_numbers_id) {
             $booking->number_range_document_numbers_id = $parent->number_range_document_numbers_id;
         }
 
