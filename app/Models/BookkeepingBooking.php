@@ -368,7 +368,7 @@ class BookkeepingBooking extends Model
             $booking->date = $parent[$dateField];
         }
 
-        if (! $booking->number_range_document_numbers_id != $parent->number_range_document_numbers_id) {
+        if (!$booking->number_range_document_numbers_id  ||  $booking->number_range_document_numbers_id != $parent->number_range_document_numbers_id) {
             $booking->number_range_document_numbers_id = $parent->number_range_document_numbers_id;
         }
 
