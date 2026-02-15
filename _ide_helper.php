@@ -30277,6 +30277,27 @@ namespace Illuminate\Testing {
         }
 
         /**
+         * @see \Inertia\Testing\TestResponseMacros::assertInertiaFlash()
+         * @param string $key
+         * @param mixed|null $expected
+         * @static
+         */
+        public static function assertInertiaFlash($key, $expected = null)
+        {
+            return \Illuminate\Testing\TestResponse::assertInertiaFlash($key, $expected);
+        }
+
+        /**
+         * @see \Inertia\Testing\TestResponseMacros::assertInertiaFlashMissing()
+         * @param string $key
+         * @static
+         */
+        public static function assertInertiaFlashMissing($key)
+        {
+            return \Illuminate\Testing\TestResponse::assertInertiaFlashMissing($key);
+        }
+
+        /**
          * @see \LaraDumps\LaraDumps\LaraDumpsServiceProvider::registerMacros()
          * @static
          */

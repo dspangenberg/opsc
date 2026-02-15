@@ -52,6 +52,7 @@ class InvoiceData extends Data
         public readonly ?string $vat_id,
         public readonly ?string $address,
         public readonly ?string $filename,
+        public readonly ?string $document_number,
 
         public readonly ?BookkeepingBookingData $booking,
 

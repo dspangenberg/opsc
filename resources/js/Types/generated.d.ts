@@ -320,6 +320,7 @@ service_provision: string | null;
 vat_id: string | null;
 address: string | null;
 filename: string | null;
+document_number: string | null;
 booking: App.Data.BookkeepingBookingData | null;
 invoice_address: Array<any>;
 formated_invoice_number: string;

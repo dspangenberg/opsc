@@ -40,6 +40,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use Momentum\Modal\Modal;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
@@ -481,7 +482,7 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function addOnAccountInvoice(Invoice $invoice): Response
+    public function addOnAccountInvoice(Invoice $invoice): Modal
     {
         $linkedInvoiceIds = InvoiceLine::whereNotNull('linked_invoice_id')
             ->pluck('linked_invoice_id')

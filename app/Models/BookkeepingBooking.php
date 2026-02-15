@@ -62,7 +62,7 @@ class BookkeepingBooking extends Model
         'document_number_range_prefix',
     ];
 
-    public function scopeSearch(Builder $query, $search): Builder
+    public function scopeSearch($query, $search): Builder
     {
         $search = trim($search);
         if ($search) {

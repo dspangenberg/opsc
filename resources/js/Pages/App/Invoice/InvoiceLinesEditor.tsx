@@ -48,6 +48,14 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
     })
   )
 
+  // Helper function to remove circular references from lines
+  const sanitizeLines = (linesToSanitize: App.Data.InvoiceLineData[]) => {
+    return linesToSanitize.map(line => {
+      const { linked_invoice, ...rest } = line
+      return rest
+    })
+  }
+
   const form = useForm(
     'app.invoice.lines-update',
     'put',
@@ -56,10 +64,7 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
     }),
     {
       ...invoice,
-      lines: lines.map(line => ({
-        ...line,
-        linked_invoice: null
-      })),
+      lines: sanitizeLines(lines) as any,
       parent_invoice: null
     }
   )
@@ -69,15 +74,11 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
     // Merge current form values with new lines structure to preserve user input
     const currentFormLines = form.data.lines || []
     const mergedLines = lines.map((line, index) => {
-      const existingFormLine = currentFormLines.find(fl => fl.id === line.id)
+      const existingFormLine = currentFormLines.find((fl: any) => fl.id === line.id)
       // If line exists in form with user input, keep form values; otherwise use context values
-      const resultLine = existingFormLine || line
-      return {
-        ...resultLine,
-        linked_invoice: null
-      }
+      return existingFormLine || line
     })
-    form.setData('lines', mergedLines)
+    form.setData('lines', sanitizeLines(mergedLines) as any)
   }, [lines])
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -96,13 +97,12 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
       // Update pos values to reflect new order
       const updatedLines = newLines.map((line, index) => ({
         ...line,
-        linked_invoice: null,
         pos: line.type_id === 9 ? 999 : index
       }))
 
       // Update both the context state and form data
-      setLines(updatedLines)
-      form.setData('lines', updatedLines)
+      setLines(updatedLines as any)
+      form.setData('lines', updatedLines as any)
     }
   }
 
