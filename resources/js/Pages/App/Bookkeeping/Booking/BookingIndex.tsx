@@ -7,7 +7,7 @@ import {
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { DataTable } from '@/Components/DataTable'
+import { DataTable, type DataTableRef } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
 import { Button } from '@/Components/twc-ui/button'
@@ -39,6 +39,8 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({
   const [search, setSearch] = useState(currentSearch)
   const [filters, setFilters] = useState<FilterConfig>(currentFilters)
   const columns = useMemo(() => createColumns(filters), [filters])
+
+  const tableRef = useRef<DataTableRef>(null)
 
   const { handleDownload } = useFileDownload({
     route: route('app.bookkeeping.bookings.export', { filters: filters })
@@ -137,7 +139,8 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({
             {
               preserveScroll: true,
               preserveState: true,
-              replace: true
+              replace: true,
+              onSuccess: () => tableRef.current?.resetRowSelection()
             }
           )
         }
@@ -164,7 +167,8 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({
             {
               preserveScroll: true,
               preserveState: true,
-              replace: true
+              replace: true,
+              onSuccess: () => tableRef.current?.resetRowSelection()
             }
           )
         }
@@ -232,6 +236,7 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({
         columns={columns}
         actionBar={actionBar}
         filterBar={filterBar}
+        ref={tableRef}
         onSelectedRowsChange={setSelectedRows}
         data={bookings.data}
         footer={footer}

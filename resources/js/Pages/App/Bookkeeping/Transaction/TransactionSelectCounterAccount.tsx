@@ -84,7 +84,7 @@ const TransactionSelectCounterAccountComponent: React.FC<
 
 interface TransactionSelectCounterAccountDialogCallParams {
   accounts: App.Data.BookkeepingAccountData[]
-  transaction: App.Data.TransactionData
+  transaction?: App.Data.TransactionData
 }
 
 export const TransactionSelectCounterAccountDialog = {

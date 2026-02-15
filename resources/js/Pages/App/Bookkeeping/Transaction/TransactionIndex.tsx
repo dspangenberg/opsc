@@ -4,13 +4,14 @@ import {
   FileExportIcon,
   FileScriptIcon,
   MoreVerticalCircle01Icon,
+  ProfileIcon,
   Tick01Icon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import { sumBy } from 'lodash'
 import * as React from 'react'
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { DataTable } from '@/Components/DataTable'
+import { DataTable, type DataTableRef } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
 import { Button } from '@/Components/twc-ui/button'
@@ -118,7 +119,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
 
   const breadcrumbs = useMemo(() => [{ title: 'Buchhaltung' }], [])
 
-  const handeSetCounterAccountAction = async (transaction: App.Data.TransactionData) => {
+  const handleSetCounterAccountAction = async (transaction: App.Data.TransactionData) => {
     const promise = await TransactionSelectCounterAccountDialog.call({
       transaction,
       accounts: bookkeeping_accounts
@@ -139,10 +140,37 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
     }
   }
 
+  const handleBulkSetCounterAccountAction = async () => {
+    const promise = await TransactionSelectCounterAccountDialog.call({
+      accounts: bookkeeping_accounts
+    })
+    if (promise !== false) {
+      router.put(
+        route('app.bookkeeping.transactions.set-counter-account', {
+          _query: {
+            ids: selectedRows
+              .filter(row => row.id != null)
+              .map(row => row.id)
+              .join(','),
+            counter_account: promise
+          }
+        }),
+        {
+          filters
+        },
+        {
+          only: ['transactions'],
+          preserveScroll: true,
+          onSuccess: () => tableRef.current?.resetRowSelection()
+        }
+      )
+    }
+  }
+
   const columns = useMemo(
     () =>
       createColumns({
-        onSetCounterAccountAction: handeSetCounterAccountAction,
+        onSetCounterAccountAction: handleSetCounterAccountAction,
         currentFilters: filters,
         currentSearch: search,
         bankAccountId: bank_account.id as number
@@ -162,7 +190,8 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
         search
       },
       {
-        preserveScroll: true
+        preserveScroll: true,
+        onSuccess: () => tableRef.current?.resetRowSelection()
       }
     )
   }
@@ -177,7 +206,8 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
         search
       },
       {
-        preserveScroll: true
+        preserveScroll: true,
+        onSuccess: () => tableRef.current?.resetRowSelection()
       }
     )
   }
@@ -262,6 +292,14 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
           title="als bestätigt markieren"
           onClick={handleBulkConfirmationClicked}
         />
+
+        <Button
+          variant="ghost"
+          size="auto"
+          icon={ProfileIcon}
+          title="Gegenkonto festlegen"
+          onClick={handleBulkSetCounterAccountAction}
+        />
         <Button
           variant="ghost"
           size="auto"
@@ -275,6 +313,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
   }, [selectedRows, selectedAmount])
 
   const footer = useMemo(() => <Pagination data={transactions} />, [transactions])
+  const tableRef = useRef<DataTableRef>(null)
 
   const filterBar = useMemo(
     () => (
@@ -314,6 +353,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
       toolbar={toolbar}
     >
       <DataTable<App.Data.TransactionData, unknown>
+        ref={tableRef}
         columns={columns}
         actionBar={actionBar}
         onSelectedRowsChange={setSelectedRows}
