@@ -11,6 +11,7 @@ use App\Data\BookkeepingAccountData;
 use App\Data\BookkeepingBookingData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CorrectBookingsRequest;
+use App\Http\Requests\CorrectEditBookingsRequest;
 use App\Models\BookkeepingAccount;
 use App\Models\BookkeepingBooking;
 use Exception;
@@ -63,6 +64,7 @@ class BookingController extends Controller
         $filters = [];
 
         $account = BookkeepingAccount::query()->where('account_number', $accountNumber)->first();
+        $accounts = BookkeepingAccount::query()->orderBy('account_number')->get();
 
         // Extrahiere Datumsfilter aus dem Request
         $parsedFilters = (new BookkeepingBooking)->getParsedFilters($request);
@@ -92,6 +94,7 @@ class BookingController extends Controller
 
         return Inertia::render('App/Bookkeeping/Booking/BookingIndexForAccount', [
             'bookings' => BookkeepingBookingData::collect($bookings),
+            'accounts' => BookkeepingAccountData::collect($accounts),
             'account' => BookkeepingAccountData::from($account),
             'accountNumber' => $accountNumber,
             'currentSearch' => $search,
@@ -190,6 +193,38 @@ class BookingController extends Controller
             ->update(['is_locked' => true]);
 
         return back();
+    }
+
+    public function editAccounts(CorrectEditBookingsRequest $request, BookkeepingBooking $booking): RedirectResponse
+    {
+        if ($booking->is_locked || $booking->is_canceled) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => 'Gesperrte oder stornierte Buchungen können nicht bearbeitet werden.']);
+            return back();
+        }
+
+        $booking->account_id_credit = $request->validated('account_id_credit');
+        $booking->account_id_debit = $request->validated('account_id_debit');
+        $booking->save();
+
+        $queryParams = [];
+        if ($request->has('filters')) {
+            $queryParams['filters'] = $request->input('filters');
+        }
+        if ($request->has('search')) {
+            $queryParams['search'] = $request->input('search');
+        }
+        if ($request->has('page')) {
+            $queryParams['page'] = $request->input('page');
+        }
+
+        if ($request->has('accountNumber')) {
+            return redirect()->route('app.bookkeeping.bookings.account', [
+                'accountNumber' => $request->input('accountNumber'),
+                ...$queryParams
+            ]);
+        }
+
+        return redirect()->route('app.bookkeeping.bookings.index', $queryParams);
     }
 
     public function correctBookings(CorrectBookingsRequest $request): RedirectResponse

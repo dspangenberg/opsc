@@ -18,6 +18,7 @@ import { Toolbar } from '@/Components/twc-ui/toolbar'
 import { Badge } from '@/Components/ui/badge'
 import { useFileDownload } from '@/Hooks/use-file-download'
 import type { FilterConfig } from '@/Lib/FilterHelper'
+import { BookingEditAccounts } from '@/Pages/App/Bookkeeping/Booking/BookingEditAccounts'
 import { BookingIndexFilterForm } from '@/Pages/App/Bookkeeping/Booking/BookingIndexFilterForm'
 import type { PageProps } from '@/Types'
 import { createColumns } from './BookingIndexColumns'
@@ -38,7 +39,6 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({
   const [selectedRows, setSelectedRows] = useState<App.Data.BookkeepingBookingData[]>([])
   const [search, setSearch] = useState(currentSearch)
   const [filters, setFilters] = useState<FilterConfig>(currentFilters)
-  const columns = useMemo(() => createColumns(filters), [filters])
 
   const tableRef = useRef<DataTableRef>(null)
 
@@ -224,6 +224,44 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({
     ),
     [search, accounts, filters]
   )
+
+  const handleEditAccounts = useCallback(
+    async (row: App.Data.BookkeepingBookingData) => {
+      const result = await BookingEditAccounts.call({
+        booking: row,
+        accounts
+      })
+      if (result === false) return
+      const { account_id_credit, account_id_debit } = result
+
+      router.put(
+        route('app.bookkeeping.bookings.edit-accounts', { booking: row.id }),
+        {
+          account_id_credit,
+          account_id_debit,
+          filters: filters as any,
+          search: search,
+          page: bookings.current_page
+        },
+        {
+          preserveScroll: true,
+          only: ['bookings']
+        }
+      )
+    },
+    [accounts, filters, search, bookings.current_page]
+  )
+
+  const columns = useMemo(
+    () =>
+      createColumns({
+        onEditAccounts: handleEditAccounts,
+        currentFilters: filters,
+        currentSearch: search
+      }),
+    [filters, search, handleEditAccounts]
+  )
+
   return (
     <PageContainer
       title="Buchungen"

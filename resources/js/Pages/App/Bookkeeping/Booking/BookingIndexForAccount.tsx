@@ -6,8 +6,8 @@ import {
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
-import { useMemo, useState } from 'react'
-import { DataTable } from '@/Components/DataTable'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { DataTable, type DataTableRef } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
 import { Button } from '@/Components/twc-ui/button'
@@ -17,12 +17,14 @@ import { Toolbar } from '@/Components/twc-ui/toolbar'
 import { Badge } from '@/Components/ui/badge'
 import { useFileDownload } from '@/Hooks/use-file-download'
 import type { FilterConfig } from '@/Lib/FilterHelper'
+import { BookingEditAccounts } from '@/Pages/App/Bookkeeping/Booking/BookingEditAccounts'
 import { BookingIndexForAccountFilterForm } from '@/Pages/App/Bookkeeping/Booking/BookingIndexForAccountFilterForm'
 import type { PageProps } from '@/Types'
 import { createColumns } from './BookingIndexForAccountColumns'
 
 interface TransactionsPageProps extends PageProps {
   bookings: App.Data.Paginated.PaginationMeta<App.Data.BookkeepingBookingData[]>
+  accounts: App.Data.BookkeepingAccountData[]
   currentSearch?: string
   currentFilters?: FilterConfig
   account: App.Data.BookkeepingAccountData
@@ -30,6 +32,7 @@ interface TransactionsPageProps extends PageProps {
 
 const BookingIndexForAccount: React.FC<TransactionsPageProps> = ({
   account,
+  accounts,
   bookings,
   currentFilters = { filters: {}, boolean: 'AND' },
   currentSearch
@@ -37,7 +40,7 @@ const BookingIndexForAccount: React.FC<TransactionsPageProps> = ({
   const [selectedRows, setSelectedRows] = useState<App.Data.BookkeepingBookingData[]>([])
   const [search, _setSearch] = useState(currentSearch)
   const [filters, setFilters] = useState<FilterConfig>(currentFilters)
-  const columns = useMemo(() => createColumns(filters), [filters])
+  const tableRef = useRef<DataTableRef>(null)
 
   const { handleDownload } = useFileDownload({
     route: route('app.bookkeeping.bookings.export', { filters: filters })
@@ -182,6 +185,44 @@ const BookingIndexForAccount: React.FC<TransactionsPageProps> = ({
     )
   }, [selectedRows.length])
 
+  const handleEditAccounts = useCallback(
+    async (row: App.Data.BookkeepingBookingData) => {
+      const result = await BookingEditAccounts.call({
+        booking: row,
+        accounts
+      })
+      if (result === false) return
+      const { account_id_credit, account_id_debit } = result
+
+      router.put(
+        route('app.bookkeeping.bookings.edit-accounts', { booking: row.id }),
+        {
+          account_id_credit,
+          account_id_debit,
+          filters: filters as any,
+          search: search,
+          accountNumber: account.account_number,
+          page: bookings.current_page
+        },
+        {
+          preserveScroll: true,
+          only: ['bookings']
+        }
+      )
+    },
+    [accounts, filters, search, account.account_number, bookings.current_page]
+  )
+
+  const columns = useMemo(
+    () =>
+      createColumns({
+        onEditAccounts: handleEditAccounts,
+        currentFilters: filters,
+        currentSearch: search
+      }),
+    [filters, search, handleEditAccounts]
+  )
+
   const footer = useMemo(() => <Pagination data={bookings} />, [bookings])
   const filterBar = useMemo(
     () => (
@@ -203,6 +244,7 @@ const BookingIndexForAccount: React.FC<TransactionsPageProps> = ({
         columns={columns}
         actionBar={actionBar}
         filterBar={filterBar}
+        ref={tableRef}
         onSelectedRowsChange={setSelectedRows}
         data={bookings.data}
         footer={footer}
