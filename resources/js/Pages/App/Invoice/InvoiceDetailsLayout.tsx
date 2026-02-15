@@ -26,6 +26,7 @@ import { Menu, MenuItem, MenuPopover, MenuSubTrigger } from '@/Components/twc-ui
 import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
 import { Tab, TabList, Tabs } from '@/Components/twc-ui/tabs'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
+import { Badge } from '@/Components/ui/badge'
 import { useFileDownload } from '@/Hooks/use-file-download'
 import { InvoiceTableProvider, useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 
@@ -36,12 +37,12 @@ interface Props {
 
 const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => {
   const onPrintPdf = () => {
-    print(route('app.invoice.pdf', { id: invoice.id }))
+    print(route('app.invoice.pdf', { invoice: invoice.id }))
   }
 
   const onShowPdf = async () => {
     await PdfViewer.call({
-      file: route('app.invoice.pdf', { id: invoice.id }),
+      file: route('app.invoice.pdf', { invoice: invoice.id }),
       filename: invoice.filename || 'invoice.pdf'
     })
   }
@@ -72,16 +73,16 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
   const title = `RG-${invoice.formated_invoice_number}`
 
   const { handleDownload } = useFileDownload({
-    route: route('app.invoice.pdf', { id: invoice.id }),
+    route: route('app.invoice.pdf', { invoice: invoice.id }),
     filename: invoice.filename || 'invoice.pdf'
   })
 
   const handleDuplicate = () => {
-    router.get(route('app.invoice.duplicate', { id: invoice.id }))
+    router.get(route('app.invoice.duplicate', { invoice: invoice.id }))
   }
 
   const handlePaymentCreateClicked = () => {
-    router.visit(route('app.invoice.create.payment', { id: invoice.id }))
+    router.visit(route('app.invoice.create.payment', { invoice: invoice.id }))
   }
 
   const handleRelease = useCallback(async () => {
@@ -93,7 +94,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
     })
 
     if (promise) {
-      router.post(route('app.invoice.release', { id: invoice.id }))
+      router.post(route('app.invoice.release', { invoice: invoice.id }))
     }
   }, [invoice.id])
 
@@ -104,16 +105,16 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
       buttonTitle: 'Rechnung löschen'
     })
     if (promise) {
-      router.delete(route('app.invoice.delete', { id: invoice.id }))
+      router.delete(route('app.invoice.delete', { invoice: invoice.id }))
     }
   }
 
   const handleMarkAsSent = () => {
-    router.post(route('app.invoice.mark-as-sent', { id: invoice.id }))
+    router.post(route('app.invoice.mark-as-sent', { invoice: invoice.id }))
   }
 
   const handleUnrelease = () => {
-    router.post(route('app.invoice.unrelease', { id: invoice.id }))
+    router.post(route('app.invoice.unrelease', { invoice: invoice.id }))
   }
 
   const handleCancel = async () => {
@@ -124,7 +125,19 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
       variant: 'destructive'
     })
     if (promise) {
-      router.post(route('app.invoice.cancel', { id: invoice.id }))
+      router.post(route('app.invoice.cancel', { invoice: invoice.id }))
+    }
+  }
+
+  const handleLostOfRreceivables = async () => {
+    const promise = await AlertDialog.call({
+      title: 'Forderungsverlust',
+      message: 'Möchtest Du die Rechnung als Forderungsverlust markieren?',
+      buttonTitle: 'Rechnung als Forderungsverlust makieren',
+      variant: 'destructive'
+    })
+    if (promise) {
+      router.put(route('set-loss-of-receivables', { invoice: invoice.id }))
     }
   }
 
@@ -296,6 +309,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
                 <MenuItem
                   icon={UnavailableIcon}
                   title="Als Forderungsverlust markieren"
+                  onClick={handleLostOfRreceivables}
                   isDisabled={invoice.is_draft}
                 />
               </Menu>
@@ -318,7 +332,12 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
 
   return (
     <PageContainer
-      title={title}
+      header={
+        <div className="flex items-center gap-2">
+          <span className="font-bold text-xl">{title}</span>
+          {invoice.is_loss_of_receivables && <Badge variant="destructive">Forderungsverlust</Badge>}
+        </div>
+      }
       width="8xl"
       tabs={tabs}
       breadcrumbs={breadcrumbs}

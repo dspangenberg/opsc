@@ -95,3 +95,4 @@ Route::post('invoicing/invoices/{invoice}/cancel', [InvoiceController::class, 'c
 Route::put('invoicing/invoices/bulk-mark-as-sent', [InvoiceController::class, 'bulkMarkAsSent'])
     ->name('app.invoice.bulk-mark-as-sent');
 
+Route::put('invoicing/invoices/{invoice}/set-loss-of-receivables', [InvoiceController::class, 'setLossOfReceivables'])->name('set-loss-of-receivables');

@@ -40,13 +40,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laravel\Ranger\Components\InertiaResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 class InvoiceController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $years = Invoice::query()->selectRaw('DISTINCT YEAR(issued_on) as year')->orderByRaw('YEAR(issued_on) DESC')->get()->pluck('year');
         $currentYear = date('Y');
@@ -128,7 +129,7 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(): Response
     {
         // Load all data in single queries, ordered appropriately for defaults
         $invoiceTypes = InvoiceType::query()->orderBy('is_default', 'DESC')->orderBy('display_name')->get();
@@ -162,7 +163,7 @@ class InvoiceController extends Controller
             ])->baseRoute('app.invoice.index');
     }
 
-    public function store(InvoiceStoreRequest $request)
+    public function store(InvoiceStoreRequest $request): RedirectResponse
     {
         $validatedData = $request->validated();
 
@@ -177,7 +178,15 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function show(Invoice $invoice)
+    public function setLossOfReceivables(Request $request, Invoice $invoice): RedirectResponse {
+
+        $invoice->is_loss_of_receivables = true;
+        $invoice->save();
+        Invoice::createBooking($invoice);
+        return redirect()->back();
+    }
+
+    public function show(Invoice $invoice): Response
     {
         $invoice
             ->load('invoice_contact')
@@ -204,7 +213,7 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function edit(Invoice $invoice)
+    public function edit(Invoice $invoice): Response
     {
         $invoice
             ->load('invoice_contact')
@@ -239,7 +248,7 @@ class InvoiceController extends Controller
             ]);
     }
 
-    public function update(InvoiceDetailsBaseUpdateRequest $request, Invoice $invoice)
+    public function update(InvoiceDetailsBaseUpdateRequest $request, Invoice $invoice): RedirectResponse
     {
         $oldContactId = $invoice->contact_id;
         if ($request->validated('project_id') === -1) {
@@ -258,7 +267,7 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function updateLines(Request $request, Invoice $invoice)
+    public function updateLines(Request $request, Invoice $invoice): RedirectResponse
     {
         $validatedLines = $request->lines;
 
@@ -269,7 +278,7 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function destroy(Invoice $invoice)
+    public function destroy(Invoice $invoice): RedirectResponse
     {
         if ($invoice->is_draft) {
             InvoiceLine::where('invoice_id', $invoice->id)->delete();
@@ -283,7 +292,7 @@ class InvoiceController extends Controller
         abort('Cannot delete a published invoice');
     }
 
-    public function duplicate(Invoice $invoice)
+    public function duplicate(Invoice $invoice): RedirectResponse
     {
         $duplicatedInvoice = Invoice::duplicateInvoice($invoice);
 
@@ -293,7 +302,7 @@ class InvoiceController extends Controller
     /**
      * @throws Throwable
      */
-    public function cancel(Invoice $invoice)
+    public function cancel(Invoice $invoice): RedirectResponse
     {
         $existing = Invoice::query()
             ->where('parent_id', $invoice->id)
@@ -324,14 +333,14 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $duplicatedInvoice->id]);
     }
 
-    public function release(Invoice $invoice)
+    public function release(Invoice $invoice): RedirectResponse
     {
         $invoice->release();
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function unrelease(Invoice $invoice)
+    public function unrelease(Invoice $invoice): RedirectResponse
     {
         if ($invoice->sent_at) {
             abort('Invoice cannot be unreleased once it has been sent.');
@@ -352,7 +361,7 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function markAsSent(Invoice $invoice)
+    public function markAsSent(Invoice $invoice): RedirectResponse
     {
         if (!$invoice->sent_at) {
             $invoice->sent_at = now();
@@ -364,7 +373,7 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function bulkMarkAsSent(Request $request)
+    public function bulkMarkAsSent(Request $request): RedirectResponse
     {
         $ids = $request->input('ids');
         $ids = $ids ? explode(',', $ids) : [];
@@ -425,7 +434,7 @@ class InvoiceController extends Controller
         return response()->file($pdfFile);
     }
 
-    public function history(Invoice $invoice)
+    public function history(Invoice $invoice): Response
     {
         $invoice
             ->load('invoice_contact')
@@ -453,7 +462,7 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function createBooking(Invoice $invoice)
+    public function createBooking(Invoice $invoice): RedirectResponse
     {
         if (!$invoice->sent_at) {
             $invoice->sent_at = now();
@@ -467,7 +476,7 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function addOnAccountInvoice(Invoice $invoice)
+    public function addOnAccountInvoice(Invoice $invoice): Response
     {
         $linkedInvoiceIds = InvoiceLine::whereNotNull('linked_invoice_id')
             ->pluck('linked_invoice_id')
@@ -502,7 +511,7 @@ class InvoiceController extends Controller
             ]);
     }
 
-    public function storeOnAccountInvoice(Request $request, Invoice $invoice)
+    public function storeOnAccountInvoice(Request $request, Invoice $invoice): RedirectResponse
     {
         $ids = $request->query('ids');
         $ids = $ids ? explode(',', $ids) : [];
