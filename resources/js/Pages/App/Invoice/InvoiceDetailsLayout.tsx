@@ -146,9 +146,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
       variant: 'destructive'
     })
     if (promise) {
-      router.put(
-        route('invoicing/invoices/{invoice}/set-loss-of-receivables', { invoice: invoice.id })
-      )
+      router.put(route('app.invoice.set-loss-of-receivables', { invoice: invoice.id }))
     }
   }
 
