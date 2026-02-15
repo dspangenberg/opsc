@@ -28,6 +28,7 @@ import { Tab, TabList, Tabs } from '@/Components/twc-ui/tabs'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
 import { Badge } from '@/Components/ui/badge'
 import { useFileDownload } from '@/Hooks/use-file-download'
+import { parseDate } from '@/Lib/DateHelper'
 import { InvoiceTableProvider, useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 
 interface Props {
@@ -57,11 +58,19 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
     )
   }
 
+  const year = () => {
+    return parseDate(invoice.issued_on).getFullYear()
+  }
+
   const breadcrumbs = useMemo(
     () => [
       {
         title: 'Rechnungen',
         url: route('app.invoice.index')
+      },
+      {
+        title: String(year()),
+        url: route('app.invoice.index', { year: year() })
       },
       {
         title: invoice.formated_invoice_number
@@ -129,7 +138,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
     }
   }
 
-  const handleLostOfRreceivables = async () => {
+  const handleLostOfReceivables = async () => {
     const promise = await AlertDialog.call({
       title: 'Forderungsverlust',
       message: 'Möchtest Du die Rechnung als Forderungsverlust markieren?',
@@ -137,7 +146,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
       variant: 'destructive'
     })
     if (promise) {
-      router.put(route('set-loss-of-receivables', { invoice: invoice.id }))
+      router.put(route('app.invoice.set-loss-of-receivables', { invoice: invoice.id }))
     }
   }
 
@@ -309,7 +318,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
                 <MenuItem
                   icon={UnavailableIcon}
                   title="Als Forderungsverlust markieren"
-                  onClick={handleLostOfRreceivables}
+                  onClick={handleLostOfReceivables}
                   isDisabled={invoice.is_draft}
                 />
               </Menu>

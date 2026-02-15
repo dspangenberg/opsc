@@ -40,7 +40,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
-use Laravel\Ranger\Components\InertiaResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
@@ -178,7 +177,13 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function setLossOfReceivables(Request $request, Invoice $invoice): RedirectResponse {
+    public function setLossOfReceivables(Invoice $invoice): RedirectResponse {
+
+        // Abfrage, ob Rechnung bereits als Forderungsverlust markiert, nicht nötig, da doppelter Aufurf keine Konsequenzen hat
+
+        if ($invoice->is_loss_of_receivables) {
+            return redirect()->back()->with('error', 'Rechnung bereits als Forderungsverlust markiert');
+        }
 
         $invoice->is_loss_of_receivables = true;
         $invoice->save();

@@ -461,9 +461,6 @@ class Invoice extends Model implements MediableInterface
 
         $outturnAccount = BookkeepingAccount::where('account_number', $invoice->tax->outturn_account_id)->first();
 
-        if ($invoice->is_loss_of_receivables) {
-            $outturnAccount = BookkeepingAccount::where('account_number', $invoice->tax->outturn_account_id)->first();
-        }
 
         $accounts = Contact::getAccounts(true, $invoice->contact_id, true, true);
 
