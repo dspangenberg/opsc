@@ -119,7 +119,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
 
   const breadcrumbs = useMemo(() => [{ title: 'Buchhaltung' }], [])
 
-  const handeSetCounterAccountAction = async (transaction: App.Data.TransactionData) => {
+  const handleSetCounterAccountAction = async (transaction: App.Data.TransactionData) => {
     const promise = await TransactionSelectCounterAccountDialog.call({
       transaction,
       accounts: bookkeeping_accounts
@@ -140,14 +140,20 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
     }
   }
 
-  const handeBulkSetCounterAccountAction = async () => {
+  const handleBulkSetCounterAccountAction = async () => {
     const promise = await TransactionSelectCounterAccountDialog.call({
       accounts: bookkeeping_accounts
     })
     if (promise !== false) {
       router.put(
         route('app.bookkeeping.transactions.set-counter-account', {
-          _query: { ids: selectedRows.map(row => row.id).join(','), counter_account: promise }
+          _query: {
+            ids: selectedRows
+              .filter(row => row.id != null)
+              .map(row => row.id)
+              .join(','),
+            counter_account: promise
+          }
         }),
         {
           filters
@@ -164,7 +170,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
   const columns = useMemo(
     () =>
       createColumns({
-        onSetCounterAccountAction: handeSetCounterAccountAction,
+        onSetCounterAccountAction: handleSetCounterAccountAction,
         currentFilters: filters,
         currentSearch: search,
         bankAccountId: bank_account.id as number
@@ -292,7 +298,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
           size="auto"
           icon={ProfileIcon}
           title="Gegenkonto festlegen"
-          onClick={handeBulkSetCounterAccountAction}
+          onClick={handleBulkSetCounterAccountAction}
         />
         <Button
           variant="ghost"
