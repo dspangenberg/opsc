@@ -62,12 +62,13 @@ class BookkeepingBooking extends Model
         'document_number_range_prefix',
     ];
 
-    public function scopeSearch($query, $search): Builder
+    public function scopeSearch(Builder $query, $search): Builder
     {
         $search = trim($search);
         if ($search) {
             $query
-                ->where('booking_text', 'like', "%$search%");
+                ->where('booking_text', 'like', "%$search%")
+                ->orWhereRelation('range_document_number', 'document_number', 'like', "%$search%");
         }
 
         return $query;
@@ -381,6 +382,7 @@ class BookkeepingBooking extends Model
             $booking->account_id_debit = $debit_account->account_number;
             $booking->account_id_credit = $credit_account->account_number;
         }
+
 
         if (get_class($parent) !== Transaction::class) {
             $taxes = BookkeepingAccount::getTax($booking->account_id_credit, $booking->account_id_debit, $booking->amount);
