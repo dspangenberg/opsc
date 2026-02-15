@@ -197,6 +197,11 @@ class BookingController extends Controller
 
     public function editAccounts(CorrectEditBookingsRequest $request, BookkeepingBooking $booking): RedirectResponse
     {
+        if ($booking->is_locked || $booking->is_canceled) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => 'Gesperrte oder stornierte Buchungen können nicht bearbeitet werden.']);
+            return back();
+        }
+
         $booking->account_id_credit = $request->validated('account_id_credit');
         $booking->account_id_debit = $request->validated('account_id_debit');
         $booking->save();

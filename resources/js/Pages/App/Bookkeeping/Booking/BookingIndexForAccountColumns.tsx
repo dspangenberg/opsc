@@ -6,6 +6,7 @@
 import {
   CancelCircleHalfDotIcon,
   MoreVerticalCircle01Icon,
+  PencilEdit02Icon,
   Tick01Icon
 } from '@hugeicons/core-free-icons'
 import { Link, router } from '@inertiajs/react'
@@ -76,8 +77,9 @@ export const createColumns = (
             onAction={() => handleCancelClicked(row.original)}
           />
           <MenuItem
-            icon={CancelCircleHalfDotIcon}
+            icon={PencilEdit02Icon}
             separator
+            isDisabled={row.original.is_locked}
             title="Konten bearbeiten"
             onAction={() => options?.onEditAccounts?.(row.original)}
           />
@@ -98,218 +100,226 @@ export const createColumns = (
   }
 
   return [
-  {
-    id: 'select',
-    size: 30,
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-        className="mx-3 bg-background align-middle"
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center">
+    {
+      id: 'select',
+      size: 30,
+      header: ({ table }) => (
         <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={value => row.toggleSelected(!!value)}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
           className="mx-3 bg-background align-middle"
-          aria-label="Select row"
+          aria-label="Select all"
         />
-      </div>
-    )
-  },
-  {
-    accessorKey: 'date',
-    header: 'Datum',
-    size: 70,
-    cell: ({ getValue }) => (
-      <div>
-        <span>{getValue() as string}</span>
-      </div>
-    )
-  },
-  {
-    accessorKey: 'is_locked',
-    header: '',
-    size: 5,
-    cell: ({ row }) => {
-      if (row.original.is_canceled) {
-        return (
-          <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-red-500">
-            <Icon icon={CancelCircleHalfDotIcon} className="size-3.5 text-white" strokeWidth={4} />
-          </div>
-        )
-      }
-      if (row.original.is_locked) {
-        return (
-          <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-green-500">
-            <Icon icon={Tick01Icon} className="size-3.5 text-white" strokeWidth={4} />
-          </div>
-        )
-      }
-    }
-  },
-  {
-    accessorKey: 'document_number',
-    header: '',
-    size: 90,
-    cell: ({ getValue, row }) => {
-      if (row.original.bookable_type === 'App\\Models\\Receipt') {
-        return (
-          <Link
-            href={route('app.bookkeeping.receipts.edit', { receipt: row.original.bookable_id })}
-          >
-            <div className="text-xs">
-              <Badge variant="outline">{getValue() as string}</Badge>
-            </div>
-          </Link>
-        )
-      }
-      if (row.original.bookable_type === 'App\\Models\\Invoice') {
-        return (
-          <Link href={route('app.invoice.details', { invoice: row.original.bookable_id })}>
-            <div className="text-xs">
-              <Badge variant="outline">{getValue() as string}</Badge>
-            </div>
-          </Link>
-        )
-      }
-      return (
-        <div className="text-xs">
-          <Badge variant="outline">{getValue() as string}</Badge>
+      ),
+      cell: ({ row }) => (
+        <div className="flex items-center">
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={value => row.toggleSelected(!!value)}
+            className="mx-3 bg-background align-middle"
+            aria-label="Select row"
+          />
         </div>
       )
-    }
-  },
-  {
-    accessorKey: 'booking_text',
-    header: 'Buchungstext',
-    size: 300,
-    cell: ({ row }) => {
-      const [bookingType, name, purpose, conversion] = row.original.booking_text.split('|')
-      return (
+    },
+    {
+      accessorKey: 'date',
+      header: 'Datum',
+      size: 70,
+      cell: ({ getValue }) => (
         <div>
-          <div className="text-foreground/80 text-xs">
-            #{row.original.id} &mdash; {bookingType}
+          <span>{getValue() as string}</span>
+        </div>
+      )
+    },
+    {
+      accessorKey: 'is_locked',
+      header: '',
+      size: 5,
+      cell: ({ row }) => {
+        if (row.original.is_canceled) {
+          return (
+            <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-red-500">
+              <Icon
+                icon={CancelCircleHalfDotIcon}
+                className="size-3.5 text-white"
+                strokeWidth={4}
+              />
+            </div>
+          )
+        }
+        if (row.original.is_locked) {
+          return (
+            <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-green-500">
+              <Icon icon={Tick01Icon} className="size-3.5 text-white" strokeWidth={4} />
+            </div>
+          )
+        }
+      }
+    },
+    {
+      accessorKey: 'document_number',
+      header: '',
+      size: 90,
+      cell: ({ getValue, row }) => {
+        if (row.original.bookable_type === 'App\\Models\\Receipt') {
+          return (
+            <Link
+              href={route('app.bookkeeping.receipts.edit', { receipt: row.original.bookable_id })}
+            >
+              <div className="text-xs">
+                <Badge variant="outline">{getValue() as string}</Badge>
+              </div>
+            </Link>
+          )
+        }
+        if (row.original.bookable_type === 'App\\Models\\Invoice') {
+          return (
+            <Link href={route('app.invoice.details', { invoice: row.original.bookable_id })}>
+              <div className="text-xs">
+                <Badge variant="outline">{getValue() as string}</Badge>
+              </div>
+            </Link>
+          )
+        }
+        return (
+          <div className="text-xs">
+            <Badge variant="outline">{getValue() as string}</Badge>
           </div>
-          <div className="truncate font-medium">{name}</div>
-          <div className="truncate">{purpose}</div>
-          {conversion && <div className="text-foreground/80 text-xs">{conversion}</div>}
+        )
+      }
+    },
+    {
+      accessorKey: 'booking_text',
+      header: 'Buchungstext',
+      size: 300,
+      cell: ({ row }) => {
+        const [bookingType, name, purpose, conversion] = row.original.booking_text.split('|')
+        return (
+          <div>
+            <div className="text-foreground/80 text-xs">
+              #{row.original.id} &mdash; {bookingType}
+            </div>
+            <div className="truncate font-medium">{name}</div>
+            <div className="truncate">{purpose}</div>
+            {conversion && <div className="text-foreground/80 text-xs">{conversion}</div>}
+          </div>
+        )
+      }
+    },
+    {
+      accessorKey: 'counter_account_label',
+      header: 'GK-Nr. ',
+      size: 50,
+      cell: ({ row }) => (
+        <TooltipTrigger>
+          <Focusable aria-label="Gegenkonto">
+            <Link
+              href={accountIndexUrl(
+                row.original.counter_account as number,
+                options?.currentFilters
+              )}
+              className="truncate hover:underline"
+            >
+              {row.original.counter_account}
+            </Link>
+          </Focusable>
+          <Tooltip>{row.original.counter_account_label}</Tooltip>
+        </TooltipTrigger>
+      )
+    },
+    {
+      accessorKey: 'amount',
+      header: () => <div className="text-right">Brutto</div>,
+      size: 70,
+      cell: ({ row }) => (
+        <div className="text-right">
+          {currencyFormatter.format(row.original.amount)}{' '}
+          {row.original.balance_type === 'debit' ? 'S' : 'H'}
         </div>
       )
-    }
-  },
-  {
-    accessorKey: 'counter_account_label',
-    header: 'GK-Nr. ',
-    size: 50,
-    cell: ({ row }) => (
-      <TooltipTrigger>
-        <Focusable aria-label="Gegenkonto">
-          <Link
-            href={accountIndexUrl(row.original.counter_account as number, options?.currentFilters)}
-            className="truncate hover:underline"
-          >
-            {row.original.counter_account}
-          </Link>
-        </Focusable>
-        <Tooltip>{row.original.counter_account_label}</Tooltip>
-      </TooltipTrigger>
-    )
-  },
-  {
-    accessorKey: 'amount',
-    header: () => <div className="text-right">Brutto</div>,
-    size: 70,
-    cell: ({ row }) => (
-      <div className="text-right">
-        {currencyFormatter.format(row.original.amount)}{' '}
-        {row.original.balance_type === 'debit' ? 'S' : 'H'}
-      </div>
-    )
-  },
-  {
-    accessorKey: 'amount_net',
-    header: () => <div className="text-right">Netto</div>,
-    size: 70,
-    cell: ({ row }) => (
-      <div className="text-right">
-        {currencyFormatter.format(row.original.amount_net ?? 0)}{' '}
-        {row.original.balance_type === 'debit' ? 'S' : 'H'}
-      </div>
-    )
-  },
-  {
-    accessorKey: 'balance',
-    header: () => <div className="text-right">Saldo</div>,
-    size: 70,
-    cell: ({ row }) => {
-      const balance = row.original.balance ?? 0
-      const absBalance = Math.abs(balance)
-      const indicator = balance >= 0 ? 'S' : 'H'
-
-      return (
-        <div className="text-right font-medium">
-          {currencyFormatter.format(absBalance)} {indicator}
+    },
+    {
+      accessorKey: 'amount_net',
+      header: () => <div className="text-right">Netto</div>,
+      size: 70,
+      cell: ({ row }) => (
+        <div className="text-right">
+          {currencyFormatter.format(row.original.amount_net ?? 0)}{' '}
+          {row.original.balance_type === 'debit' ? 'S' : 'H'}
         </div>
       )
-    }
-  },
-  {
-    accessorKey: 'amount',
-    header: () => <div className="text-right">Soll</div>,
-    size: 70,
-    cell: ({ row }) => {
-      // Zeige Betrag nur wenn dieses Konto im Soll steht
-      if (row.original.balance_type !== 'debit') return null
+    },
+    {
+      accessorKey: 'balance',
+      header: () => <div className="text-right">Saldo</div>,
+      size: 70,
+      cell: ({ row }) => {
+        const balance = row.original.balance ?? 0
+        const absBalance = Math.abs(balance)
+        const indicator = balance >= 0 ? 'S' : 'H'
 
-      return <div className="text-right">{currencyFormatter.format(row.original.amount)}</div>
-    }
-  },
-  {
-    accessorKey: 'amount',
-    header: () => <div className="text-right">Haben</div>,
-    size: 70,
-    cell: ({ row }) => {
-      // Zeige Betrag nur wenn dieses Konto im Haben steht
-      if (row.original.balance_type !== 'credit') return null
+        return (
+          <div className="text-right font-medium">
+            {currencyFormatter.format(absBalance)} {indicator}
+          </div>
+        )
+      }
+    },
+    {
+      accessorKey: 'amount',
+      header: () => <div className="text-right">Soll</div>,
+      size: 70,
+      cell: ({ row }) => {
+        // Zeige Betrag nur wenn dieses Konto im Soll steht
+        if (row.original.balance_type !== 'debit') return null
 
-      return <div className="text-right">{currencyFormatter.format(row.original.amount)}</div>
+        return <div className="text-right">{currencyFormatter.format(row.original.amount)}</div>
+      }
+    },
+    {
+      accessorKey: 'amount',
+      header: () => <div className="text-right">Haben</div>,
+      size: 70,
+      cell: ({ row }) => {
+        // Zeige Betrag nur wenn dieses Konto im Haben steht
+        if (row.original.balance_type !== 'credit') return null
+
+        return <div className="text-right">{currencyFormatter.format(row.original.amount)}</div>
+      }
+    },
+    {
+      accessorKey: 'tax',
+      header: () => <div className="text-right">USt.</div>,
+      size: 40,
+      cell: ({ row }) => <div className="text-right">{row.original.tax?.value || 0} %</div>
+    },
+    {
+      accessorKey: 'tax_debit',
+      header: () => <div className="text-right">USt. S</div>,
+      size: 50,
+      cell: ({ row }) => (
+        <div className="text-right">{currencyFormatter.format(row.original.tax_debit)}</div>
+      )
+    },
+    {
+      accessorKey: 'tax_credit',
+      header: () => <div className="text-right">USt. H</div>,
+      size: 50,
+      cell: ({ row }) => (
+        <div className="text-right">{currencyFormatter.format(row.original.tax_credit)}</div>
+      )
+    },
+    {
+      id: 'actions',
+      size: 30,
+      header: () => <span className="sr-only">Actions</span>,
+      cell: ({ row }) => <RowActions row={row} />,
+      enableHiding: false
     }
-  },
-  {
-    accessorKey: 'tax',
-    header: () => <div className="text-right">USt.</div>,
-    size: 40,
-    cell: ({ row }) => <div className="text-right">{row.original.tax?.value || 0} %</div>
-  },
-  {
-    accessorKey: 'tax_debit',
-    header: () => <div className="text-right">USt. S</div>,
-    size: 50,
-    cell: ({ row }) => (
-      <div className="text-right">{currencyFormatter.format(row.original.tax_debit)}</div>
-    )
-  },
-  {
-    accessorKey: 'tax_credit',
-    header: () => <div className="text-right">USt. H</div>,
-    size: 50,
-    cell: ({ row }) => (
-      <div className="text-right">{currencyFormatter.format(row.original.tax_credit)}</div>
-    )
-  },
-  {
-    id: 'actions',
-    size: 30,
-    header: () => <span className="sr-only">Actions</span>,
-    cell: ({ row }) => <RowActions row={row} />,
-    enableHiding: false
-  }
   ]
 }
 

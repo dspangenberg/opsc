@@ -234,12 +234,6 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({
       if (result === false) return
       const { account_id_credit, account_id_debit } = result
 
-      console.log('Sending PUT request:', {
-        booking_id: row.id,
-        account_id_credit,
-        account_id_debit
-      })
-
       router.put(
         route('app.bookkeeping.bookings.edit-accounts', { booking: row.id }),
         {

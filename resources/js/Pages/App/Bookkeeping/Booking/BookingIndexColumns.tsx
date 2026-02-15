@@ -6,6 +6,7 @@
 import {
   CancelCircleHalfDotIcon,
   MoreVerticalCircle01Icon,
+  PencilEdit02Icon,
   Tick01Icon
 } from '@hugeicons/core-free-icons'
 import { Link, router } from '@inertiajs/react'
@@ -77,7 +78,7 @@ export const createColumns = (
             onAction={() => handleCancelClicked(row.original)}
           />
           <MenuItem
-            icon={CancelCircleHalfDotIcon}
+            icon={PencilEdit02Icon}
             isDisabled={row.original.is_locked}
             separator
             title="Konten bearbeiten"
@@ -143,14 +144,18 @@ export const createColumns = (
         if (row.original.is_canceled) {
           return (
             <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-red-500">
-              <Icon icon={CancelCircleHalfDotIcon} className="size-3.5 text-white" stroke="4" />
+              <Icon
+                icon={CancelCircleHalfDotIcon}
+                className="size-3.5 text-white"
+                strokeWidth={4}
+              />
             </div>
           )
         }
         if (row.original.is_locked) {
           return (
             <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-green-500">
-              <Icon icon={Tick01Icon} className="size-3.5 text-white" stroke="4" />
+              <Icon icon={Tick01Icon} className="size-3.5 text-white" strokeWidth={4} />
             </div>
           )
         }
