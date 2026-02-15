@@ -69,7 +69,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
         url: route('app.invoice.index')
       },
       {
-        title: year(),
+        title: String(year()),
         url: route('app.invoice.index', { year: year() })
       },
       {
