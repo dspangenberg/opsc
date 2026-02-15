@@ -4,13 +4,14 @@ import {
   FileExportIcon,
   FileScriptIcon,
   MoreVerticalCircle01Icon,
+  ProfileIcon,
   Tick01Icon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import { sumBy } from 'lodash'
 import * as React from 'react'
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { DataTable } from '@/Components/DataTable'
+import { DataTable, type DataTableRef } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
 import { Button } from '@/Components/twc-ui/button'
@@ -139,6 +140,27 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
     }
   }
 
+  const handeBulkSetCounterAccountAction = async () => {
+    const promise = await TransactionSelectCounterAccountDialog.call({
+      accounts: bookkeeping_accounts
+    })
+    if (promise !== false) {
+      router.put(
+        route('app.bookkeeping.transactions.set-counter-account', {
+          _query: { ids: selectedRows.map(row => row.id).join(','), counter_account: promise }
+        }),
+        {
+          filters
+        },
+        {
+          only: ['transactions'],
+          preserveScroll: true,
+          onSuccess: () => tableRef.current?.resetRowSelection()
+        }
+      )
+    }
+  }
+
   const columns = useMemo(
     () =>
       createColumns({
@@ -162,7 +184,8 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
         search
       },
       {
-        preserveScroll: true
+        preserveScroll: true,
+        onSuccess: () => tableRef.current?.resetRowSelection()
       }
     )
   }
@@ -177,7 +200,8 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
         search
       },
       {
-        preserveScroll: true
+        preserveScroll: true,
+        onSuccess: () => tableRef.current?.resetRowSelection()
       }
     )
   }
@@ -262,6 +286,14 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
           title="als bestätigt markieren"
           onClick={handleBulkConfirmationClicked}
         />
+
+        <Button
+          variant="ghost"
+          size="auto"
+          icon={ProfileIcon}
+          title="Gegenkonto festlegen"
+          onClick={handeBulkSetCounterAccountAction}
+        />
         <Button
           variant="ghost"
           size="auto"
@@ -275,6 +307,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
   }, [selectedRows, selectedAmount])
 
   const footer = useMemo(() => <Pagination data={transactions} />, [transactions])
+  const tableRef = useRef<DataTableRef>(null)
 
   const filterBar = useMemo(
     () => (
@@ -314,6 +347,7 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
       toolbar={toolbar}
     >
       <DataTable<App.Data.TransactionData, unknown>
+        ref={tableRef}
         columns={columns}
         actionBar={actionBar}
         onSelectedRowsChange={setSelectedRows}

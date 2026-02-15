@@ -47,7 +47,7 @@ Route::match(['GET', 'POST'], '/bookkeeping/receipts', [ReceiptController::class
 Route::get('/bookkeeping/receipts/report', [ReceiptController::class, 'printReport'])->name('app.bookkeeping.receipts.print');
 
 Route::put('/bookkeeping/receipts/lock/{receipt?}', [ReceiptController::class, 'lock'])->name('app.bookkeeping.receipts.lock');
-Route::get('/bookkeeping/receipts/rule/', [ReceiptController::class, 'runRules'])->name('app.bookkeeping.receipts.rule');
+Route::put('/bookkeeping/receipts/rule/', [ReceiptController::class, 'runRules'])->name('app.bookkeeping.receipts.rule');
 
 Route::get('/bookkeeping/receipts/confirm/', [ReceiptController::class, 'confirmFirst'])->name('app.bookkeeping.receipts.confirm-first');
 Route::put('/bookkeeping/receipts/confirm/{receipt}/update', [ReceiptController::class, 'update'])->name('app.bookkeeping.receipts.update')->middleware([HandlePrecognitiveRequests::class]);

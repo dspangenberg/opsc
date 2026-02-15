@@ -5,7 +5,7 @@
 
 import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import type React from 'react'
-import { useEffect } from 'react'
+import { forwardRef, useEffect, useImperativeHandle } from 'react'
 import { ScrollArea } from '@/Components/twc-ui/scroll-area'
 import {
   Table,
@@ -27,21 +27,32 @@ interface DataTableProps<TData, TValue> {
   onSelectedRowsChange?: (selectedRows: TData[]) => void
 }
 
-export function DataTable<TData, TValue>({
-  actionBar,
-  columns,
-  data,
-  filterBar,
-  footer,
-  header,
-  onSelectedRowsChange,
-  itemName = 'Datensätze'
-}: DataTableProps<TData, TValue>) {
+export interface DataTableRef {
+  resetRowSelection: () => void
+}
+
+function DataTableInner<TData, TValue>(
+  {
+    actionBar,
+    columns,
+    data,
+    filterBar,
+    footer,
+    header,
+    onSelectedRowsChange,
+    itemName = 'Datensätze'
+  }: DataTableProps<TData, TValue>,
+  ref: React.Ref<DataTableRef>
+) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel()
   })
+
+  useImperativeHandle(ref, () => ({
+    resetRowSelection: () => table.resetRowSelection()
+  }))
 
   useEffect(() => {
     if (onSelectedRowsChange) {
@@ -102,3 +113,7 @@ export function DataTable<TData, TValue>({
     </div>
   )
 }
+
+export const DataTable = forwardRef(DataTableInner) as <TData, TValue = unknown>(
+  props: DataTableProps<TData, TValue> & { ref?: React.ForwardedRef<DataTableRef> }
+) => React.ReactElement

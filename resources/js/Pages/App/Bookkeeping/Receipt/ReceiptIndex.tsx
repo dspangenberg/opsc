@@ -9,7 +9,7 @@ import { router } from '@inertiajs/react'
 import { sumBy } from 'lodash'
 import type * as React from 'react'
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { DataTable } from '@/Components/DataTable'
+import { DataTable, type DataTableRef } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
@@ -47,7 +47,7 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
   const [selectedAmount, setSelectedAmount] = useState<number>(0)
   const [filters, setFilters] = useState<FilterConfig>(currentFilters)
   const [search, setSearch] = useState(currentSearch)
-
+  const tableRef = useRef<DataTableRef>(null)
   // Debounce für Search
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const breadcrumbs = useMemo(() => [{ title: 'Buchhaltung' }, { title: 'Belege' }], [])
@@ -75,7 +75,8 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
     if (confirmed) {
       const ids = selectedRows.map(row => row.id).join(',')
       router.delete(route('app.bookkeeping.receipts.bulk-delete', { _query: { ids } }), {
-        preserveScroll: true
+        preserveScroll: true,
+        onSuccess: () => tableRef.current?.resetRowSelection()
       })
     }
   }, [selectedRows])
@@ -89,8 +90,9 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
 
   const handleBulkRuleClicked = useCallback(() => {
     const ids = selectedRows.map(row => row.id).join(',')
-    router.get(route('app.bookkeeping.receipts.rule', { _query: { ids } }), {
-      preserveScroll: true
+    router.put(route('app.bookkeeping.receipts.rule', { _query: { ids } }), {}, {
+      preserveScroll: true,
+      onSuccess: () => tableRef.current?.resetRowSelection()
     })
   }, [selectedRows])
 
@@ -260,6 +262,7 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
           columns={columns}
           filterBar={filterBar}
           actionBar={actionBar}
+          ref={tableRef}
           onSelectedRowsChange={setSelectedRows}
           data={receipts.data || []}
           footer={footer}
