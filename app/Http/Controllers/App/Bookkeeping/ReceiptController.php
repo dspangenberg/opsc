@@ -356,7 +356,7 @@ class ReceiptController extends Controller
     public function checkReference(Request $request): RedirectResponse {
         $reference = $request->query('reference');
 
-        if (!$reference || !is_string($reference)) {
+        if (!$reference) {
             return back();
         }
 
