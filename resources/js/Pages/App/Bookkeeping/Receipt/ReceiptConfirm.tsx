@@ -53,6 +53,22 @@ const ReceiptConfirm: React.FC<Props> = ({
     form.setData(receipt)
   }, [receipt.id, receipt.amount, receipt.contact_id, receipt.cost_center_id, receipt.reference])
 
+  const handleNextReceipt = useCallback(() => {
+    if (nextReceipt) {
+      router.visit(nextReceipt, { preserveState: false })
+    } else {
+      router.visit(route('app.bookkeeping.receipts.index'))
+    }
+  }, [nextReceipt])
+
+  const handlePrevReceipt = useCallback(() => {
+    if (prevReceipt) {
+      router.visit(prevReceipt, { preserveState: false })
+    } else {
+      router.visit(route('app.bookkeeping.receipts.index'))
+    }
+  }, [prevReceipt])
+
   const handleDelete = useCallback(async () => {
     const promise = await AlertDialog.call({
       title: 'Beleg löschen',
@@ -62,29 +78,14 @@ const ReceiptConfirm: React.FC<Props> = ({
     })
 
     if (promise) {
-      router.delete(route('app.bookkeeping.receipts.destroy', { receipt: receipt.id }))
-      handleNextReceipt()
+      router.delete(route('app.bookkeeping.receipts.destroy', { receipt: receipt.id }), {
+        onSuccess: () => handleNextReceipt()
+      })
     }
-  }, [receipt.id])
+  }, [receipt.id, handleNextReceipt])
 
   if (!receipt) {
     return null
-  }
-
-  const handleNextReceipt = () => {
-    if (nextReceipt) {
-      router.visit(nextReceipt, { preserveState: false })
-    } else {
-      router.visit(route('app.bookkeeping.receipts.index'))
-    }
-  }
-
-  const handlePrevReceipt = () => {
-    if (prevReceipt) {
-      router.visit(prevReceipt, { preserveState: false })
-    } else {
-      router.visit(route('app.bookkeeping.receipts.index'))
-    }
   }
 
   const handleContactChange = (contactId: string | number | null) => {

@@ -78,4 +78,4 @@ Route::delete('bookkeeping/receipts/bulk-delete', [ReceiptController::class, 'bu
 Route::put('bookkeeping/bookings/{booking}/edit-accounts', [BookingController::class, 'editAccounts'])
    ->middleware([HandlePrecognitiveRequests::class])->name('app.bookkeeping.bookings.edit-accounts');
 
-Route::get('bookkeeping/receipts/check-reference/{reference}', [ReceiptController::class, 'checkReference'])->name('app.bookkeeping.receipts.check-reference');
+Route::get('bookkeeping/receipts/check-reference', [ReceiptController::class, 'checkReference'])->name('app.bookkeeping.receipts.check-reference');
