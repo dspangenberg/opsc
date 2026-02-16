@@ -76,9 +76,6 @@ const ReceiptConfirm: React.FC<Props> = ({
       router.visit(route('app.bookkeeping.receipts.index'))
     }
   }
-  useEffect(() => {
-    form.setData(receipt)
-  }, [receipt.id, receipt.amount, receipt.org_amount, receipt.exchange_rate])
 
   const handlePrevReceipt = () => {
     if (prevReceipt) {
@@ -98,7 +95,6 @@ const ReceiptConfirm: React.FC<Props> = ({
       form.updateAndValidateWithoutEvent('cost_center_id', contact.cost_center_id)
     }
   }
-
   const handleDelete = useCallback(async () => {
     const promise = await AlertDialog.call({
       title: 'Beleg löschen',
@@ -106,10 +102,10 @@ const ReceiptConfirm: React.FC<Props> = ({
       buttonTitle: 'Beleg löschen',
       variant: 'destructive'
     })
-
     if (promise) {
-      router.delete(route('app.bookkeeping.receipts.destroy', { receipt: receipt.id }))
-      handleNextReceipt()
+      router.delete(route('app.bookkeeping.receipts.destroy', { receipt: receipt.id }), {
+        onSuccess: () => handleNextReceipt()
+      })
     }
   }, [receipt.id])
 
