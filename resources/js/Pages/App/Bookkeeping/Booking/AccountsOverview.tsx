@@ -49,25 +49,22 @@ const AccountsOverview: React.FC<AccountsOverviewPageProps> = ({
     []
   )
 
-  const handleFiltersChange = useCallback(
-    (newFilters: FilterConfig) => {
-      router.post(
-        route('app.bookkeeping.accounts.overview'),
-        {
-          ...newFilters
-        } as any,
-        {
-          preserveScroll: true,
-          preserveState: true,
-          only: ['accounts'],
-          onSuccess: () => {
-            setFilters(newFilters)
-          }
+  const handleFiltersChange = useCallback((newFilters: FilterConfig) => {
+    router.post(
+      route('app.bookkeeping.accounts.overview'),
+      {
+        ...newFilters
+      } as any,
+      {
+        preserveScroll: true,
+        preserveState: true,
+        only: ['accounts', 'currentFilters'],
+        onSuccess: () => {
+          setFilters(newFilters)
         }
-      )
-    },
-    []
-  )
+      }
+    )
+  }, [])
 
   const columns = useMemo(
     () =>

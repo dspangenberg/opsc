@@ -18,6 +18,7 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 use Laracsv\Export;
 use League\Csv\CannotInsertRecord;
 
@@ -58,9 +59,8 @@ class BookingController extends Controller
         ]);
     }
 
-    public function accountsOverview(Request $request)
+    public function accountsOverview(Request $request): Response
     {
-        $accounts = BookkeepingAccount::query()->orderBy('account_number')->get();
         $parsedFilters = (new BookkeepingBooking)->getParsedFilters($request);
         $filters = [];
 
@@ -73,12 +73,28 @@ class BookingController extends Controller
             }
         }
 
-        $accountNumbers = $accounts->pluck('account_number')->toArray();
+        // Hole distinct account_number direkt aus BookkeepingBooking mit den gleichen Filtern
+        $query = BookkeepingBooking::query();
+
+        if (isset($filters['date_from']) && isset($filters['date_to'])) {
+            $query->whereBetween('date', [$filters['date_from'], $filters['date_to']]);
+        }
+
+        $debitAccounts = (clone $query)->distinct()->pluck('account_id_debit');
+        $creditAccounts = (clone $query)->distinct()->pluck('account_id_credit');
+
+        $accountNumbers = $debitAccounts
+            ->merge($creditAccounts)
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
+
         $balances = BookkeepingBooking::calculateBalancesForAccounts($accountNumbers, $filters);
 
         // Paginiere die Collection manuell
         $perPage = 50;
-        $currentPage = $request->input('page', 1);
+        $currentPage = (int) $request->input('page', 1);
         $balancesCollection = collect($balances->values());
 
         $paginatedBalances = new \Illuminate\Pagination\LengthAwarePaginator(
