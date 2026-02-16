@@ -89,12 +89,15 @@ class Transaction extends Model
     public function scopeSearch(Builder $query, $searchText): Builder
     {
         if ($searchText) {
+            $orgSearchText = $searchText;
             $searchText = '%'.$searchText.'%';
 
-            return $query
-                ->whereLike('name', $searchText)
-                ->orWhereLike('purpose', $searchText)
-                ->orWhereLike('account_number', $searchText);
+            return $query->where(function (Builder $q) use ($searchText, $orgSearchText) {
+                $q->whereLike('name', $searchText)
+                    ->orWhereLike('purpose', $searchText)
+                    ->orWhereLike('account_number', $searchText)
+                    ->orWhereRelation('range_document_number', 'document_number', '=', $orgSearchText);
+            });
         }
 
         return $query;
@@ -134,13 +137,14 @@ class Transaction extends Model
 
         $transaction->load('bank_account');
 
-        if (! $transaction->number_range_document_numbers_id) {
+        if (!$transaction->number_range_document_numbers_id) {
             $transaction->number_range_document_numbers_id = NumberRange::createDocumentNumber($transaction,
                 'booked_on', $transaction->bank_account->prefix);
             $transaction->save();
         }
 
-        $booking = BookkeepingBooking::whereMorphedTo('bookable', Transaction::class)->where('bookable_id', $transaction->id)->limit(5)->first();
+        $booking = BookkeepingBooking::whereMorphedTo('bookable', Transaction::class)->where('bookable_id',
+            $transaction->id)->limit(5)->first();
 
         $accounts = [
             'creditId' => '',
@@ -154,7 +158,7 @@ class Transaction extends Model
         $accountDebit = BookkeepingAccount::where('account_number', $accounts['debitId'])->first();
         $accountCredit = BookkeepingAccount::where('account_number', $accounts['creditId'])->first();
 
-        if (! $accounts['creditId']) {
+        if (!$accounts['creditId']) {
             $accounts = Contact::getAccounts(false, $transaction->contact_id);
 
             if ($accounts['subledgerAccount']) {
@@ -170,7 +174,8 @@ class Transaction extends Model
             }
 
             if ($transaction->bank_account) {
-                $accountDebit = BookkeepingAccount::where('account_number', $transaction->bank_account->bookkeeping_account_id)->first();
+                $accountDebit = BookkeepingAccount::where('account_number',
+                    $transaction->bank_account->bookkeeping_account_id)->first();
             }
         }
 
@@ -254,7 +259,7 @@ class Transaction extends Model
     {
         $lines = [];
 
-        if (! $this->booking_text && $this->booking_key === 'MSC') {
+        if (!$this->booking_text && $this->booking_key === 'MSC') {
             if ($this->counter_account_id !== 1360) {
                 $this->booking_text = $this->amount < 0 ? 'Überweisung' : 'Gutschrift';
             } else {
