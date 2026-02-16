@@ -66,9 +66,9 @@ class BookkeepingBooking extends Model
      * @param  Builder<static>  $query
      * @return Builder<static>
      */
-    public function scopeSearch(Builder $query, string $search): Builder
+    public function scopeSearch(Builder $query, ?string $search): Builder
     {
-        $search = trim($search);
+        $search = trim($search ?? '');
         if ($search) {
             $query
                 ->where('booking_text', 'like', "%$search%")
