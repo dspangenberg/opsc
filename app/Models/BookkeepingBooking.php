@@ -62,7 +62,11 @@ class BookkeepingBooking extends Model
         'document_number_range_prefix',
     ];
 
-    public function scopeSearch($query, $search): Builder
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    public function scopeSearch(Builder $query, string $search): Builder
     {
         $search = trim($search);
         if ($search) {
@@ -207,6 +211,59 @@ class BookkeepingBooking extends Model
             ->sum('amount');
 
         return $debitSum - $creditSum;
+    }
+
+    /**
+     * Calculate balances for multiple accounts
+     *
+     * @param  array  $accountNumbers  Array of account numbers
+     * @param  array  $filters  Optional filters (e.g., date range)
+     * @return \Illuminate\Support\Collection Collection with account_number, label, and balance
+     */
+    public static function calculateBalancesForAccounts(array $accountNumbers, array $filters = []): Collection
+    {
+        $query = self::query();
+        self::applyDateFilters($query, $filters);
+
+        // Get aggregated debit sums grouped by account
+        $debitSums = (clone $query)
+            ->whereIn('account_id_debit', $accountNumbers)
+            ->selectRaw('account_id_debit as account_number, SUM(amount) as total')
+            ->groupBy('account_id_debit')
+            ->pluck('total', 'account_number');
+
+        // Get aggregated credit sums grouped by account
+        $creditSums = (clone $query)
+            ->whereIn('account_id_credit', $accountNumbers)
+            ->selectRaw('account_id_credit as account_number, SUM(amount) as total')
+            ->groupBy('account_id_credit')
+            ->pluck('total', 'account_number');
+
+        // Get all account numbers that have bookings (from either debit or credit)
+        $accountsWithBookings = $debitSums->keys()
+            ->merge($creditSums->keys())
+            ->unique()
+            ->values();
+
+        // Only get accounts that have bookings
+        $accounts = BookkeepingAccount::whereIn('account_number', $accountsWithBookings)
+            ->orderBy('account_number')
+            ->get();
+
+        return $accounts->map(function ($account) use ($debitSums, $creditSums) {
+            $debitSum = $debitSums->get($account->account_number, 0);
+            $creditSum = $creditSums->get($account->account_number, 0);
+            $balance = $debitSum - $creditSum;
+
+            return [
+                'account_number' => $account->account_number,
+                'label' => $account->label,
+                'debit_sum' => $debitSum,
+                'credit_sum' => $creditSum,
+                'balance' => $balance,
+                'type' => $account->type,
+            ];
+        });
     }
 
     /**

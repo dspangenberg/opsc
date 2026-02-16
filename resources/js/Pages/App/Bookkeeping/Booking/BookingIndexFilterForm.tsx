@@ -21,9 +21,10 @@ interface Props {
   accounts: App.Data.BookkeepingAccountData[]
   filters: FilterConfig
   onFiltersChange: (filters: FilterConfig) => void
+  hideAccountFilters?: boolean
 }
 
-export const BookingIndexFilterForm: React.FC<Props> = ({ accounts, filters, onFiltersChange }) => {
+export const BookingIndexFilterForm: React.FC<Props> = ({ accounts, filters, onFiltersChange, hideAccountFilters = false }) => {
   const currentFilters = useMemo(() => {
     const issuedBetween = filters?.filters?.issuedBetween?.value
     const dateRange = parseFilterDateRange(issuedBetween)
@@ -106,34 +107,38 @@ export const BookingIndexFilterForm: React.FC<Props> = ({ accounts, filters, onF
                     }}
                   />
                 </div>
-                <div className="col-span-24 space-y-2">
-                  <ComboBox<App.Data.BookkeepingAccountData>
-                    label="Habenkonto"
-                    name="account_id_credit"
-                    isOptional
-                    value={currentFilters.account_id_credit}
-                    onChange={value =>
-                      updateFilters('account_id_credit', value ? { operator: '=', value } : null)
-                    }
-                    items={accounts}
-                    itemName="label"
-                    itemValue="account_number"
-                  />
-                </div>
-                <div className="col-span-24 space-y-2">
-                  <ComboBox<App.Data.BookkeepingAccountData>
-                    label="Sollkonto"
-                    name="account_id_debit"
-                    isOptional
-                    value={currentFilters.account_id_debit}
-                    onChange={value =>
-                      updateFilters('account_id_debit', value ? { operator: '=', value } : null)
-                    }
-                    items={accounts}
-                    itemName="label"
-                    itemValue="account_number"
-                  />
-                </div>
+                {!hideAccountFilters && (
+                  <>
+                    <div className="col-span-24 space-y-2">
+                      <ComboBox<App.Data.BookkeepingAccountData>
+                        label="Habenkonto"
+                        name="account_id_credit"
+                        isOptional
+                        value={currentFilters.account_id_credit}
+                        onChange={value =>
+                          updateFilters('account_id_credit', value ? { operator: '=', value } : null)
+                        }
+                        items={accounts}
+                        itemName="label"
+                        itemValue="account_number"
+                      />
+                    </div>
+                    <div className="col-span-24 space-y-2">
+                      <ComboBox<App.Data.BookkeepingAccountData>
+                        label="Sollkonto"
+                        name="account_id_debit"
+                        isOptional
+                        value={currentFilters.account_id_debit}
+                        onChange={value =>
+                          updateFilters('account_id_debit', value ? { operator: '=', value } : null)
+                        }
+                        items={accounts}
+                        itemName="label"
+                        itemValue="account_number"
+                      />
+                    </div>
+                  </>
+                )}
                 <div className="col-span-24 space-y-2">
                   <div className="space-y-2">
                     <Checkbox

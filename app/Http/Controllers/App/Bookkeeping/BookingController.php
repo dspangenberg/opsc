@@ -18,6 +18,7 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 use Laracsv\Export;
 use League\Csv\CannotInsertRecord;
 
@@ -55,6 +56,73 @@ class BookingController extends Controller
             'accounts' => BookkeepingAccountData::collect($accounts),
             'currentSearch' => $search,
             'currentFilters' => (new BookkeepingBooking)->getParsedFilters($request),
+        ]);
+    }
+
+    public function accountsOverview(Request $request): Response
+    {
+        $parsedFilters = (new BookkeepingBooking)->getParsedFilters($request);
+        $filters = [];
+
+        // Extrahiere Datumsfilter aus dem Request
+        if (isset($parsedFilters['filters']['issuedBetween']['value'])) {
+            $dates = $parsedFilters['filters']['issuedBetween']['value'];
+            if (is_array($dates) && count($dates) >= 2) {
+                $filters['date_from'] = $dates[0];
+                $filters['date_to'] = $dates[1];
+            }
+        }
+
+        // Hole distinct account_number direkt aus BookkeepingBooking mit den gleichen Filtern
+        $query = BookkeepingBooking::query();
+
+        if (isset($filters['date_from']) && isset($filters['date_to'])) {
+            $query->whereBetween('date', [$filters['date_from'], $filters['date_to']]);
+        }
+
+        $debitAccounts = (clone $query)->distinct()->pluck('account_id_debit');
+        $creditAccounts = (clone $query)->distinct()->pluck('account_id_credit');
+
+        $accountNumbers = $debitAccounts
+            ->merge($creditAccounts)
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
+
+        $balances = BookkeepingBooking::calculateBalancesForAccounts($accountNumbers, $filters);
+
+        // Paginiere die Collection manuell
+        $perPage = 50;
+        $currentPage = (int) $request->input('page', 1);
+        $balancesCollection = collect($balances->values());
+
+        $paginatedBalances = new \Illuminate\Pagination\LengthAwarePaginator(
+            $balancesCollection->forPage($currentPage, $perPage),
+            $balancesCollection->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        // Bei POST-Requests sollten wir die aktuellen Filter für die Paginierung beibehalten
+        if ($request->isMethod('POST')) {
+            $paginatedBalances->appends($request->only(['filters']));
+        } else {
+            $paginatedBalances->appends($request->query());
+        }
+
+        return Inertia::render('App/Bookkeeping/Booking/AccountsOverview', [
+            'accounts' => [
+                'data' => $paginatedBalances->items(),
+                'current_page' => $paginatedBalances->currentPage(),
+                'last_page' => $paginatedBalances->lastPage(),
+                'per_page' => $paginatedBalances->perPage(),
+                'total' => $paginatedBalances->total(),
+                'from' => $paginatedBalances->firstItem(),
+                'to' => $paginatedBalances->lastItem(),
+            ],
+            'currentFilters' => $parsedFilters,
         ]);
     }
 

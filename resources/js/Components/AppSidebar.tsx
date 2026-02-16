@@ -223,6 +223,25 @@ const buildNavData = (isAdmin: boolean) => ({
               activePath: '/app/bookkeeping/receipts/confirm'
             }
           ]
+        },
+        {
+          title: 'Kontenübersicht 2022',
+          url: route(
+            'app.bookkeeping.accounts.overview',
+            {
+              _query: {
+                filters: {
+                  issuedBetween: {
+                    operator: 'scope',
+                    value: ['2022-01-01', '2022-12-31']
+                  }
+                },
+                boolean: 'AND'
+              }
+            },
+            false
+          ),
+          activePath: '/app/bookkeeping/accounts-overview'
         }
       ]
     }
