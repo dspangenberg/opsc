@@ -24,6 +24,9 @@ Route::put('bookkeeping/transactions/set-counter-account/', [TransactionControll
 Route::match(['GET', 'POST'], 'bookkeeping/bookings', [BookingController::class, 'index'])
     ->name('app.bookkeeping.bookings.index');
 
+Route::match(['GET', 'POST'], 'bookkeeping/accounts-overview', [BookingController::class, 'accountsOverview'])
+    ->name('app.bookkeeping.accounts.overview');
+
 Route::get('bookkeeping/bookings/export', [BookingController::class, 'exportCSV'])
     ->name('app.bookkeeping.bookings.export');
 

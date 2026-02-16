@@ -62,7 +62,11 @@ class BookkeepingBooking extends Model
         'document_number_range_prefix',
     ];
 
-    public function scopeSearch($query, $search): Builder
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    public function scopeSearch(Builder $query, string $search): Builder
     {
         $search = trim($search);
         if ($search) {
@@ -207,6 +211,60 @@ class BookkeepingBooking extends Model
             ->sum('amount');
 
         return $debitSum - $creditSum;
+    }
+
+    /**
+     * Calculate balances for multiple accounts
+     *
+     * @param  array  $accountNumbers  Array of account numbers
+     * @param  array  $filters  Optional filters (e.g., date range)
+     * @return \Illuminate\Support\Collection Collection with account_number, label, and balance
+     */
+    public static function calculateBalancesForAccounts(array $accountNumbers, array $filters = []): Collection
+    {
+        $query = self::query();
+        self::applyDateFilters($query, $filters);
+
+        // Get all account numbers that have bookings in the given period
+        $accountsWithBookings = (clone $query)
+            ->where(function ($q) use ($accountNumbers) {
+                $q->whereIn('account_id_debit', $accountNumbers)
+                    ->orWhereIn('account_id_credit', $accountNumbers);
+            })
+            ->select('account_id_debit', 'account_id_credit')
+            ->get()
+            ->flatMap(function ($booking) {
+                return [$booking->account_id_debit, $booking->account_id_credit];
+            })
+            ->unique()
+            ->filter()
+            ->values();
+
+        // Only get accounts that have bookings
+        $accounts = BookkeepingAccount::whereIn('account_number', $accountsWithBookings)
+            ->orderBy('account_number')
+            ->get();
+
+        return $accounts->map(function ($account) use ($query) {
+            $debitSum = (clone $query)
+                ->where('account_id_debit', $account->account_number)
+                ->sum('amount');
+
+            $creditSum = (clone $query)
+                ->where('account_id_credit', $account->account_number)
+                ->sum('amount');
+
+            $balance = $debitSum - $creditSum;
+
+            return [
+                'account_number' => $account->account_number,
+                'label' => $account->label,
+                'debit_sum' => $debitSum,
+                'credit_sum' => $creditSum,
+                'balance' => $balance,
+                'type' => $account->type,
+            ];
+        });
     }
 
     /**

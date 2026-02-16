@@ -58,6 +58,58 @@ class BookingController extends Controller
         ]);
     }
 
+    public function accountsOverview(Request $request)
+    {
+        $accounts = BookkeepingAccount::query()->orderBy('account_number')->get();
+        $parsedFilters = (new BookkeepingBooking)->getParsedFilters($request);
+        $filters = [];
+
+        // Extrahiere Datumsfilter aus dem Request
+        if (isset($parsedFilters['filters']['issuedBetween']['value'])) {
+            $dates = $parsedFilters['filters']['issuedBetween']['value'];
+            if (is_array($dates) && count($dates) >= 2) {
+                $filters['date_from'] = $dates[0];
+                $filters['date_to'] = $dates[1];
+            }
+        }
+
+        $accountNumbers = $accounts->pluck('account_number')->toArray();
+        $balances = BookkeepingBooking::calculateBalancesForAccounts($accountNumbers, $filters);
+
+        // Paginiere die Collection manuell
+        $perPage = 50;
+        $currentPage = $request->input('page', 1);
+        $balancesCollection = collect($balances->values());
+
+        $paginatedBalances = new \Illuminate\Pagination\LengthAwarePaginator(
+            $balancesCollection->forPage($currentPage, $perPage),
+            $balancesCollection->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        // Bei POST-Requests sollten wir die aktuellen Filter für die Paginierung beibehalten
+        if ($request->isMethod('POST')) {
+            $paginatedBalances->appends($request->only(['filters']));
+        } else {
+            $paginatedBalances->appends($request->query());
+        }
+
+        return Inertia::render('App/Bookkeeping/Booking/AccountsOverview', [
+            'accounts' => [
+                'data' => $paginatedBalances->items(),
+                'current_page' => $paginatedBalances->currentPage(),
+                'last_page' => $paginatedBalances->lastPage(),
+                'per_page' => $paginatedBalances->perPage(),
+                'total' => $paginatedBalances->total(),
+                'from' => $paginatedBalances->firstItem(),
+                'to' => $paginatedBalances->lastItem(),
+            ],
+            'currentFilters' => $parsedFilters,
+        ]);
+    }
+
     public function indexForAccount(Request $request, string $accountNumber)
     {
         $search = $request->input('search', '');
