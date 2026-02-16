@@ -89,12 +89,14 @@ class Transaction extends Model
     public function scopeSearch(Builder $query, $searchText): Builder
     {
         if ($searchText) {
+            $orgSearchText = $searchText;
             $searchText = '%'.$searchText.'%';
 
             return $query
                 ->whereLike('name', $searchText)
                 ->orWhereLike('purpose', $searchText)
-                ->orWhereLike('account_number', $searchText);
+                ->orWhereLike('account_number', $searchText)
+                ->orWhereRelation('range_document_number', 'document_number', '=', $orgSearchText);
         }
 
         return $query;

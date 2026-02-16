@@ -161,11 +161,13 @@ class Receipt extends Model
     public function scopeSearch(Builder $query, $searchText): Builder
     {
         if ($searchText) {
+            $orgSearchText = $searchText;
             $searchText = '%'.$searchText.'%';
 
             return $query
                 ->whereLike('reference', $searchText)
-                ->orWhereRelation('contact', 'name', 'like', $searchText);
+                ->orWhereRelation('contact', 'name', 'like', $searchText)
+                ->orWhereRelation('range_document_number', 'document_number', '=', $orgSearchText);
         }
 
         return $query;
