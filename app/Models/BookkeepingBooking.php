@@ -72,7 +72,7 @@ class BookkeepingBooking extends Model
         if ($search) {
             $query
                 ->where('booking_text', 'like', "%$search%")
-                ->orWhereRelation('range_document_number', 'document_number', 'like', "%$search%");
+                ->orWhereRelation('range_document_number', 'document_number', '=', "$search");
         }
 
         return $query;
