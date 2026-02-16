@@ -164,10 +164,11 @@ class Receipt extends Model
             $orgSearchText = $searchText;
             $searchText = '%'.$searchText.'%';
 
-            return $query
-                ->whereLike('reference', $searchText)
-                ->orWhereRelation('contact', 'name', 'like', $searchText)
-                ->orWhereRelation('range_document_number', 'document_number', '=', $orgSearchText);
+            return $query->where(function (Builder $q) use ($searchText, $orgSearchText) {
+                $q->whereLike('reference', $searchText)
+                    ->orWhereRelation('contact', 'name', 'like', $searchText)
+                    ->orWhereRelation('range_document_number', 'document_number', '=', $orgSearchText);
+            });
         }
 
         return $query;
@@ -214,7 +215,7 @@ class Receipt extends Model
             }
         }
 
-        $booking = BookkeepingBooking::whereMorphedTo('bookable', Receipt::class)->where('bookable_id'  ,
+        $booking = BookkeepingBooking::whereMorphedTo('bookable', Receipt::class)->where('bookable_id',
             $receipt->id)->first();
         $booking = BookkeepingBooking::createBooking(
             $receipt, 'issued_on',
@@ -226,7 +227,7 @@ class Receipt extends Model
         );
         $name = strtoupper($accounts['name']);
         $bookingTextSuffix = $receipt->org_currency !== 'EUR' ? '(originär '.number_format($receipt->org_amount, 2, ',',
-            '.').' '.$receipt->org_currency.')' : '';
+                '.').' '.$receipt->org_currency.')' : '';
 
         $booking->booking_text = "Rechnungseingang|$name|$receipt->reference|$bookingTextSuffix";
         $booking->save();
