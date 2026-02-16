@@ -34,9 +34,6 @@ const ReceiptConfirm: React.FC<Props> = ({
   cost_centers,
   currencies
 }) => {
-  if (!receipt) {
-    return null
-  }
   const actionUrl = route(
     'app.bookkeeping.receipts.update',
     {
@@ -56,20 +53,39 @@ const ReceiptConfirm: React.FC<Props> = ({
     form.setData(receipt)
   }, [receipt.id, receipt.amount, receipt.contact_id, receipt.cost_center_id, receipt.reference])
 
-  const handleNextReceipt = () => {
+  const handleNextReceipt = useCallback(() => {
     if (nextReceipt) {
       router.visit(nextReceipt, { preserveState: false })
     } else {
       router.visit(route('app.bookkeeping.receipts.index'))
     }
-  }
+  }, [nextReceipt])
 
-  const handlePrevReceipt = () => {
+  const handlePrevReceipt = useCallback(() => {
     if (prevReceipt) {
       router.visit(prevReceipt, { preserveState: false })
     } else {
       router.visit(route('app.bookkeeping.receipts.index'))
     }
+  }, [prevReceipt])
+
+  const handleDelete = useCallback(async () => {
+    const promise = await AlertDialog.call({
+      title: 'Beleg löschen',
+      message: 'Möchtest Du den Beleg wirklich löschen?',
+      buttonTitle: 'Beleg löschen',
+      variant: 'destructive'
+    })
+
+    if (promise) {
+      router.delete(route('app.bookkeeping.receipts.destroy', { receipt: receipt.id }), {
+        onSuccess: () => handleNextReceipt()
+      })
+    }
+  }, [receipt.id, handleNextReceipt])
+
+  if (!receipt) {
+    return null
   }
 
   const handleContactChange = (contactId: string | number | null) => {
@@ -83,19 +99,18 @@ const ReceiptConfirm: React.FC<Props> = ({
     }
   }
 
-  const handleDelete = useCallback(async () => {
-    const promise = await AlertDialog.call({
-      title: 'Beleg löschen',
-      message: 'Möchtest Du den Beleg wirklich löschen?',
-      buttonTitle: 'Beleg löschen',
-      variant: 'destructive'
-    })
-
-    if (promise) {
-      router.delete(route('app.bookkeeping.receipts.destroy', { receipt: receipt.id }))
-      handleNextReceipt()
-    }
-  }, [receipt.id])
+  const checkForDuplicateReference = async (reference: string) => {
+    if (!reference) return
+    router.get(
+      route('app.bookkeeping.receipts.check-reference', { reference: reference }),
+      {},
+      {
+        preserveState: true,
+        preserveScroll: true,
+        only: []
+      }
+    )
+  }
 
   return (
     <PageContainer title="Beleg-Upload bestätigen" width="7xl" className="flex overflow-hidden">
@@ -130,7 +145,11 @@ const ReceiptConfirm: React.FC<Props> = ({
           </div>
 
           <div className="col-span-24">
-            <FormTextField label="Referenz" {...form.register('reference')} />
+            <FormTextField
+              label="Referenz"
+              {...form.register('reference')}
+              onBlur={() => checkForDuplicateReference(form.data.reference)}
+            />
           </div>
 
           <div className="col-span-24">

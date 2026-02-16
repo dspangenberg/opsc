@@ -353,6 +353,20 @@ class ReceiptController extends Controller
         return null;
     }
 
+    public function checkReference(Request $request): RedirectResponse {
+        $reference = $request->query('reference');
+
+        if (!$reference || !is_string($reference)) {
+            return back();
+        }
+
+        $receipt = Receipt::where('reference', $reference)->first();
+        if ($receipt) {
+            Inertia::flash('toast', ['type' => 'warning', 'message' => 'Es gibt bereits einen Beleg mit der Referenz']);
+        }
+        return back();
+    }
+
     public function edit(Receipt $receipt): Response
     {
         $this->loadReceiptWithPayments($receipt);
