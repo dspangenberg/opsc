@@ -98,7 +98,7 @@ class BookingController extends Controller
         $balancesCollection = collect($balances->values());
 
         $paginatedBalances = new \Illuminate\Pagination\LengthAwarePaginator(
-            $balancesCollection->forPage($currentPage, $perPage),
+            $balancesCollection->forPage($currentPage, $perPage)->values(),
             $balancesCollection->count(),
             $perPage,
             $currentPage,
@@ -121,6 +121,9 @@ class BookingController extends Controller
                 'total' => $paginatedBalances->total(),
                 'from' => $paginatedBalances->firstItem(),
                 'to' => $paginatedBalances->lastItem(),
+                'prev_page_url' => $paginatedBalances->previousPageUrl(),
+                'next_page_url' => $paginatedBalances->nextPageUrl(),
+                'links' => $paginatedBalances->linkCollection()->toArray(),
             ],
             'currentFilters' => $parsedFilters,
         ]);
