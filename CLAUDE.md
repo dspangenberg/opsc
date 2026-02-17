@@ -87,6 +87,7 @@ This project has domain-specific skills available. You MUST activate the relevan
 
 ## Tinker / Debugging
 
+- CRITICAL: This is a multi-tenant application. ALWAYS use `php artisan tenant:tinker` instead of `php artisan tinker` for database queries and model debugging.
 - You should use the `tinker` tool when you need to execute PHP to debug code or query Eloquent models directly.
 - Use the `database-query` tool when you only need to read from the database.
 

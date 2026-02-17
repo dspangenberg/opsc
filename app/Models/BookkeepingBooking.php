@@ -68,15 +68,18 @@ class BookkeepingBooking extends Model
      */
     public function scopeSearch(Builder $query, ?string $search): Builder
     {
+
         $search = trim($search ?? '');
         if ($search) {
-            $query
-                ->where('booking_text', 'like', "%$search%")
-                ->orWhereRelation('range_document_number', 'document_number', '=', "$search");
+            $query->where(function ($q) use ($search) {
+                $q->where('booking_text', 'like', "%$search%")
+                    ->orWhereRelation('range_document_number', 'document_number', '=', "$search");
+            });
         }
 
         return $query;
     }
+
 
     protected function getFilterLabel(string $key, mixed $value): ?string
     {
@@ -128,6 +131,12 @@ class BookkeepingBooking extends Model
         return $query;
     }
 
+    public function scopeWithoutCanceled(Builder $query): Builder
+    {
+        return $query->where('is_canceled', false)
+            ->whereNull('canceled_id');
+    }
+
     /**
      * Erstellt Query für bestimmtes Konto
      */
@@ -154,7 +163,7 @@ class BookkeepingBooking extends Model
         return BookkeepingAccount::whereIn('account_number', $accountIds)
             ->get()
             ->keyBy('account_number')
-            ->map(fn ($account) => $account->label);
+            ->map(fn($account) => $account->label);
     }
 
     /**
@@ -404,11 +413,11 @@ class BookkeepingBooking extends Model
         $documentNumberPrefix = '',
         $bookingId = null
     ): ?BookkeepingBooking {
-        if (! $debit_account || ! $credit_account) {
+        if (!$debit_account || !$credit_account) {
             BookkeepingLog::create([
                 'parent_model' => $parent::class,
                 'parent_id' => $parent->id,
-                'text' => ! $debit_account ? 'Sollkonto nicht gefunden' : 'Habenkonto nicht gefunden',
+                'text' => !$debit_account ? 'Sollkonto nicht gefunden' : 'Habenkonto nicht gefunden',
             ]);
 
             return null;
@@ -425,7 +434,7 @@ class BookkeepingBooking extends Model
             $booking->date = $parent[$dateField];
         }
 
-        if (!$booking->number_range_document_numbers_id  ||  $booking->number_range_document_numbers_id != $parent->number_range_document_numbers_id) {
+        if (!$booking->number_range_document_numbers_id || $booking->number_range_document_numbers_id != $parent->number_range_document_numbers_id) {
             $booking->number_range_document_numbers_id = $parent->number_range_document_numbers_id;
         }
 
@@ -442,7 +451,8 @@ class BookkeepingBooking extends Model
 
 
         if (get_class($parent) !== Transaction::class) {
-            $taxes = BookkeepingAccount::getTax($booking->account_id_credit, $booking->account_id_debit, $booking->amount);
+            $taxes = BookkeepingAccount::getTax($booking->account_id_credit, $booking->account_id_debit,
+                $booking->amount);
             $booking->tax_credit = $taxes['tax_credit'];
             $booking->tax_debit = $taxes['tax_debit'];
             $booking->tax_id = $taxes['tax_id'];
@@ -463,7 +473,7 @@ class BookkeepingBooking extends Model
     public static function correctBooking(int $bookingId): int
     {
         $booking = BookkeepingBooking::find($bookingId);
-        if (! $booking) {
+        if (!$booking) {
             throw new Exception('Booking not found');
         }
 
