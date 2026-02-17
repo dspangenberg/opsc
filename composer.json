@@ -27,6 +27,7 @@
     "predis/predis": "^3.2",
     "protonemedia/laravel-verify-new-email": "^1.13",
     "rikudou/euqrpayment": "^1.4",
+    "sentry/sentry-laravel": "^4.20",
     "smalot/pdfparser": "^2.12",
     "spatie/enum": "^3.13",
     "spatie/holidays": "^1.17",
