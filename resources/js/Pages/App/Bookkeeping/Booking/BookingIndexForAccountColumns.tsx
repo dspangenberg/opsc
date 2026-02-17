@@ -254,22 +254,6 @@ export const createColumns = (
       )
     },
     {
-      accessorKey: 'balance',
-      header: () => <div className="text-right">Saldo</div>,
-      size: 70,
-      cell: ({ row }) => {
-        const balance = row.original.balance ?? 0
-        const absBalance = Math.abs(balance)
-        const indicator = balance >= 0 ? 'S' : 'H'
-
-        return (
-          <div className="text-right font-medium">
-            {currencyFormatter.format(absBalance)} {indicator}
-          </div>
-        )
-      }
-    },
-    {
       accessorKey: 'amount',
       header: () => <div className="text-right">Soll</div>,
       size: 70,
@@ -289,6 +273,22 @@ export const createColumns = (
         if (row.original.balance_type !== 'credit') return null
 
         return <div className="text-right">{currencyFormatter.format(row.original.amount)}</div>
+      }
+    },
+    {
+      accessorKey: 'balance',
+      header: () => <div className="text-right">Saldo</div>,
+      size: 70,
+      cell: ({ row }) => {
+        const balance = row.original.balance ?? 0
+        const absBalance = Math.abs(balance)
+        const indicator = balance >= 0 ? 'S' : 'H'
+
+        return (
+          <div className="text-right font-medium">
+            {currencyFormatter.format(absBalance)} {indicator}
+          </div>
+        )
       }
     },
     {

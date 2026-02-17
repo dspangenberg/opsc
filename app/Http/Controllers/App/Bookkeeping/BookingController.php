@@ -187,6 +187,8 @@ class BookingController extends Controller
                 'allowed_scopes' => ['issuedBetween'],
             ])
             ->search($search)
+            ->where('is_canceled', 0)
+            ->whereNull('canceled_id')
             ->with('account_debit')
             ->with('account_credit')
             ->with('tax')
@@ -269,7 +271,9 @@ class BookingController extends Controller
     public function editAccounts(CorrectEditBookingsRequest $request, BookkeepingBooking $booking): RedirectResponse
     {
         if ($booking->is_locked || $booking->is_canceled) {
-            Inertia::flash('toast', ['type' => 'error', 'message' => 'Gesperrte oder stornierte Buchungen können nicht bearbeitet werden.']);
+            Inertia::flash('toast', [
+                'type' => 'error', 'message' => 'Gesperrte oder stornierte Buchungen können nicht bearbeitet werden.'
+            ]);
             return back();
         }
 
