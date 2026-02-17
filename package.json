@@ -52,7 +52,7 @@
     "@hugeicons/react": "^1.1.5",
     "@inertiajs/core": "2.3.15",
     "@internationalized/date": "^3.11.0",
-    "@mdxeditor/editor": "^3.52.3",
+    "@mdxeditor/editor": "^3.52.4",
     "@monaco-editor/react": "^4.7.0",
     "@prosemirror-adapter/react": "^0.5.1",
     "@radix-ui/react-avatar": "^1.1.11",
