@@ -55,7 +55,7 @@ class Payment extends Model
 
             $booking = BookkeepingBooking::createBooking($payment, 'issued_on', 'amount', $accountDebit,
                 $accountCredit, 'WUM',
-                $existingBooking ? $existingBooking->id : null
+                $existingBooking?->id
             );
             $booking->booking_text = implode('|', $bookingText);
             $booking->number_range_document_numbers_id = $payment->transaction->number_range_document_numbers_id;

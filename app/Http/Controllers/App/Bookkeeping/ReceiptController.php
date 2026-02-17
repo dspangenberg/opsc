@@ -67,7 +67,7 @@ class ReceiptController extends Controller
                 'issued_on',
                 'min'
             )
-            ->orderBy('issued_on');
+            ->orderByDesc('issued_on');
     }
 
     private function loadReceiptWithPayments(Receipt $receipt): void

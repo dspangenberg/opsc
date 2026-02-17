@@ -187,8 +187,7 @@ class BookingController extends Controller
                 'allowed_scopes' => ['issuedBetween'],
             ])
             ->search($search)
-            ->where('is_canceled', 0)
-            ->whereNull('canceled_id')
+            ->withoutCanceled()
             ->with('account_debit')
             ->with('account_credit')
             ->with('tax')

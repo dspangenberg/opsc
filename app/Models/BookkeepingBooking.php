@@ -131,6 +131,12 @@ class BookkeepingBooking extends Model
         return $query;
     }
 
+    public function scopeWithoutCanceled(Builder $query): Builder
+    {
+        return $query->where('is_canceled', false)
+            ->whereNull('canceled_id');
+    }
+
     /**
      * Erstellt Query für bestimmtes Konto
      */
