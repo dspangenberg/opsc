@@ -207,8 +207,8 @@ importers:
         specifier: ^0.6.1
         version: 0.6.1
       ziggy-js:
-        specifier: ^2.6.0
-        version: 2.6.0
+        specifier: ^2.6.1
+        version: 2.6.1
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -4689,8 +4689,8 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
-  qs-esm@7.0.2:
-    resolution: {integrity: sha512-D8NAthKSD7SGn748v+GLaaO6k08Mvpoqroa35PqIQC4gtUa8/Pb/k+r0m0NnGBVbHDP1gKZ2nVywqfMisRhV5A==}
+  qs-esm@7.0.3:
+    resolution: {integrity: sha512-8jbjCR0PPbqoQcv83C2K/zvVeytRPwPpt3WPDbq51qyLAxcWGtXVRjSe6GHtLCoVbg9+NEFkv7GyUxqjcDIJzw==}
     engines: {node: '>=18'}
 
   qs@6.15.0:
@@ -5567,8 +5567,8 @@ packages:
     resolution: {integrity: sha512-CzhO+pFNo8ajLM2d2IW/R93ipy99LWjtwblvC1RsoSUMZgyLbYFr221TnSNT7GjGdYui6P459mw9JH/g/zW2ug==}
     engines: {node: '>=18'}
 
-  ziggy-js@2.6.0:
-    resolution: {integrity: sha512-V6xeZKEG67xt5Qtli5nCpQrc5TXW/tf3dKu2QLJS2TCxe+xxo/5AusT7M3MwX4nNeSEKBJMIvVJz2dlt+ziWYQ==}
+  ziggy-js@2.6.1:
+    resolution: {integrity: sha512-cxsaEU5l7bZD+axkk6TurjDLrW1UKnxJ/BrhoGxkYe7+mFfNg2dKnmXOG2bwcXJHQ8NmGJ5dwZ99T5FOtPSsyw==}
 
   zod-to-json-schema@3.25.1:
     resolution: {integrity: sha512-pM/SU9d3YAggzi6MtR4h7ruuQlqKtad8e9S0fmxcMi+ueAK5Korys/aWcV9LIIHTVbj01NdzxcnXSN+O74ZIVA==}
@@ -10979,7 +10979,7 @@ snapshots:
 
   punycode@2.3.1: {}
 
-  qs-esm@7.0.2: {}
+  qs-esm@7.0.3: {}
 
   qs@6.15.0:
     dependencies:
@@ -12008,9 +12008,9 @@ snapshots:
 
   yoctocolors@2.1.2: {}
 
-  ziggy-js@2.6.0:
+  ziggy-js@2.6.1:
     dependencies:
-      qs-esm: 7.0.2
+      qs-esm: 7.0.3
 
   zod-to-json-schema@3.25.1(zod@3.25.76):
     dependencies:
