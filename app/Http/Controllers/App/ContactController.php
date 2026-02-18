@@ -38,6 +38,7 @@ use App\Models\PhoneCategory;
 use App\Models\Salutation;
 use App\Models\Tax;
 use App\Models\Title;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -141,11 +142,12 @@ class ContactController extends Controller
         return redirect()->route('app.contact.edit', ['contact' => $contact->id]);
     }
 
-    public function bulkArchive(ContactBulkArchiveRequest $request)
+    public function bulkArchive(ContactBulkArchiveRequest $request): RedirectResponse
     {
         $contactIds = $request->getContactIds();
         Contact::whereIn('id', $contactIds)->update(['is_archived' => true]);
-        return Inertia::flash('toast', ['type' => 'success', 'message' => 'Kontakte wurden archiviert'])->back();
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Kontakte wurden archiviert']);
+        return redirect()->back();
     }
 
     public function archiveToggle(Contact $contact) {

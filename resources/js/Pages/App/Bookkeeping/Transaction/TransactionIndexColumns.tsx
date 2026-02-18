@@ -195,7 +195,7 @@ export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.Trans
       }
     },
     {
-      accessorKey: 'amount_tax',
+      accessorKey: 'amount',
       header: () => <div className="text-right">Betrag</div>,
       size: 110,
       cell: ({ row }) => (
