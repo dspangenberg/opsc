@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
@@ -39,8 +40,10 @@ Route::middleware([
     Route::post('users/{user}/clear-pending-mail-address',
         [UserController::class, 'clearPendingMailAddress'])->name('admin.user.clear-pending-mail-address');
 
-
-        Route::put('users/{user}/reset-password', [UserController::class, 'resetPassword'])
+    Route::put('users/{user}/reset-password', [UserController::class, 'resetPassword'])
         ->name('admin.user.reset-password');
+
+    Route::get('settings', [SettingController::class, 'index'])->name('admin.setting.index');
+    Route::put('settings', [SettingController::class, 'update'])->name('admin.setting.update');
 
 });

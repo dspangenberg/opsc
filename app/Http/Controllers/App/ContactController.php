@@ -19,6 +19,7 @@ use App\Data\SalutationData;
 use App\Data\TaxData;
 use App\Data\TitleData;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ContactBulkArchiveRequest;
 use App\Http\Requests\ContactPersonStoreRequest;
 use App\Http\Requests\ContactStoreRequest;
 use App\Http\Requests\ContactUpdateRequest;
@@ -138,6 +139,13 @@ class ContactController extends Controller
         $contact = Contact::create($request->validated());
 
         return redirect()->route('app.contact.edit', ['contact' => $contact->id]);
+    }
+
+    public function bulkArchive(ContactBulkArchiveRequest $request)
+    {
+        $contactIds = $request->getContactIds();
+        Contact::whereIn('id', $contactIds)->update(['is_archived' => true]);
+        return Inertia::flash('toast', ['type' => 'success', 'message' => 'Kontakte wurden archiviert'])->back();
     }
 
     public function archiveToggle(Contact $contact) {

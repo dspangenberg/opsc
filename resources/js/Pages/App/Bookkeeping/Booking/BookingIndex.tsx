@@ -157,7 +157,6 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({
       {
         preserveScroll: true,
         onSuccess: () => {
-          // Reload the current page with filters and page
           router.post(
             route('app.bookkeeping.bookings.index', { page: bookings.current_page }),
             {
@@ -189,7 +188,7 @@ const BookingIndex: React.FC<TransactionsPageProps> = ({
           variant="ghost"
           size="auto"
           icon={CreditCardChangeIcon}
-          title="Buchungen korrigieren"
+          title="Buchung aktualisieren"
           onClick={() => handleCorrectBookings()}
         />
         <Button
