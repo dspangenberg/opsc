@@ -11,6 +11,7 @@
     "eg-mohamed/notable": "^1.4",
     "endroid/qr-code": "^6.0.8",
     "erusev/parsedown": "^1.7",
+    "horstoeko/zugferd-laravel": "^1.0",
     "inertiajs/inertia-laravel": "^2.0",
     "lab404/laravel-impersonate": "^1.7",
     "laravel/framework": "^12",
@@ -49,7 +50,6 @@
     "fakerphp/faker": "^1.24.1",
     "fruitcake/laravel-debugbar": "^4.0",
     "kitloong/laravel-migrations-generator": "^7.1",
-    "laradumps/laradumps": "^5.0",
     "larastan/larastan": "^3.0",
     "laravel-lang/http-statuses": "^3.10.3",
     "laravel-lang/lang": "^15.20.2",
@@ -62,7 +62,8 @@
     "nunomaduro/collision": "^8.8",
     "pestphp/pest": "^4.3.1",
     "phpstan/phpstan": "^2.1.17",
-    "soloterm/solo": "^0.5.0"
+    "soloterm/solo": "^0.5.0",
+    "spatie/laravel-ray": "^1.43"
   },
   "autoload": {
     "files": ["app/Helpers/Opsc.php"],

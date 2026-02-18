@@ -1,4 +1,5 @@
 import {
+  AlertCircleIcon,
   Delete02Icon,
   Delete04Icon,
   DeletePutBackIcon,
@@ -10,13 +11,15 @@ import {
 import { router } from '@inertiajs/react'
 import { filesize } from 'filesize'
 import type * as React from 'react'
-import { useContext } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { Pressable } from 'react-aria'
 import { HoverCard, HoverCardContent } from '@/Components/hover-card'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Button } from '@/Components/twc-ui/button'
 import { Checkbox } from '@/Components/twc-ui/checkbox'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { Icon } from '@/Components/twc-ui/icon'
+import { LogoSpinner } from '@/Components/twc-ui/logo-spinner'
 import { MenuItem } from '@/Components/twc-ui/menu'
 import { useFileDownload } from '@/Hooks/use-file-download'
 import { DocumentIndexContext } from '@/Pages/App/Document/Document/DocumentIndexContext'
@@ -30,10 +33,39 @@ interface DocumentIndexPageProps {
 export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, onClick }) => {
   const { selectedDocuments, setSelectedDocuments } = useContext(DocumentIndexContext)
   const isSelected = selectedDocuments.includes(document.id as number)
+  const [imageError, setImageError] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const imageRef = useRef<HTMLDivElement>(null)
+
   const { handleDownload: downloadFile } = useFileDownload({
     route: route('app.document.pdf', { id: document.id }),
     filename: document.filename || 'document.pdf'
   })
+
+  // Intersection Observer for lazy loading
+  useEffect(() => {
+    if (!imageRef.current) return
+
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setIsVisible(true)
+            observer.disconnect()
+          }
+        })
+      },
+      {
+        rootMargin: '50px', // Start loading 50px before element is visible
+        threshold: 0.01
+      }
+    )
+
+    observer.observe(imageRef.current)
+
+    return () => observer.disconnect()
+  }, [])
 
   const handleDelete = async () => {
     const promise = await AlertDialog.call({
@@ -95,13 +127,42 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
     <div className="relative flex h-64 w-full flex-col overflow-hidden rounded-md border bg-muted/40 shadow-sm hover:border-primary">
       <Pressable onClick={() => onClick(document)}>
         <button type="button" className="w-full border-0 bg-transparent p-0">
-          <img
-            key={document.id}
-            src={route('app.document.preview', { id: document.id })}
-            className="h-28 w-full object-cover object-top"
-            style={{ objectPosition: '50% 0%' }}
-            alt={document.filename}
-          />
+          <div ref={imageRef} className="relative h-28 w-full">
+            {!isVisible || isLoading ? (
+              <div className="flex h-28 w-full items-center justify-center bg-muted">
+                <LogoSpinner />
+              </div>
+            ) : null}
+
+            {isVisible && !imageError ? (
+              <img
+                key={document.id}
+                src={route('app.document.preview', { id: document.id })}
+                className="h-28 w-full cursor-pointer object-cover object-top"
+                style={{
+                  objectPosition: '50% 0%',
+                  display: isLoading ? 'none' : 'block'
+                }}
+                alt={document.filename}
+                onLoad={() => setIsLoading(false)}
+                onError={() => {
+                  setImageError(true)
+                  setIsLoading(false)
+                }}
+              />
+            ) : null}
+
+            {isVisible && imageError ? (
+              <div className="flex h-28 w-full items-center justify-center bg-muted">
+                <div className="text-center">
+                  <div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center">
+                    <Icon icon={AlertCircleIcon} className="size-6 text-muted-foreground" />
+                  </div>
+                  <p className="text-muted-foreground text-xs">Vorschau nicht verfügbar</p>
+                </div>
+              </div>
+            ) : null}
+          </div>
         </button>
       </Pressable>
 

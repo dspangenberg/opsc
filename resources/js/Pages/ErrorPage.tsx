@@ -1,3 +1,5 @@
+import { Head } from '@inertiajs/react'
+
 const ErrorPage = ({ status }: { status: 403 | 404 | 500 | 503 }) => {
   const title = {
     503: '503: Service nicht verfügbar',
@@ -15,6 +17,7 @@ const ErrorPage = ({ status }: { status: 403 | 404 | 500 | 503 }) => {
 
   return (
     <div>
+      <Head title={title} />
       <h1>{title}</h1>
       <div>{description}</div>
     </div>

@@ -10,8 +10,8 @@ namespace App\Models;
 use App\Exceptions\ContactNotFoundException;
 use App\Exceptions\ContactWithoutAccountException;
 use Eloquent;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,8 +21,9 @@ use Maize\Markable\Markable;
 use Maize\Markable\Models\Favorite;
 use MohamedSaid\Notable\Traits\HasNotables;
 use Plank\Mediable\Exceptions\MediaUrlException;
-use Plank\Mediable\MediableCollection;
 use Plank\Mediable\Mediable;
+use Plank\Mediable\MediableCollection;
+
 /**
  * @property-read Collection<int, ContactAddress> $addresses
  * @property-read int|null $addresses_count
@@ -50,25 +51,31 @@ use Plank\Mediable\Mediable;
  * @property-read Salutation|null $salutation
  * @property-read Tax|null $tax
  * @property-read Title|null $title
+ *
  * @method static Builder<static>|Contact newModelQuery()
  * @method static Builder<static>|Contact newQuery()
  * @method static Builder<static>|Contact query()
  * @method static Builder<static>|Contact view($view)
  * @method static Builder<static>|Contact whereHasMark(Mark $mark, Model $user, ?string $value = null)
+ *
  * @property-read string $primary_phone
  * @property-read \App\Models\CostCenter|null $cost_center
  * @property-read Collection<int, \MohamedSaid\Notable\Notable> $notables
  * @property-read int|null $notables_count
+ *
  * @method static Builder<static>|Contact search($search)
+ *
  * @mixin Eloquent
  */
 class Contact extends Model
 {
-    use Markable, HasNotables, Mediable;
+    use HasNotables, Markable, Mediable;
 
     protected static array $marks = [
         Favorite::class,
     ];
+
+    public mixed $primary_email;
 
     protected $appends = [
         'full_name',
@@ -81,7 +88,7 @@ class Contact extends Model
         'primary_phone',
         'company_name',
         'sales',
-        'avatar_url'
+        'avatar_url',
     ];
 
     protected $attributes = [
@@ -171,9 +178,10 @@ class Contact extends Model
     public function getIsFavoriteAttribute(): bool
     {
         $user = auth()->user();
-        if (!$user) {
+        if (! $user) {
             return false;
         }
+
         return Favorite::has($this, $user);
     }
 
@@ -181,6 +189,7 @@ class Contact extends Model
     {
         try {
             $media = $this->firstMedia('avatar');
+
             return $media?->getUrl();
         } catch (MediaUrlException $e) {
             return null;
@@ -255,12 +264,14 @@ class Contact extends Model
         return $this->name;
     }
 
-    public function getInvoiceAddress(): ContactAddress {
+    public function getInvoiceAddress(): ContactAddress
+    {
         $category = AddressCategory::where('is_invoice_address', true)->first();
         $address = $this->addresses()->where('address_category_id', $category->id)->first();
-        if (!$address) {
+        if (! $address) {
             return $this->addresses()->first();
         }
+
         return $address;
     }
 
@@ -324,7 +335,8 @@ class Contact extends Model
         return $this->hasMany(Project::class, 'owner_contact_id', 'id');
     }
 
-    public function scopeSearch($query, $search): Builder {
+    public function scopeSearch($query, $search): Builder
+    {
         $search = trim($search);
         if ($search) {
             $query
@@ -332,15 +344,16 @@ class Contact extends Model
                 ->orWhere('first_name', 'like', "%$search%")
                 ->orWhereRelation('company', 'name', 'like', "%$search%");
         }
+
         return $query;
     }
 
     public function scopeView(Builder $query, $view): Builder
     {
         return match ($view) {
-            'debtors' => $query->where('is_archived', 0)->where(fn($q) => $q->where('is_debtor', true)->orWhere('debtor_number', '<>', 0)),
+            'debtors' => $query->where('is_archived', 0)->where(fn ($q) => $q->where('is_debtor', true)->orWhere('debtor_number', '<>', 0)),
             'orgs' => $query->where('is_org', true),
-            'creditors' => $query->where('is_archived', false)->where(fn($q) => $q->where('is_creditor', true)->orWhere('creditor_number', '<>', 0)),
+            'creditors' => $query->where('is_archived', false)->where(fn ($q) => $q->where('is_creditor', true)->orWhere('creditor_number', '<>', 0)),
             'archived' => $query->where('is_archived', true),
             'favorites' => $query->whereHasFavorite(
                 auth()->user()
@@ -377,7 +390,8 @@ class Contact extends Model
         ];
     }
 
-    public function createBookkeepingAccount($accountNumber, int $taxId) {
+    public function createBookkeepingAccount($accountNumber, int $taxId)
+    {
 
         $account = BookkeepingAccount::where('account_number', $accountNumber)->first();
         if ($account) {
@@ -390,10 +404,12 @@ class Contact extends Model
         $bookkeepingAccount->name = $this->full_name;
         $bookkeepingAccount->type = $accountNumber < 20000 ? 'd' : 'c';
         $bookkeepingAccount->save();
+
         return $bookkeepingAccount;
     }
 
-    public function setAccountTaxId($accountNumber, $taxId) {
+    public function setAccountTaxId($accountNumber, $taxId)
+    {
         $bookkeepingAccount = BookkeepingAccount::where('account_number', $accountNumber)->first();
         if ($bookkeepingAccount) {
             $bookkeepingAccount->tax_id = $taxId;
@@ -446,9 +462,9 @@ class Contact extends Model
 
         $outturnAccount = null;
 
-        if (!$is_invoice) {
+        if (! $is_invoice) {
             $contact->load('cost_center');
-            if ($contact->cost_center_id && !$contact->is_primary) {
+            if ($contact->cost_center_id && ! $contact->is_primary) {
                 $outturnAccount = BookkeepingAccount::where('id', $contact->cost_center->bookkeeping_account_id)->first();
             } else {
                 if ($contact->outturn_account_id) {

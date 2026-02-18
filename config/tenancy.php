@@ -51,6 +51,9 @@ return [
          */
         'central_domains' => [
             str(env('APP_URL'))->after('://')->before('/')->toString(),
+            'opsc.test',
+            'localhost',
+            '127.0.0.1',
         ],
 
         /**

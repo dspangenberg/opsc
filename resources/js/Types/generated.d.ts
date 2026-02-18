@@ -565,6 +565,11 @@ name: string;
 is_hidden: boolean;
 gender: string;
 };
+export type SettingData = {
+group: string;
+key: string;
+value: string | null;
+};
 export type TaxData = {
 id: number | null;
 name: string;

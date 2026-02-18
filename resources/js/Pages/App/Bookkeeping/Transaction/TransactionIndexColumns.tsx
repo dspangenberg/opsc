@@ -4,8 +4,8 @@
  */
 
 import {
-  MoreVerticalCircle01Icon,
   CheckUnread01Icon,
+  MoreVerticalCircle01Icon,
   ProfileIcon,
   Tick01Icon
 } from '@hugeicons/core-free-icons'
@@ -30,7 +30,6 @@ interface ColumnOptions {
   currentSearch?: string
   bankAccountId?: number
 }
-
 
 export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.TransactionData>[] => {
   const handleConfirmClicked = (row: App.Data.TransactionData) => {
@@ -59,27 +58,27 @@ export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.Trans
     )
   }
 
-  const RowActions = ({
-    row
-  }: {
-    row: Row<App.Data.TransactionData>
-  }) => {
+  const RowActions = ({ row }: { row: Row<App.Data.TransactionData> }) => {
     return (
       <div className="mx-auto">
         <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
-          {row.original.is_locked && <MenuItem
-            icon={CheckUnread01Icon}
-            title="Transaktion als unbestätigt markieren"
-            separator
-            onAction={() => handleUnconfirmClicked(row.original)}
-          />}
+          {row.original.is_locked && (
+            <MenuItem
+              icon={CheckUnread01Icon}
+              title="Transaktion als unbestätigt markieren"
+              separator
+              onAction={() => handleUnconfirmClicked(row.original)}
+            />
+          )}
 
-          {!row.original.is_locked && <MenuItem
-            icon={Tick01Icon}
-            title="Transaktion als bestätigt markieren"
-            separator
-            onAction={() => handleConfirmClicked(row.original)}
-          />}
+          {!row.original.is_locked && (
+            <MenuItem
+              icon={Tick01Icon}
+              title="Transaktion als bestätigt markieren"
+              separator
+              onAction={() => handleConfirmClicked(row.original)}
+            />
+          )}
 
           <MenuItem
             icon={ProfileIcon}
@@ -95,122 +94,123 @@ export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.Trans
   }
 
   return [
-  {
-    id: 'select',
-    size: 30,
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-        className="mx-3 bg-background align-middle"
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center">
+    {
+      id: 'select',
+      size: 30,
+      header: ({ table }) => (
         <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={value => row.toggleSelected(!!value)}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
           className="mx-3 bg-background align-middle"
-          aria-label="Select row"
+          aria-label="Select all"
         />
-      </div>
-    )
-  },
-  {
-    accessorKey: 'booked_on',
-    header: 'Buchung',
-    size: 50,
-    cell: ({ getValue }) => (
-      <div>
-        <span>{getValue() as string}</span>
-      </div>
-    )
-  },
-  {
-    accessorKey: 'valued_on',
-    header: 'Wertstellung',
-    size: 50,
-    cell: ({ getValue }) => <span>{getValue() as string}</span>
-  },
-  {
-    accessorKey: 'is_locked',
-    header: '',
-    size: 5,
-    cell: ({ getValue }) => {
-      if (getValue() === true) {
+      ),
+      cell: ({ row }) => (
+        <div className="flex items-center">
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={value => row.toggleSelected(!!value)}
+            className="mx-3 bg-background align-middle"
+            aria-label="Select row"
+          />
+        </div>
+      )
+    },
+    {
+      accessorKey: 'booked_on',
+      header: 'Buchung',
+      size: 50,
+      cell: ({ getValue }) => (
+        <div>
+          <span>{getValue() as string}</span>
+        </div>
+      )
+    },
+    {
+      accessorKey: 'valued_on',
+      header: 'Wertstellung',
+      size: 50,
+      cell: ({ getValue }) => <span>{getValue() as string}</span>
+    },
+    {
+      accessorKey: 'is_locked',
+      header: '',
+      size: 5,
+      cell: ({ getValue }) => {
+        if (getValue() === true) {
+          return (
+            <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-green-500">
+              <Icon icon={Tick01Icon} className="size-3.5 text-white" stroke="3" />
+            </div>
+          )
+        }
+      }
+    },
+    {
+      accessorKey: 'bookkeeping_text',
+      header: 'Buchung',
+      size: 400,
+      cell: ({ row }) => {
+        const [bookingType, name, purpose] = row.original.bookkeeping_text.split('|')
+        let variant: BadgeVariant
+
+        switch (row.original.account?.type) {
+          case 'd':
+            variant = 'light-green'
+            break
+          case 'c':
+            variant = 'light-red'
+            break
+          default:
+            variant = 'secondary'
+            break
+        }
+
         return (
-          <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-green-500">
-            <Icon icon={Tick01Icon} className="size-3.5 text-white" stroke="3" />
+          <div>
+            <div className="flex items-center gap-2 text-xs">
+              {row.original.document_number && (
+                <Badge variant="outline">{row.original.document_number}</Badge>
+              )}
+              <div>
+                #{row.original.id} &mdash; {bookingType} &nbsp;
+                {row.original.account?.label && (
+                  <Badge variant={variant}>{row.original.account?.label}</Badge>
+                )}
+                {!row.original.counter_account_id && (
+                  <Badge variant="light-red">kein Gegenkonto</Badge>
+                )}
+              </div>
+            </div>
+            <div className="font-medium">{name}</div>
+            <div className="truncate">{purpose}</div>
+            {row.original.account_number && (
+              <div className="text-muted-foreground text-xs">{row.original.account_number}</div>
+            )}
           </div>
         )
       }
-    }
-  },
-  {
-    accessorKey: 'bookkeeping_text',
-    header: 'Buchung',
-    size: 400,
-    cell: ({ row }) => {
-      const [bookingType, name, purpose] = row.original.bookkeeping_text.split('|')
-      let variant: BadgeVariant
-
-      switch (row.original.account?.type) {
-        case 'd':
-          variant = 'light-green'
-          break
-        case 'c':
-          variant = 'light-blue'
-          break
-        default:
-          variant = 'secondary'
-          break
-      }
-
-      return (
-        <div>
-          <div className="flex items-center gap-2 text-xs">
-            {row.original.document_number && (
-              <Badge variant="outline">{row.original.document_number}</Badge>
-            )}
-            <div>
-              #{row.original.id} &mdash; {bookingType} &nbsp;
-              {row.original.account?.label && (
-                <Badge variant={variant}>{row.original.account?.label}</Badge>
-              )}
-              {!row.original.counter_account_id && (
-                <Badge variant="light-red">kein Gegenkonto</Badge>
-              )}
-            </div>
-          </div>
-          <div className="font-medium">{name}</div>
-          <div className="truncate">{purpose}</div>
-          {row.original.account_number && (
-            <div className="text-muted-foreground text-xs">{row.original.account_number}</div>
-          )}
+    },
+    {
+      accessorKey: 'amount',
+      header: () => <div className="text-right">Betrag</div>,
+      size: 110,
+      cell: ({ row }) => (
+        <div className={cn(row.original.amount < 0 ? 'text-red-500' : '', 'text-right')}>
+          {currencyFormatter.format(row.original.amount)}
         </div>
       )
+    },
+    {
+      id: 'actions',
+      size: 30,
+      header: () => <span className="sr-only">Actions</span>,
+      cell: ({ row }) => <RowActions row={row} />,
+      enableHiding: false
     }
-  },
-  {
-    accessorKey: 'amount_tax',
-    header: () => <div className="text-right">Betrag</div>,
-    size: 110,
-    cell: ({ row }) => (
-      <div className={cn(row.original.amount < 0 ? 'text-red-500' : '', 'text-right')}>
-        {currencyFormatter.format(row.original.amount)}
-      </div>
-    )
-  },
-  {
-    id: 'actions',
-    size: 30,
-    header: () => <span className="sr-only">Actions</span>,
-    cell: ({ row }) => <RowActions row={row} />,
-    enableHiding: false
-  }
   ]
 }
 

@@ -232,7 +232,7 @@ export const createColumns = (
       )
     },
     {
-      accessorKey: 'amount',
+      id: 'amount_gross',
       header: () => <div className="text-right">Brutto</div>,
       size: 70,
       cell: ({ row }) => (
@@ -243,7 +243,7 @@ export const createColumns = (
       )
     },
     {
-      accessorKey: 'amount_net',
+      id: 'amount_net',
       header: () => <div className="text-right">Netto</div>,
       size: 70,
       cell: ({ row }) => (
@@ -254,7 +254,7 @@ export const createColumns = (
       )
     },
     {
-      accessorKey: 'amount',
+      id: 'amount_debit',
       header: () => <div className="text-right">Soll</div>,
       size: 70,
       cell: ({ row }) => {
@@ -265,7 +265,7 @@ export const createColumns = (
       }
     },
     {
-      accessorKey: 'amount',
+      accessorKey: 'amount_credit',
       header: () => <div className="text-right">Haben</div>,
       size: 70,
       cell: ({ row }) => {

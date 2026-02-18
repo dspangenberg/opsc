@@ -8,6 +8,7 @@ import { Separator } from './separator'
 import 'react-pdf/dist/Page/TextLayer.css'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import {
+  AlertCircleIcon,
   ArrowDown01Icon,
   ArrowUp01Icon,
   FileDownloadIcon,
@@ -18,7 +19,12 @@ import {
   SquareArrowDiagonal02Icon
 } from '@hugeicons/core-free-icons'
 import { TextCursor } from 'lucide-react'
-import { extractFilenameFromContentDisposition, extractFilenameFromUrl, useFileDownload } from '@/Hooks/use-file-download'
+import { Icon } from '@/Components/twc-ui/icon'
+import {
+  extractFilenameFromContentDisposition,
+  extractFilenameFromUrl,
+  useFileDownload
+} from '@/Hooks/use-file-download'
 import { cn } from '@/Lib/utils'
 import { Button } from './button'
 import { DropdownButton } from './dropdown-button'
@@ -92,7 +98,7 @@ export const PdfContainer: React.FC<Props> = ({
   const baseFilename = useMemo(() => {
     if (filename) return filename
     return extractFilenameFromUrl(file)
-  }, [file, filename])
+  }, [file])
 
   const divRef = useRef<HTMLDivElement>(null)
   const [show, toggle] = useToggle(false)
@@ -143,6 +149,7 @@ export const PdfContainer: React.FC<Props> = ({
   const [scaleMode, setScaleMode] = useState<string>('scale-125')
   const [showFitToPage, setShowFitToPage] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [cursorTool, setCursorTool] = useState<'select' | 'grab'>('select')
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({
@@ -172,7 +179,24 @@ export const PdfContainer: React.FC<Props> = ({
     pdfRef.current = document
     setScale(1.25)
     setIsLoading(false)
+    setLoadError(null)
     void checkFitToPageVisibility()
+  }
+
+  const onDocumentLoadError = (error: Error): void => {
+    setIsLoading(false)
+    console.error('PDF load error:', error)
+
+    // Detect common error types
+    if (error.message.includes('404') || error.message.includes('Not Found')) {
+      setLoadError('PDF-Datei nicht gefunden. Möglicherweise fehlt die Datei im S3-Speicher.')
+    } else if (error.message.includes('403') || error.message.includes('Forbidden')) {
+      setLoadError('Zugriff auf die PDF-Datei verweigert. Bitte prüfe die S3-Berechtigungen.')
+    } else if (error.message.includes('network') || error.message.includes('fetch')) {
+      setLoadError('Netzwerkfehler beim Laden der PDF-Datei.')
+    } else {
+      setLoadError('Die PDF-Datei konnte nicht geladen werden.')
+    }
   }
 
   const calculateFitToWidth = useCallback(async () => {
@@ -464,8 +488,29 @@ export const PdfContainer: React.FC<Props> = ({
               <LogoSpinner />
             </div>
           }
+          error={
+            <div className="flex h-full w-full items-center justify-center p-8">
+              <div className="max-w-md text-center">
+                <div className="mx-auto mb-4 flex items-center justify-center rounded-full">
+                  <Icon
+                    icon={AlertCircleIcon}
+                    className="size-10 rounded-full bg-destructive/50 text-white"
+                  />
+                </div>
+                <h3 className="mb-2 font-semibold text-lg">Das hat leider nicht funktioniert.</h3>
+                <p className="mb-4 text-base text-muted-foreground">
+                  {loadError || 'Die PDF-Datei konnte nicht geladen werden.'}
+                </p>
+                <p className="text-muted-foreground text-sm">
+                  Dies kann passieren, wenn die Datenbank von einem anderen System importiert wurde
+                  und die Dateien nicht im lokalen S3-Speicher verfügbar sind.
+                </p>
+              </div>
+            </div>
+          }
           className="h-full w-full overflow-auto bg-accent"
           onLoadSuccess={onDocumentLoadSuccess}
+          onLoadError={onDocumentLoadError}
           inputRef={scrollContainerRef}
         >
           <div

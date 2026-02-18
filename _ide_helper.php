@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 12.51.0.
+ * Generated for Laravel 12.52.0.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -431,7 +431,7 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
-         * Get the fully qualified path to the environment file.
+         * Get the fully-qualified path to the environment file.
          *
          * @return string
          * @static
@@ -4662,7 +4662,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Determine if an item exists in the cache.
          *
-         * @param \BackedEnum|\UnitEnum|array|string $key
+         * @param \UnitEnum|array|string $key
          * @return bool
          * @static
          */
@@ -4675,7 +4675,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Determine if an item doesn't exist in the cache.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @return bool
          * @static
          */
@@ -4688,7 +4688,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Retrieve an item from the cache by key.
          *
-         * @param \BackedEnum|\UnitEnum|array|string $key
+         * @param \UnitEnum|array|string $key
          * @param mixed $default
          * @return mixed
          * @static
@@ -4735,7 +4735,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Retrieve an item from the cache and delete it.
          *
-         * @param \BackedEnum|\UnitEnum|array|string $key
+         * @param \UnitEnum|array|string $key
          * @param mixed $default
          * @return mixed
          * @static
@@ -4749,7 +4749,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Retrieve a string item from the cache.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param (\Closure():(string|null))|string|null $default
          * @return string
          * @throws \InvalidArgumentException
@@ -4764,7 +4764,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Retrieve an integer item from the cache.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param (\Closure():(int|null))|int|null $default
          * @return int
          * @throws \InvalidArgumentException
@@ -4779,7 +4779,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Retrieve a float item from the cache.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param (\Closure():(float|null))|float|null $default
          * @return float
          * @throws \InvalidArgumentException
@@ -4794,7 +4794,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Retrieve a boolean item from the cache.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param (\Closure():(bool|null))|bool|null $default
          * @return bool
          * @throws \InvalidArgumentException
@@ -4809,7 +4809,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Retrieve an array item from the cache.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param (\Closure():(array<array-key, mixed>|null))|array<array-key, mixed>|null $default
          * @return array<array-key, mixed>
          * @throws \InvalidArgumentException
@@ -4824,7 +4824,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Store an item in the cache.
          *
-         * @param \BackedEnum|\UnitEnum|array|string $key
+         * @param \UnitEnum|array|string $key
          * @param mixed $value
          * @param \DateTimeInterface|\DateInterval|int|null $ttl
          * @return bool
@@ -4839,7 +4839,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Store an item in the cache.
          *
-         * @param \BackedEnum|\UnitEnum|array|string $key
+         * @param \UnitEnum|array|string $key
          * @param mixed $value
          * @param \DateTimeInterface|\DateInterval|int|null $ttl
          * @return bool
@@ -4888,7 +4888,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Store an item in the cache if the key does not exist.
          *
-         * @param \BackedEnum|\UnitEnum|array|string $key
+         * @param \UnitEnum|array|string $key
          * @param mixed $value
          * @param \DateTimeInterface|\DateInterval|int|null $ttl
          * @return bool
@@ -4903,7 +4903,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Increment the value of an item in the cache.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param mixed $value
          * @return int|bool
          * @static
@@ -4917,7 +4917,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Decrement the value of an item in the cache.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param mixed $value
          * @return int|bool
          * @static
@@ -4931,7 +4931,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Store an item in the cache indefinitely.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param mixed $value
          * @return bool
          * @static
@@ -4946,7 +4946,7 @@ namespace Illuminate\Support\Facades {
          * Get an item from the cache, or execute the given Closure and store the result.
          *
          * @template TCacheValue
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param \Closure|\DateTimeInterface|\DateInterval|int|null $ttl
          * @param \Closure():  TCacheValue  $callback
          * @return TCacheValue
@@ -4962,7 +4962,7 @@ namespace Illuminate\Support\Facades {
          * Get an item from the cache, or execute the given Closure and store the result forever.
          *
          * @template TCacheValue
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param \Closure():  TCacheValue  $callback
          * @return TCacheValue
          * @static
@@ -4977,7 +4977,7 @@ namespace Illuminate\Support\Facades {
          * Get an item from the cache, or execute the given Closure and store the result forever.
          *
          * @template TCacheValue
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param \Closure():  TCacheValue  $callback
          * @return TCacheValue
          * @static
@@ -4992,7 +4992,7 @@ namespace Illuminate\Support\Facades {
          * Retrieve an item from the cache by key, refreshing it in the background if it is stale.
          *
          * @template TCacheValue
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param array{ 0: \DateTimeInterface|\DateInterval|int, 1: \DateTimeInterface|\DateInterval|int } $ttl
          * @param (callable(): TCacheValue) $callback
          * @param array{ seconds?: int, owner?: string }|null $lock
@@ -5010,7 +5010,7 @@ namespace Illuminate\Support\Facades {
          * Execute a callback while holding an atomic lock on a cache mutex to prevent overlapping calls.
          *
          * @template TReturn
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param callable():  TReturn  $callback
          * @param int $lockFor
          * @param int $waitFor
@@ -5028,7 +5028,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Remove an item from the cache.
          *
-         * @param \BackedEnum|\UnitEnum|array|string $key
+         * @param \UnitEnum|array|string $key
          * @return bool
          * @static
          */
@@ -5041,7 +5041,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Remove an item from the cache.
          *
-         * @param \BackedEnum|\UnitEnum|array|string $key
+         * @param \UnitEnum|array|string $key
          * @return bool
          * @static
          */
@@ -5197,7 +5197,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Determine if a cached value exists.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @return bool
          * @static
          */
@@ -5210,7 +5210,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Retrieve an item from the cache by key.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @return mixed
          * @static
          */
@@ -5223,7 +5223,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Store an item in the cache for the default time.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param mixed $value
          * @return void
          * @static
@@ -5237,7 +5237,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Remove an item from the cache.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @return void
          * @static
          */
@@ -13740,7 +13740,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Register a named limiter configuration.
          *
-         * @param \BackedEnum|\UnitEnum|string $name
+         * @param \UnitEnum|string $name
          * @param \Closure $callback
          * @return \Illuminate\Cache\RateLimiter
          * @static
@@ -13754,7 +13754,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the given named rate limiter.
          *
-         * @param \BackedEnum|\UnitEnum|string $name
+         * @param \UnitEnum|string $name
          * @return \Closure|null
          * @static
          */
@@ -19513,7 +19513,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Checks if a key exists.
          *
-         * @param \BackedEnum|\UnitEnum|string|array $key
+         * @param \UnitEnum|string|array $key
          * @return bool
          * @static
          */
@@ -19526,7 +19526,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Determine if the given key is missing from the session data.
          *
-         * @param \BackedEnum|\UnitEnum|string|array $key
+         * @param \UnitEnum|string|array $key
          * @return bool
          * @static
          */
@@ -19539,7 +19539,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Determine if a key is present and not null.
          *
-         * @param \BackedEnum|\UnitEnum|string|array $key
+         * @param \UnitEnum|string|array $key
          * @return bool
          * @static
          */
@@ -19552,7 +19552,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Determine if any of the given keys are present and not null.
          *
-         * @param \BackedEnum|\UnitEnum|string|array $key
+         * @param \UnitEnum|string|array $key
          * @return bool
          * @static
          */
@@ -19565,7 +19565,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get an item from the session.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param mixed $default
          * @return mixed
          * @static
@@ -19579,7 +19579,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the value of a given key and then forget it.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param mixed $default
          * @return mixed
          * @static
@@ -19633,7 +19633,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Put a key / value pair or array of key / value pairs in the session.
          *
-         * @param \BackedEnum|\UnitEnum|string|array $key
+         * @param \UnitEnum|string|array $key
          * @param mixed $value
          * @return void
          * @static
@@ -19647,7 +19647,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get an item from the session, or store the default value.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param \Closure $callback
          * @return mixed
          * @static
@@ -19661,7 +19661,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Push a value onto a session array.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param mixed $value
          * @return void
          * @static
@@ -19675,7 +19675,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Increment the value of an item in the session.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param int $amount
          * @return mixed
          * @static
@@ -19689,7 +19689,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Decrement the value of an item in the session.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param int $amount
          * @return int
          * @static
@@ -19703,7 +19703,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Flash a key / value pair to the session.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param mixed $value
          * @return void
          * @static
@@ -19717,7 +19717,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Flash a key / value pair to the session for immediate use.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @param mixed $value
          * @return void
          * @static
@@ -19781,7 +19781,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Remove an item from the session, returning its value.
          *
-         * @param \BackedEnum|\UnitEnum|string $key
+         * @param \UnitEnum|string $key
          * @return mixed
          * @static
          */
@@ -19794,7 +19794,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Remove one or many items from the session.
          *
-         * @param \BackedEnum|\UnitEnum|string|array $keys
+         * @param \UnitEnum|string|array $keys
          * @return void
          * @static
          */
@@ -20400,6 +20400,18 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
+         * Determine if temporary upload URLs can be generated.
+         *
+         * @return bool
+         * @static
+         */
+        public static function providesTemporaryUploadUrls()
+        {
+            /** @var \Illuminate\Filesystem\LocalFilesystemAdapter $instance */
+            return $instance->providesTemporaryUploadUrls();
+        }
+
+        /**
          * Get a temporary URL for the file at the given path.
          *
          * @param string $path
@@ -20412,6 +20424,21 @@ namespace Illuminate\Support\Facades {
         {
             /** @var \Illuminate\Filesystem\LocalFilesystemAdapter $instance */
             return $instance->temporaryUrl($path, $expiration, $options);
+        }
+
+        /**
+         * Get a temporary upload URL for the file at the given path.
+         *
+         * @param string $path
+         * @param \DateTimeInterface $expiration
+         * @param array $options
+         * @return array
+         * @static
+         */
+        public static function temporaryUploadUrl($path, $expiration, $options = [])
+        {
+            /** @var \Illuminate\Filesystem\LocalFilesystemAdapter $instance */
+            return $instance->temporaryUploadUrl($path, $expiration, $options);
         }
 
         /**
@@ -20935,23 +20962,6 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
-         * Get a temporary upload URL for the file at the given path.
-         *
-         * @param string $path
-         * @param \DateTimeInterface $expiration
-         * @param array $options
-         * @return array
-         * @throws \RuntimeException
-         * @static
-         */
-        public static function temporaryUploadUrl($path, $expiration, $options = [])
-        {
-            //Method inherited from \Illuminate\Filesystem\FilesystemAdapter 
-            /** @var \Illuminate\Filesystem\LocalFilesystemAdapter $instance */
-            return $instance->temporaryUploadUrl($path, $expiration, $options);
-        }
-
-        /**
          * Get an array of all files in a directory.
          *
          * @param string|null $directory
@@ -21102,6 +21112,20 @@ namespace Illuminate\Support\Facades {
             //Method inherited from \Illuminate\Filesystem\FilesystemAdapter 
             /** @var \Illuminate\Filesystem\LocalFilesystemAdapter $instance */
             $instance->buildTemporaryUrlsUsing($callback);
+        }
+
+        /**
+         * Define a custom temporary upload URL builder callback.
+         *
+         * @param \Closure $callback
+         * @return void
+         * @static
+         */
+        public static function buildTemporaryUploadUrlsUsing($callback)
+        {
+            //Method inherited from \Illuminate\Filesystem\FilesystemAdapter 
+            /** @var \Illuminate\Filesystem\LocalFilesystemAdapter $instance */
+            $instance->buildTemporaryUploadUrlsUsing($callback);
         }
 
         /**
@@ -27012,7 +27036,7 @@ namespace MohamedSaid\Notable\Facades {
         }
 
         /**
-         * Get the fully qualified "created at" column.
+         * Get the fully-qualified "created at" column.
          *
          * @return string|null
          * @static
@@ -27025,7 +27049,7 @@ namespace MohamedSaid\Notable\Facades {
         }
 
         /**
-         * Get the fully qualified "updated at" column.
+         * Get the fully-qualified "updated at" column.
          *
          * @return string|null
          * @static
@@ -28207,6 +28231,204 @@ namespace Fruitcake\LaravelDebugbar\Facades {
             //Method inherited from \DebugBar\DebugBar 
             /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
             return $instance->offsetUnset($offset);
+        }
+
+            }
+    }
+
+namespace horstoeko\zugferdlaravel\Facades {
+    /**
+     * @method static \horstoeko\zugferd\ZugferdDocumentBuilder createDocumentInMinimumProfile
+     * @method static \horstoeko\zugferd\ZugferdDocumentBuilder createDocumentInBasicProfile
+     * @method static \horstoeko\zugferd\ZugferdDocumentBuilder createDocumentInBasicWlProfile
+     * @method static \horstoeko\zugferd\ZugferdDocumentBuilder createDocumentInEN16931Profile
+     * @method static \horstoeko\zugferd\ZugferdDocumentBuilder createDocumentInExtendedProfile
+     * @method static \horstoeko\zugferd\ZugferdDocumentBuilder createDocumentInXRechnung22Profile
+     * @method static \horstoeko\zugferd\ZugferdDocumentBuilder createDocumentInXRechnung23Profile
+     * @method static \horstoeko\zugferd\ZugferdDocumentBuilder createDocumentInXRechnung30Profile
+     * @see horstoeko\zugferdlaravel\ZugferdLaravel
+     */
+    class ZugferdLaravel {
+        /**
+         * Create a new document in MINUMUM-Profile
+         *
+         * @return \horstoeko\zugferd\ZugferdDocumentBuilder
+         * @static
+         */
+        public static function createDocumentInMinimumProfile()
+        {
+            /** @var \horstoeko\zugferdlaravel\ZugferdLaravel $instance */
+            return $instance->createDocumentInMinimumProfile();
+        }
+
+        /**
+         * Create a new document in BASIC-Profile
+         *
+         * @return \horstoeko\zugferd\ZugferdDocumentBuilder
+         * @static
+         */
+        public static function createDocumentInBasicProfile()
+        {
+            /** @var \horstoeko\zugferdlaravel\ZugferdLaravel $instance */
+            return $instance->createDocumentInBasicProfile();
+        }
+
+        /**
+         * Create a new document in BASICWL-Profile
+         *
+         * @return \horstoeko\zugferd\ZugferdDocumentBuilder
+         * @static
+         */
+        public static function createDocumentInBasicWlProfile()
+        {
+            /** @var \horstoeko\zugferdlaravel\ZugferdLaravel $instance */
+            return $instance->createDocumentInBasicWlProfile();
+        }
+
+        /**
+         * Create a new document in EN16931-Profile
+         *
+         * @return \horstoeko\zugferd\ZugferdDocumentBuilder
+         * @static
+         */
+        public static function createDocumentInEN16931Profile()
+        {
+            /** @var \horstoeko\zugferdlaravel\ZugferdLaravel $instance */
+            return $instance->createDocumentInEN16931Profile();
+        }
+
+        /**
+         * Create a new document in EXTENDED-Profile
+         *
+         * @return \horstoeko\zugferd\ZugferdDocumentBuilder
+         * @static
+         */
+        public static function createDocumentInExtendedProfile()
+        {
+            /** @var \horstoeko\zugferdlaravel\ZugferdLaravel $instance */
+            return $instance->createDocumentInExtendedProfile();
+        }
+
+        /**
+         * Create a new document in XRECHNUNG-Profile (Version 2.2)
+         *
+         * @return \horstoeko\zugferd\ZugferdDocumentBuilder
+         * @static
+         */
+        public static function createDocumentInXRechnung22Profile()
+        {
+            /** @var \horstoeko\zugferdlaravel\ZugferdLaravel $instance */
+            return $instance->createDocumentInXRechnung22Profile();
+        }
+
+        /**
+         * Create a new document in XRECHNUNG-Profile (Version 2.3)
+         *
+         * @return \horstoeko\zugferd\ZugferdDocumentBuilder
+         * @static
+         */
+        public static function createDocumentInXRechnung23Profile()
+        {
+            /** @var \horstoeko\zugferdlaravel\ZugferdLaravel $instance */
+            return $instance->createDocumentInXRechnung23Profile();
+        }
+
+        /**
+         * Create a new document in XRECHNUNG-Profile (Version 3.0)
+         *
+         * @return \horstoeko\zugferd\ZugferdDocumentBuilder
+         * @static
+         */
+        public static function createDocumentInXRechnung30Profile()
+        {
+            /** @var \horstoeko\zugferdlaravel\ZugferdLaravel $instance */
+            return $instance->createDocumentInXRechnung30Profile();
+        }
+
+        /**
+         * Read the content of a xml file
+         *
+         * @param string $xmlfilename
+         * @return \horstoeko\zugferd\ZugferdDocumentReader
+         * @throws Exception
+         * @static
+         */
+        public static function readXmlFromFile($xmlfilename)
+        {
+            /** @var \horstoeko\zugferdlaravel\ZugferdLaravel $instance */
+            return $instance->readXmlFromFile($xmlfilename);
+        }
+
+        /**
+         * Read the content of a xml string
+         *
+         * @param string $xmlcontent
+         * @return \horstoeko\zugferd\ZugferdDocumentReader
+         * @throws Exception
+         * @static
+         */
+        public static function readXmlFromString($xmlcontent)
+        {
+            /** @var \horstoeko\zugferdlaravel\ZugferdLaravel $instance */
+            return $instance->readXmlFromString($xmlcontent);
+        }
+
+        /**
+         * Read the content of a pdf containing the xml data (as attached file)
+         *
+         * @param string $pdfFilename
+         * @return \horstoeko\zugferd\ZugferdDocumentReader|null
+         * @static
+         */
+        public static function readXmlFromPdfFile($pdfFilename)
+        {
+            /** @var \horstoeko\zugferdlaravel\ZugferdLaravel $instance */
+            return $instance->readXmlFromPdfFile($pdfFilename);
+        }
+
+        /**
+         * Create a merged PDF (XML as attachment) by the output of a ZugferdDocumentBuilder
+         *
+         * @param \horstoeko\zugferd\ZugferdDocumentBuilder $zugferdDocumentBuilder
+         * @param string $originalPdfDataOrPdfFilename
+         * @param string $toPdfFilename
+         * @return void
+         * @static
+         */
+        public static function buildMergedPdfByDocumentBuilder($zugferdDocumentBuilder, $originalPdfDataOrPdfFilename, $toPdfFilename)
+        {
+            /** @var \horstoeko\zugferdlaravel\ZugferdLaravel $instance */
+            $instance->buildMergedPdfByDocumentBuilder($zugferdDocumentBuilder, $originalPdfDataOrPdfFilename, $toPdfFilename);
+        }
+
+        /**
+         * Create a merged PDF (XML as attachment) by an existing XML filename or XML-Data-String
+         *
+         * @param string $xmlDataOrFilename
+         * @param string $originalPdfDataOrPdfFilename
+         * @param string $toPdfFilename
+         * @return void
+         * @static
+         */
+        public static function buildMergedPdfByXmlDataOrXmlFilename($xmlDataOrFilename, $originalPdfDataOrPdfFilename, $toPdfFilename)
+        {
+            /** @var \horstoeko\zugferdlaravel\ZugferdLaravel $instance */
+            $instance->buildMergedPdfByXmlDataOrXmlFilename($xmlDataOrFilename, $originalPdfDataOrPdfFilename, $toPdfFilename);
+        }
+
+        /**
+         * Create a merged PDF (XML as attachment) by a ZugferdDocumentBuilder or a XML filename or XML-Data-String
+         *
+         * @param \horstoeko\zugferd\ZugferdDocumentBuilder|string $xmlContainer
+         * @param string $originalPdfDataOrPdfFilename
+         * @param string $toPdfFilename
+         * @return void
+         * @static
+         */
+        public static function buildMergedPdf($xmlContainer, $originalPdfDataOrPdfFilename, $toPdfFilename)
+        {
+            /** @var \horstoeko\zugferdlaravel\ZugferdLaravel $instance */
+            $instance->buildMergedPdf($xmlContainer, $originalPdfDataOrPdfFilename, $toPdfFilename);
         }
 
             }
@@ -30333,13 +30555,13 @@ namespace Illuminate\Support {
         }
 
         /**
-         * @see \LaraDumps\LaraDumps\LaraDumpsServiceProvider::registerMacros()
-         * @param string $label
+         * @see \Spatie\LaravelRay\RayServiceProvider::registerMacros()
+         * @param string $description
          * @static
          */
-        public static function ds($label = '')
+        public static function ray($description = '')
         {
-            return \Illuminate\Support\Collection::ds($label);
+            return \Illuminate\Support\Collection::ray($description);
         }
 
             }
@@ -30347,13 +30569,13 @@ namespace Illuminate\Support {
      */
     class Stringable {
         /**
-         * @see \LaraDumps\LaraDumps\LaraDumpsServiceProvider::registerMacros()
-         * @param string $label
+         * @see \Spatie\LaravelRay\RayServiceProvider::registerMacros()
+         * @param string $description
          * @static
          */
-        public static function ds($label = '')
+        public static function ray($description = '')
         {
-            return \Illuminate\Support\Stringable::ds($label);
+            return \Illuminate\Support\Stringable::ray($description);
         }
 
             }
@@ -30539,28 +30761,12 @@ namespace Illuminate\Testing {
         }
 
         /**
-         * @see \LaraDumps\LaraDumps\LaraDumpsServiceProvider::registerMacros()
+         * @see \Spatie\LaravelRay\RayServiceProvider::registerMacros()
          * @static
          */
-        public static function ds()
+        public static function ray()
         {
-            return \Illuminate\Testing\TestResponse::ds();
-        }
-
-            }
-    }
-
-namespace Illuminate\Database\Query {
-    /**
-     */
-    class Builder {
-        /**
-         * @see \LaraDumps\LaraDumps\LaraDumpsServiceProvider::registerMacros()
-         * @static
-         */
-        public static function ds()
-        {
-            return \Illuminate\Database\Query\Builder::ds();
+            return \Illuminate\Testing\TestResponse::ray();
         }
 
             }
@@ -30583,6 +30789,22 @@ namespace Illuminate\Console\Scheduling {
         public static function sentryMonitor($monitorSlug = null, $checkInMargin = null, $maxRuntime = null, $updateMonitorConfig = true, $failureIssueThreshold = null, $recoveryThreshold = null)
         {
             return \Illuminate\Console\Scheduling\Event::sentryMonitor($monitorSlug, $checkInMargin, $maxRuntime, $updateMonitorConfig, $failureIssueThreshold, $recoveryThreshold);
+        }
+
+            }
+    }
+
+namespace Illuminate\Database\Query {
+    /**
+     */
+    class Builder {
+        /**
+         * @see \Spatie\LaravelRay\RayServiceProvider::registerMacros()
+         * @static
+         */
+        public static function ray()
+        {
+            return \Illuminate\Database\Query\Builder::ray();
         }
 
             }
@@ -32731,7 +32953,7 @@ namespace  {
         /**
          * Add a select expression to the query.
          *
-         * @param \Illuminate\Contracts\Database\Query\Expression $expression
+         * @param \Illuminate\Contracts\Database\Query\Expression|string $expression
          * @param string $as
          * @return \Illuminate\Database\Eloquent\Builder<static>
          * @static
@@ -35680,12 +35902,12 @@ namespace  {
         }
 
         /**
-         * @see \LaraDumps\LaraDumps\LaraDumpsServiceProvider::registerMacros()
+         * @see \Spatie\LaravelRay\RayServiceProvider::registerMacros()
          * @static
          */
-        public static function ds()
+        public static function ray()
         {
-            return \Illuminate\Database\Query\Builder::ds();
+            return \Illuminate\Database\Query\Builder::ray();
         }
 
 }
@@ -35720,6 +35942,7 @@ namespace  {
     class Vite extends \Illuminate\Support\Facades\Vite {}
     class Notable extends \MohamedSaid\Notable\Facades\Notable {}
     class Debugbar extends \Fruitcake\LaravelDebugbar\Facades\Debugbar {}
+    class LaravelZugferd extends \horstoeko\zugferdlaravel\Facades\ZugferdLaravel {}
     class MediaUploader extends \Plank\Mediable\Facades\MediaUploader {}
     class ImageManipulator extends \Plank\Mediable\Facades\ImageManipulator {}
     class Sentry extends \Sentry\Laravel\Facade {}
