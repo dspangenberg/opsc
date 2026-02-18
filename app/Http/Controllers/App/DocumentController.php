@@ -7,6 +7,7 @@ use App\Data\DocumentData;
 use App\Data\DocumentTypeData;
 use App\Data\ProjectData;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DocumentBulkMoveToTrashRequest;
 use App\Http\Requests\DocumentRequest;
 use App\Http\Requests\MultiDocUploadRequest;
 use App\Http\Requests\ReceiptUploadRequest;
@@ -18,6 +19,7 @@ use App\Models\DocumentType;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Throwable;
 
 class DocumentController extends Controller
@@ -98,6 +100,23 @@ class DocumentController extends Controller
         );
     }
 
+
+    public function bulkMoveToTrash(DocumentBulkMoveToTrashRequest $request): RedirectResponse
+    {
+        $ids = $request->getDocumentIds();
+        Document::whereIn('id', $ids)->delete();
+
+        return redirect()->back();
+    }
+
+    public function bulkRestore(DocumentBulkMoveToTrashRequest $request): RedirectResponse
+    {
+        $ids = $request->getDocumentIds();
+        Document::whereIn('id', $ids)->restore();
+
+        return redirect()->back();
+    }
+
     public function restore(Document $document)
     {
         $document->restore();
@@ -147,7 +166,7 @@ class DocumentController extends Controller
         $document->delete();
         $document->is_pinned = false;
         $document->save();
-        return redirect()->route('app.document.index');
+        return redirect()->back();
     }
 
     public function edit(Document $document) {

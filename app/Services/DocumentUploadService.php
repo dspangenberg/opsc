@@ -4,6 +4,13 @@ namespace App\Services;
 
 use App\Models\Document;
 use Exception;
+use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
+use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
+use Plank\Mediable\Exceptions\MediaUpload\FileNotFoundException;
+use Plank\Mediable\Exceptions\MediaUpload\FileNotSupportedException;
+use Plank\Mediable\Exceptions\MediaUpload\FileSizeException;
+use Plank\Mediable\Exceptions\MediaUpload\ForbiddenException;
+use Plank\Mediable\Exceptions\MediaUpload\InvalidHashException;
 use Plank\Mediable\Facades\MediaUploader;
 use Smalot\PdfParser\Parser;
 use Spatie\PdfToImage\Pdf;
@@ -14,7 +21,16 @@ class DocumentUploadService
     {
     }
 
-    public function upload(string $file, string $fileName, int $fileSize, string $fileMimeType, int $fileMTime, $label = null ): void
+    /**
+     * @throws FileNotSupportedException
+     * @throws FileExistsException
+     * @throws FileNotFoundException
+     * @throws ForbiddenException
+     * @throws FileSizeException
+     * @throws InvalidHashException
+     * @throws ConfigurationException
+     */
+    public function upload(string $file, string $fileName, int $fileSize, string $fileMimeType, ?int $fileMTime = null, $label = null ): void
     {
         $document = new Document();
         $document->filename = $fileName;
@@ -34,15 +50,20 @@ class DocumentUploadService
             $document->pages = $metadata['Pages'] ?? 1;
             $document->fulltext = $pdf->getText();
 
-            $creationDate = $metadata['CreationDate'] ?? null;
-            if (is_array($creationDate)) {
-                $creationDate = reset($creationDate);
+            // Use provided fileMTime if available, otherwise extract from PDF metadata
+            if ($fileMTime !== null) {
+                $document->file_created_at = $fileMTime;
+            } else {
+                $creationDate = $metadata['CreationDate'] ?? null;
+                if (is_array($creationDate)) {
+                    $creationDate = reset($creationDate);
+                }
+                $document->file_created_at = $creationDate ?? filemtime($file);
             }
-            $document->file_created_at = $creationDate ?? $fileMTime;
         } catch (Exception) {
             $document->pages = 1;
             $document->fulltext = '';
-            $document->file_created_at = $fileMTime;
+            $document->file_created_at = $fileMTime ?? filemtime($file);
         }
 
         $document->checksum = hash_file('sha256', $file);

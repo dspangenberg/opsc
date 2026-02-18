@@ -24,6 +24,7 @@ export type FileWithPreview = {
   file: File | FileMetadata
   id: string
   preview?: string
+  error?: string
 }
 
 export type FileUploadOptions = {
@@ -205,11 +206,7 @@ export const useFileUpload = (
 
         // Check file size
         if (file.size > maxSize) {
-          errors.push(
-            multiple
-              ? `Some files exceed the maximum size of ${formatBytes(maxSize)}.`
-              : `File exceeds the maximum size of ${formatBytes(maxSize)}.`
-          )
+          errors.push(`${file.name} überschreitet die maximale Größe von ${formatBytes(maxSize)}.`)
           return
         }
 
@@ -220,7 +217,8 @@ export const useFileUpload = (
           validFiles.push({
             file,
             id: generateUniqueId(file),
-            preview: createPreview(file)
+            preview: createPreview(file),
+            error: ''
           })
         }
       })

@@ -186,6 +186,40 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
     }
   }
 
+  const handleBulkRestore = async () => {
+    const promise = await AlertDialog.call({
+      title: 'Dokumente wiederherstellen',
+      message: `Möchtest Du die ausgewählten Dokumente (${selectedDocuments.length}) wirklich wiederherstellen?`,
+      buttonTitle: 'Dokumente wiederherstellen'
+    })
+    if (promise) {
+      router.put(
+        route('app.document.bulk-restore'),
+        { ids: selectedDocuments.join(',') },
+        {
+          onSuccess: () => setSelectedDocuments([])
+        }
+      )
+    }
+  }
+
+  const handleBulkMoveToTrash = async () => {
+    const promise = await AlertDialog.call({
+      title: 'Dokumente in den Papierkorb verschieben',
+      message: `Möchtest Du die ausgewählten Dokumente (${selectedDocuments.length}) wirklich in den Papierkorb verschieben?`,
+      buttonTitle: 'In den Papierkorb verschieben'
+    })
+    if (promise) {
+      router.put(
+        route('app.document.bulk-move-to-trash'),
+        { ids: selectedDocuments.join(',') },
+        {
+          onSuccess: () => setSelectedDocuments([])
+        }
+      )
+    }
+  }
+
   const toolbar = useMemo(
     () => (
       <Toolbar>
@@ -266,7 +300,11 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
               <DropdownButton title="Ausgewählte Dokumente" variant="outline" size="default">
                 {isTrash ? (
                   <>
-                    <MenuItem icon={DeletePutBackIcon} title="Wiederherstellen" />
+                    <MenuItem
+                      icon={DeletePutBackIcon}
+                      title="Wiederherstellen"
+                      onClick={() => handleBulkRestore()}
+                    />
                     <MenuItem
                       icon={Delete04Icon}
                       title="Endgültig löschen"
@@ -279,6 +317,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
                     icon={Delete01Icon}
                     title="In Papierkorb verschieben"
                     variant="destructive"
+                    onClick={() => handleBulkMoveToTrash()}
                   />
                 )}
               </DropdownButton>
@@ -305,7 +344,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
             </EmptyContent>
           </Empty>
         )}
-        <div className="absolute top-32 bottom-0 mb-4 grid min-h-0 grid-cols-6 gap-4 overflow-y-auto">
+        <div className="absolute top-32 right-0 bottom-0 left-0 mb-4 grid min-h-0 auto-rows-max grid-cols-6 gap-4 overflow-y-auto">
           {documents.map(document => (
             <DocumentIndexFile
               document={document}

@@ -1,9 +1,11 @@
+import { Cancel01Icon } from '@hugeicons/core-free-icons'
 import { useForm } from '@inertiajs/react'
 import type * as React from 'react'
 import { useMemo, useState } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { Button } from '@/Components/twc-ui/button'
-import { useFileUpload } from '@/Hooks/use-file-upload'
+import { formatBytes, useFileUpload } from '@/Hooks/use-file-upload'
+import { cn } from '@/Lib/utils'
 import type { PageProps } from '@/Types'
 
 interface DocumentUploadPageProps extends PageProps {}
@@ -37,7 +39,7 @@ export const Upload = () => {
 
   const [fileState, fileActions] = useFileUpload({
     multiple: true, // Mehrere Dateien erlauben
-    maxFiles: 20, // Maximal 10 Dateien
+    maxFiles: 50, // Maximal 10 Dateien
     maxSize: 50 * 1024 * 1024, // 50MB pro Datei
     accept: '.pdf,.txt,.zip', // Nur PDF und TXT
     onFilesChange: files => {
@@ -99,17 +101,25 @@ export const Upload = () => {
             {fileState.files.map(fileWithPreview => (
               <div
                 key={fileWithPreview.id}
-                className="flex items-center justify-between rounded bg-gray-50 p-2"
+                className={cn(
+                  'flex max-w-md items-center justify-start gap-2 rounded-md border bg-gray-50 px-2 py-1',
+                  fileWithPreview.error &&
+                    'border-destructive/20 bg-destructive/5 text-destructive-foreground'
+                )}
               >
-                <span className="text-sm">{fileWithPreview.file.name}</span>
-                <button
-                  type="button"
+                <Button
+                  icon={Cancel01Icon}
+                  variant="ghost-destructive"
+                  size="icon-xs"
+                  tooltip="Datei entfernen"
                   onClick={() => fileActions.removeFile(fileWithPreview.id)}
-                  className="text-red-600 text-sm hover:text-red-800"
-                  aria-label={`${fileWithPreview.file.name} entfernen`}
-                >
-                  Entfernen
-                </button>
+                />
+                <span className="flex-1 truncate text-left text-sm">
+                  {fileWithPreview.file.name}
+                </span>
+                <span className="w-16 text-right text-muted-foreground text-xs">
+                  {formatBytes(fileWithPreview.file.size)}
+                </span>
               </div>
             ))}
           </div>
@@ -141,7 +151,7 @@ export const Upload = () => {
         >
           {fileState.files.length === 1
             ? 'Datei hochladen'
-            : `${fileState.files.length} Dateien hochladen`}
+            : `${fileState.files.filter(file => !file.error).length} Dateien hochladen`}
         </Button>
       </div>
     </form>

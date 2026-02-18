@@ -69,9 +69,9 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
 
   const handleDelete = async () => {
     const promise = await AlertDialog.call({
-      title: 'Dokument löschen',
-      message: `Möchtest Du das ${document.filename} wirklich löschen?`,
-      buttonTitle: 'Dokument löschen'
+      title: 'Dokument in den Papierkorb verschieben',
+      message: `Möchtest Du  ${document.filename} wirklich in den Papierkorb verschieben?`,
+      buttonTitle: 'In den Papierkorb verschieben'
     })
     if (promise) {
       router.delete(route('app.document.trash', { id: document.id }))
@@ -236,7 +236,7 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
                 icon={DeletePutBackIcon}
                 title="Dokument wiederherstellen"
                 separator
-                href={route('app.document.restore', { id: document.id })}
+                onClick={handleRestore}
               />
               <MenuItem
                 icon={Delete04Icon}
