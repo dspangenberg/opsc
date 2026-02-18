@@ -2,6 +2,7 @@ import {
   Delete01Icon,
   Delete04Icon,
   DeletePutBackIcon,
+  FileEditIcon,
   FolderFileStorageIcon,
   FolderUploadIcon,
   Refresh04Icon
@@ -28,6 +29,7 @@ import { MenuItem } from '@/Components/twc-ui/menu'
 import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
 import { Select } from '@/Components/twc-ui/select'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
+import { DocumentBulkEdit } from '@/Pages/App/Document/Document/DocumentBulkEdit'
 import { DocumentMutliDocUpload } from '@/Pages/App/Document/Document/DocumentMutliDocUpload'
 import type { PageProps } from '@/Types'
 import { DocumentIndexContext } from './DocumentIndexContext'
@@ -186,6 +188,25 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
     }
   }
 
+  const handleBulkEdit = async () => {
+    const result = await DocumentBulkEdit.call({
+      contacts,
+      projects,
+      documentTypes
+    })
+    if (result !== false) {
+      // Filter out 0 values before sending
+      const filteredResult = Object.fromEntries(
+        Object.entries(result).filter(([_, value]) => value !== 0 && value !== null)
+      )
+
+      router.put(route('app.document.bulk-edit'), {
+        ids: selectedDocuments.join(','),
+        ...filteredResult
+      })
+    }
+  }
+
   const handleBulkRestore = async () => {
     const promise = await AlertDialog.call({
       title: 'Dokumente wiederherstellen',
@@ -313,12 +334,20 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
                     />
                   </>
                 ) : (
-                  <MenuItem
-                    icon={Delete01Icon}
-                    title="In Papierkorb verschieben"
-                    variant="destructive"
-                    onClick={() => handleBulkMoveToTrash()}
-                  />
+                  <>
+                    <MenuItem
+                      icon={FileEditIcon}
+                      title="Bearbeiten"
+                      separator
+                      onClick={() => handleBulkEdit()}
+                    />
+                    <MenuItem
+                      icon={Delete01Icon}
+                      title="In Papierkorb verschieben"
+                      variant="destructive"
+                      onClick={() => handleBulkMoveToTrash()}
+                    />
+                  </>
                 )}
               </DropdownButton>
             </>

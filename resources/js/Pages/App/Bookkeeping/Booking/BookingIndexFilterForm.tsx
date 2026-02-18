@@ -1,4 +1,4 @@
-import { FilterHorizontalIcon } from '@hugeicons/core-free-icons'
+import { FilterMailIcon } from '@hugeicons/core-free-icons'
 import { X } from 'lucide-react'
 import type * as React from 'react'
 import { useEffect, useMemo, useState } from 'react'
@@ -24,7 +24,12 @@ interface Props {
   hideAccountFilters?: boolean
 }
 
-export const BookingIndexFilterForm: React.FC<Props> = ({ accounts, filters, onFiltersChange, hideAccountFilters = false }) => {
+export const BookingIndexFilterForm: React.FC<Props> = ({
+  accounts,
+  filters,
+  onFiltersChange,
+  hideAccountFilters = false
+}) => {
   const currentFilters = useMemo(() => {
     const issuedBetween = filters?.filters?.issuedBetween?.value
     const dateRange = parseFilterDateRange(issuedBetween)
@@ -65,7 +70,7 @@ export const BookingIndexFilterForm: React.FC<Props> = ({ accounts, filters, onF
   return (
     <>
       <PopoverTrigger>
-        <Button variant="outline" size="lg" icon={FilterHorizontalIcon} className="h-9">
+        <Button variant="outline" size="lg" icon={FilterMailIcon} className="h-9">
           Filter
           {activeFiltersCount > 0 && (
             <Badge variant="secondary" className="ml-1 h-5 w-5 rounded-full p-0 text-xs">
@@ -116,7 +121,10 @@ export const BookingIndexFilterForm: React.FC<Props> = ({ accounts, filters, onF
                         isOptional
                         value={currentFilters.account_id_credit}
                         onChange={value =>
-                          updateFilters('account_id_credit', value ? { operator: '=', value } : null)
+                          updateFilters(
+                            'account_id_credit',
+                            value ? { operator: '=', value } : null
+                          )
                         }
                         items={accounts}
                         itemName="label"
