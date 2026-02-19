@@ -123,6 +123,7 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
                 icon={ArrowDataTransferVerticalIcon}
                 variant="outline"
                 size="icon"
+                title="Absender + Empfänger tauschen"
                 onClick={() => handleContanctSwap()}
               />
             </div>
@@ -135,7 +136,7 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
               />
             </div>
             <div className="col-span-24">
-              <FormComboBox {...form.register('project_id')} label="Project" items={projects} />
+              <FormComboBox {...form.register('project_id')} label="Projekt" items={projects} />
             </div>
             <div className="col-span-24">
               <FormTextArea label="Zusammenfassung" {...form.register('summary')} />

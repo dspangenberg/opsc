@@ -25,7 +25,7 @@ return new class extends Migration {
                 $table->date('received_on')->nullable();
                 $table->unsignedBigInteger('sender_contact_id')->nullable();
                 $table->unsignedBigInteger('receiver_contact_id')->nullable();
-                $table->unsignedBigInteger('document_type_id');
+                $table->unsignedBigInteger('document_type_id')->nullable();
                 $table->unsignedBigInteger('project_id')->nullable();
                 $table->text('summary')->nullable();
                 $table->text('fulltext')->nullable();
@@ -126,17 +126,23 @@ return new class extends Migration {
             Schema::create('documents', function (Blueprint $table) {
                 $table->id();
                 $table->string('filename');
-                $table->string('source_file')->nullable();
+                $table->string('title')->nullable();
+                $table->string('label')->nullable();
+                $table->string('mime_type')->nullable();
+                $table->string('checksum')->nullable();
+                $table->unsignedBigInteger('file_size')->nullable();
+                $table->unsignedBigInteger('pages')->nullable();
+                $table->string('reference')->nullable();
+                $table->date('file_created_at')->nullable();
+                $table->date('sent_on')->nullable();
                 $table->date('issued_on')->nullable();
                 $table->unsignedBigInteger('contact_id')->nullable();
-                $table->unsignedBigInteger('document_type_id');
+                $table->unsignedBigInteger('document_type_id')->nullable(); // Changed to nullable
                 $table->unsignedBigInteger('project_id')->nullable();
                 $table->text('description')->nullable();
                 $table->text('fulltext')->nullable();
                 $table->boolean('is_confirmed')->default(false);
                 $table->boolean('is_pinned')->default(false);
-                $table->boolean('is_hidden')->default(false);
-                $table->boolean('is_inbound')->default(true);
                 $table->timestamps();
                 $table->softDeletes();
 
@@ -165,7 +171,15 @@ return new class extends Migration {
                 DB::table('documents')->insert([
                     'id' => $row->id,
                     'filename' => $row->filename,
-                    'source_file' => $row->source_file ?? null,
+                    'title' => $row->title ?? null,
+                    'label' => $row->label ?? null,
+                    'mime_type' => $row->mime_type ?? null,
+                    'checksum' => $row->checksum ?? null,
+                    'file_size' => $row->file_size ?? null,
+                    'pages' => $row->pages ?? null,
+                    'reference' => $row->reference ?? null,
+                    'file_created_at' => $row->file_created_at ?? null,
+                    'sent_on' => $row->sent_on ?? null,
                     'issued_on' => $row->issued_on,
                     'contact_id' => $row->sender_contact_id ?? $row->contact_id,
                     'document_type_id' => $row->document_type_id,
@@ -174,8 +188,6 @@ return new class extends Migration {
                     'fulltext' => $row->fulltext,
                     'is_confirmed' => $row->is_confirmed,
                     'is_pinned' => $row->is_pinned,
-                    'is_hidden' => $row->is_hidden ?? false,
-                    'is_inbound' => $row->is_inbound ?? true,
                     'created_at' => $row->created_at,
                     'updated_at' => $row->updated_at,
                     'deleted_at' => $row->deleted_at,
