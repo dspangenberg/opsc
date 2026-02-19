@@ -8,7 +8,7 @@ import {
   Refresh04Icon
 } from '@hugeicons/core-free-icons'
 import { router, WhenVisible } from '@inertiajs/react'
-import type * as React from 'react'
+import * as React from 'react'
 import { useMemo, useState } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
@@ -78,9 +78,6 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   const documentsGroupedByFolder = Object.groupBy(documents, ({ folder }) => folder)
   const folders = Object.keys(documentsGroupedByFolder)
   const getDocumentsByFolder = (folder: string) => documentsGroupedByFolder[folder]
-
-  console.log(folders, documentsGroupedByFolder)
-
   const onClick = async (document: App.Data.DocumentData) => {
     await PdfViewer.call({
       file: route('app.document.pdf', { id: document.id }),
@@ -387,10 +384,8 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
         )}
         <div className="absolute top-32 right-0 bottom-0 left-0 mb-4 grid min-h-0 auto-rows-max grid-cols-6 gap-4 overflow-y-auto">
           {folders.map(folder => (
-            <>
-              <div className="col-span-6 mt-3 font-semibold text-base" key={folder}>
-                {folder}
-              </div>
+            <React.Fragment key={folder}>
+              <div className="col-span-6 mt-3 font-semibold text-base">{folder}</div>
               {getDocumentsByFolder(folder)?.map(document => (
                 <DocumentIndexFile
                   document={document}
@@ -398,7 +393,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
                   onClick={document => onClick(document)}
                 />
               ))}
-            </>
+            </React.Fragment>
           ))}
 
           {isNextPage && (

@@ -129,8 +129,10 @@ export const DocumentBulkEdit = {
       const container = document.createElement('div')
       document.body.appendChild(container)
       const root = createRoot(container)
+      let timeoutId: ReturnType<typeof setTimeout>
 
       const cleanup = () => {
+        clearTimeout(timeoutId)
         root.unmount()
         if (container.parentNode) {
           container.parentNode.removeChild(container)
@@ -150,8 +152,7 @@ export const DocumentBulkEdit = {
           }}
         />
       )
-
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         cleanup()
         resolve(false)
       }, 500000)

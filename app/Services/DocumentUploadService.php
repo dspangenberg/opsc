@@ -61,9 +61,24 @@ class DocumentUploadService
                 }
 
                 if ($creationDate) {
-                    // Parse PDF date format: D:20220804120000+02'00'
-                    // Normalize by removing 'D:' prefix and apostrophe in timezone
-                    $normalizedDate = preg_replace("/^D:(\d{14})([+-]\d{2})'(\d{2})$/", '$1$2$3', $creationDate);
+                    // Parse PDF date format examples:
+                    // D:20220804120000+02'00', D:20220804120000Z, D:20220804120000
+                    // Normalize by removing 'D:' prefix and all apostrophes
+                    $normalizedDate = $creationDate;
+
+                    // Remove 'D:' prefix if present
+                    if (str_starts_with($normalizedDate, 'D:')) {
+                        $normalizedDate = substr($normalizedDate, 2);
+                    }
+
+                    // Remove all apostrophes (e.g., +02'00' becomes +0200)
+                    $normalizedDate = str_replace("'", '', $normalizedDate);
+
+                    // Normalize trailing 'Z' to +0000 for Carbon compatibility
+                    if (str_ends_with($normalizedDate, 'Z')) {
+                        $normalizedDate = substr($normalizedDate, 0, -1) . '+0000';
+                    }
+
                     try {
                         $document->file_created_at = Carbon::parse($normalizedDate);
                     } catch (Exception) {
@@ -76,7 +91,7 @@ class DocumentUploadService
         } catch (Exception) {
             $document->pages = 1;
             $document->fulltext = '';
-            $document->file_created_at = $fileMTime
+            $document->file_created_at = $fileMTime !== null
                 ? Carbon::createFromTimestamp($fileMTime)
                 : Carbon::createFromTimestamp(filemtime($file));
         }

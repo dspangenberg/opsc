@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
-use Plank\Mediable\Exceptions\MediaUrlException;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
@@ -71,9 +70,9 @@ class Document extends Model
         'folder',
     ];
 
-    public function getFolderAttribute(): ?string
+    public function getFolderAttribute(): string
     {
-        return $this->issued_on->translatedFormat('F Y');
+        return $this->issued_on?->translatedFormat('F Y') ?? '';
     }
 
     public function scopeView(Builder $query, $view): Builder

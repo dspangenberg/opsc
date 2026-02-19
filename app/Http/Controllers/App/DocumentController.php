@@ -111,9 +111,9 @@ class DocumentController extends Controller
 
         // Filter out null and 0 values
         $data = array_filter($data, fn($value) => $value !== null && $value !== 0);
-        $data['is_confirmed'] = true;
 
         if (!empty($data)) {
+            $data['is_confirmed'] = true;
             Document::whereIn('id', $ids)->update($data);
         }
 
