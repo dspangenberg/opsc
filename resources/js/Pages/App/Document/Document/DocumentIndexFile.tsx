@@ -70,7 +70,7 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
   const handleDelete = async () => {
     const promise = await AlertDialog.call({
       title: 'Dokument in den Papierkorb verschieben',
-      message: `Möchtest Du  ${document.filename} wirklich in den Papierkorb verschieben?`,
+      message: `Möchtest Du ${document.filename} wirklich in den Papierkorb verschieben?`,
       buttonTitle: 'In den Papierkorb verschieben'
     })
     if (promise) {
@@ -138,7 +138,7 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
               <img
                 key={document.id}
                 src={route('app.document.preview', { id: document.id })}
-                className="h-28 w-full cursor-pointer object-cover object-top"
+                className="h-28 w-full cursor-pointer bg-background object-cover object-top p-1"
                 style={{
                   objectPosition: '50% 0%',
                   display: isLoading ? 'none' : 'block'

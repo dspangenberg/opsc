@@ -131,7 +131,8 @@ class DocumentController extends Controller
     public function bulkRestore(DocumentBulkMoveToTrashRequest $request): RedirectResponse
     {
         $ids = $request->getDocumentIds();
-        Document::whereIn('id', $ids)->restore();
+        Document::withTrashed()->whereIn('id', $ids)->restore();
+
 
         return redirect()->back();
     }

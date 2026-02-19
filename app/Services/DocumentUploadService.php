@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Document;
+use Carbon\Carbon;
 use Exception;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
 use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
@@ -30,7 +31,7 @@ class DocumentUploadService
      * @throws InvalidHashException
      * @throws ConfigurationException
      */
-    public function upload(string $file, string $fileName, int $fileSize, string $fileMimeType, ?int $fileMTime = null, $label = null ): void
+    public function upload(string $file, string $fileName, int $fileSize, string $fileMimeType, ?int $fileMTime = null, ?string $label = null ): void
     {
         $document = new Document();
         $document->filename = $fileName;
@@ -52,18 +53,32 @@ class DocumentUploadService
 
             // Use provided fileMTime if available, otherwise extract from PDF metadata
             if ($fileMTime !== null) {
-                $document->file_created_at = $fileMTime;
+                $document->file_created_at = Carbon::createFromTimestamp($fileMTime);
             } else {
                 $creationDate = $metadata['CreationDate'] ?? null;
                 if (is_array($creationDate)) {
                     $creationDate = reset($creationDate);
                 }
-                $document->file_created_at = $creationDate ?? filemtime($file);
+
+                if ($creationDate) {
+                    // Parse PDF date format: D:20220804120000+02'00'
+                    // Normalize by removing 'D:' prefix and apostrophe in timezone
+                    $normalizedDate = preg_replace("/^D:(\d{14})([+-]\d{2})'(\d{2})$/", '$1$2$3', $creationDate);
+                    try {
+                        $document->file_created_at = Carbon::parse($normalizedDate);
+                    } catch (Exception) {
+                        $document->file_created_at = Carbon::createFromTimestamp(filemtime($file));
+                    }
+                } else {
+                    $document->file_created_at = Carbon::createFromTimestamp(filemtime($file));
+                }
             }
         } catch (Exception) {
             $document->pages = 1;
             $document->fulltext = '';
-            $document->file_created_at = $fileMTime ?? filemtime($file);
+            $document->file_created_at = $fileMTime
+                ? Carbon::createFromTimestamp($fileMTime)
+                : Carbon::createFromTimestamp(filemtime($file));
         }
 
         $document->checksum = hash_file('sha256', $file);

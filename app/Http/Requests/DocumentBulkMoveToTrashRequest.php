@@ -40,7 +40,7 @@ class DocumentBulkMoveToTrashRequest extends FormRequest
     }
 
     /**
-     * Get the booking IDs as an array of integers.
+     * Get the document IDs as an array of integers.
      *
      * @return array<int>
      */

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Plank\Mediable\Exceptions\MediaUrlException;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
@@ -64,6 +65,15 @@ class Document extends Model
             'issued_on' => 'date',
             'is_in_inbox' => 'boolean',
         ];
+    }
+
+    protected $appends = [
+        'folder',
+    ];
+
+    public function getFolderAttribute(): ?string
+    {
+        return $this->issued_on->translatedFormat('F Y');
     }
 
     public function scopeView(Builder $query, $view): Builder

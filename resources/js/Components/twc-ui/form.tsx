@@ -76,14 +76,15 @@ export const Form = <T extends FormSchema>({
     console.error('Form component received undefined form prop')
     return null
   }
-  const handleSubmit = (
+  const handleSubmit = async (
     e: FormEvent<HTMLFormElement>
   ): Promise<SimpleValidationErrors | boolean> => {
     e.preventDefault()
 
     // If custom onSubmit is provided, call it instead of default behavior
     if (onSubmit) {
-      onSubmit(e)
+      await onSubmit(e)
+      onSubmitted?.()
       return Promise.resolve(true)
     }
 

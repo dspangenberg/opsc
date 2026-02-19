@@ -42,7 +42,6 @@ const DocumentBulkEditComponent: React.FC<DocumentBulkEditComponentProps> = ({
     }
   )
 
-
   return (
     <Dialog
       isOpen={true}
@@ -70,11 +69,7 @@ const DocumentBulkEditComponent: React.FC<DocumentBulkEditComponentProps> = ({
             Abbrechen
           </Button>
 
-          <Button
-            variant="default"
-            type="submit"
-            form={form.id}
-          >
+          <Button variant="default" type="submit" form={form.id}>
             Speichern
           </Button>
         </div>
@@ -122,14 +117,14 @@ const DocumentBulkEditComponent: React.FC<DocumentBulkEditComponentProps> = ({
   )
 }
 
-interface BookingEditAccountsComponentCallParams {
+interface DocumentEditAccountsComponentCallParams {
   contacts: App.Data.ContactData[]
   projects: App.Data.ProjectData[]
   documentTypes: App.Data.DocumentTypeData[]
 }
 
 export const DocumentBulkEdit = {
-  call: (params: BookingEditAccountsComponentCallParams): Promise<FormData | false> => {
+  call: (params: DocumentEditAccountsComponentCallParams): Promise<FormData | false> => {
     return new Promise<FormData | false>(resolve => {
       const container = document.createElement('div')
       document.body.appendChild(container)

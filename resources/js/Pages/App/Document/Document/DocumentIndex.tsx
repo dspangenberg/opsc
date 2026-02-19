@@ -72,8 +72,14 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   const [selectedDocuments, setSelectedDocuments] = useState<number[]>([])
   const [showMultiDocUpload, setShowMultiDocUpload] = useState(false)
 
-  const [filters, setFilters] = useState<FilterConfig>(currentFilters)
+  const [_filters, setFilters] = useState<FilterConfig>(currentFilters)
   const routeFilters = route().params.filters as unknown as FilterConfig['filters'] | undefined
+
+  const documentsGroupedByFolder = Object.groupBy(documents, ({ folder }) => folder)
+  const folders = Object.keys(documentsGroupedByFolder)
+  const getDocumentsByFolder = (folder: string) => documentsGroupedByFolder[folder]
+
+  console.log(folders, documentsGroupedByFolder)
 
   const onClick = async (document: App.Data.DocumentData) => {
     await PdfViewer.call({
@@ -200,10 +206,16 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
         Object.entries(result).filter(([_, value]) => value !== 0 && value !== null)
       )
 
-      router.put(route('app.document.bulk-edit'), {
-        ids: selectedDocuments.join(','),
-        ...filteredResult
-      })
+      router.put(
+        route('app.document.bulk-edit'),
+        {
+          ids: selectedDocuments.join(','),
+          ...filteredResult
+        },
+        {
+          onSuccess: () => setSelectedDocuments([])
+        }
+      )
     }
   }
 
@@ -374,13 +386,21 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
           </Empty>
         )}
         <div className="absolute top-32 right-0 bottom-0 left-0 mb-4 grid min-h-0 auto-rows-max grid-cols-6 gap-4 overflow-y-auto">
-          {documents.map(document => (
-            <DocumentIndexFile
-              document={document}
-              key={document.id}
-              onClick={document => onClick(document)}
-            />
+          {folders.map(folder => (
+            <>
+              <div className="col-span-6 mt-3 font-semibold text-base" key={folder}>
+                {folder}
+              </div>
+              {getDocumentsByFolder(folder)?.map(document => (
+                <DocumentIndexFile
+                  document={document}
+                  key={document.id}
+                  onClick={document => onClick(document)}
+                />
+              ))}
+            </>
           ))}
+
           {isNextPage && (
             <WhenVisible
               always
