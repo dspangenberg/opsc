@@ -78,7 +78,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   const documentsGroupedByFolder = Object.groupBy(documents, ({ folder }) => folder)
   const folders = Object.keys(documentsGroupedByFolder)
   const getDocumentsByFolder = (folder: string) => documentsGroupedByFolder[folder]
-  const onClick = async (document: App.Data.DocumentData) => {
+  const handlePdfViewClick = async (document: App.Data.DocumentData) => {
     await PdfViewer.call({
       file: route('app.document.pdf', { id: document.id }),
       filename: document.filename
@@ -387,11 +387,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
             <React.Fragment key={folder}>
               <div className="col-span-6 mt-3 font-semibold text-base">{folder}</div>
               {getDocumentsByFolder(folder)?.map(document => (
-                <DocumentIndexFile
-                  document={document}
-                  key={document.id}
-                  onClick={document => onClick(document)}
-                />
+                <DocumentIndexFile document={document} key={document.id} />
               ))}
             </React.Fragment>
           ))}

@@ -21,19 +21,26 @@ class CreateTenantAdminJob implements ShouldQueue
         $this->tenant = $tenant;
     }
 
+    /**
+     * Handle the job.
+     *
+     * Generates a secure random password for the tenant admin user.
+     * The password is cryptographically secure and unique for each tenant.
+     */
     public function handle(): void
     {
         $this->tenant->run(function ($tenant) {
 
-            dump($tenant); // dump tenant data for debugging purposes
-
-            $userData = collect($tenant)->only(['first_name', 'last_name', 'email', 'password'])->toArray();
+            $userData = collect($tenant)->only(['first_name', 'last_name', 'email'])->toArray();
+            
+            // Generate a cryptographically secure random password
+            $randomPassword = bin2hex(random_bytes(16));
+            $userData['password'] = bcrypt($randomPassword);
+            
             $userData['is_admin'] = true;
             $userData['email_verified_at'] = now();
 
-            dump($userData); // dump user data for debugging purposes
-
-            User::create($userData);
+            $user = User::create($userData);
 
             $tenant->update([
                 'password' => null,

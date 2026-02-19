@@ -81,7 +81,7 @@ use Torann\Hashids\Facade\Hashids;
  */
 class Tenant extends BaseTenant implements TenantWithDatabase
 {
-    use HasDatabase, HasDomains, MaintenanceMode;
+    use HasDatabase, HasDomains, MaintenanceMode, \Illuminate\Database\Eloquent\Factories\HasFactory;
 
     protected $attributes = [
         'last_name' => '',

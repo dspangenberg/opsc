@@ -24,7 +24,11 @@ function HoverCardContent({ className, offset = 4, ...props }: HoverCardContentP
       data-slot="hover-card-content"
       offset={offset}
       className={cn(
-        'data-[exiting]:fade-out-0 data-[entering]:fade-in-0 data-[exiting]:zoom-out-95 data-[entering]:zoom-in-95 data-[placement=bottom]:slide-in-from-top-2 data-[placement=left]:slide-in-from-right-2 data-[placement=right]:slide-in-from-left-2 data-[placement=top]:slide-in-from-bottom-2 z-50 w-64 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-hidden data-[entering]:animate-in data-[exiting]:animate-out',
+        'exiting:fade-out-0 entering:fade-in-0 exiting:zoom-out-95 entering:zoom-in-95',
+        'placement-bottom:slide-in-from-top-2 placement-left:slide-in-from-right-2',
+        'placement-right:slide-in-from-left-2 placement-top:slide-in-from-bottom-2',
+        'z-50 w-64 entering:animate-in exiting:animate-out rounded-md border bg-popover',
+        'p-4 text-popover-foreground shadow-md outline-hidden',
         className
       )}
       {...props}

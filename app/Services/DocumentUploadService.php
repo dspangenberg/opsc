@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Document;
 use Carbon\Carbon;
 use Exception;
+use App\Facades\MistralDocumentExtractorService;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
 use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
 use Plank\Mediable\Exceptions\MediaUpload\FileNotFoundException;
@@ -31,7 +32,7 @@ class DocumentUploadService
      * @throws InvalidHashException
      * @throws ConfigurationException
      */
-    public function upload(string $file, string $fileName, int $fileSize, string $fileMimeType, ?int $fileMTime = null, ?string $label = null ): void
+    public function upload(string $file, string $fileName, int $fileSize, string $fileMimeType, ?int $fileMTime = null, ?string $label = null, ?string $sourceFile = null): void
     {
         $document = new Document();
         $document->filename = $fileName;
@@ -40,6 +41,11 @@ class DocumentUploadService
         $document->mime_type = $fileMimeType;
         $document->checksum = hash_file('sha256', $file);
         $document->label = $label;
+
+        if ($sourceFile) {
+            $document->source_file = $sourceFile;
+        }
+
         $document->save();
 
 
@@ -50,6 +56,29 @@ class DocumentUploadService
 
             $document->pages = $metadata['Pages'] ?? 1;
             $document->fulltext = $pdf->getText();
+
+            // Extract AI information in a separate try-catch to preserve PDF parsing results
+            if ($document->fulltext) {
+                try {
+                    $result = MistralDocumentExtractorService::extractInformation($document->fulltext);
+                    
+                    // Only assign if we have valid results
+                    if (is_array($result) && (!empty($result['summary']) || !empty($result['subject']))) {
+                        if (!empty($result['summary'])) {
+                            $document->summary = $result['summary'];
+                        }
+                        if (!empty($result['subject'])) {
+                            $document->title = $result['subject'];
+                        }
+                    }
+                } catch (\Exception $e) {
+                    // Log AI extraction error but don't modify PDF parsing results
+                    \Log::warning('AI document extraction failed, preserving PDF parsing results', [
+                        'document_id' => $document->id ?? 'not_yet_saved',
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
 
             // Use provided fileMTime if available, otherwise extract from PDF metadata
             if ($fileMTime !== null) {
