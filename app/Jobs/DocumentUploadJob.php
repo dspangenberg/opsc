@@ -27,7 +27,8 @@ class DocumentUploadJob implements ShouldQueue
         public int $fileSize,
         public string $fileMimeType,
         public ?int $fileMTime = null,
-        public ?string $label = null
+        public ?string $label = null,
+        public ?string $sourceFile = null
     ) {}
 
     /**
@@ -42,7 +43,7 @@ class DocumentUploadJob implements ShouldQueue
         ini_set('memory_limit', '512M');
 
         try {
-            $service->upload($this->file, $this->fileName, $this->fileSize, $this->fileMimeType, $this->fileMTime, $this->label);
+            $service->upload($this->file, $this->fileName, $this->fileSize, $this->fileMimeType, $this->fileMTime, $this->label, $this->sourceFile);
         } finally {
             // Restore original memory limit
             ini_set('memory_limit', $originalLimit);

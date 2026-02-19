@@ -29177,6 +29177,33 @@ namespace Plank\Mediable\Facades {
             }
     }
 
+namespace Prism\Prism\Facades {
+    /**
+     */
+    class PrismServer {
+        /**
+         * @param \Closure():PendingRequest|callable():PendingRequest $prism
+         * @static
+         */
+        public static function register($name, $prism)
+        {
+            /** @var \Prism\Prism\PrismServer $instance */
+            return $instance->register($name, $prism);
+        }
+
+        /**
+         * @return \Prism\Prism\Collection<int, array{name: string, prism: Closure():PendingRequest|callable():PendingRequest}>
+         * @static
+         */
+        public static function prisms()
+        {
+            /** @var \Prism\Prism\PrismServer $instance */
+            return $instance->prisms();
+        }
+
+            }
+    }
+
 namespace Sentry\Laravel {
     /**
      * @see \Sentry\State\HubInterface
@@ -30564,6 +30591,20 @@ namespace Illuminate\Support {
             return \Illuminate\Support\Collection::ray($description);
         }
 
+        /**
+         * @see \Laravel\Ai\AiServiceProvider::boot()
+         * @param \Closure|array|string $by
+         * @param string $query
+         * @param int|null $limit
+         * @param array|string|null $provider
+         * @param string|null $model
+         * @static
+         */
+        public static function rerank($by, $query, $limit = null, $provider = null, $model = null)
+        {
+            return \Illuminate\Support\Collection::rerank($by, $query, $limit, $provider, $model);
+        }
+
             }
     /**
      */
@@ -30576,6 +30617,19 @@ namespace Illuminate\Support {
         public static function ray($description = '')
         {
             return \Illuminate\Support\Stringable::ray($description);
+        }
+
+        /**
+         * @see \Laravel\Ai\AiServiceProvider::boot()
+         * @param string|null $provider
+         * @param int|null $dimensions
+         * @param string|null $model
+         * @param int|bool|null $cache
+         * @static
+         */
+        public static function toEmbeddings($provider = null, $dimensions = null, $model = null, $cache = null)
+        {
+            return \Illuminate\Support\Stringable::toEmbeddings($provider, $dimensions, $model, $cache);
         }
 
             }
@@ -35945,6 +35999,7 @@ namespace  {
     class LaravelZugferd extends \horstoeko\zugferdlaravel\Facades\ZugferdLaravel {}
     class MediaUploader extends \Plank\Mediable\Facades\MediaUploader {}
     class ImageManipulator extends \Plank\Mediable\Facades\ImageManipulator {}
+    class PrismServer extends \Prism\Prism\Facades\PrismServer {}
     class Sentry extends \Sentry\Laravel\Facade {}
     class Tenancy extends \Stancl\Tenancy\Facades\Tenancy {}
     class GlobalCache extends \Stancl\Tenancy\Facades\GlobalCache {}

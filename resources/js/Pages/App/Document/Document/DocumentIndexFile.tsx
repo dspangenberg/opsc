@@ -5,10 +5,11 @@ import {
   DeletePutBackIcon,
   Edit03Icon,
   FileDownloadIcon,
+  InformationCircleIcon,
   MoreVerticalCircle01Icon,
   PinIcon
 } from '@hugeicons/core-free-icons'
-import { router } from '@inertiajs/react'
+import { Link, router } from '@inertiajs/react'
 import { filesize } from 'filesize'
 import type * as React from 'react'
 import { useContext, useEffect, useRef, useState } from 'react'
@@ -30,7 +31,7 @@ interface DocumentIndexPageProps {
   onClick: (document: App.Data.DocumentData) => void
 }
 
-export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, onClick }) => {
+export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document }) => {
   const { selectedDocuments, setSelectedDocuments } = useContext(DocumentIndexContext)
   const isSelected = selectedDocuments.includes(document.id as number)
   const [imageError, setImageError] = useState(false)
@@ -43,7 +44,6 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
     filename: document.filename || 'document.pdf'
   })
 
-  // Intersection Observer for lazy loading
   useEffect(() => {
     if (!imageRef.current) return
 
@@ -57,7 +57,7 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
         })
       },
       {
-        rootMargin: '50px', // Start loading 50px before element is visible
+        rootMargin: '50px',
         threshold: 0.01
       }
     )
@@ -125,7 +125,7 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
 
   return (
     <div className="relative flex h-64 w-full flex-col overflow-hidden rounded-md border bg-muted/40 shadow-sm hover:border-primary">
-      <Pressable onClick={() => onClick(document)}>
+      <Link href={route('app.document.edit', { id: document.id })}>
         <button type="button" className="w-full border-0 bg-transparent p-0">
           <div ref={imageRef} className="relative h-28 w-full">
             {!isVisible || isLoading ? (
@@ -164,90 +164,97 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document, 
             ) : null}
           </div>
         </button>
-      </Pressable>
 
-      <div className="flex flex-none flex-col space-y-0 rounded-b-md p-4">
-        <div className="truncate text-muted-foreground text-xs">{document.type?.name}</div>
-        <HoverCard>
-          <Pressable>
-            <span
-              role="button"
-              tabIndex={0}
-              className="truncate py-0.5 font-medium text-sm hover:text-primary-500"
-            >
-              {document.title}
-            </span>
-          </Pressable>
-          <HoverCardContent placement="bottom">
-            <DocumentIndexFileCard document={document} />
-          </HoverCardContent>
-        </HoverCard>
-        {document.contact_id && (
-          <div className="mt-1 truncate text-xs">{document.contact?.full_name}</div>
-        )}
-
-        <div className="mt-0.5 grid grid-cols-2 text-muted-foreground text-xs">
-          <div>{document.issued_on}</div>
-          <div className="text-right">{filesize(document.file_size)}</div>
-        </div>
-      </div>
-
-      <div className="absolute right-1 bottom-1 left-1 flex items-center justify-between px-0.5">
-        <div className="flex items-center gap-0.5 pl-2">
-          <Checkbox
-            name={`document-id-${document.id}`}
-            isSelected={isSelected}
-            onChange={handleCheckboxChange}
-          />
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            icon={PinIcon}
-            iconClassName={`${document.is_pinned ? 'fill-blue-500 text-blue-500 hover:text-foreground' : 'border-border fill-background hover:text-foreground/50'}`}
-            onClick={handleTogglePinned}
-          />
-        </div>
-        <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
-          {!document.deleted_at && (
-            <>
-              <MenuItem
-                icon={FileDownloadIcon}
-                title="Dokument herunterladen"
-                separator
-                onClick={handleDownload}
-              />
-              <MenuItem
-                icon={Edit03Icon}
-                title="Dokument bearbeiten"
-                href={route('app.document.edit', { document: document.id })}
-                separator
-              />
-              <MenuItem
-                icon={Delete02Icon}
-                title="Dokument löschen"
-                variant="destructive"
-                onClick={handleDelete}
-              />
-            </>
+        <div className="flex flex-none flex-col space-y-0 rounded-b-md p-4">
+          <div className="truncate text-muted-foreground text-xs">{document.type?.name}</div>
+          <div className="flex items-center gap-2 font-medium text-sm">
+            <span className="flex-1 truncate">{document.title}</span>
+            <HoverCard>
+              <Pressable>
+                <span className="rounded-full">
+                  <Icon
+                    icon={InformationCircleIcon}
+                    className="rounded-full bg-primary text-white"
+                  />
+                </span>
+              </Pressable>
+              <HoverCardContent className="w-md">
+                <DocumentIndexFileCard document={document} />
+              </HoverCardContent>
+            </HoverCard>
+          </div>
+          {document.is_inbound && document.sender_contact_id && (
+            <div className="mt-1 truncate text-xs">{document.sender_contact?.full_name}</div>
           )}
-          {document.deleted_at && (
-            <>
-              <MenuItem
-                icon={DeletePutBackIcon}
-                title="Dokument wiederherstellen"
-                separator
-                onClick={handleRestore}
-              />
-              <MenuItem
-                icon={Delete04Icon}
-                title="Dokument endgültig löschen"
-                variant="destructive"
-                onClick={handleForceDelete}
-              />
-            </>
+
+          {!document.is_inbound && document.receiver_contact_id && (
+            <div className="mt-1 truncate text-xs">{document.receiver_contact?.full_name}</div>
           )}
-        </DropdownButton>
-      </div>
+
+          <div className="mt-0.5 flex items-center gap-2 text-muted-foreground text-xs">
+            <div className="flex-1">{document.issued_on}</div>
+            <div className="text-right">{document.pages} S.</div>
+            <div className="text-right">{filesize(document.file_size)}</div>
+          </div>
+        </div>
+
+        <div className="absolute right-1 bottom-1 left-1 flex items-center justify-between px-0.5">
+          <div className="flex items-center gap-0.5 pl-2">
+            <Checkbox
+              name={`document-id-${document.id}`}
+              isSelected={isSelected}
+              onChange={handleCheckboxChange}
+            />
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              icon={PinIcon}
+              iconClassName={`${document.is_pinned ? 'fill-blue-500 text-blue-500 hover:text-foreground' : 'border-border fill-background hover:text-foreground/50'}`}
+              onClick={handleTogglePinned}
+            />
+          </div>
+          <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
+            {!document.deleted_at && (
+              <>
+                <MenuItem
+                  icon={FileDownloadIcon}
+                  title="Dokument herunterladen"
+                  separator
+                  onClick={handleDownload}
+                />
+                <MenuItem
+                  icon={Edit03Icon}
+                  title="Dokument bearbeiten"
+                  href={route('app.document.edit', { document: document.id })}
+                  separator
+                />
+                <MenuItem
+                  icon={Delete02Icon}
+                  title="Dokument löschen"
+                  variant="destructive"
+                  onClick={handleDelete}
+                />
+              </>
+            )}
+            {document.deleted_at && (
+              <>
+                <MenuItem
+                  icon={DeletePutBackIcon}
+                  title="Dokument wiederherstellen"
+                  separator
+                  onClick={handleRestore}
+                />
+                <MenuItem
+                  icon={Delete04Icon}
+                  title="Dokument endgültig löschen"
+                  variant="destructive"
+                  onClick={handleForceDelete}
+                />
+              </>
+            )}
+          </DropdownButton>
+        </div>
+      </Link>
     </div>
   )
 }

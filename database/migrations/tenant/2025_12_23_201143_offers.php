@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->boolean('is_draft')->default(false);
             $table->string('address')->nullable();
             $table->dateTime('sent_at')->nullable();
-            $table->unsignedBigInteger('tax_id')->default(1)->index('invoices_tax_id_foreign');
+            $table->unsignedBigInteger('tax_id')->default(1)->index('offers_tax_id_foreign');
             $table->text('additional_text')->nullable();
             $table->timestamps();
         });

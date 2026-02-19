@@ -6,6 +6,7 @@ use App\Data\ContactData;
 use App\Data\DocumentData;
 use App\Data\DocumentTypeData;
 use App\Data\ProjectData;
+use App\Facades\MistralDocumentExtractorService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentBulkEditRequest;
 use App\Http\Requests\DocumentBulkMoveToTrashRequest;
@@ -28,20 +29,12 @@ class DocumentController extends Controller
 
     public function index(Request $request)
     {
-        $contactIds = Document::query()->select('contact_id')->distinct()->pluck('contact_id');
         $contacts = Contact::query()->orderBy('name')->orderBy('first_name')->get();
-
-        $typeIds = Document::query()->select('document_type_id')->distinct()->pluck('document_type_id');
         $types = DocumentType::query()->orderBy('name')->get();
-
-        $projectIds = Document::query()->select('project_id')->distinct()->pluck('project_id');
-        $projects = Project::query()->whereIn('id', $projectIds)->orderBy('name')->get();
+        $projects = Project::query()->orderBy('name')->get();
 
         $filters = $request->input('filters', []);
         $page = $request->input('page', 1);
-
-
-        $years = Document::query()->selectRaw('year(issued_on) as year')->distinct()->orderBy('year', 'DESC')->get();
 
         $documents = Document::query()
             ->applyFiltersFromObject($filters, [
@@ -49,7 +42,7 @@ class DocumentController extends Controller
                 'allowed_operators' => ['=', '!=', 'like', 'scope'],
                 'allowed_scopes' => ['view'],
             ])
-            ->with('contact', 'type', 'project')
+            ->with(['sender_contact', 'receiver_contact', 'type', 'project'])
             ->orderBy('is_pinned', 'DESC')
             ->orderBy('issued_on', 'DESC')
             ->paginate(24, ['*'], 'page', $page);
@@ -128,6 +121,18 @@ class DocumentController extends Controller
         return redirect()->back();
     }
 
+
+    public function getDocumentInfosFromAI(Document $document): RedirectResponse {
+        $result = MistralDocumentExtractorService::extractInformation($document->fulltext);
+        if ($result) {
+            $document->summary = $result['summary'];
+            $document->title = $result['subject'];
+            $document->save();
+        }
+
+        return redirect()->back();
+    }
+
     public function bulkRestore(DocumentBulkMoveToTrashRequest $request): RedirectResponse
     {
         $ids = $request->getDocumentIds();
@@ -183,21 +188,21 @@ class DocumentController extends Controller
 
     public function trash(Document $document)
     {
-        $document->delete();
         $document->is_pinned = false;
         $document->save();
+        $document->delete();
         return redirect()->back();
     }
 
     public function edit(Document $document) {
         $contacts = Contact::query()->with('company')->orderBy('name')->orderBy('first_name')->get();
         $projects = Project::query()->orderBy('name')->get();
-        $documentType = DocumentType::query()->orderBy('name')->get();
+        $documentTypes = DocumentType::query()->orderBy('name')->get();
         return Inertia::render('App/Document/Document/DocumentEdit', [
             'document' => DocumentData::from($document),
             'contacts' => ContactData::collect($contacts),
             'projects' => ProjectData::collect($projects),
-            'documentTypes' => DocumentTypeData::collect($documentType),
+            'documentTypes' => DocumentTypeData::collect($documentTypes),
         ]);
     }
 
@@ -281,7 +286,7 @@ class DocumentController extends Controller
 
         $realPath = $tempFile.'/'.$fileName;
 
-        ProcessMultiDocJob::dispatch($realPath);
+        ProcessMultiDocJob::dispatch($realPath, $originalName);
 
         return redirect()->route('app.document.index', [
             'filters' => [

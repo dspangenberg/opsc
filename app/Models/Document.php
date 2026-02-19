@@ -48,13 +48,20 @@ class Document extends Model
 
     protected $fillable = [
         'document_type_id',
-        'contact_id',
+        'sender_contact_id',
+        'receiver_contact_id',
         'project_id',
         'filename',
         'issued_on',
+        'received_on',
         'title',
         'label',
         'fulltext',
+        'sourcefile',
+        'summary',
+        'source_file',
+        'is_hidden',
+        'is_inbound',
     ];
 
     protected function casts(): array
@@ -62,7 +69,8 @@ class Document extends Model
         return [
             'file_created_at' => 'datetime',
             'issued_on' => 'date',
-            'is_in_inbox' => 'boolean',
+            'received_on' => 'date',
+            'sent_on' => 'date',
         ];
     }
 
@@ -84,9 +92,14 @@ class Document extends Model
         };
     }
 
-    public function contact(): BelongsTo
+    public function sender_contact(): BelongsTo
     {
-        return $this->belongsTo(Contact::class, 'contact_id');
+        return $this->belongsTo(Contact::class, 'sender_contact_id');
+    }
+
+    public function receiver_contact(): BelongsTo
+    {
+        return $this->belongsTo(Contact::class, 'receiver_contact_id');
     }
 
     public function type(): BelongsTo

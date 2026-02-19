@@ -15,7 +15,8 @@ class ProcessMultiDocJob implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        public string $file
+        public string $file,
+        public string $orgFilename
     ) {}
 
 
@@ -27,6 +28,6 @@ class ProcessMultiDocJob implements ShouldQueue
      */
     public function handle(MultidocService $service): void
     {
-        $service->process($this->file);
+        $service->process($this->file, $this->orgFilename);
     }
 }

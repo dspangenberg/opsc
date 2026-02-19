@@ -25,13 +25,10 @@ class CreateTenantAdminJob implements ShouldQueue
     {
         $this->tenant->run(function ($tenant) {
 
-            dump($tenant); // dump tenant data for debugging purposes
-
-            $userData = collect($tenant)->only(['first_name', 'last_name', 'email', 'password'])->toArray();
+            $userData = collect($tenant)->only(['first_name', 'last_name', 'email'])->toArray();
+            $userData['password'] = bcrypt('password'); // Set a default password
             $userData['is_admin'] = true;
             $userData['email_verified_at'] = now();
-
-            dump($userData); // dump user data for debugging purposes
 
             User::create($userData);
 

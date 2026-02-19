@@ -35,7 +35,7 @@ use Plank\Mediable\MediableCollection;
  */
 class Project extends Model
 {
-    use Mediable;
+    use Mediable, \Illuminate\Database\Eloquent\Factories\HasFactory;
 
     protected $fillable = [
         'name',

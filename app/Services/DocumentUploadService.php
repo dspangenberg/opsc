@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Document;
 use Carbon\Carbon;
 use Exception;
+use App\Facades\MistralDocumentExtractorService;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
 use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
 use Plank\Mediable\Exceptions\MediaUpload\FileNotFoundException;
@@ -31,7 +32,7 @@ class DocumentUploadService
      * @throws InvalidHashException
      * @throws ConfigurationException
      */
-    public function upload(string $file, string $fileName, int $fileSize, string $fileMimeType, ?int $fileMTime = null, ?string $label = null ): void
+    public function upload(string $file, string $fileName, int $fileSize, string $fileMimeType, ?int $fileMTime = null, ?string $label = null, ?string $sourceFile = null): void
     {
         $document = new Document();
         $document->filename = $fileName;
@@ -40,6 +41,11 @@ class DocumentUploadService
         $document->mime_type = $fileMimeType;
         $document->checksum = hash_file('sha256', $file);
         $document->label = $label;
+
+        if ($sourceFile) {
+            $document->source_file = $sourceFile;
+        }
+
         $document->save();
 
 
@@ -50,6 +56,13 @@ class DocumentUploadService
 
             $document->pages = $metadata['Pages'] ?? 1;
             $document->fulltext = $pdf->getText();
+
+            if ($document->fulltext) {
+                $result = MistralDocumentExtractorService::extractInformation($document->fulltext);
+
+                $document->summary = $result['summary'];
+                $document->title = $result['subject'];
+            }
 
             // Use provided fileMTime if available, otherwise extract from PDF metadata
             if ($fileMTime !== null) {

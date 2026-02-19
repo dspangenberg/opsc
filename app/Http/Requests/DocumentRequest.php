@@ -16,9 +16,14 @@ class DocumentRequest extends FormRequest
     {
         return [
             'filename' => ['required', 'string'],
-            'issued_on' => ['nullable', 'date', 'date_format:d.m.Y'],
+            'issued_on' => ['nullable', 'date_format:d.m.Y'],
+            'received_on' => ['nullable', 'date_format:d.m.Y'],
+            'sent_on' => ['nullable', 'date_format:d.m.Y'],
             'title' => ['required', 'string'],
-            'contact_id' => ['nullable', 'exists:contacts,id'],
+            'summary' => ['nullable', 'string'],
+            'is_inbound' => ['required', 'boolean'],
+            'sender_contact_id' => ['nullable', 'exists:contacts,id'],
+            'receiver_contact_id' => ['nullable', 'exists:contacts,id'],
             'project_id' => ['nullable', 'exists:projects,id'],
             'document_type_id' => ['required', 'exists:document_types,id'],
         ];

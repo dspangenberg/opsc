@@ -58,7 +58,7 @@ class MultidocService
         return date('Y-m-d', filemtime($pdfPath));
     }
 
-    public function process(string $file): void {
+    public function process(string $file, string $orgFilename): void {
 
         // Separate PDF pages first
         $tmpDir = sys_get_temp_dir().'/'.uniqid('pdf_');
@@ -176,7 +176,8 @@ class MultidocService
                     filesize($outputPath),
                     'application/pdf',
                     $fileMTime,
-                    $group['code']
+                    $group['code'],
+                    $orgFilename
                 );
             }
         }

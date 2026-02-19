@@ -27,7 +27,6 @@ class UserFactory extends Factory
         $nameParts = explode(' ', $name, 2);
 
         return [
-            'name' => $name,
             'first_name' => $nameParts[0] ?? '',
             'last_name' => $nameParts[1] ?? $nameParts[0],
             'email' => fake()->unique()->safeEmail(),

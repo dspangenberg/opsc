@@ -19,7 +19,8 @@ class DocumentData extends Data
     public function __construct(
         public readonly ?int $id,
         public readonly ?int $document_type_id,
-        public readonly ?int $contact_id,
+        public readonly ?int $sender_contact_id,
+        public readonly ?int $receiver_contact_id,
         public readonly ?int $project_id,
         public readonly string $filename,
         public readonly string $mime_type,
@@ -32,18 +33,26 @@ class DocumentData extends Data
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
         public readonly ?DateTime $sent_on,
 
+        #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
+        public readonly ?DateTime $received_on,
+
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]
         public readonly ?DateTime $deleted_at,
+        public readonly ?bool $is_inbound,
+        public readonly ?bool $is_hidden,
+
+        public readonly ?string $source_file,
 
         public readonly string $folder,
         public readonly string $title,
         public readonly ?string $label,
-        public readonly ?string $description,
+        public readonly ?string $summary,
         public readonly ?string $reference,
         public readonly bool $is_pinned,
         public readonly bool $is_confirmed,
 
-        public readonly ?ContactData $contact,
+        public readonly ?ContactData $sender_contact,
+        public readonly ?ContactData $receiver_contact,
         public readonly ?DocumentTypeData $type,
         public readonly ?ProjectData $project,
     ) {}

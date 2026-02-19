@@ -15,6 +15,8 @@ use Illuminate\Support\Carbon;
  */
 class ProjectCategory extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
+
     protected $fillable = [
         'name',
         'color',
