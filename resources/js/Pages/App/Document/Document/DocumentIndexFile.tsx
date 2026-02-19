@@ -28,7 +28,6 @@ import { DocumentIndexFileCard } from '@/Pages/App/Document/Document/DocumentInd
 
 interface DocumentIndexPageProps {
   document: App.Data.DocumentData
-  onClick: (document: App.Data.DocumentData) => void
 }
 
 export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document }) => {

@@ -387,11 +387,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
             <React.Fragment key={folder}>
               <div className="col-span-6 mt-3 font-semibold text-base">{folder}</div>
               {getDocumentsByFolder(folder)?.map(document => (
-                <DocumentIndexFile
-                  document={document}
-                  key={document.id}
-                  onClick={document => onClick(document)}
-                />
+                <DocumentIndexFile document={document} key={document.id} />
               ))}
             </React.Fragment>
           ))}

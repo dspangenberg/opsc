@@ -57,7 +57,6 @@ class Document extends Model
         'title',
         'label',
         'fulltext',
-        'sourcefile',
         'summary',
         'source_file',
         'is_hidden',

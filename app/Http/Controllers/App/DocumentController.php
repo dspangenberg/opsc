@@ -38,7 +38,7 @@ class DocumentController extends Controller
 
         $documents = Document::query()
             ->applyFiltersFromObject($filters, [
-                'allowed_filters' => ['document_type_id', 'contact_id', 'project_id'],
+                'allowed_filters' => ['document_type_id', 'sender_contact_id', 'project_id'],
                 'allowed_operators' => ['=', '!=', 'like', 'scope'],
                 'allowed_scopes' => ['view'],
             ])
@@ -122,15 +122,53 @@ class DocumentController extends Controller
     }
 
 
+    /**
+     * Extract information from document using AI service.
+     *
+     * @param Document $document The document to process
+     * @return RedirectResponse
+     */
     public function getDocumentInfosFromAI(Document $document): RedirectResponse {
-        $result = MistralDocumentExtractorService::extractInformation($document->fulltext);
-        if ($result) {
-            $document->summary = $result['summary'];
-            $document->title = $result['subject'];
-            $document->save();
+        // Validate that document has fulltext content
+        if (empty($document->fulltext)) {
+            return redirect()->back()
+                ->with('error', 'Document has no text content to analyze.');
         }
 
-        return redirect()->back();
+        try {
+            $result = MistralDocumentExtractorService::extractInformation($document->fulltext);
+
+            // Only update if we have valid, non-empty results
+            if (is_array($result) &&
+                (!empty($result['summary']) || !empty($result['subject']))) {
+
+                if (!empty($result['summary'])) {
+                    $document->summary = $result['summary'];
+                }
+
+                if (!empty($result['subject'])) {
+                    $document->title = $result['subject'];
+                }
+
+                $document->save();
+
+                return redirect()->back()
+                    ->with('success', 'Document information extracted successfully.');
+            }
+
+            return redirect()->back()
+                ->with('warning', 'AI service returned empty results.');
+
+        } catch (\Exception $e) {
+            // Log the exception for debugging
+            \Log::error('AI document extraction failed: ' . $e->getMessage(), [
+                'document_id' => $document->id,
+                'error' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Failed to extract document information: ' . $e->getMessage());
+        }
     }
 
     public function bulkRestore(DocumentBulkMoveToTrashRequest $request): RedirectResponse

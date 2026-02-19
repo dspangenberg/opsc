@@ -42,10 +42,12 @@ return new class extends Migration {
                     ->nullOnDelete();
                 $table->foreign('receiver_contact_id')
                     ->references('id')
-                    ->on('contacts');
+                    ->on('contacts')
+                    ->nullOnDelete();
                 $table->foreign('document_type_id')
                     ->references('id')
-                    ->on('document_types');
+                    ->on('document_types')
+                    ->nullOnDelete();
                 $table->foreign('project_id')
                     ->references('id')
                     ->on('projects')
@@ -100,7 +102,8 @@ return new class extends Migration {
                 $table->unsignedBigInteger('receiver_contact_id')->nullable();
                 $table->foreign('receiver_contact_id')
                     ->references('id')
-                    ->on('contacts');
+                    ->on('contacts')
+                    ->nullOnDelete();
 
                 $table->fulltext('fulltext');
                 $table->renameColumn('description', 'summary');

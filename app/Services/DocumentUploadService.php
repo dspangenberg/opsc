@@ -57,11 +57,27 @@ class DocumentUploadService
             $document->pages = $metadata['Pages'] ?? 1;
             $document->fulltext = $pdf->getText();
 
+            // Extract AI information in a separate try-catch to preserve PDF parsing results
             if ($document->fulltext) {
-                $result = MistralDocumentExtractorService::extractInformation($document->fulltext);
-
-                $document->summary = $result['summary'];
-                $document->title = $result['subject'];
+                try {
+                    $result = MistralDocumentExtractorService::extractInformation($document->fulltext);
+                    
+                    // Only assign if we have valid results
+                    if (is_array($result) && (!empty($result['summary']) || !empty($result['subject']))) {
+                        if (!empty($result['summary'])) {
+                            $document->summary = $result['summary'];
+                        }
+                        if (!empty($result['subject'])) {
+                            $document->title = $result['subject'];
+                        }
+                    }
+                } catch (\Exception $e) {
+                    // Log AI extraction error but don't modify PDF parsing results
+                    \Log::warning('AI document extraction failed, preserving PDF parsing results', [
+                        'document_id' => $document->id ?? 'not_yet_saved',
+                        'error' => $e->getMessage(),
+                    ]);
+                }
             }
 
             // Use provided fileMTime if available, otherwise extract from PDF metadata

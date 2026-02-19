@@ -43,12 +43,12 @@ export const columns: ColumnDef<App.Data.DocumentData>[] = [
     cell: ({ getValue }) => <span>{getValue() as string}</span>
   },
   {
-    accessorKey: 'contact.full_name',
+    accessorKey: 'receiver_contact.full_name',
     header: 'Debitor',
     size: 200,
     cell: ({ getValue, row }) => (
       <Link
-        href={contactUrl(row.original.contact_id)}
+        href={contactUrl(row.original.receiver_contact_id)}
         className="truncate align-middle hover:underline"
       >
         {getValue() as string}
