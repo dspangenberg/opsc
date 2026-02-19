@@ -76,6 +76,14 @@ class Project extends Model
         'note' => '',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'is_archived' => 'boolean',
+            'deleted_at' => 'datetime',
+        ];
+    }
+
     public function getAvatarUrlAttribute(): ?string
     {
         try {

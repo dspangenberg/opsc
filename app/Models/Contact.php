@@ -69,7 +69,7 @@ use Plank\Mediable\MediableCollection;
  */
 class Contact extends Model
 {
-    use HasNotables, Markable, Mediable;
+    use HasNotables, Markable, Mediable, \Illuminate\Database\Eloquent\Factories\HasFactory;
 
     protected static array $marks = [
         Favorite::class,

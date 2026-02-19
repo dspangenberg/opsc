@@ -51,7 +51,7 @@ return new class extends Migration {
                 $table->foreign('project_id')
                     ->references('id')
                     ->on('projects')
-                    ->nullOnDelete();
+                    ->restrictOnDelete();
 
                 // Add fulltext index (only for MySQL)
                 if (DB::getDriverName() !== 'sqlite') {
