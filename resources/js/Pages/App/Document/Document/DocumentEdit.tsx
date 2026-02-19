@@ -45,7 +45,7 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
   }
 
   const handleGetAiContent = () => {
-    router.get(route('app.document.extract', { document: document.id }), {}, { replace: false })
+    router.put(route('app.document.extract', { document: document.id }), {}, { replace: false })
   }
 
   return (

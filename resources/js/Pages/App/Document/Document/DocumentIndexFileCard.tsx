@@ -34,27 +34,35 @@ export const DocumentIndexFileCard: React.FC<DocumentIndexFileCardProps> = ({ do
           <span className="font-medium">{filesize(document.file_size)}</span>
         </li>
       </ul>
-      <li className="grid gap-0.5">
-        <span className="text-muted-foreground">Dokumenttyp</span>
-        <span className="font-medium">{document.type?.name}</span>
-      </li>
-      {document.sender_contact_id && (
+      <ul>
         <li className="grid gap-0.5">
-          <span className="text-muted-foreground">Absender</span>
-          <span className="font-medium">{document.sender_contact?.full_name}</span>
+          <span className="text-muted-foreground">Dokumenttyp</span>
+          <span className="font-medium">{document.type?.name}</span>
         </li>
+      </ul>
+      {document.sender_contact_id && (
+        <ul>
+          <li className="grid gap-0.5">
+            <span className="text-muted-foreground">Absender</span>
+            <span className="font-medium">{document.sender_contact?.full_name}</span>
+          </li>
+        </ul>
       )}
       {document.receiver_contact_id && (
-        <li className="grid gap-0.5">
-          <span className="text-muted-foreground">Empfänger</span>
-          <span className="font-medium">{document.receiver_contact?.full_name}</span>
-        </li>
+        <ul>
+          <li className="grid gap-0.5">
+            <span className="text-muted-foreground">Empfänger</span>
+            <span className="font-medium">{document.receiver_contact?.full_name}</span>
+          </li>
+        </ul>
       )}
       {document.project_id && (
-        <li className="grid gap-0.5">
-          <span className="text-muted-foreground">Projekt</span>
-          <span className="font-medium">{document.project?.name}</span>
-        </li>
+        <ul>
+          <li className="grid gap-0.5">
+            <span className="text-muted-foreground">Projekt</span>
+            <span className="font-medium">{document.project?.name}</span>
+          </li>
+        </ul>
       )}
       <ul className="space-y-1">
         <li className="grid gap-0.5">
@@ -63,10 +71,12 @@ export const DocumentIndexFileCard: React.FC<DocumentIndexFileCardProps> = ({ do
         </li>
 
         {document.summary && (
-          <li className="grid gap-0.5">
-            <span className="text-muted-foreground">Zusammenfassung</span>
-            <span className="line-clamp-2 font-medium">{document.summary}</span>
-          </li>
+          <ul>
+            <li className="grid gap-0.5">
+              <span className="text-muted-foreground">Zusammenfassung</span>
+              <span className="line-clamp-2 font-medium">{document.summary}</span>
+            </li>
+          </ul>
         )}
       </ul>
     </div>

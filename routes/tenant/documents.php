@@ -31,4 +31,4 @@ Route::get('/documents/upload-form', [DocumentController::class, 'uploadForm'])-
 Route::put('/documents/bulk-move-to-trash', [DocumentController::class, 'bulkMoveToTrash'])->name('app.document.bulk-move-to-trash');
 Route::put('/documents/bulk-restore', [DocumentController::class, 'bulkRestore'])->name('app.document.bulk-restore');
 Route::put('/documents/bulk-edit', [DocumentController::class, 'bulkEdit'])->name('app.document.bulk-edit');
-Route::get('/documents/{document}/extract', [DocumentController::class, 'getDocumentInfosFromAI'])->name('app.document.extract');
+Route::put('/documents/{document}/extract', [DocumentController::class, 'getDocumentInfosFromAI'])->name('app.document.extract');
