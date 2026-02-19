@@ -26,7 +26,7 @@ class DocumentUploadJob implements ShouldQueue
         public string $fileName,
         public int $fileSize,
         public string $fileMimeType,
-        public int $fileMTime,
+        public ?int $fileMTime = null,
         public ?string $label = null
     ) {}
 

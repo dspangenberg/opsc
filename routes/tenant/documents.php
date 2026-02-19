@@ -27,3 +27,7 @@ Route::match(['GET', 'POST'], '/documents', [DocumentController::class, 'index']
 
 Route::post('/documents/upload', [DocumentController::class, 'upload'])->name('app.document.upload')->middleware([HandlePrecognitiveRequests::class]);
 Route::get('/documents/upload-form', [DocumentController::class, 'uploadForm'])->name('app.document.upload-form');
+
+Route::put('/documents/bulk-move-to-trash', [DocumentController::class, 'bulkMoveToTrash'])->name('app.document.bulk-move-to-trash');
+Route::put('/documents/bulk-restore', [DocumentController::class, 'bulkRestore'])->name('app.document.bulk-restore');
+Route::put('/documents/bulk-edit', [DocumentController::class, 'bulkEdit'])->name('app.document.bulk-edit');

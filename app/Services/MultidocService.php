@@ -12,8 +12,53 @@ class MultidocService
     {
     }
 
+    protected function extractPdfDate(string $pdfPath): string
+    {
+        // Extract text from first page
+        $result = Process::timeout(10)->run('pdftotext -f 1 -l 1 '.escapeshellarg($pdfPath).' -');
+
+        if ($result->successful()) {
+            $text = $result->output();
+
+            // Search for German date patterns with month names: 4. August 2022 or 04. August 2022
+            $months = [
+                'januar' => '01', 'februar' => '02', 'märz' => '03', 'april' => '04',
+                'mai' => '05', 'juni' => '06', 'juli' => '07', 'august' => '08',
+                'september' => '09', 'oktober' => '10', 'november' => '11', 'dezember' => '12'
+            ];
+
+            $monthPattern = implode('|', array_keys($months));
+            if (preg_match('/(\d{1,2})\.\s*('.$monthPattern.')\s+(\d{4})/iu', $text, $matches)) {
+                $day = str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+                $month = $months[mb_strtolower($matches[2])];
+                $year = $matches[3];
+
+                return $year.'-'.$month.'-'.$day;
+            }
+
+            // Search for German date patterns: DD.MM.YYYY or DD.MM.YY
+            if (preg_match('/(\d{1,2})\.(\d{1,2})\.(\d{4})/', $text, $matches)) {
+                $day = str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+                $month = str_pad($matches[2], 2, '0', STR_PAD_LEFT);
+                $year = $matches[3];
+
+                return $year.'-'.$month.'-'.$day;
+            }
+
+            if (preg_match('/(\d{1,2})\.(\d{1,2})\.(\d{2})/', $text, $matches)) {
+                $day = str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+                $month = str_pad($matches[2], 2, '0', STR_PAD_LEFT);
+                $year = '20'.$matches[3];
+
+                return $year.'-'.$month.'-'.$day;
+            }
+        }
+
+        // Fallback to file modification time
+        return date('Y-m-d', filemtime($pdfPath));
+    }
+
     public function process(string $file): void {
-        $fileDate = date('Y-m-d', filemtime($file));
 
         // Separate PDF pages first
         $tmpDir = sys_get_temp_dir().'/'.uniqid('pdf_');
@@ -100,26 +145,37 @@ class MultidocService
         }
 
         foreach ($groups as $index => $group) {
-            $outputName = $group['code'] ? $fileDate.'_'.$group['code'].'.pdf' : $fileDate.'_group_'.$index.'.pdf';
-            $outputPath = $outputDir.'/'.$outputName;
+            // Create temporary output path first
+            $tmpOutputPath = $outputDir.'/tmp_'.uniqid().'.pdf';
 
             if (count($group['pages']) === 1) {
                 // Just copy single page
-                copy($group['pages'][0], $outputPath);
+                copy($group['pages'][0], $tmpOutputPath);
             } else {
                 // Merge multiple pages using pdftk or pdfunite
                 $pagesList = implode(' ', array_map('escapeshellarg', $group['pages']));
-                Process::timeout(60)->run("pdfunite $pagesList ".escapeshellarg($outputPath));
+                Process::timeout(60)->run("pdfunite $pagesList ".escapeshellarg($tmpOutputPath));
             }
 
-            // Dispatch upload job for the created PDF
-            if (file_exists($outputPath)) {
+            // Extract date from the merged PDF
+            if (file_exists($tmpOutputPath)) {
+                $fileDate = $this->extractPdfDate($tmpOutputPath);
+                $outputName = $group['code'] ? $fileDate.'_'.$group['code'].'.pdf' : $fileDate.'_group_'.$index.'.pdf';
+                $outputPath = $outputDir.'/'.$outputName;
+
+                // Rename to final name
+                rename($tmpOutputPath, $outputPath);
+
+                // Convert extracted date to Unix timestamp
+                $fileMTime = strtotime($fileDate) ?: filemtime($outputPath);
+
+                // Dispatch upload job for the created PDF
                 DocumentUploadJob::dispatch(
                     $outputPath,
                     $outputName,
                     filesize($outputPath),
                     'application/pdf',
-                    filemtime($outputPath),
+                    $fileMTime,
                     $group['code']
                 );
             }

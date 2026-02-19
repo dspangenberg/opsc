@@ -271,6 +271,7 @@ pages: number;
 issued_on: string | null;
 sent_on: string | null;
 deleted_at: string | null;
+folder: string;
 title: string;
 label: string | null;
 description: string | null;

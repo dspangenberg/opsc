@@ -7,6 +7,8 @@ use App\Data\DocumentData;
 use App\Data\DocumentTypeData;
 use App\Data\ProjectData;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DocumentBulkEditRequest;
+use App\Http\Requests\DocumentBulkMoveToTrashRequest;
 use App\Http\Requests\DocumentRequest;
 use App\Http\Requests\MultiDocUploadRequest;
 use App\Http\Requests\ReceiptUploadRequest;
@@ -18,6 +20,7 @@ use App\Models\DocumentType;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Throwable;
 
 class DocumentController extends Controller
@@ -26,16 +29,19 @@ class DocumentController extends Controller
     public function index(Request $request)
     {
         $contactIds = Document::query()->select('contact_id')->distinct()->pluck('contact_id');
-        $contacts = Contact::query()->whereIn('id', $contactIds)->orderBy('name')->get();
+        $contacts = Contact::query()->orderBy('name')->orderBy('first_name')->get();
 
         $typeIds = Document::query()->select('document_type_id')->distinct()->pluck('document_type_id');
-        $types = DocumentType::query()->whereIn('id', $typeIds)->orderBy('name')->get();
+        $types = DocumentType::query()->orderBy('name')->get();
 
         $projectIds = Document::query()->select('project_id')->distinct()->pluck('project_id');
         $projects = Project::query()->whereIn('id', $projectIds)->orderBy('name')->get();
 
         $filters = $request->input('filters', []);
         $page = $request->input('page', 1);
+
+
+        $years = Document::query()->selectRaw('year(issued_on) as year')->distinct()->orderBy('year', 'DESC')->get();
 
         $documents = Document::query()
             ->applyFiltersFromObject($filters, [
@@ -98,6 +104,39 @@ class DocumentController extends Controller
         );
     }
 
+    public function bulkEdit(DocumentBulkEditRequest $request): RedirectResponse
+    {
+        $ids = $request->getDocumentIds();
+        $data = $request->safe()->except('ids');
+
+        // Filter out null and 0 values
+        $data = array_filter($data, fn($value) => $value !== null && $value !== 0);
+
+        if (!empty($data)) {
+            $data['is_confirmed'] = true;
+            Document::whereIn('id', $ids)->update($data);
+        }
+
+        return redirect()->back();
+    }
+
+    public function bulkMoveToTrash(DocumentBulkMoveToTrashRequest $request): RedirectResponse
+    {
+        $ids = $request->getDocumentIds();
+        Document::whereIn('id', $ids)->delete();
+
+        return redirect()->back();
+    }
+
+    public function bulkRestore(DocumentBulkMoveToTrashRequest $request): RedirectResponse
+    {
+        $ids = $request->getDocumentIds();
+        Document::withTrashed()->whereIn('id', $ids)->restore();
+
+
+        return redirect()->back();
+    }
+
     public function restore(Document $document)
     {
         $document->restore();
@@ -147,7 +186,7 @@ class DocumentController extends Controller
         $document->delete();
         $document->is_pinned = false;
         $document->save();
-        return redirect()->route('app.document.index');
+        return redirect()->back();
     }
 
     public function edit(Document $document) {

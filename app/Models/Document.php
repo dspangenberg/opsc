@@ -66,6 +66,15 @@ class Document extends Model
         ];
     }
 
+    protected $appends = [
+        'folder',
+    ];
+
+    public function getFolderAttribute(): string
+    {
+        return $this->issued_on?->translatedFormat('F Y') ?? '';
+    }
+
     public function scopeView(Builder $query, $view): Builder
     {
         return match ($view) {

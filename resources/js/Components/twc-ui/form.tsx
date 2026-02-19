@@ -51,6 +51,7 @@ const FormContext = createContext<FormContextValue | null>(null)
 interface FormProps<T extends FormSchema> extends BaseFormProps {
   form: ExtendedForm<T>
   children: React.ReactNode
+  onSubmit?: (e: FormEvent<HTMLFormElement>) => Promise<void> | void
   onSubmitted?: () => void
   errorTitle?: string
   className?: string
@@ -65,6 +66,7 @@ export const Form = <T extends FormSchema>({
   errorVariant = 'form',
   errorTitle,
   errorClassName,
+  onSubmit,
   onSubmitted,
   className,
   preserveState = true,
@@ -74,10 +76,23 @@ export const Form = <T extends FormSchema>({
     console.error('Form component received undefined form prop')
     return null
   }
-  const handleSubmit = (
+  const handleSubmit = async (
     e: FormEvent<HTMLFormElement>
   ): Promise<SimpleValidationErrors | boolean> => {
     e.preventDefault()
+
+    // If custom onSubmit is provided, call it instead of default behavior
+    if (onSubmit) {
+      try {
+        await onSubmit(e)
+        onSubmitted?.()
+        return Promise.resolve(true)
+      } catch (error) {
+        console.error('Error in custom onSubmit handler:', error)
+        return Promise.reject(error)
+      }
+    }
+
     return new Promise((resolve, reject) => {
       form.submit({
         preserveScroll: true,

@@ -2,12 +2,13 @@ import {
   Delete01Icon,
   Delete04Icon,
   DeletePutBackIcon,
+  FileEditIcon,
   FolderFileStorageIcon,
   FolderUploadIcon,
   Refresh04Icon
 } from '@hugeicons/core-free-icons'
 import { router, WhenVisible } from '@inertiajs/react'
-import type * as React from 'react'
+import * as React from 'react'
 import { useMemo, useState } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
@@ -28,6 +29,7 @@ import { MenuItem } from '@/Components/twc-ui/menu'
 import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
 import { Select } from '@/Components/twc-ui/select'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
+import { DocumentBulkEdit } from '@/Pages/App/Document/Document/DocumentBulkEdit'
 import { DocumentMutliDocUpload } from '@/Pages/App/Document/Document/DocumentMutliDocUpload'
 import type { PageProps } from '@/Types'
 import { DocumentIndexContext } from './DocumentIndexContext'
@@ -70,9 +72,12 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   const [selectedDocuments, setSelectedDocuments] = useState<number[]>([])
   const [showMultiDocUpload, setShowMultiDocUpload] = useState(false)
 
-  const [filters, setFilters] = useState<FilterConfig>(currentFilters)
+  const [_filters, setFilters] = useState<FilterConfig>(currentFilters)
   const routeFilters = route().params.filters as unknown as FilterConfig['filters'] | undefined
 
+  const documentsGroupedByFolder = Object.groupBy(documents, ({ folder }) => folder)
+  const folders = Object.keys(documentsGroupedByFolder)
+  const getDocumentsByFolder = (folder: string) => documentsGroupedByFolder[folder]
   const onClick = async (document: App.Data.DocumentData) => {
     await PdfViewer.call({
       file: route('app.document.pdf', { id: document.id }),
@@ -186,6 +191,65 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
     }
   }
 
+  const handleBulkEdit = async () => {
+    const result = await DocumentBulkEdit.call({
+      contacts,
+      projects,
+      documentTypes
+    })
+    if (result !== false) {
+      // Filter out 0 values before sending
+      const filteredResult = Object.fromEntries(
+        Object.entries(result).filter(([_, value]) => value !== 0 && value !== null)
+      )
+
+      router.put(
+        route('app.document.bulk-edit'),
+        {
+          ids: selectedDocuments.join(','),
+          ...filteredResult
+        },
+        {
+          onSuccess: () => setSelectedDocuments([])
+        }
+      )
+    }
+  }
+
+  const handleBulkRestore = async () => {
+    const promise = await AlertDialog.call({
+      title: 'Dokumente wiederherstellen',
+      message: `Möchtest Du die ausgewählten Dokumente (${selectedDocuments.length}) wirklich wiederherstellen?`,
+      buttonTitle: 'Dokumente wiederherstellen'
+    })
+    if (promise) {
+      router.put(
+        route('app.document.bulk-restore'),
+        { ids: selectedDocuments.join(',') },
+        {
+          onSuccess: () => setSelectedDocuments([])
+        }
+      )
+    }
+  }
+
+  const handleBulkMoveToTrash = async () => {
+    const promise = await AlertDialog.call({
+      title: 'Dokumente in den Papierkorb verschieben',
+      message: `Möchtest Du die ausgewählten Dokumente (${selectedDocuments.length}) wirklich in den Papierkorb verschieben?`,
+      buttonTitle: 'In den Papierkorb verschieben'
+    })
+    if (promise) {
+      router.put(
+        route('app.document.bulk-move-to-trash'),
+        { ids: selectedDocuments.join(',') },
+        {
+          onSuccess: () => setSelectedDocuments([])
+        }
+      )
+    }
+  }
+
   const toolbar = useMemo(
     () => (
       <Toolbar>
@@ -266,7 +330,11 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
               <DropdownButton title="Ausgewählte Dokumente" variant="outline" size="default">
                 {isTrash ? (
                   <>
-                    <MenuItem icon={DeletePutBackIcon} title="Wiederherstellen" />
+                    <MenuItem
+                      icon={DeletePutBackIcon}
+                      title="Wiederherstellen"
+                      onClick={() => handleBulkRestore()}
+                    />
                     <MenuItem
                       icon={Delete04Icon}
                       title="Endgültig löschen"
@@ -275,11 +343,20 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
                     />
                   </>
                 ) : (
-                  <MenuItem
-                    icon={Delete01Icon}
-                    title="In Papierkorb verschieben"
-                    variant="destructive"
-                  />
+                  <>
+                    <MenuItem
+                      icon={FileEditIcon}
+                      title="Bearbeiten"
+                      separator
+                      onClick={() => handleBulkEdit()}
+                    />
+                    <MenuItem
+                      icon={Delete01Icon}
+                      title="In Papierkorb verschieben"
+                      variant="destructive"
+                      onClick={() => handleBulkMoveToTrash()}
+                    />
+                  </>
                 )}
               </DropdownButton>
             </>
@@ -305,14 +382,20 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
             </EmptyContent>
           </Empty>
         )}
-        <div className="absolute top-32 bottom-0 mb-4 grid min-h-0 grid-cols-6 gap-4 overflow-y-auto">
-          {documents.map(document => (
-            <DocumentIndexFile
-              document={document}
-              key={document.id}
-              onClick={document => onClick(document)}
-            />
+        <div className="absolute top-32 right-0 bottom-0 left-0 mb-4 grid min-h-0 auto-rows-max grid-cols-6 gap-4 overflow-y-auto">
+          {folders.map(folder => (
+            <React.Fragment key={folder}>
+              <div className="col-span-6 mt-3 font-semibold text-base">{folder}</div>
+              {getDocumentsByFolder(folder)?.map(document => (
+                <DocumentIndexFile
+                  document={document}
+                  key={document.id}
+                  onClick={document => onClick(document)}
+                />
+              ))}
+            </React.Fragment>
           ))}
+
           {isNextPage && (
             <WhenVisible
               always

@@ -68,7 +68,11 @@ const buildNavData = (isAdmin: boolean) => ({
     },
     {
       title: 'Dokumente',
-      url: route('app.document.index', {}, false),
+      url: route(
+        'app.document.index',
+        { filters: { view: { operator: 'scope', value: 'all' } } },
+        false
+      ),
       icon: FolderFileStorageIcon,
       activePath: '/app/documents',
       items: [

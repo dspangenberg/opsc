@@ -458,7 +458,7 @@ export const PdfContainer: React.FC<Props> = ({
       ref={divRef}
       className={cn(
         className,
-        'relative flex aspect-210/297 max-h-[90%] w-3xl flex-col items-center justify-center rounded-md border bg-white'
+        'relative flex h-full w-3xl flex-col items-center justify-center rounded-md border bg-white'
       )}
     >
       <div
@@ -475,40 +475,28 @@ export const PdfContainer: React.FC<Props> = ({
         {toolbar}
       </div>
 
-      <div className="w-full flex-1 overflow-hidden">
-        {isLoading && (
-          <div className="mx-auto my-auto flex-1">
-            <LogoSpinner />
-          </div>
-        )}
+      <div className="relative w-full flex-1 overflow-hidden">
         <Document
           file={file}
           loading={
-            <div className="mx-auto my-auto flex-1">
-              <LogoSpinner />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <LogoSpinner className="size-10" />
             </div>
           }
           error={
-            <div className="flex h-full w-full items-center justify-center p-8">
+            <div className="absolute inset-0 flex items-center justify-center p-8">
               <div className="max-w-md text-center">
-                <div className="mx-auto mb-4 flex items-center justify-center rounded-full">
-                  <Icon
-                    icon={AlertCircleIcon}
-                    className="size-10 rounded-full bg-destructive/50 text-white"
-                  />
+                <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-destructive">
+                  <Icon icon={AlertCircleIcon} className="size-14 rounded-full text-white" />
                 </div>
-                <h3 className="mb-2 font-semibold text-lg">Das hat leider nicht funktioniert.</h3>
+                <h3 className="mb-2 font-semibold text-lg">Ups, das ging schief!</h3>
                 <p className="mb-4 text-base text-muted-foreground">
                   {loadError || 'Die PDF-Datei konnte nicht geladen werden.'}
-                </p>
-                <p className="text-muted-foreground text-sm">
-                  Dies kann passieren, wenn die Datenbank von einem anderen System importiert wurde
-                  und die Dateien nicht im lokalen S3-Speicher verfügbar sind.
                 </p>
               </div>
             </div>
           }
-          className="h-full w-full overflow-auto bg-accent"
+          className="h-full w-full overflow-auto"
           onLoadSuccess={onDocumentLoadSuccess}
           onLoadError={onDocumentLoadError}
           inputRef={scrollContainerRef}

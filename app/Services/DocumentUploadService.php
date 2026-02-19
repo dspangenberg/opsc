@@ -3,7 +3,15 @@
 namespace App\Services;
 
 use App\Models\Document;
+use Carbon\Carbon;
 use Exception;
+use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
+use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
+use Plank\Mediable\Exceptions\MediaUpload\FileNotFoundException;
+use Plank\Mediable\Exceptions\MediaUpload\FileNotSupportedException;
+use Plank\Mediable\Exceptions\MediaUpload\FileSizeException;
+use Plank\Mediable\Exceptions\MediaUpload\ForbiddenException;
+use Plank\Mediable\Exceptions\MediaUpload\InvalidHashException;
 use Plank\Mediable\Facades\MediaUploader;
 use Smalot\PdfParser\Parser;
 use Spatie\PdfToImage\Pdf;
@@ -14,7 +22,16 @@ class DocumentUploadService
     {
     }
 
-    public function upload(string $file, string $fileName, int $fileSize, string $fileMimeType, int $fileMTime, $label = null ): void
+    /**
+     * @throws FileNotSupportedException
+     * @throws FileExistsException
+     * @throws FileNotFoundException
+     * @throws ForbiddenException
+     * @throws FileSizeException
+     * @throws InvalidHashException
+     * @throws ConfigurationException
+     */
+    public function upload(string $file, string $fileName, int $fileSize, string $fileMimeType, ?int $fileMTime = null, ?string $label = null ): void
     {
         $document = new Document();
         $document->filename = $fileName;
@@ -34,15 +51,49 @@ class DocumentUploadService
             $document->pages = $metadata['Pages'] ?? 1;
             $document->fulltext = $pdf->getText();
 
-            $creationDate = $metadata['CreationDate'] ?? null;
-            if (is_array($creationDate)) {
-                $creationDate = reset($creationDate);
+            // Use provided fileMTime if available, otherwise extract from PDF metadata
+            if ($fileMTime !== null) {
+                $document->file_created_at = Carbon::createFromTimestamp($fileMTime);
+            } else {
+                $creationDate = $metadata['CreationDate'] ?? null;
+                if (is_array($creationDate)) {
+                    $creationDate = reset($creationDate);
+                }
+
+                if ($creationDate) {
+                    // Parse PDF date format examples:
+                    // D:20220804120000+02'00', D:20220804120000Z, D:20220804120000
+                    // Normalize by removing 'D:' prefix and all apostrophes
+                    $normalizedDate = $creationDate;
+
+                    // Remove 'D:' prefix if present
+                    if (str_starts_with($normalizedDate, 'D:')) {
+                        $normalizedDate = substr($normalizedDate, 2);
+                    }
+
+                    // Remove all apostrophes (e.g., +02'00' becomes +0200)
+                    $normalizedDate = str_replace("'", '', $normalizedDate);
+
+                    // Normalize trailing 'Z' to +0000 for Carbon compatibility
+                    if (str_ends_with($normalizedDate, 'Z')) {
+                        $normalizedDate = substr($normalizedDate, 0, -1) . '+0000';
+                    }
+
+                    try {
+                        $document->file_created_at = Carbon::parse($normalizedDate);
+                    } catch (Exception) {
+                        $document->file_created_at = Carbon::createFromTimestamp(filemtime($file));
+                    }
+                } else {
+                    $document->file_created_at = Carbon::createFromTimestamp(filemtime($file));
+                }
             }
-            $document->file_created_at = $creationDate ?? $fileMTime;
         } catch (Exception) {
             $document->pages = 1;
             $document->fulltext = '';
-            $document->file_created_at = $fileMTime;
+            $document->file_created_at = $fileMTime !== null
+                ? Carbon::createFromTimestamp($fileMTime)
+                : Carbon::createFromTimestamp(filemtime($file));
         }
 
         $document->checksum = hash_file('sha256', $file);
