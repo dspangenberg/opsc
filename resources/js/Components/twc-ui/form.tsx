@@ -51,7 +51,7 @@ const FormContext = createContext<FormContextValue | null>(null)
 interface FormProps<T extends FormSchema> extends BaseFormProps {
   form: ExtendedForm<T>
   children: React.ReactNode
-  onSubmit?: (e: FormEvent<HTMLFormElement>) => void
+  onSubmit?: (e: FormEvent<HTMLFormElement>) => Promise<void> | void
   onSubmitted?: () => void
   errorTitle?: string
   className?: string
@@ -83,9 +83,14 @@ export const Form = <T extends FormSchema>({
 
     // If custom onSubmit is provided, call it instead of default behavior
     if (onSubmit) {
-      await onSubmit(e)
-      onSubmitted?.()
-      return Promise.resolve(true)
+      try {
+        await onSubmit(e)
+        onSubmitted?.()
+        return Promise.resolve(true)
+      } catch (error) {
+        console.error('Error in custom onSubmit handler:', error)
+        return Promise.reject(error)
+      }
     }
 
     return new Promise((resolve, reject) => {
