@@ -69,16 +69,16 @@ export const DocumentIndexFileCard: React.FC<DocumentIndexFileCardProps> = ({ do
           <span className="text-muted-foreground">Titel</span>
           <span className="font-medium">{document.title}</span>
         </li>
-
-        {document.summary && (
-          <ul>
-            <li className="grid gap-0.5">
-              <span className="text-muted-foreground">Zusammenfassung</span>
-              <span className="line-clamp-2 font-medium">{document.summary}</span>
-            </li>
-          </ul>
-        )}
       </ul>
+
+      {document.summary && (
+        <ul>
+          <li className="grid gap-0.5">
+            <span className="text-muted-foreground">Zusammenfassung</span>
+            <span className="line-clamp-2 font-medium">{document.summary}</span>
+          </li>
+        </ul>
+      )}
     </div>
   )
 }

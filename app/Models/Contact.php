@@ -13,6 +13,7 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -69,7 +70,7 @@ use Plank\Mediable\MediableCollection;
  */
 class Contact extends Model
 {
-    use HasNotables, Markable, Mediable, \Illuminate\Database\Eloquent\Factories\HasFactory;
+    use HasNotables, Markable, Mediable, HasFactory;
 
     protected static array $marks = [
         Favorite::class,
