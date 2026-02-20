@@ -165,8 +165,10 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
             >
               <Checkbox
                 name={`document-selection-all`}
-                label={`1 bis ${documents.to} von ${documents.total} Dokumenten`}
-                isSelected={selectedDocuments.length === documents.data.length}
+                label={`1 bis ${documents.to ?? 0} von ${documents.total} Dokumenten`}
+                isSelected={
+                  documents.data.length > 0 && selectedDocuments.length === documents.data.length
+                }
                 onChange={() =>
                   setSelectedDocuments(
                     selectedDocuments.length === documents.data.length

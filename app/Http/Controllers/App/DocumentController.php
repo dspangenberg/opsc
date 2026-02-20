@@ -185,7 +185,7 @@ class DocumentController extends Controller
                     'value' => 'trash',
                 ],
             ],
-        ])->with('success', 'File(s) uploaded successfully.');
+        ])->with('success', 'Dokument wurde erfolgreich wiederhergestellt.');
     }
 
     public function streamPdf(Document $document)
@@ -304,7 +304,7 @@ class DocumentController extends Controller
                     'value' => 'trash',
                 ],
             ],
-        ])->with('success', 'File(s) uploaded successfully.');
+        ])->with('success', 'Dokumente wurden erfolgreich gelöscht.');
     }
 
     /**

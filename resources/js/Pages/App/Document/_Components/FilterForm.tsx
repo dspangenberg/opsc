@@ -104,7 +104,7 @@ export const FilterForm: React.FC<Props> = ({
                     onBlur={() => {
                       updateFilters(
                         'issuedBetween',
-                        localIssuedBetween
+                        localIssuedBetween?.start && localIssuedBetween?.end
                           ? {
                               operator: 'scope',
                               value: [
