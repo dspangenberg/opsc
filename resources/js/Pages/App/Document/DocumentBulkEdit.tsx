@@ -8,7 +8,8 @@ import { FormComboBox } from '@/Components/twc-ui/form-combo-box'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 
 interface FormData extends Record<string, FormDataConvertible> {
-  contact_id: number
+  sender_contact_id: number
+  receiver_contact_id: number
   project_id: number
   document_type_id: number
 }
@@ -33,7 +34,8 @@ const DocumentBulkEditComponent: React.FC<DocumentBulkEditComponentProps> = ({
     'put',
     '',
     {
-      contact_id: 0,
+      sender_contact_id: 0,
+      receiver_contact_id: 0,
       project_id: 0,
       document_type_id: 0
     },
@@ -96,11 +98,20 @@ const DocumentBulkEditComponent: React.FC<DocumentBulkEditComponentProps> = ({
           </div>
           <div className="col-span-24">
             <FormComboBox<App.Data.ContactData>
-              label="Kontakt"
+              label="Empfänger"
               isOptional
               items={contacts}
               itemName="full_name"
-              {...form.register('contact_id')}
+              {...form.register('receiver_contact_id')}
+            />
+          </div>
+          <div className="col-span-24">
+            <FormComboBox<App.Data.ContactData>
+              label="Absender"
+              isOptional
+              items={contacts}
+              itemName="full_name"
+              {...form.register('sender_contact_id')}
             />
           </div>
           <div className="col-span-24">

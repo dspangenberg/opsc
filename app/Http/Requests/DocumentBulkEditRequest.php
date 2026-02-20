@@ -24,7 +24,8 @@ class DocumentBulkEditRequest extends FormRequest
     {
         return [
             'ids' => ['required', 'string', 'regex:/^[0-9]+(,[0-9]+)*$/'],
-            'contact_id' => ['nullable', 'integer', 'min:1', 'exists:contacts,id'],
+            'sender_contact_id' => ['nullable', 'integer', 'min:1', 'exists:contacts,id'],
+            'receiver_contact_id' => ['nullable', 'integer', 'min:1', 'exists:contacts,id'],
             'project_id' => ['nullable', 'integer', 'min:1', 'exists:projects,id'],
             'document_type_id' => ['nullable', 'integer', 'min:1', 'exists:document_types,id'],
         ];
@@ -39,7 +40,7 @@ class DocumentBulkEditRequest extends FormRequest
     {
         return [
             'ids.required' => 'Es müssen Dokumente ausgewählt werden.',
-            'ids.regex' => 'Das Format der Dokument-Ids ist ungültig.'
+            'ids.regex' => 'Das Format der Dokument-Ids ist ungültig.',
         ];
     }
 

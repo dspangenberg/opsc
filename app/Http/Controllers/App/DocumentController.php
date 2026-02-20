@@ -19,69 +19,65 @@ use App\Models\Contact;
 use App\Models\Document;
 use App\Models\DocumentType;
 use App\Models\Project;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Log;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Throwable;
 
 class DocumentController extends Controller
 {
-
     public function index(Request $request)
     {
         $contacts = Contact::query()->orderBy('name')->orderBy('first_name')->get();
         $types = DocumentType::query()->orderBy('name')->get();
         $projects = Project::query()->orderBy('name')->get();
 
+        $senderIds = Document::query()->distinct()->pluck('sender_contact_id')->filter();
+        $receiverIds = Document::query()->distinct()->pluck('receiver_contact_id')->filter();
+        $contactIds = $senderIds->merge($receiverIds)->unique();
+        $filterContacts = Contact::whereIn('id', $contactIds)
+            ->orderBy('name')->orderBy('first_name')->get();
+
+        $typeIds = Document::query()->distinct()->pluck('document_type_id')->filter();
+        $filterTypes = DocumentType::whereIn('id', $typeIds)->orderBy('name')->get();
+
+        $projectIds = Document::query()->distinct()->pluck('project_id')->filter();
+        $filterProjects = Project::whereIn('id', $projectIds)->orderBy('name')->get();
+
         $filters = $request->input('filters', []);
-        $page = $request->input('page', 1);
+        $search = $request->input('search', '');
 
         $documents = Document::query()
             ->applyFiltersFromObject($filters, [
-                'allowed_filters' => ['document_type_id', 'sender_contact_id', 'project_id'],
+                'allowed_filters' => ['document_type_id', 'project_id'],
                 'allowed_operators' => ['=', '!=', 'like', 'scope'],
-                'allowed_scopes' => ['view'],
+                'allowed_scopes' => ['view', 'contact'],
             ])
+            ->search($search)
             ->with(['sender_contact', 'receiver_contact', 'type', 'project'])
             ->orderBy('is_pinned', 'DESC')
             ->orderBy('issued_on', 'DESC')
-            ->paginate(24, ['*'], 'page', $page);
+            ->paginate(20);
 
-        $documentsPaginateProp = $documents->toArray();
-        $isNextPage = $documentsPaginateProp['current_page'] < $documentsPaginateProp['last_page'];
-
-        if (!$request->header('X-Inertia') && ($request->wantsJson() || $request->ajax())) {
-            return response()->json([
-                'documents' => DocumentData::collect($documents->items()),
-                'page' => $documents->currentPage(),
-                'from' => $documentsPaginateProp['from'],
-                'to' => $documentsPaginateProp['to'],
-                'total' => $documentsPaginateProp['total'],
-                'contacts' => ContactData::collect($contacts),
-                'documentTypes' => DocumentTypeData::collect($types),
-                'projects' => ProjectData::collect($projects),
-                'currentFilters' => $filters,
-                'isNextPage' => $isNextPage
-            ]);
-        }
-
-        return Inertia::render('App/Document/Document/DocumentIndex', [
-            'documents' => Inertia::merge(DocumentData::collect($documents->items())),
-            'page' => $documents->currentPage(),
-            'from' => $documentsPaginateProp['from'],
-            'to' => $documentsPaginateProp['to'],
-            'total' => $documentsPaginateProp['total'],
+        return Inertia::render('App/Document/DocumentIndex', [
+            'documents' => Inertia::scroll(fn() => DocumentData::collect($documents)),
             'contacts' => ContactData::collect($contacts),
             'documentTypes' => DocumentTypeData::collect($types),
             'projects' => ProjectData::collect($projects),
             'currentFilters' => $filters,
-            'isNextPage' => $isNextPage
+            'currentSearch' => $search,
+            'filterContacts' => ContactData::collect($filterContacts),
+            'filterTypes' => DocumentTypeData::collect($filterTypes),
+            'filterProjects' => ProjectData::collect($filterProjects),
         ]);
     }
 
     public function streamPreview(Document $document)
     {
         $media = $document->firstMedia('preview');
+
         return response()->streamDownload(
             function () use ($media) {
                 $stream = $media->stream();
@@ -121,14 +117,13 @@ class DocumentController extends Controller
         return redirect()->back();
     }
 
-
     /**
      * Extract information from document using AI service.
      *
-     * @param Document $document The document to process
-     * @return RedirectResponse
+     * @param  Document  $document  The document to process
      */
-    public function getDocumentInfosFromAI(Document $document): RedirectResponse {
+    public function getDocumentInfosFromAI(Document $document): RedirectResponse
+    {
         // Validate that document has fulltext content
         if (empty($document->fulltext)) {
             return redirect()->back()
@@ -159,15 +154,15 @@ class DocumentController extends Controller
             return redirect()->back()
                 ->with('warning', 'AI service returned empty results.');
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Log the exception for debugging
-            \Log::error('AI document extraction failed: ' . $e->getMessage(), [
+            Log::error('AI document extraction failed: '.$e->getMessage(), [
                 'document_id' => $document->id,
-                'error' => $e->getTraceAsString()
+                'error' => $e->getTraceAsString(),
             ]);
 
             return redirect()->back()
-                ->with('error', 'Failed to extract document information: ' . $e->getMessage());
+                ->with('error', 'Failed to extract document information: '.$e->getMessage());
         }
     }
 
@@ -176,26 +171,27 @@ class DocumentController extends Controller
         $ids = $request->getDocumentIds();
         Document::withTrashed()->whereIn('id', $ids)->restore();
 
-
         return redirect()->back();
     }
 
     public function restore(Document $document)
     {
         $document->restore();
+
         return redirect()->route('app.document.index', [
             'filters' => [
                 'view' => [
                     'operator' => 'scope',
-                    'value' => 'trash'
-                ]
-            ]
-        ])->with('success', 'File(s) uploaded successfully.');
+                    'value' => 'trash',
+                ],
+            ],
+        ])->with('success', 'Dokument wurde erfolgreich wiederhergestellt.');
     }
 
     public function streamPdf(Document $document)
     {
         $media = $document->firstMedia('file');
+
         return response()->streamDownload(
             function () use ($media) {
                 $stream = $media->stream();
@@ -206,7 +202,7 @@ class DocumentController extends Controller
             $document->filename,
             [
                 'Content-Type' => $media->mime_type,
-                'Content-Length' => $media->size
+                'Content-Length' => $media->size,
             ]
         );
     }
@@ -220,7 +216,7 @@ class DocumentController extends Controller
 
         return redirect()->route('app.document.index', [
             'filters' => $filters,
-            'page' => 1
+            'page' => 1,
         ]);
     }
 
@@ -229,14 +225,17 @@ class DocumentController extends Controller
         $document->is_pinned = false;
         $document->save();
         $document->delete();
+
         return redirect()->back();
     }
 
-    public function edit(Document $document) {
+    public function edit(Document $document)
+    {
         $contacts = Contact::query()->with('company')->orderBy('name')->orderBy('first_name')->get();
         $projects = Project::query()->orderBy('name')->get();
         $documentTypes = DocumentType::query()->orderBy('name')->get();
-        return Inertia::render('App/Document/Document/DocumentEdit', [
+
+        return Inertia::render('App/Document/DocumentEdit', [
             'document' => DocumentData::from($document),
             'contacts' => ContactData::collect($contacts),
             'projects' => ProjectData::collect($projects),
@@ -244,19 +243,21 @@ class DocumentController extends Controller
         ]);
     }
 
-    public function update(DocumentRequest $request, Document $document) {
+    public function update(DocumentRequest $request, Document $document)
+    {
 
         $document->update($request->validated());
         if (!$document->is_confirmed) {
             $document->is_confirmed = true;
             $document->save();
         }
+
         return redirect()->route('app.document.index');
     }
 
     public function uploadForm()
     {
-        return Inertia::render('App/Document/Document/DocumentUpload');
+        return Inertia::render('App/Document/DocumentUpload');
     }
 
     public function forceDelete(Document $document)
@@ -273,10 +274,10 @@ class DocumentController extends Controller
             'filters' => [
                 'view' => [
                     'operator' => 'scope',
-                    'value' => 'trash'
-                ]
-            ]
-        ])->with('success', 'File(s) uploaded successfully.');
+                    'value' => 'trash',
+                ],
+            ],
+        ])->with('success', 'Dokument wurde erfolgreich gelöscht.');
     }
 
     public function bulkForceDelete(Request $request)
@@ -285,7 +286,6 @@ class DocumentController extends Controller
         $ids = $ids ? explode(',', $ids) : [];
 
         $documents = Document::whereIn('id', $ids)->withTrashed()->get();
-
 
         $documents->each(function ($document) {
             $file = $document->firstMedia('file');
@@ -297,23 +297,21 @@ class DocumentController extends Controller
             $document->forceDelete();
         });
 
-
-
         return redirect()->route('app.document.index', [
             'filters' => [
                 'view' => [
                     'operator' => 'scope',
-                    'value' => 'trash'
-                ]
-            ]
-        ])->with('success', 'File(s) uploaded successfully.');
+                    'value' => 'trash',
+                ],
+            ],
+        ])->with('success', 'Dokumente wurden erfolgreich gelöscht.');
     }
 
     /**
      * @throws Throwable
      */
-
-    public function multiDocUpload (MultiDocUploadRequest $request) {
+    public function multiDocUpload(MultiDocUploadRequest $request)
+    {
         $tempFile = storage_path('app/temp');
         if (!file_exists($tempFile)) {
             mkdir($tempFile, 0755, true);
@@ -330,45 +328,45 @@ class DocumentController extends Controller
             'filters' => [
                 'view' => [
                     'operator' => 'scope',
-                    'value' => 'inbox'
-                ]
-            ]
+                    'value' => 'inbox',
+                ],
+            ],
         ])->with('success', 'File(s) uploaded successfully.');
 
     }
+
     public function upload(ReceiptUploadRequest $request)
     {
         $files = $request->file('files');
 
+        foreach ($files as $file) {
 
-            foreach ($files as $file) {
-
-                $tempFile = storage_path('app/temp');
-                if (!file_exists($tempFile)) {
-                    mkdir($tempFile, 0755, true);
-                }
-
-                // Get file info before moving
-                $originalName = $file->getClientOriginalName();
-                $fileSize = $file->getSize();
-                $mimeType = $file->getMimeType();
-                $mTime = $file->getMTime();
-
-                $fileName = uniqid().'_'.$originalName;
-                $file->move($tempFile, $fileName);
-
-                $realPath = $tempFile.'/'.$fileName;
-
-                DocumentUploadJob::dispatch($realPath, $originalName, $fileSize, $mimeType, $mTime, '');
+            $tempFile = storage_path('app/temp');
+            if (!file_exists($tempFile)) {
+                mkdir($tempFile, 0755, true);
             }
+
+            // Get file info before moving
+            $originalName = $file->getClientOriginalName();
+            $fileSize = $file->getSize();
+            $mimeType = $file->getMimeType();
+            $mTime = $file->getMTime();
+
+            $fileName = uniqid().'_'.$originalName;
+            $file->move($tempFile, $fileName);
+
+            $realPath = $tempFile.'/'.$fileName;
+
+            DocumentUploadJob::dispatch($realPath, $originalName, $fileSize, $mimeType, $mTime, '');
+        }
 
         return redirect()->route('app.document.index', [
             'filters' => [
                 'view' => [
                     'operator' => 'scope',
-                    'value' => 'inbox'
-                ]
-            ]
+                    'value' => 'inbox',
+                ],
+            ],
         ])->with('success', 'File(s) uploaded successfully.');
     }
 }

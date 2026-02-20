@@ -19,7 +19,6 @@ class DocumentRequest extends FormRequest
             'issued_on' => ['nullable', 'date_format:d.m.Y'],
             'received_on' => ['nullable', 'date_format:d.m.Y'],
             'sent_on' => ['nullable', 'date_format:d.m.Y'],
-            'title' => ['required', 'string'],
             'summary' => ['nullable', 'string'],
             'is_inbound' => ['required', 'boolean'],
             'sender_contact_id' => ['nullable', 'exists:contacts,id'],

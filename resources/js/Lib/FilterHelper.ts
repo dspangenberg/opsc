@@ -56,6 +56,8 @@ export const getFilterBadgeLabel = (
     accounts?: App.Data.BookkeepingAccountData[]
     cost_centers?: App.Data.CostCenterData[]
     currencies?: App.Data.CurrencyData[]
+    document_types?: App.Data.DocumentTypeData[]
+    projects?: App.Data.ProjectData[]
   } = {}
 ): string => {
   switch (key) {
@@ -65,6 +67,12 @@ export const getFilterBadgeLabel = (
       return `Datum: ${new Date(filter.value[0]).toLocaleDateString('de-DE')} - ${new Date(filter.value[1]).toLocaleDateString('de-DE')}`
     case 'contact_id':
       return `Kreditor: ${options.contacts?.find(c => c.id === filter.value)?.reverse_full_name || filter.value}`
+    case 'contact':
+      return `Kontakt: ${options.contacts?.find(c => c.id === filter.value)?.reverse_full_name || filter.value}`
+    case 'project_id':
+      return `Projekt: ${options.projects?.find(c => c.id === filter.value)?.name || filter.value}`
+    case 'document_type_id':
+      return `Dokumenttyp: ${options.document_types?.find(c => c.id === filter.value)?.name || filter.value}`
     case 'cost_center_id':
       return `Kostenstelle: ${options.cost_centers?.find(cc => cc.id === filter.value)?.name || filter.value}`
     case 'org_currency':

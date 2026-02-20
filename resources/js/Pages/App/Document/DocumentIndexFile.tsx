@@ -23,8 +23,8 @@ import { Icon } from '@/Components/twc-ui/icon'
 import { LogoSpinner } from '@/Components/twc-ui/logo-spinner'
 import { MenuItem } from '@/Components/twc-ui/menu'
 import { useFileDownload } from '@/Hooks/use-file-download'
-import { DocumentIndexContext } from '@/Pages/App/Document/Document/DocumentIndexContext'
-import { DocumentIndexFileCard } from '@/Pages/App/Document/Document/DocumentIndexFileCard'
+import { DocumentIndexContext } from '@/Pages/App/Document/DocumentIndexContext'
+import { DocumentIndexFileCard } from '@/Pages/App/Document/DocumentIndexFileCard'
 
 interface DocumentIndexPageProps {
   document: App.Data.DocumentData
@@ -123,7 +123,7 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document }
   }
 
   return (
-    <div className="relative flex h-64 w-full flex-col overflow-hidden rounded-md border bg-muted/40 shadow-sm hover:border-primary">
+    <div className="relative flex h-64 w-full flex-col overflow-hidden rounded-md border bg-muted/40 shadow-sm focus-within:border-primary hover:border-primary">
       <Link href={route('app.document.edit', { id: document.id })}>
         <button type="button" className="w-full border-0 bg-transparent p-0">
           <div ref={imageRef} className="relative h-28 w-full">
@@ -170,12 +170,7 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document }
             <span className="flex-1 truncate">{document.title}</span>
             <HoverCard>
               <Pressable>
-                <span className="rounded-full">
-                  <Icon
-                    icon={InformationCircleIcon}
-                    className="rounded-full bg-primary text-white"
-                  />
-                </span>
+                <Icon icon={InformationCircleIcon} className="rounded-full bg-primary text-white" />
               </Pressable>
               <HoverCardContent className="w-md">
                 <DocumentIndexFileCard document={document} />
