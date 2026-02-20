@@ -28,6 +28,7 @@ interface PageContainerProps {
   className?: string
   hideHeader?: boolean
   containerBackground?: BackgroundColor
+  contentHeader?: React.ReactNode
   headerClassname?: string
   bgClassName?: string
 }
@@ -41,6 +42,7 @@ export const PageContainer: React.FC<PageContainerProps> = ({
   breadcrumbs = null,
   hideHeader = false,
   containerBackground = 'bg-page-content',
+  contentHeader,
   className = '',
   headerClassname = '',
   footer,
@@ -89,6 +91,8 @@ export const PageContainer: React.FC<PageContainerProps> = ({
           </LayoutContainer>
         </div>
       )}
+
+      {contentHeader && <LayoutContainer>{contentHeader}</LayoutContainer>}
 
       <div className={cn('relative flex-1 bg-page-content py-6', backgroundClass)}>
         <LayoutContainer

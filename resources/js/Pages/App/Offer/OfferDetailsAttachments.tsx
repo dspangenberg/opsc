@@ -10,7 +10,7 @@ import { GridList, GridListItem } from '@/Components/twc-ui/grid-list'
 import { Icon } from '@/Components/twc-ui/icon'
 import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
 import { ScrollCard } from '@/Components/twc-ui/scroll-card'
-import { DocumentSelector } from '@/Pages/App/Document/Document/DocumentSelector'
+import { DocumentSelector } from '@/Pages/App/Document/DocumentSelector'
 
 interface OfferDetailsAttachmentsProps {
   offer: App.Data.OfferData

@@ -45,7 +45,13 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
   }
 
   const handleGetAiContent = () => {
-    router.put(route('app.document.extract', { document: document.id }), {}, { replace: false })
+    router.put(
+      route('app.document.extract', { document: document.id }),
+      {},
+      {
+        onSuccess: () => router.reload()
+      }
+    )
   }
 
   return (
@@ -60,23 +66,28 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
         filename={document.filename}
       />
       <FormCard
-        footerClassName="gap-2"
+        footerClassName="gap-2 justify-between"
         footer={
           <>
-            <Button
-              variant="ghost"
-              icon={AiContentGenerator01Icon}
-              size="icon"
-              title="AI-Analyse"
-              onClick={() => handleGetAiContent()}
-            />
-            <Button
-              variant="default"
-              form={form.id}
-              type="submit"
-              title="Speichern"
-              isLoading={form.processing}
-            />
+            <div className="flex gap-2">
+              <Button
+                variant="ghost"
+                icon={AiContentGenerator01Icon}
+                size="icon"
+                title="AI-Analyse erneut durchführen"
+                onClick={() => handleGetAiContent()}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" title="Zurück" />
+              <Button
+                variant="default"
+                form={form.id}
+                type="submit"
+                title="Speichern"
+                isLoading={form.processing}
+              />
+            </div>
           </>
         }
       >
