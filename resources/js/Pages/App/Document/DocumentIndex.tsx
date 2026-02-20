@@ -1,20 +1,9 @@
-import {
-  Delete01Icon,
-  Delete04Icon,
-  DeletePutBackIcon,
-  FileEditIcon,
-  FolderFileStorageIcon,
-  FolderUploadIcon,
-  Refresh04Icon
-} from '@hugeicons/core-free-icons'
+import { FolderFileStorageIcon, FolderUploadIcon, Refresh04Icon } from '@hugeicons/core-free-icons'
 import { InfiniteScroll, router } from '@inertiajs/react'
 import * as React from 'react'
 import { useCallback, useMemo, useState } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
-import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
-
 import { Checkbox } from '@/Components/twc-ui/checkbox'
-
 import {
   Empty,
   EmptyContent,
@@ -25,15 +14,18 @@ import {
 } from '@/Components/twc-ui/empty'
 import { Icon } from '@/Components/twc-ui/icon'
 import { LinkButton } from '@/Components/twc-ui/link-button'
-import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
 import { BulkActions } from '@/Pages/App/Document/_Components/BulkActions'
 import { FilterForm } from '@/Pages/App/Document/_Components/FilterForm'
-import { DocumentBulkEdit } from '@/Pages/App/Document/DocumentBulkEdit'
 import { DocumentMutliDocUpload } from '@/Pages/App/Document/DocumentMutliDocUpload'
 import type { PageProps } from '@/Types'
 import { DocumentIndexContext } from './DocumentIndexContext'
 import { DocumentIndexFile } from './DocumentIndexFile'
+
+type FilterConfig = {
+  filters: Record<string, { operator: string; value: any }>
+  boolean?: 'AND' | 'OR'
+}
 
 interface DocumentIndexPageProps extends PageProps {
   documents: App.Data.Paginated.PaginationMeta<App.Data.DocumentData[]>
@@ -44,11 +36,6 @@ interface DocumentIndexPageProps extends PageProps {
   filterTypes: App.Data.DocumentTypeData[]
   filterProjects: App.Data.ProjectData[]
   currentFilters: FilterConfig
-}
-
-type FilterConfig = {
-  filters: Record<string, { operator: string; value: any }> | Record<string, never>
-  boolean?: 'AND' | 'OR'
 }
 
 const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
@@ -62,9 +49,6 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   currentFilters
 }) => {
   const breadcrumbs = useMemo(() => [{ title: 'Dokumente' }], [])
-  const [documentType, setDocumentType] = useState<number | null>(null)
-  const [contactId, setContactId] = useState<number | null>(null)
-  const [projectId, setProjectId] = useState<number | null>(null)
   const [selectedDocuments, setSelectedDocuments] = useState<number[]>([])
   const [showMultiDocUpload, setShowMultiDocUpload] = useState(false)
 
@@ -74,12 +58,6 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   const documentsGroupedByFolder = Object.groupBy(documents.data, ({ folder }) => folder)
   const folders = Object.keys(documentsGroupedByFolder)
   const getDocumentsByFolder = (folder: string) => documentsGroupedByFolder[folder]
-  const handlePdfViewClick = async (document: App.Data.DocumentData) => {
-    await PdfViewer.call({
-      file: route('app.document.pdf', { id: document.id }),
-      filename: document.filename
-    })
-  }
 
   const folder = () => {
     const view = routeFilters?.view?.value
@@ -97,72 +75,36 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   const isTrash = routeFilters?.view?.value === 'trash'
   const isInbox = routeFilters?.view?.value === 'inbox'
 
-  const handleBulkEdit = async () => {
-    const result = await DocumentBulkEdit.call({
-      contacts,
-      projects,
-      documentTypes
-    })
-    if (result !== false) {
-      // Filter out 0 values before sending
-      const filteredResult = Object.fromEntries(
-        Object.entries(result).filter(([_, value]) => value !== 0 && value !== null)
-      )
-
-      router.put(
-        route('app.document.bulk-edit'),
-        {
-          ids: selectedDocuments.join(','),
-          ...filteredResult
-        },
-        {
-          onSuccess: () => setSelectedDocuments([])
-        }
-      )
-    }
-  }
-
-  const toolbar = useMemo(
-    () => (
-      <Toolbar>
-        <ToolbarButton
-          variant="primary"
-          icon={FolderUploadIcon}
-          title="MultiDoc hochladen"
-          onClick={() => setShowMultiDocUpload(true)}
-        />
-        {isInbox && (
-          <ToolbarButton
-            icon={Refresh04Icon}
-            title="Aktualisieren"
-            onClick={() => router.reload()}
-          />
-        )}
-      </Toolbar>
-    ),
-    []
+  const toolbar = (
+    <Toolbar>
+      <ToolbarButton
+        variant="primary"
+        icon={FolderUploadIcon}
+        title="MultiDoc hochladen"
+        onClick={() => setShowMultiDocUpload(true)}
+      />
+      {isInbox && (
+        <ToolbarButton icon={Refresh04Icon} title="Aktualisieren" onClick={() => router.reload()} />
+      )}
+    </Toolbar>
   )
 
   const handleFiltersChange = useCallback((newFilters: FilterConfig) => {
-    console.log(newFilters)
-    setFilters(newFilters)
-    /*
-      router.post(
-        route('app.bookkeeping.receipts.index'),
-        {
-          ...newFilters,
-          search: search
-        },
-        {
-          preserveScroll: true,
-          preserveState: true,
-          only: ['receipts'],
-          onSuccess: () => {
-            setFilters(newFilters)
-          }
+    router.post(
+      route('app.document.index'),
+      {
+        ...newFilters
+      },
+      {
+        preserveScroll: true,
+        preserveState: true,
+        only: ['documents'],
+        reset: ['documents'],
+        onSuccess: () => {
+          setFilters(newFilters)
         }
-      )
-       */
+      }
+    )
   }, [])
 
   return (
@@ -189,7 +131,12 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
                 selectedDocuments.length > 0 && selectedDocuments.length !== documents.data.length
               }
             />
-            <BulkActions trash={isTrash} />
+            <BulkActions
+              trash={isTrash}
+              contacts={contacts}
+              projects={projects}
+              documentTypes={documentTypes}
+            />
             <FilterForm
               contacts={filterContacts}
               filters={filters}

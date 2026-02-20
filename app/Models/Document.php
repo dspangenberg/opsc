@@ -85,6 +85,18 @@ class Document extends Model
         return $this->issued_on?->translatedFormat('F Y') ?? '';
     }
 
+    public function scopeContact(Builder $query, ?int $contactId): Builder
+    {
+
+        if ($contactId) {
+            $query->where(function ($q) use ($contactId) {
+                $q->where('sender_contact_id', $contactId)->orWhere('receiver_contact_id', $contactId);
+            });
+        }
+
+        return $query;
+    }
+
     public function scopeView(Builder $query, $view): Builder
     {
         return match ($view) {

@@ -12,15 +12,50 @@ import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Button } from '@/Components/twc-ui/button'
 import { Menu, MenuItem, MenuPopover, MenuTrigger } from '@/Components/twc-ui/menu'
 import { Badge } from '@/Components/ui/badge'
+import { DocumentBulkEdit } from '@/Pages/App/Document/DocumentBulkEdit'
 import { DocumentIndexContext } from '@/Pages/App/Document/DocumentIndexContext'
 
 interface BulkActionsProps {
   trash: boolean
+  documentTypes: App.Data.DocumentTypeData[]
+  contacts: App.Data.ContactData[]
+  projects: App.Data.ProjectData[]
 }
-export const BulkActions: React.FC<BulkActionsProps> = ({ trash }) => {
+export const BulkActions: React.FC<BulkActionsProps> = ({
+  contacts,
+  documentTypes,
+  projects,
+  trash
+}) => {
   const { selectedDocuments, setSelectedDocuments } = useContext(DocumentIndexContext)
 
   if (!selectedDocuments.length) return null
+
+  const handleBulkEdit = async () => {
+    const result = await DocumentBulkEdit.call({
+      contacts,
+      projects,
+      documentTypes
+    })
+    if (result !== false) {
+      // Filter out 0 values before sending
+      const filteredResult = Object.fromEntries(
+        Object.entries(result).filter(([_, value]) => value !== 0 && value !== null)
+      )
+
+      router.put(
+        route('app.document.bulk-edit'),
+        {
+          ids: selectedDocuments.join(','),
+          ...filteredResult
+        },
+        {
+          onSuccess: () => setSelectedDocuments([])
+        }
+      )
+    }
+  }
+
   const handleForceDelete = async () => {
     const promise = await AlertDialog.call({
       title: 'Dokumente endgültig löschen',
@@ -33,7 +68,10 @@ export const BulkActions: React.FC<BulkActionsProps> = ({ trash }) => {
           _query: {
             document_ids: selectedDocuments.join(',')
           }
-        })
+        }),
+        {
+          onSuccess: () => setSelectedDocuments([])
+        }
       )
     }
   }
@@ -100,7 +138,12 @@ export const BulkActions: React.FC<BulkActionsProps> = ({ trash }) => {
             </>
           ) : (
             <>
-              <MenuItem icon={FileEditIcon} title="Bearbeiten" separator />
+              <MenuItem
+                icon={FileEditIcon}
+                title="Bearbeiten"
+                separator
+                onClick={() => handleBulkEdit()}
+              />
               <MenuItem
                 icon={Delete01Icon}
                 title="In Papierkorb verschieben"

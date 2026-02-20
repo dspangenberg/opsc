@@ -18,9 +18,7 @@ beforeEach(function () {
     Tenancy::initialize($this->tenant);
 
     // Erstelle einen Benutzer für den Tenant
-    $this->user = User::factory()->create([
-        'password' => bcrypt('password'),
-    ]);
+    $this->user = User::factory()->create();
 });
 
 afterEach(function () {

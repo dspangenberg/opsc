@@ -43,7 +43,7 @@ export const FilterForm: React.FC<Props> = ({
     const f = filters?.filters || {}
 
     return {
-      contact_id: f.contact_id?.value,
+      contact: f.contact?.value,
       document_type_id: f.document_type_id?.value,
       project_id: f.project_id?.value,
       is_hidden: f.is_hidden?.value,
@@ -51,8 +51,6 @@ export const FilterForm: React.FC<Props> = ({
       issuedBetween: dateRange
     }
   }, [filters?.filters])
-
-  console.log(currentFilters)
 
   const activeFiltersCount = useMemo(() => {
     return Object.keys(filters?.filters || {}).length
@@ -137,9 +135,9 @@ export const FilterForm: React.FC<Props> = ({
                     label="Kontakt"
                     name="contact_id"
                     isOptional
-                    value={currentFilters.contact_id}
+                    value={currentFilters.contact}
                     onChange={value =>
-                      updateFilters('contact_id', value ? { operator: '=', value } : null)
+                      updateFilters('contact', value ? { operator: 'scope', value } : null)
                     }
                     items={contacts ?? []}
                     itemName="full_name"

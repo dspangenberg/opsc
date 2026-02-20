@@ -34,26 +34,25 @@ class DocumentController extends Controller
         $types = DocumentType::query()->orderBy('name')->get();
         $projects = Project::query()->orderBy('name')->get();
 
-        $senderIds = Document::query()->select('sender_contact_id')->distinct()->pluck('sender_contact_id');
-        $receiverIds = Document::query()->select('receiver_contact_id')->distinct()->pluck('receiver_contact_id');
-        $filterContacts = $contacts->merge(Contact::whereIn('id', $senderIds)->orWhereIn('id',
-            $receiverIds)->orderBy('name')->orderBy('first_name')->get());
+        $senderIds = Document::query()->distinct()->pluck('sender_contact_id')->filter();
+        $receiverIds = Document::query()->distinct()->pluck('receiver_contact_id')->filter();
+        $contactIds = $senderIds->merge($receiverIds)->unique();
+        $filterContacts = Contact::whereIn('id', $contactIds)
+            ->orderBy('name')->orderBy('first_name')->get();
 
-        $typeIds = Document::query()->select('document_type_id')->distinct()->pluck('document_type_id');
-        $filterTypes = $types->merge(DocumentType::whereIn('id', $typeIds)->orderBy('name')->get());
+        $typeIds = Document::query()->distinct()->pluck('document_type_id')->filter();
+        $filterTypes = DocumentType::whereIn('id', $typeIds)->orderBy('name')->get();
 
-        $projectIds = Document::query()->select('project_id')->distinct()->pluck('project_id');
-        $filterProjects = $projects->merge(Project::whereIn('id', $projectIds)->orderBy('name')->get());
-
-
+        $projectIds = Document::query()->distinct()->pluck('project_id')->filter();
+        $filterProjects = Project::whereIn('id', $projectIds)->orderBy('name')->get();
 
         $filters = $request->input('filters', []);
 
         $documents = Document::query()
             ->applyFiltersFromObject($filters, [
-                'allowed_filters' => ['document_type_id', 'sender_contact_id', 'project_id'],
+                'allowed_filters' => ['document_type_id', 'project_id'],
                 'allowed_operators' => ['=', '!=', 'like', 'scope'],
-                'allowed_scopes' => ['view'],
+                'allowed_scopes' => ['view', 'contact'],
             ])
             ->with(['sender_contact', 'receiver_contact', 'type', 'project'])
             ->orderBy('is_pinned', 'DESC')
@@ -66,9 +65,9 @@ class DocumentController extends Controller
             'documentTypes' => DocumentTypeData::collect($types),
             'projects' => ProjectData::collect($projects),
             'currentFilters' => $filters,
-            'filterContacts' => $filterContacts,
-            'filterTypes' => $filterTypes,
-            'filterProjects' => $filterProjects,
+            'filterContacts' => ContactData::collect($filterContacts),
+            'filterTypes' => DocumentTypeData::collect($filterTypes),
+            'filterProjects' => ProjectData::collect($filterProjects),
         ]);
     }
 
