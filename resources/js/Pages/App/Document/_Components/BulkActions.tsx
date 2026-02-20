@@ -40,16 +40,16 @@ export const BulkActions: React.FC<BulkActionsProps> = ({ trash }) => {
 
   const handleBulkRestore = async () => {
     const promise = await AlertDialog.call({
-      title: 'Dokumente wiederherstellen',
-      message: `Möchtest Du die ausgewählten Dokumente (${selectedDocuments.length}) wirklich wiederherstellen?`,
-      buttonTitle: 'Dokumente wiederherstellen'
+      title: 'Dokumente zurücklegen',
+      message: `Möchtest Du die ausgewählten Dokumente (${selectedDocuments.length}) wirklich zurücklegen?`,
+      buttonTitle: 'Dokumente zurücklegen'
     })
     if (promise) {
       router.put(
         route('app.document.bulk-restore'),
         { ids: selectedDocuments.join(',') },
         {
-          // onSuccess: () => setSelectedDocuments([])
+          onSuccess: () => setSelectedDocuments([])
         }
       )
     }
