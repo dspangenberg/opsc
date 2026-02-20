@@ -37,7 +37,7 @@ export const BulkActions: React.FC<BulkActionsProps> = ({
       projects,
       documentTypes
     })
-    if (result !== false) {
+    if (result) {
       // Filter out 0 values before sending
       const filteredResult = Object.fromEntries(
         Object.entries(result).filter(([_, value]) => value !== 0 && value !== null)

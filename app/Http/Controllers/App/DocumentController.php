@@ -47,6 +47,7 @@ class DocumentController extends Controller
         $filterProjects = Project::whereIn('id', $projectIds)->orderBy('name')->get();
 
         $filters = $request->input('filters', []);
+        $search = $request->input('search', '');
 
         $documents = Document::query()
             ->applyFiltersFromObject($filters, [
@@ -54,6 +55,7 @@ class DocumentController extends Controller
                 'allowed_operators' => ['=', '!=', 'like', 'scope'],
                 'allowed_scopes' => ['view', 'contact'],
             ])
+            ->search($search)
             ->with(['sender_contact', 'receiver_contact', 'type', 'project'])
             ->orderBy('is_pinned', 'DESC')
             ->orderBy('issued_on', 'DESC')
@@ -65,6 +67,7 @@ class DocumentController extends Controller
             'documentTypes' => DocumentTypeData::collect($types),
             'projects' => ProjectData::collect($projects),
             'currentFilters' => $filters,
+            'currentSearch' => $search,
             'filterContacts' => ContactData::collect($filterContacts),
             'filterTypes' => DocumentTypeData::collect($filterTypes),
             'filterProjects' => ProjectData::collect($filterProjects),

@@ -88,9 +88,22 @@ class Document extends Model
     public function scopeContact(Builder $query, ?int $contactId): Builder
     {
 
-        if ($contactId) {
+        if ($contactId !== null) {
             $query->where(function ($q) use ($contactId) {
                 $q->where('sender_contact_id', $contactId)->orWhere('receiver_contact_id', $contactId);
+            });
+        }
+
+        return $query;
+    }
+
+    public function scopeSearch(Builder $query, ?string $search): Builder
+    {
+
+        if ($search !== null) {
+            $search = '%'.$search.'%';
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', $search)->orWhere('summary', 'like', $search);
             });
         }
 
