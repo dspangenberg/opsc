@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Ai\Agents\ReceiptExtractor;
 use App\Traits\HasDynamicFilters;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Carbon;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
@@ -131,6 +133,60 @@ class Receipt extends Model
     public function range_document_number(): BelongsTo
     {
         return $this->belongsTo(NumberRangeDocumentNumber::class, 'number_range_document_numbers_id', 'id');
+    }
+
+    /**
+     * @throws ConnectionException
+     */
+    public function extractInvoiceData(): self
+    {
+        if ($this->text) {
+            $agent = ReceiptExtractor::make();
+            $context = json_encode([
+                'fulltext' => $this->text,
+                'creditors' => BookkeepingAccount::where('type', 'c')->get()->toArray(),
+                'costCenters' => CostCenter::all()->toArray()
+            ]);
+
+            $result = $agent->prompt($context);
+            $this->data = $result;
+            $this->save();
+
+            $this->reference = $result['reference'];
+            $this->cost_center_id = $result['costcenter'];
+            $this->issued_on = $result['issued_on'];
+
+            $this->org_currency = $result['currency'];
+            if ($this->org_currency !== 'EUR') {
+                $this->amount = $result['amount'];
+                $this->org_amount = $result['amount'];
+                $this->is_foreign_currency = true;
+                $conversion = ConversionRate::convertAmount($this->amount, $this->org_currency,
+                    $this->issued_on);
+                if ($conversion) {
+                    $this->amount = $conversion['amount'];
+                    $this->exchange_rate = $conversion['rate'];
+                }
+            } else {
+                $this->amount = $result['amount'];
+            }
+
+            if ($result['confidence'] > 0.9) {
+                $this->is_confirmed = true;
+            }
+
+
+
+            if ($result['creditor_id']) {
+                $contact = Contact::where('creditor_number', $result['creditor_id'])->first();
+                $this->contact_id = $contact->id;
+            }
+
+            $this->save();
+            return $this;
+        }
+
+        return $this;
     }
 
     protected function casts(): array

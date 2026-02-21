@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Exception;
 
-class ReceiptUploadJob implements ShouldQueue
+class ReceiptZipUploadJob implements ShouldQueue
 {
     use Queueable;
 
@@ -15,9 +15,7 @@ class ReceiptUploadJob implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        public string $file,
-        public string $orgFilename,
-        public int $size
+        public string $file
     ) {}
 
     /**
@@ -27,6 +25,6 @@ class ReceiptUploadJob implements ShouldQueue
      */
     public function handle(ReceiptService $service): void
     {
-        $service->processFile($this->file, $this->orgFilename, $this->size);
+        $service->processZipArchive($this->file);
     }
 }

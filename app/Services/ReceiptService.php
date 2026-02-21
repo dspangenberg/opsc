@@ -6,9 +6,18 @@ use App\Facades\BookeepingRuleService;
 use App\Models\Contact;
 use App\Models\Receipt;
 use Exception;
+use App\Facades\OcrService;
 use Illuminate\Support\Str;
+use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
+use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
+use Plank\Mediable\Exceptions\MediaUpload\FileNotFoundException;
+use Plank\Mediable\Exceptions\MediaUpload\FileNotSupportedException;
+use Plank\Mediable\Exceptions\MediaUpload\FileSizeException;
+use Plank\Mediable\Exceptions\MediaUpload\ForbiddenException;
+use Plank\Mediable\Exceptions\MediaUpload\InvalidHashException;
 use Plank\Mediable\Facades\MediaUploader;
 use Smalot\PdfParser\Parser;
+use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Zip;
 
 class ReceiptService
@@ -46,6 +55,16 @@ class ReceiptService
         }
     }
 
+    /**
+     * @throws FileNotSupportedException
+     * @throws FileExistsException
+     * @throws FileNotFoundException
+     * @throws ForbiddenException
+     * @throws FileSizeException
+     * @throws InvalidHashException
+     * @throws ConfigurationException
+     * @throws PdfDoesNotExist|\Illuminate\Http\Client\ConnectionException
+     */
     public function processFile(string $file, string $orgFilename, int $size): void
     {
         $receipt = new Receipt;
@@ -63,6 +82,10 @@ class ReceiptService
             $receipt->text = $pdf->getText();
         } catch (Exception) {
             $receipt->file_created_at = filemtime($file);
+        }
+
+        if (!$receipt->text) {
+            $receipt->text = OcrService::run($file);
         }
 
         $receipt->checksum = hash_file('sha256', $file);
@@ -96,6 +119,9 @@ class ReceiptService
             $receipt->duplicate_of = $duplicatedReceipt->id;
             $receipt->save();
         }
+
+        $receipt->extractInvoiceData();
+
     }
 
     public function analizeFile(Receipt $receipt): void

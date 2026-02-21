@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Ai\Agents\DocumentExtractor;
 use App\Traits\HasDynamicFilters;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -117,6 +118,27 @@ class Document extends Model
             'trash' => $query->onlyTrashed(),
             default => $query->where('is_confirmed', true)
         };
+    }
+
+    public function extractFromFullText(): self {
+        $agent = DocumentExtractor::make();
+        $result = $agent->prompt($this->fulltext);
+
+        if ($result['issued_on']) {
+            $this->issued_on = $result['issued_on'];
+        }
+
+        if ($result['title']) {
+            $this->title = $result['title'];
+        }
+
+        if ($result['summary']) {
+            $this->summary = $result['summary'];
+        }
+
+
+        $this->save();
+        return $this;
     }
 
     public function sender_contact(): BelongsTo

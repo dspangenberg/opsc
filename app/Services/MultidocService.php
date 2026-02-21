@@ -3,7 +3,11 @@
 namespace App\Services;
 
 use App\Jobs\DocumentUploadJob;
+use App\Facades\OcrService;
+use Exception;
 use Illuminate\Support\Facades\Process;
+use Smalot\PdfParser\Parser;
+use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 
 
 class MultidocService
@@ -12,14 +16,11 @@ class MultidocService
     {
     }
 
-    protected function extractPdfDate(string $pdfPath): string
+    /**
+     */
+    protected function extractPdfDate(string $text, string $pdfPath): string
     {
-        // Extract text from first page
-        $result = Process::timeout(10)->run('pdftotext -f 1 -l 1 '.escapeshellarg($pdfPath).' -');
-
-        if ($result->successful()) {
-            $text = $result->output();
-
+        if ($text) {
             // Search for German date patterns with month names: 4. August 2022 or 04. August 2022
             $months = [
                 'januar' => '01', 'februar' => '02', 'märz' => '03', 'april' => '04',
@@ -58,6 +59,9 @@ class MultidocService
         return date('Y-m-d', filemtime($pdfPath));
     }
 
+    /**
+     * @throws PdfDoesNotExist
+     */
     public function process(string $file, string $orgFilename): void {
 
         // Separate PDF pages first
@@ -157,9 +161,23 @@ class MultidocService
                 Process::timeout(60)->run("pdfunite $pagesList ".escapeshellarg($tmpOutputPath));
             }
 
+            $fullText = '';
+
             // Extract date from the merged PDF
             if (file_exists($tmpOutputPath)) {
-                $fileDate = $this->extractPdfDate($tmpOutputPath);
+                try {
+                    $parser = new Parser;
+                    $pdf = $parser->parseFile($tmpOutputPath);
+                    $fullText = $pdf->getText();
+                }  catch (Exception $e) {
+                }
+
+                if (!trim($fullText)) {
+                    $fullText = OcrService::run($tmpOutputPath);
+                }
+
+
+                $fileDate = $this->extractPdfDate($fullText, $tmpOutputPath);
                 $outputName = $group['code'] ? $fileDate.'_'.$group['code'].'.pdf' : $fileDate.'_group_'.$index.'.pdf';
                 $outputPath = $outputDir.'/'.$outputName;
 
@@ -177,7 +195,8 @@ class MultidocService
                     'application/pdf',
                     $fileMTime,
                     $group['code'],
-                    $orgFilename
+                    $orgFilename,
+                    $fullText
                 );
             }
         }

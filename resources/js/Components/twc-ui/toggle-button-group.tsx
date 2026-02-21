@@ -11,6 +11,8 @@ import { tv, type VariantProps } from 'tailwind-variants'
 import type { buttonVariants } from './button'
 import { ToggleButton, type ToggleButtonProps } from './toggle-button'
 
+// TODO: twc-ui
+
 const ToggleButtonGroupContext = React.createContext<{
   variant?: 'ghost' | 'outline' | 'toolbar'
   size?: VariantProps<typeof buttonVariants>['size']
@@ -29,11 +31,11 @@ export interface ToggleButtonGroupProps extends AriaToggleButtonGroupProps {
 }
 
 const toggleButtonGroupVariants = tv({
-  base: 'group/toggle-button-group flex w-fit items-center gap-1.5 rounded-md',
+  base: 'group/toggle-button-group flex w-fit items-center gap-0.5 rounded-md',
   variants: {
     variant: {
       ghost: '',
-      outline: 'shadow-xs',
+      outline: 'border p-0.5',
       toolbar: ''
     }
   },
@@ -92,7 +94,7 @@ export const ToggleButtonGroupItem = ({
 
   return (
     <ToggleButton
-      variant={variant ?? context.variant}
+      variant="ghost"
       size={size ?? context.size}
       tooltip={tooltip}
       tooltipPlacement={tooltipPlacement ?? context.tooltipPlacement}
