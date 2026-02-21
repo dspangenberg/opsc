@@ -240,6 +240,8 @@ class Receipt extends Model
             'issued_on' => 'date',
             'is_confirmed' => 'boolean',
             'data' => 'array',
+            'is_foreign_currency' => 'boolean',
+            'exchange_rate' => 'decimal:4'
         ];
     }
 

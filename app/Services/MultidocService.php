@@ -12,7 +12,6 @@ use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 
 class MultidocService
 {
-    public function __construct() {}
 
     protected function extractPdfDate(string $text, string $pdfPath): string
     {

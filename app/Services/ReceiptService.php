@@ -7,7 +7,6 @@ use App\Facades\OcrService;
 use App\Models\Contact;
 use App\Models\Receipt;
 use Exception;
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Str;
 use Log;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
@@ -24,7 +23,6 @@ use Zip;
 
 class ReceiptService
 {
-    public function __construct() {}
 
     /**
      * @throws Exception
@@ -120,13 +118,6 @@ class ReceiptService
 
         try {
             $receipt->extractInvoiceData();
-        } catch (ConnectionException $e) {
-            // Log connection error but don't lose PDF parsing/checksum/media/upload work
-            Log::warning('AI receipt extraction failed due to connection error, preserving PDF parsing results', [
-                'receipt_id' => $receipt->id,
-                'error' => $e->getMessage(),
-                'stack_trace' => $e->getTraceAsString(),
-            ]);
         } catch (Exception $e) {
             // Log generic extraction error but don't lose PDF parsing/checksum/media/upload work
             Log::warning('AI receipt extraction failed, preserving PDF parsing results', [
