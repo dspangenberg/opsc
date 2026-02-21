@@ -63,7 +63,7 @@ class DocumentController extends Controller
             ->paginate(20);
 
         return Inertia::render('App/Document/DocumentIndex', [
-            'documents' => Inertia::scroll(fn() => DocumentData::collect($documents)),
+            'documents' => Inertia::scroll(fn () => DocumentData::collect($documents)),
             'contacts' => ContactData::collect($contacts),
             'documentTypes' => DocumentTypeData::collect($types),
             'projects' => ProjectData::collect($projects),
@@ -100,9 +100,9 @@ class DocumentController extends Controller
         $data = $request->safe()->except('ids');
 
         // Filter out null and 0 values
-        $data = array_filter($data, fn($value) => $value !== null && $value !== 0);
+        $data = array_filter($data, fn ($value) => $value !== null && $value !== 0);
 
-        if (!empty($data)) {
+        if (! empty($data)) {
             $data['is_confirmed'] = true;
             Document::whereIn('id', $ids)->update($data);
         }
@@ -135,7 +135,7 @@ class DocumentController extends Controller
             $document->extractFromFullText();
 
             return redirect()->back()
-            ->with('success', 'Document information extracted successfully.');
+                ->with('success', 'Document information extracted successfully.');
 
         } catch (Exception $e) {
             // Log the exception for debugging
@@ -192,7 +192,7 @@ class DocumentController extends Controller
 
     public function togglePinned(Request $request, Document $document): RedirectResponse
     {
-        $document->is_pinned = !$document->is_pinned;
+        $document->is_pinned = ! $document->is_pinned;
         $document->save();
 
         $filters = $request->input('filters', []);
@@ -230,7 +230,7 @@ class DocumentController extends Controller
     {
 
         $document->update($request->validated());
-        if (!$document->is_confirmed) {
+        if (! $document->is_confirmed) {
             $document->is_confirmed = true;
             $document->save();
         }
@@ -263,10 +263,9 @@ class DocumentController extends Controller
         ])->with('success', 'Dokument wurde erfolgreich gelöscht.');
     }
 
-    public function bulkForceDelete(Request $request): RedirectResponse
+    public function bulkForceDelete(DocumentBulkMoveToTrashRequest $request): RedirectResponse
     {
-        $ids = $request->query('document_ids');
-        $ids = $ids ? explode(',', $ids) : [];
+        $ids = $request->getDocumentIds();
 
         $documents = Document::whereIn('id', $ids)->withTrashed()->get();
 
@@ -296,7 +295,7 @@ class DocumentController extends Controller
     public function multiDocUpload(MultiDocUploadRequest $request): RedirectResponse
     {
         $tempFile = storage_path('app/temp');
-        if (!file_exists($tempFile)) {
+        if (! file_exists($tempFile)) {
             mkdir($tempFile, 0755, true);
         }
         $originalName = $request->file->getClientOriginalName();
@@ -325,7 +324,7 @@ class DocumentController extends Controller
         foreach ($files as $file) {
 
             $tempFile = storage_path('app/temp');
-            if (!file_exists($tempFile)) {
+            if (! file_exists($tempFile)) {
                 mkdir($tempFile, 0755, true);
             }
 

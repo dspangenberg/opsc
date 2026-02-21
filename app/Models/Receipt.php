@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Ai\Agents\ReceiptExtractor;
 use App\Traits\HasDynamicFilters;
 use Eloquent;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Carbon;
+use Log;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
@@ -141,49 +143,95 @@ class Receipt extends Model
     public function extractInvoiceData(): self
     {
         if ($this->text) {
-            $agent = ReceiptExtractor::make();
-            $context = json_encode([
-                'fulltext' => $this->text,
-                'creditors' => BookkeepingAccount::where('type', 'c')->get()->toArray(),
-                'costCenters' => CostCenter::all()->toArray()
-            ]);
+            try {
+                $agent = ReceiptExtractor::make();
+                $context = json_encode([
+                    'fulltext' => $this->text,
+                    'creditors' => BookkeepingAccount::where('type', 'c')->get()->toArray(),
+                    'costCenters' => CostCenter::all()->toArray(),
+                ]);
 
-            $result = $agent->prompt($context);
-            $this->data = $result;
-            $this->save();
+                $result = $agent->prompt($context);
+                $this->data = $result;
+                $this->save();
 
-            $this->reference = $result['reference'];
-            $this->cost_center_id = $result['costcenter'];
-            $this->issued_on = $result['issued_on'];
-
-            $this->org_currency = $result['currency'];
-            if ($this->org_currency !== 'EUR') {
-                $this->amount = $result['amount'];
-                $this->org_amount = $result['amount'];
-                $this->is_foreign_currency = true;
-                $conversion = ConversionRate::convertAmount($this->amount, $this->org_currency,
-                    $this->issued_on);
-                if ($conversion) {
-                    $this->amount = $conversion['amount'];
-                    $this->exchange_rate = $conversion['rate'];
+                if (isset($result['reference'])) {
+                    $this->reference = $result['reference'];
                 }
-            } else {
-                $this->amount = $result['amount'];
+
+                if (isset($result['costcenter'])) {
+                    $costCenter = CostCenter::find($result['costcenter']);
+                    if ($costCenter) {
+                        $this->cost_center_id = $costCenter->id;
+                    }
+                }
+
+                if (isset($result['issued_on'])) {
+                    try {
+                        $parsedDate = Carbon::parse($result['issued_on']);
+                        if ($parsedDate) {
+                            $this->issued_on = $parsedDate;
+                        }
+                    } catch (Exception $e) {
+                        Log::warning('Invalid issued_on date from ReceiptExtractor', [
+                            'receipt_id' => $this->id,
+                            'invalid_date' => $result['issued_on'],
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
+                }
+
+                if (isset($result['currency'])) {
+                    $this->org_currency = $result['currency'];
+                }
+
+                $validAmount = null;
+                if (isset($result['amount']) && is_numeric($result['amount'])) {
+                    $validAmount = (float) $result['amount'];
+                }
+
+                if ($this->org_currency !== 'EUR' && $validAmount !== null) {
+                    $this->amount = $validAmount;
+                    $this->org_amount = $validAmount;
+                    $this->is_foreign_currency = true;
+
+                    if ($this->issued_on instanceof Carbon) {
+                        $conversion = ConversionRate::convertAmount($this->amount, $this->org_currency, $this->issued_on);
+                        if ($conversion) {
+                            $this->amount = $conversion['amount'];
+                            $this->exchange_rate = $conversion['rate'];
+                        }
+                    }
+                } elseif ($validAmount !== null) {
+                    $this->amount = $validAmount;
+                }
+
+                if (isset($result['confidence']) && is_numeric($result['confidence'])) {
+                    if ($result['confidence'] > 0.9) {
+                        $this->is_confirmed = true;
+                    }
+                }
+
+                if (isset($result['creditor_id'])) {
+                    $contact = Contact::where('creditor_number', $result['creditor_id'])->first();
+                    if ($contact) {
+                        $this->contact_id = $contact->id;
+                    }
+                }
+
+                $this->save();
+
+                return $this;
+            } catch (Exception $e) {
+                Log::error('Receipt extraction failed', [
+                    'receipt_id' => $this->id,
+                    'error' => $e->getMessage(),
+                    'stack_trace' => $e->getTraceAsString(),
+                ]);
+
+                // Don't rethrow to avoid losing PDF parsing work
+                return $this;
             }
-
-            if ($result['confidence'] > 0.9) {
-                $this->is_confirmed = true;
-            }
-
-
-
-            if ($result['creditor_id']) {
-                $contact = Contact::where('creditor_number', $result['creditor_id'])->first();
-                $this->contact_id = $contact->id;
-            }
-
-            $this->save();
-            return $this;
         }
 
         return $this;
@@ -265,7 +313,7 @@ class Receipt extends Model
         $accounts = Contact::getAccounts(false, $receipt->contact_id);
         $receipt->load('cost_center');
 
-        if (!$accounts['outturnAccount']) {
+        if (! $accounts['outturnAccount']) {
             if ($receipt->cost_center?->bookkeeping_account_id) {
                 $accounts['outturnAccount'] = BookkeepingAccount::find($receipt->cost_center->bookkeeping_account_id);
             }
@@ -283,7 +331,7 @@ class Receipt extends Model
         );
         $name = strtoupper($accounts['name']);
         $bookingTextSuffix = $receipt->org_currency !== 'EUR' ? '(originär '.number_format($receipt->org_amount, 2, ',',
-                '.').' '.$receipt->org_currency.')' : '';
+            '.').' '.$receipt->org_currency.')' : '';
 
         $booking->booking_text = "Rechnungseingang|$name|$receipt->reference|$bookingTextSuffix";
         $booking->save();

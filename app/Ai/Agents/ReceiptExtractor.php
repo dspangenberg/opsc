@@ -11,7 +11,7 @@ use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Promptable;
 use Stringable;
 
-class ReceiptExtractor implements Agent, Conversational, HasTools, HasStructuredOutput
+class ReceiptExtractor implements Agent, Conversational, HasStructuredOutput, HasTools
 {
     use Promptable;
 
@@ -29,7 +29,7 @@ class ReceiptExtractor implements Agent, Conversational, HasTools, HasStructured
         4. Das Datum der Rechnung als issued_on im Format YYYY-MM-DD.
         5. Den Aussteller der Rechnung und dessen IBAN und VAT-ID.
         6. Ermittel den Creditor aus den creditors und übergebe den Wert account_number
-        7. Ermittel die Kostenstelle anhand der constCenters
+        7. Ermittel die Kostenstelle anhand der costCenters
         8. Bewerte die Vollständigkeit der Rechnung basierend auf den extrahierten Daten als confidence
 
         INSTRUCTIONS;

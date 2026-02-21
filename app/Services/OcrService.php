@@ -11,7 +11,8 @@ class OcrService
     /**
      * @throws PdfDoesNotExist
      */
-    public function run(string $file): string {
+    public function run(string $file): string
+    {
         $pages = $this->createImages($file);
         $fullText = '';
         foreach ($pages as $page) {
@@ -28,7 +29,8 @@ class OcrService
     /**
      * @throws PdfDoesNotExist
      */
-    private function createImages($file): array {
+    private function createImages(string $file): array
+    {
         $ghostscriptPath = config('pdf.ghostscript_path');
 
         if ($ghostscriptPath && $ghostscriptPath !== 'gs' && file_exists($ghostscriptPath)) {
@@ -40,7 +42,5 @@ class OcrService
         $pdf = new Pdf($file);
 
         return $pdf->resolution(300)->saveAllPages($tmpDir);
-
-
     }
 }
