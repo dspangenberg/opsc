@@ -16,6 +16,7 @@ use App\Http\Requests\ReceiptUpdateRequest;
 use App\Http\Requests\ReceiptUploadRequest;
 use App\Jobs\DownloadJob;
 use App\Jobs\ReceiptUploadJob;
+use App\Jobs\ReceiptZipUploadJob;
 use App\Models\Contact;
 use App\Models\ConversionRate;
 use App\Models\CostCenter;
@@ -39,9 +40,7 @@ use Plank\Mediable\Exceptions\MediaUpload\FileNotSupportedException;
 use Plank\Mediable\Exceptions\MediaUpload\FileSizeException;
 use Plank\Mediable\Exceptions\MediaUpload\ForbiddenException;
 use Plank\Mediable\Exceptions\MediaUpload\InvalidHashException;
-use Plank\Mediable\Facades\MediaUploader;
 use Plank\Mediable\Media;
-use Smalot\PdfParser\Parser;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Throwable;
 
@@ -526,72 +525,13 @@ class ReceiptController extends Controller
                 $tempPath = $file->store('temp/zip-uploads');
                 $fullPath = storage_path('app/'.$tempPath);
 
-                ReceiptUploadJob::dispatch($fullPath);
+                ReceiptZipUploadJob::dispatch($fullPath);
+            } else {
+                $tempPath = $file->store('temp/zip-uploads');
+                $fullPath = storage_path('app/'.$tempPath);
 
-                return redirect()->route('app.bookkeeping.receipts.confirm-first');
-            }
 
-            try {
-                $parser = new Parser;
-                $pdf = $parser->parseFile($file);
-                $metadata = $pdf->getDetails();
-
-                $receipt->file_created_at = $metadata['CreationDate'] ?? $file->getMTime();
-                $receipt->pages = $metadata['Pages'] ?? 1;
-                $receipt->text = $pdf->getText();
-            } catch (Exception) {
-                $receipt->file_created_at = $file->getMTime();
-                $receipt->pages = 1;
-                $receipt->text = '';
-            }
-
-            $receipt->checksum = hash_file('sha256', $file->getRealPath());
-            $receipt->issued_on = $receipt->file_created_at;
-
-            if ($receipt->text) {
-                // IBAN Pattern für deutsche/europäische IBANs
-                $ibanPattern = '/\bDE\s?[0-9]{2}(?:\s?[A-Z0-9]{4}){4}\s?[A-Z0-9]{2}\b/';
-                preg_match($ibanPattern, $receipt->text, $matches);
-                if (! empty($matches)) {
-                    foreach ($matches as $match) {
-                        $cleanIban = preg_replace('/\s/', '', $match);
-                        $contact = Contact::query()->where('iban', $cleanIban)->first();
-                        if ($contact) {
-                            $receipt->contact_id = $contact->id;
-                            if ($contact->cost_center_id) {
-                                $receipt->cost_center_id = $contact->cost_center_id;
-                            }
-                        }
-                    }
-                }
-            }
-
-            $receipt->save();
-
-            BookeepingRuleService::run('receipts', new Receipt, [$receipt->id]);
-
-            $receipt->refresh();
-            if ($receipt->contact_id && ! $receipt->cost_center_id) {
-                $receipt->cost_center_id = Contact::find($receipt->contact_id)?->cost_center_id;
-                $receipt->save();
-            }
-
-            $media = MediaUploader::fromSource($file)
-                ->toDestination('s3_private', 'uploads/'.$receipt->issued_on->format('Y/m/'))
-                ->upload();
-
-            $receipt->attachMedia($media, 'file');
-
-            $duplicatedReceipt = Receipt::query()
-                ->where('id', '!=', $receipt->id)
-                ->where('checksum', $receipt->checksum)
-                ->where('org_filename', $receipt->org_filename)
-                ->where('file_size', $receipt->file_size)
-                ->first();
-
-            if ($duplicatedReceipt) {
-                $receipt->duplicate_of = $duplicatedReceipt->id;
-                $receipt->save();
+                ReceiptUploadJob::dispatch($fullPath, $file->getClientOriginalName(), $file->getSize());
             }
         }
 

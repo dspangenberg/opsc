@@ -2,29 +2,25 @@
 
 namespace App\Services;
 
+use App\Facades\OcrService;
 use App\Jobs\DocumentUploadJob;
+use Exception;
 use Illuminate\Support\Facades\Process;
-
+use Log;
+use Smalot\PdfParser\Parser;
+use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 
 class MultidocService
 {
-    public function __construct()
+
+    protected function extractPdfDate(string $text, string $pdfPath): string
     {
-    }
-
-    protected function extractPdfDate(string $pdfPath): string
-    {
-        // Extract text from first page
-        $result = Process::timeout(10)->run('pdftotext -f 1 -l 1 '.escapeshellarg($pdfPath).' -');
-
-        if ($result->successful()) {
-            $text = $result->output();
-
+        if ($text) {
             // Search for German date patterns with month names: 4. August 2022 or 04. August 2022
             $months = [
                 'januar' => '01', 'februar' => '02', 'märz' => '03', 'april' => '04',
                 'mai' => '05', 'juni' => '06', 'juli' => '07', 'august' => '08',
-                'september' => '09', 'oktober' => '10', 'november' => '11', 'dezember' => '12'
+                'september' => '09', 'oktober' => '10', 'november' => '11', 'dezember' => '12',
             ];
 
             $monthPattern = implode('|', array_keys($months));
@@ -58,7 +54,11 @@ class MultidocService
         return date('Y-m-d', filemtime($pdfPath));
     }
 
-    public function process(string $file, string $orgFilename): void {
+    /**
+     * @throws PdfDoesNotExist
+     */
+    public function process(string $file, string $orgFilename): void
+    {
 
         // Separate PDF pages first
         $tmpDir = sys_get_temp_dir().'/'.uniqid('pdf_');
@@ -93,7 +93,7 @@ class MultidocService
 
             if ($result->successful()) {
                 $output = trim($result->output());
-                if (!empty($output)) {
+                if (! empty($output)) {
                     $barcodes[$pageNumber] = intval($output);
                 }
             }
@@ -140,7 +140,7 @@ class MultidocService
 
         // Create merged PDFs for each group
         $outputDir = storage_path('app/temp/multidoc');
-        if (!file_exists($outputDir)) {
+        if (! file_exists($outputDir)) {
             mkdir($outputDir, 0755, true);
         }
 
@@ -157,9 +157,26 @@ class MultidocService
                 Process::timeout(60)->run("pdfunite $pagesList ".escapeshellarg($tmpOutputPath));
             }
 
+            $fullText = '';
+
             // Extract date from the merged PDF
             if (file_exists($tmpOutputPath)) {
-                $fileDate = $this->extractPdfDate($tmpOutputPath);
+                try {
+                    $parser = new Parser;
+                    $pdf = $parser->parseFile($tmpOutputPath);
+                    $fullText = $pdf->getText();
+                } catch (Exception $e) {
+                    Log::warning('PDF-Parsing fehlgeschlagen, OCR-Fallback wird verwendet.', [
+                        'file' => $tmpOutputPath,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+
+                if (! trim($fullText)) {
+                    $fullText = OcrService::run($tmpOutputPath);
+                }
+
+                $fileDate = $this->extractPdfDate($fullText, $tmpOutputPath);
                 $outputName = $group['code'] ? $fileDate.'_'.$group['code'].'.pdf' : $fileDate.'_group_'.$index.'.pdf';
                 $outputPath = $outputDir.'/'.$outputName;
 
@@ -177,7 +194,8 @@ class MultidocService
                     'application/pdf',
                     $fileMTime,
                     $group['code'],
-                    $orgFilename
+                    $orgFilename,
+                    $fullText
                 );
             }
         }

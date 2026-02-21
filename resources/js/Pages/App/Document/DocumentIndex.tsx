@@ -1,4 +1,10 @@
-import { FolderFileStorageIcon, FolderUploadIcon, Refresh04Icon } from '@hugeicons/core-free-icons'
+import {
+  FolderFileStorageIcon,
+  FolderUploadIcon,
+  GridViewIcon,
+  Group01Icon,
+  Refresh04Icon
+} from '@hugeicons/core-free-icons'
 import { InfiniteScroll, router } from '@inertiajs/react'
 import * as React from 'react'
 import { useCallback, useMemo, useRef, useState } from 'react'
@@ -16,6 +22,7 @@ import {
 import { Icon } from '@/Components/twc-ui/icon'
 import { LinkButton } from '@/Components/twc-ui/link-button'
 import { SearchField } from '@/Components/twc-ui/search-field'
+import { ToggleButtonGroup, ToggleButtonGroupItem } from '@/Components/twc-ui/toggle-button-group'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
 import { BulkActions } from '@/Pages/App/Document/_Components/BulkActions'
 import { FilterForm } from '@/Pages/App/Document/_Components/FilterForm'
@@ -57,6 +64,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   const [showMultiDocUpload, setShowMultiDocUpload] = useState(false)
   const [search, setSearch] = useState(currentSearch)
   const [filters, setFilters] = useState<FilterConfig>(currentFilters)
+  const [viewType, setViewType] = useState<Set<string>>(new Set(['grouped']))
   const routeFilters = route().params.filters as unknown as FilterConfig['filters'] | undefined
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -64,7 +72,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   const folders = Object.keys(documentsGroupedByFolder)
   const getDocumentsByFolder = (folder: string) => documentsGroupedByFolder[folder]
 
-  const folder = () => {
+  const getViewTitle = () => {
     const view = routeFilters?.view?.value
     switch (view) {
       case 'trash':
@@ -76,7 +84,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
     }
   }
 
-  const view = folder()
+  const view = getViewTitle()
   const isTrash = routeFilters?.view?.value === 'trash'
   const isInbox = routeFilters?.view?.value === 'inbox'
 
@@ -157,10 +165,10 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
         toolbar={toolbar}
         breadcrumbs={breadcrumbs}
         contentHeader={
-          <Toolbar variant="default" className="mx-4 h-12 flex-1 items-center">
+          <Toolbar variant="default" className="mx-4 flex-1 items-center gap-2">
             <Group
-              aria-label="Clipboard"
-              className="flex flex-1 gap-1"
+              aria-label="Bulk-Aktionen und Filter"
+              className="flex flex-1 gap-2"
               style={{ flexDirection: 'inherit' }}
             >
               <Checkbox
@@ -194,13 +202,27 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
                 onFiltersChange={handleFiltersChange}
               />
             </Group>
-            <SearchField
-              aria-label="Suchen"
-              placeholder="Nach Referenz suchen"
-              value={search}
-              onChange={handleSearchInputChange}
-              className="w-sm justify-end"
-            />
+            <Group aria-label="Ansichtsoptionen" className="flex items-center gap-4">
+              <SearchField
+                aria-label="Suchen"
+                placeholder="Suchen …"
+                value={search}
+                onChange={handleSearchInputChange}
+                className="w-xs justify-end"
+              />
+              <ToggleButtonGroup
+                variant="ghost"
+                selectedKeys={viewType}
+                onSelectionChange={keys => setViewType(new Set(keys) as Set<string>)}
+              >
+                <ToggleButtonGroupItem
+                  id="grouped"
+                  icon={Group01Icon}
+                  tooltip="Nach Jahr/Monat gruppiert"
+                />
+                <ToggleButtonGroupItem id="grid" icon={GridViewIcon} tooltip="Ungruppiertes Grid" />
+              </ToggleButtonGroup>
+            </Group>
           </Toolbar>
         }
       >
@@ -211,7 +233,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
                 <Icon icon={FolderFileStorageIcon} className="size-10 text-gray-400" />
               </EmptyMedia>
               <EmptyTitle>Keine Dokumente gefunden</EmptyTitle>
-              <EmptyDescription>{folder()} enthält keine Dokumente</EmptyDescription>
+              <EmptyDescription>{view} enthält keine Dokumente</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
               <LinkButton
@@ -229,14 +251,18 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
           data="documents"
           className="mb-4 grid min-h-0 auto-rows-max grid-cols-6 gap-4 overflow-y-auto"
         >
-          {folders.map(folder => (
-            <React.Fragment key={folder}>
-              <div className="col-span-6 mt-3 font-semibold text-base">{folder}</div>
-              {getDocumentsByFolder(folder)?.map(document => (
+          {viewType.has('grouped')
+            ? folders.map(folder => (
+                <React.Fragment key={folder}>
+                  <div className="col-span-6 mt-3 font-semibold text-base">{folder}</div>
+                  {getDocumentsByFolder(folder)?.map(document => (
+                    <DocumentIndexFile document={document} key={document.id} />
+                  ))}
+                </React.Fragment>
+              ))
+            : documents.data.map(document => (
                 <DocumentIndexFile document={document} key={document.id} />
               ))}
-            </React.Fragment>
-          ))}
         </InfiniteScroll>
 
         <DocumentMutliDocUpload

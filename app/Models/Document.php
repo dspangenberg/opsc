@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Ai\Agents\DocumentExtractor;
 use App\Traits\HasDynamicFilters;
 use Eloquent;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Log;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
@@ -117,6 +120,60 @@ class Document extends Model
             'trash' => $query->onlyTrashed(),
             default => $query->where('is_confirmed', true)
         };
+    }
+
+    public function extractFromFullText(): self
+    {
+        // Eingabeverifizierung - fulltext darf nicht null oder leer sein
+        if ($this->fulltext === null || trim($this->fulltext) === '') {
+            Log::warning('Dokumentextraktion abgebrochen - fulltext ist leer oder null', [
+                'document_id' => $this->id,
+                'filename' => $this->filename ?? 'unbekannt',
+            ]);
+
+            return $this;
+        }
+
+        try {
+            $agent = DocumentExtractor::make();
+            $result = $agent->prompt($this->fulltext);
+
+            // Überprüfen, ob das Ergebnis ein Array ist
+            if (! is_array($result)) {
+                Log::error('Ungültiges Ergebnis von DocumentExtractor - kein Array zurückgegeben', [
+                    'document_id' => $this->id,
+                    'result_type' => gettype($result),
+                ]);
+
+                return $this;
+            }
+
+            // Sichere Zugriff auf Array-Elemente mit isset() und Null-Coalescing
+            if (isset($result['issued_on']) && $result['issued_on'] !== null) {
+                $this->issued_on = $result['issued_on'];
+            }
+
+            if (isset($result['title']) && $result['title'] !== null) {
+                $this->title = $result['title'];
+            }
+
+            if (isset($result['summary']) && $result['summary'] !== null) {
+                $this->summary = $result['summary'];
+            }
+
+        } catch (Exception $e) {
+            Log::error('Fehler bei der Dokumentextraktion', [
+                'document_id' => $this->id,
+                'filename' => $this->filename ?? 'unbekannt',
+                'error' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString(),
+            ]);
+        }
+
+        // Speichern und Rückgabe beibehalten
+        $this->save();
+
+        return $this;
     }
 
     public function sender_contact(): BelongsTo

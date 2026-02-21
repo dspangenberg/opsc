@@ -5,7 +5,8 @@ namespace App\Services;
 use App\Models\Document;
 use Carbon\Carbon;
 use Exception;
-use App\Facades\MistralDocumentExtractorService;
+use App\Facades\OcrService;
+use Log;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
 use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
 use Plank\Mediable\Exceptions\MediaUpload\FileNotFoundException;
@@ -32,8 +33,16 @@ class DocumentUploadService
      * @throws InvalidHashException
      * @throws ConfigurationException
      */
-    public function upload(string $file, string $fileName, int $fileSize, string $fileMimeType, ?int $fileMTime = null, ?string $label = null, ?string $sourceFile = null): void
-    {
+    public function upload(
+        string $file,
+        string $fileName,
+        int $fileSize,
+        string $fileMimeType,
+        ?int $fileMTime = null,
+        ?string $label = null,
+        ?string $sourceFile = null,
+        ?string $fullText = null
+    ): void {
         $document = new Document();
         $document->filename = $fileName;
         $document->title = pathinfo($fileName)['filename'];
@@ -55,25 +64,24 @@ class DocumentUploadService
             $metadata = $pdf->getDetails();
 
             $document->pages = $metadata['Pages'] ?? 1;
-            $document->fulltext = $pdf->getText();
+            if ($fullText) {
+                $document->fulltext = $fullText;
+                $document->save();
+            } else {
+                $document->fulltext = $pdf->getText();
+                if (!trim($document->fulltext)) {
+                    $document->fulltext = OcrService::run($file);
+                }
+                $document->save();
+            }
 
-            // Extract AI information in a separate try-catch to preserve PDF parsing results
+
             if ($document->fulltext) {
                 try {
-                    $result = MistralDocumentExtractorService::extractInformation($document->fulltext);
-                    
-                    // Only assign if we have valid results
-                    if (is_array($result) && (!empty($result['summary']) || !empty($result['subject']))) {
-                        if (!empty($result['summary'])) {
-                            $document->summary = $result['summary'];
-                        }
-                        if (!empty($result['subject'])) {
-                            $document->title = $result['subject'];
-                        }
-                    }
-                } catch (\Exception $e) {
+                    $document->extractFromFullText();
+                } catch (Exception $e) {
                     // Log AI extraction error but don't modify PDF parsing results
-                    \Log::warning('AI document extraction failed, preserving PDF parsing results', [
+                    Log::warning('AI document extraction failed, preserving PDF parsing results', [
                         'document_id' => $document->id ?? 'not_yet_saved',
                         'error' => $e->getMessage(),
                     ]);
@@ -105,7 +113,7 @@ class DocumentUploadService
 
                     // Normalize trailing 'Z' to +0000 for Carbon compatibility
                     if (str_ends_with($normalizedDate, 'Z')) {
-                        $normalizedDate = substr($normalizedDate, 0, -1) . '+0000';
+                        $normalizedDate = substr($normalizedDate, 0, -1).'+0000';
                     }
 
                     try {
@@ -126,8 +134,9 @@ class DocumentUploadService
         }
 
         $document->checksum = hash_file('sha256', $file);
-        $document->issued_on = $document->file_created_at;
-
+        if (!$document->issued_on) {
+            $document->issued_on = $document->file_created_at;
+        }
 
         $document->save();
 

@@ -3,19 +3,26 @@
 namespace App\Services;
 
 use App\Facades\BookeepingRuleService;
+use App\Facades\OcrService;
 use App\Models\Contact;
 use App\Models\Receipt;
 use Exception;
 use Illuminate\Support\Str;
+use Log;
+use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
+use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
+use Plank\Mediable\Exceptions\MediaUpload\FileNotFoundException;
+use Plank\Mediable\Exceptions\MediaUpload\FileNotSupportedException;
+use Plank\Mediable\Exceptions\MediaUpload\FileSizeException;
+use Plank\Mediable\Exceptions\MediaUpload\ForbiddenException;
+use Plank\Mediable\Exceptions\MediaUpload\InvalidHashException;
 use Plank\Mediable\Facades\MediaUploader;
 use Smalot\PdfParser\Parser;
+use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Zip;
 
 class ReceiptService
 {
-    public function __construct()
-    {
-    }
 
     /**
      * @throws Exception
@@ -46,6 +53,16 @@ class ReceiptService
         }
     }
 
+    /**
+     * @throws FileNotSupportedException
+     * @throws FileExistsException
+     * @throws FileNotFoundException
+     * @throws ForbiddenException
+     * @throws FileSizeException
+     * @throws InvalidHashException
+     * @throws ConfigurationException
+     * @throws PdfDoesNotExist
+     */
     public function processFile(string $file, string $orgFilename, int $size): void
     {
         $receipt = new Receipt;
@@ -65,11 +82,13 @@ class ReceiptService
             $receipt->file_created_at = filemtime($file);
         }
 
+        if (! $receipt->text) {
+            $receipt->text = OcrService::run($file);
+        }
+
         $receipt->checksum = hash_file('sha256', $file);
         $receipt->issued_on = $receipt->file_created_at;
         $receipt->save();
-
-        $this->analizeFile($receipt);
 
         BookeepingRuleService::run('receipts', new Receipt, [$receipt->id]);
 
@@ -96,25 +115,17 @@ class ReceiptService
             $receipt->duplicate_of = $duplicatedReceipt->id;
             $receipt->save();
         }
-    }
 
-    public function analizeFile(Receipt $receipt): void
-    {
-        if ($receipt->text) {
-            $ibanPattern = '/\bDE\s?[0-9]{2}(?:\s?[A-Z0-9]{4}){4}\s?[A-Z0-9]{2}\b/';
-            preg_match($ibanPattern, $receipt->text, $matches);
-            if (! empty($matches)) {
-                foreach ($matches as $match) {
-                    $cleanIban = preg_replace('/\s/', '', $match);
-                    $contact = Contact::query()->where('iban', $cleanIban)->first();
-                    if ($contact) {
-                        $receipt->contact_id = $contact->id;
-                        if ($contact->cost_center_id) {
-                            $receipt->cost_center_id = $contact->cost_center_id;
-                        }
-                    }
-                }
-            }
+        try {
+            $receipt->extractInvoiceData();
+        } catch (Exception $e) {
+            // Log generic extraction error but don't lose PDF parsing/checksum/media/upload work
+            Log::warning('AI receipt extraction failed, preserving PDF parsing results', [
+                'receipt_id' => $receipt->id,
+                'error' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString(),
+            ]);
         }
+
     }
 }

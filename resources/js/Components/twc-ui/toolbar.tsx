@@ -9,7 +9,7 @@ import { tv, type VariantProps } from 'tailwind-variants'
 import { Button, type ButtonProps } from './button'
 
 const toolbarVariants = tv({
-  base: 'flex gap-1.5 py-1 data-[orientation=vertical]:flex-col',
+  base: 'flex orientation-vertical:flex-col gap-1.5 py-1',
   variants: {
     variant: {
       default: '[&>button_svg]:text-primary',

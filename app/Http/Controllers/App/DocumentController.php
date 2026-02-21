@@ -6,7 +6,6 @@ use App\Data\ContactData;
 use App\Data\DocumentData;
 use App\Data\DocumentTypeData;
 use App\Data\ProjectData;
-use App\Facades\MistralDocumentExtractorService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentBulkEditRequest;
 use App\Http\Requests\DocumentBulkMoveToTrashRequest;
@@ -22,13 +21,15 @@ use App\Models\Project;
 use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 use Log;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 class DocumentController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $contacts = Contact::query()->orderBy('name')->orderBy('first_name')->get();
         $types = DocumentType::query()->orderBy('name')->get();
@@ -62,7 +63,7 @@ class DocumentController extends Controller
             ->paginate(20);
 
         return Inertia::render('App/Document/DocumentIndex', [
-            'documents' => Inertia::scroll(fn() => DocumentData::collect($documents)),
+            'documents' => Inertia::scroll(fn () => DocumentData::collect($documents)),
             'contacts' => ContactData::collect($contacts),
             'documentTypes' => DocumentTypeData::collect($types),
             'projects' => ProjectData::collect($projects),
@@ -74,7 +75,7 @@ class DocumentController extends Controller
         ]);
     }
 
-    public function streamPreview(Document $document)
+    public function streamPreview(Document $document): StreamedResponse
     {
         $media = $document->firstMedia('preview');
 
@@ -99,9 +100,9 @@ class DocumentController extends Controller
         $data = $request->safe()->except('ids');
 
         // Filter out null and 0 values
-        $data = array_filter($data, fn($value) => $value !== null && $value !== 0);
+        $data = array_filter($data, fn ($value) => $value !== null && $value !== 0);
 
-        if (!empty($data)) {
+        if (! empty($data)) {
             $data['is_confirmed'] = true;
             Document::whereIn('id', $ids)->update($data);
         }
@@ -131,28 +132,10 @@ class DocumentController extends Controller
         }
 
         try {
-            $result = MistralDocumentExtractorService::extractInformation($document->fulltext);
-
-            // Only update if we have valid, non-empty results
-            if (is_array($result) &&
-                (!empty($result['summary']) || !empty($result['subject']))) {
-
-                if (!empty($result['summary'])) {
-                    $document->summary = $result['summary'];
-                }
-
-                if (!empty($result['subject'])) {
-                    $document->title = $result['subject'];
-                }
-
-                $document->save();
-
-                return redirect()->back()
-                    ->with('success', 'Document information extracted successfully.');
-            }
+            $document->extractFromFullText();
 
             return redirect()->back()
-                ->with('warning', 'AI service returned empty results.');
+                ->with('success', 'Document information extracted successfully.');
 
         } catch (Exception $e) {
             // Log the exception for debugging
@@ -162,7 +145,7 @@ class DocumentController extends Controller
             ]);
 
             return redirect()->back()
-                ->with('error', 'Failed to extract document information: '.$e->getMessage());
+                ->with('error', 'Die Dokumentenverarbeitung konnte nicht abgeschlossen werden.');
         }
     }
 
@@ -174,7 +157,7 @@ class DocumentController extends Controller
         return redirect()->back();
     }
 
-    public function restore(Document $document)
+    public function restore(Document $document): RedirectResponse
     {
         $document->restore();
 
@@ -188,7 +171,7 @@ class DocumentController extends Controller
         ])->with('success', 'Dokument wurde erfolgreich wiederhergestellt.');
     }
 
-    public function streamPdf(Document $document)
+    public function streamPdf(Document $document): StreamedResponse
     {
         $media = $document->firstMedia('file');
 
@@ -207,9 +190,9 @@ class DocumentController extends Controller
         );
     }
 
-    public function togglePinned(Request $request, Document $document)
+    public function togglePinned(Request $request, Document $document): RedirectResponse
     {
-        $document->is_pinned = !$document->is_pinned;
+        $document->is_pinned = ! $document->is_pinned;
         $document->save();
 
         $filters = $request->input('filters', []);
@@ -220,7 +203,7 @@ class DocumentController extends Controller
         ]);
     }
 
-    public function trash(Document $document)
+    public function trash(Document $document): RedirectResponse
     {
         $document->is_pinned = false;
         $document->save();
@@ -229,7 +212,7 @@ class DocumentController extends Controller
         return redirect()->back();
     }
 
-    public function edit(Document $document)
+    public function edit(Document $document): Response
     {
         $contacts = Contact::query()->with('company')->orderBy('name')->orderBy('first_name')->get();
         $projects = Project::query()->orderBy('name')->get();
@@ -243,11 +226,11 @@ class DocumentController extends Controller
         ]);
     }
 
-    public function update(DocumentRequest $request, Document $document)
+    public function update(DocumentRequest $request, Document $document): RedirectResponse
     {
 
         $document->update($request->validated());
-        if (!$document->is_confirmed) {
+        if (! $document->is_confirmed) {
             $document->is_confirmed = true;
             $document->save();
         }
@@ -255,12 +238,12 @@ class DocumentController extends Controller
         return redirect()->route('app.document.index');
     }
 
-    public function uploadForm()
+    public function uploadForm(): Response
     {
         return Inertia::render('App/Document/DocumentUpload');
     }
 
-    public function forceDelete(Document $document)
+    public function forceDelete(Document $document): RedirectResponse
     {
         $file = $document->firstMedia('file');
         $file?->delete();
@@ -280,10 +263,9 @@ class DocumentController extends Controller
         ])->with('success', 'Dokument wurde erfolgreich gelöscht.');
     }
 
-    public function bulkForceDelete(Request $request)
+    public function bulkForceDelete(DocumentBulkMoveToTrashRequest $request): RedirectResponse
     {
-        $ids = $request->query('document_ids');
-        $ids = $ids ? explode(',', $ids) : [];
+        $ids = $request->getDocumentIds();
 
         $documents = Document::whereIn('id', $ids)->withTrashed()->get();
 
@@ -310,10 +292,10 @@ class DocumentController extends Controller
     /**
      * @throws Throwable
      */
-    public function multiDocUpload(MultiDocUploadRequest $request)
+    public function multiDocUpload(MultiDocUploadRequest $request): RedirectResponse
     {
         $tempFile = storage_path('app/temp');
-        if (!file_exists($tempFile)) {
+        if (! file_exists($tempFile)) {
             mkdir($tempFile, 0755, true);
         }
         $originalName = $request->file->getClientOriginalName();
@@ -335,14 +317,14 @@ class DocumentController extends Controller
 
     }
 
-    public function upload(ReceiptUploadRequest $request)
+    public function upload(ReceiptUploadRequest $request): RedirectResponse
     {
         $files = $request->file('files');
 
         foreach ($files as $file) {
 
             $tempFile = storage_path('app/temp');
-            if (!file_exists($tempFile)) {
+            if (! file_exists($tempFile)) {
                 mkdir($tempFile, 0755, true);
             }
 

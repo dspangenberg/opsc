@@ -42,6 +42,7 @@
     "stancl/jobpipeline": "^2.0@RC",
     "stancl/tenancy": "dev-master",
     "stevebauman/purify": "^6.3",
+    "thiagoalessio/tesseract_ocr": "^2.13",
     "tightenco/ziggy": "^2.5.3",
     "usmanhalalit/laracsv": "^2.1",
     "zanysoft/laravel-zip": "^3.0"

@@ -26,27 +26,11 @@ export const DocumentMutliDocUpload: React.FC<Props> = ({ isOpen, onClosed }) =>
       return
     }
 
-    console.log('Submitting with Inertia.js...')
-    console.log('File:', data.file.name, data.file.size, 'bytes')
-
     // Verwende Inertia.js - handhabt CSRF automatisch korrekt
     post(route('app.document.multi-upload'), {
       forceFormData: true,
-      onBefore: () => {
-        console.log('Starting upload...')
-      },
-      onStart: () => {
-        console.log('Upload started')
-      },
-      onSuccess: response => {
-        console.log('Upload successful:', response)
-        handleOnClosed()
-      },
       onError: errors => {
         console.error('Upload errors:', errors)
-      },
-      onProgress: progress => {
-        console.log('Upload progress:', progress)
       }
     })
   }
