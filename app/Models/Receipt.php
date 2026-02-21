@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Carbon;
 use Log;
 use Plank\Mediable\Media;
@@ -137,9 +136,6 @@ class Receipt extends Model
         return $this->belongsTo(NumberRangeDocumentNumber::class, 'number_range_document_numbers_id', 'id');
     }
 
-    /**
-     * @throws ConnectionException
-     */
     public function extractInvoiceData(): self
     {
         if ($this->text) {
