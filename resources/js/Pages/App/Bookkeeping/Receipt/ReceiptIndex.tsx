@@ -1,6 +1,8 @@
 import {
   Delete02Icon,
+  File02Icon,
   FileDownloadIcon,
+  Invoice01Icon,
   MagicWand01Icon,
   PrinterIcon,
   Tick01Icon
@@ -12,6 +14,7 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { DataTable, type DataTableRef } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
+import { BookmarkMenu } from '@/Components/Shared/Bookmark/BookmarkMenu'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Button } from '@/Components/twc-ui/button'
 import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
@@ -33,9 +36,13 @@ interface ReceiptIndexPageProps extends PageProps {
   currencies: App.Data.CurrencyData[]
   currentFilters: FilterConfig
   currentSearch: string
+  bookmark_model: string
+  bookmarks: App.Data.BookmarkData[]
 }
 
 const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
+  bookmark_model,
+  bookmarks,
   contacts,
   cost_centers,
   currencies,
@@ -90,10 +97,14 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
 
   const handleBulkRuleClicked = useCallback(() => {
     const ids = selectedRows.map(row => row.id).join(',')
-    router.put(route('app.bookkeeping.receipts.rule', { _query: { ids } }), {}, {
-      preserveScroll: true,
-      onSuccess: () => tableRef.current?.resetRowSelection()
-    })
+    router.put(
+      route('app.bookkeeping.receipts.rule', { _query: { ids } }),
+      {},
+      {
+        preserveScroll: true,
+        onSuccess: () => tableRef.current?.resetRowSelection()
+      }
+    )
   }, [selectedRows])
 
   const handlePrint = useCallback(async () => {
@@ -110,7 +121,7 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
 
   const handleFiltersChange = useCallback(
     (newFilters: FilterConfig) => {
-      router.post(
+      router.get(
         route('app.bookkeeping.receipts.index'),
         {
           ...newFilters,
@@ -136,7 +147,7 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
       }
 
       searchTimeoutRef.current = setTimeout(() => {
-        router.post(
+        router.get(
           route('app.bookkeeping.receipts.index'),
           {
             ...filters,
@@ -160,6 +171,10 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
     },
     [debouncedSearchChange]
   )
+
+  const handleBookmarkUpdate = () => {
+    router.reload({ only: ['bookmarks'] })
+  }
 
   const toolbar = useMemo(
     () => (
@@ -223,13 +238,19 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
 
   const filterBar = useMemo(
     () => (
-      <div className="flex gap-2">
+      <Toolbar className="px-1">
         <SearchField
           aria-label="Suchen"
           placeholder="Nach Referenz suchen"
           value={search}
           onChange={handleSearchInputChange}
-          className="w-sm"
+          className="w-xs"
+        />
+        <BookmarkMenu
+          bookmarks={bookmarks}
+          icon={Invoice01Icon}
+          model={bookmark_model}
+          onUpdate={handleBookmarkUpdate}
         />
         <ReceiptIndexFilterForm
           contacts={contacts}
@@ -238,7 +259,7 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
           filters={filters}
           onFiltersChange={handleFiltersChange}
         />
-      </div>
+      </Toolbar>
     ),
     [
       search,
@@ -247,7 +268,9 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
       currencies,
       cost_centers,
       handleSearchInputChange,
-      handleFiltersChange
+      handleFiltersChange,
+      bookmarks,
+      bookmark_model
     ]
   )
 

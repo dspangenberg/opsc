@@ -19,6 +19,8 @@ class StoreRegistrationCredentials
         $domain = str_replace('https://', '', Env('APP_URL'));
         $domain = $tenantData['domain'].'.'.$domain;
 
+        $tenant->
+
         $token = tenancy()->impersonate($tenant, 1, tenant_route($domain, 'app.dashboard'), 'web')->token;
 
         return Inertia::location(tenant_route($domain, 'tenant.impersonate', ['token' => $token]));

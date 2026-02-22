@@ -7,6 +7,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\App\BookmarkController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\InitialPasswordController;
 use App\Http\Controllers\Auth\InitialPasswordStoreController;
@@ -59,6 +60,11 @@ Route::middleware([
     require __DIR__.'/tenant/settings.php';
     require __DIR__.'/tenant/times.php';
 
+    Route::post('bookmarks/store', [BookmarkController::class, 'store'])->name('app.bookmark.store');
+    Route::post('bookmarks/store-folder', [BookmarkController::class, 'storeFolder'])->name('app.bookmark.store-folder');
+    Route::put('bookmarks/{bookmark}/toggle-pin', [BookmarkController::class, 'togglePin'])->name('app.bookmark.toggle-pin');
+    Route::put('bookmarks/{bookmark}/rename', [BookmarkController::class, 'rename'])->name('app.bookmark.rename');
+    
     Route::get('/onboarding', function () {
         return Inertia::modal('Onboarding')->baseRoute('app.soon');
     })->name('app.onboarding');

@@ -1,4 +1,5 @@
 import {
+  File02Icon,
   FolderFileStorageIcon,
   FolderUploadIcon,
   GridViewIcon,
@@ -10,6 +11,7 @@ import * as React from 'react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { Group } from 'react-aria-components'
 import { PageContainer } from '@/Components/PageContainer'
+import { BookmarkMenu } from '@/Components/Shared/Bookmark/BookmarkMenu'
 import { Checkbox } from '@/Components/twc-ui/checkbox'
 import {
   Empty,
@@ -46,11 +48,15 @@ interface DocumentIndexPageProps extends PageProps {
   filterProjects: App.Data.ProjectData[]
   currentFilters: FilterConfig
   currentSearch: string
+  bookmark_model: string
+  bookmarks: App.Data.BookmarkData[]
 }
 
 const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   documents,
   documentTypes,
+  bookmark_model,
+  bookmarks,
   contacts,
   filterContacts,
   filterTypes,
@@ -63,7 +69,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   const [selectedDocuments, setSelectedDocuments] = useState<number[]>([])
   const [showMultiDocUpload, setShowMultiDocUpload] = useState(false)
   const [search, setSearch] = useState(currentSearch)
-  const [filters, setFilters] = useState<FilterConfig>(currentFilters)
+  const [filters, _setFilters] = useState<FilterConfig>(currentFilters)
   const [viewType, setViewType] = useState<Set<string>>(new Set(['grouped']))
   const routeFilters = route().params.filters as unknown as FilterConfig['filters'] | undefined
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -71,6 +77,8 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   const documentsGroupedByFolder = Object.groupBy(documents.data, ({ folder }) => folder)
   const folders = Object.keys(documentsGroupedByFolder)
   const getDocumentsByFolder = (folder: string) => documentsGroupedByFolder[folder]
+
+  console.log(route().current(), route().params)
 
   const getViewTitle = () => {
     const view = routeFilters?.view?.value
@@ -146,16 +154,17 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
         {
           preserveScroll: true,
           preserveState: true,
-          only: ['documents'],
-          reset: ['documents'],
-          onSuccess: () => {
-            setFilters(newFilters)
-          }
+          only: ['documents', 'currentFilters'],
+          reset: ['documents']
         }
       )
     },
     [search]
   )
+
+  const handleBookmarkUpdate = () => {
+    router.reload({ only: ['bookmarks'] })
+  }
 
   return (
     <DocumentIndexContext.Provider value={{ selectedDocuments, setSelectedDocuments }}>
@@ -168,7 +177,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
           <Toolbar variant="default" className="mx-4 flex-1 items-center gap-2">
             <Group
               aria-label="Bulk-Aktionen und Filter"
-              className="flex flex-1 gap-2"
+              className="flex flex-1 gap-1"
               style={{ flexDirection: 'inherit' }}
             >
               <Checkbox
@@ -194,9 +203,15 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
                 projects={projects}
                 documentTypes={documentTypes}
               />
+              <BookmarkMenu
+                bookmarks={bookmarks}
+                icon={File02Icon}
+                model={bookmark_model}
+                onUpdate={handleBookmarkUpdate}
+              />
               <FilterForm
                 contacts={filterContacts}
-                filters={filters}
+                filters={currentFilters}
                 projects={filterProjects}
                 types={filterTypes}
                 onFiltersChange={handleFiltersChange}
@@ -211,7 +226,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
                 className="w-xs justify-end"
               />
               <ToggleButtonGroup
-                variant="ghost"
+                variant="toggle"
                 selectedKeys={viewType}
                 onSelectionChange={keys => setViewType(new Set(keys) as Set<string>)}
               >

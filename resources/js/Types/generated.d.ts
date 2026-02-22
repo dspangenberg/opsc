@@ -109,6 +109,23 @@ type: string;
 conditions: Array<App.Data.BookkeepingRuleConditionData> | null;
 actions: Array<App.Data.BookkeepingRuleActionData> | null;
 };
+export type BookmarkData = {
+id: number;
+name: string;
+route_name: string;
+route_params: Array<any>;
+is_pinned: boolean;
+pos: number;
+model: string;
+sidebar_title: string;
+title: string;
+};
+export type BookmarkFolderData = {
+id: number;
+name: string;
+pos: number;
+bookmarks: Array<App.Data.BookmarkData>;
+};
 export type CompanyData = {
 id: number | null;
 name: string;

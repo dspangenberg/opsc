@@ -19,6 +19,7 @@ import type * as React from 'react'
 import logo from '@/Assets/Images/tw.svg'
 import { NavMain } from '@/Components/nav-main'
 import { NavSecondary } from '@/Components/nav-secondary'
+import { BookmarkSidebarGroup } from '@/Components/Shared/Bookmark/BookmarkSidebarGroup'
 import { Sidebar, SidebarContent, SidebarHeader } from '@/Components/ui/sidebar'
 
 const buildNavData = (isAdmin: boolean) => ({
@@ -68,21 +69,13 @@ const buildNavData = (isAdmin: boolean) => ({
     },
     {
       title: 'Dokumente',
-      url: route(
-        'app.document.index',
-        { filters: { view: { operator: 'scope', value: 'all' } } },
-        false
-      ),
+      url: route('app.document.index', { view: 'all' }, false),
       icon: FolderFileStorageIcon,
       activePath: '/app/documents',
       items: [
         {
           title: 'Dokumente',
-          url: route(
-            'app.document.index',
-            { filters: { view: { operator: 'scope', value: 'all' } } },
-            false
-          ),
+          url: route('app.document.index', { view: 'all' }, false),
           activePath: '/app/documents',
           exact: true
         },
@@ -361,7 +354,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { auth } = usePage().props
   const isAdmin = auth?.user?.is_admin ?? false
   const data = buildNavData(isAdmin)
-
   return (
     <Sidebar variant="inset" collapsible="icon" {...props}>
       <SidebarHeader className="h-auto flex-none">
@@ -369,6 +361,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent className="-mt-3 flex-1">
         <NavMain items={data.navMain} />
+        <BookmarkSidebarGroup />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
     </Sidebar>

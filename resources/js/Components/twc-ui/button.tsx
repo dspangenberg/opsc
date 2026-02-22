@@ -49,10 +49,14 @@ const buttonVariants = tv({
         base: 'border border-transparent text-sm focus-visible:border focus-visible:border-input focus-visible:ring-ring/20 data-[hovered]:border-border data-[hovered]:bg-accent data-[hovered]:text-destructive-foreground'
       },
       toolbar: {
-        base: 'border border-transparent selected:bg-accent text-primary text-sm focus-visible:border focus-visible:border-primary focus-visible:ring-ring/20 active:ring-ring/50 data-[hovered]:border-border data-[hovered]:bg-accent'
+        base: 'border selected:border border-transparent selected:bg-muted text-primary text-sm focus-visible:border focus-visible:border-primary focus-visible:ring-ring/20 active:ring-ring/50 data-[hovered]:border-border data-[hovered]:bg-accent'
+      },
+      toggle: {
+        base: 'selected:bg-background selected:shadow hover:border-primary',
+        icon: 'text-primary'
       },
       'toolbar-default': {
-        base: 'border border-input bg-background text-sm focus-visible:ring-ring/20 data-[hovered]:bg-accent data-[hovered]:text-accent-foreground'
+        base: 'border border-input bg-background text-sm focus-visible:ring-ring/20 data-hovered:bg-accent data-hovered:text-accent-foreground'
       }
     },
     size: {

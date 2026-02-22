@@ -16,6 +16,7 @@
     "lab404/laravel-impersonate": "^1.7",
     "laravel/ai": "^0.2.1",
     "laravel/framework": "^12",
+    "laravel/prompts": "^0.3.13",
     "laravel/sanctum": "^4.1.1",
     "laravel/tinker": "^2.10.1",
     "laravel/wayfinder": "dev-next",

@@ -7,9 +7,13 @@
 
 namespace App\Http\Middleware;
 
+use App\Data\BookmarkData;
+use App\Data\BookmarkFolderData;
 use App\Data\TenantData;
 use App\Data\TimeData;
 use App\Data\UserData;
+use App\Models\Bookmark;
+use App\Models\BookmarkFolder;
 use App\Models\Time;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -43,13 +47,18 @@ class HandleInertiaRequests extends Middleware
            ->latest('begin_at')
            ->with(['category', 'project'])
            ->first() : null;
-       
+
+       $bookmarks = Bookmark::where('is_pinned', true)->whereNull('bookmark_folder_id')->orderBy('name')->get();
+       $bookmarkFolders = BookmarkFolder::with('bookmarks')->orderBy('name')->get();
+
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user() ? UserData::from($request->user()) : null,
                 'tenant' => $request->user() ? tenant('id') ? TenantData::from($tenant) : [] : null,
                 'runningTimer' => $runningTimer ? TimeData::from($runningTimer) : null,
+                'bookmarks' => BookmarkData::collect($bookmarks),
+                'bookmarkFolders' => BookmarkFolderData::collect($bookmarkFolders),
             ],
         ];
     }

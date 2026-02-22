@@ -10,7 +10,7 @@ import { Icon, type IconType } from './icon'
 import { Tooltip, type TooltipProps, TooltipTrigger } from './tooltip'
 
 export interface ToggleButtonProps extends AriaToggleButtonProps {
-  variant?: 'ghost' | 'outline' | 'toolbar'
+  variant?: 'ghost' | 'outline' | 'toolbar' | 'toggle'
   size?: VariantProps<typeof buttonVariants>['size']
   icon?: IconType
   tooltip?: string

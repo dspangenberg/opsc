@@ -37,7 +37,7 @@ export const BulkActions: React.FC<BulkActionsProps> = ({
       projects,
       documentTypes
     })
-    if (result) {
+    if (result !== false) {
       // Filter out 0 values before sending
       const filteredResult = Object.fromEntries(
         Object.entries(result).filter(([_, value]) => value !== 0 && value !== null)
@@ -66,7 +66,7 @@ export const BulkActions: React.FC<BulkActionsProps> = ({
       router.delete(
         route('app.document.bulk-force-delete', {
           _query: {
-            document_ids: selectedDocuments.join(',')
+            ids: selectedDocuments.join(',')
           }
         }),
         {
@@ -112,7 +112,7 @@ export const BulkActions: React.FC<BulkActionsProps> = ({
 
   return (
     <MenuTrigger>
-      <Button variant="outline" icon={CheckListIcon}>
+      <Button variant="outline" icon={CheckListIcon} className="text-primary">
         <div className="items-center">
           <Badge className="font-normal" variant="secondary">
             {selectedDocuments.length}

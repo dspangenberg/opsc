@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\App\Bookkeeping;
 
+use App\Data\BookmarkData;
 use App\Data\CompanyData;
 use App\Data\ContactData;
 use App\Data\CostCenterData;
@@ -17,6 +18,7 @@ use App\Http\Requests\ReceiptUploadRequest;
 use App\Jobs\DownloadJob;
 use App\Jobs\ReceiptUploadJob;
 use App\Jobs\ReceiptZipUploadJob;
+use App\Models\Bookmark;
 use App\Models\Contact;
 use App\Models\ConversionRate;
 use App\Models\CostCenter;
@@ -107,6 +109,8 @@ class ReceiptController extends Controller
             $receipts->appends($_GET)->links();
         }
 
+        $bookmarks = Bookmark::where('model', Receipt::class)->orderBy('name')->get();
+
         return Inertia::render('App/Bookkeeping/Receipt/ReceiptIndex', [
             'receipts' => ReceiptData::collect($receipts),
             'contacts' => ContactData::collect($contacts),
@@ -114,6 +118,8 @@ class ReceiptController extends Controller
             'cost_centers' => CostCenterData::collect($costCenters),
             'currentFilters' => (new Receipt)->getParsedFilters($request),
             'currentSearch' => $search,
+            'bookmark_model' => Receipt::class,
+            'bookmarks' => BookmarkData::collect($bookmarks)
         ]);
     }
 

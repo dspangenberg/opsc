@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\App;
 
+use App\Data\BookmarkData;
 use App\Data\ContactData;
 use App\Data\DocumentData;
 use App\Data\DocumentTypeData;
@@ -14,6 +15,7 @@ use App\Http\Requests\MultiDocUploadRequest;
 use App\Http\Requests\ReceiptUploadRequest;
 use App\Jobs\DocumentUploadJob;
 use App\Jobs\ProcessMultiDocJob;
+use App\Models\Bookmark;
 use App\Models\Contact;
 use App\Models\Document;
 use App\Models\DocumentType;
@@ -48,30 +50,36 @@ class DocumentController extends Controller
         $filterProjects = Project::whereIn('id', $projectIds)->orderBy('name')->get();
 
         $filters = $request->input('filters', []);
+
         $search = $request->input('search', '');
 
         $documents = Document::query()
             ->applyFiltersFromObject($filters, [
                 'allowed_filters' => ['document_type_id', 'project_id'],
                 'allowed_operators' => ['=', '!=', 'like', 'scope'],
-                'allowed_scopes' => ['view', 'contact'],
+                'allowed_scopes' => ['contact', 'issuedBetween'],
             ])
             ->search($search)
+            ->view($request->input('view'))
             ->with(['sender_contact', 'receiver_contact', 'type', 'project'])
             ->orderBy('is_pinned', 'DESC')
             ->orderBy('issued_on', 'DESC')
             ->paginate(20);
+
+        $bookmarks = Bookmark::where('model', Document::class)->orderBy('name')->get();
 
         return Inertia::render('App/Document/DocumentIndex', [
             'documents' => Inertia::scroll(fn () => DocumentData::collect($documents)),
             'contacts' => ContactData::collect($contacts),
             'documentTypes' => DocumentTypeData::collect($types),
             'projects' => ProjectData::collect($projects),
-            'currentFilters' => $filters,
+            'currentFilters' => new Document()->getParsedFilters($request),
             'currentSearch' => $search,
             'filterContacts' => ContactData::collect($filterContacts),
             'filterTypes' => DocumentTypeData::collect($filterTypes),
             'filterProjects' => ProjectData::collect($filterProjects),
+            'bookmark_model' => Document::class,
+            'bookmarks' => BookmarkData::collect($bookmarks)
         ]);
     }
 
@@ -266,8 +274,10 @@ class DocumentController extends Controller
     public function bulkForceDelete(DocumentBulkMoveToTrashRequest $request): RedirectResponse
     {
         $ids = $request->getDocumentIds();
+        ray($ids);
 
         $documents = Document::whereIn('id', $ids)->withTrashed()->get();
+        ray($documents->toArray());
 
         $documents->each(function ($document) {
             $file = $document->firstMedia('file');

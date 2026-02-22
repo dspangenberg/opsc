@@ -14,7 +14,7 @@ import { ToggleButton, type ToggleButtonProps } from './toggle-button'
 // TODO: twc-ui
 
 const ToggleButtonGroupContext = React.createContext<{
-  variant?: 'ghost' | 'outline' | 'toolbar'
+  variant?: 'ghost' | 'outline' | 'toolbar' | 'toggle'
   size?: VariantProps<typeof buttonVariants>['size']
   tooltipPlacement?: TooltipProps['placement']
 }>({
@@ -24,7 +24,7 @@ const ToggleButtonGroupContext = React.createContext<{
 })
 
 export interface ToggleButtonGroupProps extends AriaToggleButtonGroupProps {
-  variant?: 'ghost' | 'outline' | 'toolbar'
+  variant?: 'ghost' | 'outline' | 'toolbar' | 'toggle'
   size?: VariantProps<typeof buttonVariants>['size']
   tooltipPlacement?: TooltipProps['placement']
   id?: string
@@ -36,7 +36,8 @@ const toggleButtonGroupVariants = tv({
     variant: {
       ghost: '',
       outline: 'border p-0.5',
-      toolbar: ''
+      toolbar: 'rounded-md bg-muted/50 p-0.5',
+      toggle: 'rounded-lg bg-muted p-1'
     }
   },
   defaultVariants: {
@@ -47,7 +48,7 @@ const toggleButtonGroupVariants = tv({
 export const ToggleButtonGroup = ({
   className,
   variant = 'ghost',
-  size = 'icon',
+  size = 'icon-sm',
   tooltipPlacement = 'bottom',
   selectionMode = 'single',
   children,
@@ -94,7 +95,7 @@ export const ToggleButtonGroupItem = ({
 
   return (
     <ToggleButton
-      variant="ghost"
+      variant={context.variant ?? variant}
       size={size ?? context.size}
       tooltip={tooltip}
       tooltipPlacement={tooltipPlacement ?? context.tooltipPlacement}

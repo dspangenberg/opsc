@@ -1,8 +1,4 @@
-import {
-  FilterMailEditIcon,
-  FilterMailIcon,
-  FilterMailRemoveIcon
-} from '@hugeicons/core-free-icons'
+import { FilterEditIcon, FilterIcon, FilterRemoveIcon } from '@hugeicons/core-free-icons'
 import { X } from 'lucide-react'
 import type * as React from 'react'
 import { useEffect, useMemo, useState } from 'react'
@@ -56,6 +52,8 @@ export const FilterForm: React.FC<Props> = ({
     return Object.keys(filters?.filters || {}).length
   }, [filters?.filters])
 
+  console.log(activeFiltersCount, filters)
+
   const [localIssuedBetween, setLocalIssuedBetween] = useState<any>(currentFilters.issuedBetween)
 
   useEffect(() => {
@@ -79,7 +77,7 @@ export const FilterForm: React.FC<Props> = ({
         <Button
           variant="toolbar"
           size="icon"
-          icon={activeFiltersCount > 0 ? FilterMailEditIcon : FilterMailIcon}
+          icon={activeFiltersCount > 0 ? FilterEditIcon : FilterIcon}
           title={activeFiltersCount > 0 ? 'Filter bearbeiten' : 'Filter hinzufügen'}
         />
 
@@ -178,13 +176,13 @@ export const FilterForm: React.FC<Props> = ({
         <Button
           variant="toolbar"
           size="icon"
-          icon={FilterMailRemoveIcon}
+          icon={FilterRemoveIcon}
           title="Filter zurücksetzen"
           onClick={handleClearFilters}
         />
       )}
       {activeFiltersCount > 0 && (
-        <div className="flex flex-wrap items-center gap-1">
+        <div className="ml-2 flex flex-wrap items-center gap-1">
           {Object.entries(filters?.filters || {}).map(([key, filter]) => (
             <Badge key={key} variant="secondary" className="text-xs">
               {getFilterBadgeLabel(key, filter, {
