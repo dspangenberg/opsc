@@ -16,7 +16,7 @@ const buttonVariants = tv({
     base: [
       'inline-flex pressed:translate-y-px items-center justify-center whitespace-nowrap rounded-md font-medium text-sm pressed:shadow-black/20 pressed:shadow-inner pressed:brightness-95 transition-colors',
       /* Disabled */
-      'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'data-disabled:pointer-events-none data-[disabled]:opacity-50',
       /* Focus Visible */
       'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20',
       'pressed:shadow-black/20',
@@ -28,10 +28,10 @@ const buttonVariants = tv({
   variants: {
     variant: {
       default: {
-        base: 'bg-primary text-primary-foreground focus-visible:ring-primary/20 data-[hovered]:bg-primary/90'
+        base: 'bg-primary text-primary-foreground focus-visible:ring-primary/20 data-hovered:bg-primary/90'
       },
       destructive: {
-        base: 'border bg-destructive text-destructive-foreground text-white focus-visible:border-destructive/20 focus-visible:ring-destructive/20 data-[hovered]:bg-destructive/90'
+        base: 'border bg-destructive text-destructive-foreground focus-visible:border-destructive/20 focus-visible:ring-destructive/20 data-[hovered]:bg-destructive/90'
       },
       outline: {
         base: 'border border-input bg-background selected:bg-accent focus-visible:ring-ring/20 data-[hovered]:bg-accent data-[hovered]:text-accent-foreground'

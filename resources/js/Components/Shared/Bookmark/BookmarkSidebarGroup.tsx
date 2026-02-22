@@ -59,7 +59,7 @@ const handleUnpin = (bookmark: App.Data.BookmarkData) => {
 
 const FolderItem: FC<{ folder: App.Data.BookmarkFolderData }> = ({ folder }) => {
   return (
-    <Collapsible key={folder.id} defaultOpen className="group/folder">
+    <Collapsible key={folder.id} defaultOpen className="group/folder cursor-default">
       <SidebarMenuSubItem>
         <CollapsibleTrigger asChild>
           <SidebarMenuSubButton className="ml-1.5 w-full">

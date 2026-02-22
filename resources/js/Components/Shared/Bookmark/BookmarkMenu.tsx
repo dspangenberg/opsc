@@ -47,11 +47,13 @@ export const BookmarkMenu: React.FC<Props> = ({ model, bookmarks, icon, onUpdate
   const handleCreateBookmark = async () => {
     const result = await BookmarkEditDialog.call({ title: 'Neues Lesezeichen erstellen' })
     if (result !== false) {
+      const currentRouteName = route().current()
+      if (!currentRouteName) return
       const data = {
         name: result,
         model: model,
         is_pinned: false,
-        route_name: route().current(),
+        route_name: currentRouteName,
         route_params: route().params
       }
       router.post(route('app.bookmark.store'), data, {

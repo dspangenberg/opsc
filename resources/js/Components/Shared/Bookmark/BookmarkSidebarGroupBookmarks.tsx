@@ -6,7 +6,6 @@
 import { Bookmark01Icon, File02Icon, Invoice01Icon, PinOffIcon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/core'
 import { Link } from '@inertiajs/react'
-import type * as React from 'react'
 import type { FC } from 'react'
 import { Button } from '@/Components/twc-ui/button'
 import { Icon } from '@/Components/twc-ui/icon'

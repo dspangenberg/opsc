@@ -30,10 +30,7 @@ class BookmarkController extends Controller
 
     public function togglePin(BookmarkPinRequest $request, Bookmark $bookmark): RedirectResponse
     {
-        ray($request->validated());
-
         $bookmark->update($request->validated());
-
         return redirect()->back();
     }
 
