@@ -39,7 +39,7 @@ export const BookmarkMenu: React.FC<Props> = ({ model, bookmarks, icon, onUpdate
   const folders = usePage().props.auth.bookmarkFolders as App.Data.BookmarkFolderData[]
   const realIcon = icon ? icon : Bookmark01Icon
 
-  const [isOpen, setIsOpen] = useState(false)
+  const [_isOpen, setIsOpen] = useState(false)
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null)
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
@@ -114,7 +114,7 @@ export const BookmarkMenu: React.FC<Props> = ({ model, bookmarks, icon, onUpdate
       <Button variant="toolbar" icon={Bookmark01Icon} title="Lesezeichen" />
       <MenuPopover className="min-w-[--trigger-width]">
         <Menu>
-          {bookmarks.length &&
+          {bookmarks.length > 0 &&
             bookmarks.map(bookmark => (
               <AriaMenuItem
                 key={bookmark.id}
@@ -142,7 +142,7 @@ export const BookmarkMenu: React.FC<Props> = ({ model, bookmarks, icon, onUpdate
                     className="ml-4 p-0 opacity-0 pressed:opacity-100 group-hover:opacity-100"
                     iconClassName="size-4"
                     icon={MoreVerticalIcon}
-                    onPress={e => {
+                    onPress={() => {
                       setActiveMenuId(activeMenuId === bookmark.id ? null : bookmark.id)
                       setIsOpen(activeMenuId !== bookmark.id)
                     }}

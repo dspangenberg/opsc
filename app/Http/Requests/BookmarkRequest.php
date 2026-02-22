@@ -14,7 +14,7 @@ class BookmarkRequest extends FormRequest
             'route_name' => ['required'],
             'route_params' => ['required'],
             'is_pinned' => ['boolean'],
-            'bookmark_folder_id' => ['nullable', 'exists:bookmark_folders'],
+            'bookmark_folder_id' => ['nullable', 'exists:bookmark_folders, id'],
             'pos' => ['nullable', 'integer'],
         ];
     }

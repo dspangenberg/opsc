@@ -34,7 +34,7 @@ class Bookmark extends Model
 
     public function folder(): BelongsTo
     {
-        return $this->belongsTo(BookmarkFolder::class, 'id', 'bookmark_folder_id');
+        return $this->belongsTo(BookmarkFolder::class, 'bookmark_folder_id', 'id');
     }
 
     protected function casts(): array
