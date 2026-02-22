@@ -29,6 +29,8 @@ declare module '@inertiajs/core' {
       user: App.Data.UserData
       tenant: App.Data.TenantData
       runningTimer: App.Data.TimeData | null
+      bookmarks: App.Data.BookmarkData[]
+      bookmarkFolders: App.Data.BookmarkFolderData[]
     }
   }
 }

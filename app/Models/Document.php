@@ -122,11 +122,16 @@ class Document extends Model
         };
     }
 
+    public function scopeIssuedBetween(Builder $query, $from, $to): Builder
+    {
+        return $query->whereBetween('issued_on', [$from, $to]);
+    }
+
     public function extractFromFullText(): self
     {
         // Eingabeverifizierung - fulltext darf nicht null oder leer sein
         if ($this->fulltext === null || trim($this->fulltext) === '') {
-            Log::warning('Dokumentextraktion abgebrochen - fulltext ist leer oder null', [
+            Log::warning('Dokumentextraktion abgebrochen - Volltext ist leer oder null', [
                 'document_id' => $this->id,
                 'filename' => $this->filename ?? 'unbekannt',
             ]);

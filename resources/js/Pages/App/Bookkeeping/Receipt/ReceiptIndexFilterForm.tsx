@@ -1,4 +1,4 @@
-import { FilterHorizontalIcon } from '@hugeicons/core-free-icons'
+import { FilterEditIcon, FilterIcon, FilterRemoveIcon } from '@hugeicons/core-free-icons'
 import { X } from 'lucide-react'
 import type * as React from 'react'
 import { useEffect, useMemo, useState } from 'react'
@@ -73,14 +73,12 @@ export const ReceiptIndexFilterForm: React.FC<Props> = ({
   return (
     <>
       <PopoverTrigger>
-        <Button variant="outline" size="lg" icon={FilterHorizontalIcon} className="h-9">
-          Filter
-          {activeFiltersCount > 0 && (
-            <Badge variant="secondary" className="ml-1 h-5 w-5 rounded-full p-0 text-xs">
-              {activeFiltersCount}
-            </Badge>
-          )}
-        </Button>
+        <Button
+          variant="toolbar"
+          size="icon"
+          icon={activeFiltersCount > 0 ? FilterEditIcon : FilterIcon}
+          title={activeFiltersCount > 0 ? 'Filter bearbeiten' : 'Filter hinzufügen'}
+        />
         <Popover>
           <PopoverDialog className="max-w-md">
             <div className="space-y-4">
@@ -183,6 +181,15 @@ export const ReceiptIndexFilterForm: React.FC<Props> = ({
           </PopoverDialog>
         </Popover>
       </PopoverTrigger>
+      {activeFiltersCount > 0 && (
+        <Button
+          variant="toolbar"
+          size="icon"
+          icon={FilterRemoveIcon}
+          title="Filter zurücksetzen"
+          onClick={handleClearFilters}
+        />
+      )}
       {activeFiltersCount > 0 && (
         <div className="flex flex-wrap items-center gap-1">
           {Object.entries(filters?.filters || {}).map(([key, filter]) => (
