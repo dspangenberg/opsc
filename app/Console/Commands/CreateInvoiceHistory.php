@@ -81,13 +81,13 @@ class CreateInvoiceHistory extends Command
             foreach ($invoices as $invoice) {
                 try {
 
-                    $invoice->addHistory('hat die Rechnung erstellt', 'created', $defaultUser, $invoice->created_at);
+                    $invoice->addHistory('hat die Rechnung erstellt.', 'created', $defaultUser, $invoice->created_at);
                     if ($invoice->sent_at) {
-                        $invoice->addHistory('hat die Rechnung versendet', 'mail_sent', $defaultUser, $invoice->sent_at);
+                        $invoice->addHistory('hat die Rechnung versendet.', 'mail_sent', $defaultUser, $invoice->sent_at);
                     }
 
                     foreach ($invoice->payable as $payable) {
-                        $invoice->addHistory('Zahlungseingang über '.number_format($payable->amount, 2, ',', '.').' EUR', 'paid', null, $payable->issued_on);
+                        $invoice->addHistory('Zahlungseingang vom '.$payable->issued_on->format('d.m.Y').' über '.number_format($payable->amount, 2, ',', '.').' EUR wurde verrechnet.', 'paid', null, $payable->created_at);
                     }
 
                 } catch (Exception $e) {
