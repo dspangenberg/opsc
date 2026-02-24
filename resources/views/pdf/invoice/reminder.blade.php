@@ -14,7 +14,7 @@
 
 
 
-    <p><strong>Zahlungserinnerung</strong><br/></p>
+    <p><strong>{{ $reminder->type }}</strong><br/></p>
 
     @if($reminder->name)
         <p>Guten Tag, {{$reminder->name}},</p>

@@ -63,7 +63,7 @@ class SettingController extends Controller
         $value = $request->validated('value');
 
         $settingsClass = match ($group) {
-            'general' => InvoiceReminderSettings::class,
+            'general' => GeneralSettings::class,
             'invoice_reminders' => InvoiceReminderSettings::class,
             default => null,
         };

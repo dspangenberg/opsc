@@ -9,6 +9,7 @@ use App\Models\Tenant;
 use App\Settings\InvoiceReminderSettings;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 
 class CreateFirstReminder extends Command
@@ -30,7 +31,7 @@ class CreateFirstReminder extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): bool
+    public function handle(): int
     {
         $tenantId = $this->option('tenant');
 
@@ -39,7 +40,7 @@ class CreateFirstReminder extends Command
             if (!$tenant) {
                 $this->error("Tenant $tenantId not found");
 
-                return false;
+                return self::FAILURE;
             }
             $this->processTenant($tenant);
         } else {
@@ -51,12 +52,12 @@ class CreateFirstReminder extends Command
             }
         }
 
-        return true;
+        return self::SUCCESS;
     }
 
     private function processTenant(Tenant $tenant): bool
     {
-        $tenant->run(function () use ($tenant) {
+        $result = $tenant->run(function () use ($tenant) {
             $invoiceReminderSettings = app(InvoiceReminderSettings::class);
 
             if ($invoiceReminderSettings->level_1_days === 0) {
@@ -64,6 +65,9 @@ class CreateFirstReminder extends Command
                 return false;
             }
 
+            $mailFrom = Config::get('mail.from.address');
+
+            ray($mailFrom);
 
             $this->info("Processing tenant: $tenant->id");
 
@@ -74,6 +78,7 @@ class CreateFirstReminder extends Command
                 ->withSum('lines', 'amount')
                 ->withSum('lines', 'tax')
                 ->withSum('payable', 'amount')
+                ->with('contact')
                 ->doesntHave('reminders')
                 ->unpaid()
                 ->get();
@@ -104,7 +109,14 @@ class CreateFirstReminder extends Command
                             ->loadSum('lines', 'amount')
                             ->loadSum('lines', 'tax');
 
-                        Mail::to($reminder->invoice->contact->primary_mail)->queue(new InvoiceReminderEmail($reminder));
+                        $primaryMail = $reminder->invoice->contact?->primary_mail;
+                        if (!$primaryMail) {
+                            $this->warn("Kein E-Mail-Empfänger für Rechnung {$invoice->formated_invoice_number}");
+                            continue;
+                        }
+                        Mail::to($primaryMail)
+                            ->cc($mailFrom)
+                            ->queue(new InvoiceReminderEmail($reminder));
                     }
                 } catch (Exception $e) {
                     $this->error("Zahlungserinnerung für $invoice->id konnte nicht erstellt werden: {$e->getMessage()}");
@@ -114,6 +126,6 @@ class CreateFirstReminder extends Command
             return true;
         });
 
-        return true;
+        return (bool) $result;
     }
 }

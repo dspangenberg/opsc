@@ -5,7 +5,6 @@ namespace App\Providers;
 use App\Services\WeasyPdfService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -28,9 +27,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if ($this->app->environment('local')) {
-            Mail::alwaysTo('danny.spangenberg@twiceware.de');
-        }
         Vite::prefetch(concurrency: 3);
         Response::macro('inlineFile', function (string $path, string $filename, array $headers = []): BinaryFileResponse {
             $safeName = $filename !== '' ? $filename : 'file.pdf';

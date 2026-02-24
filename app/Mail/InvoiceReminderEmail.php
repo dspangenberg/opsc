@@ -2,21 +2,19 @@
 
 namespace App\Mail;
 
-use App\Models\Invoice;
 use App\Models\InvoiceReminder;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class InvoiceReminderEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public InvoiceReminder $reminder;
-
-    public function __construct(InvoiceReminder $reminder)
+    public function __construct(public InvoiceReminder $reminder)
     {
-        $this->reminder = $reminder;
     }
 
     public function attachments(): array
@@ -24,17 +22,22 @@ class InvoiceReminderEmail extends Mailable
         return [$this->reminder];
     }
 
-    public function build()
+    public function envelope(): Envelope
     {
-        $reminder = $this->reminder;
+        return new Envelope(subject: $this->reminder->email_subject);
+    }
 
-        return $this->subject($reminder->email_subject)
-            ->view('generated.reminder', [
-                'city' => $reminder->city,
-                'name' => $reminder->name,
-                'type' => $reminder->type,
-                'invoice_number' => $reminder->invoice->formated_invoice_number,
-                'invoice_date' => $reminder->invoice->issued_on->format('d.m.Y')
-            ]);
+    public function content(): Content
+    {
+        return new Content(
+            view: 'generated.reminder',
+            with: [
+                'city' => $this->reminder->city,
+                'name' => $this->reminder->name,
+                'type' => $this->reminder->type,
+                'invoice_number' => $this->reminder->invoice->formated_invoice_number,
+                'invoice_date' => $this->reminder->invoice->issued_on->format('d.m.Y'),
+            ]
+        );
     }
 }

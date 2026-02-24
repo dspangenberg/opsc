@@ -33,32 +33,44 @@ class InvoiceReminder extends Model implements Attachable
 
     private function getSetting(string $key): string
     {
+        if (!in_array($this->dunning_level, [1, 2, 3], true)) {
+            return '';
+        }
+
         $invoiceReminderSettings = app(InvoiceReminderSettings::class);
 
         $key = 'level_'.$this->dunning_level.'_'.$key;
         return $invoiceReminderSettings->$key;
     }
-    public function getNameAttribute(): string {
+
+    public function getNameAttribute(): string
+    {
         $this->loadMissing('invoice', 'invoice.contact');
         if ($this->invoice->invoice_contact_id) {
             $this->loadMissing('invoice.invoice_contact');
-            return $this->invoice->invoice_contact->full_name;
-        } else {
-            if ($this->invoice->project_id) {
-                $this->loadMissing('invoice.project');
-                if ($this->invoice->project->manager_contact_id) {
-                    $this->loadMissing('invoice.project.manager');
-                    return $this->invoice->project->manager->full_name;
+
+            if ($this->invoice->invoice_contact?->full_name) {
+                return $this->invoice->invoice_contact?->full_name;
+            }
+
+        } elseif ($this->invoice->project_id) {
+            $this->loadMissing('invoice.project');
+            if ($this->invoice->project->manager_contact_id) {
+                $this->loadMissing('invoice.project.manager');
+
+                if ($this->invoice->project->manager?->full_name) {
+                    return $this->invoice->project->manager?->full_name;
                 }
             }
         }
 
-        if ($this->invoice->contact->is_company) {
+
+        if ($this->invoice->contact?->is_company) {
             return '';
         }
 
-        return $this->invoice->contact->full_name;
 
+        return $this->invoice->contact?->full_name ?? '';
     }
 
     public function getCityAttribute(): string
@@ -67,20 +79,24 @@ class InvoiceReminder extends Model implements Attachable
         return $this->invoice->contact->getInvoiceAddress()->city;
     }
 
-    public function getTypeAttribute(): string {
+    public function getTypeAttribute(): string
+    {
         return $this->getSetting('subject');
     }
 
-    public function getIntroTextAttribute(): string {
+    public function getIntroTextAttribute(): string
+    {
         return $this->getSetting('intro');
     }
 
-    public function getOutroTextAttribute(): string {
+    public function getOutroTextAttribute(): string
+    {
         return $this->getSetting('outro');
     }
 
-    public function getEmailSubjectAttribute(): string {
-        return 'RG-'.$this->invoice->formated_invoice_number . ' - Zahlungserinnerung';
+    public function getEmailSubjectAttribute(): string
+    {
+        return 'RG-'.$this->invoice->formated_invoice_number.' - Zahlungserinnerung';
     }
 
     public function getFilenameAttribute(): string

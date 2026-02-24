@@ -40,7 +40,7 @@ class InvoiceDetailsBaseUpdateRequest extends FormRequest
             'tax_id' => ['required', 'exists:taxes,id'],
             'parent_id' => ['nullable', 'exists:invoices,id'],
             'additional_text' => ['nullable', 'string'],
-            'dunning_block' => ['nullable', 'boolean:'],
+            'dunning_block' => ['nullable', 'boolean'],
         ];
     }
 

@@ -54,7 +54,7 @@ class CreateInvoiceHistory extends Command
 
     private function processTenant(Tenant $tenant): bool
     {
-        $tenant->run(function () use ($tenant) {
+        $result = $tenant->run(function () use ($tenant) {
             $invoiceReminderSettings = app(InvoiceReminderSettings::class);
 
             if ($invoiceReminderSettings->level_1_days === 0) {
@@ -83,7 +83,7 @@ class CreateInvoiceHistory extends Command
 
                     $invoice->addHistory('Rechnung wurde erstellt', 'created', $defaultUser, $invoice->created_at);
                     if ($invoice->sent_at) {
-                        $invoice->addHistory('Rechnung wurde versendet', 'mail_sent', auth()->user());
+                        $invoice->addHistory('Rechnung wurde versendet', 'mail_sent', $defaultUser, $invoice->sent_at);
                     }
 
                     foreach ($invoice->payable as $payable) {
@@ -98,6 +98,6 @@ class CreateInvoiceHistory extends Command
             return true;
         });
 
-        return true;
+        return $result;
     }
 }
