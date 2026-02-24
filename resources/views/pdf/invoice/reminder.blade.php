@@ -41,7 +41,7 @@
         <tr>
             <th>Datum</th>
             <th>Fällig am</th>
-            <th>Belegnummer</th>
+            <th>Rechnung</th>
 
             <th class="right">Betrag</th>
             <th class="right">Offen</th>
@@ -50,9 +50,7 @@
 
         </tr>
         </thead>
-        <tr>
-            <td colspan="8">&nbsp;</td>
-        </tr>
+        <tbody style="padding-top: 3mm;">
 
         <tr>
             <td>{{$reminder->invoice->issued_on->format('d.m.Y')}}</td>
@@ -66,7 +64,7 @@
 
 
         </tr>
-
+        </tbody>
         </table>
 
     {!! md(nl2br($reminder->outro_text))  !!}

@@ -81,9 +81,9 @@ class CreateInvoiceHistory extends Command
             foreach ($invoices as $invoice) {
                 try {
 
-                    $invoice->addHistory('Rechnung wurde erstellt', 'created', $defaultUser, $invoice->created_at);
+                    $invoice->addHistory('hat die Rechnung erstellt', 'created', $defaultUser, $invoice->created_at);
                     if ($invoice->sent_at) {
-                        $invoice->addHistory('Rechnung wurde versendet', 'mail_sent', $defaultUser, $invoice->sent_at);
+                        $invoice->addHistory('hat die Rechnung versendet', 'mail_sent', $defaultUser, $invoice->sent_at);
                     }
 
                     foreach ($invoice->payable as $payable) {

@@ -1,5 +1,6 @@
 import type * as React from 'react'
 import { DataTable } from '@/Components/DataTable'
+import { HistoryView } from '@/Components/Shared/History/HistoryView'
 import { InvoiceDetailsLayout } from '@/Pages/App/Invoice/InvoiceDetailsLayout'
 import { InvoiceDetailsSide } from '@/Pages/App/Invoice/InvoiceDetailsSide'
 import { columns } from '@/Pages/App/Invoice/InvoicePaymentColumns'
@@ -15,7 +16,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ invoice }) => {
   return (
     <InvoiceDetailsLayout invoice={invoice}>
       <div className="flex-1">
-        <DataTable columns={columns} data={payable} itemName="Zahlungen" />
+        <HistoryView entries={invoice.notables ?? []} />
       </div>
       <div className="h-fit w-full max-w-sm flex-none px-1">
         <div className="fixed w-full max-w-sm space-y-6">
