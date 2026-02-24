@@ -4,21 +4,20 @@
  */
 
 import {
-  Bookmark01Icon,
   Edit04Icon,
   Folder01Icon,
   Folder02Icon,
   FolderAddIcon,
-  PinOffIcon
+  MoreVerticalIcon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/core'
-import { Link, usePage } from '@inertiajs/react'
+import { usePage } from '@inertiajs/react'
 import { ChevronDown } from 'lucide-react'
-import type * as React from 'react'
 import type { FC } from 'react'
 import { BookmarkEditDialog } from '@/Components/Shared/Bookmark/BookmarkEditDialog'
 import { BookmarkSidebarGroupBookmarks } from '@/Components/Shared/Bookmark/BookmarkSidebarGroupBookmarks'
 import { Button } from '@/Components/twc-ui/button'
+import { DropdownButton, MenuItem } from '@/Components/twc-ui/dropdown-button'
 import { Icon } from '@/Components/twc-ui/icon'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/Components/ui/collapsible'
 import {
@@ -50,16 +49,9 @@ const handleAddFolder = async () => {
   })
 }
 
-const handleUnpin = (bookmark: App.Data.BookmarkData) => {
-  router.put(route('app.bookmark.toggle-pin', { bookmark: bookmark.id }), {
-    is_pinned: false,
-    bookmark_folder_id: null
-  })
-}
-
 const FolderItem: FC<{ folder: App.Data.BookmarkFolderData }> = ({ folder }) => {
   return (
-    <Collapsible key={folder.id} defaultOpen className="group/folder cursor-default">
+    <Collapsible key={folder.id} defaultOpen className="group/folder mr-1 cursor-default">
       <SidebarMenuSubItem>
         <CollapsibleTrigger asChild>
           <SidebarMenuSubButton className="ml-1.5 w-full">
@@ -73,13 +65,16 @@ const FolderItem: FC<{ folder: App.Data.BookmarkFolderData }> = ({ folder }) => 
                 className="size-4 group-data-[state=open]/folder:block group-data-[state=closed]/folder:hidden"
               />
               <span className="flex-1 truncate">{folder.name}</span>
-              <Button
-                icon={Edit04Icon}
-                variant="ghost"
-                size="icon-sm"
-                title="Ordner umbenennen"
-                className="mr-3 opacity-0 group-hover/folder:opacity-100"
-              />
+              <div className="pr-2">
+                <DropdownButton
+                  icon={MoreVerticalIcon}
+                  variant="ghost"
+                  size="icon-sm"
+                  className="opacity-0 pressed:opacity-100 group-hover/folder:opacity-100"
+                >
+                  <MenuItem icon={Edit04Icon} title="Ordner umbenennen" />
+                </DropdownButton>
+              </div>
             </div>
           </SidebarMenuSubButton>
         </CollapsibleTrigger>
@@ -100,7 +95,7 @@ export const BookmarkSidebarGroup: FC = () => {
       <SidebarGroup className="group/bookmarks">
         <SidebarGroupLabel asChild className="text-base group-hover/bookmarks:bg-sidebar-accent">
           <CollapsibleTrigger className="mr-0 pr-0 font-normal text-base!">
-            <ChevronDown className="mr-2 size-5! transition-transform group-data-[state=open]/collapsible:rotate-180" />
+            <ChevronDown className="mr-2 size-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
             Lesezeichen
           </CollapsibleTrigger>
         </SidebarGroupLabel>
@@ -109,7 +104,7 @@ export const BookmarkSidebarGroup: FC = () => {
             icon={FolderAddIcon}
             variant="ghost"
             size="icon-sm"
-            className="mr-2 opacity-0 group-hover/bookmarks:opacity-100"
+            className="opacity-0 group-hover/bookmarks:opacity-100"
             onPress={() => handleAddFolder()}
           />
         </SidebarGroupAction>

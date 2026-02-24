@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Tenant;
-use App\Settings\GeneralSettings;
+use App\Settings\InvoiceReminderSettings;
 use Illuminate\Database\Seeder;
 
 class UpdatePdfGlobalCssSeeder extends Seeder
@@ -207,7 +207,7 @@ CSS;
         Tenant::chunkById(100, function ($tenants) use ($defaultCss) {
             foreach ($tenants as $tenant) {
                 $tenant->run(function () use ($tenant, $defaultCss) {
-                    $settings = app(GeneralSettings::class);
+                    $settings = app(InvoiceReminderSettings::class);
                     $settings->pdf_global_css = $defaultCss;
                     $settings->save();
 

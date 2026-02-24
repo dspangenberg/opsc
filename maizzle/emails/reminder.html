@@ -1,0 +1,67 @@
+---
+bodyClass: bg-slate-50
+preheader: opcs.cloud
+---
+
+<x-main>
+  <div class="bg-stone-100 sm:px-4 font-facit text-base">
+    <table align="center" class="m-0 mx-auto">
+      <tr>
+        <td class="w-[552px] max-w-full">
+
+
+          <table class="w-full mt-4">
+            <tr>
+              <td class="mx-auto text-center p-4">
+                <div class="mx-auto flex items-center justify-center">
+                  <img alt="Maizzle" class="rounded-md mr-1.5" src="https://twiceware.de/twsek-logo-bild-orange-wei%C3%9F.png"
+                       src-production="https://twiceware.de/twsek-logo-bild-orange-wei%C3%9F.png" width="32"
+                  >
+                  <span class="font-medium">twiceware</span>
+                </div>
+
+              </td>
+            </tr>
+            <tr>
+              <td class="py-6 px-9 sm:p-6 x bg-white [border:1px_solid_theme(colors.slate.200)] rounded-t-lg text-left">
+
+
+                <x-spacer height="24px" />
+
+                <h1 class="m-0 mb-6 text-base/6 text-slate-900 font-medium">
+                  @if($name)
+                    Guten Tag, {{ $name }},
+                  @else
+                    Guten Tag,
+                  @endif
+                </h1>
+
+                <p class="m-0 mb-6 text-base/6 text-slate-600">
+                  im Anhang dieser E-Mail senden wir Ihnen die {{ $type }} für unsere Rechnung {{ $invoice_number }} vom {{ $invoice_date }} im PDF-Format.
+                </p>
+
+                <p class="m-0 text-base/6 text-slate-600">
+                  Freundliche Grüße nach {{ $city }}<br/>
+                  twiceware solutions e. K.
+                </p>
+
+              </td>
+            </tr>
+
+          </table>
+
+          <table class="w-full border">
+            <tr>
+              <td class="py-6 px-9 sm:px-6">
+                <p class="m-0 text-xs text-stone-500 text-center leading-relaxed">
+                  twiceware solutions e. K. &middot; Belderberg 7 &middot; D-53111 Bonn<br>
+                  Inhaber Danny Spangenberg<br>HRA 6091 (AG Bonn) &middot; USt-IdNr. DE240386270
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</x-main>

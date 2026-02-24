@@ -373,6 +373,9 @@ lines: Array<App.Data.InvoiceLineData> | null;
 tax: App.Data.TaxData | null;
 offer_id: number | null;
 offer: App.Data.OfferData | null;
+dunning_days: number;
+dunning_level: number;
+notables: Array<App.Data.NoteableData> | null;
 };
 export type InvoiceLineData = {
 id: number | null;
@@ -415,7 +418,7 @@ export type NoteableData = {
 id: number;
 notable_id: number;
 note: string;
-creator: App.Data.UserData;
+creator: App.Data.UserData | null;
 created_at: string;
 updated_at: string;
 };

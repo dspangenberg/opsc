@@ -64,7 +64,10 @@ Route::middleware([
     Route::post('bookmarks/store-folder', [BookmarkController::class, 'storeFolder'])->name('app.bookmark.store-folder');
     Route::put('bookmarks/{bookmark}/toggle-pin', [BookmarkController::class, 'togglePin'])->name('app.bookmark.toggle-pin');
     Route::put('bookmarks/{bookmark}/rename', [BookmarkController::class, 'rename'])->name('app.bookmark.rename');
-    
+    Route::put('bookmarks/{bookmark}/restore', [BookmarkController::class, 'restore'])->withTrashed()->name('app.bookmark.restore');
+    Route::delete('bookmarks/{bookmark}', [BookmarkController::class, 'trash'])->name('app.bookmark.trash');
+
+
     Route::get('/onboarding', function () {
         return Inertia::modal('Onboarding')->baseRoute('app.soon');
     })->name('app.onboarding');

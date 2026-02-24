@@ -39,7 +39,7 @@ export const BookmarkSidebarGroupBookmarks: FC<Props> = ({ bookmarks }) => {
   return (
     <>
       {bookmarks.map(bookmark => (
-        <SidebarMenuSubItem key={bookmark.name} className="hover:bg-sidebar-accent">
+        <SidebarMenuSubItem key={bookmark.id} className="hover:bg-sidebar-accent">
           <SidebarMenuSubButton asChild className="">
             <div className="group/bookmark flex items-center">
               <Icon icon={getIcon(bookmark)} className="size-4! shrink" />
@@ -54,7 +54,7 @@ export const BookmarkSidebarGroupBookmarks: FC<Props> = ({ bookmarks }) => {
                 variant="ghost"
                 size="icon-sm"
                 title="Loslösen!"
-                className="mr-2.5 opacity-0 group-hover/bookmark:opacity-100"
+                className="mr-1.5 opacity-0 group-hover/bookmark:opacity-100"
                 onPress={() => handleUnpin(bookmark)}
               />
             </div>

@@ -163,6 +163,8 @@ class OfferController extends Controller
         $invoice->address = $invoice->contact->getInvoiceAddress()->full_address;
         $invoice->save();
 
+        $invoice->addHistory('Rechnung wurde erstellt.', 'created');
+
         $offer->lines()->each(function ($line) use ($invoice) {
             $invoiceLine = new InvoiceLine();
             $invoiceLine->invoice_id = $invoice->id;

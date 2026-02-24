@@ -5,10 +5,10 @@
 
 import {
   AlertCircleIcon,
+  CheckmarkCircle01Icon,
   Delete03Icon,
   EuroSendIcon,
-  MoreVerticalCircle01Icon,
-  Tick01Icon
+  MoreVerticalCircle01Icon
 } from '@hugeicons/core-free-icons'
 import { Link } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
@@ -71,21 +71,7 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
     )
   },
   {
-    accessorKey: 'is_locked',
-    header: '',
-    size: 30,
-    cell: ({ getValue }) => {
-      if (getValue() === true) {
-        return (
-          <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-green-500">
-            <Icon icon={Tick01Icon} className="size-3.5 text-white" stroke="3" />
-          </div>
-        )
-      }
-    }
-  },
-  {
-    accessorKey: 'bookings_count',
+    id: 'status-icon',
     header: '',
     size: 30,
     cell: ({ row }) => {
@@ -93,6 +79,13 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
         return (
           <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-red-500">
             <Icon icon={AlertCircleIcon} className="size-3.5 text-white" stroke="3" />
+          </div>
+        )
+      }
+      if (row.original.is_locked) {
+        return (
+          <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-green-500">
+            <Icon icon={CheckmarkCircle01Icon} className="size-3.5 text-white" stroke="3" />
           </div>
         )
       }
@@ -123,7 +116,9 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
         >
           {getValue() as string}
         </Link>
-        <Badge variant="outline">{row.original.document_number}</Badge>
+        {row.original.document_number && (
+          <Badge variant="outline">{row.original.document_number}</Badge>
+        )}
         {row.original.duplicate_of && <Badge variant="destructive">D</Badge>}
       </div>
     )
@@ -182,7 +177,7 @@ export const columns: ColumnDef<App.Data.ReceiptData>[] = [
   },
   {
     id: 'actions',
-    size: 30,
+    size: 40,
     header: () => <span className="sr-only">Actions</span>,
     cell: ({ row }) => <RowActions row={row} />,
     enableHiding: false

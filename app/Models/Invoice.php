@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use MohamedSaid\Notable\Notable;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
@@ -23,6 +24,7 @@ use Plank\Mediable\MediableInterface;
 use rikudou\EuQrPayment\QrPayment;
 use Spatie\Holidays\Countries\Germany;
 use Spatie\Holidays\Holidays;
+use MohamedSaid\Notable\Traits\HasNotables;
 
 /**
  * @property-read Contact|null $contact
@@ -71,7 +73,7 @@ use Spatie\Holidays\Holidays;
  */
 class Invoice extends Model implements MediableInterface
 {
-    use Mediable;
+    use Mediable, HasNotables;
 
     protected $fillable = [
         'contact_id',
@@ -122,7 +124,8 @@ class Invoice extends Model implements MediableInterface
         'amount_gross',
         'amount_open',
         'amount_paid',
-        'document_number'
+        'document_number',
+        'dunning_days'
     ];
 
     protected function casts(): array
@@ -249,6 +252,23 @@ class Invoice extends Model implements MediableInterface
             $this->due_on = $dueDate;
         }
     }
+
+    public function addHistory(string $text, string $type = 'note', ?User $user = null, ?DateTime $createdAt = null): Notable
+    {
+        if ($type) {
+            $text = '['.$type.'] '.$text;
+        }
+
+        $note = $this->addNote($text, $user);
+
+        if ($createdAt) {
+            $note->created_at = $createdAt;
+            $note->save();
+        }
+
+        return $note;
+    }
+
 
     public static function createRecurringInvoice(Invoice $invoice): Invoice
     {
@@ -491,6 +511,25 @@ class Invoice extends Model implements MediableInterface
         return 'Entwurf '.$this->id;
     }
 
+    public function getDunningDaysAttribute(): int
+    {
+        if ($this->amount_open > 0 && !$this->is_draft) {
+            $days = (int) $this->due_on->diffInDays(Carbon::now());
+            return max($days, 0);
+        }
+
+        return 0;
+    }
+
+    public function getDunningLevelAttribute(): int
+    {
+        if ($this->reminders) {
+            return $this->reminders->max('dunning_level') ?? 0;
+        }
+
+        return 0;
+    }
+
     public function getInvoiceAddressAttribute(): array
     {
         if (empty($this->address)) {
@@ -573,6 +612,8 @@ class Invoice extends Model implements MediableInterface
             $replicatedLine->save();
         });
 
+        $duplicatedInvoice->addHistory('Rechnung wurde erstellt.', 'created');
+
         return $duplicatedInvoice;
     }
 
@@ -643,6 +684,11 @@ class Invoice extends Model implements MediableInterface
     public function lines(): HasMany
     {
         return $this->hasMany(InvoiceLine::class);
+    }
+
+    public function reminders(): HasMany
+    {
+        return $this->hasMany(InvoiceReminder::class);
     }
 
     public function payable(): MorphMany

@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\GlobalCssUpdateRequest;
 use App\Http\Requests\LetterheadRequest;
 use App\Models\Letterhead;
-use App\Settings\GeneralSettings;
+use App\Settings\InvoiceReminderSettings;
 use Inertia\Inertia;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
 use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
@@ -40,7 +40,7 @@ class LetterheadController extends Controller
 
     public function editGlobalCSS()
     {
-        $settings = app(GeneralSettings::class);
+        $settings = app(InvoiceReminderSettings::class);
 
         return Inertia::render('App/Setting/Letterhead/GlobalCssEdit', [
             'css' => $settings->pdf_global_css
@@ -49,7 +49,7 @@ class LetterheadController extends Controller
 
     public function updateGlobalCSS(GlobalCssUpdateRequest $request)
     {
-        $settings = app(GeneralSettings::class);
+        $settings = app(InvoiceReminderSettings::class);
         $settings->pdf_global_css = $request->validated()['css'];
         $settings->save();
 

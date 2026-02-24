@@ -34,6 +34,16 @@ class BookmarkController extends Controller
         return redirect()->back();
     }
 
+    public function trash(Bookmark $bookmark): RedirectResponse {
+        $bookmark->delete();
+        return redirect()->back();
+    }
+
+    public function restore(Bookmark $bookmark): RedirectResponse {
+        $bookmark->restore();
+        return redirect()->back();
+    }
+
     public function storeFolder(BookmarkFolderRequest $request): RedirectResponse
     {
         $data = $request->validated();
