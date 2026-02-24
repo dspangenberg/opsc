@@ -4801,16 +4801,16 @@
         },
         {
             "name": "nette/schema",
-            "version": "v1.3.4",
+            "version": "v1.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/schema.git",
-                "reference": "086497a2f34b82fede9b5a41cc8e131d087cd8f7"
+                "reference": "f0ab1a3cda782dbc5da270d28545236aa80c4002"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/schema/zipball/086497a2f34b82fede9b5a41cc8e131d087cd8f7",
-                "reference": "086497a2f34b82fede9b5a41cc8e131d087cd8f7",
+                "url": "https://api.github.com/repos/nette/schema/zipball/f0ab1a3cda782dbc5da270d28545236aa80c4002",
+                "reference": "f0ab1a3cda782dbc5da270d28545236aa80c4002",
                 "shasum": ""
             },
             "require": {
@@ -4818,8 +4818,10 @@
                 "php": "8.1 - 8.5"
             },
             "require-dev": {
+                "nette/phpstan-rules": "^1.0",
                 "nette/tester": "^2.6",
-                "phpstan/phpstan": "^2.0@stable",
+                "phpstan/extension-installer": "^1.4@stable",
+                "phpstan/phpstan": "^2.1.39@stable",
                 "tracy/tracy": "^2.8"
             },
             "type": "library",
@@ -4860,9 +4862,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/schema/issues",
-                "source": "https://github.com/nette/schema/tree/v1.3.4"
+                "source": "https://github.com/nette/schema/tree/v1.3.5"
             },
-            "time": "2026-02-08T02:54:00+00:00"
+            "time": "2026-02-23T03:47:12+00:00"
         },
         {
             "name": "nette/utils",
@@ -5549,28 +5551,28 @@
         },
         {
             "name": "plank/laravel-mediable",
-            "version": "6.3.1",
+            "version": "6.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/plank/laravel-mediable.git",
-                "reference": "c769d6347cab33b52ddbc06589f16ee67fc7b3f8"
+                "reference": "56cc3c69654e250deb0badd2a8870d1f729f29e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/plank/laravel-mediable/zipball/c769d6347cab33b52ddbc06589f16ee67fc7b3f8",
-                "reference": "c769d6347cab33b52ddbc06589f16ee67fc7b3f8",
+                "url": "https://api.github.com/repos/plank/laravel-mediable/zipball/56cc3c69654e250deb0badd2a8870d1f729f29e3",
+                "reference": "56cc3c69654e250deb0badd2a8870d1f729f29e3",
                 "shasum": ""
             },
             "require": {
                 "ext-fileinfo": "*",
                 "guzzlehttp/guzzle": "^7.9.1",
                 "guzzlehttp/psr7": "^2.7",
-                "illuminate/database": "^11.34.0|^12.0",
-                "illuminate/filesystem": "^11.34.0|^12.0",
-                "illuminate/support": "^11.34.0|^12.0",
+                "illuminate/database": "^12.0|^13.0",
+                "illuminate/filesystem": "^12.0|^13.0",
+                "illuminate/support": "^12.0|^13.0",
                 "intervention/image": "^2.7.1|^3.9.1",
                 "league/flysystem": "^3.29.1",
-                "php": ">=8.1.0",
+                "php": ">=8.3.0",
                 "spatie/image-optimizer": "^1.8",
                 "symfony/http-foundation": "^6.0.3|^7.2",
                 "symfony/mime": "^6.0|^7.2"
@@ -5582,10 +5584,10 @@
                 "laravel/legacy-factories": "^1.4.0",
                 "league/flysystem-aws-s3-v3": "^3.29.0",
                 "mockery/mockery": "^1.6.12",
-                "orchestra/testbench": "^9.6.1|^10.0",
+                "orchestra/testbench": "^10.0|^11.0",
                 "php-coveralls/php-coveralls": "^2.7.0",
                 "phpstan/phpstan": "^2.0.3",
-                "phpunit/phpunit": "^11.5.10",
+                "phpunit/phpunit": "^12",
                 "vlucas/phpdotenv": "^5.6.1"
             },
             "suggest": {
@@ -5628,9 +5630,9 @@
             ],
             "support": {
                 "issues": "https://github.com/plank/laravel-mediable/issues",
-                "source": "https://github.com/plank/laravel-mediable/tree/6.3.1"
+                "source": "https://github.com/plank/laravel-mediable/tree/6.4.0"
             },
-            "time": "2025-03-06T02:19:25+00:00"
+            "time": "2026-02-24T03:36:16+00:00"
         },
         {
             "name": "ploi/ploi-php-sdk",
@@ -17892,5 +17894,5 @@
         "php": "^8.4"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }
