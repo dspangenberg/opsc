@@ -33,8 +33,13 @@ export const HistoryView: FC<Props> = ({ entries }) => {
             </div>
           </div>
           <div className="flex flex-col">
-            {getEntriesByDate(day).map(item => (
-              <HistoryViewItem key={item.id} item={item} />
+            {getEntriesByDate(day).map((item, index) => (
+              <HistoryViewItem
+                key={item.id}
+                item={item}
+                isFirst={index === 0}
+                isLast={index === getEntriesByDate(day).length - 1}
+              />
             ))}
           </div>
         </>
