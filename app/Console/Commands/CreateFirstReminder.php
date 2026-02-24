@@ -103,7 +103,7 @@ class CreateFirstReminder extends Command
                             'next_level_on' => now()->addDays($invoiceReminderSettings->level_1_next_level_days),
                         ]);
 
-                        $invoice->addHistory($reminder->type.' wurde versendet', 'mail_sent');
+                        $invoice->addHistory($reminder->type.' wurde versendet', 'reminder');
 
                         $reminder->invoice
                             ->loadSum('lines', 'amount')
