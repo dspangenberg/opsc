@@ -313,6 +313,7 @@ class Invoice extends Model implements MediableInterface
         $recurringInvoice->save();
 
         $recurringInvoice->load('lines');
+        $recurringInvoice->addHistory('Wiederkehrende Rechnung wurde erstellt.', 'created');
 
         foreach ($recurringInvoice->lines as $line) {
             $latestLine = $lastInvoice->lines->where('id', $line->parent_id)->first();
@@ -619,7 +620,7 @@ class Invoice extends Model implements MediableInterface
             $replicatedLine->save();
         });
 
-        $duplicatedInvoice->addHistory('Rechnung wurde erstellt.', 'created');
+        $duplicatedInvoice->addHistory('hat die Rechnung erstellt.', 'created', auth()->user());
 
         return $duplicatedInvoice;
     }
