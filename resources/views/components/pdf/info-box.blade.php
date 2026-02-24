@@ -9,10 +9,12 @@
             <td class="right">{{ $accountId }}</td>
         </tr>
     @endif
+    @if($reference)
     <tr>
         <td>{{ $referenceLabel }}:</td>
         <td class="right">{{ $reference }}</td>
     </tr>
+    @endif
     @if($dueDate)
         <tr>
             <td>Angebot gültig bis:</td>

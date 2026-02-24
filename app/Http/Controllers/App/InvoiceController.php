@@ -175,6 +175,8 @@ class InvoiceController extends Controller
         $invoice->vat_id = $invoice->contact->vat_id;
         $invoice->save();
 
+        $invoice->addHistory('Rechnung wurde versendet', 'created', auth()->user());
+
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
@@ -210,6 +212,8 @@ class InvoiceController extends Controller
             ->load('booking')
             ->load('tax')
             ->load('tax.rates')
+            ->load('reminders')
+            ->load('notables.creator')
             ->loadSum('lines', 'amount')
             ->loadSum('lines', 'tax')
             ->loadSum('payable', 'amount');
@@ -376,6 +380,7 @@ class InvoiceController extends Controller
             Invoice::createBooking($invoice);
         }
 
+        $invoice->addHistory('Rechnung wurde versendet', 'mail_sent', auth()->user());
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
@@ -598,6 +603,8 @@ class InvoiceController extends Controller
             } else {
                 $payment->amount = $transaction->remaining_amount;
             }
+
+            $invoice->addHistory('Zahlungseingang über '.$payment->amount, 'paid', auth()->user());
 
             if ($transaction->remaining_amount > 0) {
                 $payment->save();

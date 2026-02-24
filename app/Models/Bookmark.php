@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Bookmark extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'name',
         'model',
@@ -19,7 +22,7 @@ class Bookmark extends Model
 
     protected $appends = [
         'title',
-        'sidebar_title'
+        'sidebar_title',
     ];
 
     public function getSidebarTitleAttribute(): string

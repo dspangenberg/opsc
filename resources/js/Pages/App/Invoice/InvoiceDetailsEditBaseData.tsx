@@ -145,9 +145,12 @@ export const InvoiceDetailsEditBaseData: React.FC<Props> = ({
                 optionalValue="(kein Projekt)"
                 items={projects}
               />
-              <Checkbox {...form.registerCheckbox('is_recurring')} className="pt-1.5">
-                Wiederkehrende Rechnung
-              </Checkbox>
+              <div className="flex flex-none gap-4 pt-1.5">
+                <Checkbox {...form.registerCheckbox('is_recurring')}>
+                  Wiederkehrende Rechnung
+                </Checkbox>
+                <Checkbox {...form.registerCheckbox('dunning_block')}>Mahnsperre</Checkbox>
+              </div>
             </div>
             <div className="col-span-24">
               <FormTextArea

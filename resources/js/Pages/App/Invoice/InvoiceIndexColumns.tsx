@@ -1,9 +1,8 @@
-import { Tick01Icon } from '@hugeicons/core-free-icons'
 import { Link } from '@inertiajs/react'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Pressable } from 'react-aria-components'
 import { HoverCard } from '@/Components/twc-ui/hover-card'
-import { Icon } from '@/Components/twc-ui/icon'
+import { StatusIcon } from '@/Components/twc-ui/status-icon'
 import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
 import { InvoiceIndexHoverCard } from '@/Pages/App/Invoice/InvoiceIndexHoverCard'
@@ -52,10 +51,14 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
     cell: ({ row }) => {
       if (row.original.booking?.id) {
         return (
-          <div className="mx-auto flex size-4 items-center justify-center rounded-full bg-green-500">
+          <div className="mx-auto flex items-center justify-center">
             <HoverCard>
               <Pressable>
-                <Icon icon={Tick01Icon} className="size-3.5 text-white" stroke="3" role="button" />
+                {row.original.amount_open && row.original.dunning_level ? (
+                  <StatusIcon variant="warning" size="default" />
+                ) : (
+                  <StatusIcon variant="success" size="default" />
+                )}
               </Pressable>
 
               <InvoiceIndexHoverCard invoice={row.original} />
@@ -154,6 +157,24 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
           )}
         </div>
       )
+    }
+  },
+  {
+    accessorKey: 'dunning_days',
+    header: () => <div className="text-right">MT</div>,
+    size: 30,
+    cell: ({ row }) => {
+      if (row.original.dunning_days === 0) return null
+      return <div className="text-right">{row.original.dunning_days}</div>
+    }
+  },
+  {
+    accessorKey: 'dunning_level',
+    header: () => <div className="text-right">MS</div>,
+    size: 30,
+    cell: ({ row }) => {
+      if (row.original.dunning_level === 0) return null
+      return <div className="text-right">{row.original.dunning_level}</div>
     }
   }
 ]

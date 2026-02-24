@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use MohamedSaid\Notable\Notable;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
@@ -23,6 +24,7 @@ use Plank\Mediable\MediableInterface;
 use rikudou\EuQrPayment\QrPayment;
 use Spatie\Holidays\Countries\Germany;
 use Spatie\Holidays\Holidays;
+use MohamedSaid\Notable\Traits\HasNotables;
 
 /**
  * @property-read Contact|null $contact
@@ -71,7 +73,7 @@ use Spatie\Holidays\Holidays;
  */
 class Invoice extends Model implements MediableInterface
 {
-    use Mediable;
+    use Mediable, HasNotables;
 
     protected $fillable = [
         'contact_id',
@@ -122,7 +124,9 @@ class Invoice extends Model implements MediableInterface
         'amount_gross',
         'amount_open',
         'amount_paid',
-        'document_number'
+        'document_number',
+        'dunning_days',
+        'dunning_level',
     ];
 
     protected function casts(): array
@@ -199,7 +203,7 @@ class Invoice extends Model implements MediableInterface
         ];
 
         $pdfConfig = [];
-        $pdfConfig['pdfA'] = ! $invoice->is_draft;
+        $pdfConfig['pdfA'] = !$invoice->is_draft;
         $pdfConfig['hide'] = true;
         $pdfConfig['watermark'] = $invoice->is_draft ? 'ENTWURF' : '';
 
@@ -250,11 +254,33 @@ class Invoice extends Model implements MediableInterface
         }
     }
 
+    public function addHistory(
+        string $text,
+        string $type = 'note',
+        ?User $user = null,
+        ?DateTime $createdAt = null
+    ): Notable {
+        if ($type) {
+            $text = '['.$type.'] '.$text;
+        }
+
+        $note = $this->addNote($text, $user);
+
+        if ($createdAt) {
+            $note->created_at = $createdAt;
+            $note->save();
+        }
+
+        return $note;
+    }
+
+
     public static function createRecurringInvoice(Invoice $invoice): Invoice
     {
 
-        $lastInvoice = Invoice::query()->where('is_recurring', true)->where('parent_id', $invoice->id)->latest()->first();
-        if (! $lastInvoice) {
+        $lastInvoice = Invoice::query()->where('is_recurring', true)->where('parent_id',
+            $invoice->id)->latest()->first();
+        if (!$lastInvoice) {
             $lastInvoice = $invoice;
         }
 
@@ -268,11 +294,13 @@ class Invoice extends Model implements MediableInterface
 
         if ($recurringInvoice->service_period_begin) {
             $parentInvoice = Invoice::find($invoice->id);
-            $recurringInvoice->service_period_begin = $invoice->getDateForRecurringInterval($lastInvoice->service_period_begin, $parentInvoice->service_period_begin);
+            $recurringInvoice->service_period_begin = $invoice->getDateForRecurringInterval($lastInvoice->service_period_begin,
+                $parentInvoice->service_period_begin);
         }
         if ($recurringInvoice->service_period_end) {
             $parentInvoice = Invoice::find($invoice->id);
-            $recurringInvoice->service_period_end = $invoice->getDateForRecurringInterval($lastInvoice->service_period_end, $parentInvoice->service_period_end);
+            $recurringInvoice->service_period_end = $invoice->getDateForRecurringInterval($lastInvoice->service_period_end,
+                $parentInvoice->service_period_end);
         }
 
         $recurringInvoice->is_recurring = true;
@@ -293,7 +321,7 @@ class Invoice extends Model implements MediableInterface
             $rootLine = null;
             while ($currentLineId) {
                 $tempLine = InvoiceLine::find($currentLineId);
-                if (! $tempLine || ! $tempLine->parent_id) {
+                if (!$tempLine || !$tempLine->parent_id) {
                     $rootLine = $tempLine;
                     break;
                 }
@@ -301,12 +329,14 @@ class Invoice extends Model implements MediableInterface
             }
 
             if ($latestLine->service_period_begin) {
-                $newBegin = $invoice->getDateForRecurringInterval($latestLine->service_period_begin, $rootLine?->service_period_begin);
+                $newBegin = $invoice->getDateForRecurringInterval($latestLine->service_period_begin,
+                    $rootLine?->service_period_begin);
                 $line->service_period_begin = $newBegin;
             }
 
             if ($latestLine->service_period_end) {
-                $newEnd = $invoice->getDateForRecurringInterval($latestLine->service_period_end, $rootLine?->service_period_end);
+                $newEnd = $invoice->getDateForRecurringInterval($latestLine->service_period_end,
+                    $rootLine?->service_period_end);
                 $line->service_period_end = $newEnd;
             }
             $line->save();
@@ -322,7 +352,7 @@ class Invoice extends Model implements MediableInterface
 
     public function release(): void
     {
-        if (! $this->invoice_number) {
+        if (!$this->invoice_number) {
             $counter = Invoice::whereYear('issued_on', $this->issued_on->year)->max('invoice_number');
             if ($counter == 0) {
                 $counter = $this->issued_on->year * 100000;
@@ -337,7 +367,7 @@ class Invoice extends Model implements MediableInterface
         $this->is_draft = false;
 
         if ($this->is_recurring) {
-            if (! $this->recurring_begin_on) {
+            if (!$this->recurring_begin_on) {
                 $this->recurring_begin_on = $this->issued_on;
                 $this->recurring_next_billing_date = $this->getNextBilligDate();
             } else {
@@ -388,7 +418,7 @@ class Invoice extends Model implements MediableInterface
             ->filter()
             ->toArray();
 
-        if (! empty($incomingIds)) {
+        if (!empty($incomingIds)) {
             $this->lines()
                 ->whereNotIn('id', $incomingIds)
                 ->delete();
@@ -402,7 +432,7 @@ class Invoice extends Model implements MediableInterface
 
             // Convert date format from d.m.Y to Y-m-d for database
             $servicePeriodBegin = null;
-            if (! empty($line['service_period_begin'])) {
+            if (!empty($line['service_period_begin'])) {
                 $date = Carbon::createFromFormat('d.m.Y', $line['service_period_begin']);
                 if ($date instanceof Carbon) {
                     $servicePeriodBegin = $date->format('Y-m-d');
@@ -410,7 +440,7 @@ class Invoice extends Model implements MediableInterface
             }
 
             $servicePeriodEnd = null;
-            if (! empty($line['service_period_end'])) {
+            if (!empty($line['service_period_end'])) {
                 $date = Carbon::createFromFormat('d.m.Y', $line['service_period_end']);
                 if ($date instanceof Carbon) {
                     $servicePeriodEnd = $date->format('Y-m-d');
@@ -448,7 +478,7 @@ class Invoice extends Model implements MediableInterface
 
         $invoice->load('range_document_number');
 
-        if (! $invoice->range_document_number || $invoice->range_document_number->number_range_id !== 1) {
+        if (!$invoice->range_document_number || $invoice->range_document_number->number_range_id !== 1) {
             $invoice->number_range_document_numbers_id = NumberRange::createDocumentNumber($invoice,
                 'issued_on');
             $invoice->save();
@@ -467,7 +497,7 @@ class Invoice extends Model implements MediableInterface
         $accounts = Contact::getAccounts(true, $invoice->contact_id, true, true);
 
         if ($invoice->is_loss_of_receivables) {
-            $outturnAccount = BookkeepingAccount::where('account_number',2400)->first();
+            $outturnAccount = BookkeepingAccount::where('account_number', 2400)->first();
         }
 
         $booking = BookkeepingBooking::createBooking($invoice, 'issued_on', 'amount', $accounts['subledgerAccount'],
@@ -489,6 +519,22 @@ class Invoice extends Model implements MediableInterface
         }
 
         return 'Entwurf '.$this->id;
+    }
+
+    public function getDunningDaysAttribute(): int
+    {
+        if ($this->amount_open > 0 && !$this->is_draft && $this->due_on) {
+            $days = (int) $this->due_on->diffInDays(Carbon::now());
+            return max($days, 0);
+        }
+
+
+        return 0;
+    }
+
+    public function getDunningLevelAttribute(): int
+    {
+        return (int) ($this->reminders->max('dunning_level') ?? 0);
     }
 
     public function getInvoiceAddressAttribute(): array
@@ -573,12 +619,14 @@ class Invoice extends Model implements MediableInterface
             $replicatedLine->save();
         });
 
+        $duplicatedInvoice->addHistory('Rechnung wurde erstellt.', 'created');
+
         return $duplicatedInvoice;
     }
 
     public function getQrCodeAttribute(): string
     {
-        if (! $this->contact || $this->amount_gross <= 0) {
+        if (!$this->contact || $this->amount_gross <= 0) {
             return '';
         }
 
@@ -610,7 +658,7 @@ class Invoice extends Model implements MediableInterface
 
     public function getDateForRecurringInterval($date, ?Carbon $referenceDate = null): ?DateTime
     {
-        if (! $date || ! $this->recurring_interval) {
+        if (!$date || !$this->recurring_interval) {
             return null;
         }
 
@@ -632,7 +680,7 @@ class Invoice extends Model implements MediableInterface
         // If the original date was end of month, always set to end of target month
         // This ensures 31.01 -> 28.02 -> 31.03 -> 30.04 etc.
         if ($newDate && $wasOriginalEndOfMonth && $this->recurring_interval === InvoiceRecurringEnum::months) {
-            if (! $newDate->isLastOfMonth()) {
+            if (!$newDate->isLastOfMonth()) {
                 $newDate->endOfMonth();
             }
         }
@@ -645,11 +693,15 @@ class Invoice extends Model implements MediableInterface
         return $this->hasMany(InvoiceLine::class);
     }
 
+    public function reminders(): HasMany
+    {
+        return $this->hasMany(InvoiceReminder::class);
+    }
+
     public function payable(): MorphMany
     {
         return $this->morphMany(Payment::class, 'payable');
     }
-
 
 
     public function contact(): HasOne

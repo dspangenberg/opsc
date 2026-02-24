@@ -1,10 +1,9 @@
-import { CircleCheck, Info, Loader, TriangleAlert, X } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import type React from 'react'
 import { Toaster as Sonner, toast as sonnerToast, type ToasterProps } from 'sonner'
 import { tv } from 'tailwind-variants'
+import { StatusIcon } from '@/Components/twc-ui/status-icon'
 import { Button } from './button'
-import { Icon } from './icon'
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'system' } = useTheme()
@@ -12,14 +11,15 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       theme={theme as ToasterProps['theme']}
-      className="toaster group"
+      className="toaster group font-sans!"
       toastOptions={{
-        unstyled: true,
+        unstyled: false,
         duration: 5000,
-        className: 'w-full md:max-w-[320px]'
+        className: 'font-sans!'
       }}
       style={
         {
+          '--font-sans': 'var(--font-sans)',
           '--normal-bg': 'var(--popover)',
           '--normal-text': 'var(--popover-foreground)',
           '--normal-border': 'var(--border)',
@@ -31,12 +31,13 @@ const Toaster = ({ ...props }: ToasterProps) => {
   )
 }
 
-type ToastVariant = 'success' | 'error' | 'warning' | 'info' | 'loading' | 'default'
+type ToastVariant = 'success' | 'error' | 'warning' | 'info' | 'default'
 
 interface ToastProps {
   title?: string
   message: string
   type?: ToastVariant
+  duration?: number
   button?: {
     label: string
     onClick: () => void
@@ -45,7 +46,7 @@ interface ToastProps {
 }
 
 export const toastStyles = tv({
-  base: 'flex w-full items-center gap-3 rounded-lg p-4 font-sans shadow-lg ring-1',
+  base: 'flex min-w-96 items-center gap-3 rounded-lg p-4 font-sans shadow-lg ring-1',
   variants: {
     type: {
       default: 'bg-white text-gray-900 ring-black/5 dark:bg-gray-950 dark:text-gray-100',
@@ -55,9 +56,7 @@ export const toastStyles = tv({
         'bg-red-50 text-red-900 ring-red-500/10 dark:bg-red-950 dark:text-red-100 dark:ring-red-500/20',
       warning:
         'bg-yellow-50 text-yellow-900 ring-yellow-500/10 dark:bg-yellow-950 dark:text-yellow-100 dark:ring-yellow-500/20',
-      info: 'bg-blue-50 text-blue-900 ring-blue-500/10 dark:bg-blue-950 dark:text-blue-100 dark:ring-blue-500/20',
-      loading:
-        'bg-white text-gray-900 ring-black/5 dark:bg-gray-950 dark:text-gray-100 dark:ring-gray-500/20'
+      info: 'bg-blue-50 text-blue-900 ring-blue-500/10 dark:bg-blue-950 dark:text-blue-100 dark:ring-blue-500/20'
     }
   },
   defaultVariants: {
@@ -66,29 +65,44 @@ export const toastStyles = tv({
 })
 
 const Toast = (props: ToastProps) => {
-  const { title, message, button, type = 'success' } = props
+  const { title, message, button, type = 'default', id } = props
 
-  const IconComponent: Record<ToastVariant, React.ComponentType<{ className?: string }>> = {
-    default: Info,
-    success: CircleCheck,
-    error: X,
-    warning: TriangleAlert,
-    info: Info,
-    loading: Loader
+  const handleButtonClick = () => {
+    if (button?.onClick) {
+      button.onClick()
+    }
+    sonnerToast.dismiss(id)
+  }
+
+  const getStatusIconVariant = (
+    toastType: ToastVariant
+  ): 'default' | 'success' | 'warning' | 'info' | 'destructive' => {
+    switch (toastType) {
+      case 'success':
+        return 'success'
+      case 'error':
+        return 'destructive'
+      case 'warning':
+        return 'warning'
+      case 'info':
+        return 'info'
+      default:
+        return 'default'
+    }
   }
 
   return (
-    <div className={toastStyles({ type })}>
-      <Icon icon={IconComponent[type]} className="size-5 shrink-0" />
+    <div className={toastStyles({ type: 'default' })}>
+      <StatusIcon variant={getStatusIconVariant(type)} />
       <div className="flex flex-1 flex-col gap-1">
         {title && <p className="font-medium text-sm">{title}</p>}
         <p className="text-sm">{message}</p>
       </div>
       {button && (
         <Button
-          variant="default"
+          variant="outline"
           title={button.label}
-          onClick={button.onClick}
+          onClick={handleButtonClick}
           className="shrink-0"
         />
       )}
@@ -101,15 +115,20 @@ const toast = (props: string | Omit<ToastProps, 'id'>, type?: ToastVariant) => {
     return sonnerToast.custom(id => <Toast id={id} title="" message={props} type={type} />)
   }
 
-  return sonnerToast.custom(id => (
-    <Toast
-      id={id}
-      title={props.title}
-      message={props.message}
-      button={props.button}
-      type={props.type}
-    />
-  ))
+  return sonnerToast.custom(
+    id => (
+      <Toast
+        id={id}
+        title={props.title}
+        message={props.message}
+        button={props.button}
+        type={props.type}
+      />
+    ),
+    {
+      duration: props.duration ?? 10000
+    }
+  )
 }
 
 export { Toast, Toaster, toast }

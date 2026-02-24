@@ -14,7 +14,7 @@ class SettingUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'group' => ['required', 'string', 'in:general'],
+            'group' => ['required', 'string', 'in:general,invoice_reminders'],
             'key' => ['required', 'string'],
             'value' => ['nullable'],
         ];

@@ -16,7 +16,6 @@ import { useState } from 'react'
 import { MenuItem as AriaMenuItem } from 'react-aria-components'
 import { BookmarkEditDialog } from '@/Components/Shared/Bookmark/BookmarkEditDialog'
 import { Button } from '@/Components/twc-ui/button'
-
 import { Icon, type IconType } from '@/Components/twc-ui/icon'
 import {
   Menu,
@@ -26,6 +25,7 @@ import {
   MenuSubTrigger,
   MenuTrigger
 } from '@/Components/twc-ui/menu'
+import { toast } from '@/Components/twc-ui/sonner'
 import { useCopyToClipboard } from '@/Hooks/use-copy-to-clipboard'
 
 interface Props {
@@ -71,7 +71,6 @@ export const BookmarkMenu: React.FC<Props> = ({ model, bookmarks, icon, onUpdate
   const handleRename = async (bookmark: App.Data.BookmarkData) => {
     setActiveMenuId(null)
     setIsOpen(false)
-    // Dropdown-Menü schließen
     setDropdownOpen(false)
     const result = await BookmarkEditDialog.call({
       name: bookmark.name,
@@ -109,6 +108,37 @@ export const BookmarkMenu: React.FC<Props> = ({ model, bookmarks, icon, onUpdate
   const handleCopyLink = (bookmark: App.Data.BookmarkData) => {
     setIsOpen(false)
     copyToClipboard(route(bookmark.route_name, bookmark.route_params, true))
+  }
+
+  const handleRestore = (bookmark: App.Data.BookmarkData) => {
+    router.put(
+      route('app.bookmark.restore', { bookmark: bookmark.id }),
+      {},
+      {
+        preserveScroll: true,
+        onSuccess: () => {
+          onUpdate()
+          toast(`Lesezeichen ${bookmark.title} wurde wiederhergestellt`, 'success')
+        }
+      }
+    )
+  }
+
+  const handleTrash = (bookmark: App.Data.BookmarkData) => {
+    setDropdownOpen(false)
+    router.delete(route('app.bookmark.trash', { bookmark: bookmark.id }), {
+      onSuccess: () => {
+        onUpdate()
+        toast({
+          type: 'info',
+          message: `Lesezeichen ${bookmark.title} wurde gelöscht`,
+          button: {
+            onClick: () => handleRestore(bookmark),
+            label: 'Undo'
+          }
+        })
+      }
+    })
   }
 
   return (
@@ -189,7 +219,12 @@ export const BookmarkMenu: React.FC<Props> = ({ model, bookmarks, icon, onUpdate
                         title="URL in Zwischenablage kopieren"
                         onAction={() => handleCopyLink(bookmark)}
                       />
-                      <MenuItem icon={Delete02Icon} title="Löschen" variant="destructive" />
+                      <MenuItem
+                        icon={Delete02Icon}
+                        title="Löschen"
+                        variant="destructive"
+                        onAction={() => handleTrash(bookmark)}
+                      />
                     </Menu>
                   </MenuPopover>
                 </MenuTrigger>

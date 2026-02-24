@@ -6,6 +6,7 @@ use App\Data\SettingData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SettingUpdateRequest;
 use App\Settings\GeneralSettings;
+use App\Settings\InvoiceReminderSettings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -16,9 +17,11 @@ class SettingController extends Controller
     public function index(Request $request)
     {
         $generalSettings = app(GeneralSettings::class);
+        $invoiceReminderSettings = app(InvoiceReminderSettings::class);
 
         $settingsCollection = collect([
             $generalSettings,
+            $invoiceReminderSettings
         ])->flatMap(function ($settings) {
             $group = $settings::group();
 
@@ -61,6 +64,7 @@ class SettingController extends Controller
 
         $settingsClass = match ($group) {
             'general' => GeneralSettings::class,
+            'invoice_reminders' => InvoiceReminderSettings::class,
             default => null,
         };
 

@@ -115,6 +115,11 @@ class InvoiceData extends Data
         public readonly ?int $offer_id,
         public readonly ?OfferData $offer,
 
+        public readonly int $dunning_days,
+        public readonly int $dunning_level,
+
+        /** @var NoteableData[] */
+        public readonly ?array $notables
     ) {}
 
     public function defaultWrap(): string

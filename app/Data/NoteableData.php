@@ -21,7 +21,7 @@ class NoteableData extends Data
         public readonly int $notable_id,
         public readonly string $note,
 
-        public readonly UserData $creator,
+        public readonly ?UserData $creator,
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]
         public readonly DateTime $created_at,
