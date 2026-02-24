@@ -5,6 +5,7 @@
 
 import { parseDate as parseDateValue } from '@internationalized/date'
 import { format, minutesToHours, parse } from 'date-fns'
+import { de } from 'date-fns/locale'
 
 export const parseAndFormatDate = (date: string, formatString = 'dd.MM.yyyy') => {
   if (!date) return ''
@@ -15,7 +16,7 @@ export const parseAndFormatDate = (date: string, formatString = 'dd.MM.yyyy') =>
     parsedDate = parse(date.substring(0, 16), 'dd.MM.yyyy HH:mm', new Date())
   }
 
-  return format(parsedDate, formatString)
+  return format(parsedDate, formatString, { locale: de })
 }
 
 export const parseAndFormatDateTime = (date: string, formatString = 'dd.MM.yyyy HH:mm') => {
@@ -45,7 +46,7 @@ export const getPrevWeek = (date: string) => {
   return format(parsedDate, 'dd.MM.yyyy')
 }
 
-export const parseDate = (date: string, formatString = 'dd.MM.yyyy') => {
+export const parseDate = (date: string, formatString = 'dd.MM.yyyy'): Date => {
   let parsedDate: Date
   if (date.length === 10) {
     parsedDate = parse(date, 'dd.MM.yyyy', new Date())
@@ -61,9 +62,7 @@ export const minutesToHoursExtended = (minutes: number) => {
   try {
     const hours = minutesToHours(minutes)
     const minutesLeft = minutes - hours * 60
-    const stringifiedHours = hours >= 1000
-      ? hours.toLocaleString('de-DE')
-      : String(hours)
+    const stringifiedHours = hours >= 1000 ? hours.toLocaleString('de-DE') : String(hours)
     const stringifiedMinutes =
       String(minutesLeft).length === 1 ? `0${minutesLeft}` : `${minutesLeft}`
     return `${stringifiedHours}:${stringifiedMinutes}`

@@ -217,7 +217,7 @@ class InvoiceController extends Controller
             ->loadSum('lines', 'amount')
             ->loadSum('lines', 'tax')
             ->loadSum('payable', 'amount');
-
+        
         return Inertia::render('App/Invoice/InvoiceDetails', [
             'invoice' => InvoiceData::from($invoice),
         ]);
@@ -466,7 +466,8 @@ class InvoiceController extends Controller
             ->loadSum('lines', 'amount')
             ->loadSum('lines', 'tax')
             ->loadSum('payable', 'amount')
-            ->load('payable.transaction');
+            ->load('payable.transaction')
+            ->load('notables.creator');
 
         return Inertia::render('App/Invoice/InvoiceHistory', [
             'invoice' => InvoiceData::from($invoice),

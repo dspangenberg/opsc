@@ -78,8 +78,6 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   const folders = Object.keys(documentsGroupedByFolder)
   const getDocumentsByFolder = (folder: string) => documentsGroupedByFolder[folder]
 
-  console.log(route().current(), route().params)
-
   const getViewTitle = () => {
     const view = routeFilters?.view?.value
     switch (view) {
