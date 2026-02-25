@@ -4,7 +4,7 @@
  */
 
 import { type FormDataConvertible, router } from '@inertiajs/core'
-import type { FC } from 'react'
+import { type FC, Fragment } from 'react'
 import type { RouteUrl } from 'ziggy-js'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
@@ -68,19 +68,19 @@ export const HistoryView: FC<Props> = ({ entries, route: storeRoute }) => {
       </FormCard>
       <div className="flex flex-1 flex-col items-start space-y-4">
         {days.map(day => (
-          <>
-            <div key={day} className="relative w-full flex-1">
+          <Fragment key={day}>
+            <div className="relative w-full flex-1">
               <div className="absolute inset-x-0 top-1/2 border-border/80 border-t" />
               <div className="relative inline-block bg-page-content pr-2 font-medium text-foreground text-sm">
                 {day}
               </div>
             </div>
-            <div className="flex w-full flex-col" key={`{day}-items`}>
+            <div className="flex w-full flex-col">
               {getEntriesByDate(day).map((item, index) => (
                 <HistoryViewItem key={item.id} item={item} />
               ))}
             </div>
-          </>
+          </Fragment>
         ))}
       </div>
     </div>
