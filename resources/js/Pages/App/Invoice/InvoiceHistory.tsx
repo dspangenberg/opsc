@@ -16,7 +16,10 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ invoice }) => {
   return (
     <InvoiceDetailsLayout invoice={invoice}>
       <div className="mr-8 flex-1">
-        <HistoryView entries={invoice.notables ?? []} />
+        <HistoryView
+          entries={invoice.notables ?? []}
+          route={route('app.invoice.store-note', { invoice: invoice.id })}
+        />
       </div>
       <div className="h-fit w-full max-w-sm flex-none px-1">
         <div className="fixed w-full max-w-sm space-y-6">
