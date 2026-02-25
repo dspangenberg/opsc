@@ -5,16 +5,16 @@
     </div>
 
     <div id="infobox-first-page">
-        <x-pdf.info-box
-            :issued-on="$reminder->issued_on->format('d.m.Y')"
-            :account-id="number_format($reminder->invoice->contact->debtor_number, 0, ',', '.')"
-        />
     </div>
 
 
 
 
-    <p><strong>{{ $reminder->type }}</strong><br/></p>
+    <p style="text-align: right;">
+        Bonn,  {{ $reminder->issued_on->translatedFormat('j. F Y') }}
+    </p>
+
+    <p><strong>Ihre Kundennummer {{number_format($reminder->invoice->contact->debtor_number, 0, ',', '.')}}<br/>{{ $reminder->type }}</strong><br/></p>
 
     @if($reminder->name)
         <p>Guten Tag, {{$reminder->name}},</p>

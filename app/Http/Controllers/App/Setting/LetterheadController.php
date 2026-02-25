@@ -10,6 +10,7 @@ use App\Models\Letterhead;
 use App\Settings\GeneralSettings;
 use App\Settings\InvoiceReminderSettings;
 use Inertia\Inertia;
+use Inertia\Response;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
 use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
 use Plank\Mediable\Exceptions\MediaUpload\FileNotFoundException;
@@ -39,7 +40,7 @@ class LetterheadController extends Controller
         ]);
     }
 
-    public function editGlobalCSS()
+    public function editGlobalCSS(): Response
     {
         $settings = app(GeneralSettings::class);
 
