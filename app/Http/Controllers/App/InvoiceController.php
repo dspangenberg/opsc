@@ -175,7 +175,7 @@ class InvoiceController extends Controller
         $invoice->vat_id = $invoice->contact->vat_id;
         $invoice->save();
 
-        $invoice->addHistory('hat die Rechnung erstellt.', 'created', auth()->user());
+        $invoice->addHistory('hat die Rechnung versendet.', 'created', auth()->user());
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
