@@ -15,7 +15,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ invoice }) => {
   const payable = Array.isArray(invoice?.payable) ? invoice.payable : []
   return (
     <InvoiceDetailsLayout invoice={invoice}>
-      <div className="flex-1">
+      <div className="mr-8 flex-1">
         <HistoryView entries={invoice.notables ?? []} />
       </div>
       <div className="h-fit w-full max-w-sm flex-none px-1">

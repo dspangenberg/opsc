@@ -160,7 +160,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
             Details
           </Tab>
           <Tab id="app.invoice.history" href={route('app.invoice.history', { invoice }, false)}>
-            Historie + Buchungen
+            Historie
           </Tab>
         </TabList>
       </Tabs>

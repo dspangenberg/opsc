@@ -4,8 +4,9 @@
  */
 
 import {
-  Bookmark01Icon,
-  EuroCircleIcon,
+  AbacusIcon,
+  Add01Icon,
+  EuroIcon,
   MailValidation01Icon,
   NotificationSquareIcon
 } from '@hugeicons/core-free-icons'
@@ -13,6 +14,7 @@ import type { FC } from 'react'
 import { Avatar } from '@/Components/twc-ui/avatar'
 import { Icon } from '@/Components/twc-ui/icon'
 import { parseAndFormatDate } from '@/Lib/DateHelper'
+import { cn } from '@/Lib/utils'
 
 interface HistoryItem extends App.Data.NoteableData {
   date: string
@@ -20,30 +22,59 @@ interface HistoryItem extends App.Data.NoteableData {
 
 interface Props {
   item: HistoryItem
-  isFirst?: boolean
-  isLast?: boolean
 }
 
-export const HistoryViewItem: FC<Props> = ({ item, isFirst = false, isLast = false }) => {
-  const getIcon = (item: HistoryItem) => {
-    const type = item.note.match(/\[([^\]]*)]/g)?.map(match => match.slice(1, -1))[0]
+export const HistoryViewItem: FC<Props> = ({ item }) => {
+  const type = item.note.match(/\[([^\]]*)]/g)?.map(match => match.slice(1, -1))[0]
+  const note = item.note.replaceAll(/\[[^\]]*]/g, '').trim()
+
+  const getIcon = () => {
     switch (type) {
       case 'mail_sent':
         return MailValidation01Icon
       case 'paid':
-        return EuroCircleIcon
+        return EuroIcon
       case 'reminder':
         return NotificationSquareIcon
+      case 'booked':
+        return AbacusIcon
       default:
-        return Bookmark01Icon
+        return Add01Icon
     }
   }
 
-  const type = item.note.match(/\[([^\]]*)]/g)?.map(match => match.slice(1, -1))[0]
-  const note = item.note.replaceAll(/\[[^\]]*]/g, '').trim()
+  const getBgClass = () => {
+    switch (type) {
+      case 'mail_sent':
+        return 'bg-blue-5ßß'
+      case 'paid':
+        return 'bg-success'
+      case 'reminder':
+        return 'bg-warning-foreground'
+      case 'booked':
+        return 'bg-info'
+      default:
+        return 'bg-muted'
+    }
+  }
+
+  const getBorderClass = () => {
+    switch (type) {
+      case 'mail_sent':
+        return 'border-blue-5ßß'
+      case 'paid':
+        return 'border-success'
+      case 'reminder':
+        return 'border-warning-foreground'
+      case 'booked':
+        return 'border-info'
+      default:
+        return 'border-muted'
+    }
+  }
 
   return (
-    <div className="flex flex-col py-2">
+    <div className="flex flex-1 flex-col py-2">
       <div className="flex items-center text-sm">
         <div className="w-16">{parseAndFormatDate(item.created_at, 'HH:mm')}</div>
         <div className="mr-2">
@@ -55,16 +86,32 @@ export const HistoryViewItem: FC<Props> = ({ item, isFirst = false, isLast = fal
               fullname={item.creator?.full_name}
             />
           ) : (
-            <div className="relative flex size-7 items-center justify-center rounded-full bg-blue-500">
-              <Icon icon={getIcon(item)} className="size-6 p-1 text-white" />
+            <div className={cn('rounded-full border', getBorderClass())}>
+              <div
+                className={cn(
+                  'relative flex items-center justify-center rounded-full border-2 border-white',
+                  getBgClass()
+                )}
+              >
+                <Icon icon={getIcon()} className="size-5 p-1 text-white" />
+              </div>
             </div>
           )}
         </div>
-        <div>
-          {item.creator?.id ? <span>{item.creator?.full_name} </span> : <span></span>}
-          {note}
+        <div className="text-foreground/70">
+          {item.creator?.id ? (
+            <span className="text-foreground!">{item.creator?.full_name} </span>
+          ) : (
+            <span></span>
+          )}
+          {type ? <span>{note}</span> : <span>hat eine Notize erstellt.</span>}
         </div>
       </div>
+      {!type && (
+        <div className="mt-2 ml-21 flex-1 rounded-md border bg-background px-4 py-2 text-sm">
+          {note}
+        </div>
+      )}
     </div>
   )
 }

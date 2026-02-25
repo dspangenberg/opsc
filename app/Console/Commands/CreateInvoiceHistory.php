@@ -67,7 +67,7 @@ class CreateInvoiceHistory extends Command
 
             $invoices = Invoice::query()
                 ->whereYear('issued_on', '>', 2024)
-                ->with('payable')
+                ->with('payable', 'booking')
                 ->doesntHave('notables')
                 ->get();
 
@@ -84,6 +84,10 @@ class CreateInvoiceHistory extends Command
                     $invoice->addHistory('hat die Rechnung erstellt.', 'created', $defaultUser, $invoice->created_at);
                     if ($invoice->sent_at) {
                         $invoice->addHistory('hat die Rechnung versendet.', 'mail_sent', $defaultUser, $invoice->sent_at);
+                    }
+
+                    if ($invoice->booking) {
+                        $invoice->addHistory('Buchung wurde erstellt.', 'booked', null, $invoice->booking->date);
                     }
 
                     foreach ($invoice->payable as $payable) {

@@ -23,23 +23,18 @@ export const HistoryView: FC<Props> = ({ entries }) => {
   const getEntriesByDate = (date: string) => groupedEntries[date] ?? []
 
   return (
-    <div className="flex flex-1 flex-col items-start space-y-6">
+    <div className="flex flex-1 flex-col items-start space-y-4">
       {days.map(day => (
         <>
           <div key={day} className="relative w-full flex-1">
             <div className="absolute inset-x-0 top-1/2 border-border/80 border-t" />
-            <div className="relative inline-block bg-page-content pr-2 text-foreground text-sm uppercase">
+            <div className="relative inline-block bg-page-content pr-2 font-medium text-foreground text-sm">
               {day}
             </div>
           </div>
-          <div className="flex flex-col">
+          <div className="flex w-full flex-col" key={`{day}-items`}>
             {getEntriesByDate(day).map((item, index) => (
-              <HistoryViewItem
-                key={item.id}
-                item={item}
-                isFirst={index === 0}
-                isLast={index === getEntriesByDate(day).length - 1}
-              />
+              <HistoryViewItem key={item.id} item={item} />
             ))}
           </div>
         </>
