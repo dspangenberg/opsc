@@ -150,7 +150,7 @@ class Invoice extends Model implements MediableInterface
     /**
      * @throws Exception
      */
-    public static function createOrGetPdf(Invoice $invoice, bool $uploadToS3 = false): string
+    public static function createOrGetPdf(Invoice $invoice, string $watermark = ''): string
     {
         $invoice = Invoice::query()
             ->with('contact')
@@ -205,7 +205,7 @@ class Invoice extends Model implements MediableInterface
         $pdfConfig = [];
         $pdfConfig['pdfA'] = !$invoice->is_draft;
         $pdfConfig['hide'] = true;
-        $pdfConfig['watermark'] = $invoice->is_draft ? 'ENTWURF' : '';
+        $pdfConfig['watermark'] = $watermark ?: ($invoice->is_draft ? 'ENTWURF' : false);
 
         return WeasyPdfService::createPdf('invoice', 'pdf.invoice.index',
             [

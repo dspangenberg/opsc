@@ -50,7 +50,7 @@ export const HistoryViewItem: FC<Props> = ({ item }) => {
       case 'paid':
         return 'bg-success'
       case 'reminder':
-        return 'bg-warning-foreground'
+        return 'bg-yellow-600'
       case 'booked':
         return 'bg-info'
       default:
@@ -65,7 +65,7 @@ export const HistoryViewItem: FC<Props> = ({ item }) => {
       case 'paid':
         return 'border-success'
       case 'reminder':
-        return 'border-warning-foreground'
+        return 'border-yellow-600'
       case 'booked':
         return 'border-info'
       default:

@@ -29,23 +29,17 @@ export const HistoryView: FC<Props> = ({ entries, route: storeRoute }) => {
     date: parseAndFormatDate(item.created_at, 'dd. MMMM yyyy')
   }))
 
-  const form = useForm<FormData>(
-    'store-note-form',
-    'post',
-    storeRoute,
-    {
-      note: ''
-    },
-    {
-      onSuccess: () => {
-        form.reset()
-        router.reload({ only: ['invoice'] })
-      }
-    }
-  )
+  const form = useForm<FormData>('store-note-form', 'post', storeRoute, {
+    note: ''
+  })
 
   const groupedEntries = Object.groupBy(entriesWithDate, ({ date }) => date)
   const days = Object.keys(groupedEntries)
+
+  const handleFormSubmit = () => {
+    form.reset()
+    router.reload({ only: ['invoice'] })
+  }
 
   const getEntriesByDate = (date: string) => groupedEntries[date] ?? []
 
@@ -53,12 +47,17 @@ export const HistoryView: FC<Props> = ({ entries, route: storeRoute }) => {
     <div className="mt-8 space-y-4">
       <FormCard
         footer={
-          <Button type="submit" form={form.id} variant="default">
-            Notiz hinzufügen
-          </Button>
+          <Button
+            type="submit"
+            form={form.id}
+            variant="default"
+            title="Notiz hinzufügen"
+            isDisabled={!form.data.note}
+            isLoading={form.processing}
+          />
         }
       >
-        <Form form={form}>
+        <Form form={form} onSubmitted={handleFormSubmit}>
           <FormGrid>
             <div className="col-span-24">
               <FormTextArea autoFocus label="Notiz" {...form.register('note')} />

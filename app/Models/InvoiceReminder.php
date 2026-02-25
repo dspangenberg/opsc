@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Facades\WeasyPdfService;
 use App\Settings\InvoiceReminderSettings;
+use Exception;
 use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -104,7 +105,10 @@ class InvoiceReminder extends Model implements Attachable
         return $this->dunning_level.'-'.str_replace('.', '_', basename($this->invoice->formated_invoice_number)).'.pdf';
     }
 
-    public function createPdf(): string
+    /**
+     * @throws Exception
+     */
+    public function createPdf(string $invoicePath): string
     {
         $this->invoice->loadSum('lines', 'amount');
         $this->invoice->loadSum('lines', 'tax');
@@ -113,12 +117,16 @@ class InvoiceReminder extends Model implements Attachable
         return WeasyPdfService::createPdf('invoice', 'pdf.invoice.reminder',
             [
                 'reminder' => $this,
-            ], $pdfConfig);
+            ], $pdfConfig, [$invoicePath]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function toMailAttachment(): Attachment
     {
-        $file = $this->createPdf();
+        $invoicePath = Invoice::createOrGetPdf($this->invoice, 'DUPLIKAT');
+        $file = $this->createPdf($invoicePath);
         return Attachment::fromPath($file)->as($this->filename);
     }
 

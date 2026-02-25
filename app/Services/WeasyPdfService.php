@@ -196,15 +196,19 @@ class WeasyPdfService
             $files = [$tmpDir];
 
             foreach ($attachments as $attachment) {
-                $document = Document::find($attachment);
-                if ($document) {
-                    $media = $document->firstMedia('file');
+                if (is_string($attachment)) {
+                    $files[] = $attachment;
+                } else {
+                    $document = Document::find($attachment);
+                    if ($document) {
+                        $media = $document->firstMedia('file');
 
-                    if ($media) {
-                        $attachmentFile = FileHelperService::createTemporaryFileFromDoc($media->filename,
-                            $media->contents());
-                        if (file_exists($attachmentFile)) {
-                            $files[] = $attachmentFile;
+                        if ($media) {
+                            $attachmentFile = FileHelperService::createTemporaryFileFromDoc($media->filename,
+                                $media->contents());
+                            if (file_exists($attachmentFile)) {
+                                $files[] = $attachmentFile;
+                            }
                         }
                     }
                 }

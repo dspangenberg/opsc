@@ -442,7 +442,7 @@ class InvoiceController extends Controller
             );
         }
 
-        $pdfFile = Invoice::createOrGetPdf($invoice, false);
+        $pdfFile = Invoice::createOrGetPdf($invoice);
 
         return response()->file($pdfFile);
     }
