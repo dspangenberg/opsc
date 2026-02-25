@@ -39,7 +39,7 @@ export const HistoryView: FC<Props> = ({ entries, route: storeRoute }) => {
     {
       onSuccess: () => {
         form.reset()
-        router.reload({ only: ['notables.creator'] })
+        router.reload({ only: ['invoice'] })
       }
     }
   )

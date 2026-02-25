@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use Momentum\Modal\Modal;
+use Stevebauman\Purify\Facades\Purify;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
@@ -749,7 +750,7 @@ class InvoiceController extends Controller
     }
 
     public function storeNote(NoteStoreRequest $request, Invoice $invoice): RedirectResponse {
-        $invoice->addNote($request->validated('note'), auth()->user());
+        $invoice->addNote(Purify::clean($request->validated('note')), auth()->user());
         return redirect()->back();
     }
 
