@@ -21,6 +21,7 @@ use App\Http\Requests\InvoiceDetailsBaseUpdateRequest;
 use App\Http\Requests\InvoiceReportRequest;
 use App\Http\Requests\InvoiceStoreExternalRequest;
 use App\Http\Requests\InvoiceStoreRequest;
+use App\Http\Requests\NoteStoreRequest;
 use App\Models\BookkeepingBooking;
 use App\Models\Contact;
 use App\Models\Document;
@@ -745,6 +746,11 @@ class InvoiceController extends Controller
         $filename = now()->format('Y-m-d-H-i').'-Auswertung-Ausgangsrechnungen.pdf';
 
         return response()->inlineFile($pdf, $filename);
+    }
+
+    public function storeNote(NoteStoreRequest $request, Invoice $invoice): RedirectResponse {
+        $invoice->addNote($request->validated('note'), auth()->user());
+        return redirect()->back();
     }
 
     public function deleteLine(Invoice $invoice, InvoiceLine $invoiceLine)
