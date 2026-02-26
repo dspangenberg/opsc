@@ -38,6 +38,11 @@ interface InvoiceLinesEditorProps {
   offer: App.Data.OfferData
 }
 
+export type OfferFormData = Omit<
+  App.Data.OfferData,
+  'contact' | 'project' | 'attachments' | 'sections' | 'tax'
+>
+
 export const OfferLinesEditor: FC<InvoiceLinesEditorProps> = ({ offer }) => {
   const { setEditMode, lines, addLine, setLines } = useOfferTable()
 
@@ -48,7 +53,7 @@ export const OfferLinesEditor: FC<InvoiceLinesEditorProps> = ({ offer }) => {
     })
   )
 
-  const form = useForm(
+  const form = useForm<OfferFormData>(
     'app.offerlines.lines-update',
     'put',
     route('app.offer.lines-update', {
@@ -69,7 +74,7 @@ export const OfferLinesEditor: FC<InvoiceLinesEditorProps> = ({ offer }) => {
       // If line exists in form with user input, keep form values; otherwise use context values
       return existingFormLine || line
     })
-    form.setData('lines', mergedLines)
+    form.setData('lines', mergedLines as never)
   }, [lines])
 
   const handleDragEnd = (event: DragEndEvent) => {

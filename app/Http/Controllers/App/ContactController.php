@@ -214,9 +214,12 @@ class ContactController extends Controller
         $cost_centers = CostCenter::orderBy('name')->get();
         $mail_categories = EmailCategory::orderBy('name')->get();
 
+        $contact_persons = Contact::query()->where('company_id', $contact->id)->orderBy('name')->orderBy('first_name')->get();
+
         return Inertia::render('App/Contact/ContactEdit', [
             'contact' => ContactData::from($contact),
             'countries' => CountryData::collect($countries),
+            'contact_persons' => ContactData::collect($contact_persons),
             'payment_deadlines' => PaymentDeadlineData::collect($payment_deadlines),
             'taxes' => TaxData::collect($taxes),
             'salutations' => SalutationData::collect($salutations),

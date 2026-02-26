@@ -22,8 +22,14 @@ interface Props extends PageProps {
   documentTypes: App.Data.DocumentTypeData[]
   projects: App.Data.ProjectData[]
 }
+
+type DocumentFormData = Omit<
+  App.Data.DocumentData,
+  'sender_contact' | 'receiver_contact' | 'type' | 'project'
+>
+
 const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, projects }) => {
-  const form = useForm<App.Data.DocumentData>(
+  const form = useForm<DocumentFormData>(
     'update-document',
     'put',
     route('app.document.update', { document: document.id }),
@@ -37,11 +43,11 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
     [document.filename]
   )
 
-  const handleContanctSwap = () => {
+  const handleContactSwap = () => {
     const reminderContact = form.data.sender_contact_id
-    form.setData('sender_contact_id', form.data.receiver_contact_id)
-    form.setData('receiver_contact_id', reminderContact)
-    form.setData('is_inbound', !form.data.is_inbound)
+    form.setData('sender_contact_id', form.data.receiver_contact_id as never)
+    form.setData('receiver_contact_id', reminderContact as never)
+    form.setData('is_inbound', !form.data.is_inbound as never)
   }
 
   const handleGetAiContent = () => {
@@ -135,7 +141,7 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
                 variant="outline"
                 size="icon"
                 title="Absender + Empfänger tauschen"
-                onClick={() => handleContanctSwap()}
+                onClick={() => handleContactSwap()}
               />
             </div>
             <div className="col-span-24">

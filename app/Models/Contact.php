@@ -154,6 +154,7 @@ class Contact extends Model
         'cost_center_id',
         'website',
         'dob',
+        'invoice_contact_id'
     ];
 
     public function getFullNameAttribute(): string
@@ -265,7 +266,26 @@ class Contact extends Model
         return $this->name;
     }
 
-    public function getInvoiceAddress(): ContactAddress
+
+    public function getFormatedInvoiceAddress(?int $contactId = 0): string {
+
+        $address = $this->getInvoiceAddress($contactId);
+
+        $lines[] = $this->full_name;
+
+        if ($contactId) {
+            $contact = Contact::find($contactId);
+            $lines[] = $contact->full_name;
+        }
+
+        foreach ($address->full_address as $line) {
+            $lines[] = $line;
+        }
+
+        return implode("\n", $lines);
+    }
+
+    public function getInvoiceAddress(?int $contactId = 0): ContactAddress
     {
         $category = AddressCategory::where('is_invoice_address', true)->first();
         $address = $this->addresses()->where('address_category_id', $category->id)->first();
@@ -279,6 +299,11 @@ class Contact extends Model
     public function company(): HasOne
     {
         return $this->hasOne(Contact::class, 'id', 'company_id');
+    }
+
+    public function invoice_contact(): HasOne
+    {
+        return $this->hasOne(Contact::class, 'id', 'invoice_contact_id');
     }
 
     public function title(): HasOne

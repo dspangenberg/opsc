@@ -12,7 +12,6 @@ interface InvoiceDetailsProps extends PageProps {
 }
 
 const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ invoice }) => {
-  const payable = Array.isArray(invoice?.payable) ? invoice.payable : []
   return (
     <InvoiceDetailsLayout invoice={invoice}>
       <div className="mr-8 flex-1">
