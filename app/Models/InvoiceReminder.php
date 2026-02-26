@@ -125,7 +125,11 @@ class InvoiceReminder extends Model implements Attachable
      */
     public function toMailAttachment(): Attachment
     {
-        $invoicePath = Invoice::createOrGetPdf($this->invoice, 'DUPLIKAT');
+        /*
+         * TODO: Watermark funktioniert auf Prod nicht, Rechnungsentwürfe klappen allerdings
+         * Adding stamp failed: pdfcpu: Facit-Semibold is unsupported, please refer to "pdfcpu fonts list".
+        */
+        $invoicePath = Invoice::createOrGetPdf($this->invoice);
         $file = $this->createPdf($invoicePath);
         return Attachment::fromPath($file)->as($this->filename);
     }
