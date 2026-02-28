@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Maize\Markable\Mark;
 use Maize\Markable\Markable;
 use Maize\Markable\Models\Favorite;
+use MohamedSaid\Notable\Notable;
 use MohamedSaid\Notable\Traits\HasNotables;
 use Plank\Mediable\Exceptions\MediaUrlException;
 use Plank\Mediable\Mediable;
@@ -60,8 +61,8 @@ use Plank\Mediable\MediableCollection;
  * @method static Builder<static>|Contact whereHasMark(Mark $mark, Model $user, ?string $value = null)
  *
  * @property-read string $primary_phone
- * @property-read \App\Models\CostCenter|null $cost_center
- * @property-read Collection<int, \MohamedSaid\Notable\Notable> $notables
+ * @property-read CostCenter|null $cost_center
+ * @property-read Collection<int, Notable> $notables
  * @property-read int|null $notables_count
  *
  * @method static Builder<static>|Contact search($search)
@@ -154,6 +155,7 @@ class Contact extends Model
         'cost_center_id',
         'website',
         'dob',
+        'invoice_contact_id'
     ];
 
     public function getFullNameAttribute(): string
@@ -179,7 +181,7 @@ class Contact extends Model
     public function getIsFavoriteAttribute(): bool
     {
         $user = auth()->user();
-        if (! $user) {
+        if (!$user) {
             return false;
         }
 
@@ -199,7 +201,7 @@ class Contact extends Model
 
     public function getFormatedDebtorNumberAttribute(): ?string
     {
-        if (! $this->debtor_number) {
+        if (!$this->debtor_number) {
             return null;
         }
 
@@ -208,7 +210,7 @@ class Contact extends Model
 
     public function getFormatedCreditorNumberAttribute(): ?string
     {
-        if (! $this->creditor_number) {
+        if (!$this->creditor_number) {
             return null;
         }
 
@@ -245,7 +247,7 @@ class Contact extends Model
         if (count($parts) > 1) {
             $stoppWords = ['gmbh', 'ag', 'gbr', 'eg', 'kg', 'e.k.', 'e. k.', 'ug', 'ggmbh'];
 
-            if (! in_array(strtolower($parts[1]), $stoppWords)) {
+            if (!in_array(strtolower($parts[1]), $stoppWords)) {
                 $initials .= substr($parts[1], 0, 1);
             }
 
@@ -265,11 +267,33 @@ class Contact extends Model
         return $this->name;
     }
 
-    public function getInvoiceAddress(): ContactAddress
+
+    public function getFormatedInvoiceAddress(?int $contactId = 0): string
+    {
+
+        $address = $this->getInvoiceAddress($contactId);
+
+        $lines[] = $this->full_name;
+
+        if ($contactId) {
+            $contact = Contact::find($contactId);
+            if ($contact) {
+                $lines[] = $contact->full_name;
+            }
+        }
+
+        foreach ($address->full_address as $line) {
+            $lines[] = $line;
+        }
+
+        return implode("\n", $lines);
+    }
+
+    public function getInvoiceAddress(?int $contactId = 0): ContactAddress
     {
         $category = AddressCategory::where('is_invoice_address', true)->first();
         $address = $this->addresses()->where('address_category_id', $category->id)->first();
-        if (! $address) {
+        if (!$address) {
             return $this->addresses()->first();
         }
 
@@ -279,6 +303,11 @@ class Contact extends Model
     public function company(): HasOne
     {
         return $this->hasOne(Contact::class, 'id', 'company_id');
+    }
+
+    public function invoice_contact(): HasOne
+    {
+        return $this->hasOne(Contact::class, 'id', 'invoice_contact_id');
     }
 
     public function title(): HasOne
@@ -352,9 +381,11 @@ class Contact extends Model
     public function scopeView(Builder $query, $view): Builder
     {
         return match ($view) {
-            'debtors' => $query->where('is_archived', 0)->where(fn ($q) => $q->where('is_debtor', true)->orWhere('debtor_number', '<>', 0)),
+            'debtors' => $query->where('is_archived', 0)->where(fn($q) => $q->where('is_debtor',
+                true)->orWhere('debtor_number', '<>', 0)),
             'orgs' => $query->where('is_org', true),
-            'creditors' => $query->where('is_archived', false)->where(fn ($q) => $q->where('is_creditor', true)->orWhere('creditor_number', '<>', 0)),
+            'creditors' => $query->where('is_archived', false)->where(fn($q) => $q->where('is_creditor',
+                true)->orWhere('creditor_number', '<>', 0)),
             'archived' => $query->where('is_archived', true),
             'favorites' => $query->whereHasFavorite(
                 auth()->user()
@@ -367,14 +398,14 @@ class Contact extends Model
     protected function outturnAccountId(): Attribute
     {
         return Attribute::make(
-            set: fn ($value) => $value === null || $value === '' ? 0 : $value,
+            set: fn($value) => $value === null || $value === '' ? 0 : $value,
         );
     }
 
     protected function costCenterId(): Attribute
     {
         return Attribute::make(
-            set: fn ($value) => $value === '' || $value === 0 ? null : $value,
+            set: fn($value) => $value === '' || $value === 0 ? null : $value,
         );
     }
 
@@ -409,7 +440,7 @@ class Contact extends Model
         return $bookkeepingAccount;
     }
 
-    public function setAccountTaxId($accountNumber, $taxId)
+    public function setAccountTaxId($accountNumber, $taxId): void
     {
         $bookkeepingAccount = BookkeepingAccount::where('account_number', $accountNumber)->first();
         if ($bookkeepingAccount) {
@@ -420,8 +451,12 @@ class Contact extends Model
         }
     }
 
-    public static function getAccounts(bool $is_invoice, int $id, bool $createAccountIfNotExists = true, bool $getDefaultOutturnAccount = false): array
-    {
+    public static function getAccounts(
+        bool $is_invoice,
+        int $id,
+        bool $createAccountIfNotExists = true,
+        bool $getDefaultOutturnAccount = false
+    ): array {
         $contact = static::find($id);
 
         if ($contact === null) {
@@ -436,19 +471,19 @@ class Contact extends Model
             $contact = static::find($contact->company_id);
         }
 
-        if (! $contact) {
+        if (!$contact) {
             throw new ContactNotFoundException;
         }
 
-        if ($contact->is_debtor && ! $contact->debtor_number) {
+        if ($contact->is_debtor && !$contact->debtor_number) {
             throw new ContactWithoutAccountException;
         }
 
         $accountNumber = $is_invoice ? $contact->debtor_number : $contact->creditor_number;
 
         $bookkeepingAccount = BookkeepingAccount::where('account_number', $accountNumber)->first();
-        if (! $bookkeepingAccount || ! $accountNumber) {
-            if (! $createAccountIfNotExists) {
+        if (!$bookkeepingAccount || !$accountNumber) {
+            if (!$createAccountIfNotExists) {
                 throw new ContactWithoutAccountException;
             } else {
                 if ($accountNumber) {
@@ -463,13 +498,15 @@ class Contact extends Model
 
         $outturnAccount = null;
 
-        if (! $is_invoice) {
+        if (!$is_invoice) {
             $contact->load('cost_center');
-            if ($contact->cost_center_id && ! $contact->is_primary) {
-                $outturnAccount = BookkeepingAccount::where('id', $contact->cost_center->bookkeeping_account_id)->first();
+            if ($contact->cost_center_id && !$contact->is_primary) {
+                $outturnAccount = BookkeepingAccount::where('id',
+                    $contact->cost_center->bookkeeping_account_id)->first();
             } else {
                 if ($contact->outturn_account_id) {
-                    $outturnAccount = BookkeepingAccount::where('account_number', $contact->outturn_account_id)->first();
+                    $outturnAccount = BookkeepingAccount::where('account_number',
+                        $contact->outturn_account_id)->first();
                 }
             }
         } else {
@@ -492,7 +529,7 @@ class Contact extends Model
 
     public function getSalesAttribute(): array
     {
-        if (! $this->debtor_number) {
+        if (!$this->debtor_number) {
             return ['currentYear' => 0, 'allTime' => 0];
         }
 

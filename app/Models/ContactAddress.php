@@ -7,13 +7,12 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Carbon;
 
 /**
- * @property-read \App\Models\AddressCategory|null $category
- * @property-read \App\Models\Contact|null $contact
- * @property-read \App\Models\Country|null $country
- * @property-read string $full_address
+ * @property-read AddressCategory|null $category
+ * @property-read Contact|null $contact
+ * @property-read Country|null $country
+ * @property-read array $full_address
  * @method static Builder<static>|ContactAddress newModelQuery()
  * @method static Builder<static>|ContactAddress newQuery()
  * @method static Builder<static>|ContactAddress query()
@@ -65,10 +64,9 @@ class ContactAddress extends Model
     }
 
 
-    public function getFullAddressAttribute(): string
+    public function getFullAddressAttribute(): array
     {
         $lines = [];
-        $lines[] = $this->contact->full_name;
         $lines[] = $this->address;
 
         if ($this->country_id === 1) {
@@ -80,7 +78,7 @@ class ContactAddress extends Model
             }
         }
 
-        return implode("\n", $lines);
+        return $lines;
     }
 
     protected function serializeDate(DateTimeInterface $date): string

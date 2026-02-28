@@ -3,6 +3,7 @@ import { useFormContext } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import { OfferLinesEditorLineContainer } from './OfferLinesEditorLineContainer'
+import type { OfferFormData } from './OfferLinesEditor'
 
 interface OfferLinesEditorProps {
   offerLine: App.Data.OfferLineData
@@ -15,7 +16,7 @@ export const OfferLinesEditorCaptionLine: React.FC<OfferLinesEditorProps> = ({
   offer,
   offerLine
 }) => {
-  const form = useFormContext<App.Data.OfferData>()
+  const form = useFormContext<OfferFormData>()
 
   if (!form) {
     throw new Error('InvoiceLinesEditorCaptionLine must be used within a Form context')

@@ -11,13 +11,14 @@ interface Props {
 
 export const ContactDetailsAddresses: FC<Props> = ({ addresses }: Props) => {
   const firstAddress = addresses.length ? addresses[0] : null
+  const fullAddress = firstAddress?.full_address.join('\n') || ''
 
   const handleEditButtonClick = () => {
     console.log('Edit address clicked - modal functionality temporarily disabled')
   }
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(firstAddress?.full_address as string)
+    navigator.clipboard.writeText(fullAddress)
   }
 
   return (
@@ -30,7 +31,7 @@ export const ContactDetailsAddresses: FC<Props> = ({ addresses }: Props) => {
         >
           <div className="group/address flex items-center gap-0.5">
             <div className="flex-1 text-wrap">
-              <Markdown remarkPlugins={[remarkBreaks]}>{firstAddress.full_address}</Markdown>
+              <Markdown remarkPlugins={[remarkBreaks]}>{fullAddress}</Markdown>
             </div>
             <div className="flex-none space-x-1 self-start">
               <Button

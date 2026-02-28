@@ -67,8 +67,6 @@ class CreateFirstReminder extends Command
 
             $mailFrom = Config::get('mail.from.address');
 
-            ray($mailFrom);
-
             $this->info("Processing tenant: $tenant->id");
 
             $invoices = Invoice::query()

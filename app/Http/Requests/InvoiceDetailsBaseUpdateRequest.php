@@ -33,6 +33,7 @@ class InvoiceDetailsBaseUpdateRequest extends FormRequest
             'recurring_interval_units' => ['required_with:is_recurring', 'integer'],
             'type_id' => ['required', 'exists:invoice_types,id'],
             'contact_id' => ['required', 'exists:contacts,id'],
+            'invoice_contact_id' => ['nullable', 'exists_if_not_empty:contacts,id'],
             'recurring_begin_on' => ['nullable', 'date', 'date_format:d.m.Y'],
             'recurring_end_on' => ['nullable', 'date', 'after:recurring_begin_on', 'date_format:d.m.Y'],
             'payment_deadline_id' => ['required', 'exists:payment_deadlines,id'],

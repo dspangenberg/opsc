@@ -22,7 +22,13 @@ interface Props extends PageProps {
 
 type ProjectFormData = Omit<
   App.Data.ProjectData,
-  'project_category_id' | 'owner_contact_id' | 'manager_contact_id'
+  | 'project_category_id'
+  | 'owner_contact_id'
+  | 'manager_contact_id'
+  | 'owner'
+  | 'user'
+  | 'manager'
+  | 'category'
 > & {
   project_category_id: number | null
   owner_contact_id: number | null
@@ -52,9 +58,9 @@ const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
 
   const handleAvatarChange = (avatar: File | undefined) => {
     if (avatar) {
-      form.setData('avatar', avatar)
+      form.setData('avatar', avatar as File)
     } else {
-      form.setData('remove_avatar', true)
+      form.setData('remove_avatar', true as boolean)
     }
   }
 

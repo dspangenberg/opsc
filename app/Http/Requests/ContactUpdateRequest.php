@@ -68,6 +68,7 @@ class ContactUpdateRequest extends FormRequest
             'phones.*.phone_category_id' => ['required', 'integer', 'exists:phone_categories,id'],
             'phones.*.pos' => ['nullable', 'integer'],
             'remove_avatar' => ['nullable', 'boolean'],
+            'invoice_contact_id' => ['nullable', 'integer', 'exists_if_not_empty:contacts,id'],
         ];
     }
 

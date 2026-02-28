@@ -52,8 +52,6 @@ export const FilterForm: React.FC<Props> = ({
     return Object.keys(filters?.filters || {}).length
   }, [filters?.filters])
 
-  console.log(activeFiltersCount, filters)
-
   const [localIssuedBetween, setLocalIssuedBetween] = useState<any>(currentFilters.issuedBetween)
 
   useEffect(() => {

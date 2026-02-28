@@ -58,6 +58,7 @@ class ContactData extends Data
         public readonly ?int $cost_center_id,
         public readonly ?CostCenterData $cost_center,
         public ?string $avatar_url,
+        public readonly ?int $invoice_contact_id,
 
         /** @var BookkeepingAccountData */
         public readonly ?object $outturn_account,
@@ -69,6 +70,8 @@ class ContactData extends Data
 
         /** @var ContactData[] */
         public readonly ?array $contacts,
+
+        public readonly ?ContactData $invoice_contact,
 
         /** @var TitleData */
         public readonly ?object $title,

@@ -23,10 +23,12 @@ class InvoiceStoreRequest extends FormRequest
             ],
             'type_id' => ['required', 'exists:invoice_types,id'],
             'contact_id' => ['required', 'exists:contacts,id'],
+            'invoice_contact_id' => ['nullable', 'exists_if_not_empty:contacts,id'],
             'project_id' => ['nullable'],
             'tax_id' => ['required', 'exists:taxes,id'],
             'is_recurring' => ['required', 'boolean'],
             'is_draft' => ['nullable', 'boolean'],
+            'dunning_block' => ['nullable', 'boolean'],
         ];
     }
 

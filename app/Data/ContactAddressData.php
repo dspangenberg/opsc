@@ -20,7 +20,7 @@ class ContactAddressData extends Data
         public readonly string $zip,
         public readonly string $city,
         public readonly int $country_id,
-        public readonly string $full_address,
+        public readonly array $full_address,
         public int $address_category_id,
         /** @var AddressCategoryData */
         public readonly ?object $category,

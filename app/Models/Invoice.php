@@ -113,6 +113,7 @@ class Invoice extends Model implements MediableInterface
         'payment_deadline_id' => 0,
         'service_provision' => '',
         'is_loss_of_receivables' => false,
+        'is_external' => false
     ];
 
     protected $appends = [

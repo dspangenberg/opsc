@@ -34,6 +34,7 @@ interface Props extends PageProps {
   bookkeeping_accounts: App.Data.BookkeepingAccountData[]
   cost_centers: App.Data.CostCenterData[]
   countries: App.Data.CountryData[]
+  contact_persons: App.Data.ContactData[]
 }
 
 type FormData = Omit<
@@ -47,6 +48,7 @@ type FormData = Omit<
   | 'tax'
   | 'notables'
   | 'bookkeeping_account'
+  | 'invoice_contact'
   | 'outturn_account'
   | 'cost_center'
   | 'primary_phone'
@@ -72,6 +74,7 @@ const ContactEdit: React.FC<Props> = ({
   countries,
   bookkeeping_accounts,
   address_categories,
+  contact_persons,
   taxes
 }) => {
   const initialData: FormData = {
@@ -116,6 +119,7 @@ const ContactEdit: React.FC<Props> = ({
     dob: contact.dob,
     note: contact.note,
     has_dunning_block: contact.has_dunning_block,
+    invoice_contact_id: contact.invoice_contact_id,
     remove_avatar: false
   }
 
@@ -145,7 +149,7 @@ const ContactEdit: React.FC<Props> = ({
       country_id: defaultCountry,
       address_category_id: defaultCategoryId,
       contact_id: contact.id as number,
-      full_address: '',
+      full_address: [],
       category: address_categories.find(cat => cat.id === defaultCategoryId) || null,
       country: countries.find(country => country.id === defaultCountry) || null
     }
@@ -205,7 +209,8 @@ const ContactEdit: React.FC<Props> = ({
   form.transform((data: any) => ({
     ...data,
     outturn_account_id: !data.outturn_account_id ? null : data.outturn_account_id,
-    cost_center_id: !data.cost_center_id ? null : data.cost_center_id
+    cost_center_id: !data.cost_center_id ? null : data.cost_center_id,
+    invoice_contact_id: !data.invoice_contact_id ? null : data.invoice_contact_id
   }))
 
   const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Zurück'
@@ -251,7 +256,7 @@ const ContactEdit: React.FC<Props> = ({
       breadcrumbs={breadcrumbs}
     >
       <FormCard
-        className="mx-auto max-w-3xl"
+        className="mx-auto max-w-4xl"
         innerClassName="bg-background"
         footer={
           <div className="flex flex-none items-center justify-end gap-2 px-4 py-2">
@@ -260,7 +265,7 @@ const ContactEdit: React.FC<Props> = ({
           </div>
         }
       >
-        <Form form={form} className="max-w-4xl">
+        <Form form={form}>
           <FormGrid>
             <div className="col-span-2 inline-flex items-center justify-center">
               <div>
@@ -408,6 +413,15 @@ const ContactEdit: React.FC<Props> = ({
                     <Checkbox {...form.registerCheckbox('has_dunning_block')} className="pt-1.5">
                       Mahnsperre
                     </Checkbox>
+                  </div>
+                  <div className="col-span-9">
+                    <FormSelect<App.Data.ContactData>
+                      {...form.register('invoice_contact_id')}
+                      isOptional
+                      label="Rechnungskontakt"
+                      items={contact_persons}
+                      itemName="reverse_full_name"
+                    />
                   </div>
                 </FormGrid>
               )}

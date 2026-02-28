@@ -38,6 +38,21 @@ interface InvoiceLinesEditorProps {
   invoice: App.Data.InvoiceData
 }
 
+type InvoiceLinesFormData = Omit<
+  App.Data.InvoiceData,
+  | 'parent_invoice'
+  | 'contact'
+  | 'invoice_contact'
+  | 'project'
+  | 'offer'
+  | 'notables'
+  | 'type'
+  | 'payment_deadline'
+  | 'tax'
+  | 'payable'
+  | 'booking'
+>
+
 export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => {
   const { setEditMode, lines, addLine, setLines } = useInvoiceTable()
 
@@ -56,7 +71,7 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
     })
   }
 
-  const form = useForm(
+  const form = useForm<InvoiceLinesFormData>(
     'app.invoice.lines-update',
     'put',
     route('app.invoice.lines-update', {
@@ -64,8 +79,7 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
     }),
     {
       ...invoice,
-      lines: sanitizeLines(lines) as any,
-      parent_invoice: null
+      lines: sanitizeLines(lines) as App.Data.InvoiceLineData[]
     }
   )
 
@@ -78,7 +92,7 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
       // If line exists in form with user input, keep form values; otherwise use context values
       return existingFormLine || line
     })
-    form.setData('lines', sanitizeLines(mergedLines) as any)
+    form.setData('lines', sanitizeLines(mergedLines) as never)
   }, [lines])
 
   const handleDragEnd = (event: DragEndEvent) => {

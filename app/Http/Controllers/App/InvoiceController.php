@@ -138,7 +138,7 @@ class InvoiceController extends Controller
         $paymentDeadlines = PaymentDeadline::query()->orderBy('is_default', 'DESC')->orderBy('name')->get();
         $taxes = Tax::query()->with('rates')->orderBy('is_default', 'DESC')->orderBy('name')->get();
         $projects = Project::query()->where('is_archived', false)->orderBy('name')->get();
-        $contacts = Contact::query()->whereNotNull('debtor_number')->orderBy('name')->orderBy('first_name')->get();
+        $contacts = Contact::query()->with('contacts')->whereNotNull('debtor_number')->orderBy('name')->orderBy('first_name')->get();
 
         // Create new invoice with default values from loaded collections
         $invoice = new Invoice;
@@ -153,8 +153,9 @@ class InvoiceController extends Controller
         $invoice->is_recurring = false;
         $invoice->recurring_interval_days = 0;
         $invoice->invoice_number = null;
+        $invoice->is_external = false;
 
-        return Inertia::modal('App/Invoice/InvoiceCreate')
+        return Inertia::render('App/Invoice/InvoiceCreate')
             ->with([
                 'invoice' => InvoiceData::from($invoice),
                 'invoice_types' => InvoiceTypeData::collect($invoiceTypes),
@@ -162,7 +163,7 @@ class InvoiceController extends Controller
                 'taxes' => TaxData::collect($taxes),
                 'payment_deadlines' => PaymentDeadlineData::collect($paymentDeadlines),
                 'contacts' => ContactData::collect($contacts),
-            ])->baseRoute('app.invoice.index');
+            ]);
     }
 
     public function store(InvoiceStoreRequest $request): RedirectResponse
@@ -173,11 +174,12 @@ class InvoiceController extends Controller
         $invoice = Invoice::create($validatedData);
         $invoice->load('contact');
 
-        $invoice->address = $invoice->contact->getInvoiceAddress()->full_address;
+        $invoice->dunning_block = $invoice->contact->has_dunning_block;
+        $invoice->address = $invoice->contact->getFormatedInvoiceAddress($invoice->invoice_contact_id);
         $invoice->vat_id = $invoice->contact->vat_id;
         $invoice->save();
 
-        $invoice->addHistory('hat die Rechnung versendet.', 'created', auth()->user());
+        $invoice->addHistory('hat die Rechnung erstellt.', 'created', auth()->user());
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
@@ -229,7 +231,7 @@ class InvoiceController extends Controller
     {
         $invoice
             ->load('invoice_contact')
-            ->load('contact')
+            ->load('contact.contacts')
             ->load('project')
             ->load('payment_deadline')
             ->load('type')
@@ -247,7 +249,7 @@ class InvoiceController extends Controller
         $projects = Project::where('is_archived', false)->orderBy('name')->get();
         $taxes = Tax::with('rates')->orderBy('name')->get();
         $paymentDeadlines = PaymentDeadline::orderBy('name')->get();
-        $contacts = Contact::whereNotNull('debtor_number')->orderBy('name')->orderBy('first_name')->get();
+        $contacts = Contact::with('contacts')->whereNotNull('debtor_number')->orderBy('name')->orderBy('first_name')->get();
 
         return Inertia::render('App/Invoice/InvoiceDetailsEditBaseData')
             ->with([
@@ -263,15 +265,19 @@ class InvoiceController extends Controller
     public function update(InvoiceDetailsBaseUpdateRequest $request, Invoice $invoice): RedirectResponse
     {
         $oldContactId = $invoice->contact_id;
+        $oldInvoiceContactId = $invoice->invoice_contact_id;
+
         if ($request->validated('project_id') === -1) {
             $invoice->project_id = 0;
             $invoice->save();
         }
 
         $invoice->update($request->validated());
-        if ($request->validated('contact_id') !== $oldContactId) {
+
+        if ($request->validated('contact_id') !== $oldContactId ||
+            $request->validated('invoice_contact_id') !== $oldInvoiceContactId) {
             $invoice->load('contact');
-            $invoice->address = $invoice->contact->getInvoiceAddress()->full_address;
+            $invoice->address = $invoice->contact->getFormatedInvoiceAddress($invoice->invoice_contact_id);
             $invoice->vat_id = $invoice->contact->vat_id;
             $invoice->save();
         }
