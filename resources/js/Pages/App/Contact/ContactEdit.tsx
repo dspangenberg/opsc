@@ -209,7 +209,8 @@ const ContactEdit: React.FC<Props> = ({
   form.transform((data: any) => ({
     ...data,
     outturn_account_id: !data.outturn_account_id ? null : data.outturn_account_id,
-    cost_center_id: !data.cost_center_id ? null : data.cost_center_id
+    cost_center_id: !data.cost_center_id ? null : data.cost_center_id,
+    invoice_contact_id: !data.invoice_contact_id ? null : data.invoice_contact_id
   }))
 
   const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Zurück'

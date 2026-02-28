@@ -91,16 +91,17 @@ export const InvoiceForm: React.FC<Props> = ({
     contacts.find(contact => contact.id === form.data.contact_id)?.contacts ?? []
 
   useEffect(() => {
-    const contact = contacts.find(contact => contact.id === form.data.contact_id)
-    if (contact) {
-      if (contact.invoice_contact_id) {
-        form.setData('invoice_contact_id', contact.invoice_contact_id as number)
-      } else {
-        form.setData('invoice_contact_id', 0 as number)
-      }
-      form.setData('dunning_block', contact.has_dunning_block as boolean)
+    const selectedContact = contacts.find(contact => contact.id === form.data.contact_id)
+
+    if (!selectedContact) {
+      form.setData('invoice_contact_id', 0 as number)
+      form.setData('dunning_block', false)
+      return
     }
-  }, [form.data.contact_id])
+
+    form.setData('invoice_contact_id', selectedContact.invoice_contact_id ?? (0 as number))
+    form.setData('dunning_block', Boolean(selectedContact.has_dunning_block))
+  }, [form.data.contact_id, contacts])
 
   return (
     <FormCard
@@ -148,7 +149,7 @@ export const InvoiceForm: React.FC<Props> = ({
           <div className="col-span-12">
             <FormComboBox<App.Data.ContactData>
               label="Rechnungskontakt"
-              isDisabled={!invoiceContacts.length}
+              isDisabled={!invoice.is_draft || !invoiceContacts.length}
               itemName="reverse_full_name"
               isOptional
               {...form.register('invoice_contact_id')}
