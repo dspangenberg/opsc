@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read AddressCategory|null $category
  * @property-read Contact|null $contact
  * @property-read Country|null $country
- * @property-read string $full_address
+ * @property-read array $full_address
  * @method static Builder<static>|ContactAddress newModelQuery()
  * @method static Builder<static>|ContactAddress newQuery()
  * @method static Builder<static>|ContactAddress query()
@@ -67,15 +67,6 @@ class ContactAddress extends Model
     public function getFullAddressAttribute(): array
     {
         $lines = [];
-
-        /*
-        $lines[] = $this->contact->full_name;
-
-        if ($this->contact->invoice_contact()) {
-            $lines[] = $this->contact->invoice_contact->full_name;
-        }
-        */
-
         $lines[] = $this->address;
 
         if ($this->country_id === 1) {

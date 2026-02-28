@@ -45,9 +45,9 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
 
   const handleContactSwap = () => {
     const reminderContact = form.data.sender_contact_id
-    form.setData('sender_contact_id', form.data.receiver_contact_id as never)
-    form.setData('receiver_contact_id', reminderContact as never)
-    form.setData('is_inbound', !form.data.is_inbound as never)
+    form.setData('sender_contact_id', form.data.receiver_contact_id as number)
+    form.setData('receiver_contact_id', reminderContact as number)
+    form.setData('is_inbound', !form.data.is_inbound as boolean)
   }
 
   const handleGetAiContent = () => {

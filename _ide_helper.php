@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 12.52.0.
+ * Generated for Laravel 12.53.0.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -3368,7 +3368,7 @@ namespace Illuminate\Support\Facades {
          * Register a handler for custom directives.
          *
          * @param string $name
-         * @param callable $handler
+         * @param ($bind is true ? \Closure : callable) $handler
          * @param bool $bind
          * @return void
          * @throws \InvalidArgumentException
@@ -5023,6 +5023,19 @@ namespace Illuminate\Support\Facades {
         {
             /** @var \Illuminate\Cache\Repository $instance */
             return $instance->withoutOverlapping($key, $callback, $lockFor, $waitFor, $owner);
+        }
+
+        /**
+         * Funnel a callback for a maximum number of simultaneous executions.
+         *
+         * @param \UnitEnum|string $name
+         * @return \Illuminate\Cache\Limiters\ConcurrencyLimiterBuilder
+         * @static
+         */
+        public static function funnel($name)
+        {
+            /** @var \Illuminate\Cache\Repository $instance */
+            return $instance->funnel($name);
         }
 
         /**
@@ -8759,7 +8772,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the database transaction manager resolver implementation.
          *
-         * @param (callable(): \Illuminate\Database\DatabaseTransactionsManager|null) $resolver
+         * @param (callable(): (\Illuminate\Database\DatabaseTransactionsManager|null)) $resolver
          * @return \Illuminate\Events\Dispatcher
          * @static
          */
@@ -14678,6 +14691,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Gets the Session.
          *
+         * @throws \Symfony\Component\HttpFoundation\Exception\SessionNotFoundException
          * @throws SessionNotFoundException When session is not set properly
          * @static
          */
@@ -27765,14 +27779,14 @@ namespace Fruitcake\LaravelDebugbar\Facades {
         }
 
         /**
-         * Collects the data from the collectors
+         * Collects meta data about the current request
          *
          * @static
          */
-        public static function collect()
+        public static function collectMetaData()
         {
             /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
-            return $instance->collect();
+            return $instance->collectMetaData();
         }
 
         /**
@@ -27998,15 +28012,15 @@ namespace Fruitcake\LaravelDebugbar\Facades {
         }
 
         /**
-         * Collects meta data about the current request
+         * Collects the data from the collectors
          *
          * @static
          */
-        public static function collectMetaData()
+        public static function collect()
         {
             //Method inherited from \DebugBar\DebugBar 
             /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
-            return $instance->collectMetaData();
+            return $instance->collect();
         }
 
         /**
@@ -33560,6 +33574,35 @@ namespace  {
         {
             /** @var \Illuminate\Database\Query\Builder $instance */
             return $instance->orWhereNotLike($column, $value, $caseSensitive);
+        }
+
+        /**
+         * Add a "where null safe equals" clause to the query.
+         *
+         * @param \Illuminate\Contracts\Database\Query\Expression|string $column
+         * @param mixed $value
+         * @param string $boolean
+         * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @static
+         */
+        public static function whereNullSafeEquals($column, $value, $boolean = 'and')
+        {
+            /** @var \Illuminate\Database\Query\Builder $instance */
+            return $instance->whereNullSafeEquals($column, $value, $boolean);
+        }
+
+        /**
+         * Add an "or where null safe equals" clause to the query.
+         *
+         * @param \Illuminate\Contracts\Database\Query\Expression|string $column
+         * @param mixed $value
+         * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @static
+         */
+        public static function orWhereNullSafeEquals($column, $value)
+        {
+            /** @var \Illuminate\Database\Query\Builder $instance */
+            return $instance->orWhereNullSafeEquals($column, $value);
         }
 
         /**

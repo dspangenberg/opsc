@@ -79,7 +79,7 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
     }),
     {
       ...invoice,
-      lines: sanitizeLines(lines) as any
+      lines: sanitizeLines(lines) as App.Data.InvoiceLineData[]
     }
   )
 

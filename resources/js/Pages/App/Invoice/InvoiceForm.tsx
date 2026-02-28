@@ -94,11 +94,11 @@ export const InvoiceForm: React.FC<Props> = ({
     const contact = contacts.find(contact => contact.id === form.data.contact_id)
     if (contact) {
       if (contact.invoice_contact_id) {
-        form.setData('invoice_contact_id', contact.invoice_contact_id as never)
+        form.setData('invoice_contact_id', contact.invoice_contact_id as number)
       } else {
-        form.setData('invoice_contact_id', 0 as never)
+        form.setData('invoice_contact_id', 0 as number)
       }
-      form.setData('dunning_block', contact.has_dunning_block as never)
+      form.setData('dunning_block', contact.has_dunning_block as boolean)
     }
   }, [form.data.contact_id])
 

@@ -149,7 +149,7 @@ const ContactEdit: React.FC<Props> = ({
       country_id: defaultCountry,
       address_category_id: defaultCategoryId,
       contact_id: contact.id as number,
-      full_address: '',
+      full_address: [],
       category: address_categories.find(cat => cat.id === defaultCategoryId) || null,
       country: countries.find(country => country.id === defaultCountry) || null
     }

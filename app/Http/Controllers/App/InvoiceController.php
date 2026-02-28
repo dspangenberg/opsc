@@ -265,6 +265,8 @@ class InvoiceController extends Controller
     public function update(InvoiceDetailsBaseUpdateRequest $request, Invoice $invoice): RedirectResponse
     {
         $oldContactId = $invoice->contact_id;
+        $oldInvoiceContactId = $invoice->invoice_contact_id;
+
         if ($request->validated('project_id') === -1) {
             $invoice->project_id = 0;
             $invoice->save();
@@ -272,9 +274,8 @@ class InvoiceController extends Controller
 
         $invoice->update($request->validated());
 
-        ray($invoice->toArray());
-
-        if ($request->validated('contact_id') !== $oldContactId) {
+        if ($request->validated('contact_id') !== $oldContactId ||
+            $request->validated('invoice_contact_id') !== $oldInvoiceContactId) {
             $invoice->load('contact');
             $invoice->address = $invoice->contact->getFormatedInvoiceAddress($invoice->invoice_contact_id);
             $invoice->vat_id = $invoice->contact->vat_id;
