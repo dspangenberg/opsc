@@ -10,6 +10,7 @@ use App\Models\Tenant;
 use App\Settings\MailSettings;
 use Exception;
 use Illuminate\Mail\Mailer;
+use Illuminate\Mail\SentMessage;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -71,7 +72,7 @@ class SendEmailAsTenantService
         return false;
     }
 
-    public function sendEmail(string $email, string $name, string $city, array $data): bool
+    public function sendEmail(string $email, string $name, string $city, array $data): SentMessage | bool
     {
 
         $this->data = [
