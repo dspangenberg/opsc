@@ -32,9 +32,11 @@ const handleDelete = async (row: App.Data.UserData) => {
   }
 }
 const handleSetDefault = async (row: App.Data.EmailAccountData) => {
+  if (!row.id) return
   router.put(route('admin.email-account.set-default', { emailAccount: row.id }))
 }
 const handleSendTestmail = async (row: App.Data.EmailAccountData) => {
+  if (!row.id) return
   router.put(route('admin.email-account.send-test-mail', { emailAccount: row.id }))
 }
 

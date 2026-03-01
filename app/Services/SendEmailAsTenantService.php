@@ -33,7 +33,7 @@ class SendEmailAsTenantService
         $this->settings = app(MailSettings::class);
 
         if ($emailAccount === null) {
-            $emailAccount = EMailAccount::where('is_default', true)->first();
+            $emailAccount = EmailAccount::where('is_default', true)->first();
         }
 
         if (!$this->settings->smtp_host || !$this->settings->smtp_port || !$this->settings->smtp_encryption) {
@@ -63,8 +63,6 @@ class SendEmailAsTenantService
 
         $this->mailer->alwaysFrom($emailAccount->email, $emailAccount->name);
 
-        $this->signature = Blade::render($this->settings->signature,
-            ['email_account' => $this->emailAccount, 'city' => $this->data->city ?? ''], true);
         $this->signature = Blade::render($this->settings->signature, ['email_account' => $this->emailAccount, 'city' => $this->data['city'] ?? ''], true);
     }
 
@@ -84,6 +82,7 @@ class SendEmailAsTenantService
 
         try {
             $this->body = Blade::render($this->template->body, $this->data, true);
+            $this->subject = Blade::render($this->template->subject, $this->data, true);
             return $this->mailer->to($email ?: $this->settings->cc)->cc($this->settings->cc)->send(new TenantEmail(
                 $this->subject, $this->body, $this->signature
             ));
