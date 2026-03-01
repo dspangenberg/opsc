@@ -53,4 +53,5 @@ Route::middleware([
     Route::put('email-accounts/{emailAccount}/edit', [EmailAccountController::class, 'update'])->name('admin.email-account.update')->middleware([HandlePrecognitiveRequests::class]);
     Route::post('email-accounts', [EmailAccountController::class, 'store'])->name('admin.email-account.store')->middleware([HandlePrecognitiveRequests::class]);
     Route::put('email-accounts/{emailAccount}/send-test-mail', [EmailAccountController::class, 'sendTestMail'])->name('admin.email-account.send-test-mail');
+    Route::put('email-accounts/{emailAccount}/set-default', [EmailAccountController::class, 'setDefault'])->name('admin.email-account.set-default');
 });

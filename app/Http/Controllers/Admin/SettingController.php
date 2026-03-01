@@ -11,7 +11,6 @@ use App\Settings\MailSettings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class SettingController extends Controller

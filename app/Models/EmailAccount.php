@@ -10,6 +10,7 @@ class EmailAccount extends Model
         'name',
         'email',
         'smtp_username',
+        'smtp_password',
         'signature',
     ];
 
