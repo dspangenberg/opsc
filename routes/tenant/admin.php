@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Admin\EmailAccountController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
@@ -46,4 +47,10 @@ Route::middleware([
     Route::get('settings', [SettingController::class, 'index'])->name('admin.setting.index');
     Route::put('settings', [SettingController::class, 'update'])->name('admin.setting.update');
 
+    Route::get('email-accounts', [EmailAccountController::class, 'index'])->name('admin.email-account.index');
+    Route::get('email-accounts/create', [EmailAccountController::class, 'create'])->name('admin.email-account.create');
+    Route::get('email-accounts/{emailAccount}/edit', [EmailAccountController::class, 'edit'])->name('admin.email-account.edit');
+    Route::put('email-accounts/{emailAccount}/edit', [EmailAccountController::class, 'update'])->name('admin.email-account.update')->middleware([HandlePrecognitiveRequests::class]);
+    Route::post('email-accounts', [EmailAccountController::class, 'store'])->name('admin.email-account.store')->middleware([HandlePrecognitiveRequests::class]);
+    Route::put('email-accounts/{emailAccount}/send-test-mail', [EmailAccountController::class, 'sendTestMail'])->name('admin.email-account.send-test-mail');
 });

@@ -314,6 +314,14 @@ name: string;
 color: string | null;
 icon: string | null;
 };
+export type EmailAccountData = {
+id: number | null;
+is_default: boolean;
+name: string;
+email: string;
+smtp_username: string;
+signature: string;
+};
 export type EmailCategoryData = {
 id: number | null;
 name: string;
