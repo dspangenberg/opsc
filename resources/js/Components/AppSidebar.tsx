@@ -342,6 +342,11 @@ const buildNavData = (isAdmin: boolean) => ({
                 title: 'Einstellungen',
                 url: route('admin.setting.index', {}, false),
                 activePath: '/admin/settings'
+              },
+              {
+                title: 'E-Mail-Konten',
+                url: route('admin.email-account.index', {}, false),
+                activePath: '/admin/email-accounts'
               }
             ]
           }

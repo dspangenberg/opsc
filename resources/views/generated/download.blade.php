@@ -100,7 +100,7 @@
                   <p style="margin: 0 0 24px; font-size: 1.0rem; line-height: 24px; color: #475569;">
                     Dein Download ist bereit. Klicke auf den Button, um den Download zu starten.
                   </p>
-                  <p style="display: flex; width: 100%; align-items: center; justify-content: center; text-align: center;"></p>
+                  <p style="margin: 0 0 24px; font-size: 1.0rem; line-height: 24px; color: #475569; display: flex; width: 100%; align-items: center; justify-content: center; text-align: center;"></p>
                   <div style="text-align: center;">
                     <a href="{{ $verificationUrl }}" style="display: inline-block; text-decoration: none; padding: 16px 24px; font-size: 16px; line-height: 1; border-radius: 4px; color: #fffffe; background-color: #3b82f6; font-weight: 600;" class="hover-bg-blue-800">
                       <!--[if mso]><i style="mso-font-width: 150%; mso-text-raise: 31px;" hidden>&emsp;</i><![endif]-->
@@ -108,7 +108,7 @@
                       <!--[if mso]><i hidden style="mso-font-width: 150%;">&emsp;&#8203;</i><![endif]-->
                     </a>
                   </div>
-                  <p></p>
+                  <p style="margin: 0 0 24px; font-size: 1.0rem; line-height: 24px; color: #475569;"></p>
                   <div role="separator" style="line-height: 24px">&zwj;</div>
                   <p style="margin: 0; font-size: 1.0rem; line-height: 24px; color: #475569;">
                     Dein <span style="font-weight: 600;">opsc.cloud</span>-Team

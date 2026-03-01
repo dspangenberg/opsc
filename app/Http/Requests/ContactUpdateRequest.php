@@ -31,8 +31,8 @@ class ContactUpdateRequest extends FormRequest
             'outturn_account_id' => ['nullable', 'exists_if_not_empty:bookkeeping_accounts,account_number'],
             'cost_center_id' => ['nullable', 'exists_if_not_empty:cost_centers,id'],
             'is_primary' => ['nullable', 'boolean'],
-            'is_debtor' => ['required', 'boolean'],
-            'is_creditor' => ['required', 'boolean'],
+            'is_debtor' => ['nullable', 'boolean'],
+            'is_creditor' => ['nullable', 'boolean'],
             'dob' => ['nullable', 'date'],
             'note' => ['nullable', 'string'],
             'avatar' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:51200'],
@@ -41,7 +41,7 @@ class ContactUpdateRequest extends FormRequest
                 'required_if:is_debtor,true',
                 'required_if:is_creditor,true',
                 'nullable',
-                'exists:taxes,id'
+                'exists_if_not_empty:taxes,id'
             ],
 
             'payment_deadline_id' => ['nullable', 'exists_if_not_empty:payment_deadlines,id'],
