@@ -211,7 +211,9 @@ class InvoiceController extends Controller
             ->load('contact')
             ->load('project')
             ->load('payment_deadline')
-            ->load('parent_invoice')
+            ->load(['parent_invoice' => function ($query) {
+                $query->select('id', 'issued_on', 'invoice_number');
+            }])
             ->load('offer')
             ->load('type')
             ->load([
