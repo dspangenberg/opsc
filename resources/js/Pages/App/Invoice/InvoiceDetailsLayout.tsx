@@ -267,7 +267,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
             ellipsis
             isDisabled={invoice.is_draft}
             separator
-            href={route('app.invoice.send-by-mail', { invoice: invoice.id })}
+            href={route('app.invoice.create-send-by-mail', { invoice: invoice.id })}
           />
 
           <MenuItem
