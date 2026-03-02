@@ -21,7 +21,7 @@ export const InvoiceSendByMail: React.FC<Props> = ({ invoice, mail }) => {
   const form = useForm<App.Data.SendEmailData>(
     'invoice-form',
     'post',
-    route('app.invoice.send-by-mail', { invoice: invoice.id }),
+    route('app.invoice.store-send-by-mail', { invoice: invoice.id }),
     mail
   )
 
