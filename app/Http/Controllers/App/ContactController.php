@@ -154,7 +154,7 @@ class ContactController extends Controller
         return redirect()->back();
     }
 
-    public function archiveToggle(Contact $contact)
+    public function archiveToggle(Contact $contact): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $contact->is_archived = !$contact->is_archived;
         $contact->save();
