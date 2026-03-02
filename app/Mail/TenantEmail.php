@@ -14,8 +14,8 @@ class TenantEmail extends Mailable
     use Queueable, SerializesModels;
 
     /**
-    +     * `@param` array{path:string,name:string}|array{} $attachment
-    +     */
+     * `@param` array{path:string,name:string}|array{} $attachment
+     */
     public function __construct(
         public $subject,
         public string $body,
@@ -31,14 +31,14 @@ class TenantEmail extends Mailable
 
     public function attachments(): array
     {
-        if ($this->attachment) {
-            return [
-                Attachment::fromPath($this->attachment['path'])
-                    ->as($this->attachment['name'])
-            ];
-        } else {
+        if (!isset($this->attachment['path'], $this->attachment['name'])) {
             return [];
         }
+
+        return [
+            Attachment::fromPath($this->attachment['path'])
+                ->as($this->attachment['name']),
+        ];
     }
 
     public function envelope(): Envelope

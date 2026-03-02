@@ -797,7 +797,7 @@ class InvoiceController extends Controller
         $data = [
             'invoice' => $invoice,
             'name' => $recipient->full_name,
-            'email' => $recipient->primary_mail || $invoice->contact->primary_mail,
+            'email' => $recipient->primary_mail ?: $invoice->contact->primary_mail,
             'city' => $city,
         ];
 
