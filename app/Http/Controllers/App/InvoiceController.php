@@ -786,20 +786,27 @@ class InvoiceController extends Controller
         if ($invoice->invoice_contact_id) {
             $invoice->load('invoice_contact.mails');
             $recipient = $invoice->invoice_contact;
+            $email = $invoice->invoice_contact->primary_mail;
         } else {
             $recipient = $invoice->contact;
+            $email = $invoice->contact->primary_mail;
         }
 
         $city = $invoice->contact->getInvoiceAddress()?->city;
 
         if ($recipient->is_org) {
-            $recipient = $recipient->contacts()->first();
+            if ($recipient->primary_contact_id) {
+                $recipient = Contact::with('mails')->find($recipient->primary_contact_id);
+                if ($recipient->primary_mail) {
+                    $email = $recipient->primary_mail;
+                }
+            }
         }
 
         $data = [
             'invoice' => $invoice,
             'name' => $recipient->full_name,
-            'email' => $recipient->primary_mail ?: $invoice->contact->primary_mail,
+            'email' => $email,
             'city' => $city,
         ];
 
@@ -821,7 +828,7 @@ class InvoiceController extends Controller
                 'invoice' => InvoiceData::from($invoice),
                 'mail' => SendEmailData::from([
                     'name' => $recipient->full_name,
-                    'email' => $recipient->primary_mail,
+                    'email' => $email,
                     'city' => $city,
                     'body' => $template['body'],
                     'subject' => $template['subject'],

@@ -41,7 +41,15 @@ class SendEmailAsTenantService
             $emailAccount = EmailAccount::where('is_default', true)->first();
         }
 
-        if (!$this->settings->smtp_host || !$this->settings->smtp_port || !$this->settings->smtp_encryption) {
+        $isLocal = Config('app.env') === 'local';
+
+        if ($isLocal) {
+            $this->settings->smtp_host = '127.0.0.1';
+            $this->settings->smtp_port = 2525;
+            $this->settings->smtp_encryption = null;
+        }
+
+        if (!$this->settings->smtp_host || !$this->settings->smtp_port) {
             Log::error("Es wurde kein SMTP-Server für Tenant  $this->tenant->id definiert.");
             throw new RuntimeException("Es wurde kein SMTP-Server für Tenant {$this->tenant->id} definiert.");
 
@@ -59,7 +67,7 @@ class SendEmailAsTenantService
             'port' => $this->settings->smtp_port,
             'encryption' => $this->settings->smtp_encryption ?? null,
             'username' => $emailAccount->smtp_username,
-            'password' => $emailAccount->smtp_password,
+            'password' => $isLocal ? '' : $emailAccount->smtp_password,
             'from' => [
                 'address' => $emailAccount->email,
                 'name' => $emailAccount->name,

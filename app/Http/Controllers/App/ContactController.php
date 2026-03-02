@@ -78,12 +78,16 @@ class ContactController extends Controller
             ->with('salutation')
             ->with('title')
             ->with('favorites')
-            ->with(['mails' => function ($query) {
-                $query->orderBy('pos');
-            }])
-            ->with(['phones' => function ($query) {
-                $query->orderBy('pos');
-            }])
+            ->with([
+                'mails' => function ($query) {
+                    $query->orderBy('pos');
+                }
+            ])
+            ->with([
+                'phones' => function ($query) {
+                    $query->orderBy('pos');
+                }
+            ])
             ->orderBy('name')
             ->orderBy('first_name')
             ->paginate(15);
@@ -150,13 +154,15 @@ class ContactController extends Controller
         return redirect()->back();
     }
 
-    public function archiveToggle(Contact $contact) {
+    public function archiveToggle(Contact $contact)
+    {
         $contact->is_archived = !$contact->is_archived;
         $contact->save();
 
         $message = $contact->is_archived ? 'Kontakt wurde archiviert' : 'Kontakt wurde wiederhergestellt';
         return Inertia::flash('toast', ['type' => 'success', 'message' => $message])->back();
     }
+
     public function show(Contact $contact)
     {
         $contact->load([
@@ -201,7 +207,10 @@ class ContactController extends Controller
 
     public function edit(Contact $contact)
     {
-        $contact->load(['addresses', 'addresses.category', 'mails.category', 'salutation', 'title', 'payment_deadline', 'phones.category', 'cost_center']);
+        $contact->load([
+            'addresses', 'addresses.category', 'mails.category', 'salutation', 'title', 'payment_deadline',
+            'phones.category', 'cost_center'
+        ]);
 
         $countries = Country::orderBy('name')->get();
         $categories = AddressCategory::all();
@@ -214,7 +223,8 @@ class ContactController extends Controller
         $cost_centers = CostCenter::orderBy('name')->get();
         $mail_categories = EmailCategory::orderBy('name')->get();
 
-        $contact_persons = Contact::query()->where('company_id', $contact->id)->orderBy('name')->orderBy('first_name')->get();
+        $contact_persons = Contact::query()->where('company_id',
+            $contact->id)->orderBy('name')->orderBy('first_name')->get();
 
         return Inertia::render('App/Contact/ContactEdit', [
             'contact' => ContactData::from($contact),
@@ -280,7 +290,7 @@ class ContactController extends Controller
                 ->upload();
 
             $contact->attachMedia($media, 'avatar');
-        }  else {
+        } else {
             if ($request->input('remove_avatar', false)) {
                 if ($contact->firstMedia('avatar')) {
                     $contact->detachMediaTags('avatar');
@@ -290,13 +300,13 @@ class ContactController extends Controller
 
         $contact->load(['mails', 'title', 'salutation', 'addresses', 'phones']);
 
-        if ($contact->is_creditor && ! $contact->creditor_number) {
+        if ($contact->is_creditor && !$contact->creditor_number) {
             $contact->creditor_number = Contact::max('creditor_number') + 1;
             $contact->save();
             $contact->createBookkeepingAccount($contact->creditor_number, $contact->tax_id);
         }
 
-        if ($contact->is_debtor && ! $contact->debtor_number) {
+        if ($contact->is_debtor && !$contact->debtor_number) {
             $contact->debtor_number = Contact::max('debtor_number') + 1;
             $contact->save();
             $contact->createBookkeepingAccount($contact->debtor_number, $contact->tax_id);
@@ -311,7 +321,7 @@ class ContactController extends Controller
             }
         }
 
-       return redirect(route('app.contact.details', ['contact' => $contact]));
+        return redirect(route('app.contact.details', ['contact' => $contact]));
     }
 
     public function persons(Contact $contact)
@@ -354,7 +364,7 @@ class ContactController extends Controller
             ->filter()
             ->toArray();
 
-        if (! empty($incomingIds)) {
+        if (!empty($incomingIds)) {
             $contact->mails()
                 ->whereNotIn('id', $incomingIds)
                 ->delete();
@@ -370,7 +380,7 @@ class ContactController extends Controller
                 'pos' => $mailData['pos'] ?? $index,
             ];
 
-            if (! empty($mailData['id'])) {
+            if (!empty($mailData['id'])) {
                 ContactMail::where('id', $mailData['id'])
                     ->where('contact_id', $contact->id)
                     ->update($mailAttributes);
@@ -387,7 +397,7 @@ class ContactController extends Controller
             ->filter()
             ->toArray();
 
-        if (! empty($incomingIds)) {
+        if (!empty($incomingIds)) {
             $contact->addresses()
                 ->whereNotIn('id', $incomingIds)
                 ->delete();
@@ -405,7 +415,7 @@ class ContactController extends Controller
                 'address_category_id' => $addressData['address_category_id'],
             ];
 
-            if (! empty($addressData['id'])) {
+            if (!empty($addressData['id'])) {
                 ContactAddress::where('id', $addressData['id'])
                     ->where('contact_id', $contact->id)
                     ->update($addressAttributes);
@@ -422,7 +432,7 @@ class ContactController extends Controller
             ->filter()
             ->toArray();
 
-        if (! empty($incomingIds)) {
+        if (!empty($incomingIds)) {
             $contact->phones()
                 ->whereNotIn('id', $incomingIds)
                 ->delete();
@@ -438,7 +448,7 @@ class ContactController extends Controller
                 'pos' => $phoneData['pos'] ?? $index,
             ];
 
-            if (! empty($phoneData['id'])) {
+            if (!empty($phoneData['id'])) {
                 ContactPhone::where('id', $phoneData['id'])
                     ->where('contact_id', $contact->id)
                     ->update($phoneAttributes);
@@ -446,5 +456,15 @@ class ContactController extends Controller
                 ContactPhone::create($phoneAttributes);
             }
         }
+    }
+
+    public function setAsPrimaryContact(Contact $contact)
+    {
+        $company = Contact::find($contact->company_id);
+        if ($company) {
+            $company->primary_contact_id = $contact->id;
+            $company->save();
+        }
+        return redirect()->back();
     }
 }

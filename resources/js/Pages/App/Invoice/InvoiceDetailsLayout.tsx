@@ -151,6 +151,10 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
   }
   const currentRoute = route().current()
 
+  const handleSendByMail = () => {
+    router.visit(route('app.invoice.create-send-by-mail', { invoice: invoice.id }))
+  }
+
   const tabs = useMemo(
     () => (
       <Tabs variant="underlined" defaultSelectedKey={currentRoute}>
@@ -183,6 +187,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
             variant="primary"
             icon={Sent02Icon}
             title="Rechnung per E-Mail versenden"
+            onClick={handleSendByMail}
           />
         )}
         {invoice.is_draft && (
@@ -267,7 +272,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
             ellipsis
             isDisabled={invoice.is_draft}
             separator
-            href={route('app.invoice.create-send-by-mail', { invoice: invoice.id })}
+            onAction={handleSendByMail}
           />
 
           <MenuItem
