@@ -20,6 +20,9 @@ class GeneralSettings extends Settings
 
   public ?string $pdf_global_css;
 
+  public string $logo_url;
+  public string $logo_class;
+
   public static function group(): string
   {
     return 'general';

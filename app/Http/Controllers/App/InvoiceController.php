@@ -13,6 +13,7 @@ use App\Data\InvoiceData;
 use App\Data\InvoiceTypeData;
 use App\Data\PaymentDeadlineData;
 use App\Data\ProjectData;
+use App\Data\SendEmailData;
 use App\Data\TaxData;
 use App\Data\TransactionData;
 use App\Facades\WeasyPdfService;
@@ -22,9 +23,12 @@ use App\Http\Requests\InvoiceReportRequest;
 use App\Http\Requests\InvoiceStoreExternalRequest;
 use App\Http\Requests\InvoiceStoreRequest;
 use App\Http\Requests\NoteStoreRequest;
+use App\Http\Requests\SendEmailRequest;
 use App\Models\BookkeepingBooking;
 use App\Models\Contact;
 use App\Models\Document;
+use App\Models\EmailAccount;
+use App\Models\EmailTemplate;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
 use App\Models\InvoiceType;
@@ -35,6 +39,7 @@ use App\Models\Tax;
 use App\Models\TaxRate;
 use App\Models\Time;
 use App\Models\Transaction;
+use App\Services\SendEmailAsTenantService;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -184,7 +189,8 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function setLossOfReceivables(Invoice $invoice): RedirectResponse {
+    public function setLossOfReceivables(Invoice $invoice): RedirectResponse
+    {
 
         // Abfrage, ob Rechnung bereits als Forderungsverlust markiert, nicht nötig, da doppelter Aufurf keine Konsequenzen hat
 
@@ -613,7 +619,8 @@ class InvoiceController extends Controller
                 $payment->amount = $transaction->remaining_amount;
             }
 
-            $invoice->addHistory('Zahlungseingang vom '.$payment->issued_on->format('d.m.Y').' über '.number_format($payment->amount, 2, ',', '.').' EUR wurde verrechnet.', 'paid');
+            $invoice->addHistory('Zahlungseingang vom '.$payment->issued_on->format('d.m.Y').' über '.number_format($payment->amount,
+                    2, ',', '.').' EUR wurde verrechnet.', 'paid');
 
 
             if ($transaction->remaining_amount > 0) {
@@ -755,7 +762,8 @@ class InvoiceController extends Controller
         return response()->inlineFile($pdf, $filename);
     }
 
-    public function storeNote(NoteStoreRequest $request, Invoice $invoice): RedirectResponse {
+    public function storeNote(NoteStoreRequest $request, Invoice $invoice): RedirectResponse
+    {
         $invoice->addNote(Purify::clean($request->validated('note')), auth()->user());
         return redirect()->back();
     }
@@ -765,6 +773,98 @@ class InvoiceController extends Controller
         if ($invoiceLine->invoice_id === $invoice->id) {
             $invoiceLine->delete();
         }
+
+        return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
+    }
+
+    public function sendByEmailCreate(Invoice $invoice): Response
+    {
+
+        $invoice->load('contact.mails');
+        if ($invoice->invoice_contact_id) {
+            $invoice->load('invoice_contact.mails');
+            $recipient = $invoice->invoice_contact;
+        } else {
+            $recipient = $invoice->contact;
+        }
+
+        $city = $invoice->contact->getInvoiceAddress()?->city;
+
+        if ($recipient->is_org) {
+            $recipient = $recipient->contacts()->first();
+        }
+
+        $data = [
+            'invoice' => $invoice,
+            'name' => $recipient->full_name,
+            'email' => $recipient->primary_mail ?: $invoice->contact->primary_mail,
+            'city' => $city,
+        ];
+
+        $template = EmailTemplate::render('invoice', $data);
+        if (!$template) {
+            abort(500, 'E-Mail-Template "invoice" wurde nicht gefunden.');
+        }
+
+        $emailAccount = $template['email_account_id']
+            ? EmailAccount::find($template['email_account_id'])
+            : EmailAccount::where('is_default', true)->first();
+
+        if (!$emailAccount) {
+            abort(422, 'Kein gültiges E-Mail-Konto konfiguriert.');
+        }
+
+        return Inertia::render('App/Invoice/InvoiceSendByMail')
+            ->with([
+                'invoice' => InvoiceData::from($invoice),
+                'mail' => SendEmailData::from([
+                    'name' => $recipient->full_name,
+                    'email' => $recipient->primary_mail,
+                    'city' => $city,
+                    'body' => $template['body'],
+                    'subject' => $template['subject'],
+                    'email_account_id' => $emailAccount->id
+                ])
+            ]);
+    }
+
+    public function sendByEmailStore(SendEmailRequest $request, Invoice $invoice): RedirectResponse
+    {
+        $template = EmailTemplate::where('name', 'invoice')->first();
+        $template->body = $request->validated('body');
+        $template->subject = $request->validated('subject');
+
+        if (!$invoice->sent_at) {
+            $invoice->sent_at = now();
+            $invoice->save();
+        }
+
+
+        $data = [
+            'invoice' => $invoice,
+        ];
+
+        $pdf = Invoice::createOrGetPdf($invoice);
+
+        $emailAccount = EmailAccount::where('id', $request->validated('email_account_id'))->first();
+        $service = new SendEmailAsTenantService($template, $emailAccount);
+
+        $service->setAttachment($pdf, $invoice->filename);
+
+        $sent = $service->sendEmail($request->validated('email'), $request->validated('name'),
+            $request->validated('city'), $data);
+
+        if (!$sent) {
+            return redirect()->back()->with('error', 'E-Mail konnte nicht versendet werden.');
+        }
+
+        if (!$invoice->sent_at) {
+            $invoice->sent_at = now();
+            $invoice->save();
+        }
+
+        $invoice->addHistory("hat die Rechnung an {$request->validated('email')} versendet.", 'mail_sent',
+            auth()->user());
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }

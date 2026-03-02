@@ -78,18 +78,15 @@
             <table style="margin-top: 16px; width: 100%;" cellpadding="0" cellspacing="0" role="none">
               <tr>
                 <td style="margin-left: auto; margin-right: auto; padding: 16px; text-align: center;">
-                  <div style="margin-left: auto; margin-right: auto; display: flex; align-items: center; justify-content: center;">
-                    <img alt="Maizzle" src="https://twiceware.de/twsek-logo-bild-orange-wei%C3%9F.png" width="32" style="max-width: 100%; vertical-align: middle; margin-right: 6px; border-radius: 6px;">
-                    <span style="font-weight: 600;">twiceware</span>
+                  <div style="margin-left: auto; margin-right: auto; display: flex; align-items: center; justify-content: center;"> <img alt="Maizzle" src="{{ $logo_url }}" style="max-width: 100%; vertical-align: middle; height: {{ $logo_height }}; width: {{ $logo_width }}; border-radius: {{ $logo_radius }};">
                   </div>
                 </td>
               </tr>
               <tr>
                 <td class="sm-p-6" style="border-top-left-radius: 8px; border-top-right-radius: 8px; background-color: #fffffe; padding: 24px 36px; text-align: left; border: 1px solid #e2e8f0">
-                  <div role="separator" style="line-height: 24px">&zwj;</div> {!! md($content) !!}
-                  <p style="margin: 0; font-size: 1.0rem; line-height: 24px; color: #475569;">
-                    {!! md($signature) !!}
-                  </p>
+                  <div role="separator" style="line-height: 12px">&zwj;</div>
+                  {!! md(nl2br($content)) !!}
+                  {!! md($signature) !!} <div role="separator" style="line-height: 12px">&zwj;</div>
                 </td>
               </tr>
             </table>
@@ -97,8 +94,7 @@
               <tr>
                 <td class="sm-px-6" style="padding: 24px 36px">
                   <p style="margin: 0; text-align: center; font-size: 0.85rem; line-height: 1.625; color: #78716c;">
-                    twiceware solutions e. K. &middot; Belderberg 7 &middot; D-53111 Bonn<br>
-                    Inhaber Danny Spangenberg<br>HRA 6091 (AG Bonn) &middot; USt-IdNr. DE240386270
+                    {!! nl2br($imprint) !!}
                   </p>
                 </td>
               </tr>

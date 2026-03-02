@@ -13,9 +13,11 @@ import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { AvatarUpload } from '@/Components/twc-ui/avatar-upload'
 import { FormCard } from '@/Components/twc-ui/form-card'
 import { FormCheckbox } from '@/Components/twc-ui/form-checkbox'
+import { FormSelect } from '@/Components/twc-ui/form-select'
 
 interface Props extends PageProps {
   user: App.Data.UserData
+  email_accounts: App.Data.EmailAccountData[]
 }
 
 type UserFormData = App.Data.UserData & {
@@ -23,7 +25,7 @@ type UserFormData = App.Data.UserData & {
   remove_avatar: boolean
 }
 
-const UserEdit: React.FC<Props> = ({ user }) => {
+const UserEdit: React.FC<Props> = ({ user, email_accounts }) => {
   const title = user.id ? 'Benutzer*in bearbeiten' : 'Benutzer*in hinzufügen'
   const authUser = usePage().props.auth.user as App.Data.UserData
 
@@ -163,6 +165,15 @@ const UserEdit: React.FC<Props> = ({ user }) => {
                   {...form.registerCheckbox('is_locked')}
                 />
               </div>
+            </div>
+            <div className="col-span-11">
+              <FormSelect
+                label="E-Mail-Account"
+                isOptional
+                items={email_accounts}
+                itemName="email"
+                {...form.register('email_account_id')}
+              />
             </div>
           </FormGrid>
         </Form>

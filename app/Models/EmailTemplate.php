@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Blade;
 
 class EmailTemplate extends Model
 {
@@ -18,4 +19,20 @@ class EmailTemplate extends Model
     {
         return $this->belongsTo(EmailAccount::class);
     }
+
+    public static function render(string $name, array $data): ?array
+    {
+        $instance = self::query()->where('name', $name)->first();
+        if ($instance === null) {
+            return null;
+        }
+
+        return [
+            'subject' => Blade::render($instance->subject, $data),
+            'body' => Blade::render($instance->body, $data),
+            'email_account_id' => $instance->email_account_id,
+        ];
+    }
+
+
 }

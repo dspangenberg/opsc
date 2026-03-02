@@ -9,11 +9,13 @@ namespace App\Http\Middleware;
 
 use App\Data\BookmarkData;
 use App\Data\BookmarkFolderData;
+use App\Data\EmailAccountData;
 use App\Data\TenantData;
 use App\Data\TimeData;
 use App\Data\UserData;
 use App\Models\Bookmark;
 use App\Models\BookmarkFolder;
+use App\Models\EmailAccount;
 use App\Models\Time;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -51,6 +53,20 @@ class HandleInertiaRequests extends Middleware
        $bookmarks = Bookmark::where('is_pinned', true)->whereNull('bookmark_folder_id')->orderBy('name')->get();
        $bookmarkFolders = BookmarkFolder::with('bookmarks')->orderBy('name')->get();
 
+       $mailAccounts = [];
+       if ($user) {
+           $ids = [];
+           $defaultMailAccount = EmailAccount::query()->where('is_default', true)->first();
+           $ids[] = $defaultMailAccount->id;
+
+           if ($user->email_account_id) {
+               $ids[] = $user->email_account_id;
+           }
+
+           $mailAccounts = EmailAccount::query()->whereIn('id', $ids)->orderBy('email')->get();
+       }
+
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -59,6 +75,7 @@ class HandleInertiaRequests extends Middleware
                 'runningTimer' => $runningTimer ? TimeData::from($runningTimer) : null,
                 'bookmarks' => BookmarkData::collect($bookmarks),
                 'bookmarkFolders' => BookmarkFolderData::collect($bookmarkFolders),
+                'email_accounts' => count($mailAccounts) ? EmailAccountData::collect($mailAccounts) : [],
             ],
         ];
     }

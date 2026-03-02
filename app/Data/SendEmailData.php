@@ -11,14 +11,14 @@ use Spatie\LaravelData\Data;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
 #[TypeScript]
-class EmailAccountData extends Data
+class SendEmailData extends Data
 {
     public function __construct(
-        public readonly ?int $id,
-        public readonly bool $is_default,
-        public readonly string $name,
         public readonly string $email,
-        public readonly ?string $smtp_username,
-        public readonly string $signature,
+        public readonly string $name,
+        public readonly string $city,
+        public readonly string $body,
+        public readonly string $subject,
+        public readonly int $email_account_id,
     ) {}
 }

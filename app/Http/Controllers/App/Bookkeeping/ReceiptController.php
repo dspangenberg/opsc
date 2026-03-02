@@ -494,6 +494,12 @@ class ReceiptController extends Controller
         return redirect()->back();
     }
 
+    public function extractWithAi(Receipt $receipt): RedirectResponse
+    {
+        $receipt->extractInvoiceData();
+        return redirect()->back();
+    }
+
     public function runRules(Request $request)
     {
 

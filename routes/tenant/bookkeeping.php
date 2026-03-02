@@ -59,6 +59,8 @@ Route::delete('/bookkeeping/receipts/{receipt}/delete', [ReceiptController::clas
 Route::get('/bookkeeping/receipts/{receipt}/payments', [ReceiptController::class, 'createPayments'])->name('app.bookkeeping.receipts.payments');
 Route::get('/bookkeeping/receipts/{receipt}/payments-store', [ReceiptController::class, 'storePayments'])->name('app.bookkeeping.receipts.payments-store');
 
+Route::put('/bookkeeping/receipts/{receipt}/extract-with-ai', [ReceiptController::class, 'extractWithAi'])->name('app.bookkeeping.receipts.extract-with-ai');
+
 Route::get('/bookkeeping/receipts/confirm/{receipt}', [ReceiptController::class, 'confirm'])->name('app.bookkeeping.receipts.confirm');
 Route::get('/bookkeeping/receipts/{receipt}/edit', [ReceiptController::class, 'edit'])->name('app.bookkeeping.receipts.edit');
 Route::get('/bookkeeping/receipts/bulk-download/', [ReceiptController::class, 'bulkDownload'])->name('app.bookkeeping.bulk-download');

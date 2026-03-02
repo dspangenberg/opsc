@@ -103,7 +103,8 @@ class Invoice extends Model implements MediableInterface
         'sent_at',
         'additional_text',
         'is_external',
-        'document_id'
+        'document_id',
+        'is_org'
     ];
 
     protected $attributes = [

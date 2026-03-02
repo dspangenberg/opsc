@@ -319,7 +319,7 @@ id: number | null;
 is_default: boolean;
 name: string;
 email: string;
-smtp_username: string;
+smtp_username: string | null;
 signature: string;
 };
 export type EmailCategoryData = {
@@ -602,6 +602,14 @@ name: string;
 is_hidden: boolean;
 gender: string;
 };
+export type SendEmailData = {
+email: string;
+name: string;
+city: string;
+body: string;
+subject: string;
+email_account_id: number;
+};
 export type SettingData = {
 group: string;
 key: string;
@@ -736,6 +744,8 @@ user_agent: string | null;
 pending_email: string | null;
 is_impersonating: boolean | null;
 impersonator: string | null;
+email_account_id: number | null;
+email_account: App.Data.EmailAccountData | null;
 last_login_at: string | null;
 email_verified_at: string | null;
 };
