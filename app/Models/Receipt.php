@@ -136,7 +136,7 @@ class Receipt extends Model
         return $this->belongsTo(NumberRangeDocumentNumber::class, 'number_range_document_numbers_id', 'id');
     }
 
-    public function extractInvoiceData(): self
+    public function extractInvoiceData(?bool $shouldAutoConfirm = true): self
     {
         if ($this->text) {
             try {
@@ -202,7 +202,7 @@ class Receipt extends Model
                     $this->amount = $validAmount;
                 }
 
-                if (isset($result['confidence']) && is_numeric($result['confidence'])) {
+                if ($shouldAutoConfirm && isset($result['confidence']) && is_numeric($result['confidence'])) {
                     if ($result['confidence'] > 0.9) {
                         $this->is_confirmed = true;
                     }

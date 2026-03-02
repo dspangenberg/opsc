@@ -1,4 +1,5 @@
 import {
+  AiContentGenerator01Icon,
   Delete02Icon,
   EuroSendIcon,
   FileDownloadIcon,
@@ -139,6 +140,16 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
     }
   }
 
+  const handleAiExtraction = () => {
+    router.put(
+      route('app.bookkeeping.receipts.extract-with-ai', { receipt: receipt.id }),
+      {},
+      {
+        onSuccess: () => router.reload()
+      }
+    )
+  }
+
   const hasLockedBookings = receipt.bookings?.some(booking => booking.is_locked)
   const isDeleteDisabled = !!(receipt.is_locked || hasLockedBookings)
 
@@ -173,6 +184,14 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
                 tooltip="Beleg löschen"
                 isDisabled={isDeleteDisabled}
                 onClick={handleDelete}
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleAiExtraction}
+                isDisabled={!receipt.text}
+                icon={AiContentGenerator01Icon}
+                tooltip="AI-Belegerkennung"
               />
               <Button
                 icon={EuroSendIcon}
@@ -312,16 +331,15 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
             <div className="col-span-24">
               <Table className="w-full border-0">
                 <TableBody className="[&_tr:last-child]:border-b-0">
-                  {receipt.bookings?.map(booking =>
-
-                      <TableRow key={booking.id} className="border-b-0!">
-                        <TableCell>{booking.date}</TableCell>
-                        <TableCell>{booking.booking_text}</TableCell>
-                        <TableCell className="text-right">
-                          {currencyFormatter.format(booking.amount || 0)}
-                        </TableCell>
-                      </TableRow>
-                  )}
+                  {receipt.bookings?.map(booking => (
+                    <TableRow key={booking.id} className="border-b-0!">
+                      <TableCell>{booking.date}</TableCell>
+                      <TableCell>{booking.booking_text}</TableCell>
+                      <TableCell className="text-right">
+                        {currencyFormatter.format(booking.amount || 0)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </div>

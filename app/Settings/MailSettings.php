@@ -12,7 +12,7 @@ class MailSettings extends Settings
 
   public string $cc;
 
-  public string $smtp_encryption;
+  public string | null $smtp_encryption;
 
   public string $imprint;
 

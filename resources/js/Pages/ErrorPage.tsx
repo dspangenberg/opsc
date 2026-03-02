@@ -1,6 +1,11 @@
 import { Head } from '@inertiajs/react'
+import AppLayout from '@/Layouts/AppLayout'
 
-const ErrorPage = ({ status }: { status: 403 | 404 | 500 | 503 }) => {
+interface ErrorPageProps {
+  status: number
+  message: string
+}
+const ErrorPage = ({ status, message }: ErrorPageProps) => {
   const title = {
     503: '503: Service nicht verfügbar',
     500: '500: Serverfehler',
@@ -16,11 +21,16 @@ const ErrorPage = ({ status }: { status: 403 | 404 | 500 | 503 }) => {
   }[status]
 
   return (
-    <div>
-      <Head title={title} />
-      <h1>{title}</h1>
-      <div>{description}</div>
-    </div>
+    <AppLayout>
+      <div className="h-full w-full flex-1">
+        <div className="mx-auto my-auto">
+          <Head title={title} />
+          <h1>{title}</h1>
+          <div>{description}</div>
+          {message && <p>{message}</p>}
+        </div>
+      </div>
+    </AppLayout>
   )
 }
 

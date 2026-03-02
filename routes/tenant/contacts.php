@@ -42,3 +42,4 @@ Route::put('contacts/{contact}/archive', [ContactController::class, 'archiveTogg
 Route::delete('contacts/{contact}', [ContactController::class, 'destroy'])->name('app.contact.delete');
 
 Route::put('contacts/bulk-archive', [ContactController::class, 'bulkArchive'])->name('app.contact.bulk-archive');
+Route::put('contacts/{contact}/set-as-primary', [ContactController::class, 'setAsPrimaryContact'])->name('app.contact.set-as-primary');

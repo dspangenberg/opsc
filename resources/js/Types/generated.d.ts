@@ -243,6 +243,7 @@ phones: Array<App.Data.ContactPhoneData> | null;
 sales: App.Data.SalesData | null;
 addresses: Array<App.Data.ContactAddressData> | null;
 notables: Array<App.Data.NoteableData> | null;
+primary_contact_id: number | null;
 };
 export type ContactMailData = {
 id: number | null;

@@ -1,4 +1,9 @@
-import { ArrowLeft01Icon, ArrowRight01Icon, Delete02Icon } from '@hugeicons/core-free-icons'
+import {
+  AiContentGenerator01Icon,
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  Delete02Icon
+} from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useCallback, useEffect } from 'react'
@@ -85,6 +90,16 @@ const ReceiptConfirm: React.FC<Props> = ({
     }
   }
 
+  const handleAiExtraction = () => {
+    router.put(
+      route('app.bookkeeping.receipts.extract-with-ai', { receipt: receipt.id }),
+      {},
+      {
+        onSuccess: () => router.reload()
+      }
+    )
+  }
+
   const handleContactChange = (contactId: string | number | null) => {
     if (contactId === null) return
     const numericId = typeof contactId === 'number' ? contactId : Number(contactId)
@@ -133,6 +148,15 @@ const ReceiptConfirm: React.FC<Props> = ({
                 icon={ArrowRight01Icon}
                 tooltip="Nächster Beleg"
               />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleAiExtraction}
+                isDisabled={!receipt.text}
+                icon={AiContentGenerator01Icon}
+                tooltip="AI-Belegerkennung"
+              />
+
               <Button
                 variant="ghost-destructive"
                 size="icon"

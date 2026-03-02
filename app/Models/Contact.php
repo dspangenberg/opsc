@@ -155,7 +155,8 @@ class Contact extends Model
         'cost_center_id',
         'website',
         'dob',
-        'invoice_contact_id'
+        'invoice_contact_id',
+        'primary_contact_id',
     ];
 
     public function getFullNameAttribute(): string
@@ -308,6 +309,11 @@ class Contact extends Model
     public function invoice_contact(): HasOne
     {
         return $this->hasOne(Contact::class, 'id', 'invoice_contact_id');
+    }
+
+    public function primary_contact(): HasOne
+    {
+        return $this->hasOne(Contact::class, 'id', 'primary_contact_id');
     }
 
     public function title(): HasOne

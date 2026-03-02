@@ -2,7 +2,7 @@ import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { DataTable } from '@/Components/DataTable'
 import { ContactDetailsLayout } from '@/Pages/App/Contact/ContactDetailsLayout'
-import { columns } from '@/Pages/App/Contact/ContactDetailsPersonsColumns'
+import { createColumns } from '@/Pages/App/Contact/ContactDetailsPersonsColumns'
 import type { PageProps } from '@/Types'
 
 interface ContactDetailsPersons extends PageProps {
@@ -11,6 +11,7 @@ interface ContactDetailsPersons extends PageProps {
 
 const ContactDetailsPersons: React.FC = () => {
   const { contact } = usePage<ContactDetailsPersons>().props
+  const columns = createColumns(contact)
 
   return (
     <ContactDetailsLayout contact={contact}>
