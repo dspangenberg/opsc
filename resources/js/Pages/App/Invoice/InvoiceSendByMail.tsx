@@ -1,5 +1,6 @@
 import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
+import { Alert } from '@/Components/twc-ui/alert'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormCard } from '@/Components/twc-ui/form-card'
@@ -39,6 +40,10 @@ export const InvoiceSendByMail: React.FC<Props> = ({ invoice, mail }) => {
             />
           }
         >
+          {invoice.sent_at && (
+            <Alert variant="info">Die Rechnung wurde bereits am {invoice.sent_at} versendet.</Alert>
+          )}
+
           <Form form={form}>
             <FormGrid>
               <div className="col-span-24">

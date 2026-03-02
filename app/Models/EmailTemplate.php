@@ -20,18 +20,18 @@ class EmailTemplate extends Model
         return $this->belongsTo(EmailAccount::class);
     }
 
-    public static function render(string $name, array $data): array | null {
-        $instance = EmailTemplate::where('name', $name)->firstOrFail();
-        if ($instance) {
-            $body = Blade::render($instance->body, $data);
-            $subject = Blade::render($instance->subject, $data);
-            return [
-                'subject' => $subject,
-                'body' => $body,
-                'email_account_id' => $instance->email_account_id,
-            ];
+    public static function render(string $name, array $data): ?array
+    {
+        $instance = self::query()->where('name', $name)->first();
+        if ($instance === null) {
+            return null;
         }
-        return null;
+
+        return [
+            'subject' => Blade::render($instance->subject, $data),
+            'body' => Blade::render($instance->body, $data),
+            'email_account_id' => $instance->email_account_id,
+        ];
     }
 
 

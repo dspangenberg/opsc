@@ -8,11 +8,13 @@ use App\Http\Requests\EmailAccountStoreRequest;
 use App\Http\Requests\EmailAccountUpdateRequest;
 use App\Models\EmailAccount;
 use App\Models\EmailTemplate;
-use App\Models\Invoice;
 use App\Services\SendEmailAsTenantService;
+use DB;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class EmailAccountController extends Controller
 {
@@ -24,7 +26,8 @@ class EmailAccountController extends Controller
         ]);
     }
 
-    public function create(): Response {
+    public function create(): Response
+    {
         $email_account = new EmailAccount();
         $email_account->email = '';
         $email_account->name = '';
@@ -37,13 +40,15 @@ class EmailAccountController extends Controller
         ]);
     }
 
-    public function edit(EmailAccount $emailAccount): Response {
+    public function edit(EmailAccount $emailAccount): Response
+    {
         return Inertia::render('Admin/EmailAccount/EmailAccountEdit', [
             'email_account' => EmailAccountData::from($emailAccount),
         ]);
     }
 
-    public function update(EmailAccountUpdateRequest $request, EmailAccount $emailAccount): RedirectResponse {
+    public function update(EmailAccountUpdateRequest $request, EmailAccount $emailAccount): RedirectResponse
+    {
         $data = $request->safe()->except('smtp_password');
 
         $emailAccount->update($data);
@@ -56,39 +61,44 @@ class EmailAccountController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public function sendTestMail(EmailAccount $emailAccount) {
-        $invoice = Invoice::with('type')->find(190);
-        $pdf = Invoice::createOrGetPdf($invoice);
-
-
-        $template = EmailTemplate::where('name', 'invoice')->first();
+    public function sendTestMail(EmailAccount $emailAccount): RedirectResponse
+    {
+        $template = EmailTemplate::where('name', 'test')->first();
+        if (!$template) {
+            return redirect()->back()->withErrors(['template' => 'E-Mail-Template "test" wurde nicht gefunden.']);
+        }
         $mailer = new SendEmailAsTenantService($template, $emailAccount);
-        $mailer->setAttachment($pdf, $invoice->filename);
-        $mailer->sendEmail(auth()->user()->email, auth()->user()->full_name, 'Test City', ['invoice' => $invoice]);
+        $mailer->sendEmail(auth()->user()->email, auth()->user()->full_name, 'Test City', []);
 
         return redirect()->back();
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
+     * @throws Throwable
      */
-    public function setDefault(EmailAccount $emailAccount): RedirectResponse {
-        EmailAccount::query()->update(['is_default' => false]);
-        $emailAccount->is_default = true;
-        $emailAccount->save();
+    public function setDefault(EmailAccount $emailAccount): RedirectResponse
+    {
+        DB::transaction(function () use ($emailAccount) {
+            EmailAccount::query()->update(['is_default' => false]);
+            $emailAccount->is_default = true;
+            $emailAccount->save();
+        });
         return redirect()->back();
     }
 
 
-    public function destroy(EmailAccount $email_account): RedirectResponse {
+    public function destroy(EmailAccount $email_account): RedirectResponse
+    {
         $email_account->delete();
         return redirect()->route('admin.email-account.index');
     }
 
 
-    public function store(EmailAccountStoreRequest $request): RedirectResponse {
+    public function store(EmailAccountStoreRequest $request): RedirectResponse
+    {
         EmailAccount::create($request->validated());
         return redirect()->route('admin.email-account.index');
     }

@@ -53,15 +53,19 @@ class HandleInertiaRequests extends Middleware
        $bookmarks = Bookmark::where('is_pinned', true)->whereNull('bookmark_folder_id')->orderBy('name')->get();
        $bookmarkFolders = BookmarkFolder::with('bookmarks')->orderBy('name')->get();
 
-       $ids = [];
-       $defaultMailAccount = EmailAccount::query()->where('is_default', true)->first();
-       $ids[] = $defaultMailAccount->id;
+       $mailAccounts = [];
+       if ($user) {
+           $ids = [];
+           $defaultMailAccount = EmailAccount::query()->where('is_default', true)->first();
+           $ids[] = $defaultMailAccount->id;
 
-       if ($user->email_account_id) {
-           $ids[] = $user->email_account_id;
+           if ($user->email_account_id) {
+               $ids[] = $user->email_account_id;
+           }
+
+           $mailAccounts = EmailAccount::query()->whereIn('id', $ids)->orderBy('email')->get();
        }
 
-       $mailAccounts = EmailAccount::query()->whereIn('id', $ids)->orderBy('email')->get();
 
         return [
             ...parent::share($request),
@@ -71,7 +75,7 @@ class HandleInertiaRequests extends Middleware
                 'runningTimer' => $runningTimer ? TimeData::from($runningTimer) : null,
                 'bookmarks' => BookmarkData::collect($bookmarks),
                 'bookmarkFolders' => BookmarkFolderData::collect($bookmarkFolders),
-                'email_accounts' => EmailAccountData::collect($mailAccounts),
+                'email_accounts' => count($mailAccounts) ? EmailAccountData::collect($mailAccounts) : [],
             ],
         ];
     }

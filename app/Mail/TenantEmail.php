@@ -13,6 +13,9 @@ class TenantEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    /**
+    +     * `@param` array{path:string,name:string}|array{} $attachment
+    +     */
     public function __construct(
         public $subject,
         public string $body,

@@ -265,6 +265,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
             icon={Sent02Icon}
             title="Rechnung per E-Mail versenden"
             ellipsis
+            isDisabled={invoice.is_draft}
             separator
             href={route('app.invoice.send-by-mail', { invoice: invoice.id })}
           />

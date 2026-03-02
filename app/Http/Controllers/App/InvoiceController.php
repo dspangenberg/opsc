@@ -189,7 +189,8 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function setLossOfReceivables(Invoice $invoice): RedirectResponse {
+    public function setLossOfReceivables(Invoice $invoice): RedirectResponse
+    {
 
         // Abfrage, ob Rechnung bereits als Forderungsverlust markiert, nicht nötig, da doppelter Aufurf keine Konsequenzen hat
 
@@ -618,7 +619,8 @@ class InvoiceController extends Controller
                 $payment->amount = $transaction->remaining_amount;
             }
 
-            $invoice->addHistory('Zahlungseingang vom '.$payment->issued_on->format('d.m.Y').' über '.number_format($payment->amount, 2, ',', '.').' EUR wurde verrechnet.', 'paid');
+            $invoice->addHistory('Zahlungseingang vom '.$payment->issued_on->format('d.m.Y').' über '.number_format($payment->amount,
+                    2, ',', '.').' EUR wurde verrechnet.', 'paid');
 
 
             if ($transaction->remaining_amount > 0) {
@@ -760,7 +762,8 @@ class InvoiceController extends Controller
         return response()->inlineFile($pdf, $filename);
     }
 
-    public function storeNote(NoteStoreRequest $request, Invoice $invoice): RedirectResponse {
+    public function storeNote(NoteStoreRequest $request, Invoice $invoice): RedirectResponse
+    {
         $invoice->addNote(Purify::clean($request->validated('note')), auth()->user());
         return redirect()->back();
     }
@@ -774,7 +777,8 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
-    public function sendByEmailCreate(Invoice $invoice): Response {
+    public function sendByEmailCreate(Invoice $invoice): Response
+    {
 
         $invoice->load('contact.mails');
         if ($invoice->invoice_contact_id) {
@@ -790,7 +794,6 @@ class InvoiceController extends Controller
             $recipient = $recipient->contacts()->first();
         }
 
-
         $data = [
             'invoice' => $invoice,
             'name' => $recipient->full_name,
@@ -799,7 +802,17 @@ class InvoiceController extends Controller
         ];
 
         $template = EmailTemplate::render('invoice', $data);
-        $emailAccount = $template['email_account_id'] ? EmailAccount::find($template['email_account_id']) : EmailAccount::where('is_default', true)->first();
+        if (!$template) {
+            abort(500, 'E-Mail-Template "invoice" wurde nicht gefunden.');
+        }
+
+        $emailAccount = $template['email_account_id']
+            ? EmailAccount::find($template['email_account_id'])
+            : EmailAccount::where('is_default', true)->first();
+
+        if (!$emailAccount) {
+            abort(422, 'Kein gültiges E-Mail-Konto konfiguriert.');
+        }
 
         return Inertia::render('App/Invoice/InvoiceSendByMail')
             ->with([
@@ -815,7 +828,8 @@ class InvoiceController extends Controller
             ]);
     }
 
-    public function sendByEmailStore(SendEmailRequest $request, Invoice $invoice): RedirectResponse {
+    public function sendByEmailStore(SendEmailRequest $request, Invoice $invoice): RedirectResponse
+    {
         $template = EmailTemplate::where('name', 'invoice')->first();
         $template->body = $request->validated('body');
         $template->subject = $request->validated('subject');
@@ -824,8 +838,6 @@ class InvoiceController extends Controller
             $invoice->sent_at = now();
             $invoice->save();
         }
-
-
 
 
         $data = [
@@ -839,10 +851,21 @@ class InvoiceController extends Controller
 
         $service->setAttachment($pdf, $invoice->filename);
 
-        $service->sendEmail($request->validated('email'), $request->validated('name'), $request->validated('city'), $data);
+        $sent = $service->sendEmail($request->validated('email'), $request->validated('name'),
+            $request->validated('city'), $data);
 
-        $invoice->addHistory("hat die Rechnung an {$request->validated('email')} versendet.", 'mail_sent', auth()->user());
+        if (!$sent) {
+            return redirect()->back()->with('error', 'E-Mail konnte nicht versendet werden.');
+        }
 
-        return redirect()->route('app.invoice.details',['invoice' => $invoice->id]);
+        if (!$invoice->sent_at) {
+            $invoice->sent_at = now();
+            $invoice->save();
+        }
+
+        $invoice->addHistory("hat die Rechnung an {$request->validated('email')} versendet.", 'mail_sent',
+            auth()->user());
+
+        return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 }
