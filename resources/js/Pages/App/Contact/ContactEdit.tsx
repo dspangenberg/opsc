@@ -120,7 +120,8 @@ const ContactEdit: React.FC<Props> = ({
     note: contact.note,
     has_dunning_block: contact.has_dunning_block,
     invoice_contact_id: contact.invoice_contact_id,
-    remove_avatar: false
+    remove_avatar: false,
+    primary_contact_id: contact.primary_contact_id
   }
 
   const addEmailAddress = () => {

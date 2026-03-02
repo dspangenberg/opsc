@@ -156,7 +156,7 @@ class Contact extends Model
         'website',
         'dob',
         'invoice_contact_id',
-        'primary_contact_id'
+        'primary_contact_id',
     ];
 
     public function getFullNameAttribute(): string

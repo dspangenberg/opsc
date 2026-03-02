@@ -38,7 +38,6 @@ const RowActions = ({ row }: { row: Row<App.Data.ContactData> }) => {
         <MenuItem
           icon={UserCheck01Icon}
           title="Primärer Kontakt"
-          variant="destructive"
           onAction={() => handleSetAsPrimaryContact(row.original)}
         />
       </DropdownButton>

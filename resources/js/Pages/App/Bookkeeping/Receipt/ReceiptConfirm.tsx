@@ -152,7 +152,7 @@ const ReceiptConfirm: React.FC<Props> = ({
                 variant="ghost"
                 size="icon"
                 onClick={handleAiExtraction}
-                disabled={!receipt.text}
+                isDisabled={!receipt.text}
                 icon={AiContentGenerator01Icon}
                 tooltip="AI-Belegerkennung"
               />

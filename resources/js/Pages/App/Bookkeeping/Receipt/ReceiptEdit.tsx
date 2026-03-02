@@ -189,7 +189,7 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
                 variant="ghost"
                 size="icon"
                 onClick={handleAiExtraction}
-                disabled={!receipt.text}
+                isDisabled={!receipt.text}
                 icon={AiContentGenerator01Icon}
                 tooltip="AI-Belegerkennung"
               />

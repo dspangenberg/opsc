@@ -797,7 +797,7 @@ class InvoiceController extends Controller
         if ($recipient->is_org) {
             if ($recipient->primary_contact_id) {
                 $recipient = Contact::with('mails')->find($recipient->primary_contact_id);
-                if ($recipient->primary_mail) {
+                if ($recipient && $recipient->primary_mail) {
                     $email = $recipient->primary_mail;
                 }
             }
@@ -837,7 +837,7 @@ class InvoiceController extends Controller
             ]);
     }
 
-    public function sendByEmailStore(SendEmailRequest $request, Invoice $invoice): RedirectResponse
+    public function sendByEmailStore(SendEmailRequest $request, Invoice $invoice): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $template = EmailTemplate::where('name', 'invoice')->first();
         $template->body = $request->validated('body');
@@ -864,7 +864,7 @@ class InvoiceController extends Controller
             $request->validated('city'), $data);
 
         if (!$sent) {
-            return redirect()->back()->with('error', 'E-Mail konnte nicht versendet werden.');
+            return Inertia::flash('toast', ['type' => 'error', 'message' => 'E-Mail konnte nicht versendet werden.'])->back();
         }
 
         if (!$invoice->sent_at) {
@@ -875,6 +875,7 @@ class InvoiceController extends Controller
         $invoice->addHistory("hat die Rechnung an {$request->validated('email')} versendet.", 'mail_sent',
             auth()->user());
 
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'E-Mail wurde versendet.']);
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 }

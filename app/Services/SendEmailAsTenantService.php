@@ -41,7 +41,7 @@ class SendEmailAsTenantService
             $emailAccount = EmailAccount::where('is_default', true)->first();
         }
 
-        $isLocal = Config('app.env') === 'local';
+        $isLocal = config('app.env') === 'local';
 
         if ($isLocal) {
             $this->settings->smtp_host = '127.0.0.1';

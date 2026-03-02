@@ -458,13 +458,19 @@ class ContactController extends Controller
         }
     }
 
-    public function setAsPrimaryContact(Contact $contact)
+    public function setAsPrimaryContact(Contact $contact): \Symfony\Component\HttpFoundation\RedirectResponse
     {
+        if (!$contact->company_id) {
+            return Inertia::flash('toast', ['type' => 'error', 'message' => 'Primärkontakt kann nur für Ansprechpersonen gesetzt werden.'])->back();
+        }
+
         $company = Contact::find($contact->company_id);
         if ($company) {
             $company->primary_contact_id = $contact->id;
             $company->save();
+            return Inertia::flash('toast', ['type' => 'success', 'message' => 'Primärkontakt wurde gesetzt.'])->back();
         }
-        return redirect()->back();
+        return Inertia::flash('toast', ['type' => 'error', 'message' => 'Primärkontakt kann nur für Ansprechpersonen gesetzt werden.'])->back();
+
     }
 }
