@@ -57,7 +57,9 @@ class HandleInertiaRequests extends Middleware
        if ($user) {
            $ids = [];
            $defaultMailAccount = EmailAccount::query()->where('is_default', true)->first();
-           $ids[] = $defaultMailAccount->id;
+           if (! $defaultMailAccount) {
+               $ids[] = $defaultMailAccount->id;
+           }
 
            if ($user->email_account_id) {
                $ids[] = $user->email_account_id;

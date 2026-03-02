@@ -79,8 +79,7 @@ class InvoiceData extends Data
         public readonly ?int $parent_id,
         public readonly ?int $tax_id,
 
-        /** @var InvoiceData */
-        public readonly ?object $parent_invoice,
+        public readonly ?ParentInvoiceData $parent_invoice,
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]
         public readonly ?DateTime $sent_at,

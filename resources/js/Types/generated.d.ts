@@ -370,7 +370,7 @@ recurring_interval: App.Enums.InvoiceRecurringEnum | null;
 payable: App.Data.PaymentData | null;
 parent_id: number | null;
 tax_id: number | null;
-parent_invoice: App.Data.InvoiceData | null;
+parent_invoice: App.Data.ParentInvoiceData | null;
 sent_at: string | null;
 recurring_begin_on: string | null;
 recurring_end_on: string | null;
@@ -489,6 +489,13 @@ id: number | null;
 name: string;
 default_content: string | null;
 pagebreak: App.Enums.PagebreakEnum | null;
+};
+export type ParentInvoiceData = {
+id: number | null;
+invoice_number: number;
+formated_invoice_number: string;
+issued_on: string | null;
+sent_at: string | null;
 };
 export type PaymentData = {
 id: number | null;
