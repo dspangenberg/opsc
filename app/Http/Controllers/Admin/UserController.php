@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Data\EmailAccountData;
 use App\Data\UserData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserUpdateRequest;
+use App\Models\EmailAccount;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
@@ -35,14 +37,19 @@ class UserController extends Controller
         $user->last_name = '';
         $user->email = '';
         $user->is_admin = false;
+
+        $emailAccounts = EmailAccount::orderBy('email')->get();
         return Inertia::render('Admin/User/UserEdit', [
             'user' => UserData::from($user),
+            'email_accounts' => EmailAccountData::collect($emailAccounts),
         ]);
     }
 
     public function edit(User $user) {
+        $emailAccounts = EmailAccount::orderBy('email')->get();
         return Inertia::render('Admin/User/UserEdit', [
             'user' => UserData::from($user),
+            'email_accounts' => EmailAccountData::collect($emailAccounts),
         ]);
     }
 

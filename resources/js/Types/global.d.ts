@@ -31,6 +31,7 @@ declare module '@inertiajs/core' {
       runningTimer: App.Data.TimeData | null
       bookmarks: App.Data.BookmarkData[]
       bookmarkFolders: App.Data.BookmarkFolderData[]
+      email_accounts: App.Data.EmailAccountData[]
     }
   }
 }

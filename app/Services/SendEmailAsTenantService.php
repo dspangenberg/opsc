@@ -7,6 +7,7 @@ use App\Models\Contact;
 use App\Models\EmailAccount;
 use App\Models\EmailTemplate;
 use App\Models\Tenant;
+use App\Settings\GeneralSettings;
 use App\Settings\MailSettings;
 use Exception;
 use Illuminate\Mail\Mailer;
@@ -23,7 +24,10 @@ class SendEmailAsTenantService
     public MailSettings $settings;
     public string $subject;
     public string $body;
+    public string $imprint;
     public Tenant $tenant;
+
+    public array $attachment = [];
 
     public function __construct(
         public EmailTemplate $template,
@@ -63,13 +67,61 @@ class SendEmailAsTenantService
         ]);
 
         $this->mailer->alwaysFrom($emailAccount->email, $emailAccount->name);
-
-        $this->signature = Blade::render($this->settings->signature, ['email_account' => $this->emailAccount, 'city' => $this->data['city'] ?? ''], true);
     }
 
     public function sendMailToContact(Contact $contact): bool
     {
         return false;
+    }
+
+    public function setAttachment(string $path, string $name): self
+    {
+        $this->attachment = [
+            'path' => $path,
+            'name' => $name,
+        ];
+        return $this;
+    }
+    public function setBody(string $body): self
+    {
+        $this->template->body = $body;
+        return $this;
+    }
+
+    public function setSubject(string $subject): self
+    {
+        $this->template->subject = $subject;
+        return $this;
+    }
+
+    private function parseLogoClasses(string $logoClass): array
+    {
+        $result = [
+            'height' => '3rem',
+            'width' => 'auto',
+            'radius' => '0.375rem'
+        ];
+
+        $classMap = [
+            'h-8' => ['height' => '2rem'],
+            'h-10' => ['height' => '2.5rem'],
+            'h-12' => ['height' => '3rem'],
+            'w-auto' => ['width' => 'auto'],
+            'w-full' => ['width' => '100%'],
+            'rounded-md' => ['radius' => '0.375rem'],
+            'rounded-lg' => ['radius' => '0.5rem'],
+        ];
+
+        $classes = explode(' ', trim($logoClass));
+        foreach ($classes as $class) {
+            if (isset($classMap[$class])) {
+                foreach ($classMap[$class] as $property => $value) {
+                    $result[$property] = $value;
+                }
+            }
+        }
+
+        return $result;
     }
 
     public function sendEmail(string $email, string $name, string $city, array $data): SentMessage | bool
@@ -81,11 +133,23 @@ class SendEmailAsTenantService
             ...$data
         ];
 
+        $logoStyles = $this->parseLogoClasses(app(GeneralSettings::class)->logo_class);
+
         try {
             $this->body = Blade::render($this->template->body, $this->data, true);
             $this->subject = Blade::render($this->template->subject, $this->data, true);
+            $this->imprint = Blade::render($this->settings->imprint, ['imprint' => $this->settings->imprint], true);
+            $this->signature = Blade::render($this->settings->signature, ['email_account' => $this->emailAccount, 'city' => $this->data['city'] ?? ''], true);
             return $this->mailer->to($email ?: $this->settings->cc)->cc($this->settings->cc)->send(new TenantEmail(
-                $this->subject, $this->body, $this->signature
+                $this->subject,
+                $this->body,
+                $this->signature,
+                $this->imprint,
+                app(GeneralSettings::class)->logo_url,
+                $logoStyles['height'],
+                $logoStyles['width'],
+                $logoStyles['radius'],
+                $this->attachment
             ));
         } catch (Exception $e) {
             Log::error("Fehler beim Versenden der E-Mail: ".$e->getMessage());

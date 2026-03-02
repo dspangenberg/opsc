@@ -8,6 +8,7 @@ use App\Http\Requests\EmailAccountStoreRequest;
 use App\Http\Requests\EmailAccountUpdateRequest;
 use App\Models\EmailAccount;
 use App\Models\EmailTemplate;
+use App\Models\Invoice;
 use App\Services\SendEmailAsTenantService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -54,14 +55,25 @@ class EmailAccountController extends Controller
         return redirect()->route('admin.email-account.index');
     }
 
+    /**
+     * @throws \Exception
+     */
     public function sendTestMail(EmailAccount $emailAccount) {
-        $template = EmailTemplate::where('name', 'test')->first();
+        $invoice = Invoice::with('type')->find(190);
+        $pdf = Invoice::createOrGetPdf($invoice);
+
+
+        $template = EmailTemplate::where('name', 'invoice')->first();
         $mailer = new SendEmailAsTenantService($template, $emailAccount);
-        $mailer->sendEmail(auth()->user()->email, 'Test User', 'Test City', []);
+        $mailer->setAttachment($pdf, $invoice->filename);
+        $mailer->sendEmail(auth()->user()->email, auth()->user()->full_name, 'Test City', ['invoice' => $invoice]);
 
         return redirect()->back();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function setDefault(EmailAccount $emailAccount): RedirectResponse {
         EmailAccount::query()->update(['is_default' => false]);
         $emailAccount->is_default = true;

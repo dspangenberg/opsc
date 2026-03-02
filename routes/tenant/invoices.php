@@ -99,3 +99,10 @@ Route::put('invoicing/invoices/{invoice}/set-loss-of-receivables', [InvoiceContr
 
 
 Route::post('invoicing/invoices/{invoice}/store-note', [InvoiceController::class, 'storeNote'])->middleware([HandlePrecognitiveRequests::class])->name('app.invoice.store-note');
+
+Route::get('invoicing/invoices/{invoice}/send-by-mail', [InvoiceController::class, 'sendByEmailCreate'])
+    ->name('app.invoice.send-by-mail');
+
+Route::post('invoicing/invoices/{invoice}/send-by-mail', [InvoiceController::class, 'sendByEmailStore'])
+    ->middleware([HandlePrecognitiveRequests::class])
+    ->name('app.invoice.send-by-mail');

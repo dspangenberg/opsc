@@ -149,7 +149,6 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
       router.put(route('app.invoice.set-loss-of-receivables', { invoice: invoice.id }))
     }
   }
-
   const currentRoute = route().current()
 
   const tabs = useMemo(
@@ -262,7 +261,13 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
             separator
             onAction={onPrintPdf}
           />
-          <MenuItem icon={Sent02Icon} title="Rechnung per E-Mail versenden" ellipsis separator />
+          <MenuItem
+            icon={Sent02Icon}
+            title="Rechnung per E-Mail versenden"
+            ellipsis
+            separator
+            href={route('app.invoice.send-by-mail', { invoice: invoice.id })}
+          />
 
           <MenuItem
             icon={EuroReceiveIcon}
