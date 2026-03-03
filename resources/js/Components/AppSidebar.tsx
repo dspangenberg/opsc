@@ -86,12 +86,8 @@ const buildNavData = (isAdmin: boolean) => ({
         },
         {
           title: 'Papierkorb',
-          url: route(
-            'app.document.index',
-            { filters: { view: { operator: 'scope', value: 'trash' } } },
-            false
-          ),
-          activePath: '/app/documents?filters[view][value]=trash'
+          url: route('app.document.index', { view: 'trash' }, false),
+          activePath: '/app/documents?view=trash'
         },
         {
           title: 'Upload',
@@ -186,20 +182,10 @@ const buildNavData = (isAdmin: boolean) => ({
     },
     {
       title: 'Buchhaltung',
-      url: route('app.bookkeeping.bookings.index', {}, false),
+      url: route('app.bookkeeping.receipts.index', {}, false),
       icon: AbacusIcon,
       activePath: '/app/bookkeeping',
       items: [
-        {
-          title: 'Buchungen',
-          url: route('app.bookkeeping.bookings.index', {}, false),
-          activePath: '/app/bookkeeping/bookings'
-        },
-        {
-          title: 'Transaktionen',
-          url: route('app.bookkeeping.transactions.index', {}, false),
-          activePath: '/app/bookkeeping/transactions'
-        },
         {
           title: 'Belege',
           url: route('app.bookkeeping.receipts.index', {}, false),
@@ -218,23 +204,19 @@ const buildNavData = (isAdmin: boolean) => ({
           ]
         },
         {
-          title: 'Kontenübersicht 2022',
-          url: route(
-            'app.bookkeeping.accounts.overview',
-            {
-              _query: {
-                filters: {
-                  issuedBetween: {
-                    operator: 'scope',
-                    value: ['2022-01-01', '2022-12-31']
-                  }
-                },
-                boolean: 'AND'
-              }
-            },
-            false
-          ),
+          title: 'Buchungen',
+          url: route('app.bookkeeping.bookings.index', {}, false),
+          activePath: '/app/bookkeeping/bookings'
+        },
+        {
+          title: 'Konten + Salden',
+          url: route('app.bookkeeping.accounts.overview'),
           activePath: '/app/bookkeeping/accounts-overview'
+        },
+        {
+          title: 'Transaktionen',
+          url: route('app.bookkeeping.transactions.index', {}, false),
+          activePath: '/app/bookkeeping/transactions'
         }
       ]
     }

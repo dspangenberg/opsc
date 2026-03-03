@@ -19,6 +19,7 @@
     "hooks": "@/Hooks"
   },
   "registries": {
-    "@twc-ui": "https://twc-ui.test/r/{name}.json"
+    "@twc-ui": "https://twc-ui.test/r/{name}.json",
+    "@hooks": "https://shadcn-hooks.com/r/{name}.json"
   }
 }
