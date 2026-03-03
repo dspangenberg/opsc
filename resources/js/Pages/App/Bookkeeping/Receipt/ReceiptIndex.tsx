@@ -1,6 +1,5 @@
 import {
   Delete02Icon,
-  File02Icon,
   FileDownloadIcon,
   Invoice01Icon,
   MagicWand01Icon,

@@ -1,10 +1,11 @@
-import { PrinterIcon } from '@hugeicons/core-free-icons'
+import { Invoice01Icon, PrinterIcon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
 import { useCallback, useMemo, useState } from 'react'
 import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
+import { BookmarkMenu } from '@/Components/Shared/Bookmark/BookmarkMenu'
 import { Button } from '@/Components/twc-ui/button'
 import { Toolbar } from '@/Components/twc-ui/toolbar'
 import type { FilterConfig } from '@/Lib/FilterHelper'
@@ -24,10 +25,14 @@ interface AccountBalance {
 interface AccountsOverviewPageProps extends PageProps {
   accounts: App.Data.Paginated.PaginationMeta<AccountBalance[]>
   currentFilters?: FilterConfig
+  bookmark_model: string
+  bookmarks: App.Data.BookmarkData[]
 }
 
 const AccountsOverview: React.FC<AccountsOverviewPageProps> = ({
   accounts: accountsData,
+  bookmark_model,
+  bookmarks = [],
   currentFilters = { filters: {}, boolean: 'AND' }
 }) => {
   const [filters, setFilters] = useState<FilterConfig>(currentFilters)
@@ -40,6 +45,10 @@ const AccountsOverview: React.FC<AccountsOverviewPageProps> = ({
     []
   )
 
+  const handleBookmarkUpdate = () => {
+    router.reload({ only: ['bookmarks'] })
+  }
+
   const toolbar = useMemo(
     () => (
       <Toolbar>
@@ -50,7 +59,7 @@ const AccountsOverview: React.FC<AccountsOverviewPageProps> = ({
   )
 
   const handleFiltersChange = useCallback((newFilters: FilterConfig) => {
-    router.post(
+    router.get(
       route('app.bookkeeping.accounts.overview'),
       {
         ...newFilters
@@ -83,9 +92,15 @@ const AccountsOverview: React.FC<AccountsOverviewPageProps> = ({
           onFiltersChange={handleFiltersChange}
           hideAccountFilters
         />
+        <BookmarkMenu
+          bookmarks={bookmarks}
+          icon={Invoice01Icon}
+          model={bookmark_model}
+          onUpdate={handleBookmarkUpdate}
+        />
       </div>
     ),
-    [filters, handleFiltersChange]
+    [filters, handleFiltersChange, bookmarks, bookmark_model]
   )
 
   const footer = useMemo(() => <Pagination data={accountsData} />, [accountsData])

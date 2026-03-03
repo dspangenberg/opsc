@@ -9,11 +9,14 @@ namespace App\Http\Controllers\App\Bookkeeping;
 
 use App\Data\BookkeepingAccountData;
 use App\Data\BookkeepingBookingData;
+use App\Data\BookmarkData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CorrectBookingsRequest;
 use App\Http\Requests\CorrectEditBookingsRequest;
 use App\Models\BookkeepingAccount;
 use App\Models\BookkeepingBooking;
+use App\Models\Bookmark;
+use App\Models\Receipt;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -112,6 +115,8 @@ class BookingController extends Controller
             $paginatedBalances->appends($request->query());
         }
 
+        $bookmarks = Bookmark::where('model', BookkeepingBooking::class)->orderBy('name')->get();
+
         return Inertia::render('App/Bookkeeping/Booking/AccountsOverview', [
             'accounts' => [
                 'data' => $paginatedBalances->items(),
@@ -126,6 +131,8 @@ class BookingController extends Controller
                 'links' => $paginatedBalances->linkCollection()->toArray(),
             ],
             'currentFilters' => $parsedFilters,
+            'bookmark_model' => BookkeepingBooking::class,
+            'bookmarks' => BookmarkData::collect($bookmarks)
         ]);
     }
 

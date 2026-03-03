@@ -1,6 +1,7 @@
 import {
   CreditCardChangeIcon,
   FileExportIcon,
+  Invoice01Icon,
   MoreVerticalCircle01Icon,
   Tick01Icon
 } from '@hugeicons/core-free-icons'

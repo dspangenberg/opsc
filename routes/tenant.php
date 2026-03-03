@@ -66,7 +66,9 @@ Route::middleware([
     Route::put('bookmarks/{bookmark}/rename', [BookmarkController::class, 'rename'])->name('app.bookmark.rename');
     Route::put('bookmarks/{bookmark}/restore', [BookmarkController::class, 'restore'])->withTrashed()->name('app.bookmark.restore');
     Route::delete('bookmarks/{bookmark}', [BookmarkController::class, 'trash'])->name('app.bookmark.trash');
-
+    Route::put('bookmarks/folder/{bookmarkFolder}', [BookmarkController::class, 'renameFolder'])->name('app.bookmark.rename-folder');
+    Route::delete('bookmarks/folder/{bookmarkFolder}', [BookmarkController::class, 'trashFolder'])->name('app.bookmark.trash-folder');
+    Route::put('bookmarks/folder/{bookmarkFolder}/restore', [BookmarkController::class, 'restoreFolder'])->withTrashed()->name('app.bookmark.restore-folder');
 
     Route::get('/onboarding', function () {
         return Inertia::modal('Onboarding')->baseRoute('app.soon');

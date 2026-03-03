@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\App;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BookmarkFolderRenameRequest;
 use App\Http\Requests\BookmarkFolderRequest;
 use App\Http\Requests\BookmarkPinRequest;
 use App\Http\Requests\BookmarkRenameRequest;
@@ -28,6 +29,13 @@ class BookmarkController extends Controller
         return redirect()->back();
     }
 
+    public function renameFolder(BookmarkFolderRenameRequest $request, BookmarkFolder $bookmarkFolder): RedirectResponse
+    {
+        $bookmarkFolder->update($request->validated());
+        return redirect()->back();
+    }
+
+
     public function togglePin(BookmarkPinRequest $request, Bookmark $bookmark): RedirectResponse
     {
         $bookmark->update($request->validated());
@@ -36,6 +44,16 @@ class BookmarkController extends Controller
 
     public function trash(Bookmark $bookmark): RedirectResponse {
         $bookmark->delete();
+        return redirect()->back();
+    }
+
+    public function trashFolder(BookmarkFolder $bookmarkFolder): RedirectResponse {
+        $bookmarkFolder->delete();
+        return redirect()->back();
+    }
+
+    public function restoreFolder(BookmarkFolder $bookmarkFolder): RedirectResponse {
+        $bookmarkFolder->restore();
         return redirect()->back();
     }
 
