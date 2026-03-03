@@ -127,7 +127,7 @@ class TransactionController extends Controller
         return $this->index($request, $bankAccount);
     }
 
-    public function setCounterAccount(Request $request): Response
+    public function setCounterAccount(Request $request): RedirectResponse
     {
         $ids = $request->query('ids');
         $counterAccount = $request->query('counter_account');
@@ -142,10 +142,10 @@ class TransactionController extends Controller
             }
         });
 
-        $bankAccount = $transactions->first()?->bank_account ?? BankAccount::query()->orderBy('pos')->first();
+        // $bankAccount = $transactions->first()?->bank_account ?? BankAccount::query()->orderBy('pos')->first();
 
         // TODO: Transaktionen werden gut aktualsiert und Filter beigehalten. Allerdings wird die URL geändert.
-        return $this->index($request, $bankAccount);
+        return redirect()->back();
     }
 
     /**

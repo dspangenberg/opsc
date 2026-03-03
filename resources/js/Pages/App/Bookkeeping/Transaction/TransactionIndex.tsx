@@ -133,7 +133,9 @@ const TransactionIndex: React.FC<TransactionsPageProps> = ({
           filters
         },
         {
-          only: ['transactions'],
+          onSuccess: () => {
+            router.reload({ only: ['transactions'] })
+          },
           preserveScroll: true
         }
       )
