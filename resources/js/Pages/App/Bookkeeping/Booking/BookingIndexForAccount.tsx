@@ -35,8 +35,6 @@ const BookingIndexForAccount: React.FC<TransactionsPageProps> = ({
   account,
   accounts,
   bookings,
-  bookmark_model,
-  bookmarks,
   currentFilters = { filters: {}, boolean: 'AND' },
   currentSearch
 }) => {
