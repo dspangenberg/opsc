@@ -544,7 +544,7 @@ class ReceiptController extends Controller
                 $fullPath = storage_path('app/'.$tempPath);
 
 
-                ReceiptUploadJob::dispatch($fullPath, $file->getClientOriginalName(), $file->getSize());
+                ReceiptUploadJob::dispatch($fullPath, $file->getClientOriginalName(), $file->getSize(), $request->validated('useAi'));
             }
         }
 

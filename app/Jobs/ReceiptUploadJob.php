@@ -17,7 +17,8 @@ class ReceiptUploadJob implements ShouldQueue
     public function __construct(
         public string $file,
         public string $orgFilename,
-        public int $size
+        public int $size,
+        public ?bool $useAi = true
     ) {}
 
     /**
@@ -27,6 +28,6 @@ class ReceiptUploadJob implements ShouldQueue
      */
     public function handle(ReceiptService $service): void
     {
-        $service->processFile($this->file, $this->orgFilename, $this->size);
+        $service->processFile($this->file, $this->orgFilename, $this->size, $this->useAi);
     }
 }

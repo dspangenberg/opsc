@@ -9,6 +9,7 @@ import type * as React from 'react'
 import { useMemo, useState } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { Button } from '@/Components/twc-ui/button'
+import { Checkbox } from '@/Components/twc-ui/checkbox'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { Menu, MenuItem, MenuPopover, MenuSubTrigger } from '@/Components/twc-ui/menu'
 import { Toolbar } from '@/Components/twc-ui/toolbar'
@@ -76,8 +77,10 @@ const ReceiptUpload: React.FC<ReceiptIndexPageProps> = ({ receipts }) => {
 export default ReceiptUpload
 
 export const Upload = () => {
+  const [useAi, setUseAi] = useState(true)
   const { data, setData, post, processing, errors } = useForm({
-    files: [] as File[]
+    files: [] as File[],
+    useAi: true
   })
 
   const [fileState, fileActions] = useFileUpload({
@@ -177,6 +180,13 @@ export const Upload = () => {
             <p className="text-red-600 text-sm">{errors.files}</p>
           </div>
         )}
+
+        <Checkbox
+          label="AI-Belegerkennung"
+          name="useAi"
+          isSelected={data.useAi}
+          onChange={value => setData('useAi', value)}
+        />
 
         {/* Submit Button */}
         <Button
