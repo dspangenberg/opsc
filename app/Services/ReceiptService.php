@@ -77,13 +77,13 @@ class ReceiptService
             $metadata = $pdf->getDetails();
             $receipt->file_created_at = $metadata['CreationDate'] ?? filemtime($file);
             $receipt->pages = $metadata['Pages'] ?? 1;
-            $receipt->text = $pdf->getText();
+            $receipt->text = iconv('UTF-8', 'UTF-8//IGNORE', $pdf->getText());
         } catch (Exception) {
             $receipt->file_created_at = filemtime($file);
         }
 
         if (!$receipt->text) {
-            $receipt->text = OcrService::run($file);
+            $receipt->text = iconv('UTF-8', 'UTF-8//IGNORE',OcrService::run($file));
         }
 
         $receipt->checksum = hash_file('sha256', $file);
