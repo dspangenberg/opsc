@@ -5,6 +5,7 @@
 
 import type { FC, ReactNode } from 'react'
 import { cn } from '@/Lib/utils'
+
 interface Props {
   value?: string | number
   label: string
@@ -14,9 +15,9 @@ interface Props {
 
 export const StatsField: FC<Props> = ({ value = '', label, children, classNameValue = '' }) => {
   return (
-    <div className="block space-x-1 font-normal text-center space-y-0 px-3">
-      <div className={cn('text-base font-medium', classNameValue)}>{children || value}</div>
-      <div className="text-xs text-foreground/60">{label}</div>
+    <div className="block space-x-1 space-y-0 px-3 text-center font-normal">
+      <div className={cn('text-base text-black', classNameValue)}>{children || value}</div>
+      <div className="text-foreground/50 text-xs">{label}</div>
     </div>
   )
 }

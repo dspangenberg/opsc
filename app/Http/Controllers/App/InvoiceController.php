@@ -571,7 +571,7 @@ class InvoiceController extends Controller
             ->whereRaw('amount - COALESCE((SELECT SUM(amount) FROM payments WHERE transaction_id = transactions.id), 0) > 0.01')
             ->where('is_locked', true)
             ->whereBetween('booked_on',
-                [$invoice->issued_on->copy()->subMonths(3), $invoice->issued_on->copy()->addMonths(3)])
+                [$invoice->issued_on->copy()->subMonths(6), $invoice->issued_on->copy()->addMonths(6)])
             ->get();
 
         $invoice

@@ -14,16 +14,19 @@ export interface DataCardProps {
   className?: string
 }
 
-export const DataCard: FC<DataCardProps> = ({
+export const DataCardLight: FC<DataCardProps> = ({
   children,
   title = '',
   className = ''
 }: DataCardProps) => {
   return (
-    <ScrollCard className="flex flex-1 overflow-y-hidden" innerClassName="overflow-y-hidden">
+    <ScrollCard
+      className="flex flex-1 overflow-y-hidden bg-background"
+      innerClassName="overflow-y-hidden"
+    >
       <div className={cn('flex w-full max-w-sm flex-1 flex-col rounded-lg', className)}>
         {title && <DataCardHeader title={title} />}
-        <div className="flex-1 overflow-y-auto rounded-lg px-2">{children}</div>
+        <div className="flex-1 overflow-y-auto rounded-lg">{children}</div>
       </div>
     </ScrollCard>
   )
@@ -43,7 +46,7 @@ export const DataCardHeader: FC<DataCardHeaderProps> = ({
   return (
     <div
       className={cn(
-        'flex-none overflow-x-hidden hyphens-auto text-wrap bg-background px-4 py-2.5 font-medium text-base text-foreground',
+        'flex-none overflow-x-hidden hyphens-auto text-wrap rounded-t-lg border-border/50 border-b bg-muted/50 px-4 py-2.5 font-medium text-base text-foreground',
         className
       )}
     >
@@ -76,13 +79,13 @@ export const DataCardContent: FC<DataCardContentProps> = ({ children, showSecond
 
   return (
     <div className="">
-      <div className="my-1 space-y-1.5 divide-border/40 overflow-y-auto">
+      <div className="my-1 overflow-y-auto">
         {showSecondarySections ? allChildren : filteredChildren}
       </div>
       {!showSecondarySections && allChildren.length > filteredChildren.length && (
         <button
           type="button"
-          className="flex w-full cursor-pointer items-center justify-center overflow-y-auto py-2 text-center text-xs hover:underline"
+          className="flex w-full cursor-pointer items-center justify-center overflow-y-auto text-center text-xs hover:underline"
           onClick={onShowSecondaryClicked}
         >
           Details anzeigen
@@ -93,7 +96,7 @@ export const DataCardContent: FC<DataCardContentProps> = ({ children, showSecond
 }
 export interface DataCardSectionProps {
   className?: string
-  children: ReactNode
+  children?: ReactNode
   minChildren?: number
   title?: string
   buttonVariant?: 'ghost' | 'outline'
@@ -143,7 +146,7 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
       {title && <DataCardSectionHeader title={title} addon={addon} />}
       <div
         className={cn(
-          'flex w-full flex-1 flex-col space-y-2 truncate hyphens-auto rounded-md border border-border/50 bg-background px-2.5 py-1.5 text-base',
+          'flex w-full flex-1 flex-col space-y-2 truncate hyphens-auto border-border/50 border-t bg-background px-4 pt-1.5 pb-0.5 text-base',
           className
         )}
       >
@@ -164,11 +167,7 @@ export const DataCardFieldGroup: FC<DataFieldGroupProps> = ({
   children,
   className = ''
 }: DataFieldGroupProps) => {
-  return (
-    <div className={cn('divide-y divide-border truncate text-foreground/50 text-sm', className)}>
-      {children}
-    </div>
-  )
+  return <div className={cn('truncate text-foreground/50 text-sm', className)}>{children}</div>
 }
 
 interface DataCardSectionHeaderProps {
@@ -185,9 +184,9 @@ export const DataCardSectionHeader: FC<DataCardSectionHeaderProps> = ({
   addon = ''
 }: DataCardSectionHeaderProps) => {
   return (
-    <div className="flex items-center py-1 pr-0.5 pl-2.5 text-sm">
-      <div className={cn('flex-1 pb-1 font-medium', className)}>{children || title}</div>
-      <div className="flex-none text-right text-sm">{addon}</div>
+    <div className="mt-2 flex items-center border-border/50 border-t border-b bg-muted/50 pt-2 pr-0.5 pb-1 pl-4 font-medium text-black text-sm leading-relaxed">
+      <div className={cn('flex-1 pb-1', className)}>{children || title}</div>
+      <div className="flex-none text-right">{addon}</div>
     </div>
   )
 }
@@ -234,7 +233,7 @@ export const DataCardFieldLabel: FC<DataCardFieldLabelProps> = ({
   label,
   className = ''
 }: DataCardFieldLabelProps) => {
-  return <div className={cn('truncate text-foreground/50 text-sm', className)}>{label}:</div>
+  return <div className={cn('truncate pb-0.5 text-foreground/50 text-sm', className)}>{label}:</div>
 }
 
 export interface DataCardFieldCommonProps {
@@ -251,9 +250,9 @@ export const DataCardFieldHorizontal: FC<DataCardFieldCommonProps> = ({
   className = ''
 }: DataCardFieldCommonProps) => {
   return (
-    <div className={cn('flex', className)}>
-      <DataCardFieldLabel label={label} className="w-[50%] flex-none" />
-      <div className="flex-1 font-medium text-foreground">{value || children}</div>
+    <div className={cn('flex text-sm', className)}>
+      <DataCardFieldLabel label={label} className="w-[40%] flex-none truncate" />
+      <div className="m flex-1 font-medium text-black">{value || children}</div>
     </div>
   )
 }
@@ -281,7 +280,7 @@ export const DataCardFieldVertical: FC<DataCardFieldCommonProps> = ({
   return (
     <div className={cn('block w-full flex-1', className)}>
       <DataCardFieldLabel className="block" label={label} />
-      <div className="block truncate font-medium text-foreground text-sm">{children || value}</div>
+      <div className="block truncate text-black text-sm">{children || value}</div>
     </div>
   )
 }

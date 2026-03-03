@@ -6,8 +6,6 @@ import { useInitials } from '@/Hooks/use-initials'
 import { generateColorFromString, getIdealTextColor } from '@/Lib/color-utils'
 import { cn } from '@/Lib/utils'
 
-// TODO twc-ui
-
 const avatarVariants = tv({
   slots: {
     base: 'relative flex shrink-0 overflow-hidden rounded-full p-0.5 text-primary-foreground focus-visible:ring-primary/20 data-hovered:bg-primary/90',
