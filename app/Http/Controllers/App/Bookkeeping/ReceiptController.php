@@ -469,6 +469,7 @@ class ReceiptController extends Controller
         $receipts->each(function ($receipt) {
             if (! $receipt->is_locked) {
                 $receipt->is_locked = true;
+                $receipt->duplicate_of = null;
 
                 if (! $receipt->number_range_document_numbers_id) {
                     $receipt->number_range_document_numbers_id = NumberRange::createDocumentNumber($receipt,

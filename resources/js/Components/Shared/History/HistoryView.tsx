@@ -60,7 +60,12 @@ export const HistoryView: FC<Props> = ({ entries, route: storeRoute }) => {
         <Form form={form} onSubmitted={handleFormSubmit}>
           <FormGrid>
             <div className="col-span-24">
-              <FormTextArea autoFocus label="Notiz" {...form.register('note')} />
+              <FormTextArea
+                autoFocus
+                aria-label="Notiz schreiben"
+                placeholder="Neue Notiz erstellen"
+                {...form.register('note')}
+              />
             </div>
           </FormGrid>
         </Form>
@@ -70,7 +75,7 @@ export const HistoryView: FC<Props> = ({ entries, route: storeRoute }) => {
           <Fragment key={day}>
             <div className="relative w-full flex-1">
               <div className="absolute inset-x-0 top-1/2 border-border/80 border-t" />
-              <div className="relative inline-block bg-page-content pr-2 font-medium text-foreground text-sm">
+              <div className="relative inline-block bg-page-content pr-2 font-medium text-base text-foreground">
                 {day}
               </div>
             </div>

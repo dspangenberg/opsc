@@ -24,6 +24,7 @@
   --width-8xl: 88rem;
   --max-width-8xl: 88rem;
   --font-size-xs: 0.8rem;
+  --font-size-md: 0.84rem;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
