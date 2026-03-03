@@ -118,7 +118,7 @@ class ReceiptService
             $receipt->save();
         }
 
-        if ($useAi) {
+        if ($useAi && !$duplicatedReceipt) {
             try {
                 $receipt->extractInvoiceData();
             } catch (Exception $e) {
