@@ -10,7 +10,7 @@ import { cn } from '@/Lib/utils'
 
 const avatarVariants = tv({
   slots: {
-    base: 'relative flex shrink-0 overflow-hidden rounded-full p-0.5 text-primary-foreground focus-visible:ring-primary/20 data-[hovered]:bg-primary/90',
+    base: 'relative flex shrink-0 overflow-hidden rounded-full p-0.5 text-primary-foreground focus-visible:ring-primary/20 data-hovered:bg-primary/90',
     image: 'aspect-square size-full rounded-full',
     fallback: 'flex size-full items-center justify-center rounded-full uppercase',
     badge: 'flex items-center justify-center rounded-full border text-white text-xs',
@@ -89,6 +89,7 @@ interface AvatarProps extends React.ComponentPropsWithoutRef<typeof AvatarPrimit
   className?: string
   variant?: AvatarVariants['variant']
   badge?: React.ReactNode
+  imageClassName?: string
   alt?: string
   children?: React.ReactNode
   badgeClassName?: string
@@ -98,6 +99,7 @@ const Avatar = ({
   fullname = '',
   initials = '',
   badgeClassName,
+  imageClassName,
   className,
   size = 'md',
   variant = 'default',
@@ -131,7 +133,11 @@ const Avatar = ({
       <div className="rounded-full border border-border" data-testid="avatar-container">
         <AvatarRoot className={cn(styles.base(), className)} {...props}>
           {children}
-          <AvatarImage className={styles.image()} src={src ?? undefined} alt={alt || fullname} />
+          <AvatarImage
+            className={cn(styles.image(), imageClassName)}
+            src={src ?? undefined}
+            alt={alt || fullname}
+          />
           <AvatarFallback
             style={{
               backgroundColor,
