@@ -33,7 +33,7 @@ class ReceiptService
 
         $files = [];
         foreach ($zip->listFiles() as $zipFile) {
-            if (! Str::startsWith($zipFile, ['.DS_Store', '__MACOSX', '.', '..'])) {
+            if (!Str::startsWith($zipFile, ['.DS_Store', '__MACOSX', '.', '..'])) {
                 $files[] = $zipFile;
             }
         }
@@ -44,7 +44,7 @@ class ReceiptService
             $pdfFile = $tempFile.'/'.$zipFile;
             if ($result) {
 
-                if (! is_dir($pdfFile)) {
+                if (!is_dir($pdfFile)) {
                     $orgFilename = basename($zipFile);
                     $filesize = filesize($pdfFile);
                     $this->processFile($pdfFile, $orgFilename, $filesize);
@@ -63,7 +63,7 @@ class ReceiptService
      * @throws ConfigurationException
      * @throws PdfDoesNotExist
      */
-    public function processFile(string $file, string $orgFilename, int $size): void
+    public function processFile(string $file, string $orgFilename, int $size, bool $useAi = true): void
     {
         $receipt = new Receipt;
         $receipt->org_filename = $orgFilename;
@@ -82,7 +82,7 @@ class ReceiptService
             $receipt->file_created_at = filemtime($file);
         }
 
-        if (! $receipt->text) {
+        if (!$receipt->text) {
             $receipt->text = OcrService::run($file);
         }
 
@@ -92,11 +92,13 @@ class ReceiptService
 
         BookeepingRuleService::run('receipts', new Receipt, [$receipt->id]);
 
+        /*
         $receipt->refresh();
-        if ($receipt->contact_id && ! $receipt->cost_center_id) {
+        if ($receipt->contact_id && !$receipt->cost_center_id) {
             $receipt->cost_center_id = Contact::find($receipt->contact_id)->cost_center_id;
             $receipt->save();
         }
+        */
 
         $media = MediaUploader::fromSource($file)
             ->toDestination('s3_private', 'uploads/'.$receipt->issued_on->format('Y/m/'))
@@ -116,16 +118,17 @@ class ReceiptService
             $receipt->save();
         }
 
-        try {
-            $receipt->extractInvoiceData();
-        } catch (Exception $e) {
-            // Log generic extraction error but don't lose PDF parsing/checksum/media/upload work
-            Log::warning('AI receipt extraction failed, preserving PDF parsing results', [
-                'receipt_id' => $receipt->id,
-                'error' => $e->getMessage(),
-                'stack_trace' => $e->getTraceAsString(),
-            ]);
+        if ($useAi) {
+            try {
+                $receipt->extractInvoiceData();
+            } catch (Exception $e) {
+                // Log generic extraction error but don't lose PDF parsing/checksum/media/upload work
+                Log::warning('AI receipt extraction failed, preserving PDF parsing results', [
+                    'receipt_id' => $receipt->id,
+                    'error' => $e->getMessage(),
+                    'stack_trace' => $e->getTraceAsString(),
+                ]);
+            }
         }
-
     }
 }

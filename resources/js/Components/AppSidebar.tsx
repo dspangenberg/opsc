@@ -81,11 +81,7 @@ const buildNavData = (isAdmin: boolean) => ({
         },
         {
           title: 'Inbox',
-          url: route(
-            'app.document.index',
-            { filters: { view: { operator: 'scope', value: 'inbox' } } },
-            false
-          ),
+          url: route('app.document.index', { view: 'inbox' }, false),
           activePath: '/app/documents?filters[view][value]=inbox'
         },
         {
