@@ -3,6 +3,7 @@ import { DataTable } from '@/Components/DataTable'
 import { HistoryView } from '@/Components/Shared/History/HistoryView'
 import { InvoiceDetailsLayout } from '@/Pages/App/Invoice/InvoiceDetailsLayout'
 import { InvoiceDetailsSide } from '@/Pages/App/Invoice/InvoiceDetailsSide'
+import { InvoiceDetailsSideLight } from '@/Pages/App/Invoice/InvoiceDetailsSideLight'
 import { columns } from '@/Pages/App/Invoice/InvoicePaymentColumns'
 import type { PageProps } from '@/Types'
 
@@ -20,9 +21,9 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ invoice }) => {
           route={route('app.invoice.store-note', { invoice: invoice.id })}
         />
       </div>
-      <div className="h-fit w-full max-w-sm flex-none px-1">
+      <div className="h-fit w-full max-w-sm flex-none border-l! border-stone-200 px-1">
         <div className="fixed w-full max-w-sm space-y-6">
-          <InvoiceDetailsSide invoice={invoice} />
+          <InvoiceDetailsSideLight invoice={invoice} />
         </div>
       </div>
     </InvoiceDetailsLayout>

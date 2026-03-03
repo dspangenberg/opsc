@@ -87,42 +87,22 @@ export const HistoryViewItem: React.FC<Props> = ({ item }) => {
           <div className="inline-block">
             {item.creator?.id ? (
               <Avatar
-                size="md"
+                size="sm"
                 src={item.creator?.avatar_url}
                 initials={item.creator?.initials}
                 fullname={item.creator?.full_name}
-                badge={
-                  <div className={cn('rounded-full border', getBorderClass())}>
-                    <div
-                      className={cn(
-                        'relative flex items-center justify-center rounded-full border-2 border-white',
-                        getBgClass()
-                      )}
-                    >
-                      <Icon icon={getIcon()} className="size-4 p-0.5 text-white" />
-                    </div>
-                  </div>
-                }
+                badgeClassName={cn(getBgClass(), getBorderClass())}
+                badge={<Icon icon={getIcon()} className="size-3 text-white" />}
               />
             ) : (
               <Avatar
-                size="md"
+                size="sm"
                 src={robot}
                 initials="Sys"
                 fullname="System"
-                imageClassName="size-5 mx-auto my-auto opacity-50"
-                badge={
-                  <div className={cn('rounded-full border', getBorderClass())}>
-                    <div
-                      className={cn(
-                        'relative flex items-center justify-center rounded-full border-2 border-white',
-                        getBgClass()
-                      )}
-                    >
-                      <Icon icon={getIcon()} className="size-4 p-0.5 text-white" />
-                    </div>
-                  </div>
-                }
+                imageClassName="size-4 mx-auto my-auto opacity-50"
+                badgeClassName={cn(getBgClass(), getBorderClass())}
+                badge={<Icon icon={getIcon()} className="size-3 text-white" />}
               />
             )}
           </div>

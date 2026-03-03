@@ -153,6 +153,7 @@ export const InvoiceForm: React.FC<Props> = ({
               itemName="reverse_full_name"
               isOptional
               {...form.register('invoice_contact_id')}
+              optionalValue="0"
               items={invoiceContacts}
             />
           </div>
