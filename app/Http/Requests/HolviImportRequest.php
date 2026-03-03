@@ -15,7 +15,7 @@ class HolviImportRequest extends FormRequest
     {
         return [
             'bank_account_id' => ['required', 'exists:bank_accounts,id'],
-            'file' => 'required|file|mimes:csv|max:51200',
+            'file' => 'required|file|extensions:csv|max:51200',
         ];
     }
 }
