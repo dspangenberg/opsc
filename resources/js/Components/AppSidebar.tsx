@@ -82,7 +82,7 @@ const buildNavData = (isAdmin: boolean) => ({
         {
           title: 'Inbox',
           url: route('app.document.index', { view: 'inbox' }, false),
-          activePath: '/app/documents?filters[view][value]=inbox'
+          activePath: '/app/documents?view=inbox'
         },
         {
           title: 'Papierkorb',
