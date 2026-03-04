@@ -43,7 +43,7 @@ export const DataCardHeader: FC<DataCardHeaderProps> = ({
   return (
     <div
       className={cn(
-        'flex-none overflow-x-hidden hyphens-auto text-wrap bg-background px-4 py-2.5 font-medium text-base text-foreground',
+        'flex-none overflow-x-hidden hyphens-auto text-wrap bg-sidebar px-4 py-2.5 font-medium text-base text-foreground',
         className
       )}
     >
@@ -82,7 +82,7 @@ export const DataCardContent: FC<DataCardContentProps> = ({ children, showSecond
       {!showSecondarySections && allChildren.length > filteredChildren.length && (
         <button
           type="button"
-          className="flex w-full cursor-pointer items-center justify-center overflow-y-auto py-2 text-center text-xs hover:underline"
+          className="flex w-full cursor-pointer items-center justify-center overflow-y-auto py-1.5 text-center text-xs hover:underline"
           onClick={onShowSecondaryClicked}
         >
           Details anzeigen
@@ -117,20 +117,19 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
   title = ''
 }: DataCardSectionProps) => {
   const getValidChildren = (children: ReactNode) => {
-    return Children.toArray(children).filter(
-      (child): child is ReactElement<DataCardFieldProps> =>
+    return Children.toArray(children).filter((child): child is ReactElement => {
+      return (
         React.isValidElement(child) &&
         typeof child.type === 'function' &&
         'props' in child &&
         typeof child.props === 'object' &&
-        child.props !== null &&
-        'value' in child.props &&
-        child.props.value !== null &&
-        child.props.value !== undefined
-    )
+        child.props !== null
+      )
+    })
   }
 
   const validChildren = getValidChildren(children)
+
   const hasValidChildren = validChildren.length > 0
 
   return (
@@ -143,7 +142,7 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
       {title && <DataCardSectionHeader title={title} addon={addon} />}
       <div
         className={cn(
-          'flex w-full flex-1 flex-col space-y-2 truncate hyphens-auto rounded-md border border-border/50 bg-background px-2.5 py-1.5 text-base',
+          'flex w-full flex-1 flex-col space-y-1.5 divide-y divide-border/50 truncate hyphens-auto rounded-md border border-border/50 bg-background pt-0.5 text-base',
           className
         )}
       >
@@ -165,9 +164,7 @@ export const DataCardFieldGroup: FC<DataFieldGroupProps> = ({
   className = ''
 }: DataFieldGroupProps) => {
   return (
-    <div className={cn('divide-y divide-border truncate text-foreground/50 text-sm', className)}>
-      {children}
-    </div>
+    <div className={cn('w-full truncate text-foreground/50 text-sm', className)}>{children}</div>
   )
 }
 
@@ -185,8 +182,10 @@ export const DataCardSectionHeader: FC<DataCardSectionHeaderProps> = ({
   addon = ''
 }: DataCardSectionHeaderProps) => {
   return (
-    <div className="flex items-center py-1 pr-0.5 pl-2.5 text-sm">
-      <div className={cn('flex-1 pb-1 font-medium', className)}>{children || title}</div>
+    <div className="flex items-center py-1 pr-0.5 pl-2.5 text-xs">
+      <div className={cn('flex-1 pb-1 text-foreground/50 uppercase', className)}>
+        {children || title}
+      </div>
       <div className="flex-none text-right text-sm">{addon}</div>
     </div>
   )
@@ -234,7 +233,7 @@ export const DataCardFieldLabel: FC<DataCardFieldLabelProps> = ({
   label,
   className = ''
 }: DataCardFieldLabelProps) => {
-  return <div className={cn('truncate text-foreground/50 text-sm', className)}>{label}:</div>
+  return <div className={cn('truncate pb-0.5 text-foreground/50 text-xs', className)}>{label}:</div>
 }
 
 export interface DataCardFieldCommonProps {
@@ -279,9 +278,9 @@ export const DataCardFieldVertical: FC<DataCardFieldCommonProps> = ({
   className = ''
 }: DataCardFieldCommonProps) => {
   return (
-    <div className={cn('block w-full flex-1', className)}>
+    <div className={cn('block w-full flex-1 px-2.5 pt-1 pb-2', className)}>
       <DataCardFieldLabel className="block" label={label} />
-      <div className="block truncate font-medium text-foreground text-sm">{children || value}</div>
+      <div className="block truncate text-black text-sm">{children || value}</div>
     </div>
   )
 }

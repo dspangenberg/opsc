@@ -42,10 +42,9 @@ export const BookmarkSidebarGroupBookmarks: FC<Props> = ({ bookmarks }) => {
         <SidebarMenuSubItem key={bookmark.id} className="hover:bg-sidebar-accent">
           <SidebarMenuSubButton asChild className="">
             <div className="group/bookmark flex items-center">
-              <Icon icon={getIcon(bookmark)} className="size-4! shrink" />
               <Link
                 href={route(bookmark.route_name, bookmark.route_params)}
-                className="flex-1 truncate"
+                className="-ml-1 flex-1 truncate"
               >
                 {bookmark.sidebar_title}
               </Link>
