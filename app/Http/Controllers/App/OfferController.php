@@ -224,7 +224,7 @@ class OfferController extends Controller
 
         if ($request->validated('contact_id') !== $oldContactId) {
 
-            $offer->address = $offer->contact->getInvoiceAddress()->full_address;
+            $offer->address = $offer->contact->getFormatedInvoiceAddress();
             $offer->save();
         }
 
