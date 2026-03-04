@@ -3,13 +3,14 @@ import { type FC, useMemo } from 'react'
 import { ArrayTextField } from '@/Components/ArrayTextField'
 
 import {
+  DataCard,
   DataCardContent,
   DataCardField,
+  DataCardFieldGroup,
   DataCardHeader,
-  DataCardLight,
   DataCardSection,
   DataCardSectionHeader
-} from '@/Components/DataCardLight'
+} from '@/Components/DataCard'
 import { StatsField } from '@/Components/StatsField'
 import { cn } from '@/Lib/utils'
 
@@ -45,52 +46,59 @@ export const InvoiceDetailsSideLight: FC<InvoiceDetailsSideProps> = ({
   const title = `RG-${invoice.formated_invoice_number}`
 
   return (
-    <DataCardLight title={title}>
-      <DataCardHeader
-        className={cn(
-          'grid border-0 bg-background pt-2.5 pb-0',
-          invoice.is_draft ? 'grid-cols-3' : 'grid-cols-4'
-        )}
-      >
-        <StatsField label="netto" value={currencyFormatter.format(invoice.amount_net)} />
-        <StatsField label="USt." value={currencyFormatter.format(invoice.amount_tax)} />
-        <StatsField label="brutto" value={currencyFormatter.format(invoice.amount_gross)} />
-        {!invoice.is_draft && (
-          <StatsField label="offen" value={currencyFormatter.format(invoice.amount_open || 0)} />
-        )}
-      </DataCardHeader>
+    <DataCard title={title}>
       <DataCardContent>
-        <DataCardSection className={cn('grid grid-cols-2 space-y-2')} title="Details">
-          <DataCardField variant="vertical" label="Datum" value={invoice.issued_on} />
-          <DataCardField variant="vertical" label="Fälligkeit" value={invoice.due_on}>
-            {invoice.due_on} {invoice.dunning_days > 0 && <span> (+{invoice.dunning_days})</span>}
-          </DataCardField>
+        <DataCardSection
+          className={cn(
+            'grid border py-2 pb-0 tabular-nums',
+            invoice.is_draft ? 'grid-cols-3' : 'grid-cols-4'
+          )}
+        >
+          <StatsField label="netto" value={currencyFormatter.format(invoice.amount_net)} />
+          <StatsField label="USt." value={currencyFormatter.format(invoice.amount_tax)} />
+          <StatsField label="brutto" value={currencyFormatter.format(invoice.amount_gross)} />
+          {!invoice.is_draft && (
+            <StatsField label="offen" value={currencyFormatter.format(invoice.amount_open || 0)} />
+          )}
         </DataCardSection>
-        <DataCardSection suppressEmptyText>
-          <DataCardField
-            className="col-span-2"
-            variant="vertical"
-            label="Leistungsdatum"
-            value={invoice.service_provision || invoice.service_period_begin}
-          >
-            {invoice.service_period_begin ? (
-              <>
-                {invoice.service_period_begin} &ndash; {invoice.service_period_end}
-              </>
-            ) : (
-              invoice.service_provision
-            )}
-          </DataCardField>
+        <DataCardSection title="Details">
+          <DataCardFieldGroup className="grid grid-cols-3">
+            <DataCardField variant="vertical" label="Datum" value={invoice.issued_on} />
+            <DataCardField
+              className="col-span-2"
+              variant="vertical"
+              label="Fälligkeit"
+              value={invoice.due_on}
+            >
+              {invoice.due_on}{' '}
+              {invoice.dunning_days > 0 && (
+                <span className="text-destructive">+{invoice.dunning_days}</span>
+              )}
+            </DataCardField>
+          </DataCardFieldGroup>
+          <DataCardFieldGroup className="grid grid-cols-3">
+            <DataCardField
+              variant="vertical"
+              label="Rechnungstyp"
+              value={invoice.type?.display_name}
+            />
+            <DataCardField
+              className="col-span-2"
+              variant="vertical"
+              label="Leistungsdatum"
+              value={invoice.service_provision || invoice.service_period_begin}
+            >
+              {invoice.service_period_begin ? (
+                <>
+                  {invoice.service_period_begin} &ndash; {invoice.service_period_end}
+                </>
+              ) : (
+                invoice.service_provision
+              )}
+            </DataCardField>
+          </DataCardFieldGroup>
         </DataCardSection>
-        <DataCardSection>
-          <DataCardField
-            variant="vertical"
-            label="Rechnungstyp"
-            value={invoice.type?.display_name}
-          />
-        </DataCardSection>
-        <DataCardSectionHeader title="Rechnungsempfänger" />
-        <DataCardSection>
+        <DataCardSection title="Rechnungsempfänger">
           <DataCardField
             variant="vertical"
             label="Debitor"
@@ -101,12 +109,11 @@ export const InvoiceDetailsSideLight: FC<InvoiceDetailsSideProps> = ({
               {invoice.contact?.formated_debtor_number} &ndash; {invoice.contact?.full_name}
             </Link>
           </DataCardField>
-        </DataCardSection>
-        <DataCardSection className="grid grid-cols-2 pt-1.5">
-          <DataCardField variant="vertical" label="Umsatzsteuer" value={invoice.tax?.name} />
-          <DataCardField variant="vertical" label="Umsatzsteuer-ID" empty value={invoice.vat_id} />
-        </DataCardSection>
-        <DataCardSection secondary>
+
+          <DataCardFieldGroup className="grid grid-cols-2">
+            <DataCardField variant="vertical" label="Umsatzsteuer" value={invoice.tax?.name} />
+            <DataCardField variant="vertical" label="Umsatzsteuer-ID" value={invoice.vat_id} />
+          </DataCardFieldGroup>
           <DataCardField
             variant="vertical"
             label="Rechnungsanschrift"
@@ -114,13 +121,10 @@ export const InvoiceDetailsSideLight: FC<InvoiceDetailsSideProps> = ({
           >
             <ArrayTextField lines={invoice.invoice_address} />
           </DataCardField>
-        </DataCardSection>
-        <DataCardSection suppressEmptyText>
           <DataCardField variant="vertical" label="Zusatztext" value={invoice.additional_text} />
         </DataCardSection>
 
-        <DataCardSectionHeader title="Verknüpfungen" />
-        <DataCardSection suppressEmptyText>
+        <DataCardSection title="Verknüpfungen">
           <DataCardField
             variant="vertical"
             label="Übergeordnete Rechnung"
@@ -130,17 +134,12 @@ export const InvoiceDetailsSideLight: FC<InvoiceDetailsSideProps> = ({
               {invoice.parent_invoice?.formated_invoice_number}
             </Link>
           </DataCardField>
-        </DataCardSection>
-
-        <DataCardSection suppressEmptyText>
           <DataCardField
             className="col-span-2"
             variant="vertical"
             label="Projekt"
             value={invoice.project?.name}
           />
-        </DataCardSection>
-        <DataCardSection suppressEmptyText>
           <DataCardField
             className="col-span-2"
             variant="vertical"
@@ -153,6 +152,6 @@ export const InvoiceDetailsSideLight: FC<InvoiceDetailsSideProps> = ({
           </DataCardField>
         </DataCardSection>
       </DataCardContent>
-    </DataCardLight>
+    </DataCard>
   )
 }

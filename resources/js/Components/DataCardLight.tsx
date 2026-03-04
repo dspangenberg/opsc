@@ -252,7 +252,7 @@ export const DataCardFieldHorizontal: FC<DataCardFieldCommonProps> = ({
   return (
     <div className={cn('flex text-sm', className)}>
       <DataCardFieldLabel label={label} className="w-[40%] flex-none truncate" />
-      <div className="m flex-1 font-medium text-black">{value || children}</div>
+      <div className="flex-1 font-medium text-black">{value || children}</div>
     </div>
   )
 }

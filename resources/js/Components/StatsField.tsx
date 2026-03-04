@@ -15,7 +15,7 @@ interface Props {
 
 export const StatsField: FC<Props> = ({ value = '', label, children, classNameValue = '' }) => {
   return (
-    <div className="block space-x-1 space-y-0 px-3 text-center font-normal">
+    <div className="block space-x-1 space-y-0 border-0 px-3 text-center font-normal">
       <div className={cn('text-base text-black', classNameValue)}>{children || value}</div>
       <div className="text-foreground/50 text-xs">{label}</div>
     </div>
