@@ -7,6 +7,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\InboxEntryStatus;
 use App\Http\Controllers\App\BookmarkController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\InitialPasswordController;
@@ -14,12 +15,15 @@ use App\Http\Controllers\Auth\InitialPasswordStoreController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Models\User;
+use Carbon\Carbon;
 use ProtoneMedia\LaravelVerifyNewEmail\Http\VerifyNewEmailController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Stancl\Tenancy\Features\UserImpersonation;
 use Stancl\Tenancy\Middleware;
+use App\Models\InboxEntry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
@@ -175,8 +179,46 @@ Route::middleware([
             return response(null, 500);
         }
 
-        Log::info('Postal', [
-            'json' => $request->json()->all(),
+        $payload = $request->json()->all();
+        if (!isset($payload['from'], $payload['to'])) {
+            return response(null, 422);
+        }
+
+        $from = parseMailParty((string) $payload['from'])['email'];
+        $to = parseMailParty((string) $payload['to'])['email'];
+
+        $messageId = $payload['message_id'] ?? null;
+
+        if (!isset($payload['date'])) {
+            return response(null, 422);
+        }
+
+        try {
+            $sentAt = Carbon::parse((string) $payload['date']);
+        } catch (Throwable $exception) {
+            return response(null, 422);
+        }
+
+        $attributes = [
+            'payload' => $payload,
+            'message_id' => $messageId,
+            'from' => $from,
+            'to' => $to,
+            'user_id' => User::query()->where('email', $to)->value('id')
+                ?? User::query()->where('email', $from)->value('id'),
+            'received_at' => now(),
+            'status' => InboxEntryStatus::PENDING,
+            'sent_at' => $sentAt,
+        ];
+
+        if ($messageId !== null) {
+            InboxEntry::updateOrCreate(['message_id' => $messageId], $attributes);
+        } else {
+            InboxEntry::create($attributes);
+        }
+
+        Log::info('Postal: Inbox entry created', [
+            'message_id' => $payload['message_id'] ?? null,
         ]);
 
         return response(null, 200);

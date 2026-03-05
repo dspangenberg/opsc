@@ -129,3 +129,21 @@ if (! function_exists('sortByLength')) {
         return strlen($b) - strlen($a);
     }
 }
+if (! function_exists('parseMailParty')) {
+    function parseMailParty(string $party): array
+    {
+        if (preg_match('/^(.*?)\s*<([^>]+)>$/', $party, $matches)) {
+            $name = trim($matches[1]); // "John Doe"
+            $email = $matches[2]; // "test@example.com"
+        } else {
+            // Fallback, falls das Format nicht passt
+            $name = null;
+            $email = $party;
+        }
+
+        return [
+            'name' => $name,
+            'email' => $email,
+        ];
+    }
+}
