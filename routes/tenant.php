@@ -189,6 +189,16 @@ Route::middleware([
 
         $messageId = $payload['message_id'] ?? null;
 
+        if (!isset($payload['date'])) {
+            return response(null, 422);
+        }
+
+        try {
+            $sentAt = Carbon::parse((string) $payload['date']);
+        } catch (Throwable $exception) {
+            return response(null, 422);
+        }
+
         $attributes = [
             'payload' => $payload,
             'message_id' => $messageId,
@@ -198,7 +208,7 @@ Route::middleware([
                 ?? User::query()->where('email', $from)->value('id'),
             'received_at' => now(),
             'status' => InboxEntryStatus::PENDING,
-            'sent_at' => Carbon::parse($payload['date']),
+            'sent_at' => $sentAt,
         ];
 
         if ($messageId !== null) {
