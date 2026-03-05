@@ -145,13 +145,28 @@ Route::middleware([
             return response(null, 401);
         }
 
-        $publicKey = openssl_pkey_get_public(config('services.postal.public_key'));
+        $publicKeyPem = config('services.postal.public_key');
+
+        if (empty($publicKeyPem)) {
+            Log::error('Postal: Public key not configured');
+            return response(null, 500);
+        }
+
+        $publicKey = openssl_pkey_get_public($publicKeyPem);
+        if ($publicKey === false) {
+            Log::error('Postal: Invalid public key');
+            return response(null, 500);
+        }
+
         $rawBody = $request->getContent();
-        $decoded = base64_decode($signature);
+        $decoded = base64_decode($signature, true);
+        if ($decoded === false) {
+            return response(null, 401);
+        }
 
         $valid = openssl_verify($rawBody, $decoded, $publicKey, OPENSSL_ALGO_SHA256);
 
-        if ($valid !== 1) {
+        if ($valid === false) {
             return response(null, 401);
         }
 

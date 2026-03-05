@@ -33,7 +33,7 @@ return [
         'url' => env('GOTENBERG_URL'),
     ],
     'postal' => [
-        'public_key' => env('POSTAL_PUBLIC_KEY'),
+        'public_key' => str_replace('\n', "\n", env('POSTAL_PUBLIC_KEY')),
     ],
     'vat_currency_rates' => [
         'host' => 'https://umsatzsteuer-umrechnungskurse.org/api/',
