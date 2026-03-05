@@ -32,6 +32,9 @@ return [
     'gotenberg' => [
         'url' => env('GOTENBERG_URL'),
     ],
+    'postal' => [
+        'public_key' => env('POSTAL_PUBLIC_KEY'),
+    ],
     'vat_currency_rates' => [
         'host' => 'https://umsatzsteuer-umrechnungskurse.org/api/',
         'key' => env('CONVERSION_RATES_API_KEY'),
