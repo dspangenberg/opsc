@@ -1,6 +1,6 @@
 import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { OfferDetailsAttachments } from '@/Pages/App/Offer/OfferDetailsAttachments'
 import { OfferDetailsLayout } from '@/Pages/App/Offer/OfferDetailsLayout'
 import type { PageProps } from '@/Types'

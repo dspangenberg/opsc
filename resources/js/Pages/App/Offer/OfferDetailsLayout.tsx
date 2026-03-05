@@ -155,8 +155,7 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children, ...props 
     })
     if (promise) {
       router.put(route('app.offer.set-status', { offer: offer.id }), {
-        status,
-        status_name: statusName
+        status
       })
     }
   }

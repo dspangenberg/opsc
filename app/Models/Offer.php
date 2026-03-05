@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\OfferStatusEnum;
 use App\Facades\WeasyPdfService;
 use Carbon\Carbon;
+use DateTimeInterface;
 use Eloquent;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -375,7 +376,7 @@ class Offer extends Model implements MediableInterface
         string $text,
         string $type = 'note',
         ?User $user = null,
-        ?DateTime $createdAt = null
+        ?DateTimeInterface $createdAt = null
     ): Notable {
         if ($type) {
             $text = '['.$type.'] '.$text;

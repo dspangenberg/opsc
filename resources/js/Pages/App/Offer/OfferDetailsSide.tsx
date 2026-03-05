@@ -47,7 +47,7 @@ export const OfferDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
         <StatsField label="brutto" value={currencyFormatter.format(offer.amount_gross)} />
       </DataCardHeader>
       <DataCardContent>
-        <DataCardSection title="Angbotsdetails">
+        <DataCardSection title="Angebotsdetails">
           <DataCardFieldGroup className="grid grid-cols-3">
             <DataCardField variant="vertical" label="Datum" value={offer.issued_on} />
             <DataCardField variant="vertical" label="gültig bis" value={offer.valid_until} />

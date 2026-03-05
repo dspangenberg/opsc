@@ -1,14 +1,9 @@
-import { router, usePage } from '@inertiajs/react'
 import type * as React from 'react'
-import { useEffect } from 'react'
+
 import { HistoryView } from '@/Components/Shared/History/HistoryView'
-import { InvoiceDetailsSideLight } from '@/Pages/App/Invoice/InvoiceDetailsSideLight'
 import { OfferDetailsLayout } from '@/Pages/App/Offer/OfferDetailsLayout'
 import type { PageProps } from '@/Types'
 import { OfferDetailsSide } from './OfferDetailsSide'
-import { OfferLinesEditor } from './OfferLinesEditor'
-import { OfferTable } from './OfferTable'
-import { useOfferTable } from './OfferTableProvider'
 
 interface OfferTermsProps extends PageProps {
   offer: App.Data.OfferData
