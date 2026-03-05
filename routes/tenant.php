@@ -204,6 +204,7 @@ Route::middleware([
             'message_id' => $messageId,
             'from' => $from,
             'to' => $to,
+            'subject' => $payload['subject'],
             'user_id' => User::query()->where('email', $to)->value('id')
                 ?? User::query()->where('email', $from)->value('id'),
             'received_at' => now(),

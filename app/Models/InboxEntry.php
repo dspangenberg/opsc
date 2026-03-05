@@ -12,6 +12,7 @@ class InboxEntry extends Model
     protected $fillable = [
         'from',
         'to',
+        'subject',
         'payload',
         'status',
         'processed_by',
