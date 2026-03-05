@@ -34,7 +34,7 @@ return new class extends Migration
             // Metadaten
             $table->string('message_id')->nullable();
             $table->dateTime('received_at');
-
+            $table->dateTime('sent_at');
             $table->timestamps();
 
             $table->index('status');

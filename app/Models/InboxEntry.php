@@ -3,13 +3,11 @@
 namespace App\Models;
 
 use App\Enums\InboxEntryStatus;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class InboxEntry extends Model
 {
-    use HasFactory;
 
     protected $fillable = [
         'from',
@@ -20,15 +18,20 @@ class InboxEntry extends Model
         'processed_at',
         'received_at',
         'message_id',
+        'sent_at',
         'user_id'
     ];
 
-    protected $casts = [
-        'payload' => 'array',
-        'processed_at' => 'datetime',
-        'received_at' => 'datetime',
-        'status' => InboxEntryStatus::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'payload' => 'array',
+            'processed_at' => 'datetime',
+            'received_at' => 'datetime',
+            'sent_at' => 'datetime',
+            'status' => InboxEntryStatus::class,
+        ];
+    }
 
     public function processedBy(): BelongsTo
     {
@@ -39,6 +42,7 @@ class InboxEntry extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
     public function markAsAccepted(User $user): void
     {
         $this->update([
