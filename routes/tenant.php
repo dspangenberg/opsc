@@ -164,15 +164,21 @@ Route::middleware([
             return response(null, 401);
         }
 
-        $valid = openssl_verify($rawBody, $decoded, $publicKey, OPENSSL_ALGO_SHA256);
+        $verificationResult = openssl_verify($rawBody, $decoded, $publicKey, OPENSSL_ALGO_SHA256);
 
-        if ($valid === false) {
-            return response(null, 401);
+        if ($verificationResult !== 1) {
+            if ($verificationResult === 0) {
+                return response(null, 401);
+            }
+
+            Log::error('Postal: Signature verification error');
+            return response(null, 500);
         }
 
         Log::info('Postal', [
             'json' => $request->json()->all(),
         ]);
+
         return response(null, 200);
     })->withoutMiddleware([ValidateCsrfToken::class]);
 });
