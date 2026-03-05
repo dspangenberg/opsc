@@ -46,7 +46,8 @@
     "thiagoalessio/tesseract_ocr": "^2.13",
     "tightenco/ziggy": "^2.5.3",
     "usmanhalalit/laracsv": "^2.1",
-    "zanysoft/laravel-zip": "^3.0"
+    "zanysoft/laravel-zip": "^3.0",
+    "ext-openssl": "*"
   },
   "require-dev": {
     "barryvdh/laravel-ide-helper": "^3.5.5",

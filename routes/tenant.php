@@ -64,14 +64,20 @@ Route::middleware([
     require __DIR__.'/tenant/times.php';
 
     Route::post('bookmarks/store', [BookmarkController::class, 'store'])->name('app.bookmark.store');
-    Route::post('bookmarks/store-folder', [BookmarkController::class, 'storeFolder'])->name('app.bookmark.store-folder');
-    Route::put('bookmarks/{bookmark}/toggle-pin', [BookmarkController::class, 'togglePin'])->name('app.bookmark.toggle-pin');
+    Route::post('bookmarks/store-folder',
+        [BookmarkController::class, 'storeFolder'])->name('app.bookmark.store-folder');
+    Route::put('bookmarks/{bookmark}/toggle-pin',
+        [BookmarkController::class, 'togglePin'])->name('app.bookmark.toggle-pin');
     Route::put('bookmarks/{bookmark}/rename', [BookmarkController::class, 'rename'])->name('app.bookmark.rename');
-    Route::put('bookmarks/{bookmark}/restore', [BookmarkController::class, 'restore'])->withTrashed()->name('app.bookmark.restore');
+    Route::put('bookmarks/{bookmark}/restore',
+        [BookmarkController::class, 'restore'])->withTrashed()->name('app.bookmark.restore');
     Route::delete('bookmarks/{bookmark}', [BookmarkController::class, 'trash'])->name('app.bookmark.trash');
-    Route::put('bookmarks/folder/{bookmarkFolder}', [BookmarkController::class, 'renameFolder'])->name('app.bookmark.rename-folder');
-    Route::delete('bookmarks/folder/{bookmarkFolder}', [BookmarkController::class, 'trashFolder'])->name('app.bookmark.trash-folder');
-    Route::put('bookmarks/folder/{bookmarkFolder}/restore', [BookmarkController::class, 'restoreFolder'])->withTrashed()->name('app.bookmark.restore-folder');
+    Route::put('bookmarks/folder/{bookmarkFolder}',
+        [BookmarkController::class, 'renameFolder'])->name('app.bookmark.rename-folder');
+    Route::delete('bookmarks/folder/{bookmarkFolder}',
+        [BookmarkController::class, 'trashFolder'])->name('app.bookmark.trash-folder');
+    Route::put('bookmarks/folder/{bookmarkFolder}/restore',
+        [BookmarkController::class, 'restoreFolder'])->withTrashed()->name('app.bookmark.restore-folder');
 
     Route::get('/onboarding', function () {
         return Inertia::modal('Onboarding')->baseRoute('app.soon');
@@ -119,7 +125,9 @@ Route::middleware([
         ->middleware(['signed', 'throttle:6,1'])
         ->name('initial-password');
 
-    Route::post('/initial-password/store', [InitialPasswordStoreController::class, '__invoke'])->name('initial-password.store')->middleware([HandlePrecognitiveRequests::class]);
+    Route::post('/initial-password/store', [
+        InitialPasswordStoreController::class, '__invoke'
+    ])->name('initial-password.store')->middleware([HandlePrecognitiveRequests::class]);
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store')->middleware([HandlePrecognitiveRequests::class]);
@@ -132,9 +140,45 @@ Route::middleware([
     Middleware\ScopeSessions::class,
 ])->group(function () {
     Route::post('/postal', function (Request $request) {
+        $signature = $request->header('X-Postal-Signature-256');
+        if (!$signature) {
+            return response(null, 401);
+        }
+
+        $publicKeyPem = config('services.postal.public_key');
+
+        if (empty($publicKeyPem)) {
+            Log::error('Postal: Public key not configured');
+            return response(null, 500);
+        }
+
+        $publicKey = openssl_pkey_get_public($publicKeyPem);
+        if ($publicKey === false) {
+            Log::error('Postal: Invalid public key');
+            return response(null, 500);
+        }
+
+        $rawBody = $request->getContent();
+        $decoded = base64_decode($signature, true);
+        if ($decoded === false) {
+            return response(null, 401);
+        }
+
+        $verificationResult = openssl_verify($rawBody, $decoded, $publicKey, OPENSSL_ALGO_SHA256);
+
+        if ($verificationResult !== 1) {
+            if ($verificationResult === 0) {
+                return response(null, 401);
+            }
+
+            Log::error('Postal: Signature verification error');
+            return response(null, 500);
+        }
+
         Log::info('Postal', [
             'json' => $request->json()->all(),
         ]);
+
         return response(null, 200);
     })->withoutMiddleware([ValidateCsrfToken::class]);
 });
