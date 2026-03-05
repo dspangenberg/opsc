@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Stancl\Tenancy\Features\UserImpersonation;
 use Stancl\Tenancy\Middleware;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 /*
 |--------------------------------------------------------------------------
@@ -128,8 +130,8 @@ Route::middleware([
     Middleware\PreventAccessFromUnwantedDomains::class,
     Middleware\ScopeSessions::class,
 ])->group(function () {
-    Route::get('/postal', function (Request $request) {
-        Log::warning('Postal', [
+    Route::post('/postal', function (Request $request) {
+        Log::info('Postal', [
             'json' => $request->json()->all(),
         ]);
         return response(null, 200);
