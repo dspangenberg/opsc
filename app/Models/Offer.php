@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\OfferStatusEnum;
 use App\Facades\WeasyPdfService;
 use Carbon\Carbon;
+use DateTimeInterface;
 use Eloquent;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,10 +16,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Facades\DB;
+use MohamedSaid\Notable\Notable;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
 use Plank\Mediable\MediableInterface;
+use MohamedSaid\Notable\Traits\HasNotables;
 
 /**
  * @property bool $is_draft
@@ -57,7 +61,7 @@ use Plank\Mediable\MediableInterface;
  */
 class Offer extends Model implements MediableInterface
 {
-    use Mediable;
+    use Mediable, HasNotables;
 
     protected $fillable = [
         'contact_id',
@@ -70,6 +74,7 @@ class Offer extends Model implements MediableInterface
         'sent_at',
         'is_template',
         'template_name',
+        'status'
     ];
 
     protected $attributes = [
@@ -93,6 +98,7 @@ class Offer extends Model implements MediableInterface
             'sent_at' => 'datetime',
             'is_draft' => 'boolean',
             'is_template' => 'boolean',
+            'status' => OfferStatusEnum::class
         ];
     }
 
@@ -364,5 +370,25 @@ class Offer extends Model implements MediableInterface
             'templates' => $query->where('is_template', true),
             default => $query->where('is_draft', false)
         };
+    }
+
+    public function addHistory(
+        string $text,
+        string $type = 'note',
+        ?User $user = null,
+        ?DateTimeInterface $createdAt = null
+    ): Notable {
+        if ($type) {
+            $text = '['.$type.'] '.$text;
+        }
+
+        $note = $this->addNote($text, $user);
+
+        if ($createdAt) {
+            $note->created_at = $createdAt;
+            $note->save();
+        }
+
+        return $note;
     }
 }

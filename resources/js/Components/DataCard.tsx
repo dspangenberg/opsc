@@ -197,7 +197,7 @@ export interface DataCardFieldProps {
   variant?: 'horizontal' | 'vertical' | 'horizontal-right'
   label: string
   value?: string | number | null | string[]
-  empty?: boolean
+  empty?: boolean | string
 }
 
 export const DataCardField: FC<DataCardFieldProps> = ({
@@ -212,7 +212,10 @@ export const DataCardField: FC<DataCardFieldProps> = ({
     return null
   }
 
-  const props = { label, value, children, className }
+  const realEmpty = typeof empty === 'string' ? empty : ''
+  const realValue = value ?? (realEmpty as string)
+
+  const props = { label, value: realValue, children, className }
 
   switch (variant) {
     case 'horizontal':

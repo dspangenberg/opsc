@@ -4,11 +4,13 @@ import {
   DataCard,
   DataCardContent,
   DataCardField,
+  DataCardFieldGroup,
   DataCardHeader,
   DataCardSection
 } from '@/Components/DataCard'
 import { StatsField } from '@/Components/StatsField'
 import { cn } from '@/Lib/utils'
+import { offerStatusDirectory } from '@/Pages/App/Offer/OfferDetails'
 
 interface ContactDetailsOrgInfoBoxProps {
   offer: App.Data.OfferData
@@ -23,6 +25,8 @@ export const OfferDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })
+
+  const statusLabel = offerStatusDirectory[offer.status].name
 
   const contactRoute = useMemo(
     () => route('app.contact.details', { id: offer.contact_id }),
@@ -43,22 +47,19 @@ export const OfferDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
         <StatsField label="brutto" value={currencyFormatter.format(offer.amount_gross)} />
       </DataCardHeader>
       <DataCardContent>
-        <DataCardSection
-          className={cn('grid space-y-0', offer.is_draft ? 'grid-cols-2' : 'grid-cols-3')}
-          title="Angbotsdetails"
-        >
-          <DataCardField variant="vertical" label="Datum" value={offer.issued_on} />
-          <DataCardField variant="vertical" label="gültig bis" value={offer.valid_until} />
-          {!offer.is_draft && (
+        <DataCardSection title="Angebotsdetails">
+          <DataCardFieldGroup className="grid grid-cols-3">
+            <DataCardField variant="vertical" label="Datum" value={offer.issued_on} />
+            <DataCardField variant="vertical" label="gültig bis" value={offer.valid_until} />
             <DataCardField
               variant="vertical"
-              label="versendet"
-              value={offer.sent_at?.substring(0, 10)}
+              label="Status"
+              value={offer.is_draft ? 'Entwurf' : statusLabel}
             />
-          )}
-        </DataCardSection>
-        <DataCardSection className="grid grid-cols-2">
-          <DataCardField variant="vertical" label="Umsatzsteuer" value={offer.tax?.name} />
+          </DataCardFieldGroup>
+          <DataCardFieldGroup>
+            <DataCardField variant="vertical" label="Umsatzsteuer" value={offer.tax?.name} />
+          </DataCardFieldGroup>
         </DataCardSection>
         <DataCardSection>
           <DataCardField

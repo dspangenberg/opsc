@@ -62,10 +62,15 @@ export const InvoiceDetailsSideLight: FC<InvoiceDetailsSideProps> = ({
           )}
         </DataCardSection>
         <DataCardSection title="Details">
-          <DataCardFieldGroup className="grid grid-cols-3">
-            <DataCardField variant="vertical" label="Datum" value={invoice.issued_on} />
+          <DataCardFieldGroup className="grid grid-cols-6">
             <DataCardField
               className="col-span-2"
+              variant="vertical"
+              label="Datum"
+              value={invoice.issued_on}
+            />
+            <DataCardField
+              className="col-span-3"
               variant="vertical"
               label="Fälligkeit"
               value={invoice.due_on}
@@ -75,17 +80,19 @@ export const InvoiceDetailsSideLight: FC<InvoiceDetailsSideProps> = ({
                 <span className="text-destructive">+{invoice.dunning_days}</span>
               )}
             </DataCardField>
+            <DataCardField variant="vertical" label="MS" value={invoice.dunning_level} />
           </DataCardFieldGroup>
           <DataCardFieldGroup className="grid grid-cols-3">
             <DataCardField
               variant="vertical"
               label="Rechnungstyp"
-              value={invoice.type?.display_name}
+              value={invoice.type?.abbreviation}
             />
             <DataCardField
               className="col-span-2"
               variant="vertical"
               label="Leistungsdatum"
+              empty="ohne"
               value={invoice.service_provision || invoice.service_period_begin}
             >
               {invoice.service_period_begin ? (

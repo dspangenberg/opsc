@@ -99,7 +99,7 @@ class InvoiceController extends Controller
                 SELECT SUM(amount)
                 FROM payments
                 WHERE payable_type = ? AND payable_id = invoices.id
-            ), 0) > 0.01', [Invoice::class, Invoice::class])
+            ), 0) != 0.00', [Invoice::class, Invoice::class])
             ->where('is_draft', false)
             ->byYear($year)
             ->first();

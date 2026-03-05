@@ -84,5 +84,7 @@ Route::put('invoicing/offers/{offer}/terms/sort-sections', [OfferController::cla
     ->name('app.offer.sort-sections');
 
 Route::post('invoicing/offers/{offer}/save-as-template', [OfferController::class, 'saveAsTemplate'])->middleware([HandlePrecognitiveRequests::class])->name('app.offer.save-as-template');
+Route::put('invoicing/offers/{offer}/status', [OfferController::class, 'setStatus'])->middleware([HandlePrecognitiveRequests::class])->name('app.offer.set-status');
 
+Route::post('invoicing/offers/{offer}/store-note', [OfferController::class, 'storeNote'])->middleware([HandlePrecognitiveRequests::class])->name('app.offer.store-note');
 

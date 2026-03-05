@@ -4,7 +4,7 @@
  */
 
 import { parseDate as parseDateValue } from '@internationalized/date'
-import { format, minutesToHours, parse } from 'date-fns'
+import { format, formatDistanceStrict, minutesToHours, parse } from 'date-fns'
 import { de } from 'date-fns/locale'
 
 export const parseAndFormatDate = (date: string, formatString = 'dd.MM.yyyy') => {
@@ -17,6 +17,19 @@ export const parseAndFormatDate = (date: string, formatString = 'dd.MM.yyyy') =>
   }
 
   return format(parsedDate, formatString, { locale: de })
+}
+
+export const formatDateDistance = (date: string) => {
+  let parsedDate: Date
+  if (date.length === 10) {
+    parsedDate = parse(date, 'dd.MM.yyyy', new Date())
+  } else {
+    parsedDate = parse(date.substring(0, 16), 'dd.MM.yyyy HH:mm', new Date())
+  }
+  return formatDistanceStrict(parsedDate, new Date(), {
+    locale: de,
+    addSuffix: true
+  })
 }
 
 export const parseAndFormatDateTime = (date: string, formatString = 'dd.MM.yyyy HH:mm') => {

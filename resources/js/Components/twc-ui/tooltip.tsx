@@ -1,3 +1,5 @@
+// TODO: twc-ui
+
 import type React from 'react'
 import {
   Tooltip as AriaTooltip,
@@ -29,13 +31,14 @@ export function Tooltip({ children, ...props }: TooltipProps) {
     <AriaTooltip
       {...props}
       offset={8}
-      className={composeRenderProps(props.className, (className, renderProps) =>
-        tooltipVariants({
+      className={composeRenderProps(props.className, (className, renderProps) => {
+        const baseClasses = tooltipVariants.base
+        const variantClasses = tooltipVariants({
           isEntering: renderProps.isEntering,
-          isExiting: renderProps.isExiting,
-          className
+          isExiting: renderProps.isExiting
         })
-      )}
+        return `${baseClasses} ${variantClasses} ${className}`
+      })}
     >
       <OverlayArrow>
         <svg

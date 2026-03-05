@@ -11,7 +11,6 @@ import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormCard } from '@/Components/twc-ui/form-card'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextArea } from '@/Components/twc-ui/form-text-area'
-import { parseAndFormatDate } from '@/Lib/DateHelper'
 import { HistoryViewItem } from './HistoryViewItem'
 
 interface Props {
@@ -24,24 +23,14 @@ interface FormData extends Record<string, FormDataConvertible> {
 }
 
 export const HistoryView: FC<Props> = ({ entries, route: storeRoute }) => {
-  const entriesWithDate = entries.map(item => ({
-    ...item,
-    date: parseAndFormatDate(item.created_at, 'dd. MMMM yyyy')
-  }))
-
   const form = useForm<FormData>('store-note-form', 'post', storeRoute, {
     note: ''
   })
-
-  const groupedEntries = Object.groupBy(entriesWithDate, ({ date }) => date)
-  const days = Object.keys(groupedEntries)
 
   const handleFormSubmit = () => {
     form.reset()
     router.reload({ only: ['invoice'] })
   }
-
-  const getEntriesByDate = (date: string) => groupedEntries[date] ?? []
 
   return (
     <div className="mt-8 space-y-4">
@@ -70,22 +59,19 @@ export const HistoryView: FC<Props> = ({ entries, route: storeRoute }) => {
           </FormGrid>
         </Form>
       </FormCard>
-      <div className="flex flex-1 flex-col items-start space-y-4">
-        {days.map(day => (
-          <Fragment key={day}>
-            <div className="relative w-full flex-1">
-              <div className="absolute inset-x-0 top-1/2 border-border/80 border-t" />
-              <div className="relative inline-block bg-page-content pr-2 font-medium text-base text-foreground">
-                {day}
-              </div>
-            </div>
-            <div className="flex w-full flex-col">
-              {getEntriesByDate(day).map((item, index) => (
-                <HistoryViewItem key={item.id} item={item} />
-              ))}
-            </div>
-          </Fragment>
-        ))}
+      <div className="mt-6 flex flex-1 flex-col items-start">
+        <div className="flex w-full flex-col">
+          {entries.map((item, index) => (
+            <Fragment key={item.id}>
+              <HistoryViewItem key={item.id} item={item} />
+              {index !== entries.length - 1 && (
+                <div className="relative h-fit min-h-3 w-12">
+                  <div className="absolute inset-y-0 left-1/2 border-gray-300 border-l" />
+                </div>
+              )}
+            </Fragment>
+          ))}
+        </div>
       </div>
     </div>
   )

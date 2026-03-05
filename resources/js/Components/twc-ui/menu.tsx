@@ -1,3 +1,5 @@
+// TODO: twc-ui
+
 import { Check, ChevronRight, Dot } from 'lucide-react'
 import type * as React from 'react'
 import {
@@ -51,14 +53,14 @@ const menuItemVariants = tv({
   base: [
     'relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors',
     /* Disabled */
-    'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+    'data-disabled:pointer-events-none data-disabled:opacity-50',
     /* Selection Mode */
-    'data-[selection-mode]:pl-8'
+    'data-selection-mode:pl-8'
   ],
   variants: {
     variant: {
-      default: ['data-[focused]:bg-accent data-[focused]:text-accent-foreground'],
-      destructive: ['data-[focused]:bg-destructive/10 data-[focused]:text-destructive-foreground']
+      default: ['data-focused:bg-accent data-focused:text-accent-foreground'],
+      destructive: ['data-focused:bg-destructive/10 data-focused:text-destructive-foreground']
     }
   },
   defaultVariants: {
@@ -74,6 +76,7 @@ interface MenuItemProps extends AriaMenuItemProps, VariantProps<typeof menuItemV
   ellipsis?: boolean
   shortcut?: string
   isDisabled?: boolean
+  selectionMode?: 'single' | 'multiple'
 }
 
 interface BaseMenuItemProps extends AriaMenuItemProps, VariantProps<typeof menuItemVariants> {}
@@ -97,6 +100,7 @@ const MenuItem = ({
   shortcut = '',
   title,
   ellipsis = false,
+  selectionMode,
   variant,
   ...props
 }: MenuItemProps) => (
@@ -105,6 +109,7 @@ const MenuItem = ({
       id={props.id}
       textValue={props.textValue || (typeof children === 'string' ? children : undefined)}
       isDisabled={isDisabled}
+      data-selection-mode={selectionMode}
       className={composeRenderProps(className, className =>
         menuItemVariants({ variant, className })
       )}
@@ -112,15 +117,23 @@ const MenuItem = ({
     >
       {composeRenderProps(children, (_children, renderProps) => (
         <div className="flex flex-1 items-center gap-2">
-          {icon ? <Icon icon={icon} className="size-4 flex-none" /> : <span className="size-4" />}
+          {!selectionMode ? (
+            icon ? (
+              <Icon icon={icon} className="size-4 flex-none" />
+            ) : (
+              <span className="size-4" />
+            )
+          ) : (
+            ''
+          )}
           <span className="absolute left-2 flex size-4 items-center justify-center">
             {renderProps.isSelected && (
               <>
                 {renderProps.selectionMode === 'single' && (
-                  <Icon icon={Dot} className="size-4 fill-current text-primary" />
+                  <Icon icon={Dot} className="size-5 fill-current text-primary" strokeWidth={5} />
                 )}
                 {renderProps.selectionMode === 'multiple' && (
-                  <Icon icon={Check} className="size-4" />
+                  <Icon icon={Check} className="size-5" />
                 )}
               </>
             )}

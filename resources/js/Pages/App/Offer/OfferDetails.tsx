@@ -14,6 +14,20 @@ interface OfferDetailsProps extends PageProps {
   children?: React.ReactNode
 }
 
+type OfferStatus = {
+  id: string
+  name: string
+}
+
+export const offerStatusDirectory: Record<string, OfferStatus> = {
+  pending: { id: 'pending', name: 'ausstehend' },
+  accepted: { id: 'accepted', name: 'angenommen' },
+  rejected: { id: 'rejected', name: 'abgelehnt' },
+  postponed: { id: 'postponed', name: 'aufgeschoben' },
+  extended: { id: 'extended', name: 'verlängert' },
+  canceled: { id: 'canceled', name: 'storniert' }
+}
+
 const OfferDetailsContent: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const { offer } = usePage<OfferDetailsProps>().props
 

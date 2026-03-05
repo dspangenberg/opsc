@@ -460,6 +460,8 @@ attachments: Array<App.Data.AttachmentData> | null;
 tax: App.Data.TaxData | null;
 is_template: boolean | null;
 template_name: string | null;
+status: App.Enums.OfferStatusEnum;
+notables: Array<App.Data.NoteableData> | null;
 };
 export type OfferLineData = {
 id: number | null;
@@ -760,5 +762,6 @@ email_verified_at: string | null;
 }
 declare namespace App.Enums {
 export type InvoiceRecurringEnum = 'days' | 'weeks' | 'months' | 'years';
+export type OfferStatusEnum = 'pending' | 'accepted' | 'rejected' | 'postponed' | 'extended' | 'canceled';
 export type PagebreakEnum = 'after' | 'before' | 'both' | 'none';
 }
