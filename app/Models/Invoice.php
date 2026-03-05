@@ -7,6 +7,7 @@ use App\Facades\WeasyPdfService;
 use App\Http\Controllers\App\TimeController;
 use Carbon\Carbon;
 use DateTime;
+use DateTimeInterface;
 use Eloquent;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -260,7 +261,7 @@ class Invoice extends Model implements MediableInterface
         string $text,
         string $type = 'note',
         ?User $user = null,
-        ?DateTime $createdAt = null
+        ?DateTimeInterface $createdAt = null
     ): Notable {
         if ($type) {
             $text = '['.$type.'] '.$text;
@@ -379,34 +380,7 @@ class Invoice extends Model implements MediableInterface
 
         }
 
-        /*
-        if (!$this->number_range_document_numbers_id) {
-            $this->number_range_document_numbers_id = NumberRange::createDocumentNumber($this, 'issued_on');
-        }
-        if (!$releasedInvoice->hasMedia('pdf')) {
-            Invoice::createOrGetPdf($releasedInvoice, true);
-
-        */
-
         $this->save();
-
-        /*
-        $releasedInvoice = $this->refresh();
-        $releasedInvoice
-            ->load('lines')
-            ->load('contact')
-            ->load('project')
-            ->load('lines')
-            ->load('type')
-            ->load('range_document_number')
-            ->loadSum('lines', 'amount')
-            ->loadSum('lines', 'tax')
-            ->loadSum('payable', 'amount');
-
-        Invoice::createBooking($releasedInvoice);
-        */
-
-        // return $releasedInvoice;
     }
 
     /**

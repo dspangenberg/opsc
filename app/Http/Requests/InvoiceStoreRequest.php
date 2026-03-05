@@ -29,6 +29,7 @@ class InvoiceStoreRequest extends FormRequest
             'is_recurring' => ['required', 'boolean'],
             'is_draft' => ['nullable', 'boolean'],
             'dunning_block' => ['nullable', 'boolean'],
+            'payment_deadline_id' => ['required', 'exists:payment_deadlines,id'],
         ];
     }
 

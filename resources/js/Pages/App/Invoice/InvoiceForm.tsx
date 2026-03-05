@@ -101,6 +101,8 @@ export const InvoiceForm: React.FC<Props> = ({
 
     form.setData('invoice_contact_id', selectedContact.invoice_contact_id ?? (0 as number))
     form.setData('dunning_block', Boolean(selectedContact.has_dunning_block))
+    form.setData('payment_deadline_id', selectedContact.payment_deadline_id ?? (0 as number))
+    form.setData('tax_id', selectedContact.tax_id ?? (0 as number))
   }, [form.data.contact_id, contacts])
 
   return (

@@ -121,3 +121,17 @@ Route::middleware([
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store')->middleware([HandlePrecognitiveRequests::class]);
 });
+
+Route::middleware([
+    'web',
+    Middleware\InitializeTenancyByDomainOrSubdomain::class,
+    Middleware\PreventAccessFromUnwantedDomains::class,
+    Middleware\ScopeSessions::class,
+])->group(function () {
+    Route::get('/postal', function (Request $request) {
+        Log::warning('Postal', [
+            'json' => $request->json()->all(),
+        ]);
+        return response(null, 200);
+    });
+});
