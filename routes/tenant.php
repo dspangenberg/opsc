@@ -140,15 +140,20 @@ Route::middleware([
     Middleware\ScopeSessions::class,
 ])->group(function () {
     Route::post('/postal', function (Request $request) {
-        $signature = $request->header('X-Postal-Signature');
-        $expectedSignature = hash_hmac('sha256', $request->getContent(), config('services.postal.public_key'));
-
-        if (!hash_equals($expectedSignature, $signature ?? '')) {
+        $signature = $request->header('X-Postal-Signature-256');
+        if (!$signature) {
             return response(null, 401);
         }
 
+        $publicKey = openssl_pkey_get_public(config('services.postal.public_key'));
+        $rawBody = $request->getContent();
+        $decoded = base64_decode($signature);
 
+        $valid = openssl_verify($rawBody, $decoded, $publicKey, OPENSSL_ALGO_SHA256);
 
+        if ($valid !== 1) {
+            return response(null, 401);
+        }
 
         Log::info('Postal', [
             'json' => $request->json()->all(),
