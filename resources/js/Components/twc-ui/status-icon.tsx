@@ -50,28 +50,33 @@ const alertStyles = tv({
 interface AlertProps extends React.ComponentProps<'div'>, VariantProps<typeof alertStyles> {
   variant: VariantProps<typeof alertStyles>['variant']
   size?: VariantProps<typeof alertStyles>['size']
+  icon?: IconType
 }
 
-const StatusIcon: React.FC<AlertProps> = ({ variant, size }) => {
+const StatusIcon: React.FC<AlertProps> = ({ icon, variant, size }) => {
   const styles = alertStyles({ variant, size })
   let realIcon: IconType
 
-  switch (variant) {
-    case 'destructive':
-      realIcon = CancelCircleIcon
-      break
-    case 'info':
-      realIcon = InformationCircleIcon
-      break
-    case 'warning':
-      realIcon = AlertCircleIcon
-      break
-    case 'success':
-      realIcon = CheckmarkCircle01Icon
-      break
-    default:
-      realIcon = AlertCircleIcon
-      break
+  if (icon) {
+    realIcon = icon
+  } else {
+    switch (variant) {
+      case 'destructive':
+        realIcon = CancelCircleIcon
+        break
+      case 'info':
+        realIcon = InformationCircleIcon
+        break
+      case 'warning':
+        realIcon = AlertCircleIcon
+        break
+      case 'success':
+        realIcon = CheckmarkCircle01Icon
+        break
+      default:
+        realIcon = AlertCircleIcon
+        break
+    }
   }
 
   return <Icon icon={realIcon} className={cn(styles.icon())} />

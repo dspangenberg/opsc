@@ -12,7 +12,8 @@ import {
   ParagraphIcon,
   Pdf02Icon,
   PrinterIcon,
-  Sent02Icon
+  Sent02Icon,
+  StatusIcon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import print from 'print-js'
@@ -21,11 +22,12 @@ import { useCallback, useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
-import { MenuItem } from '@/Components/twc-ui/menu'
+import { Menu, MenuItem, MenuPopover, MenuSubTrigger } from '@/Components/twc-ui/menu'
 import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
 import { Tab, TabList, Tabs } from '@/Components/twc-ui/tabs'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
 import { useFileDownload } from '@/Hooks/use-file-download'
+import { offerStatusDirectory } from '@/Pages/App/Offer/OfferDetails'
 import { OfferSaveAsTemplate } from '@/Pages/App/Offer/OfferSaveAsTemplate'
 import { OfferTableProvider, useOfferTable } from './OfferTableProvider'
 
@@ -144,6 +146,26 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children, ...props 
     }
   }
 
+  const handleStatusChange = async (status: string) => {
+    const statusName = offerStatusDirectory[status].name
+    const promise = await AlertDialog.call({
+      title: 'Status ändern',
+      message: `Möchtest Du den Status wirklich auf ${statusName} ändern?`,
+      buttonTitle: 'Status ändern'
+    })
+    if (promise) {
+      router.put(route('app.offer.set-status', { offer: offer.id }), {
+        status,
+        status_name: statusName
+      })
+    }
+  }
+
+  const statusArray = Object.entries(offerStatusDirectory).map(([key, value]) => ({
+    id: key,
+    name: value.name
+  }))
+
   const handelAddSection = () => {
     props?.onAddSection?.()
   }
@@ -190,7 +212,7 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children, ...props 
         <ToolbarButton icon={Pdf02Icon} title="PDF-Vorschau" onClick={() => onShowPdf()} />
 
         <DropdownButton variant="toolbar" icon={MoreVerticalCircle01Icon} isDisabled={editMode}>
-          {offer.is_draft && (
+          {offer.is_draft ? (
             <>
               <MenuItem
                 icon={Edit03Icon}
@@ -213,6 +235,23 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children, ...props 
                 onAction={handleRelease}
               />
             </>
+          ) : (
+            <MenuSubTrigger>
+              <MenuItem icon={StatusIcon} title="Status setzen" separator />
+              <MenuPopover>
+                <Menu selectionMode="single" selectedKeys={[offer.status]}>
+                  {statusArray.map(status => (
+                    <MenuItem
+                      selectionMode="single"
+                      key={status.id}
+                      id={status.id}
+                      title={status.name}
+                      onAction={() => handleStatusChange(status.id)}
+                    />
+                  ))}
+                </Menu>
+              </MenuPopover>
+            </MenuSubTrigger>
           )}
           <MenuItem icon={Pdf02Icon} title="PDF-Vorschau" ellipsis onAction={() => onShowPdf()} />
           <MenuItem
@@ -281,7 +320,9 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children, ...props 
       setEditMode,
       currentRoute,
       offer.is_draft,
-      offer.id
+      offer.id,
+      statusArray,
+      offer.status
     ]
   )
 

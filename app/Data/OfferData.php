@@ -7,6 +7,7 @@
 
 namespace App\Data;
 
+use App\Enums\OfferStatusEnum;
 use DateTime;
 use Spatie\LaravelData\Attributes\WithTransformer;
 use Spatie\LaravelData\Data;
@@ -66,6 +67,9 @@ class OfferData extends Data
 
         public readonly ?bool $is_template,
         public readonly ?string $template_name,
+        public readonly OfferStatusEnum $status,
+        /** @var NoteableData[] */
+        public readonly ?array $notables
     ) {
     }
 

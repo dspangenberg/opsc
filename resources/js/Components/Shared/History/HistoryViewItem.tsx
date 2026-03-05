@@ -9,23 +9,20 @@ import {
   EuroIcon,
   Mail01Icon,
   Note01Icon,
-  NotificationSquareIcon
+  NotificationSquareIcon,
+  StatusIcon
 } from '@hugeicons/core-free-icons'
 import type React from 'react'
+import { Pressable } from 'react-aria-components'
 import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
-import robot from '@/Assets/Images/robotic-stroke-rounded.png'
-import { Avatar } from '@/Components/twc-ui/avatar'
 import { Icon } from '@/Components/twc-ui/icon'
-import { parseAndFormatDate } from '@/Lib/DateHelper'
+import { Tooltip, TooltipTrigger } from '@/Components/twc-ui/tooltip'
+import { formatDateDistance, parseAndFormatDate } from '@/Lib/DateHelper'
 import { cn } from '@/Lib/utils'
 
-interface HistoryItem extends App.Data.NoteableData {
-  date: string
-}
-
 interface Props {
-  item: HistoryItem
+  item: App.Data.NoteableData
 }
 
 export const HistoryViewItem: React.FC<Props> = ({ item }) => {
@@ -44,6 +41,10 @@ export const HistoryViewItem: React.FC<Props> = ({ item }) => {
         return AbacusIcon
       case 'created':
         return Add01Icon
+      case 'status.info':
+      case 'status.destructive':
+      case 'status.success':
+        return StatusIcon
       default:
         return Note01Icon
     }
@@ -52,75 +53,85 @@ export const HistoryViewItem: React.FC<Props> = ({ item }) => {
   const getBgClass = () => {
     switch (type) {
       case 'mail_sent':
+      case 'status.info':
         return 'bg-blue-500'
       case 'paid':
+      case 'created':
+      case 'status.success':
         return 'bg-success'
       case 'reminder':
         return 'bg-yellow-600'
       case 'booked':
         return 'bg-info'
+      case 'note':
+        return 'bg-muted'
+      case 'status.destructive':
+        return 'bg-destructive'
       default:
-        return 'bg-success'
+        return 'bg-info'
     }
   }
 
   const getBorderClass = () => {
     switch (type) {
       case 'mail_sent':
+      case 'status.info':
         return 'border-blue-500'
       case 'paid':
+      case 'created':
+      case 'status.success':
         return 'border-success'
       case 'reminder':
         return 'border-yellow-600'
       case 'booked':
         return 'border-info'
+      case 'status.destructive':
+        return 'border-destructive'
       default:
-        return 'border-success'
+        return 'border-info'
     }
   }
 
   return (
-    <div className="flex flex-1 flex-col py-2">
-      <div className="flex items-center text-sm">
-        <div className="w-16">{parseAndFormatDate(item.created_at, 'HH:mm')}</div>
-        <div className="mr-2 w-14">
+    <>
+      <div className="mr-6 flex flex-1 items-center py-2 text-sm">
+        <div className="flex w-12 items-center justify-center">
           <div className="inline-block">
-            {item.creator?.id ? (
-              <Avatar
-                size="sm"
-                src={item.creator?.avatar_url}
-                initials={item.creator?.initials}
-                fullname={item.creator?.full_name}
-                badgeClassName={cn(getBgClass(), getBorderClass())}
-                badge={<Icon icon={getIcon()} className="size-3 text-white" />}
-              />
-            ) : (
-              <Avatar
-                size="sm"
-                src={robot}
-                initials="Sys"
-                fullname="System"
-                imageClassName="size-4 mx-auto my-auto opacity-50"
-                badgeClassName={cn(getBgClass(), getBorderClass())}
-                badge={<Icon icon={getIcon()} className="size-3 text-white" />}
-              />
-            )}
+            <div className={cn('rounded-full border p-0.5', getBorderClass())}>
+              <div className={cn('rounded-full p-1', getBgClass())}>
+                <Icon icon={getIcon()} className="size-3.5 text-white" />
+              </div>
+            </div>
           </div>
         </div>
-        <div className="text-foreground/70">
-          {item.creator?.id ? (
-            <span className="text-foreground!">{item.creator?.full_name} </span>
-          ) : (
-            <span></span>
+        <div className="flex flex-1 items-center gap-1 text-foreground/70">
+          {item.creator?.id && (
+            <div className="flex items-center gap-1">{item.creator?.full_name}</div>
           )}
-          {type ? <span>{note}</span> : <span>hat eine Notize erstellt.</span>}
+          <div>{type ? <Markdown>{note}</Markdown> : <div>hat eine Notiz erstellt.</div>}</div>
+        </div>
+
+        <div className="mr-6 text-foreground/50 text-sm">
+          <TooltipTrigger>
+            <Pressable>
+              <span role="button">{formatDateDistance(item.created_at)}</span>
+            </Pressable>
+            <Tooltip>
+              <span>{parseAndFormatDate(item.created_at, 'dd.MM.yyyy HH:mm')}</span>
+            </Tooltip>
+          </TooltipTrigger>
         </div>
       </div>
       {!type && (
-        <div className="ml-30 flex-1 rounded-md border bg-muted px-4 py-2 text-sm">
-          <Markdown remarkPlugins={[remarkBreaks]}>{note}</Markdown>
+        <div className="relative">
+          <div className="absolute top-0 bottom-0 w-12">
+            <div className="absolute top-0 bottom-0 left-1/2 border-gray-300 border-l" />
+          </div>
+          <div className="mr-6 ml-12 rounded-md border bg-background p-2.5 text-sm leading-normal">
+            <Markdown remarkPlugins={[remarkBreaks]}>{note}</Markdown>
+          </div>
         </div>
       )}
-    </div>
+    </>
   )
 }

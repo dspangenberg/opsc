@@ -1,6 +1,6 @@
 import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { OfferDetailsAttachments } from '@/Pages/App/Offer/OfferDetailsAttachments'
 import { OfferDetailsLayout } from '@/Pages/App/Offer/OfferDetailsLayout'
 import type { PageProps } from '@/Types'
@@ -12,6 +12,20 @@ import { useOfferTable } from './OfferTableProvider'
 interface OfferDetailsProps extends PageProps {
   offer: App.Data.OfferData
   children?: React.ReactNode
+}
+
+type OfferStatus = {
+  id: string
+  name: string
+}
+
+export const offerStatusDirectory: Record<string, OfferStatus> = {
+  pending: { id: 'pending', name: 'ausstehend' },
+  accepted: { id: 'accepted', name: 'angenommen' },
+  rejected: { id: 'rejected', name: 'abgelehnt' },
+  postponed: { id: 'postponed', name: 'aufgeschoben' },
+  extended: { id: 'extended', name: 'verlängert' },
+  canceled: { id: 'canceled', name: 'storniert' }
 }
 
 const OfferDetailsContent: React.FC<{ children?: React.ReactNode }> = ({ children }) => {

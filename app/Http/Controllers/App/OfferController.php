@@ -14,11 +14,13 @@ use App\Data\ProjectData;
 use App\Data\TaxData;
 use App\Data\TextModuleData;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\NoteStoreRequest;
 use App\Http\Requests\OfferAttachmentSortUpdateRequest;
 use App\Http\Requests\OfferOfferSectionRequest;
 use App\Http\Requests\OfferStoreRequest;
 use App\Http\Requests\OfferTemplateStoreRequest;
 use App\Http\Requests\OfferTermsRequest;
+use App\Http\Requests\OfferUpdateStatusRequest;
 use App\Models\Attachment;
 use App\Models\Contact;
 use App\Models\Invoice;
@@ -32,9 +34,11 @@ use App\Models\Tax;
 use App\Models\TextModule;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Requests\OfferAttachmentAddRequest;
+use Stevebauman\Purify\Facades\Purify;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class OfferController extends Controller
@@ -115,7 +119,7 @@ class OfferController extends Controller
             ])->baseRoute('app.offer.index');
     }
 
-    public function store(OfferStoreRequest $request)
+    public function store(OfferStoreRequest $request): RedirectResponse
     {
 
         $data = $request->safe()->except('template_id');
@@ -137,6 +141,7 @@ class OfferController extends Controller
         $offer->address = $offer->contact->getInvoiceAddress()->full_address;
         $offer->save();
 
+        $offer->addHistory('hat das Angebot erstellt.', 'created', auth()->user());
 
         return redirect()->route('app.offer.details', ['offer' => $offer->id]);
     }
@@ -160,7 +165,7 @@ class OfferController extends Controller
         $invoice->save();
 
         $invoice->load('contact');
-        $invoice->address = $invoice->contact->getInvoiceAddress()->full_address;
+        $invoice->address = $invoice->contact->getFormatedInvoiceAddress();
         $invoice->save();
 
         $invoice->addHistory('Rechnung wurde erstellt.', 'created');
@@ -254,6 +259,7 @@ class OfferController extends Controller
     public function duplicate(Offer $offer)
     {
         $duplicatedOffer = Offer::duplicate($offer);
+        $duplicatedOffer->addHistory('hat das Angebot erstellt.', 'created', auth()->user());
 
         return redirect()->route('app.offer.details', ['offer' => $duplicatedOffer->id]);
     }
@@ -285,12 +291,14 @@ class OfferController extends Controller
         return redirect()->route('app.offer.details', ['offer' => $offer->id]);
     }
 
-    public function markAsSent(Offer $offer)
+    public function markAsSent(Offer $offer): RedirectResponse
     {
         if (!$offer->sent_at) {
             $offer->sent_at = now();
             $offer->save();
         }
+
+        $offer->addHistory('hat das Angebot versendet.', 'mail_sent', auth()->user());
 
         return redirect()->route('app.offer.details', ['offer' => $offer->id]);
     }
@@ -421,6 +429,27 @@ class OfferController extends Controller
         return back();
     }
 
+    public function setStatus(OfferUpdateStatusRequest $request, Offer $offer): RedirectResponse
+    {
+        $offer->status = $request->validated('status');
+        $offer->save();
+
+        $statusType = match ($offer->status->name) {
+            'ACCEPTED' => 'status.success',
+            'REJECTED', 'CANCELED' => 'status.destructive',
+            default => 'status.info',
+        };
+
+        $offer->addHistory('hat den Status auf **'.$request->validated('status_name').'** geändert.', $statusType);
+        return back();
+    }
+
+    public function storeNote(NoteStoreRequest $request, Offer $offer): RedirectResponse
+    {
+        $offer->addNote(Purify::clean($request->validated('note')), auth()->user());
+        return redirect()->back();
+    }
+
     public function history(Offer $offer, ?int $line = null)
     {
         $offer
@@ -434,7 +463,8 @@ class OfferController extends Controller
             ->load('tax')
             ->load('tax.rates')
             ->loadSum('lines', 'amount')
-            ->loadSum('lines', 'tax');
+            ->loadSum('lines', 'tax')
+            ->load('notables.creator');
 
         return Inertia::render('App/Offer/OfferHistory', [
             'offer' => OfferData::from($offer),
