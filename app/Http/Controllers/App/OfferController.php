@@ -444,6 +444,12 @@ class OfferController extends Controller
         $newStatus = OfferStatusEnum::from($request->validated('status'));
 
         $offer->status = $request->validated('status');
+
+        if ($offer->status === $newStatus) {
+            return back();
+        }
+
+
         $offer->save();
 
         $statusName = match ($newStatus) {

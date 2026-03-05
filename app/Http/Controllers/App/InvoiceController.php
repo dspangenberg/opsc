@@ -179,7 +179,6 @@ class InvoiceController extends Controller
         $invoice = Invoice::create($validatedData);
         $invoice->load('contact');
 
-        $invoice->dunning_block = $invoice->contact->has_dunning_block;
         $invoice->address = $invoice->contact->getFormatedInvoiceAddress($invoice->invoice_contact_id);
         $invoice->vat_id = $invoice->contact->vat_id;
         $invoice->save();
@@ -191,8 +190,6 @@ class InvoiceController extends Controller
 
     public function setLossOfReceivables(Invoice $invoice): RedirectResponse
     {
-
-        // Abfrage, ob Rechnung bereits als Forderungsverlust markiert, nicht nötig, da doppelter Aufurf keine Konsequenzen hat
 
         if ($invoice->is_loss_of_receivables) {
             return redirect()->back()->with('error', 'Rechnung bereits als Forderungsverlust markiert');
