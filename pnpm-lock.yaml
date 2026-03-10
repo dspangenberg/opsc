@@ -207,8 +207,8 @@ importers:
         specifier: ^0.6.1
         version: 0.6.1
       ziggy-js:
-        specifier: ^2.6.1
-        version: 2.6.1
+        specifier: ^2.6.2
+        version: 2.6.2
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -5613,8 +5613,8 @@ packages:
     resolution: {integrity: sha512-CzhO+pFNo8ajLM2d2IW/R93ipy99LWjtwblvC1RsoSUMZgyLbYFr221TnSNT7GjGdYui6P459mw9JH/g/zW2ug==}
     engines: {node: '>=18'}
 
-  ziggy-js@2.6.1:
-    resolution: {integrity: sha512-cxsaEU5l7bZD+axkk6TurjDLrW1UKnxJ/BrhoGxkYe7+mFfNg2dKnmXOG2bwcXJHQ8NmGJ5dwZ99T5FOtPSsyw==}
+  ziggy-js@2.6.2:
+    resolution: {integrity: sha512-41xc9wRvv5Olh8pZjKSaL5vDAjw4BfTDMFoeLwRpDGc2B+uqcdwIKd81EHs6uwpqahdRrU7uMab0xWj0hBSDjg==}
 
   zod-to-json-schema@3.25.1:
     resolution: {integrity: sha512-pM/SU9d3YAggzi6MtR4h7ruuQlqKtad8e9S0fmxcMi+ueAK5Korys/aWcV9LIIHTVbj01NdzxcnXSN+O74ZIVA==}
@@ -12109,7 +12109,7 @@ snapshots:
 
   yoctocolors@2.1.2: {}
 
-  ziggy-js@2.6.1:
+  ziggy-js@2.6.2:
     dependencies:
       qs-esm: 7.0.3
 
