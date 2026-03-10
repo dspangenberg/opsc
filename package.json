@@ -63,7 +63,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tooltip": "^1.2.8",
-    "@react-aria/i18n": "^3.12.15",
+    "@react-aria/i18n": "^3.12.16",
     "@react-hooks-library/core": "^0.6.2",
     "@react-stately/calendar": "^3.9.2",
     "@react-types/overlays": "^3.9.3",
