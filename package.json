@@ -91,7 +91,7 @@
     "nuqs": "^2.8.9",
     "pdfjs-dist": "5.4.296",
     "print-js": "^1.6.0",
-    "react-aria": "^3.46.0",
+    "react-aria": "^3.47.0",
     "react-aria-components": "^1.15.1",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
