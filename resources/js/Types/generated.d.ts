@@ -315,6 +315,13 @@ name: string;
 color: string | null;
 icon: string | null;
 };
+export type DropboxData = {
+id: number | null;
+email_address: string;
+name: string;
+is_shared: boolean;
+is_auto_processing: boolean;
+};
 export type EmailAccountData = {
 id: number | null;
 is_default: boolean;
@@ -333,6 +340,14 @@ id: number | null;
 name: string;
 is_default: boolean;
 email_address: string;
+};
+export type InboxEntryData = {
+id: number;
+from: string;
+to: string;
+subject: string;
+body: string;
+sent_at: string | null;
 };
 export type InvoiceData = {
 id: number | null;

@@ -11,6 +11,7 @@ import {
   FileEuroIcon,
   FolderFileStorageIcon,
   KanbanIcon,
+  MailAtSign02Icon,
   Settings05Icon,
   TimeScheduleIcon
 } from '@hugeicons/core-free-icons'
@@ -31,6 +32,13 @@ const buildNavData = (isAdmin: boolean) => ({
       icon: DashboardSpeed02Icon,
       activePath: '/app',
       exact: true,
+      hasSep: true
+    },
+    {
+      title: 'E-Mail-Dropboxen',
+      url: route('app.inbox.index', {}, false),
+      icon: MailAtSign02Icon,
+      activePath: '/app/inbox',
       hasSep: true
     },
     {
@@ -320,6 +328,11 @@ const buildNavData = (isAdmin: boolean) => ({
                 title: 'Einstellungen',
                 url: route('admin.setting.index', {}, false),
                 activePath: '/admin/settings'
+              },
+              {
+                title: 'E-Mail-Dropboxen',
+                url: route('admin.dropbox.index', {}, false),
+                activePath: '/admin/dropboxes'
               },
               {
                 title: 'E-Mail-Konten',

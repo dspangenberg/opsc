@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class DropboxRequest extends FormRequest
+{
+    public function rules(): array  
+    {
+        return [
+            'email_address' => ['required', 'email', 'unique:dropboxes,email_address,'.($this->route('dropbox')?->id ?? 'NULL')],
+            'name' => ['required'],
+            'is_shared' => ['boolean'],
+            'is_auto_processing' => ['boolean'],
+        ];
+    }
+
+    public function authorize(): bool
+    {
+        return true;
+    }
+}

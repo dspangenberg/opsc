@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 use App\Enums\InboxEntryStatus;
 use App\Http\Controllers\App\BookmarkController;
+use App\Http\Controllers\App\InboxController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\InitialPasswordController;
 use App\Http\Controllers\Auth\InitialPasswordStoreController;
@@ -83,6 +84,9 @@ Route::middleware([
     Route::put('bookmarks/folder/{bookmarkFolder}/restore',
         [BookmarkController::class, 'restoreFolder'])->withTrashed()->name('app.bookmark.restore-folder');
 
+    Route::get('inbox', [InboxController::class, 'index'])->name('app.inbox.index');
+
+
     Route::get('/onboarding', function () {
         return Inertia::modal('Onboarding')->baseRoute('app.soon');
     })->name('app.onboarding');
@@ -144,6 +148,8 @@ Route::middleware([
     Middleware\ScopeSessions::class,
 ])->group(function () {
     Route::post('/postal', function (Request $request) {
+        if (config('app.env') === 'production') {
+
         $signature = $request->header('X-Postal-Signature-256');
         if (!$signature) {
             return response(null, 401);
@@ -178,6 +184,7 @@ Route::middleware([
             Log::error('Postal: Signature verification error');
             return response(null, 500);
         }
+    }
 
         $payload = $request->json()->all();
         if (!isset($payload['from'], $payload['to'])) {
