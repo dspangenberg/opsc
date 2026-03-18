@@ -23,6 +23,10 @@ class InboxEntry extends Model
         'user_id'
     ];
 
+    protected $appends = [
+        'body'
+    ];
+
     protected function casts(): array
     {
         return [
@@ -32,6 +36,11 @@ class InboxEntry extends Model
             'sent_at' => 'datetime',
             'status' => InboxEntryStatus::class,
         ];
+    }
+
+    public function getBodyAttribute(): string
+    {
+        return $this->payload['plain_body'] ?? '';
     }
 
     public function processedBy(): BelongsTo

@@ -4,7 +4,7 @@
  */
 
 import { parseDate as parseDateValue } from '@internationalized/date'
-import { format, formatDistanceStrict, minutesToHours, parse } from 'date-fns'
+import { format, formatDistanceStrict, formatRelative, minutesToHours, parse } from 'date-fns'
 import { de } from 'date-fns/locale'
 
 export const parseAndFormatDate = (date: string, formatString = 'dd.MM.yyyy') => {
@@ -30,6 +30,51 @@ export const formatDateDistance = (date: string) => {
     locale: de,
     addSuffix: true
   })
+}
+
+export const parseAndFormatRelative = (date: string) => {
+  let parsedDate: Date
+  if (date.length === 10) {
+    parsedDate = parse(date, 'dd.MM.yyyy', new Date())
+  } else {
+    parsedDate = parse(date.substring(0, 16), 'dd.MM.yyyy HH:mm', new Date())
+  }
+  const relativeDate = formatRelative(parsedDate, new Date(), {
+    locale: de,
+    weekStartsOn: 1
+  })
+
+  if (relativeDate.includes('heute')) {
+    return format(parsedDate, 'HH:mm')
+  }
+  if (relativeDate.includes('gestern')) {
+    return 'gestern'
+  }
+  if (relativeDate.includes('Montag')) {
+    return 'Mo.'
+  }
+  if (relativeDate.includes('Dienstag')) {
+    return 'Di.'
+  }
+  if (relativeDate.includes('Mittwoch')) {
+    return 'Mi.'
+  }
+  if (relativeDate.includes('Donnerstag')) {
+    return 'Do.'
+  }
+  if (relativeDate.includes('Freitag')) {
+    return 'Fr.'
+  }
+  if (relativeDate.includes('Samstag')) {
+    return 'Sa.'
+  }
+  if (relativeDate.includes('Sonntag')) {
+    return 'So.'
+  }
+  if (relativeDate.includes('am')) {
+    return format(parsedDate, 'HH:mm')
+  }
+  return format(parsedDate, 'dd.MM.')
 }
 
 export const parseAndFormatDateTime = (date: string, formatString = 'dd.MM.yyyy HH:mm') => {

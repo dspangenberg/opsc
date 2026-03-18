@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 12.53.0.
+ * Generated for Laravel 12.55.0.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -353,7 +353,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Get the path to the views directory.
-         * 
+         *
          * This method returns the first configured path in the array of view paths.
          *
          * @param string $path
@@ -1229,9 +1229,9 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Returns true if the container can return an entry for the given identifier.
-         * 
+         *
          * Returns false otherwise.
-         * 
+         *
          * `has($id)` returning true does not mean that `get($id)` will not throw an exception.
          * It does however mean that `get($id)` will not throw a `NotFoundExceptionInterface`.
          *
@@ -2647,7 +2647,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Log the user out of the application on their current device only.
-         * 
+         *
          * This method does not cycle the "remember" token.
          *
          * @return void
@@ -2662,7 +2662,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Invalidate other sessions for the current user.
-         * 
+         *
          * The application must be using the AuthenticateSession middleware.
          *
          * @param string $password
@@ -3654,7 +3654,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Register the routes for handling broadcast authentication and sockets.
-         * 
+         *
          * Alias of "routes" method.
          *
          * @param array|null $attributes
@@ -3901,7 +3901,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Dispatch a command to its appropriate handler in the current process.
-         * 
+         *
          * Queueable jobs will be dispatched to the "sync" queue.
          *
          * @param mixed $command
@@ -4100,7 +4100,6 @@ namespace Illuminate\Support\Facades {
          * Assert if a job was pushed exactly once.
          *
          * @param string|\Closure $command
-         * @param int $times
          * @return void
          * @static
          */
@@ -4701,7 +4700,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Retrieve multiple items from the cache by key.
-         * 
+         *
          * Items not found in the cache will have a null value.
          *
          * @param array $keys
@@ -6333,7 +6332,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * @template TReturn of mixed
-         * 
+         *
          * Run the callback function with the given context values and restore the original context state when complete.
          * @param (callable(): TReturn) $callback
          * @param array<string, mixed> $data
@@ -8474,7 +8473,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * @template TReturn of mixed
-         * 
+         *
          * Execute a Closure within a transaction.
          * @param (\Closure(static): TReturn) $callback
          * @param int $attempts
@@ -8905,7 +8904,6 @@ namespace Illuminate\Support\Facades {
          * Assert if an event was dispatched exactly once.
          *
          * @param string $event
-         * @param int $times
          * @return void
          * @static
          */
@@ -9355,7 +9353,7 @@ namespace Illuminate\Support\Facades {
          * Get the file type of a given file.
          *
          * @param string $path
-         * @return string
+         * @return string|false
          * @static
          */
         public static function type($path)
@@ -9613,7 +9611,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Recursively delete a directory.
-         * 
+         *
          * The directory itself may be optionally preserved.
          *
          * @param string $directory
@@ -11390,7 +11388,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Action must be taken immediately.
-         * 
+         *
          * Example: Entire website down, database unavailable, etc. This should
          * trigger the SMS alerts and wake you up.
          *
@@ -11407,7 +11405,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Critical conditions.
-         * 
+         *
          * Example: Application component unavailable, unexpected exception.
          *
          * @param string|\Stringable $message
@@ -11438,7 +11436,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Exceptional occurrences that are not errors.
-         * 
+         *
          * Example: Use of deprecated APIs, poor use of an API, undesirable things
          * that are not necessarily wrong.
          *
@@ -11469,7 +11467,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Interesting events.
-         * 
+         *
          * Example: User logs in, SQL logs.
          *
          * @param string|\Stringable $message
@@ -12989,7 +12987,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Indicate that queue workers should not poll for restart or pause signals.
-         * 
+         *
          * This prevents the workers from hitting the application cache to determine if they need to pause or restart.
          *
          * @return void
@@ -13751,7 +13749,7 @@ namespace Illuminate\Support\Facades {
      */
     class RateLimiter {
         /**
-         * Register a named limiter configuration.
+         * Register a named rate limiter configuration.
          *
          * @param \UnitEnum|string $name
          * @param \Closure $callback
@@ -14600,7 +14598,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * This method belongs to Symfony HttpFoundation and is not usually needed when using Laravel.
-         * 
+         *
          * Instead, you may use the "input" method.
          *
          * @param string $key
@@ -14674,7 +14672,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Whether the request contains a Session object.
-         * 
+         *
          * This method does not give any information about the state of the session object,
          * like whether the session is started or not. It is just a way to check if this Request
          * is associated with a Session instance.
@@ -14923,7 +14921,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Sets the parameters for this request.
-         * 
+         *
          * This method also re-initializes all properties.
          *
          * @param array $query The GET parameters
@@ -14955,7 +14953,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Creates a Request based on a given URI and configuration.
-         * 
+         *
          * The information contained in the URI always take precedence
          * over the other information (server and parameters).
          *
@@ -14977,7 +14975,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Sets a callable able to create a Request instance.
-         * 
+         *
          * This is mainly useful when you need to override the Request class
          * to keep BC with an existing system. It should not be used for any
          * other purpose.
@@ -14992,7 +14990,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Overrides the PHP global variables according to this request instance.
-         * 
+         *
          * It overrides $_GET, $_POST, $_REQUEST, $_SERVER, $_COOKIE.
          * $_FILES is never overridden, see rfc1867
          *
@@ -15007,7 +15005,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Sets a list of trusted proxies.
-         * 
+         *
          * You should only list the reverse proxies that you manage directly.
          *
          * @param array $proxies A list of trusted proxies, the string 'REMOTE_ADDR' will be replaced with $_SERVER['REMOTE_ADDR'] and 'PRIVATE_SUBNETS' by IpUtils::PRIVATE_SUBNETS
@@ -15046,7 +15044,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Sets a list of trusted host patterns.
-         * 
+         *
          * You should only list the hosts you manage using regexs.
          *
          * @param array $hostPatterns A list of trusted host patterns
@@ -15072,7 +15070,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Normalizes a query string.
-         * 
+         *
          * It builds a normalized query string, where keys/value pairs are alphabetized,
          * have consistent escaping and unneeded delimiters are removed.
          *
@@ -15086,13 +15084,13 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Enables support for the _method request parameter to determine the intended HTTP method.
-         * 
+         *
          * Be warned that enabling this feature might lead to CSRF issues in your code.
          * Check that you are using CSRF tokens when required.
          * If the HTTP method parameter override is enabled, an html-form with method "POST" can be altered
          * and used to send a "PUT" or "DELETE" request via the _method request parameter.
          * If these methods are not protected against CSRF, this presents a possible vulnerability.
-         * 
+         *
          * The HTTP method can only be overridden when the real HTTP method is POST.
          *
          * @static
@@ -15116,7 +15114,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Sets the list of HTTP methods that can be overridden.
-         * 
+         *
          * Set to null to allow all methods to be overridden (default). Set to an
          * empty array to disallow overrides entirely. Otherwise, provide the list
          * of uppercased method names that are allowed.
@@ -15179,11 +15177,11 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Returns the client IP addresses.
-         * 
+         *
          * In the returned array the most trusted IP address is first, and the
          * least trusted one last. The "real" client IP address is the last one,
          * but this is also the least trusted one. Trusted proxies are stripped.
-         * 
+         *
          * Use this method carefully; you should use getClientIp() instead.
          *
          * @see getClientIp()
@@ -15198,13 +15196,13 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Returns the client IP address.
-         * 
+         *
          * This method can read the client IP address from the "X-Forwarded-For" header
          * when trusted proxies were set via "setTrustedProxies()". The "X-Forwarded-For"
          * header value is a comma+space separated list of IP addresses, the left-most
          * being the original client, and each successive proxy that passed the request
          * adding the IP address where it received the request from.
-         * 
+         *
          * If your reverse proxy uses a different header name than "X-Forwarded-For",
          * ("Client-Ip" for instance), configure it via the $trustedHeaderSet
          * argument of the Request::setTrustedProxies() method instead.
@@ -15234,11 +15232,11 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Returns the path being requested relative to the executed script.
-         * 
+         *
          * The path info always starts with a /.
-         * 
+         *
          * Suppose this request is instantiated from /mysite on localhost:
-         * 
+         *
          *  * http://localhost/mysite              returns '/'
          *  * http://localhost/mysite/about        returns '/about'
          *  * http://localhost/mysite/enco%20ded   returns '/enco%20ded'
@@ -15256,9 +15254,9 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Returns the root path from which this request is executed.
-         * 
+         *
          * Suppose that an index.php file instantiates this request object:
-         * 
+         *
          *  * http://localhost/index.php         returns an empty string
          *  * http://localhost/index.php/page    returns an empty string
          *  * http://localhost/web/index.php     returns '/web'
@@ -15276,9 +15274,9 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Returns the root URL from which this request is executed.
-         * 
+         *
          * The base URL never ends with a /.
-         * 
+         *
          * This is similar to getBasePath(), except that it also includes the
          * script filename (e.g. index.php) if one exists.
          *
@@ -15306,10 +15304,10 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Returns the port on which the request is made.
-         * 
+         *
          * This method can read the client port from the "X-Forwarded-Port" header
          * when trusted proxies were set via "setTrustedProxies()".
-         * 
+         *
          * The "X-Forwarded-Port" header must contain the client port.
          *
          * @return int|string|null Can be a string if fetched from the server bag
@@ -15361,7 +15359,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Returns the HTTP host being requested.
-         * 
+         *
          * The port name will be appended to the host if it's non-standard.
          *
          * @static
@@ -15388,7 +15386,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Gets the scheme and HTTP host.
-         * 
+         *
          * If the URL was called with basic authentication, the user
          * and the password are not added to the generated string.
          *
@@ -15429,12 +15427,12 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Returns the path as relative reference from the current Request path.
-         * 
+         *
          * Only the URIs path component (no schema, host etc.) is relevant and must be given.
          * Both paths must be absolute and not contain relative parts.
          * Relative URLs from one resource to another are useful when generating self-contained downloadable document archives.
          * Furthermore, they can be used to reduce the link size in documents.
-         * 
+         *
          * Example target paths, given a base path of "/a/b/c/d":
          * - "/a/b/c/d"     -> ""
          * - "/a/b/c/"      -> "./"
@@ -15453,7 +15451,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Generates the normalized query string for the Request.
-         * 
+         *
          * It builds a normalized query string, where keys/value pairs are alphabetized
          * and have consistent escaping.
          *
@@ -15468,10 +15466,10 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Checks whether the request is secure or not.
-         * 
+         *
          * This method can read the client protocol from the "X-Forwarded-Proto" header
          * when trusted proxies were set via "setTrustedProxies()".
-         * 
+         *
          * The "X-Forwarded-Proto" header must contain the protocol: "https" or "http".
          *
          * @static
@@ -15485,10 +15483,10 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Returns the host name.
-         * 
+         *
          * This method can read the client host name from the "X-Forwarded-Host" header
          * when trusted proxies were set via "setTrustedProxies()".
-         * 
+         *
          * The "X-Forwarded-Host" header must contain the client host name.
          *
          * @throws SuspiciousOperationException when the host name is invalid or not trusted
@@ -15515,13 +15513,13 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Gets the request "intended" method.
-         * 
+         *
          * If the X-HTTP-Method-Override header is set, and if the method is a POST,
          * then it is used to determine the "real" intended HTTP method.
-         * 
+         *
          * The _method request parameter can also be used to determine the HTTP method,
          * but only if enableHttpMethodParameterOverride() has been called.
-         * 
+         *
          * The method is always an uppercased string.
          *
          * @see getRealMethod()
@@ -15573,7 +15571,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Gets the format associated with the mime type.
-         * 
+         *
          * Resolution order:
          *   1) Exact match on the full MIME type (e.g. "application/json").
          *   2) Match on the canonical MIME type (i.e. before the first ";" parameter).
@@ -15610,9 +15608,9 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Gets the request format.
-         * 
+         *
          * Here is the process to determine the format:
-         * 
+         *
          *  * format defined by the user (with setRequestFormat())
          *  * _format request attribute
          *  * $default
@@ -15753,7 +15751,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Returns the protocol version.
-         * 
+         *
          * If the application is behind a proxy, the protocol version used in the
          * requests between the client and the proxy and between the proxy and the
          * server might be different. This returns the former (from the "Via" header)
@@ -15823,7 +15821,7 @@ namespace Illuminate\Support\Facades {
          * Gets the preferred format for the response by inspecting, in the following order:
          *   * the request format set using setRequestFormat;
          *   * the values of the Accept HTTP header.
-         * 
+         *
          * Note that if you use this method, you should send the "Vary: Accept" header
          * in the response to prevent any issues with intermediary HTTP caches.
          *
@@ -15890,7 +15888,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Returns true if the request is an XMLHttpRequest.
-         * 
+         *
          * It works if your JavaScript library sets an X-Requested-With HTTP header.
          * It is known to work with common JavaScript frameworks:
          *
@@ -15919,7 +15917,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Indicates whether this request originated from a trusted proxy.
-         * 
+         *
          * This can be useful to determine whether or not to trust the
          * contents of a proxy-specific header.
          *
@@ -16006,6 +16004,18 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
+         * Determine if the current request is asking for Markdown.
+         *
+         * @return bool
+         * @static
+         */
+        public static function wantsMarkdown()
+        {
+            /** @var \Illuminate\Http\Request $instance */
+            return $instance->wantsMarkdown();
+        }
+
+        /**
          * Determines whether the current requests accepts a given content type.
          *
          * @param string|array $contentTypes
@@ -16053,6 +16063,18 @@ namespace Illuminate\Support\Facades {
         {
             /** @var \Illuminate\Http\Request $instance */
             return $instance->acceptsJson();
+        }
+
+        /**
+         * Determines whether a request accepts Markdown.
+         *
+         * @return bool
+         * @static
+         */
+        public static function acceptsMarkdown()
+        {
+            /** @var \Illuminate\Http\Request $instance */
+            return $instance->acceptsMarkdown();
         }
 
         /**
@@ -16549,7 +16571,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Retrieve data as a boolean value.
-         * 
+         *
          * Returns true when value is "1", "true", "on", and "yes". Otherwise, returns false.
          *
          * @param string|null $key
@@ -16621,6 +16643,20 @@ namespace Illuminate\Support\Facades {
         {
             /** @var \Illuminate\Http\Request $instance */
             return $instance->date($key, $format, $tz);
+        }
+
+        /**
+         * Retrieve data from the instance as a CarbonInterval instance.
+         *
+         * @param string $key
+         * @param \Carbon\Unit|string|null $unit
+         * @return \Carbon\CarbonInterval|null
+         * @static
+         */
+        public static function interval($key, $unit = null)
+        {
+            /** @var \Illuminate\Http\Request $instance */
+            return $instance->interval($key, $unit);
         }
 
         /**
@@ -17797,7 +17833,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Add a middleware to the beginning of a middleware group.
-         * 
+         *
          * If the middleware is already in the group, it will not be added again.
          *
          * @param string $group
@@ -17813,7 +17849,7 @@ namespace Illuminate\Support\Facades {
 
         /**
          * Add a middleware to the end of a middleware group.
-         * 
+         *
          * If the middleware is already in the group, it will not be added again.
          *
          * @param string $group
@@ -18425,7 +18461,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Create new schedule group.
          *
-         * @param \Illuminate\Console\Scheduling\Event $event
+         * @param \Closure $events
          * @return void
          * @throws \RuntimeException
          * @static
@@ -23513,7 +23549,7 @@ namespace MohamedSaid\Notable\Facades {
     /**
      * @see \MohamedSaid\Notable\Notable
      */
-    class Notable extends \Illuminate\Database\Eloquent\Model {
+    class Notable {
         /**
          * @static
          */
@@ -24361,7 +24397,7 @@ namespace MohamedSaid\Notable\Facades {
 
         /**
          * Force a hard delete on a soft deleted model.
-         * 
+         *
          * This method protects developers from running forceDelete when the trait is missing.
          *
          * @return bool|null
@@ -24376,7 +24412,7 @@ namespace MohamedSaid\Notable\Facades {
 
         /**
          * Force a hard destroy on a soft deleted model.
-         * 
+         *
          * This method protects developers from running forceDestroy when the trait is missing.
          *
          * @param \Illuminate\Support\Collection|array|int|string $ids
@@ -26876,6 +26912,20 @@ namespace MohamedSaid\Notable\Facades {
         }
 
         /**
+         * Duplicate the instance and unset the given loaded relations.
+         *
+         * @param array|string $relations
+         * @return \MohamedSaid\Notable\Notable
+         * @static
+         */
+        public static function withoutRelation($relations)
+        {
+            //Method inherited from \Illuminate\Database\Eloquent\Model 
+            /** @var \MohamedSaid\Notable\Notable $instance */
+            return $instance->withoutRelation($relations);
+        }
+
+        /**
          * Unset all the loaded relations for the instance.
          *
          * @return \MohamedSaid\Notable\Notable
@@ -26918,7 +26968,7 @@ namespace MohamedSaid\Notable\Facades {
         /**
          * Update the model's update timestamp.
          *
-         * @param string|null $attribute
+         * @param array|string|null $attribute
          * @return bool
          * @static
          */
@@ -26932,7 +26982,7 @@ namespace MohamedSaid\Notable\Facades {
         /**
          * Update the model's update timestamp without raising any events.
          *
-         * @param string|null $attribute
+         * @param array|string|null $attribute
          * @return bool
          * @static
          */
@@ -27550,7 +27600,7 @@ namespace Fruitcake\LaravelDebugbar\Facades {
      * @method static void            warning(mixed $message)
      * @see \Fruitcake\LaravelDebugbar\LaravelDebugbar
      */
-    class Debugbar extends \DebugBar\DebugBar {
+    class Debugbar {
         /**
          * @static
          */
@@ -27759,6 +27809,14 @@ namespace Fruitcake\LaravelDebugbar\Facades {
         }
 
         /**
+         * @static
+         */
+        public static function canBeEnabled()
+        {
+            return \Fruitcake\LaravelDebugbar\LaravelDebugbar::canBeEnabled();
+        }
+
+        /**
          * Check if the Debugbar is enabled
          *
          * @static
@@ -27767,6 +27825,15 @@ namespace Fruitcake\LaravelDebugbar\Facades {
         {
             /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
             return $instance->isEnabled();
+        }
+
+        /**
+         * @static
+         */
+        public static function isStorageOpen($request)
+        {
+            /** @var \Fruitcake\LaravelDebugbar\LaravelDebugbar $instance */
+            return $instance->isStorageOpen($request);
         }
 
         /**
@@ -27800,7 +27867,7 @@ namespace Fruitcake\LaravelDebugbar\Facades {
 
         /**
          * Injects the web debug toolbar into the given Response.
-         * 
+         *
          * Based on https://github.com/symfony/WebProfilerBundle/blob/master/EventListener/WebDebugToolbarListener.php
          *
          * @static
@@ -27855,7 +27922,7 @@ namespace Fruitcake\LaravelDebugbar\Facades {
 
         /**
          * Adds a message to the MessagesCollector
-         * 
+         *
          * A message can be anything from an object to a string
          *
          * @static
@@ -28025,7 +28092,7 @@ namespace Fruitcake\LaravelDebugbar\Facades {
 
         /**
          * Returns collected data
-         * 
+         *
          * Will collect the data if none have been collected yet
          *
          * @static
@@ -28651,7 +28718,7 @@ namespace Plank\Mediable\Facades {
 
         /**
          * Overwrite existing Media when file already exists at destination.
-         * 
+         *
          * This will delete the old media record and create a new one, detaching any existing associations.
          *
          * @return \Plank\Mediable\MediaUploader
@@ -28665,9 +28732,9 @@ namespace Plank\Mediable\Facades {
 
         /**
          * Overwrite existing Media when file already exists at destination and delete any variants of the original record.
-         * 
+         *
          * This will delete the old media record and create a new one, detaching any existing associations.
-         * 
+         *
          * This will also delete any existing
          *
          * @return \Plank\Mediable\MediaUploader
@@ -28681,7 +28748,7 @@ namespace Plank\Mediable\Facades {
 
         /**
          * Overwrite existing files and update the existing media record.
-         * 
+         *
          * This will retain any existing associations.
          *
          * @return \Plank\Mediable\MediaUploader
@@ -28749,7 +28816,7 @@ namespace Plank\Mediable\Facades {
 
         /**
          * Prefer the MIME type provided by the client, if any, over the inferred MIME type.
-         * 
+         *
          * Depending on the source, this may not be accurate.
          *
          * @return \Plank\Mediable\MediaUploader
@@ -28802,7 +28869,7 @@ namespace Plank\Mediable\Facades {
 
         /**
          * Verify the MD5 hash of the file contents matches an expected value.
-         * 
+         *
          * The upload process will throw an InvalidHashException if the hash of the
          * uploaded file does not match the provided value.
          *
@@ -28852,10 +28919,10 @@ namespace Plank\Mediable\Facades {
 
         /**
          * Apply an image manipulation to the uploaded image.
-         * 
+         *
          * This will modify the image before saving it to disk.
          * The original image will not be preserved.
-         * 
+         *
          * Note this will manipulate the image as part of the upload process, which may be slow.
          *
          * @param string|\Plank\Mediable\ImageManipulation $imageManipulation Either a defined ImageManipulation variant name
@@ -28927,7 +28994,7 @@ namespace Plank\Mediable\Facades {
 
         /**
          * Process the file upload.
-         * 
+         *
          * Validates the source, then stores the file onto the disk and creates and stores a new Media instance.
          *
          * @return \Plank\Mediable\Media
@@ -28947,7 +29014,7 @@ namespace Plank\Mediable\Facades {
 
         /**
          * Process the file upload, overwriting an existing media's file
-         * 
+         *
          * Uploader will automatically place the file on the same disk as the original media.
          *
          * @param \Plank\Mediable\Media $media
@@ -29401,14 +29468,14 @@ namespace Sentry\Laravel {
         /**
          * Starts a new `Transaction` and returns it. This is the entry point to manual
          * tracing instrumentation.
-         * 
+         *
          * A tree structure can be built by adding child spans to the transaction, and
          * child spans to other spans. To start a new child span within the transaction
          * or any span, call the respective `startChild()` method.
-         * 
+         *
          * Every child span must be finished before the transaction is finished,
          * otherwise the unfinished spans are discarded.
-         * 
+         *
          * The transaction must be finished with a call to its `finish()` method, at
          * which point the transaction with all its finished child spans will be sent to
          * Sentry.
@@ -29476,7 +29543,7 @@ namespace Stancl\Tenancy\Facades {
 
         /**
          * Run a callback in the current tenant's context.
-         * 
+         *
          * This method is atomic and safely reverts to the previous context.
          *
          * @template T
@@ -29523,7 +29590,7 @@ namespace Stancl\Tenancy\Facades {
 
         /**
          * Bootstrap configured Tenancy features.
-         * 
+         *
          * Normally, features are bootstrapped directly in TSP::boot(). However, if
          * new features are enabled at runtime (e.g. during tests), this method may
          * be called to bootstrap new features. It's idempotent and keeps track of
@@ -29577,7 +29644,7 @@ namespace Stancl\Tenancy\Facades {
 
         /**
          * Run a callback in the central context.
-         * 
+         *
          * Atomic, safely reverts to previous context.
          *
          * @static
@@ -29694,28 +29761,28 @@ namespace Stancl\Tenancy\Facades {
 
         /**
          * Get the middleware context of a route (tenant, central, or universal).
-         * 
+         *
          * If the route has the 'universal' middleware, the context is universal,
          * and the route is accessible from both contexts.
-         * 
+         *
          * The universal flag has the highest priority.
-         * 
+         *
          * If you want a universal route to be accessible from the tenant context,
          * you still have to provide an identification middleware either using
          * route-level middleware or in the global middleware stack.
-         * 
+         *
          * If the 'tenant' group has identification middleware, you can use it in
          * combination with the 'universal' flag, the route will still be universal.
-         * 
+         *
          * If the route has the 'tenant' middleware, or any tenancy identification
          * middleware, the context is tenant (assuming the route doesn't also have
          * the 'universal' flag).
-         * 
+         *
          * If the route has the 'central' middleware, the context is central.
-         * 
+         *
          * If the route doesn't have any of the mentioned flags/middleware,
          * the context is determined by the `tenancy.default_route_mode` config.
-         * 
+         *
          * If the default route mode is tenant, all unflagged routes will be tenant by default,
          * but they will still have to have an identification middleware (route-level
          * or global) to be accessible. Same applies for universal default route mode.
@@ -29737,18 +29804,18 @@ namespace Stancl\Tenancy\Facades {
 
         /**
          * Get middleware of the passed route (without controller middleware and middleware from the global stack).
-         * 
+         *
          * First, get the surface-level route middleware (`$route->middleware()`).
          * The surface-level middleware could contain middleware groups,
          * and to accurately get all the specific middleware, we need to unpack them.
          * The unpacked middleware groups could also have middleware groups inside them,
          * so we further unpack these, three times.
-         * 
+         *
          * For example, a route has a 'surface' middleware group.
          * The 'surface' group has a 'first-level' group, and that group has a 'second-level' group (three middleware group layers).
          * The 'second-level' group has a specific middleware (e.g. SomeMiddleware).
          * Using the getRouteMiddleware method on that route will get you all the middleware the route has, including SomeMiddleware.
-         * 
+         *
          * Note that the unpacking doesn't go further than three layers – if 'second-level' had 'third-level' that would have ThirdLevelMiddleware,
          * the middleware returned by this method won't include ThirdLevelMiddleware because the 'third-level' group won't get unpacked.
          *
@@ -29802,7 +29869,7 @@ namespace Stancl\Tenancy\Facades {
 
         /**
          * Obtain route from the passed request.
-         * 
+         *
          * If the route isn't directly available on the request,
          * find the route that matches the passed request.
          *
@@ -30029,7 +30096,7 @@ namespace Stevebauman\Purify\Facades {
      * @method static \HTMLPurifier              getPurifier()
      * @method static array|string               clean(array|string $input)
      */
-    class Purify extends \Illuminate\Support\Manager {
+    class Purify {
         /**
          * Convenience alias for driver().
          *
@@ -30148,7 +30215,7 @@ namespace Vinkla\Hashids\Facades {
      * @method static string encodeHex(string $str)
      * @method static string decodeHex(string $hash)
      */
-    class Hashids extends \GrahamCampbell\Manager\AbstractManager {
+    class Hashids {
         /**
          * @static
          */
@@ -30610,7 +30677,7 @@ namespace Illuminate\Support {
          * @param \Closure|array|string $by
          * @param string $query
          * @param int|null $limit
-         * @param array|string|null $provider
+         * @param \Laravel\Ai\Enums\Lab|array|string|null $provider
          * @param string|null $model
          * @static
          */
@@ -30635,7 +30702,7 @@ namespace Illuminate\Support {
 
         /**
          * @see \Laravel\Ai\AiServiceProvider::boot()
-         * @param string|null $provider
+         * @param \Laravel\Ai\Enums\Lab|array|string|null $provider
          * @param int|null $dimensions
          * @param string|null $model
          * @param int|bool|null $cache
@@ -31826,7 +31893,7 @@ namespace  {
 
         /**
          * Specify attributes that should be added to any new models created by this builder.
-         * 
+         *
          * The given key / value pairs will also be added as where conditions to the query.
          *
          * @param \Illuminate\Contracts\Database\Query\Expression|array|string $attributes
@@ -32407,7 +32474,7 @@ namespace  {
 
         /**
          * Add a relationship count / exists condition to the query with where clauses.
-         * 
+         *
          * Also load the relationship with the same condition.
          *
          * @param string $relation
@@ -34860,6 +34927,20 @@ namespace  {
         {
             /** @var \Illuminate\Database\Query\Builder $instance */
             return $instance->inRandomOrder($seed);
+        }
+
+        /**
+         * Add an "order by" clause to order results by a given sequence of values.
+         *
+         * @param \Illuminate\Contracts\Database\Query\Expression|string $column
+         * @param \Illuminate\Contracts\Support\Arrayable|array $values
+         * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @static
+         */
+        public static function inOrderOf($column, $values)
+        {
+            /** @var \Illuminate\Database\Query\Builder $instance */
+            return $instance->inOrderOf($column, $values);
         }
 
         /**

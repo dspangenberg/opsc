@@ -23,7 +23,7 @@
   --radius-sm: calc(var(--radius) - 4px);
   --width-8xl: 88rem;
   --max-width-8xl: 88rem;
-  --text-xs: 0.8rem;
+  --text-xs: 0.84rem;
   --text-sm: 0.92rem;
   --color-background: var(--background);
   --color-foreground: var(--foreground);

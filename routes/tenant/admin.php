@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Admin\DropboxController;
 use App\Http\Controllers\Admin\EmailAccountController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
@@ -46,6 +47,14 @@ Route::middleware([
 
     Route::get('settings', [SettingController::class, 'index'])->name('admin.setting.index');
     Route::put('settings', [SettingController::class, 'update'])->name('admin.setting.update');
+
+    Route::get('dropboxes', [DropboxController::class, 'index'])->name('admin.dropbox.index');
+    Route::get('dropboxes/create', [DropboxController::class, 'create'])->name('admin.dropbox.create');
+    Route::get('dropboxes/create', [DropboxController::class, 'create'])->name('admin.dropbox.create');
+    Route::post('dropboxes/store', [DropboxController::class, 'store'])->name('admin.dropbox.store')->middleware([HandlePrecognitiveRequests::class]);
+    Route::get('dropboxes/{dropbox}/edit', [DropboxController::class, 'edit'])->name('admin.dropbox.edit');
+    Route::put('dropboxes/{dropbox}/update', [DropboxController::class, 'update'])->name('admin.dropbox.update')->middleware([HandlePrecognitiveRequests::class]);
+    Route::delete('dropboxes/{dropbox}', [DropboxController::class, 'destroy'])->name('admin.dropbox.delete');
 
     Route::get('email-accounts', [EmailAccountController::class, 'index'])->name('admin.email-account.index');
     Route::get('email-accounts/create', [EmailAccountController::class, 'create'])->name('admin.email-account.create');
