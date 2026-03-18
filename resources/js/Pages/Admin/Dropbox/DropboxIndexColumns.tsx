@@ -3,19 +3,13 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import {
-  Delete03Icon,
-  MailLock01Icon,
-  MailSend01Icon,
-  MoreVerticalCircle01Icon
-} from '@hugeicons/core-free-icons'
+import { Delete03Icon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/core'
-import { Link, usePage } from '@inertiajs/react'
+import { Link } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { MenuItem } from '@/Components/twc-ui/menu'
-import { Badge } from '@/Components/ui/badge'
 import { Checkbox } from '@/Components/ui/checkbox'
 
 const editUrl = (id: number | null) => (id ? route('admin.dropbox.edit', { dropbox: id }) : '#')

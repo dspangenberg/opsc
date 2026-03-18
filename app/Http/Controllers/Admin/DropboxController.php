@@ -42,9 +42,7 @@ class DropboxController extends Controller
 
     public function update(DropboxRequest $request, Dropbox $dropbox): RedirectResponse
     {
-
         $dropbox->update($request->validated());
-
         return redirect()->route('admin.dropbox.index');
     }
 
@@ -59,7 +57,6 @@ class DropboxController extends Controller
 
     public function store(DropboxRequest $request): RedirectResponse
     {
-        ray($request->validated());
         Dropbox::create($request->validated());
         return redirect()->route('admin.dropbox.index');
     }
