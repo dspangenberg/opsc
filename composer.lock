@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b42b715339b6b6749b78c2661f70c17e",
+    "content-hash": "fa01561ae8864f68bf0e69e70d458065",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2893,16 +2893,16 @@
         },
         {
             "name": "laravel/ai",
-            "version": "v0.2.8",
+            "version": "v0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/ai.git",
-                "reference": "8c35ed04ebdec3bd1cdfff13ee735608fb65c3d7"
+                "reference": "ab91fe5c366288fe0b90d0eb5e4ba1d57ead5363"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/ai/zipball/8c35ed04ebdec3bd1cdfff13ee735608fb65c3d7",
-                "reference": "8c35ed04ebdec3bd1cdfff13ee735608fb65c3d7",
+                "url": "https://api.github.com/repos/laravel/ai/zipball/ab91fe5c366288fe0b90d0eb5e4ba1d57ead5363",
+                "reference": "ab91fe5c366288fe0b90d0eb5e4ba1d57ead5363",
                 "shasum": ""
             },
             "require": {
@@ -2920,7 +2920,7 @@
             "require-dev": {
                 "laravel/pint": "^1.26",
                 "mockery/mockery": "^1.6.12",
-                "orchestra/testbench": "^10.6"
+                "orchestra/testbench": "^10.6|^11.0"
             },
             "type": "library",
             "extra": {
@@ -2955,7 +2955,7 @@
                 "issues": "https://github.com/laravel/ai/issues",
                 "source": "https://github.com/laravel/ai"
             },
-            "time": "2026-03-10T19:58:47+00:00"
+            "time": "2026-03-16T17:52:59+00:00"
         },
         {
             "name": "laravel/framework",
