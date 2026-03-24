@@ -14,7 +14,7 @@
     "horstoeko/zugferd-laravel": "^1.0",
     "inertiajs/inertia-laravel": "^2.0",
     "lab404/laravel-impersonate": "^1.7",
-    "laravel/ai": "^0.2.1",
+    "laravel/ai": "^0.3.2",
     "laravel/framework": "^12",
     "laravel/prompts": "^0.3.13",
     "laravel/sanctum": "^4.1.1",
