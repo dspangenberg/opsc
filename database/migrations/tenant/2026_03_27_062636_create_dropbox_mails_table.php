@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('message_id');
             $table->string('subject');
-            $table->string('text');
+            $table->longText('text');
             $table->json('references');
             $table->string('from');
             $table->json('to');
