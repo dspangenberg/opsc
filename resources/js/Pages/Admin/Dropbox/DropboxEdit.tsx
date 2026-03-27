@@ -98,7 +98,7 @@ const DropboxEdit: React.FC<Props> = ({ dropbox, users }) => {
                 />
                 <div className="flex gap-2 pt-1.5">
                   <FormCheckbox
-                    label="E-Mails sind stardmäßig privat"
+                    label="E-Mails sind standardmäßig privat"
                     {...form.registerCheckbox('is_private_by_default')}
                   />
                 </div>
