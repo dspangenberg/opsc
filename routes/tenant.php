@@ -16,6 +16,8 @@ use App\Http\Controllers\Auth\InitialPasswordStoreController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Models\Dropbox;
+use App\Models\DropboxMail;
 use App\Models\User;
 use Carbon\Carbon;
 use ProtoneMedia\LaravelVerifyNewEmail\Http\VerifyNewEmailController;
@@ -147,6 +149,30 @@ Route::middleware([
     Middleware\PreventAccessFromUnwantedDomains::class,
     Middleware\ScopeSessions::class,
 ])->group(function () {
+    Route::post('/mail-to-dropbox/{email}/{token}', function (Request $request, $email, $token) {
+        $dropbox = Dropbox::where('email_address', $email)->where('token', $token)->firstOrFail();
+        $payload = $request->json('payload');
+
+
+        $sentAt = Carbon::parse((string) $payload['timestamp']);
+
+       $attributes = [
+           'dropbox_id' => $dropbox->id,
+           'message_id' => $payload['message_id'],
+           'subject' => $payload['subject'],
+           'text' => $payload['text'],
+           'references' => $payload['references'],
+           'html' => $payload['html'],
+           'from' => $payload['from'][0],
+           'timestamp' => $sentAt,
+           'to' => $payload['to'],
+       ];
+
+        DropboxMail::create($attributes);
+        return response(null, 200);
+
+    })->withoutMiddleware([ValidateCsrfToken::class]);
+
     Route::post('/postal', function (Request $request) {
         if (config('app.env') === 'production') {
 

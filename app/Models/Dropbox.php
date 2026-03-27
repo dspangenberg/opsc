@@ -11,6 +11,7 @@ class Dropbox extends Model
         'name',
         'is_shared',
         'is_auto_processing',
+        'token'
     ];
 
     protected function casts(): array

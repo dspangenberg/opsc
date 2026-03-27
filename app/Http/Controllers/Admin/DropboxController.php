@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Data\DropboxData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DropboxRequest;
-use App\Http\Requests\EmailAccountStoreRequest;
 use App\Models\Dropbox;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
+use Str;
 
 class DropboxController extends Controller
 {
@@ -24,8 +24,9 @@ class DropboxController extends Controller
     public function create(): Response
     {
         $dropbox= new Dropbox();
-        $dropbox->email_address = '';
+        $dropbox->email_address = uniqid().'@dropbox.opsc.cloud';
         $dropbox->name = '';
+        $dropbox->token = Str::random(32);
         $dropbox->is_shared = false;
         $dropbox->is_auto_processing = false;
         return Inertia::render('Admin/Dropbox/DropboxEdit', [

@@ -6,10 +6,11 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class DropboxRequest extends FormRequest
 {
-    public function rules(): array  
+    public function rules(): array
     {
         return [
             'email_address' => ['required', 'email', 'unique:dropboxes,email_address,'.($this->route('dropbox')?->id ?? 'NULL')],
+            'token' => ['required', 'string'],
             'name' => ['required'],
             'is_shared' => ['boolean'],
             'is_auto_processing' => ['boolean'],
