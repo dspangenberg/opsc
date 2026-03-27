@@ -78,6 +78,7 @@ class HandleInertiaRequests extends Middleware
                 'bookmarks' => BookmarkData::collect($bookmarks),
                 'bookmarkFolders' => BookmarkFolderData::collect($bookmarkFolders),
                 'email_accounts' => count($mailAccounts) ? EmailAccountData::collect($mailAccounts) : [],
+                'domain' => $request->getHost(),
             ],
         ];
     }

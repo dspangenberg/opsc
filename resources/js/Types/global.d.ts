@@ -30,6 +30,7 @@ declare module '@inertiajs/core' {
       tenant: App.Data.TenantData
       runningTimer: App.Data.TimeData | null
       bookmarks: App.Data.BookmarkData[]
+      domain: string
       bookmarkFolders: App.Data.BookmarkFolderData[]
       email_accounts: App.Data.EmailAccountData[]
     }

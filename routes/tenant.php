@@ -7,7 +7,6 @@
 
 declare(strict_types=1);
 
-use App\Enums\InboxEntryStatus;
 use App\Http\Controllers\App\BookmarkController;
 use App\Http\Controllers\App\InboxController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -18,7 +17,6 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Models\Dropbox;
 use App\Models\DropboxMail;
-use App\Models\User;
 use Carbon\Carbon;
 use ProtoneMedia\LaravelVerifyNewEmail\Http\VerifyNewEmailController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
@@ -26,9 +24,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Stancl\Tenancy\Features\UserImpersonation;
 use Stancl\Tenancy\Middleware;
-use App\Models\InboxEntry;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 
 /*
@@ -166,6 +162,7 @@ Route::middleware([
             'from' => $payload['from'][0],
             'timestamp' => $sentAt,
             'to' => $payload['to'],
+            'is_private' => $dropbox->is_private_by_default
         ];
 
         DropboxMail::updateOrCreate(
@@ -179,88 +176,4 @@ Route::middleware([
 
     })->withoutMiddleware([ValidateCsrfToken::class]);
 
-    Route::post('/postal', function (Request $request) {
-        if (config('app.env') === 'production') {
-
-            $signature = $request->header('X-Postal-Signature-256');
-            if (!$signature) {
-                return response(null, 401);
-            }
-
-            $publicKeyPem = config('services.postal.public_key');
-
-            if (empty($publicKeyPem)) {
-                Log::error('Postal: Public key not configured');
-                return response(null, 500);
-            }
-
-            $publicKey = openssl_pkey_get_public($publicKeyPem);
-            if ($publicKey === false) {
-                Log::error('Postal: Invalid public key');
-                return response(null, 500);
-            }
-
-            $rawBody = $request->getContent();
-            $decoded = base64_decode($signature, true);
-            if ($decoded === false) {
-                return response(null, 401);
-            }
-
-            $verificationResult = openssl_verify($rawBody, $decoded, $publicKey, OPENSSL_ALGO_SHA256);
-
-            if ($verificationResult !== 1) {
-                if ($verificationResult === 0) {
-                    return response(null, 401);
-                }
-
-                Log::error('Postal: Signature verification error');
-                return response(null, 500);
-            }
-        }
-
-        $payload = $request->json()->all();
-        if (!isset($payload['from'], $payload['to'])) {
-            return response(null, 422);
-        }
-
-        $from = parseMailParty((string) $payload['from'])['email'];
-        $to = parseMailParty((string) $payload['to'])['email'];
-
-        $messageId = $payload['message_id'] ?? null;
-
-        if (!isset($payload['date'])) {
-            return response(null, 422);
-        }
-
-        try {
-            $sentAt = Carbon::parse((string) $payload['date']);
-        } catch (Throwable $exception) {
-            return response(null, 422);
-        }
-
-        $attributes = [
-            'payload' => $payload,
-            'message_id' => $messageId,
-            'from' => $from,
-            'to' => $to,
-            'subject' => $payload['subject'] ?? null,
-            'user_id' => User::query()->where('email', $to)->value('id')
-                ?? User::query()->where('email', $from)->value('id'),
-            'received_at' => now(),
-            'status' => InboxEntryStatus::PENDING,
-            'sent_at' => $sentAt,
-        ];
-
-        if ($messageId !== null) {
-            InboxEntry::updateOrCreate(['message_id' => $messageId], $attributes);
-        } else {
-            InboxEntry::create($attributes);
-        }
-
-        Log::info('Postal: Inbox entry created', [
-            'message_id' => $payload['message_id'] ?? null,
-        ]);
-
-        return response(null, 200);
-    })->withoutMiddleware([ValidateCsrfToken::class]);
 });

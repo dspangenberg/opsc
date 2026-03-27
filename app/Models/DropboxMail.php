@@ -17,12 +17,19 @@ class DropboxMail extends Model
         'html',
         'dropbox_id',
         'timestamp',
+        'is_private',
+        'is_processed'
     ];
 
     public function dropbox(): BelongsTo
     {
         return $this->belongsTo(Dropbox::class);
     }
+
+    protected $attributes = [
+        'is_private' => false,
+        'is_processed' => false,
+    ];
 
     protected function casts(): array
     {

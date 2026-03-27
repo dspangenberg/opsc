@@ -322,6 +322,9 @@ token: string;
 name: string;
 is_shared: boolean;
 is_auto_processing: boolean;
+is_private_by_default: boolean;
+user_id: number | null;
+user: App.Data.UserData | null;
 };
 export type EmailAccountData = {
 id: number | null;
