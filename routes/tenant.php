@@ -156,19 +156,25 @@ Route::middleware([
 
         $sentAt = Carbon::parse((string) $payload['timestamp']);
 
-       $attributes = [
-           'dropbox_id' => $dropbox->id,
-           'message_id' => $payload['message_id'],
-           'subject' => $payload['subject'],
-           'text' => $payload['text'],
-           'references' => $payload['references'],
-           'html' => $payload['html'],
-           'from' => $payload['from'][0],
-           'timestamp' => $sentAt,
-           'to' => $payload['to'],
-       ];
+        $attributes = [
+            'dropbox_id' => $dropbox->id,
+            'message_id' => $payload['message_id'],
+            'subject' => $payload['subject'],
+            'text' => $payload['text'],
+            'references' => $payload['references'],
+            'html' => $payload['html'],
+            'from' => $payload['from'][0],
+            'timestamp' => $sentAt,
+            'to' => $payload['to'],
+        ];
 
-        DropboxMail::updateOrCreate(['message_id' => $payload['message_id']], $attributes);
+        DropboxMail::updateOrCreate(
+            [
+                'dropbox_id' => $dropbox->id,
+                'message_id' => $payload['message_id'],
+            ],
+            $attributes
+        );
         return response(null, 200);
 
     })->withoutMiddleware([ValidateCsrfToken::class]);
@@ -176,41 +182,41 @@ Route::middleware([
     Route::post('/postal', function (Request $request) {
         if (config('app.env') === 'production') {
 
-        $signature = $request->header('X-Postal-Signature-256');
-        if (!$signature) {
-            return response(null, 401);
-        }
-
-        $publicKeyPem = config('services.postal.public_key');
-
-        if (empty($publicKeyPem)) {
-            Log::error('Postal: Public key not configured');
-            return response(null, 500);
-        }
-
-        $publicKey = openssl_pkey_get_public($publicKeyPem);
-        if ($publicKey === false) {
-            Log::error('Postal: Invalid public key');
-            return response(null, 500);
-        }
-
-        $rawBody = $request->getContent();
-        $decoded = base64_decode($signature, true);
-        if ($decoded === false) {
-            return response(null, 401);
-        }
-
-        $verificationResult = openssl_verify($rawBody, $decoded, $publicKey, OPENSSL_ALGO_SHA256);
-
-        if ($verificationResult !== 1) {
-            if ($verificationResult === 0) {
+            $signature = $request->header('X-Postal-Signature-256');
+            if (!$signature) {
                 return response(null, 401);
             }
 
-            Log::error('Postal: Signature verification error');
-            return response(null, 500);
+            $publicKeyPem = config('services.postal.public_key');
+
+            if (empty($publicKeyPem)) {
+                Log::error('Postal: Public key not configured');
+                return response(null, 500);
+            }
+
+            $publicKey = openssl_pkey_get_public($publicKeyPem);
+            if ($publicKey === false) {
+                Log::error('Postal: Invalid public key');
+                return response(null, 500);
+            }
+
+            $rawBody = $request->getContent();
+            $decoded = base64_decode($signature, true);
+            if ($decoded === false) {
+                return response(null, 401);
+            }
+
+            $verificationResult = openssl_verify($rawBody, $decoded, $publicKey, OPENSSL_ALGO_SHA256);
+
+            if ($verificationResult !== 1) {
+                if ($verificationResult === 0) {
+                    return response(null, 401);
+                }
+
+                Log::error('Postal: Signature verification error');
+                return response(null, 500);
+            }
         }
-    }
 
         $payload = $request->json()->all();
         if (!isset($payload['from'], $payload['to'])) {
