@@ -318,6 +318,7 @@ icon: string | null;
 export type DropboxData = {
 id: number | null;
 email_address: string;
+token: string;
 name: string;
 is_shared: boolean;
 is_auto_processing: boolean;
