@@ -153,8 +153,6 @@ Route::middleware([
         $dropbox = Dropbox::where('email_address', $email)->where('token', $token)->firstOrFail();
         $payload = $request->json('payload');
 
-       ray($dropbox);
-       ray($payload);
 
         $sentAt = Carbon::parse((string) $payload['timestamp']);
 
