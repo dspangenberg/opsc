@@ -168,7 +168,7 @@ Route::middleware([
            'to' => $payload['to'],
        ];
 
-        DropboxMail::create($attributes);
+        DropboxMail::updateOrCreate(['message_id' => $payload['message_id']], $attributes);
         return response(null, 200);
 
     })->withoutMiddleware([ValidateCsrfToken::class]);
