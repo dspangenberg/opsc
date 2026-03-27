@@ -18,7 +18,12 @@ class DropboxMail extends Model
         'dropbox_id',
         'timestamp',
         'is_private',
-        'is_processed'
+        'is_processed',
+        'full_payload',
+        'plain_body',
+        'cc',
+        'bcc',
+        'in_reply_to'
     ];
 
     public function dropbox(): BelongsTo
@@ -36,7 +41,10 @@ class DropboxMail extends Model
         return [
             'references' => 'array',
             'to' => 'array',
+            'cc' => 'array',
+            'bcc' => 'array',
             'timestamp' => 'datetime',
+            'full_payload' => 'array'
         ];
     }
 }

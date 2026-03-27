@@ -63,7 +63,7 @@ const DropboxEdit: React.FC<Props> = ({ dropbox, users }) => {
       <FormCard
         className="mx-auto flex max-w-4xl flex-1 overflow-y-hidden"
         footer={
-          <div className="flex flex-none items-center justify-end gap-2 px-4 py-2">
+          <div className="flex flex-none items-center justify-end gap-2">
             <Button variant="outline" onClick={handleCancel} title={cancelButtonTitle} />
             <Button variant="default" form={form.id} type="submit" title="Speichern" />
           </div>
@@ -98,7 +98,7 @@ const DropboxEdit: React.FC<Props> = ({ dropbox, users }) => {
                 />
                 <div className="flex gap-2 pt-1.5">
                   <FormCheckbox
-                    label="E-Mails sind stardmäßig privat"
+                    label="E-Mails sind standardmäßig privat"
                     {...form.registerCheckbox('is_private_by_default')}
                   />
                 </div>

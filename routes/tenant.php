@@ -156,13 +156,17 @@ Route::middleware([
             'dropbox_id' => $dropbox->id,
             'message_id' => $payload['message_id'],
             'subject' => $payload['subject'],
-            'text' => $payload['text'],
+            'text' => $payload['text'] ?? '',
             'references' => $payload['references'],
-            'html' => $payload['html'],
+            'html' => $payload['html'] ?? '',
             'from' => $payload['from'][0],
             'timestamp' => $sentAt,
             'to' => $payload['to'],
-            'is_private' => $dropbox->is_private_by_default
+            'cc' => $payload['cc'] ?? [],
+            'bcc' => $payload['bcc'] ?? [],
+            'is_private' => $dropbox->is_private_by_default,
+            'full_payload' => $payload,
+            'plain_body' => $payload['plain_body'] ?? '',
         ];
 
         DropboxMail::updateOrCreate(

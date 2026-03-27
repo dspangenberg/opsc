@@ -40,6 +40,7 @@ class DropboxController extends Controller
 
     public function edit(Dropbox $dropbox): Response
     {
+        $dropbox->load('user');
         $users = User::orderBy('last_name')->orderBy('first_name')->get();
         return Inertia::render('Admin/Dropbox/DropboxEdit', [
             'dropbox' => DropboxData::from($dropbox),
