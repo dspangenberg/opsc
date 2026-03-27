@@ -28,9 +28,6 @@ const DropboxEdit: React.FC<Props> = ({ dropbox, users }) => {
     }),
     dropbox
   )
-
-  console.log(users)
-
   const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Zurück'
 
   const breadcrumbs = useMemo(() => {
