@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->json('references');
             $table->string('from');
             $table->json('to');
-            $table->string('html');
+            $table->longText('html');
             $table->string('in_reply_to')->nullable();
             $table->foreignId('dropbox_id');
             $table->dateTime('timestamp');
