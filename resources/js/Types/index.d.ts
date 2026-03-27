@@ -6,5 +6,6 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
     bookmarks: App.Data.BookmarkData[]
     bookmarkFolders: App.Data.BookmarkFolderData[]
     email_accounts: App.Data.EmailAccountData[]
+    domain: string
   }
 }

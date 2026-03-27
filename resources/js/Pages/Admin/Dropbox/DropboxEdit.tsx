@@ -6,15 +6,18 @@ import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormCard } from '@/Components/twc-ui/form-card'
+import { FormCheckbox } from '@/Components/twc-ui/form-checkbox'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
+import { FormSelect } from '@/Components/twc-ui/form-select'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import type { PageProps } from '@/Types'
 
 interface Props extends PageProps {
   dropbox: App.Data.DropboxData
+  users: App.Data.UserData[]
 }
 
-const DropboxEdit: React.FC<Props> = ({ dropbox }) => {
+const DropboxEdit: React.FC<Props> = ({ dropbox, users }) => {
   const title = dropbox.id ? 'Dropbox bearbeiten' : 'Dropbox hinzufügen'
 
   const form = useForm<App.Data.DropboxData>(
@@ -25,6 +28,8 @@ const DropboxEdit: React.FC<Props> = ({ dropbox }) => {
     }),
     dropbox
   )
+
+  console.log(users)
 
   const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Zurück'
 
@@ -71,6 +76,9 @@ const DropboxEdit: React.FC<Props> = ({ dropbox }) => {
           <FormGrid>
             <div className="col-span-12">
               <FormTextField label="Bezeichnung" isRequired {...form.register('name')} />
+              <div className="flex gap-2 pt-1.5">
+                <FormCheckbox label="gemeinsame Dropbox" {...form.registerCheckbox('is_shared')} />
+              </div>
             </div>
             <div className="col-span-12">
               <FormTextField
@@ -81,6 +89,25 @@ const DropboxEdit: React.FC<Props> = ({ dropbox }) => {
               />
             </div>
           </FormGrid>
+          {!form.data.is_shared && (
+            <FormGrid border>
+              <div className="col-span-12">
+                <FormSelect
+                  label="Benutzer*in"
+                  isOptional
+                  items={users}
+                  itemName="reverse_full_name"
+                  {...form.register('user_id')}
+                />
+                <div className="flex gap-2 pt-1.5">
+                  <FormCheckbox
+                    label="E-Mails sind stardmäßig privat"
+                    {...form.registerCheckbox('is_private_by_default')}
+                  />
+                </div>
+              </div>
+            </FormGrid>
+          )}
         </Form>
       </FormCard>
     </PageContainer>

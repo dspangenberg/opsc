@@ -3,9 +3,9 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Delete03Icon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
+import { CopyLinkIcon, Delete03Icon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/core'
-import { Link } from '@inertiajs/react'
+import { Link, usePage } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
@@ -26,9 +26,17 @@ const handleDelete = async (row: App.Data.DropboxData) => {
 }
 
 const RowActions = ({ row }: { row: Row<App.Data.DropboxData> }) => {
+  const domain = usePage().props.auth.domain
+  const iniEntry = `${row.original.email_address}=https://${domain}/${row.original.email_address}/${row.original.token}`
   return (
     <div className="mx-auto">
       <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
+        <MenuItem
+          separator
+          icon={CopyLinkIcon}
+          title="INI-Eintrag kopieren"
+          onAction={() => navigator.clipboard.writeText(iniEntry)}
+        />
         <MenuItem
           icon={Delete03Icon}
           title="Löschen"
@@ -79,7 +87,7 @@ export const columns: ColumnDef<App.Data.DropboxData>[] = [
     accessorKey: 'email_address',
     header: 'E-Mail',
     size: 200,
-    cell: ({ getValue, row }) => (
+    cell: ({ getValue }) => (
       <>
         <span>{getValue() as string}</span>
       </>

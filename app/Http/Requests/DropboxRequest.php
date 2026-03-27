@@ -14,6 +14,8 @@ class DropboxRequest extends FormRequest
             'name' => ['required'],
             'is_shared' => ['boolean'],
             'is_auto_processing' => ['boolean'],
+            'is_private_by_default' => ['boolean'],
+            'user_id' => ['nullable', 'exists:users,id'],
         ];
     }
 
