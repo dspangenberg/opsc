@@ -15,7 +15,9 @@ class DropboxMail extends Model
         'from',
         'to',
         'html',
-        'dropbox_id',
+        'dropbox_id', s,
+        'payload'
+
         'timestamp',
         'is_private',
         'is_processed',
@@ -23,7 +25,8 @@ class DropboxMail extends Model
         'plain_body',
         'cc',
         'bcc',
-        'in_reply_to'
+        'in_reply_to',
+        'payload'
     ];
 
     public function dropbox(): BelongsTo
