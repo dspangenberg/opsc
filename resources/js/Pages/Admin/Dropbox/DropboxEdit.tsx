@@ -63,7 +63,7 @@ const DropboxEdit: React.FC<Props> = ({ dropbox, users }) => {
       <FormCard
         className="mx-auto flex max-w-4xl flex-1 overflow-y-hidden"
         footer={
-          <div className="flex flex-none items-center justify-end gap-2 px-4 py-2">
+          <div className="flex flex-none items-center justify-end gap-2">
             <Button variant="outline" onClick={handleCancel} title={cancelButtonTitle} />
             <Button variant="default" form={form.id} type="submit" title="Speichern" />
           </div>
