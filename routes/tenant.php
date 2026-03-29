@@ -161,6 +161,7 @@ Route::middleware([
             'html' => $payload['html'] ?? '',
             'from' => $payload['from'][0],
             'timestamp' => $sentAt,
+            'in_reply_to' => $payload['in_reply_to'] ?? null,
             'to' => $payload['to'],
             'cc' => $payload['cc'] ?? [],
             'bcc' => $payload['bcc'] ?? [],
