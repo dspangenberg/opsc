@@ -326,6 +326,14 @@ is_private_by_default: boolean;
 user_id: number | null;
 user: App.Data.UserData | null;
 };
+export type DropboxInboxData = {
+id: number;
+from: string;
+to: Array<string>;
+subject: string;
+plain_body: string;
+date: string | null;
+};
 export type EmailAccountData = {
 id: number | null;
 is_default: boolean;
