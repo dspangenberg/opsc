@@ -179,7 +179,7 @@ Route::middleware([
                 'message_id' => $payload['message_id'],
             ],
             [
-                'payload' => $payload['payload'],
+                'payload' => $payload,
                 'date' => Carbon::parse((string) $payload['timestamp'])
             ]
         );
