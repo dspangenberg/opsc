@@ -175,7 +175,7 @@ Route::middleware([
                 'message_id' => $payload['message_id'],
             ],
             [
-                'payload' => $payload,
+                'payload' => $payload['payload'],
             ]
         );
         return response(null, 200);

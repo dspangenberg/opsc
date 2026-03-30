@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('dropbox_inbox', function (Blueprint $table) {
+        Schema::create('dropbox_inboxes', function (Blueprint $table) {
             $table->id();
             $table->string('message_id');
             $table->json('payload');
@@ -21,6 +21,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('dropbox_inbox');
+        Schema::dropIfExists('dropbox_inboxes');
     }
 };
