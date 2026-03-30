@@ -15,6 +15,33 @@ class DropboxInbox extends Model
         'date',
     ];
 
+    protected $appends = [
+        'plain_body',
+        'subject',
+        'from',
+        'to'
+    ];
+
+    public function getPlainBodyAttribute(): string
+    {
+        return $this->payload['plain_body'] ?? '';
+    }
+
+    public function getSubjectAttribute(): string
+    {
+        return $this->payload['subject'] ?? '';
+    }
+
+    public function getFromAttribute(): string
+    {
+        return $this->payload['from'] ?? '';
+    }
+
+    public function getToAttribute(): array
+    {
+        return $this->payload['to'] ?? [];
+    }
+
     public function dropbox(): BelongsTo
     {
         return $this->belongsTo(Dropbox::class);

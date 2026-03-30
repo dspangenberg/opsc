@@ -82,7 +82,8 @@ Route::middleware([
     Route::put('bookmarks/folder/{bookmarkFolder}/restore',
         [BookmarkController::class, 'restoreFolder'])->withTrashed()->name('app.bookmark.restore-folder');
 
-    Route::get('inbox', [InboxController::class, 'index'])->name('app.inbox.index');
+    Route::get('inbox/{mail?}', [InboxController::class, 'index'])->name('app.inbox.index');
+    Route::delete('inbox/{mail}', [InboxController::class, 'destroy'])->name('app.inbox.destroy');
 
 
     Route::get('/onboarding', function () {
