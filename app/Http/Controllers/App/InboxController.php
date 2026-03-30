@@ -23,7 +23,6 @@ class InboxController extends Controller
     }
 
     public function destroy(DropboxInbox $mail): RedirectResponse {
-        ray($mail);
         $mail->delete();
         return redirect()->route('app.inbox.index');
     }
