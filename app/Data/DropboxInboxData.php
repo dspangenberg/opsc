@@ -25,7 +25,7 @@ class DropboxInboxData extends Data
 
         public readonly string $subject,
         public readonly string $plain_body,
-
+        public readonly array $payload,
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]
         public readonly ?DateTime $date,
     ) {}

@@ -16,9 +16,10 @@ class DropboxInbox extends Model
     ];
 
     protected $appends = [
+        'attachments',
+        'from',
         'plain_body',
         'subject',
-        'from',
         'to'
     ];
 
@@ -40,6 +41,11 @@ class DropboxInbox extends Model
     public function getToAttribute(): array
     {
         return $this->payload['to'] ?? [];
+    }
+
+    public function getAttachmentsAttribute(): array
+    {
+        return $this->payload['attachments'] ?? [];
     }
 
     public function dropbox(): BelongsTo

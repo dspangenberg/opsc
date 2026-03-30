@@ -1,5 +1,6 @@
 import { FolderUploadIcon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
+import { JSONTree } from 'react-json-tree'
 import { parseAndFormatRelative } from '@/Lib/DateHelper'
 import type { PageProps } from '@/Types'
 
