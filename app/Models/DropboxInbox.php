@@ -11,7 +11,8 @@ class DropboxInbox extends Model
         'message_id',
         'payload',
         'dropbox_id',
-        'is_private'
+        'is_private',
+        'date',
     ];
 
     public function dropbox(): BelongsTo
@@ -24,6 +25,7 @@ class DropboxInbox extends Model
         return [
             'payload' => 'array',
             'is_private' => 'boolean',
+            'date' => 'datetime',
         ];
     }
 }
