@@ -17,6 +17,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Models\Dropbox;
 use App\Models\DropboxInbox;
+use Carbon\Carbon;
 use ProtoneMedia\LaravelVerifyNewEmail\Http\VerifyNewEmailController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
