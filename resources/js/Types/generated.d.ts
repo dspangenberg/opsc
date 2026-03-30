@@ -335,6 +335,14 @@ plain_body: string;
 payload: Array<any>;
 date: string | null;
 };
+export type DropboxInboxIndexData = {
+id: number;
+from: string;
+to: Array<string>;
+subject: string;
+plain_body: string;
+date: string | null;
+};
 export type EmailAccountData = {
 id: number | null;
 is_default: boolean;

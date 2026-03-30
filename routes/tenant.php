@@ -150,10 +150,6 @@ Route::middleware([
         $dropbox = Dropbox::where('email_address', $email)->where('token', $token)->firstOrFail();
         $payload = $request->json('payload');
 
-        $payload->remove('html');
-        $payload->remove('text');
-        $payload->remove('text_as_html');
-
         $payload = $request->json('payload', []);
         if (!is_array($payload)) {
             abort(422, 'Invalid payload format');
