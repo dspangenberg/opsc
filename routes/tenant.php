@@ -180,7 +180,7 @@ Route::middleware([
             ],
             [
                 'payload' => $payload,
-                'date' => Carbon::parse((string) $payload['timestamp'])
+                'date' => Carbon::parse((string) $payload['date'])
             ]
         );
         return response(null, 200);
