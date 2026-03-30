@@ -16,7 +16,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Models\Dropbox;
-use App\Models\DropboxMail;
+use App\Models\DropboxInbox;
 use ProtoneMedia\LaravelVerifyNewEmail\Http\VerifyNewEmailController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
@@ -169,7 +169,7 @@ Route::middleware([
         ];
         */
 
-        DropboxMail::updateOrCreate(
+        DropboxInbox::updateOrCreate(
             [
                 'dropbox_id' => $dropbox->id,
                 'message_id' => $payload['message_id'],
