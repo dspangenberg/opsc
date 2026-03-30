@@ -16,8 +16,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Models\Dropbox;
-use App\Models\DropboxMail;
-use Carbon\Carbon;
+use App\Models\DropboxInbox;
 use ProtoneMedia\LaravelVerifyNewEmail\Http\VerifyNewEmailController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
@@ -150,11 +149,10 @@ Route::middleware([
         $payload = $request->json('payload');
 
 
+        /*
         $sentAt = Carbon::parse((string) $payload['timestamp']);
 
         $attributes = [
-            'dropbox_id' => $dropbox->id,
-            'message_id' => $payload['message_id'],
             'subject' => $payload['subject'],
             'text' => $payload['text'] ?? '',
             'references' => $payload['references'],
@@ -169,13 +167,16 @@ Route::middleware([
             'full_payload' => $payload,
             'plain_body' => $payload['plain_body'] ?? '',
         ];
+        */
 
-        DropboxMail::updateOrCreate(
+        DropboxInbox::updateOrCreate(
             [
                 'dropbox_id' => $dropbox->id,
                 'message_id' => $payload['message_id'],
             ],
-            $attributes
+            [
+                'payload' => $payload['payload'],
+            ]
         );
         return response(null, 200);
 
