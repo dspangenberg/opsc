@@ -169,6 +169,9 @@ Route::middleware([
         ];
         */
 
+
+
+
         DropboxInbox::updateOrCreate(
             [
                 'dropbox_id' => $dropbox->id,
@@ -176,6 +179,7 @@ Route::middleware([
             ],
             [
                 'payload' => $payload['payload'],
+                'date' => Carbon::parse((string) $payload['timestamp'])
             ]
         );
         return response(null, 200);
