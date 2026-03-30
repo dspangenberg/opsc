@@ -14,7 +14,7 @@ use Spatie\LaravelData\Transformers\DateTimeInterfaceTransformer;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
 #[TypeScript]
-class DropboxInboxData extends Data
+class DropboxInboxIndexData extends Data
 {
     public function __construct(
         public readonly int $id,
@@ -22,10 +22,8 @@ class DropboxInboxData extends Data
 
         /** @var string[] */
         public readonly array $to,
-
         public readonly string $subject,
         public readonly string $plain_body,
-        public readonly array $payload,
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]
         public readonly ?DateTime $date,
     ) {}

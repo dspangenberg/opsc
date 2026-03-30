@@ -332,6 +332,7 @@ from: string;
 to: Array<string>;
 subject: string;
 plain_body: string;
+payload: Array<any>;
 date: string | null;
 };
 export type EmailAccountData = {
