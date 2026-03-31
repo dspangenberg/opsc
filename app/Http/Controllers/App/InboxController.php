@@ -8,16 +8,16 @@ use App\Http\Controllers\Controller;
 use App\Models\DropboxInbox;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class InboxController extends Controller
 {
-    public function index($mail = null)
+    public function index($mail = null): Response
     {
-
         $mails = DropboxInbox::query()->orderBy('date', 'desc')->paginate();
         return Inertia::render('App/Inbox/InboxIndex', [
             'mails' => DropboxInboxIndexData::collect($mails),
-            'mail' => $mail ? DropboxInboxData::from(DropboxInbox::query()->where('id', $mail)->firstOrFail()) : null
+            'mail' => $mail ? DropboxInboxData::from(DropboxInbox::query()->with('dropbox')->where('id', $mail)->firstOrFail()) : null
         ]);
     }
 

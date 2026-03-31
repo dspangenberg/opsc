@@ -18,10 +18,13 @@ class DropboxInboxData extends Data
 {
     public function __construct(
         public readonly int $id,
+        public readonly int $dropbox_id,
         public readonly string $from,
 
         /** @var string[] */
         public readonly array $to,
+
+        public readonly DropboxData $dropbox,
 
         public readonly string $subject,
         public readonly string $plain_body,

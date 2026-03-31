@@ -25,8 +25,12 @@ class DropboxController extends Controller
 
     public function create(): Response
     {
+
+        $dropbox_domain = config('app.dropbox_domain');
+        $emailAddress = Str::lower(Str::random(4)).'.'.tenant('domains')[0]->domain.'@'.$dropbox_domain;
+
         $dropbox= new Dropbox();
-        $dropbox->email_address = uniqid().'@dropbox.opsc.cloud';
+        $dropbox->email_address = $emailAddress;
         $dropbox->name = '';
         $dropbox->token = Str::random(32);
 
