@@ -328,8 +328,10 @@ user: App.Data.UserData | null;
 };
 export type DropboxInboxData = {
 id: number;
+dropbox_id: number;
 from: string;
 to: Array<string>;
+dropbox: App.Data.DropboxData;
 subject: string;
 plain_body: string;
 payload: Array<any>;

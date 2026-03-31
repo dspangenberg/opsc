@@ -53,6 +53,8 @@ return [
     */
 
     'url' => env('APP_URL', 'https://opsc.test'),
+    'dropbox_domain' => env('APP_DROPBOX_DOMAIN', 'dropbox.example.com'),
+
 
     /*
     |--------------------------------------------------------------------------

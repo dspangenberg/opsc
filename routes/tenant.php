@@ -148,7 +148,6 @@ Route::middleware([
 ])->group(function () {
     Route::post('/mail-to-dropbox/{email}/{token}', function (Request $request, $email, $token) {
         $dropbox = Dropbox::where('email_address', $email)->where('token', $token)->firstOrFail();
-        $payload = $request->json('payload');
 
         $payload = $request->json('payload', []);
         if (!is_array($payload)) {
@@ -157,28 +156,6 @@ Route::middleware([
 
         unset($payload['html'], $payload['text'], $payload['text_as_html']);
 
-
-        /*
-        $sentAt = Carbon::parse((string) $payload['timestamp']);
-
-        $attributes = [
-            'subject' => $payload['subject'],
-            'text' => $payload['text'] ?? '',
-            'references' => $payload['references'],
-            'html' => $payload['html'] ?? '',
-            'from' => $payload['from'][0],
-            'timestamp' => $sentAt,
-            'in_reply_to' => $payload['in_reply_to'] ?? null,
-            'to' => $payload['to'],
-            'cc' => $payload['cc'] ?? [],
-            'bcc' => $payload['bcc'] ?? [],
-            'is_private' => $dropbox->is_private_by_default,
-            'full_payload' => $payload,
-            'plain_body' => $payload['plain_body'] ?? '',
-        ];
-        */
-
-
         DropboxInbox::updateOrCreate(
             [
                 'dropbox_id' => $dropbox->id,
@@ -186,7 +163,8 @@ Route::middleware([
             ],
             [
                 'payload' => $payload,
-                'date' => Carbon::parse((string) $payload['date'])
+                'date' => Carbon::parse((string) $payload['date'])->setTimezone('Europe/Berlin'),
+                'is_private' => $dropbox->is_private_by_default,
             ]
         );
         return response(null, 200);
