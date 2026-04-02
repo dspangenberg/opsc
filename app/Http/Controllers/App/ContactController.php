@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\App;
 
+use App\Actions\BuildTimeline;
 use App\Data\AddressCategoryData;
 use App\Data\BookkeepingAccountData;
 use App\Data\ContactData;
@@ -81,12 +82,12 @@ class ContactController extends Controller
             ->with([
                 'mails' => function ($query) {
                     $query->orderBy('pos');
-                }
+                },
             ])
             ->with([
                 'phones' => function ($query) {
                     $query->orderBy('pos');
-                }
+                },
             ])
             ->orderBy('name')
             ->orderBy('first_name')
@@ -135,6 +136,7 @@ class ContactController extends Controller
     public function store(ContactStoreRequest $request)
     {
         $contact = Contact::create($request->validated());
+
         return redirect()->route('app.contact.edit', ['contact' => $contact->id]);
     }
 
@@ -151,15 +153,17 @@ class ContactController extends Controller
         $contactIds = $request->getContactIds();
         Contact::whereIn('id', $contactIds)->update(['is_archived' => true]);
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Kontakte wurden archiviert']);
+
         return redirect()->back();
     }
 
     public function archiveToggle(Contact $contact): \Symfony\Component\HttpFoundation\RedirectResponse
     {
-        $contact->is_archived = !$contact->is_archived;
+        $contact->is_archived = ! $contact->is_archived;
         $contact->save();
 
         $message = $contact->is_archived ? 'Kontakt wurde archiviert' : 'Kontakt wurde wiederhergestellt';
+
         return Inertia::flash('toast', ['type' => 'success', 'message' => $message])->back();
     }
 
@@ -197,11 +201,14 @@ class ContactController extends Controller
             'contacts' => function ($query) {
                 $query->with('contacts');
             },
-            'notables.creator',
         ]);
 
         return Inertia::render('App/Contact/ContactDetails', [
             'contact' => ContactData::from($contact),
+            'timeline' => fn () => (new BuildTimeline)
+                ->withNotables($contact)
+                ->withDropboxMails($contact)
+                ->get(),
         ]);
     }
 
@@ -209,7 +216,7 @@ class ContactController extends Controller
     {
         $contact->load([
             'addresses', 'addresses.category', 'mails.category', 'salutation', 'title', 'payment_deadline',
-            'phones.category', 'cost_center'
+            'phones.category', 'cost_center',
         ]);
 
         $countries = Country::orderBy('name')->get();
@@ -300,13 +307,13 @@ class ContactController extends Controller
 
         $contact->load(['mails', 'title', 'salutation', 'addresses', 'phones']);
 
-        if ($contact->is_creditor && !$contact->creditor_number) {
+        if ($contact->is_creditor && ! $contact->creditor_number) {
             $contact->creditor_number = Contact::max('creditor_number') + 1;
             $contact->save();
             $contact->createBookkeepingAccount($contact->creditor_number, $contact->tax_id);
         }
 
-        if ($contact->is_debtor && !$contact->debtor_number) {
+        if ($contact->is_debtor && ! $contact->debtor_number) {
             $contact->debtor_number = Contact::max('debtor_number') + 1;
             $contact->save();
             $contact->createBookkeepingAccount($contact->debtor_number, $contact->tax_id);
@@ -349,11 +356,11 @@ class ContactController extends Controller
         return redirect()->route('app.contact.details', ['contact' => $contact->id]);
     }
 
-
     public function destroy(Contact $contact)
     {
         $contact->delete();
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Kontakt erfolgreich gelöscht']);
+
         return redirect()->route('app.contact.index');
     }
 
@@ -364,7 +371,7 @@ class ContactController extends Controller
             ->filter()
             ->toArray();
 
-        if (!empty($incomingIds)) {
+        if (! empty($incomingIds)) {
             $contact->mails()
                 ->whereNotIn('id', $incomingIds)
                 ->delete();
@@ -380,7 +387,7 @@ class ContactController extends Controller
                 'pos' => $mailData['pos'] ?? $index,
             ];
 
-            if (!empty($mailData['id'])) {
+            if (! empty($mailData['id'])) {
                 ContactMail::where('id', $mailData['id'])
                     ->where('contact_id', $contact->id)
                     ->update($mailAttributes);
@@ -397,7 +404,7 @@ class ContactController extends Controller
             ->filter()
             ->toArray();
 
-        if (!empty($incomingIds)) {
+        if (! empty($incomingIds)) {
             $contact->addresses()
                 ->whereNotIn('id', $incomingIds)
                 ->delete();
@@ -415,7 +422,7 @@ class ContactController extends Controller
                 'address_category_id' => $addressData['address_category_id'],
             ];
 
-            if (!empty($addressData['id'])) {
+            if (! empty($addressData['id'])) {
                 ContactAddress::where('id', $addressData['id'])
                     ->where('contact_id', $contact->id)
                     ->update($addressAttributes);
@@ -432,7 +439,7 @@ class ContactController extends Controller
             ->filter()
             ->toArray();
 
-        if (!empty($incomingIds)) {
+        if (! empty($incomingIds)) {
             $contact->phones()
                 ->whereNotIn('id', $incomingIds)
                 ->delete();
@@ -448,7 +455,7 @@ class ContactController extends Controller
                 'pos' => $phoneData['pos'] ?? $index,
             ];
 
-            if (!empty($phoneData['id'])) {
+            if (! empty($phoneData['id'])) {
                 ContactPhone::where('id', $phoneData['id'])
                     ->where('contact_id', $contact->id)
                     ->update($phoneAttributes);
@@ -460,7 +467,7 @@ class ContactController extends Controller
 
     public function setAsPrimaryContact(Contact $contact): \Symfony\Component\HttpFoundation\RedirectResponse
     {
-        if (!$contact->company_id) {
+        if (! $contact->company_id) {
             return Inertia::flash('toast', ['type' => 'error', 'message' => 'Primärkontakt kann nur für Ansprechpersonen gesetzt werden.'])->back();
         }
 
@@ -468,8 +475,10 @@ class ContactController extends Controller
         if ($company) {
             $company->primary_contact_id = $contact->id;
             $company->save();
+
             return Inertia::flash('toast', ['type' => 'success', 'message' => 'Primärkontakt wurde gesetzt.'])->back();
         }
+
         return Inertia::flash('toast', ['type' => 'error', 'message' => 'Primärkontakt kann nur für Ansprechpersonen gesetzt werden.'])->back();
 
     }

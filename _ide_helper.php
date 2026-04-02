@@ -23545,6 +23545,227 @@ namespace Illuminate\Support\Facades {
             }
     }
 
+namespace Boci\HetznerLaravel\Facades {
+    /**
+     * Hetzner Laravel Facade
+     *
+     * This facade provides static access to the Hetzner Cloud API client and its resources.
+     * It allows for convenient access to all Hetzner Cloud API functionality through
+     * Laravel's facade system.
+     *
+     */
+    class HetznerLaravel {
+        /**
+         * Create a new client factory instance.
+         *
+         * @static
+         */
+        public static function factory()
+        {
+            return \Boci\HetznerLaravel\Client::factory();
+        }
+
+        /**
+         * Get the servers resource.
+         *
+         * @static
+         */
+        public static function servers()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->servers();
+        }
+
+        /**
+         * Get the images resource.
+         *
+         * @static
+         */
+        public static function images()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->images();
+        }
+
+        /**
+         * Get the locations resource.
+         *
+         * @static
+         */
+        public static function locations()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->locations();
+        }
+
+        /**
+         * Get the server types resource.
+         *
+         * @static
+         */
+        public static function serverTypes()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->serverTypes();
+        }
+
+        /**
+         * Get the SSH keys resource.
+         *
+         * @static
+         */
+        public static function sshKeys()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->sshKeys();
+        }
+
+        /**
+         * Get the certificates resource.
+         *
+         * @static
+         */
+        public static function certificates()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->certificates();
+        }
+
+        /**
+         * Get the ISOs resource.
+         *
+         * @static
+         */
+        public static function isos()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->isos();
+        }
+
+        /**
+         * Get the placement groups resource.
+         *
+         * @static
+         */
+        public static function placementGroups()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->placementGroups();
+        }
+
+        /**
+         * Get the primary IPs resource.
+         *
+         * @static
+         */
+        public static function primaryIPs()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->primaryIPs();
+        }
+
+        /**
+         * Get the load balancers resource.
+         *
+         * @static
+         */
+        public static function loadBalancers()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->loadBalancers();
+        }
+
+        /**
+         * Get the load balancer types resource.
+         *
+         * @static
+         */
+        public static function loadBalancerTypes()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->loadBalancerTypes();
+        }
+
+        /**
+         * Get the billing resource.
+         *
+         * @static
+         */
+        public static function billing()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->billing();
+        }
+
+        /**
+         * Get the volumes resource.
+         *
+         * @static
+         */
+        public static function volumes()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->volumes();
+        }
+
+        /**
+         * Get the firewalls resource.
+         *
+         * @static
+         */
+        public static function firewalls()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->firewalls();
+        }
+
+        /**
+         * Get the floating IPs resource.
+         *
+         * @static
+         */
+        public static function floatingIPs()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->floatingIPs();
+        }
+
+        /**
+         * Get the actions resource.
+         *
+         * @static
+         */
+        public static function actions()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->actions();
+        }
+
+        /**
+         * Get the networks resource.
+         *
+         * @static
+         */
+        public static function networks()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->networks();
+        }
+
+        /**
+         * Get access to the DNS zones resource
+         *
+         * @static
+         */
+        public static function dnsZones()
+        {
+            /** @var \Boci\HetznerLaravel\Client $instance */
+            return $instance->dnsZones();
+        }
+
+            }
+    }
+
 namespace MohamedSaid\Notable\Facades {
     /**
      * @see \MohamedSaid\Notable\Notable
@@ -36118,6 +36339,7 @@ namespace  {
     class Validator extends \Illuminate\Support\Facades\Validator {}
     class View extends \Illuminate\Support\Facades\View {}
     class Vite extends \Illuminate\Support\Facades\Vite {}
+    class HetznerLaravel extends \Boci\HetznerLaravel\Facades\HetznerLaravel {}
     class Notable extends \MohamedSaid\Notable\Facades\Notable {}
     class Debugbar extends \Fruitcake\LaravelDebugbar\Facades\Debugbar {}
     class LaravelZugferd extends \horstoeko\zugferdlaravel\Facades\ZugferdLaravel {}

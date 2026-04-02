@@ -242,7 +242,6 @@ mails: Array<App.Data.ContactMailData> | null;
 phones: Array<App.Data.ContactPhoneData> | null;
 sales: App.Data.SalesData | null;
 addresses: Array<App.Data.ContactAddressData> | null;
-notables: Array<App.Data.NoteableData> | null;
 primary_contact_id: number | null;
 };
 export type ContactMailData = {
@@ -332,6 +331,7 @@ dropbox_id: number;
 from: string;
 to: Array<string>;
 dropbox: App.Data.DropboxData;
+is_private: boolean;
 subject: string;
 plain_body: string;
 payload: Array<any>;
@@ -343,6 +343,16 @@ from: string;
 to: Array<string>;
 subject: string;
 plain_body: string;
+date: string | null;
+};
+export type DropboxMailData = {
+id: number;
+dropbox_id: number;
+from: string;
+to: Array<string>;
+is_private: boolean;
+subject: string;
+body: string;
 date: string | null;
 };
 export type EmailAccountData = {
@@ -663,6 +673,12 @@ group: string;
 key: string;
 value: string | null;
 };
+export type SimpleContactData = {
+id: number;
+reverse_full_name: string;
+initials: string;
+primary_mail: string | null;
+};
 export type TaxData = {
 id: number | null;
 name: string;
@@ -727,6 +743,12 @@ project: App.Data.ProjectData | null;
 subproject: App.Data.ProjectData | null;
 category: App.Data.TimeCategoryData | null;
 user: App.Data.UserData | null;
+};
+export type TimelineEntryData = {
+type: string;
+date: string | null;
+note: App.Data.NoteableData | null;
+mail: App.Data.DropboxMailData | null;
 };
 export type TitleData = {
 id: number | null;

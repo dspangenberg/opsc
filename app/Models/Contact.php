@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Maize\Markable\Mark;
@@ -71,7 +72,7 @@ use Plank\Mediable\MediableCollection;
  */
 class Contact extends Model
 {
-    use HasNotables, Markable, Mediable, HasFactory;
+    use HasFactory, HasNotables, Markable, Mediable;
 
     protected static array $marks = [
         Favorite::class,
@@ -182,7 +183,7 @@ class Contact extends Model
     public function getIsFavoriteAttribute(): bool
     {
         $user = auth()->user();
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
@@ -202,7 +203,7 @@ class Contact extends Model
 
     public function getFormatedDebtorNumberAttribute(): ?string
     {
-        if (!$this->debtor_number) {
+        if (! $this->debtor_number) {
             return null;
         }
 
@@ -211,7 +212,7 @@ class Contact extends Model
 
     public function getFormatedCreditorNumberAttribute(): ?string
     {
-        if (!$this->creditor_number) {
+        if (! $this->creditor_number) {
             return null;
         }
 
@@ -248,7 +249,7 @@ class Contact extends Model
         if (count($parts) > 1) {
             $stoppWords = ['gmbh', 'ag', 'gbr', 'eg', 'kg', 'e.k.', 'e. k.', 'ug', 'ggmbh'];
 
-            if (!in_array(strtolower($parts[1]), $stoppWords)) {
+            if (! in_array(strtolower($parts[1]), $stoppWords)) {
                 $initials .= substr($parts[1], 0, 1);
             }
 
@@ -267,7 +268,6 @@ class Contact extends Model
 
         return $this->name;
     }
-
 
     public function getFormatedInvoiceAddress(?int $contactId = 0): string
     {
@@ -294,7 +294,7 @@ class Contact extends Model
     {
         $category = AddressCategory::where('is_invoice_address', true)->first();
         $address = $this->addresses()->where('address_category_id', $category->id)->first();
-        if (!$address) {
+        if (! $address) {
             return $this->addresses()->first();
         }
 
@@ -387,10 +387,10 @@ class Contact extends Model
     public function scopeView(Builder $query, $view): Builder
     {
         return match ($view) {
-            'debtors' => $query->where('is_archived', 0)->where(fn($q) => $q->where('is_debtor',
+            'debtors' => $query->where('is_archived', 0)->where(fn ($q) => $q->where('is_debtor',
                 true)->orWhere('debtor_number', '<>', 0)),
             'orgs' => $query->where('is_org', true),
-            'creditors' => $query->where('is_archived', false)->where(fn($q) => $q->where('is_creditor',
+            'creditors' => $query->where('is_archived', false)->where(fn ($q) => $q->where('is_creditor',
                 true)->orWhere('creditor_number', '<>', 0)),
             'archived' => $query->where('is_archived', true),
             'favorites' => $query->whereHasFavorite(
@@ -404,15 +404,27 @@ class Contact extends Model
     protected function outturnAccountId(): Attribute
     {
         return Attribute::make(
-            set: fn($value) => $value === null || $value === '' ? 0 : $value,
+            set: fn ($value) => $value === null || $value === '' ? 0 : $value,
         );
     }
 
     protected function costCenterId(): Attribute
     {
         return Attribute::make(
-            set: fn($value) => $value === '' || $value === 0 ? null : $value,
+            set: fn ($value) => $value === '' || $value === 0 ? null : $value,
         );
+    }
+
+    public function dropbox_mails(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            DropboxMail::class,
+            'dropbox_mail_links',
+            'mailable_id',
+            'dropbox_mail_id'
+        )
+            ->where('dropbox_mail_links.mailable_type', static::class)
+            ->latest('dropbox_mails.date');
     }
 
     protected function casts(): array
@@ -477,19 +489,19 @@ class Contact extends Model
             $contact = static::find($contact->company_id);
         }
 
-        if (!$contact) {
+        if (! $contact) {
             throw new ContactNotFoundException;
         }
 
-        if ($contact->is_debtor && !$contact->debtor_number) {
+        if ($contact->is_debtor && ! $contact->debtor_number) {
             throw new ContactWithoutAccountException;
         }
 
         $accountNumber = $is_invoice ? $contact->debtor_number : $contact->creditor_number;
 
         $bookkeepingAccount = BookkeepingAccount::where('account_number', $accountNumber)->first();
-        if (!$bookkeepingAccount || !$accountNumber) {
-            if (!$createAccountIfNotExists) {
+        if (! $bookkeepingAccount || ! $accountNumber) {
+            if (! $createAccountIfNotExists) {
                 throw new ContactWithoutAccountException;
             } else {
                 if ($accountNumber) {
@@ -504,9 +516,9 @@ class Contact extends Model
 
         $outturnAccount = null;
 
-        if (!$is_invoice) {
+        if (! $is_invoice) {
             $contact->load('cost_center');
-            if ($contact->cost_center_id && !$contact->is_primary) {
+            if ($contact->cost_center_id && ! $contact->is_primary) {
                 $outturnAccount = BookkeepingAccount::where('id',
                     $contact->cost_center->bookkeeping_account_id)->first();
             } else {
@@ -535,7 +547,7 @@ class Contact extends Model
 
     public function getSalesAttribute(): array
     {
-        if (!$this->debtor_number) {
+        if (! $this->debtor_number) {
             return ['currentYear' => 0, 'allTime' => 0];
         }
 

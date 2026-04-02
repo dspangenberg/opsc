@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DropboxMail extends Model
 {
@@ -14,19 +15,15 @@ class DropboxMail extends Model
         'references',
         'from',
         'to',
-        'html',
-        'dropbox_id', s,
-        'payload'
-
-        'timestamp',
+        'dropbox_id',
+        'date',
         'is_private',
-        'is_processed',
-        'full_payload',
-        'plain_body',
+        'body',
         'cc',
-        'bcc',
         'in_reply_to',
-        'payload'
+        'seen_at',
+        'mailable_type',
+        'mailable_id',
     ];
 
     public function dropbox(): BelongsTo
@@ -34,9 +31,13 @@ class DropboxMail extends Model
         return $this->belongsTo(Dropbox::class);
     }
 
+    public function links(): HasMany
+    {
+        return $this->hasMany(DropboxMailLink::class);
+    }
+
     protected $attributes = [
         'is_private' => false,
-        'is_processed' => false,
     ];
 
     protected function casts(): array
@@ -45,9 +46,8 @@ class DropboxMail extends Model
             'references' => 'array',
             'to' => 'array',
             'cc' => 'array',
-            'bcc' => 'array',
-            'timestamp' => 'datetime',
-            'full_payload' => 'array'
+            'date' => 'datetime',
+            'seen_at' => 'datetime',
         ];
     }
 }

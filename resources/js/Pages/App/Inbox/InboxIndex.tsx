@@ -11,9 +11,11 @@ import { InboxIndexEntry } from './InboxIndexEntry'
 interface InboxIndexProps extends PageProps {
   mails: App.Data.Paginated.PaginationMeta<App.Data.DropboxInboxData[]>
   mail?: App.Data.DropboxInboxData
+  contacts: App.Data.ContactData[]
+  projects: App.Data.ProjectData[]
 }
 
-const InboxIndex: React.FC<InboxIndexProps> = ({ mails, mail }) => {
+const InboxIndex: React.FC<InboxIndexProps> = ({ contacts, mail, mails, projects }) => {
   const handleDelete = async () => {
     if (!mail) return
     const promise = await AlertDialog.call({
@@ -43,14 +45,14 @@ const InboxIndex: React.FC<InboxIndexProps> = ({ mails, mail }) => {
       <div className="absolute top-0 bottom-0 w-96 border-r">
         <div className="h-full overflow-y-auto">
           <div className="flex flex-col gap-2 p-4">
-            {mails.data.map(mail => (
-              <InboxIndexEntry key={mail.id} mail={mail} />
+            {mails.data.map(item => (
+              <InboxIndexEntry key={item.id} mail={item} isActive={item.id === mail?.id} />
             ))}
           </div>
         </div>
       </div>
       <div className="absolute top-0 right-0 bottom-0 left-96 flex">
-        {mail && <InboxMail mail={mail} />}
+        {mail && <InboxMail mail={mail} contacts={contacts} projects={projects} />}
       </div>
     </PageContainerWithSideOnLeft>
   )

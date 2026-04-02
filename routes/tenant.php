@@ -18,14 +18,14 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Models\Dropbox;
 use App\Models\DropboxInbox;
 use Carbon\Carbon;
-use ProtoneMedia\LaravelVerifyNewEmail\Http\VerifyNewEmailController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use ProtoneMedia\LaravelVerifyNewEmail\Http\VerifyNewEmailController;
 use Stancl\Tenancy\Features\UserImpersonation;
 use Stancl\Tenancy\Middleware;
-use Illuminate\Http\Request;
-use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,7 +84,7 @@ Route::middleware([
 
     Route::get('inbox/{mail?}', [InboxController::class, 'index'])->name('app.inbox.index');
     Route::delete('inbox/{mail}', [InboxController::class, 'destroy'])->name('app.inbox.destroy');
-
+    Route::put('inbox/{mail}', [InboxController::class, 'import'])->name('app.inbox.import');
 
     Route::get('/onboarding', function () {
         return Inertia::modal('Onboarding')->baseRoute('app.soon');
@@ -133,7 +133,7 @@ Route::middleware([
         ->name('initial-password');
 
     Route::post('/initial-password/store', [
-        InitialPasswordStoreController::class, '__invoke'
+        InitialPasswordStoreController::class, '__invoke',
     ])->name('initial-password.store')->middleware([HandlePrecognitiveRequests::class]);
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
@@ -150,7 +150,7 @@ Route::middleware([
         $dropbox = Dropbox::where('email_address', $email)->where('token', $token)->firstOrFail();
 
         $payload = $request->json('payload', []);
-        if (!is_array($payload)) {
+        if (! is_array($payload)) {
             abort(422, 'Invalid payload format');
         }
 
@@ -167,6 +167,7 @@ Route::middleware([
                 'is_private' => $dropbox->is_private_by_default,
             ]
         );
+
         return response(null, 200);
 
     })->withoutMiddleware([ValidateCsrfToken::class]);

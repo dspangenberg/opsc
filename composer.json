@@ -6,7 +6,9 @@
   "license": "MIT",
   "require": {
     "php": "^8.4",
+    "ext-openssl": "*",
     "based/momentum-modal": "dev-master",
+    "boci/hetzner-laravel": "^1.0",
     "calebporzio/sushi": "^2.5",
     "eg-mohamed/notable": "^1.4",
     "endroid/qr-code": "^6.0.8",
@@ -46,8 +48,7 @@
     "thiagoalessio/tesseract_ocr": "^2.13",
     "tightenco/ziggy": "^2.5.3",
     "usmanhalalit/laracsv": "^2.1",
-    "zanysoft/laravel-zip": "^3.0",
-    "ext-openssl": "*"
+    "zanysoft/laravel-zip": "^3.0"
   },
   "require-dev": {
     "barryvdh/laravel-ide-helper": "^3.5.5",
