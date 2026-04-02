@@ -1,13 +1,13 @@
-import { FolderUploadIcon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import { parseAndFormatRelative } from '@/Lib/DateHelper'
-import type { PageProps } from '@/Types'
+import { cn } from '@/Lib/utils'
 
 interface InboxIndexEntryProps {
+  isActive?: boolean
   mail: App.Data.DropboxInboxData
 }
 
-export const InboxIndexEntry: React.FC<InboxIndexEntryProps> = ({ mail }) => {
+export const InboxIndexEntry: React.FC<InboxIndexEntryProps> = ({ mail, isActive }) => {
   const handleClicked = () => {
     console.log('clicked')
     router.visit(route('app.inbox.index', { mail: mail.id }), {
@@ -17,8 +17,12 @@ export const InboxIndexEntry: React.FC<InboxIndexEntryProps> = ({ mail }) => {
   }
 
   return (
-    <div
-      className="flex cursor-default items-center justify-between rounded-lg bg-white p-4 hover:bg-muted/50"
+    <button
+      className={cn(
+        'flex cursor-default items-start justify-between rounded-lg bg-white p-4 text-left hover:bg-muted/50',
+        isActive && 'border bg-muted'
+      )}
+      type="button"
       onClick={handleClicked}
     >
       <div className="flex flex-1 flex-col gap-2">
@@ -32,6 +36,6 @@ export const InboxIndexEntry: React.FC<InboxIndexEntryProps> = ({ mail }) => {
       <div className="flex-none">
         <div className="text-xs"> {parseAndFormatRelative(mail.date as string)}</div>
       </div>
-    </div>
+    </button>
   )
 }

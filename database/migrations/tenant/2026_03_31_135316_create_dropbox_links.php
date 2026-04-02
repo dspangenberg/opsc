@@ -7,19 +7,17 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('dropbox_mail_attachments', function (Blueprint $table) {
+        Schema::create('dropbox_mail_links', function (Blueprint $table) {
             $table->id();
+            $table->morphs('mailable');
             $table->foreignId('dropbox_mail_id');
             $table->foreign('dropbox_mail_id')->references('id')->on('dropbox_mails')->onDelete('cascade');
-            $table->string('mime_type');
-            $table->string('filename');
-            $table->integer('size');
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('dropbox_mail_attachments');
+        Schema::dropIfExists('dropbox_mail_links');
     }
 };

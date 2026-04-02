@@ -13,6 +13,7 @@ class DropboxInbox extends Model
         'dropbox_id',
         'is_private',
         'date',
+        'seen_at',
     ];
 
     protected $appends = [
@@ -20,7 +21,7 @@ class DropboxInbox extends Model
         'from',
         'plain_body',
         'subject',
-        'to'
+        'to',
     ];
 
     public function getPlainBodyAttribute(): string
@@ -59,6 +60,7 @@ class DropboxInbox extends Model
             'payload' => 'array',
             'is_private' => 'boolean',
             'date' => 'datetime',
+            'seen_at' => 'datetime',
         ];
     }
 }

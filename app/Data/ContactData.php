@@ -97,9 +97,8 @@ class ContactData extends Data
         /** @var ContactAddressData[] */
         public readonly ?array $addresses,
 
-        /** @var NoteableData[] */
-        public readonly ?array $notables,
         public readonly ?int $primary_contact_id,
+
     ) {}
 
     public function defaultWrap(): string

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b42b715339b6b6749b78c2661f70c17e",
+    "content-hash": "1d17a52c9ab5669648dd17b2a16fb713",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -275,6 +275,77 @@
                 }
             ],
             "time": "2025-03-16T19:46:18+00:00"
+        },
+        {
+            "name": "boci/hetzner-laravel",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/amar8eka/hetzner-laravel.git",
+                "reference": "d59aaeb7d076e5994dd438c1b4010861ab61e834"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/amar8eka/hetzner-laravel/zipball/d59aaeb7d076e5994dd438c1b4010861ab61e834",
+                "reference": "d59aaeb7d076e5994dd438c1b4010861ab61e834",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.10",
+                "illuminate/support": "^12.0",
+                "php": "^8.2",
+                "psr/http-client": "^1.0",
+                "psr/http-message": "^2.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.25",
+                "orchestra/testbench": "^10.0",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^11.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "HetznerLaravel": "Boci\\HetznerLaravel\\Facades\\HetznerLaravel"
+                    },
+                    "providers": [
+                        "Boci\\HetznerLaravel\\HetznerLaravelServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Boci\\HetznerLaravel\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Amar Beka",
+                    "email": "amar8eka@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A Laravel SDK for interacting with the Hetzner Cloud API - inspired by Nuno Maduro's OpenAI PHP client",
+            "homepage": "https://github.com/amar8eka/hetzner-laravel",
+            "keywords": [
+                "API-Client",
+                "boci",
+                "hetzner",
+                "hetzner-cloud",
+                "hetzner-laravel",
+                "laravel",
+                "sdk"
+            ],
+            "support": {
+                "issues": "https://github.com/amar8eka/hetzner-laravel/issues",
+                "source": "https://github.com/amar8eka/hetzner-laravel/tree/v1.0.2"
+            },
+            "time": "2025-10-28T20:17:55+00:00"
         },
         {
             "name": "brick/math",
