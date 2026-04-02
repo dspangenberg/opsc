@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1d17a52c9ab5669648dd17b2a16fb713",
+    "content-hash": "9bfd5cca23b900d1c1dc8ebfde3f2b09",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -5712,16 +5712,16 @@
         },
         {
             "name": "ploi/ploi-php-sdk",
-            "version": "1.9.5",
+            "version": "2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ploi/ploi-php-sdk.git",
-                "reference": "73395a908bfd771c91514bebccfef55f980aa8a3"
+                "reference": "6d9ce13acb3473606c81808577d7771add19fb63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ploi/ploi-php-sdk/zipball/73395a908bfd771c91514bebccfef55f980aa8a3",
-                "reference": "73395a908bfd771c91514bebccfef55f980aa8a3",
+                "url": "https://api.github.com/repos/ploi/ploi-php-sdk/zipball/6d9ce13acb3473606c81808577d7771add19fb63",
+                "reference": "6d9ce13acb3473606c81808577d7771add19fb63",
                 "shasum": ""
             },
             "require": {
@@ -5730,7 +5730,7 @@
                 "php": ">=7.3"
             },
             "require-dev": {
-                "phpstan/phpstan": "^2.1",
+                "phpstan/phpstan": "^1.12 || ^2.1",
                 "phpunit/phpunit": "^9",
                 "psy/psysh": "@stable",
                 "squizlabs/php_codesniffer": "3.*",
@@ -5738,8 +5738,8 @@
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "Ploi": "src/"
+                "psr-4": {
+                    "Ploi\\": "src/Ploi/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -5759,9 +5759,9 @@
             "description": "Ploi.io for easy site deployments",
             "support": {
                 "issues": "https://github.com/ploi/ploi-php-sdk/issues",
-                "source": "https://github.com/ploi/ploi-php-sdk/tree/1.9.5"
+                "source": "https://github.com/ploi/ploi-php-sdk/tree/2.0"
             },
-            "time": "2025-05-18T05:48:27+00:00"
+            "time": "2026-03-10T14:47:25+00:00"
         },
         {
             "name": "pontedilana/php-weasyprint",
