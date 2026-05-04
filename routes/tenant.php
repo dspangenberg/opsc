@@ -161,7 +161,7 @@ Route::middleware([
                 'dropbox_id' => $dropbox->id,
                 'message_id' => $payload['message_id'],
             ],
-            [
+            [   
                 'payload' => $payload,
                 'date' => Carbon::parse((string) $payload['date'])->setTimezone('Europe/Berlin'),
                 'is_private' => $dropbox->is_private_by_default,
