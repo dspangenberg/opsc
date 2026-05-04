@@ -64,7 +64,6 @@ class DropboxController extends Controller
         return redirect()->route('admin.dropbox.index');
     }
 
-
     public function store(DropboxRequest $request): RedirectResponse
     {
         Dropbox::create($request->validated());

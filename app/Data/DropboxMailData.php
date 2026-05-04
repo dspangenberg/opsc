@@ -26,7 +26,7 @@ class DropboxMailData extends Data
         public readonly bool $is_private,
         public readonly string $subject,
         public readonly string $body,
-
+    
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]
         public readonly ?DateTime $date,
     ) {}
