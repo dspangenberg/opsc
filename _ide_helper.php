@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 12.55.0.
+ * Generated for Laravel 12.58.0.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -20712,6 +20712,7 @@ namespace Illuminate\Support\Facades {
          * @param array $headers
          * @param string|null $disposition
          * @return \Symfony\Component\HttpFoundation\StreamedResponse
+         * @throws UnableToRetrieveMetadata
          * @static
          */
         public static function response($path, $name = null, $headers = [], $disposition = 'inline')
@@ -20729,6 +20730,7 @@ namespace Illuminate\Support\Facades {
          * @param string|null $name
          * @param array $headers
          * @return \Symfony\Component\HttpFoundation\StreamedResponse
+         * @throws UnableToRetrieveMetadata
          * @static
          */
         public static function serve($request, $path, $name = null, $headers = [])
@@ -20745,6 +20747,7 @@ namespace Illuminate\Support\Facades {
          * @param string|null $name
          * @param array $headers
          * @return \Symfony\Component\HttpFoundation\StreamedResponse
+         * @throws UnableToRetrieveMetadata
          * @static
          */
         public static function download($path, $name = null, $headers = [])
@@ -20943,6 +20946,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param string $path
          * @return string|false
+         * @throws UnableToRetrieveMetadata
          * @static
          */
         public static function mimeType($path)
@@ -29566,10 +29570,10 @@ namespace Sentry\Laravel {
          * is automatically removed once the operation finishes or throws.
          *
          * @param callable $callback The callback to be executed
-         * @psalm-template T
-         * @psalm-param callable(Scope): T $callback
+         * @phpstan-template T
+         * @phpstan-param callable(Scope): T $callback
          * @return mixed|void The callback's return value, upon successful execution
-         * @psalm-return T
+         * @phpstan-return T
          * @static
          */
         public static function withScope($callback)
@@ -29675,9 +29679,9 @@ namespace Sentry\Laravel {
          * Gets the integration whose FQCN matches the given one if it's available on the current client.
          *
          * @param string $className The FQCN of the integration
-         * @psalm-template T of IntegrationInterface
-         * @psalm-param class-string<T> $className
-         * @psalm-return T|null
+         * @phpstan-template T of IntegrationInterface
+         * @phpstan-param class-string<T> $className
+         * @phpstan-return T|null
          * @static
          */
         public static function getIntegration($className)
@@ -29785,6 +29789,22 @@ namespace Stancl\Tenancy\Facades {
         {
             /** @var \Stancl\Tenancy\Tenancy $instance */
             return $instance->end();
+        }
+
+        /**
+         * End tenancy and initialize it again for the current tenant.
+         *
+         * This can be helpful when changing "dependencies" of bootstrappers such as
+         * attributes of the current tenant that are only read once, during bootstrap().
+         *
+         * If tenancy is not initialized, this method is a no-op.
+         *
+         * @static
+         */
+        public static function reinitialize()
+        {
+            /** @var \Stancl\Tenancy\Tenancy $instance */
+            return $instance->reinitialize();
         }
 
         /**
