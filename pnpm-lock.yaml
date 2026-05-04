@@ -5648,7 +5648,7 @@ snapshots:
 
   '@cgarciagarcia/react-query-builder@1.20.5(react@19.2.4)':
     dependencies:
-      lodash: 4.17.23
+      lodash: 4.18.1
       react: 19.2.4
 
   '@codemirror/autocomplete@6.20.0':
@@ -6762,7 +6762,7 @@ snapshots:
   '@esbuild/linux-loong64@0.27.7':
     optional: true
 
-  '@napi-rs/wasm-runtime@1.1.1':
+  '@napi-rs/wasm-runtime@1.1.2(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)':
     dependencies:
       '@emnapi/core': 1.9.1
       '@emnapi/runtime': 1.9.1
