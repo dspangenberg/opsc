@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1d17a52c9ab5669648dd17b2a16fb713",
+    "content-hash": "19962bd192364de4ccbd4176cc2493eb",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2964,19 +2964,20 @@
         },
         {
             "name": "laravel/ai",
-            "version": "v0.2.8",
+            "version": "v0.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/ai.git",
-                "reference": "8c35ed04ebdec3bd1cdfff13ee735608fb65c3d7"
+                "reference": "f425b4f69dff713e390272c1b7b0a55147c80fb7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/ai/zipball/8c35ed04ebdec3bd1cdfff13ee735608fb65c3d7",
-                "reference": "8c35ed04ebdec3bd1cdfff13ee735608fb65c3d7",
+                "url": "https://api.github.com/repos/laravel/ai/zipball/f425b4f69dff713e390272c1b7b0a55147c80fb7",
+                "reference": "f425b4f69dff713e390272c1b7b0a55147c80fb7",
                 "shasum": ""
             },
             "require": {
+                "aws/aws-sdk-php": "^3.339",
                 "illuminate/console": "^12.0|^13.0",
                 "illuminate/container": "^12.0|^13.0",
                 "illuminate/contracts": "^12.0|^13.0",
@@ -2985,13 +2986,14 @@
                 "illuminate/support": "^12.0|^13.0",
                 "laravel/prompts": "^0.3.6",
                 "laravel/serializable-closure": "^2.0",
-                "php": "^8.3",
-                "prism-php/prism": "^0.99.0"
+                "php": "^8.3"
             },
             "require-dev": {
                 "laravel/pint": "^1.26",
                 "mockery/mockery": "^1.6.12",
-                "orchestra/testbench": "^10.6"
+                "orchestra/testbench": "^10.6|^11.0",
+                "pestphp/pest": "^3.0|^4.0",
+                "pestphp/pest-plugin-laravel": "^3.0|^4.0"
             },
             "type": "library",
             "extra": {
@@ -3026,7 +3028,7 @@
                 "issues": "https://github.com/laravel/ai/issues",
                 "source": "https://github.com/laravel/ai"
             },
-            "time": "2026-03-10T19:58:47+00:00"
+            "time": "2026-05-02T11:22:04+00:00"
         },
         {
             "name": "laravel/framework",
@@ -5889,85 +5891,6 @@
                 }
             ],
             "time": "2026-03-09T20:33:04+00:00"
-        },
-        {
-            "name": "prism-php/prism",
-            "version": "v0.99.22",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/prism-php/prism.git",
-                "reference": "989f67567aef69c613eae6e932d615fb96e2f5d7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/prism-php/prism/zipball/989f67567aef69c613eae6e932d615fb96e2f5d7",
-                "reference": "989f67567aef69c613eae6e932d615fb96e2f5d7",
-                "shasum": ""
-            },
-            "require": {
-                "ext-fileinfo": "*",
-                "laravel/framework": "^11.0|^12.0|^13.0",
-                "php": "^8.2"
-            },
-            "require-dev": {
-                "brianium/paratest": "^7.8.4",
-                "laravel/mcp": "^0.6.0",
-                "laravel/pint": "^1.14",
-                "mockery/mockery": "^1.6",
-                "orchestra/testbench": "^10",
-                "pestphp/pest": "^3.0",
-                "pestphp/pest-plugin-arch": "^3.0",
-                "pestphp/pest-plugin-laravel": "^3.0",
-                "phpstan/extension-installer": "^1.3",
-                "phpstan/phpdoc-parser": "^2.0",
-                "phpstan/phpstan": "2.1.34",
-                "phpstan/phpstan-deprecation-rules": "^2.0",
-                "projektgopher/whisky": "^0.7.0",
-                "rector/rector": "2.3.3",
-                "spatie/laravel-ray": "^1.39",
-                "symplify/rule-doc-generator-contracts": "^11.2"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "PrismServer": "Prism\\Prism\\Facades\\PrismServer"
-                    },
-                    "providers": [
-                        "Prism\\Prism\\PrismServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
-                "psr-4": {
-                    "Prism\\Prism\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "TJ Miller",
-                    "email": "hello@echolabs.dev"
-                }
-            ],
-            "description": "A powerful Laravel package for integrating Large Language Models (LLMs) into your applications.",
-            "support": {
-                "issues": "https://github.com/prism-php/prism/issues",
-                "source": "https://github.com/prism-php/prism/tree/v0.99.22"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/sixlive",
-                    "type": "github"
-                }
-            ],
-            "time": "2026-03-12T17:55:23+00:00"
         },
         {
             "name": "protonemedia/laravel-verify-new-email",
