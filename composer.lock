@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1d17a52c9ab5669648dd17b2a16fb713",
+    "content-hash": "eb68aacfa723626f967eb97b701d33ea",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4478,30 +4478,30 @@
         },
         {
             "name": "maize-tech/laravel-markable",
-            "version": "2.3.2",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/maize-tech/laravel-markable.git",
-                "reference": "dd3218a5cdacbd2980d7a397e21024e9f00f75d7"
+                "reference": "19e2a559a38ea6b5eca87664f78d35e2be7dbbff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maize-tech/laravel-markable/zipball/dd3218a5cdacbd2980d7a397e21024e9f00f75d7",
-                "reference": "dd3218a5cdacbd2980d7a397e21024e9f00f75d7",
+                "url": "https://api.github.com/repos/maize-tech/laravel-markable/zipball/19e2a559a38ea6b5eca87664f78d35e2be7dbbff",
+                "reference": "19e2a559a38ea6b5eca87664f78d35e2be7dbbff",
                 "shasum": ""
             },
             "require": {
-                "illuminate/database": "^9.0|^10.0|^11.0|^12.0",
-                "illuminate/support": "^9.0|^10.0|^11.0|^12.0",
-                "php": "^8.0",
+                "illuminate/database": "^11.0|^12.0|^13.0",
+                "illuminate/support": "^11.0|^12.0|^13.0",
+                "php": "^8.3",
                 "spatie/laravel-package-tools": "^1.92.6"
             },
             "require-dev": {
+                "larastan/larastan": "^2.9|^3.0",
                 "laravel/pint": "^1.0",
-                "orchestra/testbench": "^7.0|^8.0|^9.0|^10.0",
-                "phpunit/phpunit": "^9.5|^10.5|^11.5.3",
-                "spatie/laravel-ray": "^1.29",
-                "vimeo/psalm": "^4.22|^5.22|^6.6"
+                "orchestra/testbench": "^9.1|^10.0|^11.0",
+                "pestphp/pest": "^4",
+                "pestphp/pest-plugin-laravel": "^4"
             },
             "type": "library",
             "extra": {
@@ -4545,7 +4545,7 @@
             ],
             "support": {
                 "issues": "https://github.com/maize-tech/laravel-markable/issues",
-                "source": "https://github.com/maize-tech/laravel-markable/tree/2.3.2"
+                "source": "https://github.com/maize-tech/laravel-markable/tree/3.0.0"
             },
             "funding": [
                 {
@@ -4553,7 +4553,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-07-19T15:48:46+00:00"
+            "time": "2026-04-15T12:30:57+00:00"
         },
         {
             "name": "monolog/monolog",
