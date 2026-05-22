@@ -16,6 +16,7 @@ use App\Data\TextModuleData;
 use App\Enums\OfferStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NoteStoreRequest;
+use App\Http\Requests\OfferAttachmentAddRequest;
 use App\Http\Requests\OfferAttachmentSortUpdateRequest;
 use App\Http\Requests\OfferOfferSectionRequest;
 use App\Http\Requests\OfferStoreRequest;
@@ -38,7 +39,6 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Http\Requests\OfferAttachmentAddRequest;
 use Stevebauman\Purify\Facades\Purify;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -55,7 +55,7 @@ class OfferController extends Controller
             $year = $currentYear;
         }
 
-        if ($year && !$years->contains($year)) {
+        if ($year && ! $years->contains($year)) {
             $years->push($year);
         }
 
@@ -147,7 +147,6 @@ class OfferController extends Controller
         return redirect()->route('app.offer.details', ['offer' => $offer->id]);
     }
 
-
     public function createInvoice(Offer $offer)
     {
         $offer->load('contact', 'lines');
@@ -173,7 +172,7 @@ class OfferController extends Controller
         $invoice->addHistory('Rechnung wurde erstellt.', 'created');
 
         $offer->lines()->each(function ($line) use ($invoice) {
-            $invoiceLine = new InvoiceLine();
+            $invoiceLine = new InvoiceLine;
             $invoiceLine->invoice_id = $invoice->id;
             $invoiceLine->pos = $line->pos;
             $invoiceLine->quantity = $line->quantity;
@@ -186,7 +185,6 @@ class OfferController extends Controller
             $invoiceLine->tax = $line->tax;
             $invoiceLine->save();
         });
-
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
 
@@ -205,13 +203,12 @@ class OfferController extends Controller
             ->load([
                 'attachments' => function ($query) {
                     $query->with('document')->orderBy('pos');
-                }
+                },
             ])
             ->load('tax')
             ->load('tax.rates')
             ->loadSum('lines', 'amount')
             ->loadSum('lines', 'tax');
-
 
         return Inertia::render('App/Offer/OfferDetails', [
             'offer' => OfferData::from($offer),
@@ -225,7 +222,6 @@ class OfferController extends Controller
             $offer->project_id = 0;
             $offer->save();
         }
-
 
         $offer->update($request->validated());
 
@@ -269,6 +265,7 @@ class OfferController extends Controller
     public function release(Offer $offer)
     {
         $offer->release();
+
         return redirect()->route('app.offer.details', ['offer' => $offer->id]);
     }
 
@@ -297,7 +294,7 @@ class OfferController extends Controller
 
     public function markAsSent(Offer $offer): RedirectResponse
     {
-        if (!$offer->sent_at) {
+        if (! $offer->sent_at) {
             $offer->sent_at = now();
             $offer->save();
             $offer->addHistory('hat das Angebot versendet.', 'mail_sent', auth()->user());
@@ -313,6 +310,7 @@ class OfferController extends Controller
     {
         $offer->load('attachments');
         $pdfFile = Offer::createOrGetPdf($offer);
+
         return response()->file($pdfFile);
 
     }
@@ -329,7 +327,7 @@ class OfferController extends Controller
                 'section_id' => $section->id,
                 'pagebreak' => $section->pagebreak,
                 'pos' => $pos,
-                'content' => $section->default_content
+                'content' => $section->default_content,
             ]);
         }
     }
@@ -375,6 +373,7 @@ class OfferController extends Controller
     public function updateSection(OfferOfferSectionRequest $request, Offer $offer, OfferOfferSection $offerSection)
     {
         $offerSection->update($request->validated());
+
         return Inertia::flash('toast',
             ['type' => 'success', 'message' => 'Abschnitt wurde erfolgreich gespeichert'])->back();
     }
@@ -382,6 +381,7 @@ class OfferController extends Controller
     public function deleteSection(Offer $offer, OfferOfferSection $offerSection)
     {
         $offerSection->delete();
+
         return Inertia::flash('toast',
             ['type' => 'success', 'message' => 'Abschnitt wurde erfolgreich gelöscht'])->back();
     }
@@ -416,7 +416,7 @@ class OfferController extends Controller
     public function removeAttachment(Offer $offer, Attachment $attachment)
     {
         $attachment = $offer->attachments()->find($attachment->id);
-        if (!$attachment) {
+        if (! $attachment) {
             return back();
         }
         $attachment->delete();
@@ -432,7 +432,7 @@ class OfferController extends Controller
         foreach ($documentIds as $index => $documentId) {
             $offer->attachments()->create([
                 'document_id' => $documentId,
-                'pos' => $maxPos + $index + 1
+                'pos' => $maxPos + $index + 1,
             ]);
         }
 
@@ -443,13 +443,11 @@ class OfferController extends Controller
     {
         $newStatus = OfferStatusEnum::from($request->validated('status'));
 
-        $offer->status = $request->validated('status');
-
         if ($offer->status === $newStatus) {
             return back();
         }
 
-
+        $offer->status = $newStatus->value;
         $offer->save();
 
         $statusName = match ($newStatus) {
@@ -475,6 +473,7 @@ class OfferController extends Controller
     public function storeNote(NoteStoreRequest $request, Offer $offer): RedirectResponse
     {
         $offer->addNote(Purify::clean($request->validated('note')), auth()->user());
+
         return redirect()->back();
     }
 

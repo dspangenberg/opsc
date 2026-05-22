@@ -10,10 +10,12 @@ import '@fontsource/clear-sans/300.css'
 import '@fontsource/clear-sans/400.css'
 import '@fontsource/clear-sans/500.css'
 import '@fontsource/clear-sans/700.css'
+import '@fontsource/ia-writer-quattro'
 
 import { createInertiaApp } from '@inertiajs/react'
 import * as Sentry from '@sentry/react'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
+import type { JSXElementConstructor, ReactElement, ReactNode, ReactPortal } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ApplicationProvider } from '@/Components/ApplicationProvider'
 import AppLayout from '@/Layouts/AppLayout'
@@ -38,13 +40,18 @@ globalThis.resolveMomentumModal = async name => {
 createInertiaApp({
   title: title => `${title} - ${appName}`,
   resolve: async name => {
-    const page = await resolvePageComponent(
+    const page: unknown = await resolvePageComponent(
       `./Pages/${name}.tsx`,
       import.meta.glob('./Pages/**/*.tsx')
     )
 
     // @ts-expect-error
-    page.default.layout = (name.startsWith('App') || name.startsWith('Admin')) ? page => <AppLayout>{page}</AppLayout> : undefined
+    page.default.layout =
+      name.startsWith('App') || name.startsWith('Admin')
+        ? (page: ReactElement<unknown, string | JSXElementConstructor<any>>) => (
+            <AppLayout>{page}</AppLayout>
+          )
+        : undefined
 
     return page
   },
