@@ -84,7 +84,7 @@
     "html2canvas-pro": "^2.0.2",
     "laravel-precognition": "^1.0.2",
     "laravel-precognition-react-inertia": "^0.8.0",
-    "lodash": "^4.17.23",
+    "lodash": "^4.18.1",
     "lucide-react": "^0.577.0",
     "moderndash": "^4.0.0",
     "momentum-modal-react": "^1.0.0",
