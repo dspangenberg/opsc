@@ -14,7 +14,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: "Clear Sans";
+  --font-sans: "iA Writer Quattro", "Clear Sans";
   --font-mono: "JetBrains Mono Variable";
   --color-ring: var(--ring);
   --font-weight-medium: 600;

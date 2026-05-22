@@ -10,6 +10,7 @@ import '@fontsource/clear-sans/300.css'
 import '@fontsource/clear-sans/400.css'
 import '@fontsource/clear-sans/500.css'
 import '@fontsource/clear-sans/700.css'
+import '@fontsource/ia-writer-quattro'
 
 import { createInertiaApp } from '@inertiajs/react'
 import * as Sentry from '@sentry/react'
@@ -44,7 +45,10 @@ createInertiaApp({
     )
 
     // @ts-expect-error
-    page.default.layout = (name.startsWith('App') || name.startsWith('Admin')) ? page => <AppLayout>{page}</AppLayout> : undefined
+    page.default.layout =
+      name.startsWith('App') || name.startsWith('Admin')
+        ? page => <AppLayout>{page}</AppLayout>
+        : undefined
 
     return page
   },
