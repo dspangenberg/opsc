@@ -133,7 +133,7 @@ importers:
         version: 1.0.2
       laravel-precognition-react-inertia:
         specifier: ^0.8.0
-        version: 0.8.0(@inertiajs/react@2.3.18(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
+        version: 0.8.0(@inertiajs/react@2.3.24(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       lodash:
         specifier: ^4.18.1
         version: 4.18.1
@@ -226,8 +226,8 @@ importers:
         specifier: 2.4.8
         version: 2.4.8
       '@inertiajs/react':
-        specifier: 2.3.18
-        version: 2.3.18(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 2.3.24
+        version: 2.3.24(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@react-types/shared':
         specifier: ^3.33.0
         version: 3.34.0(react@19.2.4)
@@ -364,6 +364,10 @@ packages:
     resolution: {integrity: sha512-9NhCeYjq9+3uxgdtp20LSiJXJvN0FeCtNGpJxuMFZ1Kv3cWUNb6DOhJwUvcVCzKGR66cw4njwM6hrJLqgOwbcw==}
     engines: {node: '>=6.9.0'}
 
+  '@babel/code-frame@7.29.7':
+    resolution: {integrity: sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==}
+    engines: {node: '>=6.9.0'}
+
   '@babel/compat-data@7.29.3':
     resolution: {integrity: sha512-LIVqM46zQWZhj17qA8wb4nW/ixr2y1Nw+r1etiAWgRM6U1IqP+LNhL1yg440jYZR72jCWcWbLWzIosH+uP1fqg==}
     engines: {node: '>=6.9.0'}
@@ -434,6 +438,10 @@ packages:
     resolution: {integrity: sha512-qSs4ifwzKJSV39ucNjsvc6WVHs6b7S03sOh2OcHF9UHfVPqWWALUsNUVzhSBiItjRZoLHx7nIarVjqKVusUZ1Q==}
     engines: {node: '>=6.9.0'}
 
+  '@babel/helper-validator-identifier@7.29.7':
+    resolution: {integrity: sha512-qehxGkRj55h/ff8EMaJ+cYhyaKlHIxqYDn682wQD7RNp9UujOQsHog2uS0r2vzr4pW+sXf90NeeayjcNaX3fFg==}
+    engines: {node: '>=6.9.0'}
+
   '@babel/helper-validator-option@7.27.1':
     resolution: {integrity: sha512-YvjJow9FxbhFFKDSuFnVCe2WxXk1zWc22fFePVNEaWJEu8IrZVlda6N0uHwzZrUM1il7NC9Mlp4MaJYbYd9JSg==}
     engines: {node: '>=6.9.0'}
@@ -491,6 +499,10 @@ packages:
 
   '@babel/runtime@7.29.2':
     resolution: {integrity: sha512-JiDShH45zKHWyGe4ZNVRrCjBz8Nh9TMmZG1kh4QTK8hCBTWBi8Da+i7s1fJw7/lYpM4ccepSNfqzZ/QvABBi5g==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/runtime@7.29.7':
+    resolution: {integrity: sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==}
     engines: {node: '>=6.9.0'}
 
   '@babel/template@7.28.6':
@@ -976,13 +988,16 @@ packages:
   '@inertiajs/core@2.3.18':
     resolution: {integrity: sha512-StOszdE28nx9uxY4I28d7oLRGLdu/F9pRgWody2k29Qe9WqAoPHVQ5VJabTi2RTYHJXZrZZ+Wgtw3qVRZMrwOA==}
 
+  '@inertiajs/core@2.3.24':
+    resolution: {integrity: sha512-xAlUl5+RKtdbutEgsmdWa6HmnvjIGcWTrvfLj/3Icy3/7bSH3aiI+kuYPs17LBq/SMaXnqBZXXo094rEXUv2aA==}
+
   '@inertiajs/react@1.3.0':
     resolution: {integrity: sha512-K+PF23xP6jjMkubs8PbxT1MroSDdH1z3VTEGbO3685Xyf0QNwoNIF95hnyqJxlWaeG4fB0GAag40gh04fefRUA==}
     peerDependencies:
       react: ^16.9.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  '@inertiajs/react@2.3.18':
-    resolution: {integrity: sha512-kcoPveEDN7vyjqhyFEa9dlBjgvAsrz9k9YlrSK9PFJxRBGpCAnovmU37/a9AG2ORUP1zLw2P8y+5QfMgRdEPfw==}
+  '@inertiajs/react@2.3.24':
+    resolution: {integrity: sha512-PtzuoL66QlxpLgV8j8l9a7SIkVtFVFetrIHQjfemNk8Ey9C7IhacE7b4PKgx5cI77ftJBwEfNrj2+AhOvFpgpw==}
     peerDependencies:
       react: ^16.9.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.9.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -2083,6 +2098,9 @@ packages:
 
   '@swc/helpers@0.5.21':
     resolution: {integrity: sha512-jI/VAmtdjB/RnI8GTnokyX7Ug8c+g+ffD6QRLa6XQewtnGyukKkKSk3wLTM3b5cjt1jNh9x0jfVlagdN2gDKQg==}
+
+  '@swc/helpers@0.5.22':
+    resolution: {integrity: sha512-/e2Ly3Docn9kYByap6TV4oquJ3wQuz3c+kC74riqtkwU9CwTMeuj6t2rW+bRr4pyOx/CYQM4wr0RgaKQwGEz0A==}
 
   '@tailwindcss/forms@0.5.11':
     resolution: {integrity: sha512-h9wegbZDPurxG22xZSoWtdzc41/OlNEUQERNqI/0fOwa2aVlWGu7C35E/x6LDyD3lgtztFSSjKZyuVM0hxhbgA==}
@@ -5170,6 +5188,12 @@ snapshots:
       js-tokens: 4.0.0
       picocolors: 1.1.1
 
+  '@babel/code-frame@7.29.7':
+    dependencies:
+      '@babel/helper-validator-identifier': 7.29.7
+      js-tokens: 4.0.0
+      picocolors: 1.1.1
+
   '@babel/compat-data@7.29.3': {}
 
   '@babel/core@7.29.0':
@@ -5276,6 +5300,8 @@ snapshots:
 
   '@babel/helper-validator-identifier@7.28.5': {}
 
+  '@babel/helper-validator-identifier@7.29.7': {}
+
   '@babel/helper-validator-option@7.27.1': {}
 
   '@babel/helpers@7.29.2':
@@ -5338,6 +5364,8 @@ snapshots:
       - supports-color
 
   '@babel/runtime@7.29.2': {}
+
+  '@babel/runtime@7.29.7': {}
 
   '@babel/template@7.28.6':
     dependencies:
@@ -5946,6 +5974,17 @@ snapshots:
       - debug
       - supports-color
 
+  '@inertiajs/core@2.3.24':
+    dependencies:
+      '@types/lodash-es': 4.17.12
+      axios: 1.16.1
+      laravel-precognition: 1.0.2
+      lodash-es: 4.18.1
+      qs: 6.15.2
+    transitivePeerDependencies:
+      - debug
+      - supports-color
+
   '@inertiajs/react@1.3.0(react@18.3.1)':
     dependencies:
       '@inertiajs/core': 1.3.0
@@ -5955,9 +5994,9 @@ snapshots:
       - debug
       - supports-color
 
-  '@inertiajs/react@2.3.18(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@inertiajs/react@2.3.24(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
-      '@inertiajs/core': 2.3.18
+      '@inertiajs/core': 2.3.24
       '@types/lodash-es': 4.17.12
       laravel-precognition: 1.0.2
       lodash-es: 4.18.1
@@ -7006,7 +7045,7 @@ snapshots:
   '@react-spectrum/provider@3.11.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       '@adobe/react-spectrum': 3.47.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@swc/helpers': 0.5.21
+      '@swc/helpers': 0.5.22
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
 
@@ -7180,6 +7219,10 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  '@swc/helpers@0.5.22':
+    dependencies:
+      tslib: 2.8.1
+
   '@tailwindcss/forms@0.5.11(tailwindcss@4.3.0)':
     dependencies:
       mini-svg-data-uri: 1.4.4
@@ -7278,8 +7321,8 @@ snapshots:
 
   '@testing-library/dom@10.4.1':
     dependencies:
-      '@babel/code-frame': 7.29.0
-      '@babel/runtime': 7.29.2
+      '@babel/code-frame': 7.29.7
+      '@babel/runtime': 7.29.7
       '@types/aria-query': 5.0.4
       aria-query: 5.3.0
       dom-accessibility-api: 0.5.16
@@ -8571,9 +8614,9 @@ snapshots:
 
   kleur@4.1.5: {}
 
-  laravel-precognition-react-inertia@0.8.0(@inertiajs/react@2.3.18(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4):
+  laravel-precognition-react-inertia@0.8.0(@inertiajs/react@2.3.24(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4):
     dependencies:
-      '@inertiajs/react': 2.3.18(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@inertiajs/react': 2.3.24(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       laravel-precognition: 0.8.0
       laravel-precognition-react: 0.8.0(react@19.2.4)
       react: 19.2.4
