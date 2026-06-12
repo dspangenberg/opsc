@@ -122,7 +122,7 @@ export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.Trans
     {
       accessorKey: 'booked_on',
       header: 'Buchung',
-      size: 50,
+      size: 70,
       cell: ({ getValue }) => (
         <div>
           <span>{getValue() as string}</span>
@@ -132,7 +132,7 @@ export const createColumns = (options?: ColumnOptions): ColumnDef<App.Data.Trans
     {
       accessorKey: 'valued_on',
       header: 'Wertstellung',
-      size: 50,
+      size: 70,
       cell: ({ getValue }) => <span>{getValue() as string}</span>
     },
     {

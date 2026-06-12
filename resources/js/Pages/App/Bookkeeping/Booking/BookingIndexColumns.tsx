@@ -127,16 +127,6 @@ export const createColumns = (
       )
     },
     {
-      accessorKey: 'date',
-      header: 'Datum',
-      size: 60,
-      cell: ({ getValue }) => (
-        <div>
-          <span>{getValue() as string}</span>
-        </div>
-      )
-    },
-    {
       accessorKey: 'is_locked',
       header: '',
       size: 5,
@@ -160,6 +150,16 @@ export const createColumns = (
           )
         }
       }
+    },
+    {
+      accessorKey: 'date',
+      header: 'Datum',
+      size: 70,
+      cell: ({ getValue }) => (
+        <div>
+          <span>{getValue() as string}</span>
+        </div>
+      )
     },
     {
       accessorKey: 'document_number',
