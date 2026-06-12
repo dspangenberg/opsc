@@ -291,7 +291,7 @@
         @endif
 
         @if($groupedByCategoryTimes)
-            <pagebreak>
+                <div class="page-break"></div>
                 <h1>Leistungsnachweis</h1>
                 <table border-spacing="0" cellspacing="0" style="margin-top: 5mm; margin-bottom: 5mm;">
                     <tbody>

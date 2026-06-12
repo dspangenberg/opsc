@@ -98,6 +98,7 @@
   table tbody tr th, table tbody tr td {
     padding: 2px;
     text-align: left;
+    border-bottom: 1px solid #aaa;
   }
 
   table tbody tr td.time {
@@ -211,7 +212,7 @@
 </style>
 
 
-  <h2>Auswertung Eingangsrechnungen</h2>
+  <h2>Auswertung Ausgangsrechnungen</h2>
   vom {{ $begin_on ? \Illuminate\Support\Carbon::parse($begin_on)->format('d.m.Y') : '' }}
   bis {{ $end_on ? \Illuminate\Support\Carbon::parse($end_on)->format('d.m.Y') : '' }}
 
@@ -232,7 +233,7 @@
     </thead>
     <tbody>
     @foreach ($invoices as $invoice)
-      <tr style="background-color: #eee;">
+      <tr style="background-color: #eee;border-bottom: 1px solid #aaa;">
         <td>{{ $invoice->issued_on->format('d.m.Y') }}</td>
         <td>{{ $invoice->formated_invoice_number }}</td>
         <td class="truncate">{{ $invoice->contact->fullname }}</td>

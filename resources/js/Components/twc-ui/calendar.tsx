@@ -21,6 +21,9 @@ import {
   useLocale
 } from 'react-aria-components'
 import { tv } from 'tailwind-variants'
+
+type CalendarSelectionMode = 'single' | 'multiple'
+
 import { cn } from '@/Lib/utils'
 import { Button } from './button'
 import { Select } from './select'
@@ -234,7 +237,11 @@ export const CalendarGridHeader = () => {
   )
 }
 
-const SelectMonth = ({ state }: { state: CalendarState | RangeCalendarState }) => {
+const SelectMonth = ({
+  state
+}: {
+  state: CalendarState<CalendarSelectionMode> | RangeCalendarState
+}) => {
   const months: { id: string; name: string }[] = []
 
   const formatter = useDateFormatter({
@@ -268,7 +275,7 @@ const SelectYear = ({
   maxYear,
   state
 }: {
-  state: CalendarState | RangeCalendarState
+  state: CalendarState<CalendarSelectionMode> | RangeCalendarState
   minYear: number
   maxYear: number
 }) => {
@@ -305,9 +312,9 @@ const SelectYear = ({
 
 export {
   CalendarCell,
+  CalendarFooter,
   CalendarGrid,
   CalendarGridBody,
-  CalendarHeaderCell,
-  CalendarFooter,
-  CalendarHeader
+  CalendarHeader,
+  CalendarHeaderCell
 }

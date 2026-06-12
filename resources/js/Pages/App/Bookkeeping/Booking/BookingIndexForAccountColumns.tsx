@@ -128,7 +128,7 @@ export const createColumns = (
     {
       accessorKey: 'date',
       header: 'Datum',
-      size: 70,
+      size: 80,
       cell: ({ getValue }) => (
         <div>
           <span>{getValue() as string}</span>
@@ -163,7 +163,7 @@ export const createColumns = (
     {
       accessorKey: 'document_number',
       header: '',
-      size: 90,
+      size: 100,
       cell: ({ getValue, row }) => {
         if (row.original.bookable_type === 'App\\Models\\Receipt') {
           return (
@@ -212,7 +212,7 @@ export const createColumns = (
     },
     {
       accessorKey: 'counter_account_label',
-      header: 'GK-Nr. ',
+      header: 'GK',
       size: 50,
       cell: ({ row }) => (
         <TooltipTrigger>

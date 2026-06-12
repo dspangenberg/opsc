@@ -5,7 +5,7 @@
 
 import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import type React from 'react'
-import { forwardRef, useEffect, useImperativeHandle } from 'react'
+import { useEffect, useImperativeHandle } from 'react'
 import { ScrollArea } from '@/Components/twc-ui/scroll-area'
 import {
   Table,
@@ -25,25 +25,24 @@ interface DataTableProps<TData, TValue> {
   actionBar?: React.ReactNode
   filterBar?: React.ReactNode
   onSelectedRowsChange?: (selectedRows: TData[]) => void
+  ref?: React.Ref<DataTableRef>
 }
 
 export interface DataTableRef {
   resetRowSelection: () => void
 }
 
-function DataTableInner<TData, TValue>(
-  {
-    actionBar,
-    columns,
-    data,
-    filterBar,
-    footer,
-    header,
-    onSelectedRowsChange,
-    itemName = 'Datensätze'
-  }: DataTableProps<TData, TValue>,
-  ref: React.Ref<DataTableRef>
-) {
+function DataTableComponent<TData, TValue>({
+  actionBar,
+  columns,
+  data,
+  filterBar,
+  footer,
+  header,
+  onSelectedRowsChange,
+  itemName = 'Datensätze',
+  ref
+}: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
@@ -65,7 +64,7 @@ function DataTableInner<TData, TValue>(
     <div className="flex h-full flex-1 flex-col overflow-hidden">
       <div className="mx-2 flex-none">{header}</div>
 
-      <div className="relative flex max-h-fit w-full flex-1 flex-col gap-1.5 overflow-hidden rounded-lg border border-border/80 bg-page-content p-1.5 pt-2.5">
+      <div className="relative flex max-h-fit w-full flex-1 flex-col gap-1.5 overflow-hidden rounded-lg border border-border/80 bg-page-content p-1.5">
         {filterBar}
         <ScrollArea className="min-h-0 flex-1 rounded-md border bg-page-content" scroll-region="">
           <Table className="table-fixed border-spacing-0 border-b-0 bg-background [&_td]:border-border [&_tfoot_td]:border-t [&_th]:border-border [&_th]:border-b [&_tr:not(:last-child)_td]:border-b [&_tr]:border-none">
@@ -114,6 +113,4 @@ function DataTableInner<TData, TValue>(
   )
 }
 
-export const DataTable = forwardRef(DataTableInner) as <TData, TValue = unknown>(
-  props: DataTableProps<TData, TValue> & { ref?: React.ForwardedRef<DataTableRef> }
-) => React.ReactElement
+export { DataTableComponent as DataTable }

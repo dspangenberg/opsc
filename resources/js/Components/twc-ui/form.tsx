@@ -11,7 +11,7 @@ export type FormSchema = Record<string, FormDataConvertible>
 type UseFormReturn<T extends FormSchema> = ReturnType<typeof internalUseForm<T>>
 type BaseFormProps = Omit<HTMLAttributes<HTMLFormElement>, 'onSubmit'>
 
-// Erweiterte Form-Typ Definition - mit korrektem errors Typ
+// Erweiterte Form-Typ Definition - mit korrektem errors Typ  
 type ExtendedForm<T extends FormSchema> = {
   id: string
   className?: string

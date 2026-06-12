@@ -47,7 +47,6 @@ class WeasyPdfService
 
     private function getPdfCpuCommand(): string
     {
-
         return escapeshellarg(Config::get('pdf.pdfcpu_path'));
     }
 

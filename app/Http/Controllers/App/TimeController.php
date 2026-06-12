@@ -184,7 +184,7 @@ class TimeController extends Controller
             'issued_on' => now(),
             'type_id' => 1,
             'is_draft' => true,
-            'address' => $contact->getInvoiceAddress()->full_address,
+            'address' => $contact->getFormatedInvoiceAddress(),
             'payment_deadline_id' => $paymentDeadline->id,
         ]);
 
