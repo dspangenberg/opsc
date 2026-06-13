@@ -19,7 +19,7 @@ use App\Models\Dropbox;
 use App\Models\DropboxInbox;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
-use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -161,7 +161,7 @@ Route::middleware([
                 'dropbox_id' => $dropbox->id,
                 'message_id' => $payload['message_id'],
             ],
-            [   
+            [
                 'payload' => $payload,
                 'date' => Carbon::parse((string) $payload['date'])->setTimezone('Europe/Berlin'),
                 'is_private' => $dropbox->is_private_by_default,
@@ -170,6 +170,6 @@ Route::middleware([
 
         return response(null, 200);
 
-    })->withoutMiddleware([ValidateCsrfToken::class]);
+    })->withoutMiddleware([PreventRequestForgery::class]);
 
 });

@@ -7,7 +7,7 @@
   "require": {
     "php": "^8.4",
     "ext-openssl": "*",
-    "based/momentum-modal": "dev-master",
+    "based/momentum-modal": "^0.5",
     "boci/hetzner-laravel": "^1.0",
     "calebporzio/sushi": "^2.5",
     "eg-mohamed/notable": "^1.4",
@@ -17,10 +17,10 @@
     "inertiajs/inertia-laravel": "^2.0",
     "lab404/laravel-impersonate": "^1.7",
     "laravel/ai": "^0.2.1",
-    "laravel/framework": "^12",
+    "laravel/framework": "^13.0",
     "laravel/prompts": "^0.3.13",
     "laravel/sanctum": "^4.1.1",
-    "laravel/tinker": "^2.10.1",
+    "laravel/tinker": "^3.0",
     "laravel/wayfinder": "dev-next",
     "league/csv": "^9.24.1",
     "league/flysystem-aws-s3-v3": "^3.29",
@@ -112,6 +112,44 @@
       "dont-discover": []
     }
   },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "patches/vendor/eg-mohamed/notable"
+    },
+    {
+      "type": "path",
+      "url": "patches/vendor/boci/hetzner-laravel"
+    },
+    {
+      "type": "path",
+      "url": "patches/vendor/maize-tech/laravel-markable"
+    },
+    {
+      "type": "path",
+      "url": "patches/vendor/mtvs/eloquent-hashids"
+    },
+    {
+      "type": "path",
+      "url": "patches/vendor/soloterm/solo"
+    },
+    {
+      "type": "path",
+      "url": "patches/vendor/based/momentum-modal"
+    },
+    {
+      "type": "path",
+      "url": "patches/vendor/protonemedia/laravel-verify-new-email"
+    },
+    {
+      "type": "path",
+      "url": "patches/vendor/vinkla/hashids"
+    },
+    {
+      "type": "composer",
+      "url": "https://repo.packagist.org"
+    }
+  ],
   "config": {
     "optimize-autoloader": true,
     "preferred-install": "dist",
