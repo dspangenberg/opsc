@@ -14,7 +14,7 @@
     "endroid/qr-code": "^6.0.8",
     "erusev/parsedown": "^1.7",
     "horstoeko/zugferd-laravel": "^1.0",
-    "inertiajs/inertia-laravel": "^2.0",
+    "inertiajs/inertia-laravel": "^3.0",
     "lab404/laravel-impersonate": "^1.7",
     "laravel/ai": "^0.2.1",
     "laravel/framework": "^13.0",
