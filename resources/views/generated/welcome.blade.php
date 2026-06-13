@@ -10,6 +10,7 @@
     <!--[if mso]>
       <style>
         td,th,div,p,a,h1,h2,h3,h4,h5,h6 {font-family: "Segoe UI", sans-serif; mso-line-height-rule: exactly;}
+        .mso-break-all {word-break: break-all;}
       </style>
     <![endif]-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,6 +31,9 @@
         font-weight: 700;
         src: url("https://cdn.jsdelivr.net/fontsource/fonts/ia-writer-quattro@latest/latin-700-normal.woff2") format("woff2"), url("https://cdn.jsdelivr.net/fontsource/fonts/ia-writer-quattro@latest/latin-700-normal.woff") format("woff");
       }
+      .hover-bg-indigo-600:hover {
+        background-color: #4f46e5 !important;
+      }
       @media (max-width: 600px) {
         .sm-px-6 {
           padding-left: 24px !important;
@@ -48,6 +52,9 @@
         }
         .dark-text-gray-300 {
           color: #d1d5db !important;
+        }
+        .dark-text-gray-400 {
+          color: #9ca3af !important;
         }
       }
     </style>
@@ -110,13 +117,24 @@
         <div style="margin: 0 auto; max-width: 576px; font-family: 'iA Writer Quattro', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;">
           <!--[if mso]><table role="none" cellpadding="0" cellspacing="0" style="width: 100%"><tr><td style="background-color: #fffffe; padding: 24px 36px; border: 1px solid #e2e8f0"><![endif]-->
           <div class="sm-px-6 dark-bg-gray-900 dark-border-gray-700" style="border-radius: 8px; background-color: #fffffe; padding: 24px 36px; border: 1px solid #e2e8f0;">
-            <h1 class="dark-text-gray-300" style="margin: 0 0 24px; font-size: 20px; line-height: 28px; font-weight: 600; color: #0f172a;">@if($name) Guten Tag, {{ $name }}, @else Guten Tag, @endif</h1>
-            <p class="dark-text-gray-300" style="margin-top: 16px; margin-bottom: 24px; font-size: 16px; line-height: 24px; color: #475569;">im Anhang dieser E-Mail senden wir Ihnen die {{ $type }} für unsere Rechnung {{ $invoice_number }} vom {{ $invoice_date }} im PDF-Format.</p>
+            <h1 class="dark-text-gray-300" style="margin: 0 0 24px; font-size: 30px; line-height: 36px; font-weight: 600; color: #0f172a;">Hello there!</h1>
+            <p class="dark-text-gray-300" style="margin-top: 16px; margin-bottom: 24px; font-size: 16px; line-height: 24px; color: #475569;">We're happy to have you on board! Please verify your email address in order to activate your account:</p>
+            <div>
+              <a style="display: inline-block; border-radius: 4px; background-color: #4338ca; padding: 16px 24px; font-size: 16px; line-height: 24px; line-height: 1; color: #fffffe; text-decoration: none;" href="https://maizzle.com" class="hover-bg-indigo-600">
+                <!--[if mso]><i style="mso-font-width: 150%; mso-text-raise: 31px;" hidden>&emsp;</i><![endif]-->
+                <span style="mso-text-raise: 16px;">Verify email</span>
+                <!--[if mso]><i style="mso-font-width: 150%;" hidden>&emsp;&#8203;</i><![endif]-->
+              </a>
+            </div>
             <div role="separator" height="24px">&zwj;</div>
             <p class="dark-text-gray-300" style="margin: 0; font-size: 16px; line-height: 24px; color: #475569;">
-              Freundliche Grüße nach {{ $city }}
+              Thanks,@if ($name) {{ $name }} @endif
               <br>
-              twiceware solutions e. K.
+              <span style="font-weight: 600;">Maizzle</span>
+            </p>
+            <p class="mso-break-all dark-text-gray-400" style="margin: 0; font-size: 12px; line-height: 16px; color: #475569;">
+              If you're having trouble clicking the "Verify email" button, copy and paste the following URL into your web browser:
+              <a href="{{$link}}" class="dark-text-gray-400" style="color: #1e293b; text-decoration: underline;">https://maizzle.com/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0</a>
             </p>
           </div>
           <!--[if mso]></td></tr></table><![endif]-->
