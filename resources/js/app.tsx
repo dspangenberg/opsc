@@ -15,7 +15,7 @@ import '@fontsource/ia-writer-quattro'
 import { createInertiaApp } from '@inertiajs/react'
 import * as Sentry from '@sentry/react'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
-import type { JSXElementConstructor, ReactElement, ReactNode, ReactPortal } from 'react'
+import type { JSXElementConstructor, ReactElement } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ApplicationProvider } from '@/Components/ApplicationProvider'
 import AppLayout from '@/Layouts/AppLayout'
@@ -40,12 +40,11 @@ globalThis.resolveMomentumModal = async name => {
 createInertiaApp({
   title: title => `${title} - ${appName}`,
   resolve: async name => {
-    const page: unknown = await resolvePageComponent(
+    const page: any = await resolvePageComponent(
       `./Pages/${name}.tsx`,
       import.meta.glob('./Pages/**/*.tsx')
     )
 
-    // @ts-expect-error
     page.default.layout =
       name.startsWith('App') || name.startsWith('Admin')
         ? (page: ReactElement<unknown, string | JSXElementConstructor<any>>) => (
