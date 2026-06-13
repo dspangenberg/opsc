@@ -1,0 +1,71 @@
+{
+    "name": "boci/hetzner-laravel",
+    "version": "1.0.2",
+    "description": "A Laravel SDK for interacting with the Hetzner Cloud API - inspired by Nuno Maduro's OpenAI PHP client",
+    "keywords": [
+        "boci",
+        "hetzner",
+        "hetzner-laravel",
+        "hetzner-cloud",
+        "laravel",
+        "sdk",
+        "api-client"
+    ],
+    "homepage": "https://github.com/amar8eka/hetzner-laravel",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Amar Beka",
+            "email": "amar8eka@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "guzzlehttp/guzzle": "^7.10",
+        "illuminate/support": "^12.0||^13.0",
+        "psr/http-client": "^1.0",
+        "psr/http-message": "^2.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.25",
+        "orchestra/testbench": "^10.0",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Boci\\HetznerLaravel\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Boci\\HetznerLaravel\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "analyse": "vendor/bin/phpstan analyse",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Boci\\HetznerLaravel\\HetznerLaravelServiceProvider"
+            ],
+            "aliases": {
+                "HetznerLaravel": "Boci\\HetznerLaravel\\Facades\\HetznerLaravel"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
