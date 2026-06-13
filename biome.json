@@ -1,4 +1,7 @@
 {
+  "files": {
+    "includes": ["resources/js/**/*"]
+  },
   "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
   "formatter": {
     "enabled": true,
