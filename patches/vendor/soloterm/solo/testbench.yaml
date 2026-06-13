@@ -1,0 +1,13 @@
+providers:
+  - SoloTerm\Solo\Providers\SoloServiceProvider
+  - App\Providers\AppServiceProvider
+
+migrations: false
+
+workbench:
+  start: '/'
+  health: true
+  discovers:
+    web: true
+    config: true
+    commands: true
