@@ -105,11 +105,14 @@ export const Form = <T extends FormSchema>({
         preserveScroll: true,
         preserveState,
         onError: (errors: Record<string, string | string[]>) => {
-          const simpleErrors = Object.entries(errors).reduce<SimpleValidationErrors>((acc, [key, value]) => {
-            acc[key] = Array.isArray(value) ? value : [value]
+          const simpleErrors = Object.entries(errors).reduce<SimpleValidationErrors>(
+            (acc, [key, value]) => {
+              acc[key] = Array.isArray(value) ? value : [value]
 
-            return acc
-          }, {})
+              return acc
+            },
+            {}
+          )
           form.setError(simpleErrors)
           reject(simpleErrors)
         },
@@ -200,8 +203,8 @@ export function useForm<T extends FormSchema>(
     submit: (options?: any) =>
       internalForm.submit({
         ...options,
-        onSuccess: () => {
-          options?.onSuccess?.()
+        onSuccess: (...callbackArgs: unknown[]) => {
+          options?.onSuccess?.(...callbackArgs)
           onSuccessHandler?.()
         }
       }),

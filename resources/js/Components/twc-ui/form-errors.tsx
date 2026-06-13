@@ -15,7 +15,10 @@ const toErrorString = (error: ErrorValue): string => {
   return Array.isArray(error) ? error[0] : error
 }
 
-export const getFormError = (errors: Record<string, unknown> | undefined, name?: string): string | undefined => {
+export const getFormError = (
+  errors: Record<string, unknown> | undefined,
+  name?: string
+): string | undefined => {
   if (!errors || !name) return undefined
 
   const directError = errors[name]
@@ -36,11 +39,11 @@ interface Props {
 export const FormErrors: React.FC<Props> = ({ className, errors, showErrors = true, title }) => {
   const { locale } = useLocale()
 
-  const realErrorTitle = 'Something went wrong'
+  const realErrorTitle = title?.trim() || 'Something went wrong'
 
   const errorMessages = useMemo(() => {
     if (!errors) return []
-    return Object.values(errors).flatMap((error) => {
+    return Object.values(errors).flatMap(error => {
       if (!error) return []
       if (Array.isArray(error)) return error
       return [error]

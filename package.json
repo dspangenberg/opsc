@@ -116,6 +116,9 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "canvas"
-    ]
+    ],
+    "overrides": {
+      "dompurify": ">=3.4.0"
+    }
   }
 }
