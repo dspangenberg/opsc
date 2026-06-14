@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { JSONTree } from 'react-json-tree'
 import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
+import remarkGfm from 'remark-gfm'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormCheckbox } from '@/Components/twc-ui/form-checkbox'
@@ -149,7 +150,18 @@ export const InboxMail: React.FC<InboxMailProps> = ({ mail, contacts, projects }
         </Form>
       </div>
       <div className="px-8 py-4">
-        <Markdown remarkPlugins={[remarkBreaks]}>{mail.plain_body}</Markdown>
+        <Markdown
+          remarkPlugins={[remarkGfm, remarkBreaks]}
+          components={{
+            a: ({ href, children }) => (
+              <a href={href} target="_blank" rel="noopener noreferrer" className="md-a">
+                {children}
+              </a>
+            )
+          }}
+        >
+          {mail.plain_body.replace(/(https?:\/\/[^\s\][()<>"]+)/g, '[$1]($1)')}
+        </Markdown>
         {showJson ? (
           <JSONTree data={mail.payload} invertTheme theme={theme} />
         ) : (

@@ -335,7 +335,7 @@ const buildNavData = (isAdmin: boolean) => ({
                 activePath: '/admin/dropboxes'
               },
               {
-                title: 'E-Mail-Konten',
+                title: 'SMTP-Konten',
                 url: route('admin.email-account.index', {}, false),
                 activePath: '/admin/email-accounts'
               }
