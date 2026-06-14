@@ -336,3 +336,7 @@ table tr td ul li ul li {
 .md-editor table {
   @apply table-auto w-full;
 }
+
+.md-a {
+  @apply text-primary;
+}

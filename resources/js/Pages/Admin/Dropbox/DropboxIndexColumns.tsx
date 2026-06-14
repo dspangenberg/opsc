@@ -27,7 +27,7 @@ const handleDelete = async (row: App.Data.DropboxData) => {
 
 const RowActions = ({ row }: { row: Row<App.Data.DropboxData> }) => {
   const domain = usePage().props.auth.domain
-  const iniEntry = `${row.original.email_address}=https://${domain}/${row.original.email_address}/${row.original.token}`
+  const iniEntry = `${row.original.email_address}=https://${domain}/mail-to-dropbox/${row.original.email_address}/${row.original.token}`
   return (
     <div className="mx-auto">
       <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>

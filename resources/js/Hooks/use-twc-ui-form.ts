@@ -23,7 +23,7 @@ function getNestedValue(obj: any, path: string): any {
   }, obj)
 }
 
-/**
+/**w
  * Helper function to set a nested value in an object using a path string
  * Supports both dot notation (obj.key) and array notation (arr[0])
  * Creates intermediate objects/arrays as needed
