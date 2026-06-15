@@ -17,7 +17,7 @@ interface UserIndexPageProps extends PageProps {
 const DropboxIndex: React.FC<UserIndexPageProps> = ({ dropboxes }) => {
   const [selectedRows, setSelectedRows] = useState<App.Data.DropboxData[]>([])
 
-  const breadcrumbs = useMemo(() => [{ title: 'Admin' }, { title: 'E-Mail-Accounts' }], [])
+  const breadcrumbs = useMemo(() => [{ title: 'Admin' }, { title: 'Dropboxen' }], [])
 
   const handleAddDropbox = () => {
     router.visit(route('admin.dropbox.create'))

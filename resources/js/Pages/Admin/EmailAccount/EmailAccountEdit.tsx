@@ -17,7 +17,7 @@ interface Props extends PageProps {
 }
 
 const EmailAccountEdit: React.FC<Props> = ({ email_account }) => {
-  const title = email_account.id ? 'E-Mail-Account bearbeiten' : 'E-Mail-Account hinzufügen'
+  const title = email_account.id ? 'SMTP-Konto bearbeiten' : 'SMTP-Konto hinzufügen'
 
   const form = useForm<App.Data.EmailAccountData>(
     'form-email-account-edit',
@@ -33,7 +33,7 @@ const EmailAccountEdit: React.FC<Props> = ({ email_account }) => {
   const breadcrumbs = useMemo(() => {
     return [
       { title: 'Administration', url: route('admin') },
-      { title: 'Benutzer:innen', url: route('admin.user.index') },
+      { title: 'SMTP-Konten', url: route('admin.user.index') },
       { title }
     ]
   }, [])

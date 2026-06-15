@@ -134,9 +134,6 @@ importers:
       laravel-precognition:
         specifier: ^1.0.2
         version: 1.0.2
-      laravel-precognition-react-inertia:
-        specifier: ^0.8.0
-        version: 0.8.0(@inertiajs/react@3.4.0(axios@1.17.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       lodash:
         specifier: ^4.18.1
         version: 4.18.1
@@ -3738,20 +3735,6 @@ packages:
   kleur@4.1.5:
     resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
     engines: {node: '>=6'}
-
-  laravel-precognition-react-inertia@0.8.0:
-    resolution: {integrity: sha512-Zkdq7QiPy/9F+JuPaC1nAdT4sTAeWa8X+6gaTL8Kn6mrZ0n0goniL2K9c9KuB0Q88wPveb3cgrw8AB//J7hNbw==}
-    peerDependencies:
-      '@inertiajs/react': ^1.0.0 || ^2.0.0
-      react: ^18.0.0 || ^19.0.0
-
-  laravel-precognition-react@0.8.0:
-    resolution: {integrity: sha512-8W7pzhrUwKY4VC2eA1rkBqVLGJgwEZxlcd1jdiQHzMEqMuNbEH/UYehhwIBVsLpLYHTKFYCmSY5ACyy49t1png==}
-    peerDependencies:
-      react: ^18.0.0 || ^19.0.0
-
-  laravel-precognition@0.8.0:
-    resolution: {integrity: sha512-wpnzUAGz43NM+vfu0WORUeGe/dWEFfhBTsH4MUA9QRcFNH8CVaB6lnmk5BU5DxfgEzk7QVwU6cCUYAEwsQLVsg==}
 
   laravel-precognition@1.0.2:
     resolution: {integrity: sha512-0H08JDdMWONrL/N314fvsO3FATJwGGlFKGkMF3nNmizVFJaWs17816iM+sX7Rp8d5hUjYCx6WLfsehSKfaTxjg==}
@@ -8990,33 +8973,6 @@ snapshots:
   kleur@3.0.3: {}
 
   kleur@4.1.5: {}
-
-  laravel-precognition-react-inertia@0.8.0(@inertiajs/react@3.4.0(axios@1.17.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4):
-    dependencies:
-      '@inertiajs/react': 3.4.0(axios@1.17.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      laravel-precognition: 0.8.0
-      laravel-precognition-react: 0.8.0(react@19.2.4)
-      react: 19.2.4
-    transitivePeerDependencies:
-      - debug
-      - supports-color
-
-  laravel-precognition-react@0.8.0(react@19.2.4):
-    dependencies:
-      laravel-precognition: 0.8.0
-      lodash-es: 4.18.1
-      react: 19.2.4
-    transitivePeerDependencies:
-      - debug
-      - supports-color
-
-  laravel-precognition@0.8.0:
-    dependencies:
-      axios: 1.17.0
-      lodash-es: 4.18.1
-    transitivePeerDependencies:
-      - debug
-      - supports-color
 
   laravel-precognition@1.0.2:
     dependencies:
