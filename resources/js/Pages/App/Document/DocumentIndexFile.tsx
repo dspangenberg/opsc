@@ -178,14 +178,14 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document }
             </HoverCard>
           </div>
           {document.is_inbound && document.sender_contact_id && (
-            <div className="mt-1 truncate text-xs">{document.sender_contact?.full_name}</div>
+            <div className="mt-1 truncate text-sm">{document.sender_contact?.full_name}</div>
           )}
 
           {!document.is_inbound && document.receiver_contact_id && (
             <div className="mt-1 truncate text-xs">{document.receiver_contact?.full_name}</div>
           )}
 
-          <div className="mt-0.5 flex items-center gap-2 text-muted-foreground text-xs">
+          <div className="mt-0.5 flex items-center gap-2 text-muted-foreground text-xxs">
             <div className="flex-1">{document.issued_on}</div>
             <div className="text-right">{document.pages} S.</div>
             <div className="text-right">{filesize(document.file_size)}</div>

@@ -141,7 +141,7 @@ class Document extends Model
 
         try {
             $agent = DocumentExtractor::make();
-            $result = $agent->prompt($this->fulltext);
+            $result = $agent->prompt($this->fulltext)->structured;
 
             // Überprüfen, ob das Ergebnis ein Array ist
             if (! is_array($result)) {

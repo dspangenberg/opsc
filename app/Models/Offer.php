@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Enums\OfferStatusEnum;
-use App\Facades\WeasyPdfService;
+use App\Facades\PdfService;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Eloquent;
@@ -17,11 +17,11 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Facades\DB;
 use MohamedSaid\Notable\Notable;
+use MohamedSaid\Notable\Traits\HasNotables;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
 use Plank\Mediable\MediableInterface;
-use MohamedSaid\Notable\Traits\HasNotables;
 
 /**
  * @property bool $is_draft
@@ -44,6 +44,7 @@ use MohamedSaid\Notable\Traits\HasNotables;
  * @property-read int|null $media_count
  * @property-read Project|null $project
  * @property-read Tax|null $tax
+ *
  * @method static MediableCollection<int, static> all($columns = ['*'])
  * @method static Builder<static>|Offer byYear(int $year)
  * @method static MediableCollection<int, static> get($columns = ['*'])
@@ -57,11 +58,12 @@ use MohamedSaid\Notable\Traits\HasNotables;
  * @method static Builder<static>|Offer withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static Builder<static>|Offer withMediaAndVariantsMatchAll($tags = [])
  * @method static Builder<static>|Offer withMediaMatchAll(array|string  $tags = [], bool $withVariants = false)
+ *
  * @mixin Eloquent
  */
 class Offer extends Model implements MediableInterface
 {
-    use Mediable, HasNotables;
+    use HasNotables, Mediable;
 
     protected $fillable = [
         'contact_id',
@@ -74,7 +76,7 @@ class Offer extends Model implements MediableInterface
         'sent_at',
         'is_template',
         'template_name',
-        'status'
+        'status',
     ];
 
     protected $attributes = [
@@ -98,7 +100,7 @@ class Offer extends Model implements MediableInterface
             'sent_at' => 'datetime',
             'is_draft' => 'boolean',
             'is_template' => 'boolean',
-            'status' => OfferStatusEnum::class
+            'status' => OfferStatusEnum::class,
         ];
     }
 
@@ -129,7 +131,6 @@ class Offer extends Model implements MediableInterface
 
         $taxes = $offer->taxBreakdown($offer->lines);
 
-
         $pdfConfig = [];
         $pdfConfig['pdfA'] = ! $offer->is_draft;
         $pdfConfig['hide'] = true;
@@ -139,11 +140,11 @@ class Offer extends Model implements MediableInterface
             return $attachment->document_id;
         });
 
-        return WeasyPdfService::createPdf('offer', 'pdf.offer.index',
+        return PdfService::createPdf('offer', 'pdf.offer.index',
             [
                 'offer' => $offer,
                 'taxes' => $taxes,
-                'attachments' => $offer->attachments()->orderBy('pos')->with('document')->get()
+                'attachments' => $offer->attachments()->orderBy('pos')->with('document')->get(),
             ], $pdfConfig, $attachments->toArray());
     }
 
@@ -241,7 +242,8 @@ class Offer extends Model implements MediableInterface
         }
     }
 
-    public static function duplicate(Offer $offer): Offer {
+    public static function duplicate(Offer $offer): Offer
+    {
         return DB::transaction(function () use ($offer) {
             $duplicatedOffer = $offer->replicate();
 

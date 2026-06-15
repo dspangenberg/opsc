@@ -119,26 +119,44 @@ const htmlXmlns = computed(() => outlookFallback ? {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="screen">
     <style>
       @font-face {
-        font-family: 'iA Writer Quattro';
+        font-family: 'Clear Sans';
+        font-style: normal;
+        font-display: swap;
+        font-weight: 300;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-300-normal.woff2) format('woff2'), url(https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-300-normal.woff) format('woff');
+      }
+
+      /* clear-sans-latin-400-normal */
+      @font-face {
+        font-family: 'Clear Sans';
         font-style: normal;
         font-display: swap;
         font-weight: 400;
-        src: url(https://cdn.jsdelivr.net/fontsource/fonts/ia-writer-quattro@latest/latin-400-normal.woff2) format('woff2'),
-        url(https://cdn.jsdelivr.net/fontsource/fonts/ia-writer-quattro@latest/latin-400-normal.woff) format('woff');
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-400-normal.woff2) format('woff2'), url(https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-400-normal.woff) format('woff');
       }
 
+      /* clear-sans-latin-500-normal */
       @font-face {
-        font-family: 'iA Writer Quattro';
+        font-family: 'Clear Sans';
+        font-style: normal;
+        font-display: swap;
+        font-weight: 500;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-500-normal.woff2) format('woff2'), url(https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-500-normal.woff) format('woff');
+      }
+
+      /* clear-sans-latin-700-normal */
+      @font-face {
+        font-family: 'Clear Sans';
         font-style: normal;
         font-display: swap;
         font-weight: 700;
-        src: url(https://cdn.jsdelivr.net/fontsource/fonts/ia-writer-quattro@latest/latin-700-normal.woff2) format('woff2'),
-        url(https://cdn.jsdelivr.net/fontsource/fonts/ia-writer-quattro@latest/latin-700-normal.woff) format('woff');
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-700-normal.woff2) format('woff2'), url(https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-700-normal.woff) format('woff');
       }
+
       @import "@maizzle/tailwindcss";
 
       @theme {
-        --font-sans: "iA Writer Quattro", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        --font-sans: "Clear Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
       }
 
       img {

@@ -17,18 +17,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="screen">
     <style>
       @font-face {
-        font-family: "iA Writer Quattro";
+        font-family: "Clear Sans";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 300;
+        src: url("https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-300-normal.woff2") format("woff2"), url("https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-300-normal.woff") format("woff");
+      }
+      @font-face {
+        font-family: "Clear Sans";
         font-style: normal;
         font-display: swap;
         font-weight: 400;
-        src: url("https://cdn.jsdelivr.net/fontsource/fonts/ia-writer-quattro@latest/latin-400-normal.woff2") format("woff2"), url("https://cdn.jsdelivr.net/fontsource/fonts/ia-writer-quattro@latest/latin-400-normal.woff") format("woff");
+        src: url("https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-400-normal.woff2") format("woff2"), url("https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-400-normal.woff") format("woff");
       }
       @font-face {
-        font-family: "iA Writer Quattro";
+        font-family: "Clear Sans";
+        font-style: normal;
+        font-display: swap;
+        font-weight: 500;
+        src: url("https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-500-normal.woff2") format("woff2"), url("https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-500-normal.woff") format("woff");
+      }
+      @font-face {
+        font-family: "Clear Sans";
         font-style: normal;
         font-display: swap;
         font-weight: 700;
-        src: url("https://cdn.jsdelivr.net/fontsource/fonts/ia-writer-quattro@latest/latin-700-normal.woff2") format("woff2"), url("https://cdn.jsdelivr.net/fontsource/fonts/ia-writer-quattro@latest/latin-700-normal.woff") format("woff");
+        src: url("https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-700-normal.woff2") format("woff2"), url("https://cdn.jsdelivr.net/fontsource/fonts/clear-sans@latest/latin-700-normal.woff") format("woff");
       }
       @media (max-width: 600px) {
         .sm-px-6 {
@@ -74,7 +88,7 @@
       class="dark-bg-gray-950"
     >
       <!--[if mso]><table role="none" cellpadding="0" cellspacing="0" style="width: 576px" align="center"><tr><td><![endif]-->
-      <div style="margin: 0 auto; max-width: 576px; font-family: 'iA Writer Quattro', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;">
+      <div style="margin: 0 auto; max-width: 576px; font-family: 'Clear Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;">
         <!--[if mso]><table role="none" cellpadding="0" cellspacing="0" style="width: 100%"><tr><td style="background-color: #fffffe; padding: 24px 36px"><![endif]-->
         <div class="sm-px-6" style="background-color: #fffffe; padding: 24px 36px;">
           <a href="https://twiceware.de" style="margin-left: auto; margin-right: auto; text-decoration: none;">
@@ -107,7 +121,7 @@
         </div>
         <!--[if mso]></td></tr></table><![endif]-->
         <!--[if mso]><table role="none" cellpadding="0" cellspacing="0" style="width: 576px" align="center"><tr><td><![endif]-->
-        <div style="margin: 0 auto; max-width: 576px; font-family: 'iA Writer Quattro', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;">
+        <div style="margin: 0 auto; max-width: 576px; font-family: 'Clear Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;">
           <!--[if mso]><table role="none" cellpadding="0" cellspacing="0" style="width: 100%"><tr><td style="background-color: #fffffe; padding: 24px 36px; border: 1px solid #e2e8f0"><![endif]-->
           <div class="sm-px-6 dark-bg-gray-900 dark-border-gray-700" style="border-radius: 8px; background-color: #fffffe; padding: 24px 36px; border: 1px solid #e2e8f0;">
             <p class="dark-text-gray-300" style="margin-top: 16px; margin-bottom: 24px; font-size: 16px; line-height: 24px; color: #475569;">{!! md(nl2br($content)) !!}{!! md($signature) !!}</p>
