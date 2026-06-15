@@ -131,7 +131,7 @@ class PdfService
             }
         }
 
-        if ($data['pdf_config']['pdfA']) {
+        if ($data['config']['pdfA']) {
             $mpdf->PDFA = true;
         }
 

@@ -27,7 +27,6 @@ const DocumentSelectorComponent: React.FC<DocumentSelectorComponentProps> = ({
         }
       })
       .then(response => {
-        console.log(response.data)
         setDocuments(response.data.documents || [])
       })
       .catch(error => {
