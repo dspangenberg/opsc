@@ -160,7 +160,7 @@ export const InboxMail: React.FC<InboxMailProps> = ({ mail, contacts, projects }
             )
           }}
         >
-          {mail.plain_body.replace(/(https?:\/\/[^\s\][()<>"]+)/g, '[$1]($1)')}
+          {mail.plain_body}
         </Markdown>
         {showJson ? (
           <JSONTree data={mail.payload} invertTheme theme={theme} />

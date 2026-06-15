@@ -17,7 +17,7 @@ interface UserIndexPageProps extends PageProps {
 const EmailAccountIndex: React.FC<UserIndexPageProps> = ({ email_accounts }) => {
   const [selectedRows, setSelectedRows] = useState<App.Data.EmailAccountData[]>([])
 
-  const breadcrumbs = useMemo(() => [{ title: 'Admin' }, { title: 'E-Mail-Accounts' }], [])
+  const breadcrumbs = useMemo(() => [{ title: 'Administration' }, { title: 'SMTP-Konten' }], [])
 
   const handleUserAdd = () => {
     router.visit(route('admin.email-account.create'))
@@ -44,7 +44,7 @@ const EmailAccountIndex: React.FC<UserIndexPageProps> = ({ email_accounts }) => 
 
   return (
     <PageContainer
-      title="E-Mail-Konten"
+      title="SMTP-Konten"
       width="7xl"
       breadcrumbs={breadcrumbs}
       className="flex overflow-hidden"
