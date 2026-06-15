@@ -9,7 +9,6 @@ interface InboxIndexEntryProps {
 
 export const InboxIndexEntry: React.FC<InboxIndexEntryProps> = ({ mail, isActive }) => {
   const handleClicked = () => {
-    console.log('clicked')
     router.visit(route('app.inbox.index', { mail: mail.id }), {
       preserveScroll: true,
       preserveState: true
