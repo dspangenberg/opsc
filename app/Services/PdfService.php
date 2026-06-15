@@ -117,8 +117,8 @@ class PdfService
             }
 
             if (count($files) > 0) {
-                $mpdf->AddPage();
                 foreach ($files as $file) {
+                    $mpdf->AddPage();
                     $pagecount = $mpdf->setSourceFile($file);
                     for ($i = 1; $i <= $pagecount; $i++) {
                         $tplIdx = $mpdf->ImportPage($i);
