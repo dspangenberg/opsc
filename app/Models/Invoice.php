@@ -11,6 +11,11 @@ use Carbon\Carbon;
 use DateTime;
 use DateTimeInterface;
 use Eloquent;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\RoundBlockSizeMode;
+use Endroid\QrCode\Writer\SvgWriter;
 use Exception;
 use horstoeko\zugferd\codelists\ZugferdCurrencyCodes;
 use horstoeko\zugferd\codelists\ZugferdElectronicAddressScheme;
@@ -226,17 +231,32 @@ class Invoice extends Model implements MediableInterface
         $pdfConfig['hide'] = true;
         $pdfConfig['watermark'] = $watermark ?: ($invoice->is_draft ? 'ENTWURF' : false);
 
+        $qrCodeSvg = null;
+        if ($invoice->qr_code) {
+            $qrPayment = new QrPayment($bankAccount->iban);
+            $qrPayment
+                ->setBic($bankAccount->bic)
+                ->setBeneficiaryName($bankAccount->account_owner)
+                ->setAmount($invoice->amount_gross)
+                ->setCurrency('EUR')
+                ->setRemittanceText('RG-'.$invoice->formated_invoice_number.' K-'.number_format($invoice->contact->debtor_number, 0, ',', '.'));
+            $qrString = $qrPayment->getQrString();
+            $qrCode = new QrCode($qrString, new Encoding('UTF-8'), ErrorCorrectionLevel::Low, 100, 0, RoundBlockSizeMode::None);
+            $qrCodeSvg = (new SvgWriter)->write($qrCode)->getString();
+        }
+
         $pdf = PdfService::createPdf('invoice', 'pdf.invoice.index',
             [
                 'invoice' => $invoice,
                 'taxes' => $taxes,
                 'bank_account' => $bank_account,
+                'qr_code_svg' => $qrCodeSvg,
                 'groupedTimes' => $groupedTimes,
                 'groupedByCategoryTimes' => $groupedByCategoryTimes,
                 'timesSum' => $timesSum,
             ], $pdfConfig);
 
-        PdfService::fixPdfForPdfA($pdf);
+        // PdfService::fixPdfForPdfA($pdf);
 
         try {
             $invoiceAddress = $invoice->invoice_address;
