@@ -17,8 +17,6 @@ use horstoeko\zugferd\codelists\ZugferdElectronicAddressScheme;
 use horstoeko\zugferd\codelists\ZugferdInvoiceType;
 use horstoeko\zugferd\codelists\ZugferdVatCategoryCodes;
 use horstoeko\zugferd\codelists\ZugferdVatTypeCodes;
-use horstoeko\zugferd\ZugferdDocumentBuilder;
-use horstoeko\zugferd\ZugferdProfiles;
 use horstoeko\zugferdlaravel\Facades\ZugferdLaravel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -278,6 +276,15 @@ class Invoice extends Model implements MediableInterface
                     $zip,
                     $city,
                     'DE'
+                )
+                ->setDocumentShipTo($invoice->contact->name ?? $invoice->contact?->full_name ?? '')
+                ->setDocumentShipToAddress(
+                    $invoiceAddress[1] ?? '',
+                    '',
+                    '',
+                    $zip,
+                    $city,
+                    'DE'
                 );
 
             foreach ($invoice->lines as $index => $line) {
@@ -329,9 +336,8 @@ class Invoice extends Model implements MediableInterface
                     $purposeText
                 );
             }
-            
 
-            ZugferdLaravel::buildMergedPdfByXmlDataOrXmlFilename($document, $pdf, $pdfFile);
+            ZugferdLaravel::buildMergedPdfByDocumentBuilder($document, $pdf, $pdfFile);
 
             if (! $invoice->is_draft) {
 
@@ -348,6 +354,8 @@ class Invoice extends Model implements MediableInterface
 
         } catch (Throwable $e) {
             Log::warning('ZUGFeRD generation failed, falling back to plain PDF: '.$e->getMessage());
+
+            file_put_contents($pdfFile, $pdf);
         }
 
         return $pdfFile;
