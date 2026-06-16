@@ -6,14 +6,19 @@ use App\Enums\InvoiceRecurringEnum;
 use App\Facades\FileHelperService;
 use App\Facades\PdfService;
 use App\Http\Controllers\App\TimeController;
+use App\Settings\ZugferdSettings;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeInterface;
 use Eloquent;
 use Exception;
 use horstoeko\zugferd\codelists\ZugferdCurrencyCodes;
+use horstoeko\zugferd\codelists\ZugferdElectronicAddressScheme;
 use horstoeko\zugferd\codelists\ZugferdInvoiceType;
-use horstoeko\zugferd\ZugferdDocumentPdfBuilder;
+use horstoeko\zugferd\codelists\ZugferdVatCategoryCodes;
+use horstoeko\zugferd\codelists\ZugferdVatTypeCodes;
+use horstoeko\zugferd\ZugferdDocumentBuilder;
+use horstoeko\zugferd\ZugferdProfiles;
 use horstoeko\zugferdlaravel\Facades\ZugferdLaravel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -25,6 +30,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Facades\Log;
 use MohamedSaid\Notable\Notable;
 use MohamedSaid\Notable\Traits\HasNotables;
+use Plank\Mediable\Facades\MediaUploader;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
@@ -32,6 +38,7 @@ use Plank\Mediable\MediableInterface;
 use rikudou\EuQrPayment\QrPayment;
 use Spatie\Holidays\Countries\Germany;
 use Spatie\Holidays\Holidays;
+use Str;
 use Throwable;
 
 /**
@@ -203,8 +210,9 @@ class Invoice extends Model implements MediableInterface
             return $line->type_id !== 9;
         });
 
+        $settings = app(ZugferdSettings::class);
+
         $bankAccount = BankAccount::orderBy('pos')->first();
-        $zugpferdPdf = null;
         $pdfFile = FileHelperService::getTempFile('pdf');
 
         $bank_account = (object) [
@@ -240,23 +248,29 @@ class Invoice extends Model implements MediableInterface
                 $city = $parts[1] ?? '';
             }
 
-            $document = ZugferdLaravel::createDocumentInEN16931Profile()
+            $contact = Contact::find($settings->seller_contact_id);
+
+            $document = ZugferdLaravel::createDocumentInXRechnung30Profile()
                 ->setDocumentInformation(
                     $invoice->formated_invoice_number,
                     ZugferdInvoiceType::INVOICE,
                     $invoice->issued_on,
-                    ZugferdCurrencyCodes::EURO
+                    ZugferdCurrencyCodes::EURO,
+                    'Rechnung'
                 )
-                ->addDocumentNote('Inhaber Danny Spangenberg; HRA 6091 (Amtsgericht Bonn)', '', 'REG')
-                ->addDocumentPaymentTerm('Der Rechnungsbetrag ist ohne Abzug sofort zahlbar.', $invoice->due_on)
-                ->setDocumentSeller('twiceware solutions e. K.')
-                ->addDocumentSellerGlobalId('312545306', '0060')
-                ->addDocumentSellerTaxRegistration('VA', 'DE240386270')
-                // ->addDocumentSellerTaxRegistration('FC', '205/5289/1242')
+                ->addDocumentNote($settings->document_note, '', 'REG')
+                ->addDocumentPaymentTerm($settings->payment_term, $invoice->due_on)
+                ->setDocumentSeller($settings->seller)
+
+                ->setDocumentSellerCommunication(ZugferdElectronicAddressScheme::UNECE3155_EM, $settings->seller_email)
+                ->addDocumentSellerGlobalId($settings->global_id, $settings->global_id_type)
+
+                ->addDocumentSellerTaxRegistration('VA', $settings->seller_tax_vat)
                 ->setDocumentSellerAddress('Belderberg 7', '', '', '53111', 'Bonn', 'DE')
-                ->setDocumentSellerContact('Danny Spangenberg', '', '+49 228 84263764', '',
-                    'danny.spangenberg@twiceware.de')
-                ->setDocumentBuyer($invoice->contact->name ?? $invoice->contact?->full_name ?? '')
+                ->setDocumentSellerContact($contact->full_name, $contact->department, $contact->primary_phone, '', $contact->primary_mail)
+                ->setDocumentBuyer($invoice->contact->name ?? $invoice->contact?->full_name ?? '', $invoice->contact->formated_debtor_number)
+                ->setDocumentBuyerReference($invoice->contact->vat_id)
+                ->setDocumentBuyerCommunication(ZugferdElectronicAddressScheme::UNECE3155_EM, $invoice->contact->primary_mail)
                 ->setDocumentBuyerAddress(
                     $invoiceAddress[1] ?? '',
                     '',
@@ -268,46 +282,46 @@ class Invoice extends Model implements MediableInterface
 
             foreach ($invoice->lines as $index => $line) {
                 $document->addNewPosition((string) ($index + 1));
+                $document->setDocumentPositionLineSummation((float) round($line->amount, 2));
                 $document->setDocumentPositionProductDetails(
                     $line->text ?? 'Position',
                 );
                 $document->setDocumentPositionBillingPeriod($line->service_period_begin, $line->service_period_end);
-                $unitPrice = $line->quantity > 0 ? round($line->amount / $line->quantity, 10    ) : 0;
-                $document->setDocumentPositionNetPrice($unitPrice);
+                $document->setDocumentPositionNetPrice((float) round($line->price, 2));
                 $document->setDocumentPositionQuantity($line->quantity, 'C62');
                 $document->addDocumentPositionTax(
                     'S',
                     'VAT',
                     $line->rate?->rate ?? 0
                 );
-                $document->setDocumentPositionLineSummation((float) $line->amount);
+                $document->setDocumentPositionLineSummation((float) round($line->amount, 2));
             }
+
+            ray($taxes);
 
             foreach ($taxes as $taxData) {
                 $document->addDocumentTax(
-                    'S',
-                    'VAT',
-                    (float) $taxData['amount'],
-                    (float) $taxData['sum'],
-                    19
-                );
+                    ZugferdVatCategoryCodes::STAN_RATE,
+                    ZugferdVatTypeCodes::VALUE_ADDED_TAX,
+                    (float) round($taxData['amount'], 2),
+                    (float) round($taxData['sum'], 2),
+                    $taxData['tax_rate']['rate']);
             }
 
             $document->setDocumentSummation(
-                (float) $invoice->amount_gross,
-                (float) $invoice->amount_gross,
-                (float) $invoice->amount_net,
+                (float) round($invoice->amount_gross, 2),
+                (float) round($invoice->amount_gross, 2),
+                (float) round($invoice->amount_net, 2),
                 0,
                 0,
-                (float) $invoice->amount_net,
-                (float) $invoice->amount_tax
+                (float) round($invoice->amount_net, 2),
+                (float) round($invoice->amount_tax, 2)
             );
 
             $purposeText = 'RG-'.$invoice->formated_invoice_number.' K-'.number_format($invoice->contact->debtor_number, 0, ',', '.');
 
-
             if ($bankAccount) {
-            $document->addDocumentPaymentMeanToCreditTransfer(
+                $document->addDocumentPaymentMeanToCreditTransfer(
                     $bankAccount->iban,
                     $bankAccount->account_owner,
                     null,
@@ -316,15 +330,24 @@ class Invoice extends Model implements MediableInterface
                 );
             }
 
-
             ZugferdLaravel::buildMergedPdfByXmlDataOrXmlFilename($document, $pdf, $pdfFile);
-            return $pdfFile;
 
+            if (! $invoice->is_draft) {
+
+                $fileName = Str::replace('.pdf', '', $invoice->filename);
+
+                $media = MediaUploader::fromSource($pdfFile)
+                    ->useFilename($fileName)
+                    ->toDestination('s3_private', 'invoices/'.$invoice->issued_on->format('Y'))
+                    ->upload();
+                $invoice->attachMedia($media, 'pdf');
+            }
+
+            return $pdfFile;
 
         } catch (Throwable $e) {
             Log::warning('ZUGFeRD generation failed, falling back to plain PDF: '.$e->getMessage());
         }
-
 
         return $pdfFile;
     }
@@ -333,8 +356,8 @@ class Invoice extends Model implements MediableInterface
     {
         $groupedEntries = [];
         foreach ($invoiceLines->groupBy('tax_rate_id') as $key => $value) {
-            $groupedEntries[$key]['sum'] = $value->sum('tax');
-            $groupedEntries[$key]['amount'] = $value->sum('amount');
+            $groupedEntries[$key]['sum'] = round($value->sum('tax'), 2);
+            $groupedEntries[$key]['amount'] = round($value->sum('amount'), 2);
             $groupedEntries[$key]['tax_rate'] = $value->first()->toArray()['rate'];
             $groupedEntries[$key]['tax_rate_id'] = $value->first()->toArray()['id'];
             // $sum = $sum + $groupedEntries[$key]['sum'];

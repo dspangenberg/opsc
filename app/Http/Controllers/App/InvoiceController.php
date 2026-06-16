@@ -64,7 +64,7 @@ class InvoiceController extends Controller
             $year = $currentYear;
         }
 
-        if ($year && !$years->contains($year)) {
+        if ($year && ! $years->contains($year)) {
             $years->push($year);
         }
 
@@ -115,7 +115,7 @@ class InvoiceController extends Controller
         $invoices = Invoice::query()
             ->with([
                 'invoice_contact', 'contact', 'project', 'payment_deadline', 'type', 'booking',
-                'booking.range_document_number', 'booking.account_credit', 'booking.account_debit'
+                'booking.range_document_number', 'booking.account_credit', 'booking.account_debit',
             ])
             ->view($view)
             ->withSum('lines', 'amount')
@@ -198,6 +198,7 @@ class InvoiceController extends Controller
         $invoice->is_loss_of_receivables = true;
         $invoice->save();
         Invoice::createBooking($invoice);
+
         return redirect()->back();
     }
 
@@ -381,12 +382,18 @@ class InvoiceController extends Controller
 
         $invoice->save();
 
+        if ($invoice->hasMedia('pdf')) {
+            $media = $invoice->firstMedia('pdf');
+            $invoice->detachMedia($media);
+            $media->delete();
+        }
+
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
     public function markAsSent(Invoice $invoice): RedirectResponse
     {
-        if (!$invoice->sent_at) {
+        if (! $invoice->sent_at) {
             $invoice->sent_at = now();
             $invoice->save();
 
@@ -394,6 +401,7 @@ class InvoiceController extends Controller
         }
 
         $invoice->addHistory('hat die Rechnung versendet.', 'mail_sent', auth()->user());
+
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
@@ -405,7 +413,7 @@ class InvoiceController extends Controller
         $invoices = Invoice::query()->whereIn('id', $ids)->get();
 
         foreach ($invoices as $invoice) {
-            if (!$invoice->sent_at) {
+            if (! $invoice->sent_at) {
                 $invoice->sent_at = now();
                 $invoice->save();
             }
@@ -414,7 +422,7 @@ class InvoiceController extends Controller
                 ->where('bookable_id', $invoice->id)
                 ->exists();
 
-            if (!$hasBooking) {
+            if (! $hasBooking) {
                 Invoice::createBooking($invoice);
             }
         }
@@ -429,15 +437,32 @@ class InvoiceController extends Controller
     {
         // $file = '/Invoicing/Invoices/'.$invoice->issued_on->format('Y').'/'.$invoice->filename;
 
+        if ($invoice->hasMedia('pdfx')) {
+            $media = $invoice->firstMedia('pdf');
+
+            return response()->stream(function () use ($media) {
+                $stream = $media->stream();
+                while ($bytes = $stream->read(8192)) {
+                    echo $bytes;
+                }
+                $stream->close();
+            }, 200, [
+                'Content-Type' => $media->mime_type ?? 'application/pdf',
+                'Content-Disposition' => 'inline; filename="'.$invoice->filename.'"',
+                'Content-Length' => $media->size,
+            ]);
+        }
+
         if ($invoice->is_external) {
             $document = Document::find($invoice->document_id);
-            if (!$document) {
+            if (! $document) {
                 abort(404, 'Document not found');
             }
             $media = $document->firstMedia('file');
-            if (!$media) {
+            if (! $media) {
                 abort(404, 'Document file not found');
             }
+
             return response()->streamDownload(
                 function () use ($media) {
                     $stream = $media->stream();
@@ -448,14 +473,14 @@ class InvoiceController extends Controller
                 $document->filename,
                 [
                     'Content-Type' => $media->mime_type,
-                    'Content-Length' => $media->size
+                    'Content-Length' => $media->size,
                 ]
             );
         }
 
         $pdfFile = Invoice::createOrGetPdf($invoice);
 
-        return response()->file($pdfFile);
+        return response()->inlineFile($pdfFile, $invoice->filename);
     }
 
     public function history(Invoice $invoice): Response
@@ -489,7 +514,7 @@ class InvoiceController extends Controller
 
     public function createBooking(Invoice $invoice): RedirectResponse
     {
-        if (!$invoice->sent_at) {
+        if (! $invoice->sent_at) {
             $invoice->sent_at = now();
             $invoice->save();
         }
@@ -619,8 +644,7 @@ class InvoiceController extends Controller
             }
 
             $invoice->addHistory('Zahlungseingang vom '.$payment->issued_on->format('d.m.Y').' über '.number_format($payment->amount,
-                    2, ',', '.').' EUR wurde verrechnet.', 'paid');
-
+                2, ',', '.').' EUR wurde verrechnet.', 'paid');
 
             if ($transaction->remaining_amount > 0) {
                 $payment->save();
@@ -705,7 +729,7 @@ class InvoiceController extends Controller
             'amount' => $request->validated('amount'),
             'tax_id' => $tax->id,
             'tax' => $request->validated('amount') / 100 * $taxRate->rate,
-            'tax_rate_id' => $taxRate->id
+            'tax_rate_id' => $taxRate->id,
         ]);
 
         $invoice->setDueDate();
@@ -742,7 +766,7 @@ class InvoiceController extends Controller
             ->with([
                 'payable' => function ($query) {
                     $query->orderBy('issued_on', 'asc');
-                }
+                },
             ])
             ->with('payable.transaction')
             ->whereBetween('issued_on', [$request->validated('begin_on'), $request->validated('end_on')])
@@ -764,6 +788,7 @@ class InvoiceController extends Controller
     public function storeNote(NoteStoreRequest $request, Invoice $invoice): RedirectResponse
     {
         $invoice->addNote(Purify::clean($request->validated('note')), auth()->user());
+
         return redirect()->back();
     }
 
@@ -808,7 +833,7 @@ class InvoiceController extends Controller
         ];
 
         $template = EmailTemplate::render('invoice', $data);
-        if (!$template) {
+        if (! $template) {
             abort(500, 'E-Mail-Template "invoice" wurde nicht gefunden.');
         }
 
@@ -816,7 +841,7 @@ class InvoiceController extends Controller
             ? EmailAccount::find($template['email_account_id'])
             : EmailAccount::where('is_default', true)->first();
 
-        if (!$emailAccount) {
+        if (! $emailAccount) {
             abort(422, 'Kein gültiges E-Mail-Konto konfiguriert.');
         }
 
@@ -829,8 +854,8 @@ class InvoiceController extends Controller
                     'city' => $city,
                     'body' => $template['body'],
                     'subject' => $template['subject'],
-                    'email_account_id' => $emailAccount->id
-                ])
+                    'email_account_id' => $emailAccount->id,
+                ]),
             ]);
     }
 
@@ -840,11 +865,10 @@ class InvoiceController extends Controller
         $template->body = $request->validated('body');
         $template->subject = $request->validated('subject');
 
-        if (!$invoice->sent_at) {
+        if (! $invoice->sent_at) {
             $invoice->sent_at = now();
             $invoice->save();
         }
-
 
         $data = [
             'invoice' => $invoice,
@@ -860,11 +884,11 @@ class InvoiceController extends Controller
         $sent = $service->sendEmail($request->validated('email'), $request->validated('name'),
             $request->validated('city'), $data);
 
-        if (!$sent) {
+        if (! $sent) {
             return Inertia::flash('toast', ['type' => 'error', 'message' => 'E-Mail konnte nicht versendet werden.'])->back();
         }
 
-        if (!$invoice->sent_at) {
+        if (! $invoice->sent_at) {
             $invoice->sent_at = now();
             $invoice->save();
         }
@@ -873,6 +897,7 @@ class InvoiceController extends Controller
             auth()->user());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'E-Mail wurde versendet.']);
+
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 }
