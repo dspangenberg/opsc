@@ -251,7 +251,9 @@ class Invoice extends Model implements MediableInterface
 
             $contact = Contact::find($settings->seller_contact_id);
 
-            $document = ZugferdLaravel::createDocumentInXRechnung30Profile()
+            // Wir haben im XML eine Warnung, die wird aber ignorieren können, solange kein B2G
+
+            $document = ZugferdLaravel::createDocumentInEN16931Profile()
                 ->setDocumentInformation(
                     $invoice->formated_invoice_number,
                     ZugferdInvoiceType::INVOICE,
@@ -259,6 +261,7 @@ class Invoice extends Model implements MediableInterface
                     ZugferdCurrencyCodes::EURO,
                     'Rechnung'
                 )
+                // ->setDocumentBusinessProcess('urn:fdc:peppol.eu:2017:poacc:billing:01:1.0')
                 ->setDocumentBusinessProcess('urn:fdc:peppol.eu:2017:poacc:billing:01:1.0')
                 ->addDocumentNote($settings->document_note, '', 'REG')
                 ->addDocumentPaymentTerm($settings->payment_term, $invoice->due_on)

@@ -17,6 +17,10 @@ class PdfService
 {
     public static function fixPdfForPdfA(string $pdfPath): void
     {
+
+        // Workaround von OpenCode TODO: Letterhead fixen und Hochladen
+
+
         $content = file_get_contents($pdfPath);
         if ($content === false || ! str_contains($content, '/Interpolate true')) {
             return;
