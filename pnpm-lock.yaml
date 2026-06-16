@@ -43,7 +43,7 @@ importers:
         version: 1.1.6(react@19.2.4)
       '@inertiajs/core':
         specifier: ^3.4.0
-        version: 3.4.0(axios@1.17.0)
+        version: 3.4.0(axios@1.18.0)
       '@internationalized/date':
         specifier: ^3.12.2
         version: 3.12.2
@@ -227,7 +227,7 @@ importers:
         version: 2.4.8
       '@inertiajs/react':
         specifier: ^3.4.0
-        version: 3.4.0(axios@1.17.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 3.4.0(axios@1.18.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@react-types/shared':
         specifier: ^3.35.0
         version: 3.35.0(react@19.2.4)
@@ -262,8 +262,8 @@ importers:
         specifier: ^10.4.27
         version: 10.5.0(postcss@8.5.15)
       axios:
-        specifier: ^1.17.0
-        version: 1.17.0
+        specifier: ^1.18.0
+        version: 1.18.0
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -2781,8 +2781,8 @@ packages:
     peerDependencies:
       postcss: ^8.1.0
 
-  axios@1.17.0:
-    resolution: {integrity: sha512-J8SwNxprqqpbfenehxWYXE7CW+wM1BB4w3+N+g+/Wx40xM4rsLrfPmHHxSWIxJLYDgSY/HqlFPIYb2/S3rxafw==}
+  axios@1.18.0:
+    resolution: {integrity: sha512-E32NzpYKp++W7XRe52rHiXV2ehxmh3wbdgO7MHeFM+vqxLBYHzt0ElkiImtOBxtOmyp0yoC8C6uESVV84Y2/hw==}
 
   bail@2.0.2:
     resolution: {integrity: sha512-0xO6mYd7JB2YesxDKplafRpsiOzPt9V02ddPCLbY1xYGPOX24NTyN50qnUxgCPcSoYMhKpAuBTjQoRZCAkUDRw==}
@@ -3371,8 +3371,8 @@ packages:
       debug:
         optional: true
 
-  form-data@4.0.5:
-    resolution: {integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==}
+  form-data@4.0.6:
+    resolution: {integrity: sha512-vKatAh4SlVfgbv+YtmhiRjhEMJsYpsG1Y2rMQtR+SVSbytsSD1YGzDIcrAJmdFec88u/+VoGmxnl+80gL1tRCQ==}
     engines: {node: '>= 6'}
 
   format@0.2.2:
@@ -3482,8 +3482,8 @@ packages:
     resolution: {integrity: sha512-NqADB8VjPFLM2V0VvHUewwwsw0ZWBaIdgo+ieHtK3hasLz4qeCRjYcqfB6AQrBggRKppKF8L52/VqdVsO47Dlw==}
     engines: {node: '>= 0.4'}
 
-  hasown@2.0.3:
-    resolution: {integrity: sha512-ej4AhfhfL2Q2zpMmLo7U1Uv9+PyhIZpgQLGT1F9miIGmiCJIoCgSmczFdrc97mWT4kVY72KA+WnnhJ5pghSvSg==}
+  hasown@2.0.4:
+    resolution: {integrity: sha512-T2UbfbBEF32wiepXIsMlTW9+dDYC6wMh/t/vYA4tuOMKqWz/n3vr1NFSxQiyP+zk2mXsoMA/i/7qV6LKut1t1A==}
     engines: {node: '>= 0.4'}
 
   hast-util-to-jsx-runtime@2.3.6:
@@ -6175,7 +6175,7 @@ snapshots:
 
   '@inertiajs/core@1.3.0':
     dependencies:
-      axios: 1.17.0
+      axios: 1.18.0
       deepmerge: 4.3.1
       nprogress: 0.2.0
       qs: 6.15.2
@@ -6183,13 +6183,13 @@ snapshots:
       - debug
       - supports-color
 
-  '@inertiajs/core@3.4.0(axios@1.17.0)':
+  '@inertiajs/core@3.4.0(axios@1.18.0)':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       es-toolkit: 1.47.1
-      laravel-precognition: 2.0.0(axios@1.17.0)
+      laravel-precognition: 2.0.0(axios@1.18.0)
     optionalDependencies:
-      axios: 1.17.0
+      axios: 1.18.0
 
   '@inertiajs/react@1.3.0(react@18.3.1)':
     dependencies:
@@ -6200,11 +6200,11 @@ snapshots:
       - debug
       - supports-color
 
-  '@inertiajs/react@3.4.0(axios@1.17.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@inertiajs/react@3.4.0(axios@1.18.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
-      '@inertiajs/core': 3.4.0(axios@1.17.0)
+      '@inertiajs/core': 3.4.0(axios@1.18.0)
       es-toolkit: 1.47.1
-      laravel-precognition: 2.0.0(axios@1.17.0)
+      laravel-precognition: 2.0.0(axios@1.18.0)
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
     transitivePeerDependencies:
@@ -8016,10 +8016,10 @@ snapshots:
       postcss: 8.5.15
       postcss-value-parser: 4.2.0
 
-  axios@1.17.0:
+  axios@1.18.0:
     dependencies:
       follow-redirects: 1.16.0
-      form-data: 4.0.5
+      form-data: 4.0.6
       https-proxy-agent: 5.0.1
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
@@ -8396,7 +8396,7 @@ snapshots:
       es-errors: 1.3.0
       get-intrinsic: 1.3.0
       has-tostringtag: 1.0.2
-      hasown: 2.0.3
+      hasown: 2.0.4
 
   es-toolkit@1.47.1: {}
 
@@ -8640,12 +8640,12 @@ snapshots:
 
   follow-redirects@1.16.0: {}
 
-  form-data@4.0.5:
+  form-data@4.0.6:
     dependencies:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       es-set-tostringtag: 2.1.0
-      hasown: 2.0.3
+      hasown: 2.0.4
       mime-types: 2.1.35
 
   format@0.2.2: {}
@@ -8698,7 +8698,7 @@ snapshots:
       get-proto: 1.0.1
       gopd: 1.2.0
       has-symbols: 1.1.0
-      hasown: 2.0.3
+      hasown: 2.0.4
       math-intrinsics: 1.1.0
 
   get-nonce@1.0.1: {}
@@ -8734,7 +8734,7 @@ snapshots:
     dependencies:
       has-symbols: 1.1.0
 
-  hasown@2.0.3:
+  hasown@2.0.4:
     dependencies:
       function-bind: 1.1.2
 
@@ -8976,17 +8976,17 @@ snapshots:
 
   laravel-precognition@1.0.2:
     dependencies:
-      axios: 1.17.0
+      axios: 1.18.0
       lodash-es: 4.18.1
     transitivePeerDependencies:
       - debug
       - supports-color
 
-  laravel-precognition@2.0.0(axios@1.17.0):
+  laravel-precognition@2.0.0(axios@1.18.0):
     dependencies:
       es-toolkit: 1.47.1
     optionalDependencies:
-      axios: 1.17.0
+      axios: 1.18.0
 
   laravel-vite-plugin@3.1.0(vite@8.0.16(@types/node@25.9.3)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0)):
     dependencies:
@@ -9661,7 +9661,7 @@ snapshots:
   momentum-modal-react@1.0.0:
     dependencies:
       '@inertiajs/react': 1.3.0(react@18.3.1)
-      axios: 1.17.0
+      axios: 1.18.0
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
