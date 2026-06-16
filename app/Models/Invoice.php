@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\InvoiceRecurringEnum;
+use App\Facades\FileHelperService;
 use App\Facades\PdfService;
 use App\Http\Controllers\App\TimeController;
 use Carbon\Carbon;
@@ -10,6 +11,10 @@ use DateTime;
 use DateTimeInterface;
 use Eloquent;
 use Exception;
+use horstoeko\zugferd\codelists\ZugferdCurrencyCodes;
+use horstoeko\zugferd\codelists\ZugferdInvoiceType;
+use horstoeko\zugferd\ZugferdDocumentPdfBuilder;
+use horstoeko\zugferdlaravel\Facades\ZugferdLaravel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Support\Facades\Log;
 use MohamedSaid\Notable\Notable;
 use MohamedSaid\Notable\Traits\HasNotables;
 use Plank\Mediable\Media;
@@ -26,6 +32,7 @@ use Plank\Mediable\MediableInterface;
 use rikudou\EuQrPayment\QrPayment;
 use Spatie\Holidays\Countries\Germany;
 use Spatie\Holidays\Holidays;
+use Throwable;
 
 /**
  * @property-read Contact|null $contact
@@ -197,6 +204,8 @@ class Invoice extends Model implements MediableInterface
         });
 
         $bankAccount = BankAccount::orderBy('pos')->first();
+        $zugpferdPdf = null;
+        $pdfFile = FileHelperService::getTempFile('pdf');
 
         $bank_account = (object) [
             'iban' => $bankAccount->iban,
@@ -206,7 +215,7 @@ class Invoice extends Model implements MediableInterface
         ];
 
         $pdfConfig = [];
-        $pdfConfig['pdfA'] = !$invoice->is_draft;
+        $pdfConfig['pdfA'] = ! $invoice->is_draft;
         $pdfConfig['hide'] = true;
         $pdfConfig['watermark'] = $watermark ?: ($invoice->is_draft ? 'ENTWURF' : false);
 
@@ -220,7 +229,104 @@ class Invoice extends Model implements MediableInterface
                 'timesSum' => $timesSum,
             ], $pdfConfig);
 
-        return $pdf;
+        try {
+            $invoiceAddress = $invoice->invoice_address;
+
+            $zip = '';
+            $city = '';
+            if (isset($invoiceAddress[2])) {
+                $parts = explode(' ', $invoiceAddress[2], 2);
+                $zip = $parts[0] ?? '';
+                $city = $parts[1] ?? '';
+            }
+
+            $document = ZugferdLaravel::createDocumentInEN16931Profile()
+                ->setDocumentInformation(
+                    $invoice->formated_invoice_number,
+                    ZugferdInvoiceType::INVOICE,
+                    $invoice->issued_on,
+                    ZugferdCurrencyCodes::EURO
+                )
+                ->addDocumentNote('Inhaber Danny Spangenberg; HRA 6091 (Amtsgericht Bonn)', '', 'REG')
+                ->addDocumentPaymentTerm('Der Rechnungsbetrag ist ohne Abzug sofort zahlbar.', $invoice->due_on)
+                ->setDocumentSeller('twiceware solutions e. K.')
+                ->addDocumentSellerGlobalId('312545306', '0060')
+                ->addDocumentSellerTaxRegistration('VA', 'DE240386270')
+                // ->addDocumentSellerTaxRegistration('FC', '205/5289/1242')
+                ->setDocumentSellerAddress('Belderberg 7', '', '', '53111', 'Bonn', 'DE')
+                ->setDocumentSellerContact('Danny Spangenberg', '', '+49 228 84263764', '',
+                    'danny.spangenberg@twiceware.de')
+                ->setDocumentBuyer($invoice->contact->name ?? $invoice->contact?->full_name ?? '')
+                ->setDocumentBuyerAddress(
+                    $invoiceAddress[1] ?? '',
+                    '',
+                    '',
+                    $zip,
+                    $city,
+                    'DE'
+                );
+
+            foreach ($invoice->lines as $index => $line) {
+                $document->addNewPosition((string) ($index + 1));
+                $document->setDocumentPositionProductDetails(
+                    $line->text ?? 'Position',
+                );
+                $document->setDocumentPositionBillingPeriod($line->service_period_begin, $line->service_period_end);
+                $unitPrice = $line->quantity > 0 ? round($line->amount / $line->quantity, 10    ) : 0;
+                $document->setDocumentPositionNetPrice($unitPrice);
+                $document->setDocumentPositionQuantity($line->quantity, 'C62');
+                $document->addDocumentPositionTax(
+                    'S',
+                    'VAT',
+                    $line->rate?->rate ?? 0
+                );
+                $document->setDocumentPositionLineSummation((float) $line->amount);
+            }
+
+            foreach ($taxes as $taxData) {
+                $document->addDocumentTax(
+                    'S',
+                    'VAT',
+                    (float) $taxData['amount'],
+                    (float) $taxData['sum'],
+                    19
+                );
+            }
+
+            $document->setDocumentSummation(
+                (float) $invoice->amount_gross,
+                (float) $invoice->amount_gross,
+                (float) $invoice->amount_net,
+                0,
+                0,
+                (float) $invoice->amount_net,
+                (float) $invoice->amount_tax
+            );
+
+            $purposeText = 'RG-'.$invoice->formated_invoice_number.' K-'.number_format($invoice->contact->debtor_number, 0, ',', '.');
+
+
+            if ($bankAccount) {
+            $document->addDocumentPaymentMeanToCreditTransfer(
+                    $bankAccount->iban,
+                    $bankAccount->account_owner,
+                    null,
+                    $bankAccount->bic,
+                    $purposeText
+                );
+            }
+
+
+            ZugferdLaravel::buildMergedPdfByXmlDataOrXmlFilename($document, $pdf, $pdfFile);
+            return $pdfFile;
+
+
+        } catch (Throwable $e) {
+            Log::warning('ZUGFeRD generation failed, falling back to plain PDF: '.$e->getMessage());
+        }
+
+
+        return $pdfFile;
     }
 
     public function taxBreakdown(Collection $invoiceLines): array
