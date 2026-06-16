@@ -201,7 +201,6 @@ class Invoice extends Model implements MediableInterface
         $groupedByCategoryTimes = $times ? TimeController::groupByCategoryAndDate($times) : [];
         $timesSum = $times ? $times->sum('mins') : 0;
 
-        $taxes = $invoice->taxBreakdown($invoice->lines);
         $invoice->linked_invoices = $invoice->lines->filter(function ($line) {
             return $line->type_id === 9;
         });
@@ -209,6 +208,8 @@ class Invoice extends Model implements MediableInterface
         $invoice->lines = $invoice->lines->filter(function ($line) {
             return $line->type_id !== 9;
         });
+
+        $taxes = $invoice->taxBreakdown($invoice->lines);
 
         $settings = app(ZugferdSettings::class);
 
@@ -258,13 +259,12 @@ class Invoice extends Model implements MediableInterface
                     ZugferdCurrencyCodes::EURO,
                     'Rechnung'
                 )
+                ->setDocumentBusinessProcess('urn:fdc:peppol.eu:2017:poacc:billing:01:1.0')
                 ->addDocumentNote($settings->document_note, '', 'REG')
                 ->addDocumentPaymentTerm($settings->payment_term, $invoice->due_on)
                 ->setDocumentSeller($settings->seller)
-
                 ->setDocumentSellerCommunication(ZugferdElectronicAddressScheme::UNECE3155_EM, $settings->seller_email)
                 ->addDocumentSellerGlobalId($settings->global_id, $settings->global_id_type)
-
                 ->addDocumentSellerTaxRegistration('VA', $settings->seller_tax_vat)
                 ->setDocumentSellerAddress('Belderberg 7', '', '', '53111', 'Bonn', 'DE')
                 ->setDocumentSellerContact($contact->full_name, $contact->department, $contact->primary_phone, '', $contact->primary_mail)
@@ -282,7 +282,6 @@ class Invoice extends Model implements MediableInterface
 
             foreach ($invoice->lines as $index => $line) {
                 $document->addNewPosition((string) ($index + 1));
-                $document->setDocumentPositionLineSummation((float) round($line->amount, 2));
                 $document->setDocumentPositionProductDetails(
                     $line->text ?? 'Position',
                 );
@@ -297,8 +296,6 @@ class Invoice extends Model implements MediableInterface
                 $document->setDocumentPositionLineSummation((float) round($line->amount, 2));
             }
 
-            ray($taxes);
-
             foreach ($taxes as $taxData) {
                 $document->addDocumentTax(
                     ZugferdVatCategoryCodes::STAN_RATE,
@@ -308,14 +305,17 @@ class Invoice extends Model implements MediableInterface
                     $taxData['tax_rate']['rate']);
             }
 
+            $lineTotal = round($invoice->lines->sum(fn ($l) => round($l->amount, 2)), 2);
+            $taxTotal = round(collect($taxes)->sum(fn ($t) => round($t['sum'], 2)), 2);
+
             $document->setDocumentSummation(
-                (float) round($invoice->amount_gross, 2),
-                (float) round($invoice->amount_gross, 2),
-                (float) round($invoice->amount_net, 2),
+                (float) round($lineTotal + $taxTotal, 2),
+                (float) round($lineTotal + $taxTotal, 2),
+                (float) $lineTotal,
                 0,
                 0,
-                (float) round($invoice->amount_net, 2),
-                (float) round($invoice->amount_tax, 2)
+                (float) $lineTotal,
+                (float) $taxTotal
             );
 
             $purposeText = 'RG-'.$invoice->formated_invoice_number.' K-'.number_format($invoice->contact->debtor_number, 0, ',', '.');
@@ -329,6 +329,7 @@ class Invoice extends Model implements MediableInterface
                     $purposeText
                 );
             }
+            
 
             ZugferdLaravel::buildMergedPdfByXmlDataOrXmlFilename($document, $pdf, $pdfFile);
 
@@ -356,11 +357,10 @@ class Invoice extends Model implements MediableInterface
     {
         $groupedEntries = [];
         foreach ($invoiceLines->groupBy('tax_rate_id') as $key => $value) {
-            $groupedEntries[$key]['sum'] = round($value->sum('tax'), 2);
-            $groupedEntries[$key]['amount'] = round($value->sum('amount'), 2);
+            $groupedEntries[$key]['sum'] = $value->sum(fn ($line) => round($line->tax, 2));
+            $groupedEntries[$key]['amount'] = $value->sum(fn ($line) => round($line->amount, 2));
             $groupedEntries[$key]['tax_rate'] = $value->first()->toArray()['rate'];
             $groupedEntries[$key]['tax_rate_id'] = $value->first()->toArray()['id'];
-            // $sum = $sum + $groupedEntries[$key]['sum'];
         }
 
         return $groupedEntries;
