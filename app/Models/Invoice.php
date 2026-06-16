@@ -236,6 +236,8 @@ class Invoice extends Model implements MediableInterface
                 'timesSum' => $timesSum,
             ], $pdfConfig);
 
+        PdfService::fixPdfForPdfA($pdf);
+
         try {
             $invoiceAddress = $invoice->invoice_address;
 
