@@ -437,7 +437,7 @@ class InvoiceController extends Controller
     {
         // $file = '/Invoicing/Invoices/'.$invoice->issued_on->format('Y').'/'.$invoice->filename;
 
-        if ($invoice->hasMedia('pdfx')) {
+        if ($invoice->hasMedia('pdf')) {
             $media = $invoice->firstMedia('pdf');
 
             return response()->stream(function () use ($media) {
