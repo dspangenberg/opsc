@@ -33,7 +33,6 @@ class InvoiceDetailsBaseUpdateRequest extends FormRequest
             ],
             'zugferd_route_id' => ['nullable', 'string'],
             'zugferd_profile' => [
-                'nullable',
                 'required_if:is_zugferd,true',
                 'required_if:is_zugferd,1',
                 Rule::enum(ZugferdProfileEnum::class),
