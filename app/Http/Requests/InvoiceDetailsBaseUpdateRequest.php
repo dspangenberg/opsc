@@ -8,6 +8,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\InvoiceRecurringEnum;
+use App\Enums\ZugferdProfileEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -30,6 +31,12 @@ class InvoiceDetailsBaseUpdateRequest extends FormRequest
                 'required_if:is_recurring,1',
                 Rule::enum(InvoiceRecurringEnum::class),
             ],
+            'zugferd_route_id' => ['nullable', 'string'],
+            'zugferd_profile' => [
+                'required',
+                Rule::enum(ZugferdProfileEnum::class),
+            ],
+            'is_zugferd' => ['required', 'boolean'],
             'recurring_interval_units' => ['required_with:is_recurring', 'integer'],
             'type_id' => ['required', 'exists:invoice_types,id'],
             'contact_id' => ['required', 'exists:contacts,id'],

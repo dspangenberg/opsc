@@ -8,6 +8,11 @@ declare global {
     axios: AxiosInstance
   }
 
+  interface LaravelOptions {
+    id: number | string
+    name: string
+  }
+
   type IconSvgElement = readonly (readonly [
     string,
     {

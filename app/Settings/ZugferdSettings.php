@@ -20,6 +20,18 @@ class ZugferdSettings extends Settings
 
     public string $seller_contact_id;
 
+    public string $seller_address_line_1;
+
+    public string $seller_address_line_2;
+
+    public string $seller_address_line_3;
+
+    public string $seller_zip;
+
+    public string $seller_city;
+
+    public string $seller_country_iso;
+
     public string $payment_term;
 
     public static function group(): string

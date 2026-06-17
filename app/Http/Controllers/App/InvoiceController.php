@@ -16,6 +16,7 @@ use App\Data\ProjectData;
 use App\Data\SendEmailData;
 use App\Data\TaxData;
 use App\Data\TransactionData;
+use App\Enums\ZugferdProfileEnum;
 use App\Facades\WeasyPdfService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceDetailsBaseUpdateRequest;
@@ -47,6 +48,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use Momentum\Modal\Modal;
+use Spatie\LaravelOptions\Options;
 use Stevebauman\Purify\Facades\Purify;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -168,6 +170,7 @@ class InvoiceController extends Controller
                 'taxes' => TaxData::collect($taxes),
                 'payment_deadlines' => PaymentDeadlineData::collect($paymentDeadlines),
                 'contacts' => ContactData::collect($contacts),
+                'zugferd_profiles' => Options::forEnum(ZugferdProfileEnum::class),
             ]);
     }
 
@@ -230,6 +233,7 @@ class InvoiceController extends Controller
 
         return Inertia::render('App/Invoice/InvoiceDetails', [
             'invoice' => InvoiceData::from($invoice),
+            'zugferd_profiles' => Options::forEnum(ZugferdProfileEnum::class),
         ]);
     }
 
@@ -265,6 +269,7 @@ class InvoiceController extends Controller
                 'taxes' => TaxData::collect($taxes),
                 'payment_deadlines' => PaymentDeadlineData::collect($paymentDeadlines),
                 'contacts' => ContactData::collect($contacts),
+                'zugferd_profiles' => Options::forEnum(ZugferdProfileEnum::class),
             ]);
     }
 
@@ -437,7 +442,7 @@ class InvoiceController extends Controller
     {
         // $file = '/Invoicing/Invoices/'.$invoice->issued_on->format('Y').'/'.$invoice->filename;
 
-        if ($invoice->hasMedia('pdf')) {
+        if ($invoice->hasMedia('pdfx')) {
             $media = $invoice->firstMedia('pdf');
 
             return response()->stream(function () use ($media) {
@@ -509,6 +514,7 @@ class InvoiceController extends Controller
 
         return Inertia::render('App/Invoice/InvoiceHistory', [
             'invoice' => InvoiceData::from($invoice),
+            'zugferd_profiles' => Options::forEnum(ZugferdProfileEnum::class),
         ]);
     }
 

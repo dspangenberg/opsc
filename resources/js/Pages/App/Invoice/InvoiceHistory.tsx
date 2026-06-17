@@ -9,10 +9,11 @@ import type { PageProps } from '@/Types'
 
 interface InvoiceDetailsProps extends PageProps {
   invoice: App.Data.InvoiceData
+  zugferd_profiles: LaravelOptions[]
   children?: React.ReactNode
 }
 
-const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ invoice }) => {
+const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ invoice, zugferd_profiles }) => {
   return (
     <InvoiceDetailsLayout invoice={invoice}>
       <div className="mr-8 flex-1">
@@ -23,7 +24,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ invoice }) => {
       </div>
       <div className="h-fit w-full max-w-sm flex-none border-l! border-stone-200 px-1">
         <div className="fixed w-full max-w-sm space-y-6">
-          <InvoiceDetailsSideLight invoice={invoice} />
+          <InvoiceDetailsSideLight invoice={invoice} zugferd_profiles={zugferd_profiles} />
         </div>
       </div>
     </InvoiceDetailsLayout>
