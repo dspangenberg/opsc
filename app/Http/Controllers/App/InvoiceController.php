@@ -442,20 +442,22 @@ class InvoiceController extends Controller
     {
         // $file = '/Invoicing/Invoices/'.$invoice->issued_on->format('Y').'/'.$invoice->filename;
 
-        if ($invoice->hasMedia('pdfx')) {
+        if ($invoice->hasMedia('pdf')) {
             $media = $invoice->firstMedia('pdf');
 
-            return response()->stream(function () use ($media) {
-                $stream = $media->stream();
-                while ($bytes = $stream->read(8192)) {
-                    echo $bytes;
-                }
-                $stream->close();
-            }, 200, [
-                'Content-Type' => $media->mime_type ?? 'application/pdf',
-                'Content-Disposition' => 'inline; filename="'.$invoice->filename.'"',
-                'Content-Length' => $media->size,
-            ]);
+            if ($media) {
+                return response()->stream(function () use ($media) {
+                    $stream = $media->stream();
+                    while ($bytes = $stream->read(8192)) {
+                        echo $bytes;
+                    }
+                    $stream->close();
+                }, 200, [
+                    'Content-Type' => $media->mime_type ?? 'application/pdf',
+                    'Content-Disposition' => 'inline; filename="'.$invoice->filename.'"',
+                    'Content-Length' => $media->size,
+                ]);
+            }
         }
 
         if ($invoice->is_external) {

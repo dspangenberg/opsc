@@ -433,14 +433,14 @@ const ContactEdit: React.FC<Props> = ({
                   </div>
                   <div className="col-span-5">
                     <FormTextField
-                      label="Zugferd Leitweg-ID"
+                      label="ZUGFeRD Leitweg-ID"
                       {...form.register('zugferd_route_id')}
                     />
                   </div>
                   <div className="col-span-5">
                     <FormSelect
                       {...form.register('zugferd_profile')}
-                      label="Zugferdprofil"
+                      label="ZUGFeRD-Profil"
                       items={zugferd_profiles}
                     />
                   </div>
