@@ -19,6 +19,7 @@ use App\Data\PhoneCategoryData;
 use App\Data\SalutationData;
 use App\Data\TaxData;
 use App\Data\TitleData;
+use App\Enums\ZugferdProfileEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ContactBulkArchiveRequest;
 use App\Http\Requests\ContactPersonStoreRequest;
@@ -52,6 +53,7 @@ use Plank\Mediable\Exceptions\MediaUpload\FileSizeException;
 use Plank\Mediable\Exceptions\MediaUpload\ForbiddenException;
 use Plank\Mediable\Exceptions\MediaUpload\InvalidHashException;
 use Plank\Mediable\Facades\MediaUploader;
+use Spatie\LaravelOptions\Options;
 use Stevebauman\Purify\Facades\Purify;
 use Throwable;
 
@@ -246,6 +248,7 @@ class ContactController extends Controller
             'phone_categories' => PhoneCategoryData::collect($phone_categories),
             'bookkeeping_accounts' => BookkeepingAccountData::collect($bookkeeping_accounts),
             'cost_centers' => CostCenterData::collect($cost_centers),
+            'zugferd_profiles' => Options::forEnum(ZugferdProfileEnum::class),
         ]);
     }
 

@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 13.15.0.
+ * Generated for Laravel 13.16.1.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -7296,9 +7296,10 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the default database connection for the callback execution.
          *
+         * @template TReturn
          * @param \UnitEnum|string $name
-         * @param callable $callback
-         * @return mixed
+         * @param (callable(): TReturn) $callback
+         * @return TReturn
          * @static
          */
         public static function usingConnection($name, $callback)
@@ -7846,8 +7847,9 @@ namespace Illuminate\Support\Facades {
         /**
          * Execute the given callback without "pretending".
          *
-         * @param \Closure $callback
-         * @return mixed
+         * @template TReturn
+         * @param \Closure():  TReturn  $callback
+         * @return TReturn
          * @static
          */
         public static function withoutPretending($callback)
@@ -8566,8 +8568,9 @@ namespace Illuminate\Support\Facades {
         /**
          * Execute the given callback without table prefix.
          *
-         * @param \Closure $callback
-         * @return mixed
+         * @template TReturn
+         * @param (\Closure($this): TReturn) $callback
+         * @return TReturn
          * @static
          */
         public static function withoutTablePrefix($callback)
@@ -16857,6 +16860,25 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
+         * Apply the callback if the instance contains a valid enum value for the given key.
+         *
+         * @template TEnum of \BackedEnum
+         * @template TReturn
+         * @template TReturnDefault = never
+         * @param string $key
+         * @param class-string<TEnum> $enumClass
+         * @param callable(TEnum):TReturn $callback
+         * @param (callable(): TReturnDefault)|null $default
+         * @return $this|TReturn|\Illuminate\Http\TReturnDefault
+         * @static
+         */
+        public static function whenEnum($key, $enumClass, $callback, $default = null)
+        {
+            /** @var \Illuminate\Http\Request $instance */
+            return $instance->whenEnum($key, $enumClass, $callback, $default);
+        }
+
+        /**
          * Determine if the instance is missing a given key.
          *
          * @param string|array $key
@@ -24492,8 +24514,9 @@ namespace MohamedSaid\Notable\Facades {
         /**
          * Execute a callback without broadcasting any model events for all model types.
          *
-         * @param callable $callback
-         * @return mixed
+         * @template TReturn
+         * @param callable():  TReturn  $callback
+         * @return TReturn
          * @static
          */
         public static function withoutBroadcasting($callback)
@@ -26921,7 +26944,7 @@ namespace MohamedSaid\Notable\Facades {
         /**
          * Get the event map for the model.
          *
-         * @return array
+         * @return array<string, class-string>
          * @static
          */
         public static function dispatchesEvents()
@@ -26971,8 +26994,9 @@ namespace MohamedSaid\Notable\Facades {
         /**
          * Execute a callback without firing any model events for any model type.
          *
-         * @param callable $callback
-         * @return mixed
+         * @template TReturn
+         * @param callable():  TReturn  $callback
+         * @return TReturn
          * @static
          */
         public static function withoutEvents($callback)
@@ -27829,7 +27853,9 @@ namespace MohamedSaid\Notable\Facades {
         /**
          * Disable timestamps for the current class during the given callback scope.
          *
-         * @return mixed
+         * @template TReturn
+         * @param (callable(): TReturn) $callback
+         * @return TReturn
          * @static
          */
         public static function withoutTimestamps($callback)
@@ -27841,9 +27867,10 @@ namespace MohamedSaid\Notable\Facades {
         /**
          * Disable timestamps for the given model classes during the given callback scope.
          *
+         * @template TReturn
          * @param array $models
-         * @param callable $callback
-         * @return mixed
+         * @param callable():  TReturn  $callback
+         * @return TReturn
          * @static
          */
         public static function withoutTimestampsOn($models, $callback)

@@ -136,6 +136,7 @@ class PdfService
         }
 
         $mpdf->Output($tmpDir);
+
         return $tmpDir;
     }
 }

@@ -10,6 +10,7 @@ interface Props extends PageProps {
   taxes: App.Data.TaxData[]
   payment_deadlines: App.Data.PaymentDeadlineData[]
   contacts: App.Data.ContactData[]
+  zugferd_profiles: LaravelOptions[]
 }
 
 const InvoiceCreate: React.FC<Props> = ({
@@ -18,7 +19,8 @@ const InvoiceCreate: React.FC<Props> = ({
   projects,
   invoice_types,
   taxes,
-  payment_deadlines
+  payment_deadlines,
+  zugferd_profiles
 }) => {
   return (
     <PageContainer title="Neue Rechnung erstellen" width="8xl" className="flex overflow-hidden">
@@ -31,6 +33,7 @@ const InvoiceCreate: React.FC<Props> = ({
         invoice={invoice}
         invoice_types={invoice_types}
         payment_deadlines={payment_deadlines}
+        zugferd_profiles={zugferd_profiles}
         projects={projects}
         taxes={taxes}
       />
