@@ -192,15 +192,16 @@ class TimeController extends Controller
         collect($categories)->each(function ($category) use ($invoice, &$pos) {
             $timeCategory = TimeCategory::find($category['id']);
             $pos++;
+            $amount = round($category['quantity'] * $timeCategory['hourly'], 2);
             $invoice->lines()->create([
                 'pos' => $pos,
                 'type_id' => 1,
                 'quantity' => $category['quantity'],
                 'price' => $timeCategory['hourly'],
                 'unit' => 'h',
-                'amount' => $category['quantity'] * $timeCategory['hourly'],
+                'amount' => $amount,
                 'tax_rate_id' => 1,
-                'tax' => $category['quantity'] * $timeCategory['hourly'] * 0.19,
+                'tax' => round($amount / 100 * 19, 2),
                 'service_period_begin' => $category['start'],
                 'service_period_end' => $category['end'],
                 'text' => '**'.$category['name']."**\ngem. Leistungsnachweis",

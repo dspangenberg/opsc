@@ -5,7 +5,7 @@
   "keywords": ["laravel", "framework"],
   "license": "MIT",
   "require": {
-    "php": "^8.4",
+    "php": "^8.5",
     "ext-openssl": "*",
     "based/momentum-modal": "^0.5",
     "boci/hetzner-laravel": "^1.0",
