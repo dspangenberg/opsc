@@ -35,6 +35,7 @@ interface Props extends PageProps {
   cost_centers: App.Data.CostCenterData[]
   countries: App.Data.CountryData[]
   contact_persons: App.Data.ContactData[]
+  zugferd_profiles: LaravelOptions[]
 }
 
 type FormData = Omit<
@@ -75,7 +76,8 @@ const ContactEdit: React.FC<Props> = ({
   bookkeeping_accounts,
   address_categories,
   contact_persons,
-  taxes
+  taxes,
+  zugferd_profiles
 }) => {
   const initialData: FormData = {
     id: contact.id,
@@ -121,7 +123,9 @@ const ContactEdit: React.FC<Props> = ({
     has_dunning_block: contact.has_dunning_block,
     invoice_contact_id: contact.invoice_contact_id,
     remove_avatar: false,
-    primary_contact_id: contact.primary_contact_id
+    primary_contact_id: contact.primary_contact_id,
+    zugferd_route_id: contact.zugferd_route_id,
+    zugferd_profile: contact.zugferd_profile
   }
 
   const addEmailAddress = () => {
@@ -350,7 +354,7 @@ const ContactEdit: React.FC<Props> = ({
                 Account
               </Tab>
               <Tab isDisabled={!isOrganization && form.data.company_id !== 0} id="payments">
-                Register-/Steuerdaten
+                Sonstiges
               </Tab>
             </TabList>
             <TabPanel id="base">
@@ -380,13 +384,16 @@ const ContactEdit: React.FC<Props> = ({
               />
             </TabPanel>
             <TabPanel id="finances">
-              <FormGrid title="Steuer">
-                <div className="col-span-9">
+              <FormGrid title="Umsatzsteuer">
+                <div className="col-span-8">
                   <FormSelect<App.Data.TaxData>
                     {...form.register('tax_id')}
                     label="Umsatzsteuer"
                     items={taxes}
                   />
+                </div>
+                <div className="col-span-6">
+                  <FormTextField label="Umsatzsteuer-ID" {...form.register('vat_id')} />
                 </div>
               </FormGrid>
               {form.data.is_debtor && (
@@ -398,14 +405,14 @@ const ContactEdit: React.FC<Props> = ({
                       </Alert>
                     </div>
                   )}
-                  <div className="col-span-6">
+                  <div className="col-span-4">
                     <FormTextField
                       label="Debitor-Nr."
                       isReadOnly
                       {...form.register('formated_debtor_number')}
                     />
                   </div>
-                  <div className="col-span-9">
+                  <div className="col-span-4">
                     <FormSelect<App.Data.PaymentDeadlineData>
                       {...form.register('payment_deadline_id')}
                       label="Zahlungsziel"
@@ -415,13 +422,26 @@ const ContactEdit: React.FC<Props> = ({
                       Mahnsperre
                     </Checkbox>
                   </div>
-                  <div className="col-span-9">
+                  <div className="col-span-6">
                     <FormSelect<App.Data.ContactData>
                       {...form.register('invoice_contact_id')}
                       isOptional
                       label="Rechnungskontakt"
                       items={contact_persons}
                       itemName="reverse_full_name"
+                    />
+                  </div>
+                  <div className="col-span-5">
+                    <FormTextField
+                      label="Zugferd Leitweg-ID"
+                      {...form.register('zugferd_route_id')}
+                    />
+                  </div>
+                  <div className="col-span-5">
+                    <FormSelect
+                      {...form.register('zugferd_profile')}
+                      label="Zugferdprofil"
+                      items={zugferd_profiles}
                     />
                   </div>
                 </FormGrid>
@@ -471,9 +491,6 @@ const ContactEdit: React.FC<Props> = ({
             </TabPanel>
             <TabPanel id="payments">
               <FormGrid title="Steuerdaten">
-                <div className="col-span-12">
-                  <FormTextField label="Umsatzsteuer-ID" {...form.register('vat_id')} />
-                </div>
                 <div className="col-span-12">
                   <FormTextField label="Steuernummer" {...form.register('tax_number')} />
                 </div>

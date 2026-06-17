@@ -17,16 +17,23 @@ import { cn } from '@/Lib/utils'
 interface InvoiceDetailsSideProps {
   invoice: App.Data.InvoiceData
   showSecondary?: boolean
+  zugferd_profiles: LaravelOptions[]
 }
 
 export const InvoiceDetailsSideLight: FC<InvoiceDetailsSideProps> = ({
-  invoice
+  invoice,
+  zugferd_profiles
 }: InvoiceDetailsSideProps) => {
   const currencyFormatter = new Intl.NumberFormat('de-DE', {
     style: 'decimal',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })
+
+  const zugferdProfile = useMemo(
+    () => zugferd_profiles?.find(item => item.id === invoice.zugferd_profile)?.name,
+    [zugferd_profiles, invoice.zugferd_profile]
+  )
 
   const contactRoute = useMemo(
     () => route('app.contact.details', { id: invoice.contact_id }),
@@ -44,7 +51,6 @@ export const InvoiceDetailsSideLight: FC<InvoiceDetailsSideProps> = ({
   }, [invoice.parent_id])
 
   const title = `RG-${invoice.formated_invoice_number}`
-
   return (
     <DataCard title={title}>
       <DataCardContent>
@@ -130,6 +136,18 @@ export const InvoiceDetailsSideLight: FC<InvoiceDetailsSideProps> = ({
           </DataCardField>
           <DataCardField variant="vertical" label="Zusatztext" value={invoice.additional_text} />
         </DataCardSection>
+        {invoice.is_zugferd && (
+          <DataCardSection title="Zugpferd">
+            <DataCardFieldGroup className="grid grid-cols-2">
+              <DataCardField variant="vertical" label="Profil" value={zugferdProfile} />
+              <DataCardField
+                variant="vertical"
+                label="Leitweg-ID"
+                value={invoice.zugferd_route_id}
+              />
+            </DataCardFieldGroup>
+          </DataCardSection>
+        )}
 
         <DataCardSection title="Verknüpfungen">
           <DataCardField

@@ -7,6 +7,7 @@
 
 namespace App\Data;
 
+use App\Enums\ZugferdProfileEnum;
 use DateTime;
 use Spatie\LaravelData\Attributes\WithTransformer;
 use Spatie\LaravelData\Data;
@@ -98,6 +99,8 @@ class ContactData extends Data
         public readonly ?array $addresses,
 
         public readonly ?int $primary_contact_id,
+        public readonly ?ZugferdProfileEnum $zugferd_profile,
+        public readonly ?string $zugferd_route_id,
 
     ) {}
 

@@ -15,6 +15,7 @@ import { FormNumberField } from '@/Components/twc-ui/form-number-field'
 import { FormRadioGroup } from '@/Components/twc-ui/form-radio-group'
 import { FormSelect } from '@/Components/twc-ui/form-select'
 import { FormTextArea } from '@/Components/twc-ui/form-text-area'
+import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import { cn } from '@/Lib/utils'
 
 type InvoiceFormData = Omit<
@@ -44,6 +45,7 @@ interface Props {
   saveRoute: RouteUrl
   cancelRoute: RouteUrl
   className?: string
+  zugferd_profiles: LaravelOptions[]
 }
 
 export const InvoiceForm: React.FC<Props> = ({
@@ -56,7 +58,8 @@ export const InvoiceForm: React.FC<Props> = ({
   invoice_types,
   payment_deadlines,
   projects,
-  taxes
+  taxes,
+  zugferd_profiles
 }) => {
   const form = useForm<InvoiceFormData>('invoice-form', method, saveRoute, invoice)
 
@@ -68,6 +71,14 @@ export const InvoiceForm: React.FC<Props> = ({
       { name: 'Wochen', id: 'weeks' },
       { name: 'Monate', id: 'months' },
       { name: 'Jahre', id: 'years' }
+    ],
+    []
+  )
+
+  const zugferdProfileOptions = useMemo(
+    () => [
+      { name: 'Zugferd 3', id: 'zugferd' },
+      { name: 'XRechnung 3', id: 'xrechnung' }
     ],
     []
   )
@@ -118,8 +129,8 @@ export const InvoiceForm: React.FC<Props> = ({
     >
       <Form form={form}>
         <FormGrid>
-          <div className="col-span-24">
-            <FormRadioGroup<App.Data.InvoiceTypeData>
+          <div className="col-span-7">
+            <FormSelect<App.Data.InvoiceTypeData>
               autoFocus
               label="Rechnungsart"
               itemName={'display_name'}
@@ -127,9 +138,10 @@ export const InvoiceForm: React.FC<Props> = ({
               items={invoice_types}
               {...form.register('type_id')}
             />
+            <div className="pt-1">
+              <Checkbox {...form.registerCheckbox('is_zugferd')}>Zugferd-Rechnung</Checkbox>
+            </div>
           </div>
-        </FormGrid>
-        <FormGrid>
           <div className="col-span-5">
             <FormDatePicker
               label="Rechnungsdatum"
@@ -137,6 +149,26 @@ export const InvoiceForm: React.FC<Props> = ({
               isDisabled={!invoice.is_draft}
             />
           </div>
+
+          {form.data.is_zugferd && (
+            <>
+              <div className="col-span-5">
+                <FormTextField
+                  label="Zugferd Leitweg-ID"
+                  isDisabled={!invoice.is_draft}
+                  {...form.register('zugferd_route_id')}
+                />
+              </div>
+              <div className="col-span-7">
+                <FormSelect
+                  {...form.register('zugferd_profile')}
+                  label="Zugferdprofil"
+                  items={zugferd_profiles}
+                  isDisabled={!invoice.is_draft}
+                />
+              </div>
+            </>
+          )}
 
           <div className="col-span-19" />
           <div className="col-span-12">

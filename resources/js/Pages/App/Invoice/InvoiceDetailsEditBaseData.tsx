@@ -11,6 +11,7 @@ interface Props {
   taxes: App.Data.TaxData[]
   payment_deadlines: App.Data.PaymentDeadlineData[]
   contacts: App.Data.ContactData[]
+  zugferd_profiles: LaravelOptions[]
 }
 
 export const InvoiceDetailsEditBaseData: React.FC<Props> = ({
@@ -19,7 +20,8 @@ export const InvoiceDetailsEditBaseData: React.FC<Props> = ({
   invoice_types,
   payment_deadlines,
   projects,
-  taxes
+  taxes,
+  zugferd_profiles
 }) => {
   return (
     <InvoiceDetailsLayout invoice={invoice}>
@@ -35,6 +37,7 @@ export const InvoiceDetailsEditBaseData: React.FC<Props> = ({
           payment_deadlines={payment_deadlines}
           projects={projects}
           taxes={taxes}
+          zugferd_profiles={zugferd_profiles}
         />
       </div>
       <div className="h-fit w-sm flex-none space-y-6 px-1">

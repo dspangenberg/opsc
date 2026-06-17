@@ -7,6 +7,7 @@
 
 namespace App\Models;
 
+use App\Enums\ZugferdProfileEnum;
 use App\Exceptions\ContactNotFoundException;
 use App\Exceptions\ContactWithoutAccountException;
 use Eloquent;
@@ -158,6 +159,8 @@ class Contact extends Model
         'dob',
         'invoice_contact_id',
         'primary_contact_id',
+        'zugferd_profile',
+        'zugferd_route_id',
     ];
 
     public function getFullNameAttribute(): string
@@ -437,6 +440,7 @@ class Contact extends Model
             'is_archived' => 'boolean',
             'has_dunning_block' => 'boolean',
             'dob' => 'datetime',
+            'zugferd_profile' => ZugferdProfileEnum::class,
         ];
     }
 

@@ -12,6 +12,7 @@ import type { PageProps } from '@/Types'
 
 interface InvoiceDetailsProps extends PageProps {
   invoice: App.Data.InvoiceData
+  zugferd_profiles: LaravelOptions[]
   children?: React.ReactNode
 }
 
@@ -66,14 +67,14 @@ const InvoiceDetailsContent: React.FC<{ children?: React.ReactNode }> = ({ child
 }
 
 const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
-  const { invoice } = usePage<InvoiceDetailsProps>().props
+  const { invoice, zugferd_profiles } = usePage<InvoiceDetailsProps>().props
 
   return (
     <InvoiceDetailsLayout invoice={invoice}>
       <InvoiceDetailsContent>{children}</InvoiceDetailsContent>
       <div className="h-fit w-sm flex-none px-1">
         <div className="fixed w-sm space-y-6">
-          <InvoiceDetailsSideLight invoice={invoice} />
+          <InvoiceDetailsSideLight invoice={invoice} zugferd_profiles={zugferd_profiles} />
         </div>
       </div>
     </InvoiceDetailsLayout>

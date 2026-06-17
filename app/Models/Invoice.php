@@ -3,13 +3,27 @@
 namespace App\Models;
 
 use App\Enums\InvoiceRecurringEnum;
+use App\Enums\ZugferdProfileEnum;
+use App\Facades\FileHelperService;
 use App\Facades\PdfService;
 use App\Http\Controllers\App\TimeController;
+use App\Settings\ZugferdSettings;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeInterface;
 use Eloquent;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\RoundBlockSizeMode;
+use Endroid\QrCode\Writer\SvgWriter;
 use Exception;
+use horstoeko\zugferd\codelists\ZugferdCurrencyCodes;
+use horstoeko\zugferd\codelists\ZugferdElectronicAddressScheme;
+use horstoeko\zugferd\codelists\ZugferdInvoiceType;
+use horstoeko\zugferd\codelists\ZugferdVatCategoryCodes;
+use horstoeko\zugferd\codelists\ZugferdVatTypeCodes;
+use horstoeko\zugferdlaravel\Facades\ZugferdLaravel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -17,8 +31,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Support\Facades\Log;
 use MohamedSaid\Notable\Notable;
 use MohamedSaid\Notable\Traits\HasNotables;
+use Plank\Mediable\Facades\MediaUploader;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
@@ -26,6 +42,8 @@ use Plank\Mediable\MediableInterface;
 use rikudou\EuQrPayment\QrPayment;
 use Spatie\Holidays\Countries\Germany;
 use Spatie\Holidays\Holidays;
+use Str;
+use Throwable;
 
 /**
  * @property-read Contact|null $contact
@@ -106,6 +124,9 @@ class Invoice extends Model implements MediableInterface
         'is_external',
         'document_id',
         'is_org',
+        'zugferd_profile',
+        'zugferd_route_id',
+        'is_zugferd',
     ];
 
     protected $attributes = [
@@ -147,6 +168,8 @@ class Invoice extends Model implements MediableInterface
             'is_draft' => 'boolean',
             'is_external' => 'boolean',
             'recurring_interval' => InvoiceRecurringEnum::class,
+            'is_zugferd' => 'boolean',
+            'zugferd_profile' => ZugferdProfileEnum::class,
         ];
     }
 
@@ -187,7 +210,6 @@ class Invoice extends Model implements MediableInterface
         $groupedByCategoryTimes = $times ? TimeController::groupByCategoryAndDate($times) : [];
         $timesSum = $times ? $times->sum('mins') : 0;
 
-        $taxes = $invoice->taxBreakdown($invoice->lines);
         $invoice->linked_invoices = $invoice->lines->filter(function ($line) {
             return $line->type_id === 9;
         });
@@ -196,7 +218,12 @@ class Invoice extends Model implements MediableInterface
             return $line->type_id !== 9;
         });
 
+        $taxes = $invoice->taxBreakdown($invoice->lines);
+
+        $settings = app(ZugferdSettings::class);
+
         $bankAccount = BankAccount::orderBy('pos')->first();
+        $pdfFile = FileHelperService::getTempFile('pdf');
 
         $bank_account = (object) [
             'iban' => $bankAccount->iban,
@@ -206,32 +233,187 @@ class Invoice extends Model implements MediableInterface
         ];
 
         $pdfConfig = [];
-        $pdfConfig['pdfA'] = !$invoice->is_draft;
+        $pdfConfig['pdfA'] = ! $invoice->is_draft;
         $pdfConfig['hide'] = true;
         $pdfConfig['watermark'] = $watermark ?: ($invoice->is_draft ? 'ENTWURF' : false);
+
+        // Der dem "alte" QR-Code verletzte die PDF/A-Konformität (PDF/A-3). OpenCode-Workaround
+
+        $qrCodeSvg = null;
+        if ($invoice->qr_code) {
+            $qrPayment = new QrPayment($bankAccount->iban);
+            $qrPayment
+                ->setBic($bankAccount->bic)
+                ->setBeneficiaryName($bankAccount->account_owner)
+                ->setAmount($invoice->amount_gross)
+                ->setCurrency('EUR')
+                ->setRemittanceText('RG-'.$invoice->formated_invoice_number.' K-'.number_format($invoice->contact->debtor_number,
+                    0, ',', '.'));
+            $qrString = $qrPayment->getQrString();
+            $qrCode = new QrCode($qrString, new Encoding('UTF-8'), ErrorCorrectionLevel::Low, 100, 0,
+                RoundBlockSizeMode::None);
+            $qrCodeSvg = (new SvgWriter)->write($qrCode)->getString();
+        }
 
         $pdf = PdfService::createPdf('invoice', 'pdf.invoice.index',
             [
                 'invoice' => $invoice,
                 'taxes' => $taxes,
                 'bank_account' => $bank_account,
+                'qr_code_svg' => $qrCodeSvg,
                 'groupedTimes' => $groupedTimes,
                 'groupedByCategoryTimes' => $groupedByCategoryTimes,
                 'timesSum' => $timesSum,
             ], $pdfConfig);
 
-        return $pdf;
+        // PdfService::fixPdfForPdfA($pdf);
+
+        try {
+            $invoiceAddress = $invoice->invoice_address;
+
+            $zip = '';
+            $city = '';
+            if (isset($invoiceAddress[2])) {
+                $parts = explode(' ', $invoiceAddress[2], 2);
+                $zip = $parts[0] ?? '';
+                $city = $parts[1] ?? '';
+            }
+
+            $contact = Contact::find($settings->seller_contact_id);
+
+            /*
+             * Wir haben im XML eine Warnung, die wird aber ignorieren können, solange kein B2G
+             *  Das Element "Specification identifier" (BT-24) soll syntaktisch der Kennung des Standards XRechnung entsprechen.
+             *  [ID BR-DE-21] from /xslt/XR_30/XRechnung-CII-validation.xslt)
+             *
+             * [PEPPOL-EN16931-R008]-Document MUST not contain empty elements. (still status warning) from /xslt/ZF_250/FACTUR-X_EN16931.xslt)
+             * ist nur eine Warnung und es gibt noch keine Lösung und kann erst einmal ignoriert werden.
+             *
+             */
+
+            $document = ZugferdLaravel::createDocumentInEN16931Profile()
+                ->setDocumentInformation(
+                    $invoice->formated_invoice_number,
+                    ZugferdInvoiceType::INVOICE,
+                    $invoice->issued_on,
+                    ZugferdCurrencyCodes::EURO,
+                    'Rechnung'
+                )
+                ->setDocumentBusinessProcess('urn:fdc:peppol.eu:2017:poacc:billing:01:1.0')
+                ->addDocumentNote($settings->document_note, '', 'REG')
+                ->addDocumentPaymentTerm($settings->payment_term, $invoice->due_on)
+                ->setDocumentSeller($settings->seller)
+                ->setDocumentSellerCommunication(ZugferdElectronicAddressScheme::UNECE3155_EM, $settings->seller_email)
+                ->addDocumentSellerGlobalId($settings->global_id, $settings->global_id_type)
+                ->addDocumentSellerTaxRegistration('VA', $settings->seller_tax_vat)
+                ->setDocumentSellerAddress(
+                    $settings->seller_address_line_1,
+                    $settings->seller_address_line_2,
+                    $settings->seller_address_line_3,
+                    $settings->seller_zip,
+                    $settings->seller_city,
+                    $settings->seller_country_iso
+                )
+                ->setDocumentSellerContact($contact->full_name, $contact->department, $contact->primary_phone, '',
+                    $contact->primary_mail)
+                ->setDocumentBuyer($invoice->contact->name ?? $invoice->contact?->full_name ?? '',
+                    $invoice->contact->formated_debtor_number)
+                ->setDocumentBuyerReference($invoice->contact->vat_id)
+                ->setDocumentBuyerCommunication(ZugferdElectronicAddressScheme::UNECE3155_EM,
+                    $invoice->contact->primary_mail)
+                ->setDocumentBuyerAddress(
+                    $invoiceAddress[1] ?? '',
+                    '',
+                    '',
+                    $zip,
+                    $city,
+                    'DE'
+
+                );
+
+            foreach ($invoice->lines as $index => $line) {
+                $document->addNewPosition((string) ($index + 1));
+                $document->setDocumentPositionProductDetails(
+                    $line->text ?? 'Position',
+                );
+                $document->setDocumentPositionBillingPeriod($line->service_period_begin, $line->service_period_end);
+                $document->setDocumentPositionNetPrice(round($line->price, 2));
+                $document->setDocumentPositionQuantity($line->quantity, 'C62');
+                $document->addDocumentPositionTax(
+                    'S',
+                    'VAT',
+                    $line->rate?->rate ?? 0
+                );
+                $document->setDocumentPositionLineSummation(round($line->amount, 2));
+            }
+
+            foreach ($taxes as $taxData) {
+                $document->addDocumentTax(
+                    ZugferdVatCategoryCodes::STAN_RATE,
+                    ZugferdVatTypeCodes::VALUE_ADDED_TAX,
+                    round($taxData['amount'], 2),
+                    round($taxData['sum'], 2),
+                    $taxData['tax_rate']['rate']);
+            }
+
+            $lineTotal = round($invoice->lines->sum(fn ($l) => round($l->amount, 2)), 2);
+            $taxTotal = round(collect($taxes)->sum(fn ($t) => round($t['sum'], 2)), 2);
+
+            $document->setDocumentSummation(
+                round($lineTotal + $taxTotal, 2),
+                round($lineTotal + $taxTotal, 2),
+                $lineTotal,
+                0,
+                0,
+                $lineTotal,
+                $taxTotal
+            );
+
+            $purposeText = 'RG-'.$invoice->formated_invoice_number.' K-'.number_format($invoice->contact->debtor_number,
+                0, ',', '.');
+
+            if ($bankAccount) {
+                $document->addDocumentPaymentMeanToCreditTransfer(
+                    $bankAccount->iban,
+                    $bankAccount->account_owner,
+                    null,
+                    $bankAccount->bic,
+                    $purposeText
+                );
+            }
+
+            ZugferdLaravel::buildMergedPdfByDocumentBuilder($document, $pdf, $pdfFile);
+
+            if (! $invoice->is_draft) {
+
+                $fileName = Str::replace('.pdf', '', $invoice->filename);
+
+                $media = MediaUploader::fromSource($pdfFile)
+                    ->useFilename($fileName)
+                    ->toDestination('s3_private', 'invoices/'.$invoice->issued_on->format('Y'))
+                    ->upload();
+                $invoice->attachMedia($media, 'pdf');
+            }
+
+            return $pdfFile;
+
+        } catch (Throwable $e) {
+            Log::warning('ZUGFeRD generation failed, falling back to plain PDF: '.$e->getMessage());
+
+            file_put_contents($pdfFile, $pdf);
+        }
+
+        return $pdfFile;
     }
 
     public function taxBreakdown(Collection $invoiceLines): array
     {
         $groupedEntries = [];
         foreach ($invoiceLines->groupBy('tax_rate_id') as $key => $value) {
-            $groupedEntries[$key]['sum'] = $value->sum('tax');
-            $groupedEntries[$key]['amount'] = $value->sum('amount');
+            $groupedEntries[$key]['sum'] = $value->sum(fn ($line) => round($line->tax, 2));
+            $groupedEntries[$key]['amount'] = $value->sum(fn ($line) => round($line->amount, 2));
             $groupedEntries[$key]['tax_rate'] = $value->first()->toArray()['rate'];
             $groupedEntries[$key]['tax_rate_id'] = $value->first()->toArray()['id'];
-            // $sum = $sum + $groupedEntries[$key]['sum'];
         }
 
         return $groupedEntries;
@@ -432,10 +614,10 @@ class Invoice extends Model implements MediableInterface
                 'unit' => $line['unit'] ?? '',
                 'tax_rate_id' => $line['tax_rate_id'] ?? null,
                 'text' => $line['text'] ?? '',
-                'price' => $line['price'] ?? 0,
-                'amount' => $amount,
+                'price' => round($line['price'], 2) ?? 0,
+                'amount' => round($amount, 2),
                 'tax_rate' => $taxRate->rate ?? 0,
-                'tax' => $amount / 100 * $taxRate->rate,
+                'tax' => round($amount / 100 * $taxRate->rate, 2),
                 'pos' => $line['type_id'] === 9 ? 999 : $line['pos'] ?? $index,
                 'service_period_begin' => $servicePeriodBegin,
                 'service_period_end' => $servicePeriodEnd,

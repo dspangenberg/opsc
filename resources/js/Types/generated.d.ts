@@ -243,6 +243,8 @@ phones: Array<App.Data.ContactPhoneData> | null;
 sales: App.Data.SalesData | null;
 addresses: Array<App.Data.ContactAddressData> | null;
 primary_contact_id: number | null;
+zugferd_profile: App.Enums.ZugferdProfileEnum | null;
+zugferd_route_id: string | null;
 };
 export type ContactMailData = {
 id: number | null;
@@ -435,6 +437,9 @@ offer: App.Data.OfferData | null;
 dunning_days: number;
 dunning_level: number;
 notables: Array<App.Data.NoteableData> | null;
+zugferd_profile: App.Enums.ZugferdProfileEnum;
+zugferd_route_id: string | null;
+is_zugferd: boolean;
 };
 export type InvoiceLineData = {
 id: number | null;
@@ -824,4 +829,5 @@ declare namespace App.Enums {
 export type InvoiceRecurringEnum = 'days' | 'weeks' | 'months' | 'years';
 export type OfferStatusEnum = 'pending' | 'accepted' | 'rejected' | 'postponed' | 'extended' | 'canceled';
 export type PagebreakEnum = 'after' | 'before' | 'both' | 'none';
+export type ZugferdProfileEnum = 'zugferd' | 'xrechnung3';
 }

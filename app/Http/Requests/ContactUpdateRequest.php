@@ -7,7 +7,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ZugferdProfileEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ContactUpdateRequest extends FormRequest
 {
@@ -41,11 +43,17 @@ class ContactUpdateRequest extends FormRequest
                 'required_if:is_debtor,true',
                 'required_if:is_creditor,true',
                 'nullable',
-                'exists_if_not_empty:taxes,id'
+                'exists_if_not_empty:taxes,id',
             ],
 
             'payment_deadline_id' => ['nullable', 'exists_if_not_empty:payment_deadlines,id'],
             'has_dunning_block' => ['required', 'boolean'],
+
+            'zugferd_route_id' => ['nullable', 'string'],
+            'zugferd_profile' => [
+                'required',
+                Rule::enum(ZugferdProfileEnum::class),
+            ],
 
             // E-Mail-Validierung hinzufügen
             'mails' => ['nullable', 'array'],

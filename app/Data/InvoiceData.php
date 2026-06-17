@@ -8,6 +8,7 @@
 namespace App\Data;
 
 use App\Enums\InvoiceRecurringEnum;
+use App\Enums\ZugferdProfileEnum;
 use DateTime;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Attributes\WithTransformer;
@@ -118,7 +119,11 @@ class InvoiceData extends Data
         public readonly int $dunning_level,
 
         /** @var NoteableData[] */
-        public readonly ?array $notables
+        public readonly ?array $notables,
+
+        public readonly ZugferdProfileEnum $zugferd_profile,
+        public readonly ?string $zugferd_route_id,
+        public readonly bool $is_zugferd,
     ) {}
 
     public function defaultWrap(): string
