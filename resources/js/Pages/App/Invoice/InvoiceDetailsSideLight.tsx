@@ -137,7 +137,7 @@ export const InvoiceDetailsSideLight: FC<InvoiceDetailsSideProps> = ({
           <DataCardField variant="vertical" label="Zusatztext" value={invoice.additional_text} />
         </DataCardSection>
         {invoice.is_zugferd && (
-          <DataCardSection title="Zugpferd">
+          <DataCardSection title="ZUGFeRD">
             <DataCardFieldGroup className="grid grid-cols-2">
               <DataCardField variant="vertical" label="Profil" value={zugferdProfile} />
               <DataCardField

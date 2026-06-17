@@ -7,7 +7,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ZugferdProfileEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class InvoiceStoreRequest extends FormRequest
 {
@@ -21,6 +23,14 @@ class InvoiceStoreRequest extends FormRequest
                 'required_if:invoice,service_period_begin', 'date', 'date_format:d.m.Y',
                 'after_or_equal:service_period_begin',
             ],
+            'zugferd_route_id' => ['nullable', 'string'],
+            'zugferd_profile' => [
+                'nullable',
+                'required_if:is_zugferd,true',
+                'required_if:is_zugferd,1',
+                Rule::enum(ZugferdProfileEnum::class),
+            ],
+            'is_zugferd' => ['required', 'boolean'],
             'type_id' => ['required', 'exists:invoice_types,id'],
             'contact_id' => ['required', 'exists:contacts,id'],
             'invoice_contact_id' => ['nullable', 'exists_if_not_empty:contacts,id'],

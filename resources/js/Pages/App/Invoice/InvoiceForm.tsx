@@ -12,7 +12,6 @@ import { FormDatePicker } from '@/Components/twc-ui/form-date-picker'
 import { FormDateRangePicker } from '@/Components/twc-ui/form-date-range-picker'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormNumberField } from '@/Components/twc-ui/form-number-field'
-import { FormRadioGroup } from '@/Components/twc-ui/form-radio-group'
 import { FormSelect } from '@/Components/twc-ui/form-select'
 import { FormTextArea } from '@/Components/twc-ui/form-text-area'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
@@ -75,14 +74,6 @@ export const InvoiceForm: React.FC<Props> = ({
     []
   )
 
-  const zugferdProfileOptions = useMemo(
-    () => [
-      { name: 'Zugferd 3', id: 'zugferd' },
-      { name: 'XRechnung 3', id: 'xrechnung' }
-    ],
-    []
-  )
-
   const handleCancel = async () => {
     if (form.isDirty) {
       const promise = await AlertDialog.call({
@@ -139,7 +130,7 @@ export const InvoiceForm: React.FC<Props> = ({
               {...form.register('type_id')}
             />
             <div className="pt-1">
-              <Checkbox {...form.registerCheckbox('is_zugferd')}>Zugferd-Rechnung</Checkbox>
+              <Checkbox {...form.registerCheckbox('is_zugferd')}>ZUGFeRD-Rechnung</Checkbox>
             </div>
           </div>
           <div className="col-span-5">
@@ -154,7 +145,7 @@ export const InvoiceForm: React.FC<Props> = ({
             <>
               <div className="col-span-5">
                 <FormTextField
-                  label="Zugferd Leitweg-ID"
+                  label="ZUGFeRD Leitweg-ID"
                   isDisabled={!invoice.is_draft}
                   {...form.register('zugferd_route_id')}
                 />
@@ -162,7 +153,7 @@ export const InvoiceForm: React.FC<Props> = ({
               <div className="col-span-7">
                 <FormSelect
                   {...form.register('zugferd_profile')}
-                  label="Zugferdprofil"
+                  label="ZUGFeRD-Profil"
                   items={zugferd_profiles}
                   isDisabled={!invoice.is_draft}
                 />

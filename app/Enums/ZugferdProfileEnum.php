@@ -13,7 +13,7 @@ enum ZugferdProfileEnum: string
     public static function labels(): array
     {
         return [
-            'zugferd' => ' EN16931 (COMFORT)',
+            'zugferd' => 'EN16931 (COMFORT)',
             'xrechnung3' => 'XRechnung 3',
         ];
     }
