@@ -444,6 +444,8 @@ class InvoiceController extends Controller
     {
         // $file = '/Invoicing/Invoices/'.$invoice->issued_on->format('Y').'/'.$invoice->filename;
 
+        // TODO: Nach Abschluss der Zugfert-Implementierung wieder auf pdf anstatt pdf4x setzen
+
         if ($invoice->hasMedia('pdfx')) {
             $media = $invoice->firstMedia('pdf');
 

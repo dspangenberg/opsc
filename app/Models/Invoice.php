@@ -632,7 +632,7 @@ class Invoice extends Model implements MediableInterface
 
     public function getAmountPaidAttribute(): float
     {
-        return round($this->payable_sum_amount, 2);
+        return round($this->payable_sum_amount ?: 0, 2);
     }
 
     public function getAmountOpenAttribute(): float

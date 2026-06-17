@@ -129,7 +129,7 @@ class ZugferdService
     public function setBuyerData(): void
     {
 
-        $addressLines = explode('\n', $this->invoice->contact->getInvoiceAddress()->address);
+        $addressLines = explode("\n", $this->invoice->contact->getInvoiceAddress()->address);
 
         $this->xmlDoc
             ->setDocumentBuyer($this->invoice->contact->name ?? $this->invoice->contact?->full_name ?? '', $this->invoice->contact->formated_debtor_number)
