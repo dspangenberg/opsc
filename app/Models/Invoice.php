@@ -596,7 +596,13 @@ class Invoice extends Model implements MediableInterface
     public function getAmountNetAttribute(): float
     {
         if ($this->relationLoaded('lines') && $this->lines->isNotEmpty()) {
-            return round($this->lines->sum(fn ($line) => round($line->amount ?? 0, 2)), 2);
+            $amount = $this->lines->sum(fn ($line) => round($line->amount ?? 0, 2));
+
+            if (isset($this->linked_invoices) && $this->linked_invoices->isNotEmpty()) {
+                $amount += $this->linked_invoices->sum(fn ($line) => round($line->amount ?? 0, 2));
+            }
+
+            return round($amount, 2);
         }
 
         return round($this->lines_sum_amount ?: 0, 2);
@@ -605,7 +611,13 @@ class Invoice extends Model implements MediableInterface
     public function getAmountTaxAttribute(): float
     {
         if ($this->relationLoaded('lines') && $this->lines->isNotEmpty()) {
-            $taxBreakdown = $this->taxBreakdown($this->lines);
+            $allLines = $this->lines;
+
+            if (isset($this->linked_invoices) && $this->linked_invoices->isNotEmpty()) {
+                $allLines = $allLines->merge($this->linked_invoices);
+            }
+
+            $taxBreakdown = $this->taxBreakdown($allLines);
 
             return round(collect($taxBreakdown)->sum(fn ($t) => $t['sum']), 2);
         }

@@ -36,7 +36,8 @@ class ZugferdService
     public function setSellerData(): void
     {
         $contact = Contact::find($this->settings->seller_contact_id);
-        $this->xmlDoc->addDocumentNote($this->settings->document_note, '', 'REG')
+        $this->xmlDoc
+            ->addDocumentNote($this->settings->document_note, '', 'REG')
             ->addDocumentPaymentTerm($this->settings->payment_term, $this->invoice->due_on)
             ->setDocumentSeller($this->settings->seller)
             ->setDocumentSellerCommunication(ZugferdElectronicAddressScheme::UNECE3155_EM, $this->settings->seller_email)
@@ -76,19 +77,30 @@ class ZugferdService
 
     public function getLinkedInvoices(): Collection
     {
-        return $this->invoice->lines->filter(function ($line) {
-            return $line->type_id === 9;
-        });
+        return $this->invoice->linked_invoices ?? collect();
     }
 
     public function getPrepaidAmount(): float
     {
         $prepaidAmount = 0;
         foreach ($this->getLinkedInvoices() as $invoice) {
-            $prepaidAmount += round($invoice->amount, 2);
+            $prepaidAmount += round($invoice->amount + $invoice->tax, 2);
         }
 
-        return round($prepaidAmount, 2);
+        return round(abs($prepaidAmount), 2);
+    }
+
+    public function getPrepaidInvoices(): void
+    {
+        if ($this->getLinkedInvoices()->isNotEmpty()) {
+            foreach ($this->getLinkedInvoices() as $invoice) {
+                $this->xmlDoc->addDocumentInvoiceReferencedDocument(
+                    $invoice->linked_invoice->formated_invoice_number,
+                    null,                                      // BT-X-555: optionaler Typ-Code
+                    $invoice->linked_invoice->issued_on,
+                );
+            }
+        }
     }
 
     public function setDocumentPositions(): void
@@ -165,7 +177,7 @@ class ZugferdService
 
         $this->xmlDoc->setDocumentSummation(
             round($lineTotal + $taxTotal, 2),
-            round($lineTotal + $taxTotal - $this->getPrepaidAmount(), 2),
+            round(($lineTotal + $taxTotal) - $this->getPrepaidAmount(), 2),
             $lineTotal,
             0,
             0,
@@ -200,14 +212,14 @@ class ZugferdService
             $this->xmlDoc->setDocumentBusinessProcess('urn:fdc:peppol.eu:2017:poacc:billing:01:1.0');
         }
 
-        $this->xmlDoc->setDocumentInformation(
-            $invoice->formated_invoice_number,
-            ZugferdInvoiceType::INVOICE,
-            $invoice->issued_on,
-            ZugferdCurrencyCodes::EURO,
-            'Rechnung'
-        )
-            ->addDocumentNote($this->settings->document_note, '', 'REG')
+        $this->xmlDoc
+            ->setDocumentInformation(
+                $invoice->formated_invoice_number,
+                ZugferdInvoiceType::INVOICE,
+                $invoice->issued_on,
+                ZugferdCurrencyCodes::EURO,
+                'Rechnung'
+            )
             ->addDocumentPaymentTerm($this->settings->payment_term, $this->invoice->due_on);
 
         if ($this->invoice->service_period_begin && $this->invoice->service_period_end) {
@@ -220,6 +232,7 @@ class ZugferdService
         $this->getTaxBreakdown();
         $this->getSummation();
         $this->getPaymentInformation();
+        $this->getPrepaidInvoices();
 
         ZugferdLaravel::buildMergedPdfByDocumentBuilder($this->xmlDoc, $orgPdfFile, $this->pdfFileName);
 
