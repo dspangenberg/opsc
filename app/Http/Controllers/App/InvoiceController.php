@@ -212,9 +212,11 @@ class InvoiceController extends Controller
             ->load('contact')
             ->load('project')
             ->load('payment_deadline')
-            ->load(['parent_invoice' => function ($query) {
-                $query->select('id', 'issued_on', 'invoice_number');
-            }])
+            ->load([
+                'parent_invoice' => function ($query) {
+                    $query->select('id', 'issued_on', 'invoice_number');
+                },
+            ])
             ->load('offer')
             ->load('type')
             ->load([
@@ -442,7 +444,9 @@ class InvoiceController extends Controller
     {
         // $file = '/Invoicing/Invoices/'.$invoice->issued_on->format('Y').'/'.$invoice->filename;
 
-        if ($invoice->hasMedia('pdf')) {
+        // TODO: Nach Abschluss der Zugfert-Implementierung wieder auf pdf anstatt pdf4x setzen
+
+        if ($invoice->hasMedia('pdfx')) {
             $media = $invoice->firstMedia('pdf');
 
             if ($media) {
@@ -730,13 +734,14 @@ class InvoiceController extends Controller
 
         $taxRate = TaxRate::findOrFail($tax->default_rate_id);
         $invoice = Invoice::create($data);
+        $amount = round($request->validated('amount'), 2);
         $invoice->lines()->create([
             'pos' => 1,
             'type_id' => 3,
             'text' => 'Externe Rechnung',
-            'amount' => $request->validated('amount'),
+            'amount' => $amount,
             'tax_id' => $tax->id,
-            'tax' => $request->validated('amount') / 100 * $taxRate->rate,
+            'tax' => round($amount / 100 * $taxRate->rate, 2),
             'tax_rate_id' => $taxRate->id,
         ]);
 
@@ -867,8 +872,10 @@ class InvoiceController extends Controller
             ]);
     }
 
-    public function sendByEmailStore(SendEmailRequest $request, Invoice $invoice): \Symfony\Component\HttpFoundation\RedirectResponse
-    {
+    public function sendByEmailStore(
+        SendEmailRequest $request,
+        Invoice $invoice
+    ): \Symfony\Component\HttpFoundation\RedirectResponse {
         $template = EmailTemplate::where('name', 'invoice')->first();
         $template->body = $request->validated('body');
         $template->subject = $request->validated('subject');
@@ -893,7 +900,8 @@ class InvoiceController extends Controller
             $request->validated('city'), $data);
 
         if (! $sent) {
-            return Inertia::flash('toast', ['type' => 'error', 'message' => 'E-Mail konnte nicht versendet werden.'])->back();
+            return Inertia::flash('toast',
+                ['type' => 'error', 'message' => 'E-Mail konnte nicht versendet werden.'])->back();
         }
 
         if (! $invoice->sent_at) {

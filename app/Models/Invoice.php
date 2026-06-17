@@ -4,10 +4,9 @@ namespace App\Models;
 
 use App\Enums\InvoiceRecurringEnum;
 use App\Enums\ZugferdProfileEnum;
-use App\Facades\FileHelperService;
 use App\Facades\PdfService;
+use App\Facades\ZugferdService;
 use App\Http\Controllers\App\TimeController;
-use App\Settings\ZugferdSettings;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeInterface;
@@ -18,12 +17,6 @@ use Endroid\QrCode\QrCode;
 use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\SvgWriter;
 use Exception;
-use horstoeko\zugferd\codelists\ZugferdCurrencyCodes;
-use horstoeko\zugferd\codelists\ZugferdElectronicAddressScheme;
-use horstoeko\zugferd\codelists\ZugferdInvoiceType;
-use horstoeko\zugferd\codelists\ZugferdVatCategoryCodes;
-use horstoeko\zugferd\codelists\ZugferdVatTypeCodes;
-use horstoeko\zugferdlaravel\Facades\ZugferdLaravel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -31,7 +24,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Support\Facades\Log;
 use MohamedSaid\Notable\Notable;
 use MohamedSaid\Notable\Traits\HasNotables;
 use Plank\Mediable\Facades\MediaUploader;
@@ -43,7 +35,6 @@ use rikudou\EuQrPayment\QrPayment;
 use Spatie\Holidays\Countries\Germany;
 use Spatie\Holidays\Holidays;
 use Str;
-use Throwable;
 
 /**
  * @property-read Contact|null $contact
@@ -151,6 +142,7 @@ class Invoice extends Model implements MediableInterface
         'document_number',
         'dunning_days',
         'dunning_level',
+        'purpose',
     ];
 
     protected function casts(): array
@@ -220,10 +212,7 @@ class Invoice extends Model implements MediableInterface
 
         $taxes = $invoice->taxBreakdown($invoice->lines);
 
-        $settings = app(ZugferdSettings::class);
-
         $bankAccount = BankAccount::orderBy('pos')->first();
-        $pdfFile = FileHelperService::getTempFile('pdf');
 
         $bank_account = (object) [
             'iban' => $bankAccount->iban,
@@ -266,152 +255,32 @@ class Invoice extends Model implements MediableInterface
                 'timesSum' => $timesSum,
             ], $pdfConfig);
 
-        // PdfService::fixPdfForPdfA($pdf);
-
-        try {
-            $invoiceAddress = $invoice->invoice_address;
-
-            $zip = '';
-            $city = '';
-            if (isset($invoiceAddress[2])) {
-                $parts = explode(' ', $invoiceAddress[2], 2);
-                $zip = $parts[0] ?? '';
-                $city = $parts[1] ?? '';
-            }
-
-            $contact = Contact::find($settings->seller_contact_id);
-
-            /*
-             * Wir haben im XML eine Warnung, die wird aber ignorieren können, solange kein B2G
-             *  Das Element "Specification identifier" (BT-24) soll syntaktisch der Kennung des Standards XRechnung entsprechen.
-             *  [ID BR-DE-21] from /xslt/XR_30/XRechnung-CII-validation.xslt)
-             *
-             * [PEPPOL-EN16931-R008]-Document MUST not contain empty elements. (still status warning) from /xslt/ZF_250/FACTUR-X_EN16931.xslt)
-             * ist nur eine Warnung und es gibt noch keine Lösung und kann erst einmal ignoriert werden.
-             *
-             */
-
-            $document = ZugferdLaravel::createDocumentInEN16931Profile()
-                ->setDocumentInformation(
-                    $invoice->formated_invoice_number,
-                    ZugferdInvoiceType::INVOICE,
-                    $invoice->issued_on,
-                    ZugferdCurrencyCodes::EURO,
-                    'Rechnung'
-                )
-                ->setDocumentBusinessProcess('urn:fdc:peppol.eu:2017:poacc:billing:01:1.0')
-                ->addDocumentNote($settings->document_note, '', 'REG')
-                ->addDocumentPaymentTerm($settings->payment_term, $invoice->due_on)
-                ->setDocumentSeller($settings->seller)
-                ->setDocumentSellerCommunication(ZugferdElectronicAddressScheme::UNECE3155_EM, $settings->seller_email)
-                ->addDocumentSellerGlobalId($settings->global_id, $settings->global_id_type)
-                ->addDocumentSellerTaxRegistration('VA', $settings->seller_tax_vat)
-                ->setDocumentSellerAddress(
-                    $settings->seller_address_line_1,
-                    $settings->seller_address_line_2,
-                    $settings->seller_address_line_3,
-                    $settings->seller_zip,
-                    $settings->seller_city,
-                    $settings->seller_country_iso
-                )
-                ->setDocumentSellerContact($contact->full_name, $contact->department, $contact->primary_phone, '',
-                    $contact->primary_mail)
-                ->setDocumentBuyer($invoice->contact->name ?? $invoice->contact?->full_name ?? '',
-                    $invoice->contact->formated_debtor_number)
-                ->setDocumentBuyerReference($invoice->contact->vat_id)
-                ->setDocumentBuyerCommunication(ZugferdElectronicAddressScheme::UNECE3155_EM,
-                    $invoice->contact->primary_mail)
-                ->setDocumentBuyerAddress(
-                    $invoiceAddress[1] ?? '',
-                    '',
-                    '',
-                    $zip,
-                    $city,
-                    'DE'
-
-                );
-
-            foreach ($invoice->lines as $index => $line) {
-                $document->addNewPosition((string) ($index + 1));
-                $document->setDocumentPositionProductDetails(
-                    $line->text ?? 'Position',
-                );
-                $document->setDocumentPositionBillingPeriod($line->service_period_begin, $line->service_period_end);
-                $document->setDocumentPositionNetPrice(round($line->price, 2));
-                $document->setDocumentPositionQuantity($line->quantity, 'C62');
-                $document->addDocumentPositionTax(
-                    'S',
-                    'VAT',
-                    $line->rate?->rate ?? 0
-                );
-                $document->setDocumentPositionLineSummation(round($line->amount, 2));
-            }
-
-            foreach ($taxes as $taxData) {
-                $document->addDocumentTax(
-                    ZugferdVatCategoryCodes::STAN_RATE,
-                    ZugferdVatTypeCodes::VALUE_ADDED_TAX,
-                    round($taxData['amount'], 2),
-                    round($taxData['sum'], 2),
-                    $taxData['tax_rate']['rate']);
-            }
-
-            $lineTotal = round($invoice->lines->sum(fn ($l) => round($l->amount, 2)), 2);
-            $taxTotal = round(collect($taxes)->sum(fn ($t) => round($t['sum'], 2)), 2);
-
-            $document->setDocumentSummation(
-                round($lineTotal + $taxTotal, 2),
-                round($lineTotal + $taxTotal, 2),
-                $lineTotal,
-                0,
-                0,
-                $lineTotal,
-                $taxTotal
-            );
-
-            $purposeText = 'RG-'.$invoice->formated_invoice_number.' K-'.number_format($invoice->contact->debtor_number,
-                0, ',', '.');
-
-            if ($bankAccount) {
-                $document->addDocumentPaymentMeanToCreditTransfer(
-                    $bankAccount->iban,
-                    $bankAccount->account_owner,
-                    null,
-                    $bankAccount->bic,
-                    $purposeText
-                );
-            }
-
-            ZugferdLaravel::buildMergedPdfByDocumentBuilder($document, $pdf, $pdfFile);
-
-            if (! $invoice->is_draft) {
-
-                $fileName = Str::replace('.pdf', '', $invoice->filename);
-
-                $media = MediaUploader::fromSource($pdfFile)
-                    ->useFilename($fileName)
-                    ->toDestination('s3_private', 'invoices/'.$invoice->issued_on->format('Y'))
-                    ->upload();
-                $invoice->attachMedia($media, 'pdf');
-            }
-
-            return $pdfFile;
-
-        } catch (Throwable $e) {
-            Log::warning('ZUGFeRD generation failed, falling back to plain PDF: '.$e->getMessage());
-
-            file_put_contents($pdfFile, $pdf);
+        if (! $invoice->is_draft && $invoice->is_zugferd) {
+            $pdf = ZugferdService::generateZugferdXml($pdf, $invoice, $taxes, $bankAccount);
         }
 
-        return $pdfFile;
+        if (! $invoice->is_draft) {
+
+            $fileName = Str::replace('.pdf', '', $invoice->filename);
+
+            $media = MediaUploader::fromSource($pdf)
+                ->useFilename($fileName)
+                ->toDestination('s3_private', 'invoices/'.$invoice->issued_on->format('Y'))
+                ->upload();
+            $invoice->attachMedia($media, 'pdf');
+        }
+
+        return $pdf;
     }
 
     public function taxBreakdown(Collection $invoiceLines): array
     {
         $groupedEntries = [];
         foreach ($invoiceLines->groupBy('tax_rate_id') as $key => $value) {
-            $groupedEntries[$key]['sum'] = $value->sum(fn ($line) => round($line->tax, 2));
-            $groupedEntries[$key]['amount'] = $value->sum(fn ($line) => round($line->amount, 2));
+            $amount = $value->sum(fn ($line) => round($line->amount, 2));
+            $rate = $value->first()->rate->rate;
+            $groupedEntries[$key]['sum'] = round($amount * $rate / 100, 2);
+            $groupedEntries[$key]['amount'] = $amount;
             $groupedEntries[$key]['tax_rate'] = $value->first()->toArray()['rate'];
             $groupedEntries[$key]['tax_rate_id'] = $value->first()->toArray()['id'];
         }
@@ -680,6 +549,13 @@ class Invoice extends Model implements MediableInterface
         return 'Entwurf '.$this->id;
     }
 
+    public function getPurposeAttribute(): string
+    {
+        $this->loadMissing('contact');
+
+        return 'RG-'.$this->formated_invoice_number.' K-'.$this->contact?->formated_debtor_number;
+    }
+
     public function getDunningDaysAttribute(): int
     {
         if ($this->amount_open > 0 && ! $this->is_draft && $this->due_on) {
@@ -719,14 +595,34 @@ class Invoice extends Model implements MediableInterface
 
     public function getAmountNetAttribute(): float
     {
+        if ($this->relationLoaded('lines') && $this->lines->isNotEmpty()) {
+            $amount = $this->lines->sum(fn ($line) => round($line->amount ?? 0, 2));
+
+            if (isset($this->linked_invoices) && $this->linked_invoices->isNotEmpty()) {
+                $amount += $this->linked_invoices->sum(fn ($line) => round($line->amount ?? 0, 2));
+            }
+
+            return round($amount, 2);
+        }
+
         return round($this->lines_sum_amount ?: 0, 2);
     }
 
     public function getAmountTaxAttribute(): float
     {
+        if ($this->relationLoaded('lines') && $this->lines->isNotEmpty()) {
+            $allLines = $this->lines;
 
-        return $this->lines_sum_tax ?: 0;
+            if (isset($this->linked_invoices) && $this->linked_invoices->isNotEmpty()) {
+                $allLines = $allLines->merge($this->linked_invoices);
+            }
 
+            $taxBreakdown = $this->taxBreakdown($allLines);
+
+            return round(collect($taxBreakdown)->sum(fn ($t) => $t['sum']), 2);
+        }
+
+        return round($this->lines_sum_tax ?: 0, 2);
     }
 
     public function getAmountGrossAttribute(): float
@@ -789,10 +685,6 @@ class Invoice extends Model implements MediableInterface
             return '';
         }
 
-        $purposeText = [];
-        $purposeText[] = 'RG-'.$this->formated_invoice_number;
-        $purposeText[] = 'K-'.number_format($this->contact->debtor_number, 0, ',', '.');
-
         $bankAccount = BankAccount::orderBy('pos')->first();
 
         $payment = new QrPayment($bankAccount->iban);
@@ -801,7 +693,7 @@ class Invoice extends Model implements MediableInterface
             ->setBeneficiaryName($bankAccount->account_owner)
             ->setAmount($this->amount_gross)
             ->setCurrency('EUR')
-            ->setRemittanceText(implode(' ', $purposeText));
+            ->setRemittanceText($this->purpose);
 
         return $payment->getQrCode()->getDataUri();
     }

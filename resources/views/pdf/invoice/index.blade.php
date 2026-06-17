@@ -32,7 +32,7 @@
         <h2>Rechnung</h2>
     @endif
 
-    @if($invoice->parent_invoice && ! $invoice->is_recurring)
+    @if($invoice->parent_invoice && ! $invoice->type_id === 5)
         <div style="margin-top: -10px;">
             <strong>
                 zur Rechnung Nr. {{ $invoice->parent_invoice->formated_invoice_number }} vom {{ $invoice->parent_invoice->issued_on?->format('d.m.Y') }}
@@ -275,7 +275,7 @@
 
             <table>
                 <tr>
-                    <td>@if($qr_code_svg) {!! str_replace('<svg ', '<svg style="width:1.5cm;" ', $qr_code_svg) !!} @elseif($invoice->qr_code) <img src="{{ $invoice->qr_code }}" style="width: 1.5cm;"> @endif</td>
+                    <td>@if($qr_code_svg) {!! str_replace('<svg ', '<svg style="width:1.5cm;margin-top:-24px;" ', $qr_code_svg) !!} @endif</td>
                     <td style="vertical-align: top; padding-left: 0.5cm; text-align: justify;">
                         Bitte überweisen Sie den Rechnungsbetrag unter Angabe der Rechnungs- und Kundennummer kurzfristig auf
                         unser Konto <strong>{{ iban_to_human_format($bank_account->iban) }}</strong> bei der
