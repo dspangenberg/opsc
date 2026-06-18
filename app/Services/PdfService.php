@@ -67,11 +67,11 @@ class PdfService
         $html = View::make($view, $data)->render();
         $tmpDir = FileHelperService::getTempFile('pdf');
 
-        $pdf = new Pdf(config('pdf.weasyprint_path'));
-        $pdf->setOptions([
+        $weasyprint = new Pdf(config('pdf.weasyprint_path'));
+        $weasyprint->setOptions([
             'uncompressed-pdf' => true,
         ]);
-        $pdf->generateFromHtml($html, $tmpDir);
+        $weasyprint->generateFromHtml($html, $tmpDir);
 
         $mpdf = new Mpdf;
 
@@ -80,7 +80,7 @@ class PdfService
         }
 
         if ($data['config']['watermark']) {
-            $mpdf->watermark_font = true; // // true führt offenbar dazu, dass Facit, also der Standardfont (?) genutzt wird
+            $mpdf->watermark_font = true; // // true führt offenbar dazu, dass Facit, also der (body-) Standardfont (?) genutzt wird
             $mpdf->showWatermarkText = true;
             $mpdf->SetWatermarkText(new WatermarkText($config['watermark']));
         }

@@ -32,7 +32,7 @@
         <h2>Rechnung</h2>
     @endif
 
-    @if($invoice->parent_invoice && ! $invoice->type_id === 5)
+    @if($invoice->parent_invoice && $invoice->type->zugferd_id === "384")
         <div style="margin-top: -10px;">
             <strong>
                 zur Rechnung Nr. {{ $invoice->parent_invoice->formated_invoice_number }} vom {{ $invoice->parent_invoice->issued_on?->format('d.m.Y') }}
@@ -287,7 +287,8 @@
             Bitte beachten Sie, dass Sie, ohne dass es einer Mahnung bedarf, spätestens in Verzug kommen, wenn Sie Ihre
             Zahlung nicht innerhalb von 30 Tagen nach Zugang dieser Rechnung leisten (§ 286 Abs. 3 BGB).
         </p>
-
+        @elseif ($invoice->parent_invoice)
+        <p><strong>Der Gutschriftbetrags wird mit unserer Rechnung {{$invoice->parent_invoice->formated_invoice_number}} verrechnet.</strong></p>
         @endif
 
         @if($groupedByCategoryTimes)

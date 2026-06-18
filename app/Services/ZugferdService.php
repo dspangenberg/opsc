@@ -37,7 +37,6 @@ class ZugferdService
         $contact = Contact::find($this->settings->seller_contact_id);
         $this->xmlDoc
             ->addDocumentNote($this->settings->document_note, '', 'REG')
-            ->addDocumentPaymentTerm($this->settings->payment_term, $this->invoice->due_on)
             ->setDocumentSeller($this->settings->seller)
             ->setDocumentSellerCommunication(ZugferdElectronicAddressScheme::UNECE3155_EM, $this->settings->seller_email)
             ->addDocumentSellerGlobalId($this->settings->global_id, $this->settings->global_id_type)
@@ -95,7 +94,7 @@ class ZugferdService
             foreach ($this->getLinkedInvoices() as $invoice) {
                 $this->xmlDoc->addDocumentInvoiceReferencedDocument(
                     $invoice->linked_invoice->formated_invoice_number,
-                    null,                                      // BT-X-555: optionaler Typ-Code
+                    null,
                     $invoice->linked_invoice->issued_on,
                 );
             }
@@ -133,6 +132,7 @@ class ZugferdService
         $this->xmlDoc
             ->setDocumentBuyer($this->invoice->contact->name ?? $this->invoice->contact?->full_name ?? '', $this->invoice->contact->formated_debtor_number)
             ->setDocumentBuyerReference($this->getBuyerReference())
+            ->addDocumentBuyerVATRegistrationNumber($this->invoice->contact->vat_id)
             ->setDocumentBuyerCommunication(ZugferdElectronicAddressScheme::UNECE3155_EM,
                 $this->invoice->contact->primary_mail)
             ->setDocumentBuyerAddress(
@@ -159,13 +159,20 @@ class ZugferdService
 
     public function getPaymentInformation(): void
     {
-        $this->xmlDoc->addDocumentPaymentMeanToCreditTransfer(
-            $this->bankAccount->iban,
-            $this->bankAccount->account_owner,
-            null,
-            $this->bankAccount->bic,
-            $this->invoice->purpose
-        );
+        if ($this->invoice->type->zugferd_id === '384') {
+            $this->xmlDoc
+                ->addDocumentPaymentMean('97', 'Der Gutschriftsbetrag wird mit der Rechnung '.$this->invoice->parent_invoice->formated_invoice_number.' verrechnet.');
+        } else {
+            $this->xmlDoc
+                ->addDocumentPaymentMeanToCreditTransfer(
+                    $this->bankAccount->iban,
+                    $this->bankAccount->account_owner,
+                    null,
+                    $this->bankAccount->bic,
+                    $this->invoice->purpose
+                )
+                ->addDocumentPaymentTerm($this->settings->payment_term, $this->invoice->due_on);
+        }
     }
 
     public function getSummation(): void
@@ -190,14 +197,17 @@ class ZugferdService
     public function generateZugferdXml(string $orgPdfFile, Invoice $invoice, array $taxes, BankAccount $bankAccount): string
     {
         /*
-            * Wir haben im XML eine Warnung, die wird aber ignorieren können, solange kein B2G
-            *  Das Element "Specification identifier" (BT-24) soll syntaktisch der Kennung des Standards XRechnung entsprechen.
-            *  [ID BR-DE-21] from /xslt/XR_30/XRechnung-CII-validation.xslt)
-            *
-            * [PEPPOL-EN16931-R008]-Document MUST not contain empty elements. (still status warning) from /xslt/ZF_250/FACTUR-X_EN16931.xslt)
-            * ist nur eine Warnung und es gibt noch keine Lösung und kann erst einmal ignoriert werden.
-            *
-            */
+        * Wir haben im XML eine Warnung, die wir aber ignorieren können, solange kein B2G
+        *  Das Element "Specification identifier" (BT-24) soll syntaktisch der Kennung des Standards XRechnung entsprechen.
+        *  [ID BR-DE-21] from /xslt/XR_30/XRechnung-CII-validation.xslt)
+        *
+        * [PEPPOL-EN16931-R008]-Document MUST not contain empty elements. (still status warning) from /xslt/ZF_250/FACTUR-X_EN16931.xslt)
+        * ist nur eine Warnung und es gibt noch keine Lösung und kann erst einmal ignoriert werden.
+        *
+        * TODO:
+        * - Bei Storno-Rechnungen müssen wir uns etwas wegen der PaymentInstructions überlegen
+        * - BuyerContact
+        */
 
         $this->invoice = $invoice;
         $this->taxes = $taxes;
@@ -206,7 +216,10 @@ class ZugferdService
 
         $this->pdfFileName = FileHelperService::getTempFile('pdf');
 
-        $this->xmlDoc = $invoice->zugferd_profile === ZugferdProfileEnum::ZUGFERD ? ZugferdLaravel::createDocumentInEN16931Profile() : ZugferdLaravel::createDocumentInXRechnung30Profile();
+        $this->xmlDoc = $invoice->zugferd_profile === ZugferdProfileEnum::ZUGFERD
+            ? ZugferdLaravel::createDocumentInEN16931Profile()
+            : ZugferdLaravel::createDocumentInXRechnung30Profile();
+
         /*
         if ($invoice->zugferd_profile === ZugferdProfileEnum::ZUGFERD) {
             $this->xmlDoc->setDocumentBusinessProcess('urn:fdc:peppol.eu:2017:poacc:billing:01:1.0');
@@ -220,11 +233,22 @@ class ZugferdService
                 $invoice->issued_on,
                 ZugferdCurrencyCodes::EURO,
                 $invoice->type->print_name
-            )
-            ->addDocumentPaymentTerm($this->settings->payment_term, $this->invoice->due_on);
+            );
 
         if ($this->invoice->service_period_begin && $this->invoice->service_period_end) {
             $this->xmlDoc->setDocumentBillingPeriod($this->invoice->service_period_begin, $this->invoice->service_period_end, '');
+        }
+
+        if ($this->invoice->additional_text) {
+            $this->xmlDoc->addDocumentNote($this->invoice->additional_text, '', 'AFB');
+        }
+
+        if ($this->invoice->type->zugferd_id === '384') {
+            $this->xmlDoc->addDocumentInvoiceReferencedDocument(
+                $invoice->parent_invoice->formated_invoice_number,
+                null,
+                $invoice->parent_invoice->issued_on,
+            );
         }
 
         $this->setSellerData();
@@ -235,10 +259,11 @@ class ZugferdService
         $this->getPaymentInformation();
         $this->getPrepaidInvoices();
 
+        /*
         if ($this->invoice->project_id) {
             $this->xmlDoc->setDocumentProcuringProject($this->invoice->project->name, $this->invoice->project->id);
         }
-
+        */
 
         ZugferdLaravel::buildMergedPdfByDocumentBuilder($this->xmlDoc, $orgPdfFile, $this->pdfFileName);
 
