@@ -134,7 +134,13 @@ export const InvoiceDetailsSideLight: FC<InvoiceDetailsSideProps> = ({
           >
             <ArrayTextField lines={invoice.invoice_address} />
           </DataCardField>
-          <DataCardField variant="vertical" label="Zusatztext" value={invoice.additional_text} />
+          <DataCardField
+            className="wrap-normal"
+            variant="vertical"
+            label="Zusatztext"
+            truncate={false}
+            value={invoice.additional_text}
+          />
         </DataCardSection>
         {invoice.is_zugferd && (
           <DataCardSection title="ZUGFeRD">

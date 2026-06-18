@@ -142,7 +142,7 @@ export const DataCardSection: FC<DataCardSectionProps> = ({
       {title && <DataCardSectionHeader title={title} addon={addon} />}
       <div
         className={cn(
-          'flex w-full flex-1 flex-col space-y-1.5 divide-y divide-border/50 truncate hyphens-auto rounded-md border border-border/50 bg-background pt-0.5 text-base',
+          'flex w-full flex-1 flex-col space-y-1.5 divide-y divide-border/50 hyphens-auto rounded-md border border-border/50 bg-background pt-0.5 text-base',
           className
         )}
       >
@@ -163,9 +163,7 @@ export const DataCardFieldGroup: FC<DataFieldGroupProps> = ({
   children,
   className = ''
 }: DataFieldGroupProps) => {
-  return (
-    <div className={cn('w-full truncate text-foreground/50 text-sm', className)}>{children}</div>
-  )
+  return <div className={cn('w-full text-foreground/50 text-sm', className)}>{children}</div>
 }
 
 interface DataCardSectionHeaderProps {
@@ -198,6 +196,7 @@ export interface DataCardFieldProps {
   label: string
   value?: string | number | null | string[]
   empty?: boolean | string
+  truncate?: boolean
 }
 
 export const DataCardField: FC<DataCardFieldProps> = ({
@@ -206,7 +205,8 @@ export const DataCardField: FC<DataCardFieldProps> = ({
   variant = 'horizontal-right',
   label,
   value,
-  className = ''
+  className = '',
+  truncate = true
 }: DataCardFieldProps) => {
   if (!value && !empty) {
     return null
@@ -215,7 +215,7 @@ export const DataCardField: FC<DataCardFieldProps> = ({
   const realEmpty = typeof empty === 'string' ? empty : ''
   const realValue = value ?? (realEmpty as string)
 
-  const props = { label, value: realValue, children, className }
+  const props = { label, value: realValue, children, className, truncate }
 
   switch (variant) {
     case 'horizontal':
@@ -244,6 +244,7 @@ export interface DataCardFieldCommonProps {
   label: string
   value?: string | number | null | string[]
   children?: ReactNode
+  truncate?: boolean
 }
 
 export const DataCardFieldHorizontal: FC<DataCardFieldCommonProps> = ({
@@ -264,12 +265,15 @@ export const DataCardFieldHorizontalRight: FC<DataCardFieldCommonProps> = ({
   label,
   value,
   children,
-  className = ''
+  className = '',
+  truncate = true
 }: DataCardFieldCommonProps) => {
   return (
     <div className={cn('flex', className)}>
       <DataCardFieldLabel label={label} className="flex-none" />
-      <div className="flex-1 text-right text-foreground">{value || children}</div>
+      <div className={cn('flex-1 text-right text-foreground', truncate ? 'truncate' : '')}>
+        {value || children}
+      </div>
     </div>
   )
 }
@@ -278,12 +282,15 @@ export const DataCardFieldVertical: FC<DataCardFieldCommonProps> = ({
   label,
   value,
   children,
-  className = ''
+  className = '',
+  truncate
 }: DataCardFieldCommonProps) => {
   return (
     <div className={cn('block w-full flex-1 px-2.5 pt-1 pb-2', className)}>
       <DataCardFieldLabel className="block" label={label} />
-      <div className="block truncate text-black text-sm">{children || value}</div>
+      <div className={cn('block text-black text-sm', truncate ? 'truncate' : '')}>
+        {children || value}
+      </div>
     </div>
   )
 }
