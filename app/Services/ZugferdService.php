@@ -10,7 +10,6 @@ use App\Models\Invoice;
 use App\Settings\ZugferdSettings;
 use horstoeko\zugferd\codelists\ZugferdCurrencyCodes;
 use horstoeko\zugferd\codelists\ZugferdElectronicAddressScheme;
-use horstoeko\zugferd\codelists\ZugferdInvoiceType;
 use horstoeko\zugferd\codelists\ZugferdVatCategoryCodes;
 use horstoeko\zugferd\codelists\ZugferdVatTypeCodes;
 use horstoeko\zugferd\ZugferdDocumentBuilder;
@@ -208,17 +207,19 @@ class ZugferdService
         $this->pdfFileName = FileHelperService::getTempFile('pdf');
 
         $this->xmlDoc = $invoice->zugferd_profile === ZugferdProfileEnum::ZUGFERD ? ZugferdLaravel::createDocumentInEN16931Profile() : ZugferdLaravel::createDocumentInXRechnung30Profile();
+        /*
         if ($invoice->zugferd_profile === ZugferdProfileEnum::ZUGFERD) {
             $this->xmlDoc->setDocumentBusinessProcess('urn:fdc:peppol.eu:2017:poacc:billing:01:1.0');
         }
+        */
 
         $this->xmlDoc
             ->setDocumentInformation(
                 $invoice->formated_invoice_number,
-                ZugferdInvoiceType::INVOICE,
+                $invoice->type->zugferd_id,
                 $invoice->issued_on,
                 ZugferdCurrencyCodes::EURO,
-                'Rechnung'
+                $invoice->type->print_name
             )
             ->addDocumentPaymentTerm($this->settings->payment_term, $this->invoice->due_on);
 
@@ -233,6 +234,11 @@ class ZugferdService
         $this->getSummation();
         $this->getPaymentInformation();
         $this->getPrepaidInvoices();
+
+        if ($this->invoice->project_id) {
+            $this->xmlDoc->setDocumentProcuringProject($this->invoice->project->name, $this->invoice->project->id);
+        }
+
 
         ZugferdLaravel::buildMergedPdfByDocumentBuilder($this->xmlDoc, $orgPdfFile, $this->pdfFileName);
 

@@ -226,7 +226,7 @@ class Invoice extends Model implements MediableInterface
         $pdfConfig['hide'] = true;
         $pdfConfig['watermark'] = $watermark ?: ($invoice->is_draft ? 'ENTWURF' : false);
 
-        // Der dem "alte" QR-Code verletzte die PDF/A-Konformität (PDF/A-3). OpenCode-Workaround
+        // TODO: Der  "alte" QR-Code verletzte die PDF/A-Konformität (PDF/A-3). OpenCode-Workaround kommt mur etwas merkwürdig vor
 
         $qrCodeSvg = null;
         if ($invoice->qr_code) {
@@ -346,6 +346,7 @@ class Invoice extends Model implements MediableInterface
         $recurringInvoice->number_range_document_numbers_id = null;
         $recurringInvoice->sent_at = null;
         $recurringInvoice->parent_id = $invoice->id;
+        $recurringInvoice->is_zugferd = true;
 
         if ($recurringInvoice->service_period_begin) {
             $parentInvoice = Invoice::find($invoice->id);
@@ -663,6 +664,7 @@ class Invoice extends Model implements MediableInterface
         $duplicatedInvoice->invoice_number = null;
         $duplicatedInvoice->number_range_document_numbers_id = null;
         $duplicatedInvoice->sent_at = null;
+        $duplicatedInvoice->is_zugferd = true;
         $duplicatedInvoice->save();
 
         $invoice->lines()->each(function ($line) use ($setParentId, $duplicatedInvoice) {

@@ -161,6 +161,7 @@ class InvoiceController extends Controller
         $invoice->recurring_interval_days = 0;
         $invoice->invoice_number = null;
         $invoice->is_external = false;
+        $invoice->is_zugferd = true;
 
         return Inertia::render('App/Invoice/InvoiceCreate')
             ->with([
