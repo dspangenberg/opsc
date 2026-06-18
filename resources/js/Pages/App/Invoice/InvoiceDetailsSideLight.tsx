@@ -7,9 +7,7 @@ import {
   DataCardContent,
   DataCardField,
   DataCardFieldGroup,
-  DataCardHeader,
-  DataCardSection,
-  DataCardSectionHeader
+  DataCardSection
 } from '@/Components/DataCard'
 import { StatsField } from '@/Components/StatsField'
 import { cn } from '@/Lib/utils'
@@ -135,7 +133,7 @@ export const InvoiceDetailsSideLight: FC<InvoiceDetailsSideProps> = ({
             <ArrayTextField lines={invoice.invoice_address} />
           </DataCardField>
           <DataCardField
-            className="wrap-normal"
+            className="whitespace-normal"
             variant="vertical"
             label="Zusatztext"
             truncate={false}

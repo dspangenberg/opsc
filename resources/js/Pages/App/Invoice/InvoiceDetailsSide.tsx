@@ -148,7 +148,13 @@ export const InvoiceDetailsSide: FC<InvoiceDetailsSideProps> = ({
           </DataCardField>
         </DataCardSection>
         <DataCardSection suppressEmptyText>
-          <DataCardField variant="vertical" label="Zusatztext" value={invoice.additional_text} />
+          <DataCardField
+            className="whitespace-normal"
+            variant="vertical"
+            label="Zusatztext"
+            truncate={false}
+            value={invoice.additional_text}
+          />
         </DataCardSection>
       </DataCardContent>
     </DataCard>
