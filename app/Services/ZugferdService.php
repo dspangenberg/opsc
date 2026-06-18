@@ -159,9 +159,9 @@ class ZugferdService
 
     public function getPaymentInformation(): void
     {
-        if ($this->invoice->type->zugferd_id === '384') {
+        if ($this->invoice->type->zugferd_id === '384' && $this->invoice->parent_invoice) {
             $this->xmlDoc
-                ->addDocumentPaymentMean('97', 'Der Gutschriftsbetrag wird mit der Rechnung '.$this->invoice->parent_invoice->formated_invoice_number.' verrechnet.');
+                ->addDocumentPaymentMean('97', 'Der Gutschriftbetrag wird mit der Rechnung '.$this->invoice->parent_invoice->formated_invoice_number.' verrechnet.');
         } else {
             $this->xmlDoc
                 ->addDocumentPaymentMeanToCreditTransfer(
@@ -243,7 +243,7 @@ class ZugferdService
             $this->xmlDoc->addDocumentNote($this->invoice->additional_text, '', 'AFB');
         }
 
-        if ($this->invoice->type->zugferd_id === '384') {
+        if ($this->invoice->type->zugferd_id === '384' && $this->invoice->parent_invoice) {
             $this->xmlDoc->addDocumentInvoiceReferencedDocument(
                 $invoice->parent_invoice->formated_invoice_number,
                 null,

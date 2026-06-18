@@ -80,7 +80,7 @@ class PdfService
         }
 
         if ($data['config']['watermark']) {
-            $mpdf->watermark_font = true; // // true führt offenbar dazu, dass Facit, also der (body-) Standardfont (?) genutzt wird
+            $mpdf->watermark_font = true; // true führt offenbar dazu, dass Facit, also der (body-) Standardfont (?) genutzt wird
             $mpdf->showWatermarkText = true;
             $mpdf->SetWatermarkText(new WatermarkText($config['watermark']));
         }

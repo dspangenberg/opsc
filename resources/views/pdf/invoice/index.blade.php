@@ -288,7 +288,7 @@
             Zahlung nicht innerhalb von 30 Tagen nach Zugang dieser Rechnung leisten (§ 286 Abs. 3 BGB).
         </p>
         @elseif ($invoice->parent_invoice)
-        <p><strong>Der Gutschriftbetrags wird mit unserer Rechnung {{$invoice->parent_invoice->formated_invoice_number}} verrechnet.</strong></p>
+        <p><strong>Der Gutschriftbetrag wird mit unserer Rechnung {{$invoice->parent_invoice->formated_invoice_number}} verrechnet.</strong></p>
         @endif
 
         @if($groupedByCategoryTimes)
