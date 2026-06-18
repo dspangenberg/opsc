@@ -260,14 +260,27 @@ class Invoice extends Model implements MediableInterface
         }
 
         if (! $invoice->is_draft) {
+            try {
+                $oldMedia = $invoice->firstMedia('pdf');
+                if ($oldMedia) {
+                    $invoice->detachMedia($oldMedia);
+                    try {
+                        $oldMedia->delete();
+                    } catch (\Throwable) {
+                        //
+                    }
+                }
 
-            $fileName = Str::replace('.pdf', '', $invoice->filename);
+                $fileName = Str::replace('.pdf', '', $invoice->filename);
 
-            $media = MediaUploader::fromSource($pdf)
-                ->useFilename($fileName)
-                ->toDestination('s3_private', 'invoices/'.$invoice->issued_on->format('Y'))
-                ->upload();
-            $invoice->attachMedia($media, 'pdf');
+                $media = MediaUploader::fromSource($pdf)
+                    ->useFilename($fileName)
+                    ->toDestination('s3_private', 'invoices/'.$invoice->issued_on->format('Y'))
+                    ->upload();
+                $invoice->attachMedia($media, 'pdf');
+            } catch (\Throwable) {
+                //
+            }
         }
 
         return $pdf;

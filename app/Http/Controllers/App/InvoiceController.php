@@ -393,7 +393,11 @@ class InvoiceController extends Controller
         if ($invoice->hasMedia('pdf')) {
             $media = $invoice->firstMedia('pdf');
             $invoice->detachMedia($media);
-            $media->delete();
+            try {
+                $media->delete();
+            } catch (Throwable) {
+                //
+            }
         }
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
@@ -443,10 +447,10 @@ class InvoiceController extends Controller
      */
     public function downloadPdf(Invoice $invoice): BinaryFileResponse|StreamedResponse
     {
-        if ($invoice->hasMedia('pdfx')) {
+        if ($invoice->hasMedia('pdf') && app()->environment('production')) {
             $media = $invoice->firstMedia('pdf');
 
-            if ($media) {
+            if ($media && $media->exists()) {
                 return response()->stream(function () use ($media) {
                     $stream = $media->stream();
                     while ($bytes = $stream->read(8192)) {
