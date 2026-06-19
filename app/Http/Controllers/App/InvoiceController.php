@@ -344,6 +344,10 @@ class InvoiceController extends Controller
         if ($existing) {
             return redirect()->route('app.invoice.details', ['invoice' => $existing->id]);
         }
+
+        $invoice->is_canceled = true;
+        $invoice->save();
+
         $duplicatedInvoice = DB::transaction(function () use ($invoice) {
             $duplicatedInvoice = Invoice::duplicateInvoice($invoice);
             $duplicatedInvoice->load('lines');

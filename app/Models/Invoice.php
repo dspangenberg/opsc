@@ -118,6 +118,7 @@ class Invoice extends Model implements MediableInterface
         'zugferd_profile',
         'zugferd_route_id',
         'is_zugferd',
+        'is_canceled',
     ];
 
     protected $attributes = [
@@ -162,6 +163,7 @@ class Invoice extends Model implements MediableInterface
             'recurring_interval' => InvoiceRecurringEnum::class,
             'is_zugferd' => 'boolean',
             'zugferd_profile' => ZugferdProfileEnum::class,
+            'is_canceled' => 'boolean',
         ];
     }
 
@@ -813,6 +815,7 @@ class Invoice extends Model implements MediableInterface
     {
         $query
             ->where('is_draft', false)
+            ->where('is_canceled', false)
             ->whereRaw('(
                 SELECT COALESCE(SUM(amount), 0) 
                 FROM invoice_lines 

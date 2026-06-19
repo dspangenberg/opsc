@@ -124,6 +124,7 @@ class InvoiceData extends Data
         public readonly ZugferdProfileEnum $zugferd_profile,
         public readonly ?string $zugferd_route_id,
         public readonly bool $is_zugferd,
+        public readonly bool $is_canceled,
     ) {}
 
     public function defaultWrap(): string
