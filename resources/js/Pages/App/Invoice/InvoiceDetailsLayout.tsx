@@ -265,6 +265,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
             title="PDF in neuem Tab öffnen"
             ellipsis
             href={route('app.invoice.pdf', { invoice: invoice.id })}
+            rel="noopener noreferrer"
             target="_blank"
           />
           <MenuItem
