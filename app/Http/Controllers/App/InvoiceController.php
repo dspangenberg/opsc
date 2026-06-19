@@ -460,8 +460,8 @@ class InvoiceController extends Controller
      */
     public function downloadPdf(Invoice $invoice): BinaryFileResponse|StreamedResponse
     {
-        if ($invoice->hasMedia('pdf') && app()->environment('production')) {
-            $media = $invoice->firstMedia('pdf');
+        if (($invoice->is_external || $invoice->hasMedia('pdf')) && app()->environment('production')) {
+            $media = $invoice->is_external ? Document::find($invoice->document_id)->firstMedia('file') : $invoice->firstMedia('pdf');
 
             if ($media && $media->exists()) {
                 return response()->stream(function () use ($media) {
@@ -478,33 +478,7 @@ class InvoiceController extends Controller
             }
         }
 
-        if ($invoice->is_external) {
-            $document = Document::find($invoice->document_id);
-            if (! $document) {
-                abort(404, 'Document not found');
-            }
-            $media = $document->firstMedia('file');
-            if (! $media) {
-                abort(404, 'Document file not found');
-            }
-
-            return response()->streamDownload(
-                function () use ($media) {
-                    $stream = $media->stream();
-                    while ($bytes = $stream->read(1024)) {
-                        echo $bytes;
-                    }
-                },
-                $document->filename,
-                [
-                    'Content-Type' => $media->mime_type,
-                    'Content-Length' => $media->size,
-                ]
-            );
-        }
-
         $pdfFile = Invoice::createOrGetPdf($invoice);
-
         return response()->inlineFile($pdfFile, $invoice->filename);
     }
 
