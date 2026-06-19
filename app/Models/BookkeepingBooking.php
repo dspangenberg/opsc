@@ -20,12 +20,18 @@ use Illuminate\Support\Collection;
  * @property-read string $document_number
  * @property-read NumberRangeDocumentNumber|null $range_document_number
  * @property-read Tax|null $tax
- *
  * @method static Builder<static>|BookkeepingBooking newModelQuery()
  * @method static Builder<static>|BookkeepingBooking newQuery()
  * @method static Builder<static>|BookkeepingBooking query()
  * @method static Builder<static>|BookkeepingBooking search($search)
- *
+ * @property-read float $amount_net
+ * @property-read string $document_number_range_prefix
+ * @method static Builder<static>|BookkeepingBooking applyDynamicFilters(\Illuminate\Http\Request $request, array $options = [])
+ * @method static Builder<static>|BookkeepingBooking applyFiltersFromObject(array|string $filters, array $options = [])
+ * @method static Builder<static>|BookkeepingBooking hidePrivate()
+ * @method static Builder<static>|BookkeepingBooking hideTransit()
+ * @method static Builder<static>|BookkeepingBooking issuedBetween($from, $to)
+ * @method static Builder<static>|BookkeepingBooking withoutCanceled()
  * @mixin Eloquent
  */
 class BookkeepingBooking extends Model

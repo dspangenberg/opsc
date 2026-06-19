@@ -6,6 +6,16 @@ use App\Enums\InboxEntryStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property InboxEntryStatus $status
+ * @property-read string $body
+ * @property-read \App\Models\User|null $processedBy
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InboxEntry newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InboxEntry newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InboxEntry query()
+ * @mixin \Eloquent
+ */
 class InboxEntry extends Model
 {
 

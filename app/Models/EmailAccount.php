@@ -4,6 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailAccount newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailAccount newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailAccount query()
+ * @mixin \Eloquent
+ */
 class EmailAccount extends Model
 {
     protected $fillable = [

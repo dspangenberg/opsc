@@ -6,6 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property-read \App\Models\BookmarkFolder|null $folder
+ * @property-read string $sidebar_title
+ * @property-read string $title
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Bookmark newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Bookmark newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Bookmark onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Bookmark query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Bookmark withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Bookmark withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Bookmark extends Model
 {
     use SoftDeletes;

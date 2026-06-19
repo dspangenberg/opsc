@@ -33,6 +33,10 @@ use Plank\Mediable\MediableCollection;
  * @method static Builder<static>|Project withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static Builder<static>|Project withMediaAndVariantsMatchAll($tags = [])
  * @method static Builder<static>|Project withMediaMatchAll(array|string  $tags = [], bool $withVariants = false)
+ * @method static \Database\Factories\ProjectFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Project onlyTrashed()
+ * @method static Builder<static>|Project withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|Project withoutTrashed()
  * @mixin Eloquent
  */
 class Project extends Model

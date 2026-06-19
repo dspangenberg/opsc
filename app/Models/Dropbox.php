@@ -5,6 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dropbox newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dropbox newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dropbox query()
+ * @mixin \Eloquent
+ */
 class Dropbox extends Model
 {
     protected $fillable = [

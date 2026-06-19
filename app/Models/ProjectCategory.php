@@ -11,6 +11,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|ProjectCategory newModelQuery()
  * @method static Builder<static>|ProjectCategory newQuery()
  * @method static Builder<static>|ProjectCategory query()
+ * @method static \Database\Factories\ProjectCategoryFactory factory($count = null, $state = [])
  * @mixin Eloquent
  */
 class ProjectCategory extends Model

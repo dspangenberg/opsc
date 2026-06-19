@@ -52,6 +52,20 @@ use Lab404\Impersonate\Models\Impersonate;
  * @method static Builder<static>|User whereProfilePhotoPath($value)
  * @method static Builder<static>|User whereRememberToken($value)
  * @method static Builder<static>|User whereUpdatedAt($value)
+ * @property-read string|null $avatar_url
+ * @property-read string|null $impersonator
+ * @property-read bool $is_impersonating
+ * @property-read string|null $pending_email
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Plank\Mediable\Media> $media
+ * @property-read int|null $media_count
+ * @method static \Plank\Mediable\MediableCollection<int, static> all($columns = ['*'])
+ * @method static \Plank\Mediable\MediableCollection<int, static> get($columns = ['*'])
+ * @method static Builder<static>|User whereHasMedia($tags = [], bool $matchAll = false)
+ * @method static Builder<static>|User whereHasMediaMatchAll($tags)
+ * @method static Builder<static>|User withMedia($tags = [], bool $matchAll = false, bool $withVariants = false)
+ * @method static Builder<static>|User withMediaAndVariants($tags = [], bool $matchAll = false)
+ * @method static Builder<static>|User withMediaAndVariantsMatchAll($tags = [])
+ * @method static Builder<static>|User withMediaMatchAll(bool $tags = [], bool $withVariants = false)
  * @mixin Eloquent
  */
 class User extends Authenticatable implements MustVerifyEmail

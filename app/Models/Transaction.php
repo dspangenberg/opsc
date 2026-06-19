@@ -24,19 +24,17 @@ use Illuminate\Support\Carbon;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Payment> $payments
  * @property-read int|null $payments_count
  * @property-read NumberRangeDocumentNumber|null $range_document_number
- *
  * @method static Builder<static>|Transaction newModelQuery()
  * @method static Builder<static>|Transaction newQuery()
  * @method static Builder<static>|Transaction query()
- *
  * @property-read BookkeepingAccount|null $account
  * @property-read float $remaining_amount
- *
  * @method static Builder<static>|Transaction applyDynamicFilters(\Illuminate\Http\Request $request, array $options = [])
  * @method static Builder<static>|Transaction applyFiltersFromObject(array|string $filters, array $options = [])
  * @method static Builder<static>|Transaction search($searchText)
  * @method static Builder<static>|Transaction hidePrivate()
- *
+ * @method static Builder<static>|Transaction hideTransit()
+ * @method static Builder<static>|Transaction issuedBetween($from, $to)
  * @mixin Eloquent
  */
 class Transaction extends Model
