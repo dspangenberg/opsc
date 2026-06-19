@@ -1,4 +1,5 @@
 import {
+  AppWindowIcon,
   CashbackEuroIcon,
   Delete02Icon,
   DocumentValidationIcon,
@@ -258,6 +259,13 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
             title="PDF herunterladen"
             ellipsis
             onAction={handleDownload}
+          />
+          <MenuItem
+            icon={AppWindowIcon}
+            title="PDF in neuem Tab öffnen"
+            ellipsis
+            href={route('app.invoice.pdf', { invoice: invoice.id })}
+            target="_blank"
           />
           <MenuItem
             icon={PrinterIcon}

@@ -205,7 +205,7 @@ class ZugferdService
         * ist nur eine Warnung und es gibt noch keine Lösung und kann erst einmal ignoriert werden.
         *
         * TODO:
-        * - Bei Storno-Rechnungen müssen wir uns etwas wegen der PaymentInstructions überlegen
+        * - Markdown aus Rechnungspostionen entfernen
         * - BuyerContact
         */
 

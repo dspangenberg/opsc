@@ -130,7 +130,9 @@ export const InvoiceForm: React.FC<Props> = ({
               {...form.register('type_id')}
             />
             <div className="pt-1">
-              <Checkbox {...form.registerCheckbox('is_zugferd')}>ZUGFeRD-Rechnung</Checkbox>
+              <Checkbox isDisabled={!invoice.is_draft} {...form.registerCheckbox('is_zugferd')}>
+                ZUGFeRD-Rechnung
+              </Checkbox>
             </div>
           </div>
           <div className="col-span-5">
@@ -145,7 +147,7 @@ export const InvoiceForm: React.FC<Props> = ({
             <>
               <div className="col-span-5">
                 <FormTextField
-                  label="ZUGFeRD Leitweg-ID"
+                  label="Leitweg-ID"
                   isDisabled={!invoice.is_draft}
                   {...form.register('zugferd_route_id')}
                 />
