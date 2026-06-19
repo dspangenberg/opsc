@@ -8,5 +8,10 @@
   },
   "dependencies": {
     "@maizzle/framework": "next"
+  },
+  "pnpm": {
+    "overrides": {
+      "nodemailer": "^9.0.1"
+    }
   }
 }
