@@ -138,6 +138,9 @@ class InvoiceController extends Controller
         ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function create(): Response
     {
         // Load all data in single queries, ordered appropriately for defaults
@@ -206,6 +209,9 @@ class InvoiceController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * @throws Exception
+     */
     public function show(Invoice $invoice): Response
     {
         $invoice
@@ -240,6 +246,9 @@ class InvoiceController extends Controller
         ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function edit(Invoice $invoice): Response
     {
         $invoice
@@ -345,9 +354,6 @@ class InvoiceController extends Controller
             return redirect()->route('app.invoice.details', ['invoice' => $existing->id]);
         }
 
-        $invoice->is_canceled = true;
-        $invoice->save();
-
         $duplicatedInvoice = DB::transaction(function () use ($invoice) {
             $duplicatedInvoice = Invoice::duplicateInvoice($invoice);
             $duplicatedInvoice->load('lines');
@@ -362,6 +368,9 @@ class InvoiceController extends Controller
                 $line->amount = $line->amount * -1;
                 $line->save();
             });
+
+            $invoice->is_canceled = true;
+            $invoice->save();
 
             return $duplicatedInvoice;
         });
@@ -499,6 +508,9 @@ class InvoiceController extends Controller
         return response()->inlineFile($pdfFile, $invoice->filename);
     }
 
+    /**
+     * @throws Exception
+     */
     public function history(Invoice $invoice): Response
     {
         $invoice
@@ -759,6 +771,9 @@ class InvoiceController extends Controller
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function createReport(InvoiceReportRequest $request): BinaryFileResponse
     {
         $invoices = Invoice::query()
@@ -877,6 +892,9 @@ class InvoiceController extends Controller
             ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function sendByEmailStore(
         SendEmailRequest $request,
         Invoice $invoice
