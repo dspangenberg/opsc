@@ -10,7 +10,6 @@ use App\Http\Controllers\App\TimeController;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeInterface;
-use Eloquent;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\QrCode;
@@ -27,69 +26,14 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use MohamedSaid\Notable\Notable;
 use MohamedSaid\Notable\Traits\HasNotables;
 use Plank\Mediable\Facades\MediaUploader;
-use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
-use Plank\Mediable\MediableCollection;
 use Plank\Mediable\MediableInterface;
 use rikudou\EuQrPayment\QrPayment;
 use Spatie\Holidays\Countries\Germany;
 use Spatie\Holidays\Holidays;
 use Str;
+use Throwable;
 
-/**
- * @property-read Contact|null $contact
- * @property-read float $amount_gross
- * @property-read float $amount_net
- * @property-read float $amount_open
- * @property-read float $amount_paid
- * @property-read float $amount_tax
- * @property-read string $document_number
- * @property-read string $filename
- * @property-read string $formated_invoice_number
- * @property-read array $invoice_address
- * @property-read string $qr_code
- * @property-read Contact|null $invoice_contact
- * @property-read Collection<int, InvoiceLine> $lines
- * @property-read int|null $lines_count
- * @property-read Contact|null $linked_invoice
- * @property-read Collection<int, Media> $media
- * @property-read int|null $media_count
- * @property-read Collection<int, Payment> $payable
- * @property-read int|null $payable_count
- * @property-read PaymentDeadline|null $payment_deadline
- * @property-read Project|null $project
- * @property-read NumberRangeDocumentNumber|null $range_document_number
- * @property-read Tax|null $tax
- * @property-read InvoiceType|null $type
- * @method static MediableCollection<int, static> all($columns = ['*'])
- * @method static Builder<static>|Invoice byYear(int $year)
- * @method static MediableCollection<int, static> get($columns = ['*'])
- * @method static Builder<static>|Invoice newModelQuery()
- * @method static Builder<static>|Invoice newQuery()
- * @method static Builder<static>|Invoice query()
- * @method static Builder<static>|Invoice whereHasMedia($tags = [], bool $matchAll = false)
- * @method static Builder<static>|Invoice whereHasMediaMatchAll($tags)
- * @method static Builder<static>|Invoice withMedia($tags = [], bool $matchAll = false, bool $withVariants = false)
- * @method static Builder<static>|Invoice withMediaAndVariants($tags = [], bool $matchAll = false)
- * @method static Builder<static>|Invoice withMediaAndVariantsMatchAll($tags = [])
- * @method static Builder<static>|Invoice withMediaMatchAll(bool $tags = [], bool $withVariants = false)
- * @method static Builder<static>|Invoice unpaid()
- * @method static Builder<static>|Invoice view($view)
- * @property-read BookkeepingBooking|null $booking
- * @property InvoiceRecurringEnum $recurring_interval
- * @property ZugferdProfileEnum $zugferd_profile
- * @property-read \App\Models\Document|null $document
- * @property-read int $dunning_days
- * @property-read int $dunning_level
- * @property-read string $purpose
- * @property-read Collection<int, Notable> $notables
- * @property-read int|null $notables_count
- * @property-read \App\Models\Offer|null $offer
- * @property-read Invoice|null $parent_invoice
- * @property-read Collection<int, \App\Models\InvoiceReminder> $reminders
- * @property-read int|null $reminders_count
- * @mixin Eloquent
- */
 class Invoice extends Model implements MediableInterface
 {
     use HasNotables, Mediable;
@@ -277,7 +221,7 @@ class Invoice extends Model implements MediableInterface
                     $invoice->detachMedia($oldMedia);
                     try {
                         $oldMedia->delete();
-                    } catch (\Throwable) {
+                    } catch (Throwable) {
                         //
                     }
                 }
@@ -289,7 +233,7 @@ class Invoice extends Model implements MediableInterface
                     ->toDestination('s3_private', 'invoices/'.$invoice->issued_on->format('Y'))
                     ->upload();
                 $invoice->attachMedia($media, 'pdf');
-            } catch (\Throwable) {
+            } catch (Throwable) {
                 //
             }
         }

@@ -35,7 +35,7 @@ const buildNavData = (isAdmin: boolean) => ({
       hasSep: true
     },
     {
-      title: 'E-Mail-Dropboxen',
+      title: 'E-Mails',
       url: route('app.inbox.index', {}, false),
       icon: MailAtSign02Icon,
       activePath: '/app/inbox',
