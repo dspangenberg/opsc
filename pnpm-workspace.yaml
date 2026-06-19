@@ -1,3 +1,10 @@
+allowBuilds:
+  canvas: true
+
+overrides:
+  dompurify: '>=3.4.0'
+  js-yaml: '>=4.2.0'
+
 minimumReleaseAgeExclude:
   - '@sentry/browser-utils@10.59.0'
   - '@sentry/browser@10.59.0'

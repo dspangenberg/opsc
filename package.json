@@ -110,14 +110,5 @@
     "ziggy-js": "^2.6.2",
     "zod": "^4.4.3"
   },
-  "packageManager": "pnpm@11.8.0",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "canvas"
-    ],
-    "overrides": {
-      "dompurify": ">=3.4.0",
-      "js-yaml": ">=4.2.0"
-    }
-  }
+  "packageManager": "pnpm@11.8.0"
 }
