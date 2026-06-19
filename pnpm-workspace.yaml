@@ -1,0 +1,9 @@
+minimumReleaseAgeExclude:
+  - '@sentry/browser-utils@10.59.0'
+  - '@sentry/browser@10.59.0'
+  - '@sentry/core@10.59.0'
+  - '@sentry/feedback@10.59.0'
+  - '@sentry/react@10.59.0'
+  - '@sentry/replay-canvas@10.59.0'
+  - '@sentry/replay@10.59.0'
+  - '@types/node@26.0.0'
