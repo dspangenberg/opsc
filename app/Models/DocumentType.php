@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DocumentType query()
- *
+ * @method static \Database\Factories\DocumentTypeFactory factory($count = null, $state = [])
  * @mixin \Eloquent
  */
 class DocumentType extends Model

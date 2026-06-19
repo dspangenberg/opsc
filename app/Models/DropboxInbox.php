@@ -5,6 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read \App\Models\Dropbox|null $dropbox
+ * @property-read array $attachments
+ * @property-read string $from
+ * @property-read string $plain_body
+ * @property-read string $subject
+ * @property-read array $to
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DropboxInbox newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DropboxInbox newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DropboxInbox query()
+ * @mixin \Eloquent
+ */
 class DropboxInbox extends Model
 {
     protected $fillable = [

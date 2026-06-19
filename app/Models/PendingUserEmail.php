@@ -5,6 +5,14 @@ namespace App\Models;
 use Illuminate\Support\Facades\URL;
 use ProtoneMedia\LaravelVerifyNewEmail\PendingUserEmail as BasePendingUserEmail;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PendingUserEmail forUser(\Illuminate\Database\Eloquent\Model $user)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PendingUserEmail newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PendingUserEmail newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PendingUserEmail query()
+ * @mixin \Eloquent
+ */
 class PendingUserEmail extends BasePendingUserEmail
 {
     public function verificationUrl(): string

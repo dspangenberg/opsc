@@ -77,6 +77,7 @@ use Torann\Hashids\Facade\Hashids;
  * @method static Builder<static>|Tenant whereUpdatedAt($value)
  * @method static Builder<static>|Tenant whereWebsite($value)
  * @method static Builder<static>|Tenant whereZip($value)
+ * @method static \Database\Factories\TenantFactory factory($count = null, $state = [])
  * @mixin Eloquent
  */
 class Tenant extends BaseTenant implements TenantWithDatabase

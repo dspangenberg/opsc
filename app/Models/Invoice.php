@@ -61,7 +61,6 @@ use Str;
  * @property-read NumberRangeDocumentNumber|null $range_document_number
  * @property-read Tax|null $tax
  * @property-read InvoiceType|null $type
- *
  * @method static MediableCollection<int, static> all($columns = ['*'])
  * @method static Builder<static>|Invoice byYear(int $year)
  * @method static MediableCollection<int, static> get($columns = ['*'])
@@ -76,9 +75,19 @@ use Str;
  * @method static Builder<static>|Invoice withMediaMatchAll(bool $tags = [], bool $withVariants = false)
  * @method static Builder<static>|Invoice unpaid()
  * @method static Builder<static>|Invoice view($view)
- *
  * @property-read BookkeepingBooking|null $booking
- *
+ * @property InvoiceRecurringEnum $recurring_interval
+ * @property ZugferdProfileEnum $zugferd_profile
+ * @property-read \App\Models\Document|null $document
+ * @property-read int $dunning_days
+ * @property-read int $dunning_level
+ * @property-read string $purpose
+ * @property-read Collection<int, Notable> $notables
+ * @property-read int|null $notables_count
+ * @property-read \App\Models\Offer|null $offer
+ * @property-read Invoice|null $parent_invoice
+ * @property-read Collection<int, \App\Models\InvoiceReminder> $reminders
+ * @property-read int|null $reminders_count
  * @mixin Eloquent
  */
 class Invoice extends Model implements MediableInterface

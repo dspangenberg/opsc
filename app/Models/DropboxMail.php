@@ -6,6 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property-read \App\Models\Dropbox|null $dropbox
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DropboxMailLink> $links
+ * @property-read int|null $links_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DropboxMail newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DropboxMail newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DropboxMail query()
+ * @mixin \Eloquent
+ */
 class DropboxMail extends Model
 {
     protected $fillable = [

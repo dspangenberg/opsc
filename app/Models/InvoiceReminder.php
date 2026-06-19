@@ -10,6 +10,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Mail\Attachment;
 
+/**
+ * @property-read string $city
+ * @property-read string $email_subject
+ * @property-read string $filename
+ * @property-read string $intro_text
+ * @property-read string $name
+ * @property-read string $outro_text
+ * @property-read string $type
+ * @property-read \App\Models\Invoice|null $invoice
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InvoiceReminder newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InvoiceReminder newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InvoiceReminder query()
+ * @mixin \Eloquent
+ */
 class InvoiceReminder extends Model implements Attachable
 {
     protected $fillable = [

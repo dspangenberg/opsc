@@ -26,7 +26,6 @@ use Plank\Mediable\MediableCollection;
  * @property-read Collection<int, Media> $media
  * @property-read int|null $media_count
  * @property-read NumberRangeDocumentNumber|null $numberRangeDocumentNumber
- *
  * @method static MediableCollection<int, static> all($columns = ['*'])
  * @method static MediableCollection<int, static> get($columns = ['*'])
  * @method static Builder<static>|Receipt newModelQuery()
@@ -38,14 +37,25 @@ use Plank\Mediable\MediableCollection;
  * @method static Builder<static>|Receipt withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static Builder<static>|Receipt withMediaAndVariantsMatchAll($tags = [])
  * @method static Builder<static>|Receipt withMediaMatchAll(bool $tags = [], bool $withVariants = false)
- *
  * @property-read BookkeepingBooking|null $booking
  * @property-read CostCenter|null $cost_center
  * @property-read float $open_amount
  * @property-read Collection<int, Payment> $payable
  * @property-read int|null $payable_count
  * @property-read NumberRangeDocumentNumber|null $range_document_number
- *
+ * @property-read Collection<int, \App\Models\BookkeepingBooking> $bookings
+ * @property-read int|null $bookings_count
+ * @property-read Collection<int, \App\Models\Payment> $payableWithoutCurrencyDifference
+ * @property-read int|null $payable_without_currency_difference_count
+ * @method static Builder<static>|Receipt applyDynamicFilters(\Illuminate\Http\Request $request, array $options = [])
+ * @method static Builder<static>|Receipt applyFiltersFromObject(array|string $filters, array $options = [])
+ * @method static Builder<static>|Receipt isUnpaid()
+ * @method static Builder<static>|Receipt issuedBetween($from, $to)
+ * @method static Builder<static>|Receipt onlyTrashed()
+ * @method static Builder<static>|Receipt search($searchText)
+ * @method static Builder<static>|Receipt withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|Receipt withoutBookings()
+ * @method static Builder<static>|Receipt withoutTrashed()
  * @mixin Eloquent
  */
 class Receipt extends Model

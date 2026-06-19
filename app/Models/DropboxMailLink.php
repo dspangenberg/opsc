@@ -6,6 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * @property-read \App\Models\DropboxMail|null $dropboxMail
+ * @property-read Model|\Eloquent $mailable
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DropboxMailLink newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DropboxMailLink newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DropboxMailLink query()
+ * @mixin \Eloquent
+ */
 class DropboxMailLink extends Model
 {
     protected $fillable = [
