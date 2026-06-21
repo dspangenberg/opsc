@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Data\ContactData;
 use App\Data\EmailAccountData;
 use App\Data\UserData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserUpdateRequest;
+use App\Models\Contact;
 use App\Models\EmailAccount;
 use App\Models\User;
+use App\Settings\GeneralSettings;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
@@ -26,30 +29,41 @@ class UserController extends Controller
     public function index()
     {
         $users = User::query()->orderBy('last_name')->orderBy('first_name')->paginate();
+
         return Inertia::render('Admin/User/UserIndex', [
             'users' => UserData::collect($users),
         ]);
     }
 
-    public function create() {
-        $user = new User();
+    public function create()
+    {
+        $user = new User;
         $user->first_name = '';
         $user->last_name = '';
         $user->email = '';
         $user->is_admin = false;
 
         $emailAccounts = EmailAccount::orderBy('email')->get();
+
         return Inertia::render('Admin/User/UserEdit', [
             'user' => UserData::from($user),
             'email_accounts' => EmailAccountData::collect($emailAccounts),
         ]);
     }
 
-    public function edit(User $user) {
+    public function edit(User $user)
+    {
+        $settings = app(GeneralSettings::class);
+        $contacts = Contact::where('company_id', $settings->contact_id)->orderBy('name')->orderBy('first_name')->get();
+
+        ray($contacts->toArray());
+
         $emailAccounts = EmailAccount::orderBy('email')->get();
+
         return Inertia::render('Admin/User/UserEdit', [
             'user' => UserData::from($user),
             'email_accounts' => EmailAccountData::collect($emailAccounts),
+            'contacts' => ContactData::collect($contacts),
         ]);
     }
 
@@ -62,7 +76,8 @@ class UserController extends Controller
      * @throws InvalidHashException
      * @throws ConfigurationException
      */
-    public function update(UserUpdateRequest $request, User $user) {
+    public function update(UserUpdateRequest $request, User $user)
+    {
         $data = $request->safe()->except('avatar', 'remove_avatar');
 
         if ($data['email'] !== $user->email) {
@@ -98,12 +113,15 @@ class UserController extends Controller
         return redirect()->route('admin.user.index');
     }
 
-    public function destroy(User $user) {
+    public function destroy(User $user)
+    {
         if ($user->id === auth()->id()) {
             Inertia::flash('toast', ['type' => 'error', 'message' => 'Du kannst Dich nicht selbst löschen.']);
+
             return redirect()->route('admin.user.index');
         }
         $user->delete();
+
         return redirect()->route('admin.user.index');
     }
 
@@ -116,7 +134,8 @@ class UserController extends Controller
      * @throws InvalidHashException
      * @throws ConfigurationException
      */
-    public function store(UserUpdateRequest $request) {
+    public function store(UserUpdateRequest $request)
+    {
         $data = $request->safe()->except('avatar');
 
         $data['password'] = Str::random(20);
@@ -141,6 +160,7 @@ class UserController extends Controller
     {
         $user->resendPendingEmailVerificationMail();
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Bestätigungs-E-Mail wurde erneut gesendet.']);
+
         return redirect()->back();
     }
 
@@ -148,13 +168,15 @@ class UserController extends Controller
     {
         $user->clearPendingEmail();
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Die Änderung der E-Mail-Adresse wurde zurückgesetzt.']);
+
         return redirect()->back();
     }
 
-    public function resetPassword(User $user) {
+    public function resetPassword(User $user)
+    {
 
         Password::sendResetLink(
-            ['email' => $user->email,]
+            ['email' => $user->email]
         );
 
         return Inertia::flash('toast', ['type' => 'success', 'message' => 'E-Mail zum Zurücksetzen des Passworts wurde gesendet.'])->back();

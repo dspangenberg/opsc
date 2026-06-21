@@ -6,25 +6,28 @@ use Spatie\LaravelSettings\Settings;
 
 class GeneralSettings extends Settings
 {
-  public string $site_name;
+    public string $site_name;
 
-  public string $company_name;
+    public string $company_name;
 
-  public bool $site_active;
+    public bool $site_active;
 
-  public string $default_currency;
+    public string $default_currency;
 
-  public string $default_language;
+    public string $default_language;
 
-  public string $timezone;
+    public string $timezone;
 
-  public ?string $pdf_global_css;
+    public ?string $pdf_global_css;
 
-  public string $logo_url;
-  public string $logo_class;
+    public string $logo_url;
 
-  public static function group(): string
-  {
-    return 'general';
-  }
+    public string $logo_class;
+
+    public string $contact_id;
+
+    public static function group(): string
+    {
+        return 'general';
+    }
 }

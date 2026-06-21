@@ -32,13 +32,13 @@ class FileHelperService
         return sys_get_temp_dir().'/'.uniqid('file_').'.'.$ext;
     }
 
-    public function createTemporaryFileFromDoc($fileName, $content): string
+    public function createTemporaryFileFromDoc($fileName, $content, $ext = '.pdf'): string
     {
         $tempFile = storage_path('app/temp');
         if (! file_exists($tempFile)) {
             mkdir($tempFile, 0755, true);
         }
-        $fileName = uniqid().'_'.$fileName.'.pdf';
+        $fileName = uniqid().'_'.$fileName.$ext;
         file_put_contents($tempFile.'/'.$fileName, $content);
         $realPath = $tempFile.'/'.$fileName;
 

@@ -6,11 +6,15 @@ use App\Data\BookmarkData;
 use App\Data\ContactData;
 use App\Data\DocumentData;
 use App\Data\DocumentTypeData;
+use App\Data\OfficeTemplateData;
 use App\Data\ProjectData;
+use App\Data\UserData;
+use App\Facades\FileHelperService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentBulkEditRequest;
 use App\Http\Requests\DocumentBulkMoveToTrashRequest;
 use App\Http\Requests\DocumentRequest;
+use App\Http\Requests\LetterCreateRequest;
 use App\Http\Requests\MultiDocUploadRequest;
 use App\Http\Requests\ReceiptUploadRequest;
 use App\Jobs\DocumentUploadJob;
@@ -19,12 +23,15 @@ use App\Models\Bookmark;
 use App\Models\Contact;
 use App\Models\Document;
 use App\Models\DocumentType;
+use App\Models\OfficeTemplate;
 use App\Models\Project;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Log;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
@@ -69,7 +76,7 @@ class DocumentController extends Controller
         $bookmarks = Bookmark::where('model', Document::class)->orderBy('name')->get();
 
         return Inertia::render('App/Document/DocumentIndex', [
-            'documents' => Inertia::scroll(fn () => DocumentData::collect($documents)),
+            'documents' => Inertia::scroll(fn() => DocumentData::collect($documents)),
             'contacts' => ContactData::collect($contacts),
             'documentTypes' => DocumentTypeData::collect($types),
             'projects' => ProjectData::collect($projects),
@@ -79,7 +86,7 @@ class DocumentController extends Controller
             'filterTypes' => DocumentTypeData::collect($filterTypes),
             'filterProjects' => ProjectData::collect($filterProjects),
             'bookmark_model' => Document::class,
-            'bookmarks' => BookmarkData::collect($bookmarks)
+            'bookmarks' => BookmarkData::collect($bookmarks),
         ]);
     }
 
@@ -108,9 +115,9 @@ class DocumentController extends Controller
         $data = $request->safe()->except('ids');
 
         // Filter out null and 0 values
-        $data = array_filter($data, fn ($value) => $value !== null && $value !== 0);
+        $data = array_filter($data, fn($value) => $value !== null && $value !== 0);
 
-        if (! empty($data)) {
+        if (!empty($data)) {
             $data['is_confirmed'] = true;
             Document::whereIn('id', $ids)->update($data);
         }
@@ -200,7 +207,7 @@ class DocumentController extends Controller
 
     public function togglePinned(Request $request, Document $document): RedirectResponse
     {
-        $document->is_pinned = ! $document->is_pinned;
+        $document->is_pinned = !$document->is_pinned;
         $document->save();
 
         $filters = $request->input('filters', []);
@@ -222,7 +229,15 @@ class DocumentController extends Controller
 
     public function edit(Document $document): Response
     {
-        $contacts = Contact::query()->with('company')->orderBy('name')->orderBy('first_name')->get();
+        $contacts = Contact::query()
+            ->with([
+                'contacts' => function ($query) {
+                    $query->with('salutation');
+                },
+            ])
+            ->with('salutation')
+            ->orderBy('name')
+            ->orderBy('first_name')->get();
         $projects = Project::query()->orderBy('name')->get();
         $documentTypes = DocumentType::query()->orderBy('name')->get();
 
@@ -234,11 +249,38 @@ class DocumentController extends Controller
         ]);
     }
 
+    public function createLetter(): Response
+    {
+        $contacts = Contact::query()->with('contacts')->where('is_org',
+            true)->where('is_archived', false)->orderBy('name')->orderBy('first_name')->get();
+        $templates = OfficeTemplate::query()->orderBy('name')->get();
+        $users = User::query()->has('contact')->with('contact')->orderBy('last_name')->get();
+
+        return Inertia::render('App/Document/DocumentCreateLetter', [
+            'templates' => OfficeTemplateData::collect($templates),
+            'contacts' => ContactData::collect($contacts),
+            'users' => UserData::collect($users),
+        ]);
+    }
+
+    public function storeLetter(LetterCreateRequest $request): BinaryFileResponse
+    {
+        $template = OfficeTemplate::find($request->template_id);
+        $media = $template->firstMedia('file');
+
+
+        $docx = FileHelperService::createTemporaryFileFromDoc('template', $media->contents(), '.docx');
+
+        ray($docx);
+
+        return response()->inlineFile($docx, 'word.docx');
+    }
+
     public function update(DocumentRequest $request, Document $document): RedirectResponse
     {
 
         $document->update($request->validated());
-        if (! $document->is_confirmed) {
+        if (!$document->is_confirmed) {
             $document->is_confirmed = true;
             $document->save();
         }
@@ -305,7 +347,7 @@ class DocumentController extends Controller
     public function multiDocUpload(MultiDocUploadRequest $request): RedirectResponse
     {
         $tempFile = storage_path('app/temp');
-        if (! file_exists($tempFile)) {
+        if (!file_exists($tempFile)) {
             mkdir($tempFile, 0755, true);
         }
         $originalName = $request->file->getClientOriginalName();
@@ -334,7 +376,7 @@ class DocumentController extends Controller
         foreach ($files as $file) {
 
             $tempFile = storage_path('app/temp');
-            if (! file_exists($tempFile)) {
+            if (!file_exists($tempFile)) {
                 mkdir($tempFile, 0755, true);
             }
 
