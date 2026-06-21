@@ -1,14 +1,11 @@
-import { AiContentGenerator01Icon, ArrowDataTransferVerticalIcon } from '@hugeicons/core-free-icons'
-import { router } from '@inertiajs/core'
 import { usePage } from '@inertiajs/react'
 import { format } from 'date-fns'
 import type * as React from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { Button } from '@/Components/twc-ui/button'
-import { Form, type FormSchema, useForm } from '@/Components/twc-ui/form'
+import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormCard } from '@/Components/twc-ui/form-card'
-import { FormCheckbox } from '@/Components/twc-ui/form-checkbox'
 import { FormComboBox } from '@/Components/twc-ui/form-combo-box'
 import { FormDatePicker } from '@/Components/twc-ui/form-date-picker'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
@@ -98,10 +95,33 @@ const DocumentCreateLetter: React.FC<Props> = ({ contacts, templates, users }) =
               <Button variant="outline" title="Zurück" />
               <Button
                 variant="default"
-                form={form.id}
-                type="submit"
+                type="button"
                 title="Speichern"
-                isLoading={form.processing}
+                onPress={() => {
+                  const el = document.createElement('form')
+                  el.method = 'POST'
+                  el.action = route('app.document.store-letter')
+                  el.style.display = 'none'
+
+                  const csrfInput = document.createElement('input')
+                  csrfInput.type = 'hidden'
+                  csrfInput.name = '_token'
+                  const meta = document.querySelector('meta[name="csrf-token"]')
+                  csrfInput.value = (meta as HTMLMetaElement)?.content ?? ''
+                  el.appendChild(csrfInput)
+
+                  Object.entries(form.data).forEach(([key, value]) => {
+                    const input = document.createElement('input')
+                    input.type = 'hidden'
+                    input.name = key
+                    input.value = String(value ?? '')
+                    el.appendChild(input)
+                  })
+
+                  document.body.appendChild(el)
+                  el.submit()
+                  document.body.removeChild(el)
+                }}
               />
             </div>
           </>

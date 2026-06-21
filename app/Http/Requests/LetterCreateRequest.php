@@ -28,6 +28,8 @@ class LetterCreateRequest extends FormRequest
             'template_id' => ['required', 'integer', 'exists:office_templates,id'],
             'recipient_id' => ['required', 'integer', 'exists:contacts,id'],
             'recipient_contact_id' => ['nullable', 'exists_if_not_empty:contacts,id'],
+            'salutation' => ['required', 'string'],
+            'subject' => ['required', 'string'],
         ];
     }
 

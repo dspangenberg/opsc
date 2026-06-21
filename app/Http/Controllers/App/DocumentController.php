@@ -9,7 +9,7 @@ use App\Data\DocumentTypeData;
 use App\Data\OfficeTemplateData;
 use App\Data\ProjectData;
 use App\Data\UserData;
-use App\Facades\FileHelperService;
+use App\Facades\OfficeService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentBulkEditRequest;
 use App\Http\Requests\DocumentBulkMoveToTrashRequest;
@@ -31,6 +31,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Log;
+use PhpOffice\PhpWord\Exception\CopyFileException;
+use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -76,7 +78,7 @@ class DocumentController extends Controller
         $bookmarks = Bookmark::where('model', Document::class)->orderBy('name')->get();
 
         return Inertia::render('App/Document/DocumentIndex', [
-            'documents' => Inertia::scroll(fn() => DocumentData::collect($documents)),
+            'documents' => Inertia::scroll(fn () => DocumentData::collect($documents)),
             'contacts' => ContactData::collect($contacts),
             'documentTypes' => DocumentTypeData::collect($types),
             'projects' => ProjectData::collect($projects),
@@ -115,9 +117,9 @@ class DocumentController extends Controller
         $data = $request->safe()->except('ids');
 
         // Filter out null and 0 values
-        $data = array_filter($data, fn($value) => $value !== null && $value !== 0);
+        $data = array_filter($data, fn ($value) => $value !== null && $value !== 0);
 
-        if (!empty($data)) {
+        if (! empty($data)) {
             $data['is_confirmed'] = true;
             Document::whereIn('id', $ids)->update($data);
         }
@@ -207,7 +209,7 @@ class DocumentController extends Controller
 
     public function togglePinned(Request $request, Document $document): RedirectResponse
     {
-        $document->is_pinned = !$document->is_pinned;
+        $document->is_pinned = ! $document->is_pinned;
         $document->save();
 
         $filters = $request->input('filters', []);
@@ -263,14 +265,14 @@ class DocumentController extends Controller
         ]);
     }
 
+    /**
+     * @throws CopyFileException
+     * @throws CreateTemporaryFileException
+     * @throws \PhpOffice\PhpWord\Exception\Exception
+     */
     public function storeLetter(LetterCreateRequest $request): BinaryFileResponse
     {
-        $template = OfficeTemplate::find($request->template_id);
-        $media = $template->firstMedia('file');
-
-
-        $docx = FileHelperService::createTemporaryFileFromDoc('template', $media->contents(), '.docx');
-
+        $docx = OfficeService::createOfficeLetter($request->validated());
         ray($docx);
 
         return response()->inlineFile($docx, 'word.docx');
@@ -280,7 +282,7 @@ class DocumentController extends Controller
     {
 
         $document->update($request->validated());
-        if (!$document->is_confirmed) {
+        if (! $document->is_confirmed) {
             $document->is_confirmed = true;
             $document->save();
         }
@@ -347,7 +349,7 @@ class DocumentController extends Controller
     public function multiDocUpload(MultiDocUploadRequest $request): RedirectResponse
     {
         $tempFile = storage_path('app/temp');
-        if (!file_exists($tempFile)) {
+        if (! file_exists($tempFile)) {
             mkdir($tempFile, 0755, true);
         }
         $originalName = $request->file->getClientOriginalName();
@@ -376,7 +378,7 @@ class DocumentController extends Controller
         foreach ($files as $file) {
 
             $tempFile = storage_path('app/temp');
-            if (!file_exists($tempFile)) {
+            if (! file_exists($tempFile)) {
                 mkdir($tempFile, 0755, true);
             }
 
