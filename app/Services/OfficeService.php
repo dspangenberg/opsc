@@ -86,11 +86,19 @@ class OfficeService
 
         $docData['letter_date'] = $data['date'];
         $docData['letter_salutation'] = $data['salutation'];
+
+        if (! $user->contact) {
+            throw new InvalidArgumentException('Benutzer hat keinen zugeordneten Kontakt.');
+        }
+
         $docData['contact'] = $user->contact->full_name;
+
         $docData['contact_phone'] = $user->contact->primary_phone !== ''
             ? $user->contact->primary_phone
             : ($user->contact->company?->primary_phone ?? '');
+
         $docData['contact_email'] = $user->contact->primary_mail;
+
         $docData['letter_subject'] = $data['subject'];
         $docData['reciepent_city'] = $address->city;
         $docData['reciepient_full_address'] = Arr::join($addressLines, "\n");
