@@ -78,22 +78,17 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
     [receipt.id, receipt.document_number]
   )
 
-  const form = useForm<ReceiptForm>(
-    'update-receipt',
-    'put',
-    route(
-      'app.bookkeeping.receipts.update',
-      {
-        receipt: receipt.id,
-        _query: { confirm: 1, load_next: 1 }
-      },
-      false
-    ),
+  const form = useForm<ReceiptForm>('update-receipt', 'put', route(
+    'app.bookkeeping.receipts.update',
     {
-      ...receipt,
-      is_reconversion: false
-    }
-  )
+      receipt: receipt.id,
+      _query: { confirm: 1, load_next: 1 }
+    },
+    false
+  ), {
+    ...receipt,
+    is_reconversion: false
+  })
 
   // Form-Daten aktualisieren wenn sich receipt Props ändern
   useEffect(() => {

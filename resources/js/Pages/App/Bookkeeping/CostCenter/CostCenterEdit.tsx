@@ -18,17 +18,12 @@ const CostCenterEdit: React.FC<Props> = ({ cost_center, bookkeeping_accounts }) 
   const title = cost_center.id ? 'Kostenstelle bearbeiten' : 'Neue Kostenstelle hinzufügen'
   const [isOpen, setIsOpen] = useState(true)
 
-  const form = useForm<App.Data.CostCenterData>(
-    'form-contact-edit-address',
-    cost_center.id ? 'put' : 'post',
-    route(
-      cost_center.id ? 'app.bookkeeping.cost-centers.update' : 'app.bookkeeping.cost-centers.store',
-      {
-        id: cost_center.id
-      }
-    ),
-    cost_center
-  )
+  const form = useForm<App.Data.CostCenterData>('form-contact-edit-address', cost_center.id ? 'put' : 'post', route(
+    cost_center.id ? 'app.bookkeeping.cost-centers.update' : 'app.bookkeeping.cost-centers.store',
+    {
+      id: cost_center.id
+    }
+  ), cost_center)
 
   const handleClose = () => {
     setIsOpen(false)

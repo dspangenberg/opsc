@@ -20,7 +20,8 @@ class UserUpdateRequest extends FormRequest
             'is_locked' => ['required', 'boolean'],
             'avatar' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:51200'],
             'remove_avatar' => ['nullable', 'boolean'],
-            'email_account_id' => ['nullable', 'exists_if_not_empty:email_accounts,id']
+            'email_account_id' => ['nullable', 'exists_if_not_empty:email_accounts,id'],
+            'contact_id' => ['nullable', 'exists_if_not_empty:contacts,id'],
         ];
     }
 

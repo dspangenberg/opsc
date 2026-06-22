@@ -32,14 +32,9 @@ interface Props extends PageProps {
 const TextModuleEdit: React.FC<Props> = ({ module }) => {
   const title = module.id ? 'Textbaustein bearbeiten' : 'Textbausteine hinzufügen'
 
-  const form = useForm<App.Data.TextModuleData>(
-    'form-offer-section-edit',
-    module.id ? 'put' : 'post',
-    route(module.id ? 'app.setting.text-module.update' : 'app.setting.text-module.store', {
-      module: module.id
-    }),
-    module
-  )
+  const form = useForm<App.Data.TextModuleData>('form-offer-section-edit', module.id ? 'put' : 'post', route(module.id ? 'app.setting.text-module.update' : 'app.setting.text-module.store', {
+    module: module.id
+  }), module)
 
   const breadcrumbs = useMemo(
     () => [

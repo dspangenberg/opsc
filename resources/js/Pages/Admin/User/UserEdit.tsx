@@ -18,6 +18,7 @@ import { FormSelect } from '@/Components/twc-ui/form-select'
 interface Props extends PageProps {
   user: App.Data.UserData
   email_accounts: App.Data.EmailAccountData[]
+  contacts: App.Data.ContactData[]
 }
 
 type UserFormData = App.Data.UserData & {
@@ -25,23 +26,18 @@ type UserFormData = App.Data.UserData & {
   remove_avatar: boolean
 }
 
-const UserEdit: React.FC<Props> = ({ user, email_accounts }) => {
+const UserEdit: React.FC<Props> = ({ user, contacts, email_accounts }) => {
   const title = user.id ? 'Benutzer*in bearbeiten' : 'Benutzer*in hinzufügen'
   const authUser = usePage().props.auth.user as App.Data.UserData
 
-  const form = useForm<UserFormData>(
-    'form-user-edit',
-    user.id ? 'put' : 'post',
-    route(user.id ? 'admin.user.update' : 'admin.user.store', {
-      user: user.id,
-      _method: user.id ? 'put' : 'post'
-    }),
-    {
-      ...user,
-      remove_avatar: false,
-      avatar: null
-    }
-  )
+  const form = useForm<UserFormData>('form-user-edit', user.id ? 'put' : 'post', route(user.id ? 'admin.user.update' : 'admin.user.store', {
+    user: user.id,
+    _method: user.id ? 'put' : 'post'
+  }), {
+    ...user,
+    remove_avatar: false,
+    avatar: null
+  })
 
   const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Zurück'
 
@@ -173,6 +169,16 @@ const UserEdit: React.FC<Props> = ({ user, email_accounts }) => {
                 items={email_accounts}
                 itemName="email"
                 {...form.register('email_account_id')}
+              />
+            </div>
+            <div className="col-span-2" />
+            <div className="col-span-11">
+              <FormSelect
+                label="Verknüpfter Kontakt"
+                isOptional
+                items={contacts}
+                itemName="reverse_full_name"
+                {...form.register('contact_id')}
               />
             </div>
           </FormGrid>

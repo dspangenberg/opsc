@@ -17,14 +17,9 @@ interface GlobalCssFormData extends Record<string, FormDataConvertible> {
 }
 
 const GlobalCssEdit: React.FC<Props> = ({ css }) => {
-  const form = useForm<GlobalCssFormData>(
-    'form-global-css-edit',
-    'put',
-    route('app.setting.global-css-update'),
-    {
-      css: css
-    }
-  )
+  const form = useForm<GlobalCssFormData>('form-global-css-edit', 'put', route('app.setting.global-css-update'), {
+    css: css
+  })
 
   const breadcrumbs = [
     { title: 'Einstellungen', url: route('app.setting') },

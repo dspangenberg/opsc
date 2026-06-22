@@ -53,17 +53,12 @@ export const OfferLinesEditor: FC<InvoiceLinesEditorProps> = ({ offer }) => {
     })
   )
 
-  const form = useForm<OfferFormData>(
-    'app.offerlines.lines-update',
-    'put',
-    route('app.offer.lines-update', {
-      offer: offer.id
-    }),
-    {
-      ...offer,
-      lines
-    }
-  )
+  const form = useForm<OfferFormData>('app.offerlines.lines-update', 'put', route('app.offer.lines-update', {
+    offer: offer.id
+  }), {
+    ...offer,
+    lines
+  })
 
   // Sync form data when lines change (e.g., when duplicating or adding lines)
   useEffect(() => {

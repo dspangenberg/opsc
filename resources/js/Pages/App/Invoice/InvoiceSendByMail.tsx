@@ -18,12 +18,7 @@ interface Props {
 
 export const InvoiceSendByMail: React.FC<Props> = ({ invoice, mail }) => {
   const { email_accounts } = usePage().props.auth
-  const form = useForm<App.Data.SendEmailData>(
-    'invoice-form',
-    'post',
-    route('app.invoice.store-send-by-mail', { invoice: invoice.id }),
-    mail
-  )
+  const form = useForm<App.Data.SendEmailData>('invoice-form', 'post', route('app.invoice.store-send-by-mail', { invoice: invoice.id }), mail)
 
   return (
     <InvoiceDetailsLayout invoice={invoice}>

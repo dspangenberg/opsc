@@ -201,14 +201,9 @@ const ContactEdit: React.FC<Props> = ({
     }
   }
 
-  const form = useForm<FormData>(
-    'contact-form',
-    'put',
-    route('app.contact.update', {
-      contact: contact.id
-    }),
-    initialData
-  )
+  const form = useForm<FormData>('contact-form', 'put', route('app.contact.update', {
+    contact: contact.id
+  }), initialData)
 
   // Transform empty strings to null for optional ID fields before submit
   form.transform((data: any) => ({

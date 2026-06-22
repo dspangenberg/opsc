@@ -6,11 +6,15 @@ use App\Data\BookmarkData;
 use App\Data\ContactData;
 use App\Data\DocumentData;
 use App\Data\DocumentTypeData;
+use App\Data\OfficeTemplateData;
 use App\Data\ProjectData;
+use App\Data\UserData;
+use App\Facades\OfficeService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentBulkEditRequest;
 use App\Http\Requests\DocumentBulkMoveToTrashRequest;
 use App\Http\Requests\DocumentRequest;
+use App\Http\Requests\LetterCreateRequest;
 use App\Http\Requests\MultiDocUploadRequest;
 use App\Http\Requests\ReceiptUploadRequest;
 use App\Jobs\DocumentUploadJob;
@@ -19,12 +23,17 @@ use App\Models\Bookmark;
 use App\Models\Contact;
 use App\Models\Document;
 use App\Models\DocumentType;
+use App\Models\OfficeTemplate;
 use App\Models\Project;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Log;
+use PhpOffice\PhpWord\Exception\CopyFileException;
+use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
@@ -79,7 +88,7 @@ class DocumentController extends Controller
             'filterTypes' => DocumentTypeData::collect($filterTypes),
             'filterProjects' => ProjectData::collect($filterProjects),
             'bookmark_model' => Document::class,
-            'bookmarks' => BookmarkData::collect($bookmarks)
+            'bookmarks' => BookmarkData::collect($bookmarks),
         ]);
     }
 
@@ -222,7 +231,15 @@ class DocumentController extends Controller
 
     public function edit(Document $document): Response
     {
-        $contacts = Contact::query()->with('company')->orderBy('name')->orderBy('first_name')->get();
+        $contacts = Contact::query()
+            ->with([
+                'contacts' => function ($query) {
+                    $query->with('salutation');
+                },
+            ])
+            ->with('salutation')
+            ->orderBy('name')
+            ->orderBy('first_name')->get();
         $projects = Project::query()->orderBy('name')->get();
         $documentTypes = DocumentType::query()->orderBy('name')->get();
 
@@ -232,6 +249,32 @@ class DocumentController extends Controller
             'projects' => ProjectData::collect($projects),
             'documentTypes' => DocumentTypeData::collect($documentTypes),
         ]);
+    }
+
+    public function createLetter(): Response
+    {
+        $contacts = Contact::query()->with('contacts')->where('is_org',
+            true)->where('is_archived', false)->orderBy('name')->orderBy('first_name')->get();
+        $templates = OfficeTemplate::query()->orderBy('name')->get();
+        $users = User::query()->has('contact')->with('contact')->orderBy('last_name')->get();
+
+        return Inertia::render('App/Document/DocumentCreateLetter', [
+            'templates' => OfficeTemplateData::collect($templates),
+            'contacts' => ContactData::collect($contacts),
+            'users' => UserData::collect($users),
+        ]);
+    }
+
+    /**
+     * @throws CopyFileException
+     * @throws CreateTemporaryFileException
+     * @throws \PhpOffice\PhpWord\Exception\Exception
+     */
+    public function storeLetter(LetterCreateRequest $request): BinaryFileResponse
+    {
+        $docx = OfficeService::createOfficeLetter($request->validated());
+
+        return response()->inlineFile($docx, 'word.docx');
     }
 
     public function update(DocumentRequest $request, Document $document): RedirectResponse

@@ -1,4 +1,4 @@
-import type { FormDataConvertible } from '@inertiajs/core'
+import type { FormDataConvertible, HttpResponse, Page } from '@inertiajs/core'
 import type React from 'react'
 import type { FormEvent, HTMLAttributes } from 'react'
 import { createContext, useContext } from 'react'
@@ -55,7 +55,7 @@ interface FormProps<T extends FormSchema> extends BaseFormProps {
   form: ExtendedForm<T>
   children: React.ReactNode
   onSubmit?: (e: FormEvent<HTMLFormElement>) => Promise<void> | void
-  onSubmitted?: () => void
+  onSubmitted?: (page: Page<any>, response?: HttpResponse) => void
   errorTitle?: string
   className?: string
   errorVariant?: 'form' | 'field'
@@ -90,12 +90,10 @@ export const Form = <T extends FormSchema>({
     if (onSubmit) {
       try {
         await onSubmit(e)
-        onSubmitted?.()
-
+        onSubmitted?.({} as Page<any>, undefined)
         return Promise.resolve(true)
       } catch (error) {
         console.error('Error in custom onSubmit handler:', error)
-
         return Promise.reject(error)
       }
     }
@@ -108,7 +106,6 @@ export const Form = <T extends FormSchema>({
           const simpleErrors = Object.entries(errors).reduce<SimpleValidationErrors>(
             (acc, [key, value]) => {
               acc[key] = Array.isArray(value) ? value : [value]
-
               return acc
             },
             {}
@@ -116,8 +113,8 @@ export const Form = <T extends FormSchema>({
           form.setError(simpleErrors)
           reject(simpleErrors)
         },
-        onSuccess: () => {
-          onSubmitted?.()
+        onSuccess: (page: Page<any>, response?: HttpResponse) => {
+          onSubmitted?.(page, response)
           resolve(true)
         }
       })
@@ -174,21 +171,19 @@ export function useForm<T extends FormSchema>(
   method: RequestMethod,
   action: string,
   data: T,
-  configOrClassName?: FormValidationOptions | string,
+  config?: Omit<FormValidationOptions, 'onSuccess'> & { onSuccess?: (...args: unknown[]) => void },
   className?: string
 ): ExtendedForm<T> {
-  const config = typeof configOrClassName === 'string' ? {} : (configOrClassName ?? {})
-  const resolvedClassName = typeof configOrClassName === 'string' ? configOrClassName : className
-  const internalForm = internalUseForm(method, action, data, config)
+  const resolvedConfig = config ?? {}
+  const internalForm = internalUseForm(method, action, data, resolvedConfig)
 
-  const onSuccessHandler = config.onSuccess
+  const onSuccessHandler = resolvedConfig.onSuccess
 
   return {
     id,
-    className: resolvedClassName,
     method,
     action,
-    config,
+    config: resolvedConfig,
     isDirty: internalForm.isDirty,
     recentlySuccessful: internalForm.recentlySuccessful,
     register: internalForm.register,
@@ -205,7 +200,7 @@ export function useForm<T extends FormSchema>(
         ...options,
         onSuccess: (...callbackArgs: unknown[]) => {
           options?.onSuccess?.(...callbackArgs)
-          onSuccessHandler?.()
+          onSuccessHandler?.(...callbackArgs)
         }
       }),
     setData: internalForm.setData,

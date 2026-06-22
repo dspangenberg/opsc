@@ -8,4 +8,5 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
     email_accounts: App.Data.EmailAccountData[]
     domain: string
   }
+  csrf_token: string
 }

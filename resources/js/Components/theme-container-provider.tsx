@@ -6,8 +6,12 @@
 import type React from 'react'
 import { createContext, useContext, useEffect, useState } from 'react'
 
-export type Container = '6xl' | '7xl' | 'full' | '8xl' | '9xl'
-export type BackgroundColor = 'bg-background' | 'bg-page-content' | 'bg-sidebar-content' | 'bg-sidebar-accent'
+export type Container = '4xl' | '5xl' | '6xl' | '7xl' | 'full' | '8xl' | '9xl'
+export type BackgroundColor =
+  | 'bg-background'
+  | 'bg-page-content'
+  | 'bg-sidebar-content'
+  | 'bg-sidebar-accent'
 
 type ThemeContainerProviderProps = {
   children: React.ReactNode
@@ -49,6 +53,8 @@ export function ThemeContainerProvider({
   const getClassNames = (width: Container): string => {
     return {
       full: 'max-w-full mx-4',
+      '4xl': 'w-screen max-w-full 2xl:mx-auto 2xl:max-w-4xl',
+      '5xl': 'w-screen max-w-full 2xl:mx-auto 2xl:max-w-5xl',
       '6xl': 'w-screen max-w-full 2xl:mx-auto 2xl:max-w-6xl',
       '7xl': 'w-screen max-w-full 2xl:mx-auto 2xl:max-w-7xl',
       '8xl': 'w-screen max-w-full 2xl:mx-auto 2xl:max-w-8xl',

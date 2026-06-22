@@ -1,5 +1,4 @@
 import { router } from '@inertiajs/react'
-import Editor from '@monaco-editor/react'
 import type * as React from 'react'
 import { useMemo, useState } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
@@ -7,28 +6,30 @@ import { Button } from '@/Components/twc-ui/button'
 import { FileTrigger } from '@/Components/twc-ui/file-trigger'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormCard } from '@/Components/twc-ui/form-card'
-import { FormCheckbox } from '@/Components/twc-ui/form-checkbox'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import type { PageProps } from '@/Types'
 
 interface Props extends PageProps {
-  letterhead: App.Data.LetterheadData
+  template: App.Data.OfficeTemplateData
 }
 
-type LetterheadFormData = App.Data.LetterheadData & {
+type OfficeTemplateFormData = App.Data.OfficeTemplateData & {
   file: File | null
 }
 
-const LetterheadEdit: React.FC<Props> = ({ letterhead }) => {
-  const title = letterhead.id ? 'Briefbogen bearbeiten' : 'Briefbogen hinzufügen'
+const OfficeTemplateEdit: React.FC<Props> = ({ template }) => {
+  const title = template.id ? 'Office-Vorlage bearbeiten' : 'Office-Vorlage hinzufügen'
   const [file, setFile] = useState<string | null>(null)
 
-  const form = useForm<LetterheadFormData>('form-letterhead-edit', letterhead.id ? 'post' : 'post', route(letterhead.id ? 'app.setting.letterhead.update' : 'app.setting.letterhead.store', {
-    letterhead: letterhead.id,
-    _method: letterhead.id ? 'put' : 'post'
-  }), {
-    ...letterhead,
+  const form = useForm<OfficeTemplateFormData>('form-office_template-edit', template.id ? 'post' : 'post', route(
+    template.id ? 'app.setting.office-template.update' : 'app.setting.office-template.store',
+    {
+      template: template.id,
+      _method: template.id ? 'put' : 'post'
+    }
+  ), {
+    ...template,
     file: null
   })
 
@@ -36,14 +37,14 @@ const LetterheadEdit: React.FC<Props> = ({ letterhead }) => {
     () => [
       { title: 'Einstellungen', url: route('app.setting') },
       { title: 'Drucksystem', url: route('app.setting.printing-system') },
-      { title: 'Briefbögen', url: route('app.setting.letterhead.index') },
-      { title: letterhead.title || 'Neuer Briefbogen' }
+      { title: 'Office-Vorlagen', url: route('app.setting.office-template.index') },
+      { title: template.name || 'Neue Vorlage' }
     ],
-    [letterhead.title]
+    [template.name]
   )
 
   const handleClose = () => {
-    router.get(route('app.setting.letterhead.index'))
+    router.get(route('app.setting.office-template.index'))
   }
 
   return (
@@ -63,16 +64,7 @@ const LetterheadEdit: React.FC<Props> = ({ letterhead }) => {
         <Form form={form} onSubmitted={handleClose} className="max-w-4xl">
           <FormGrid>
             <div className="col-span-24">
-              <FormTextField label="Titel" {...form.register('title')} />
-            </div>
-            <div className="col-span-24">
-              <Editor
-                height="50vh"
-                className="rounded-md border border-border bg-background p-2"
-                defaultLanguage="css"
-                defaultValue={form.data.css as string}
-                onChange={value => form.setData('css', value as string)}
-              />
+              <FormTextField label="Bezeichnung" {...form.register('name')} />
             </div>
 
             <div className="col-span-24">
@@ -89,7 +81,7 @@ const LetterheadEdit: React.FC<Props> = ({ letterhead }) => {
                   }
                 }}
               >
-                <Button variant="outline">PDF-Dokument hochladen</Button>
+                <Button variant="outline">Office-Dokument hochladen</Button>
               </FileTrigger>
               {file && <p>Ausgewählt: {file}</p>}
             </div>
@@ -100,4 +92,4 @@ const LetterheadEdit: React.FC<Props> = ({ letterhead }) => {
   )
 }
 
-export default LetterheadEdit
+export default OfficeTemplateEdit

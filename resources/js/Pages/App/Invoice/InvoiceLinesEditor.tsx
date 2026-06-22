@@ -71,17 +71,12 @@ export const InvoiceLinesEditor: FC<InvoiceLinesEditorProps> = ({ invoice }) => 
     })
   }
 
-  const form = useForm<InvoiceLinesFormData>(
-    'app.invoice.lines-update',
-    'put',
-    route('app.invoice.lines-update', {
-      invoice: invoice.id
-    }),
-    {
-      ...invoice,
-      lines: sanitizeLines(lines) as App.Data.InvoiceLineData[]
-    }
-  )
+  const form = useForm<InvoiceLinesFormData>('app.invoice.lines-update', 'put', route('app.invoice.lines-update', {
+    invoice: invoice.id
+  }), {
+    ...invoice,
+    lines: sanitizeLines(lines) as App.Data.InvoiceLineData[]
+  })
 
   // Sync form data when lines change (e.g., when duplicating or adding lines)
   useEffect(() => {

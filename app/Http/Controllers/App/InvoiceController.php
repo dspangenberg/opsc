@@ -481,6 +481,7 @@ class InvoiceController extends Controller
         }
 
         $pdfFile = Invoice::createOrGetPdf($invoice);
+
         return response()->inlineFile($pdfFile, $invoice->filename);
     }
 

@@ -13,7 +13,9 @@ export default defineConfig(({ mode }) => {
     plugins: [
       laravel({
         input: 'resources/js/app.tsx',
-        refresh: true
+        refresh: {
+          paths: ['routes/**', 'resources/**']
+        }
       }),
       tailwindcss(),
       react(),

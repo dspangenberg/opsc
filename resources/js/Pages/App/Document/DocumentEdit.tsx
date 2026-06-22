@@ -29,12 +29,7 @@ type DocumentFormData = Omit<
 >
 
 const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, projects }) => {
-  const form = useForm<DocumentFormData>(
-    'update-document',
-    'put',
-    route('app.document.update', { document: document.id }),
-    document
-  )
+  const form = useForm<DocumentFormData>('update-document', 'put', route('app.document.update', { document: document.id }), document)
 
   const [isEditMode, setIsEditMode] = useState(!document.is_confirmed)
 

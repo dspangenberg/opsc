@@ -70,12 +70,7 @@ export const OfferTermsSection: React.FC<OfferTermsSectionProps> = ({
   const ref = useRef<MDXEditorMethods>(null)
   const [selectValue, setSelectValue] = useState<string>('')
 
-  const form = useForm<App.Data.OfferOfferSectionData>(
-    'form-offer-offer-section-edit',
-    'put',
-    route('app.offer.update-section', { offer: section.offer_id, offerSection: section.id }),
-    section
-  )
+  const form = useForm<App.Data.OfferOfferSectionData>('form-offer-offer-section-edit', 'put', route('app.offer.update-section', { offer: section.offer_id, offerSection: section.id }), section)
 
   const handleUpdate = (content: string) => {
     form.setData('content', content)

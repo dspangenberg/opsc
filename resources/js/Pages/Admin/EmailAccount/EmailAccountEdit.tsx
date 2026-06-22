@@ -19,14 +19,9 @@ interface Props extends PageProps {
 const EmailAccountEdit: React.FC<Props> = ({ email_account }) => {
   const title = email_account.id ? 'SMTP-Konto bearbeiten' : 'SMTP-Konto hinzufügen'
 
-  const form = useForm<App.Data.EmailAccountData>(
-    'form-email-account-edit',
-    email_account.id ? 'put' : 'post',
-    route(email_account.id ? 'admin.email-account.update' : 'admin.email-account.store', {
-      emailAccount: email_account.id
-    }),
-    email_account
-  )
+  const form = useForm<App.Data.EmailAccountData>('form-email-account-edit', email_account.id ? 'put' : 'post', route(email_account.id ? 'admin.email-account.update' : 'admin.email-account.store', {
+    emailAccount: email_account.id
+  }), email_account)
 
   const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Zurück'
 
