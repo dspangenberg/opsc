@@ -440,6 +440,7 @@ notables: Array<App.Data.NoteableData> | null;
 zugferd_profile: App.Enums.ZugferdProfileEnum;
 zugferd_route_id: string | null;
 is_zugferd: boolean;
+is_canceled: boolean;
 };
 export type InvoiceLineData = {
 id: number | null;
@@ -545,6 +546,11 @@ id: number | null;
 name: string;
 default_content: string | null;
 pagebreak: App.Enums.PagebreakEnum | null;
+};
+export type OfficeTemplateData = {
+id: number | null;
+name: string;
+is_default: boolean;
 };
 export type ParentInvoiceData = {
 id: number | null;

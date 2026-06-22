@@ -25,15 +25,10 @@ type OfferFormData = App.Data.OfferData & {
 const OfferEdit: React.FC<Props> = ({ offer, contacts, projects, taxes, templates }) => {
   const [isOpen, setIsOpen] = useState(true)
 
-  const form = useForm<OfferFormData>(
-    'form-offer-edit',
-    offer.id ? 'put' : 'post',
-    offer.id ? route('app.offer.update', { id: offer.id }) : route('app.offer.store'),
-    {
-      template_id: 0,
-      ...offer
-    }
-  )
+  const form = useForm<OfferFormData>('form-offer-edit', offer.id ? 'put' : 'post', offer.id ? route('app.offer.update', { id: offer.id }) : route('app.offer.store'), {
+    template_id: 0,
+    ...offer
+  })
 
   const handleClose = () => {
     const newRoute = offer.id

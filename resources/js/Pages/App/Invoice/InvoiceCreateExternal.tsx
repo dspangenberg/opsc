@@ -29,15 +29,10 @@ const InvoiceCreateExternal: React.FC<Props> = ({
   payment_deadlines,
   taxes
 }) => {
-  const form = useForm<FormData>(
-    'create-external-invoice-form',
-    'post',
-    route('app.invoice.store-external'),
-    {
-      amount: 0,
-      ...invoice
-    }
-  )
+  const form = useForm<FormData>('create-external-invoice-form', 'post', route('app.invoice.store-external'), {
+    amount: 0,
+    ...invoice
+  })
 
   const breadcrumbs = useMemo(
     () => [

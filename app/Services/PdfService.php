@@ -94,6 +94,8 @@ class PdfService
             }
         }
 
+        //     $letterheadPdfFile = storage_path('system/word-templates/Standardbrief.docx');
+
         if ($attachments && count($attachments) > 0) {
             $files = [];
 

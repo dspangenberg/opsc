@@ -306,6 +306,11 @@ const buildNavData = (isAdmin: boolean) => ({
               title: 'Layouts',
               url: route('app.setting.layout.index', {}, false),
               activePath: '/app/settings/printing-system/layouts'
+            },
+            {
+              title: 'Office-Vorlagen',
+              url: route('app.setting.office-template.index', {}, false),
+              activePath: '/app/settings/printing-system/office-templates'
             }
           ]
         }

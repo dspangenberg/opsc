@@ -20,18 +20,13 @@ interface RegisterForm {
 }
 
 const Register: React.FC = () => {
-  const form = useForm<RegisterForm & FormSchema>(
-    'register-form',
-    'post',
-    route('cloud.register.store'),
-    {
-      email: '',
-      organisation: '',
-      first_name: '',
-      last_name: '',
-      website: ''
-    }
-  )
+  const form = useForm<RegisterForm & FormSchema>('register-form', 'post', route('cloud.register.store'), {
+    email: '',
+    organisation: '',
+    first_name: '',
+    last_name: '',
+    website: ''
+  })
 
   const registerContent = (
     <AuthContainer title="Registrierung" maxWidth="md">

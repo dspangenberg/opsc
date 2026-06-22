@@ -29,20 +29,14 @@ const DocumentBulkEditComponent: React.FC<DocumentBulkEditComponentProps> = ({
   onConfirm,
   onCancel
 }) => {
-  const form = useForm<FormData>(
-    'document-bulk-edit-form',
-    'put',
-    '',
-    {
-      sender_contact_id: 0,
-      receiver_contact_id: 0,
-      project_id: 0,
-      document_type_id: 0
-    },
-    {
-      validateOn: 'none'
-    }
-  )
+  const form = useForm<FormData>('document-bulk-edit-form', 'put', '', {
+    sender_contact_id: 0,
+    receiver_contact_id: 0,
+    project_id: 0,
+    document_type_id: 0
+  }, {
+    validateOn: 'none'
+  })
 
   return (
     <Dialog

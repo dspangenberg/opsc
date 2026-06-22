@@ -8,6 +8,7 @@ use App\Http\Controllers\App\Bookkeeping\CostCenterController;
 use App\Http\Controllers\App\Setting\DocumentTypeController;
 use App\Http\Controllers\App\Setting\LetterheadController;
 use App\Http\Controllers\App\Setting\OfferSectionController;
+use App\Http\Controllers\App\Setting\OfficeTemplateController;
 use App\Http\Controllers\App\Setting\PrintLayoutController;
 use App\Http\Controllers\App\Setting\TextModuleController;
 use App\Http\Controllers\ProfileController;
@@ -20,7 +21,6 @@ Route::post('settings/offers/text-modules/store', [TextModuleController::class, 
 Route::get('settings/offers/text-modules/{module}', [TextModuleController::class, 'edit'])->name('app.setting.text-module.edit');
 Route::put('settings/offers/text-modules/{module}', [TextModuleController::class, 'update'])->name('app.setting.text-module.update')->middleware([HandlePrecognitiveRequests::class]);
 Route::delete('settings/offers/text-modules/{module}', [TextModuleController::class, 'delete'])->name('app.setting.text-module.delete');
-
 
 Route::redirect('settings/offers', '/app/settings/offers/offer-sections')->name('app.setting.offer');
 
@@ -61,7 +61,6 @@ Route::post('/settings/documents/document-types', [DocumentTypeController::class
 Route::get('/settings/documents/document-types/{documentType}/edit', [DocumentTypeController::class, 'edit'])->name('app.setting.document_type.edit')->middleware([HandlePrecognitiveRequests::class]);
 Route::put('/settings/documents/document-types/{documentType}/edit', [DocumentTypeController::class, 'update'])->name('app.setting.document_type.update')->middleware([HandlePrecognitiveRequests::class]);
 
-
 Route::redirect('settings/bookkeeping', '/app/settings/bookkeeping/accounts')->name('app.setting.bookkeeping');
 Route::get('/settings/bookkeeping/accounts', [BookkeepingAcountsController::class, 'index'])->name('app.bookkeeping.accounts.index');
 
@@ -91,6 +90,12 @@ Route::put('/profile/edit', [ProfileController::class, 'update'])->name('app.pro
 Route::post('profile/verification-notification', [ProfileController::class, 'resendVerificationEmail'])->name('verification.send');
 Route::impersonate();
 
+Route::get('settings/printing-system/office-templates', [OfficeTemplateController::class, 'index'])->name('app.setting.office-template.index');
+Route::get('settings/printing-system/office-templates/create', [OfficeTemplateController::class, 'create'])->name('app.setting.office-template.create');
+Route::post('settings/printing-system/office-templates/store', [OfficeTemplateController::class, 'store'])->name('app.setting.office-template.store')->middleware([HandlePrecognitiveRequests::class]);
+Route::get('settings/printing-system/office-templates/{template}/edit', [OfficeTemplateController::class, 'edit'])->name('app.setting.office-template.edit');
+Route::put('settings/printing-system/office-templates/{template}', [OfficeTemplateController::class, 'update'])->name('app.setting.office-template.update')->middleware([HandlePrecognitiveRequests::class]);
+Route::delete('settings/printing-system/office-templates/{template}', [OfficeTemplateController::class, 'delete'])->name('app.setting.office-template.delete');
+
 Route::post('/profile/clear-pending-mail-address',
     [ProfileController::class, 'clearPendingMailAddress'])->name('profile.clear-pending-mail-address');
-

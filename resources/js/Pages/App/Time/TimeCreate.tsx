@@ -25,17 +25,12 @@ const TimeCreate: React.FC<Props> = ({ time, projects, categories, users }) => {
   const title = time.id ? 'Zeit bearbeiten' : 'Neue Zeit hinzufügen'
   const [isOpen, setIsOpen] = useState(true)
 
-  const form = useForm<App.Data.TimeData>(
-    'form-contact-edit-address',
-    time.id ? 'put' : 'post',
-    route(time.id ? 'app.time.update' : 'app.time.store', {
-      id: time.id,
-      _query: {
-        view: route().queryParams.view
-      }
-    }),
-    time
-  )
+  const form = useForm<App.Data.TimeData>('form-contact-edit-address', time.id ? 'put' : 'post', route(time.id ? 'app.time.update' : 'app.time.store', {
+    id: time.id,
+    _query: {
+      view: route().queryParams.view
+    }
+  }), time)
 
   const handleClose = () => {
     setIsOpen(false)

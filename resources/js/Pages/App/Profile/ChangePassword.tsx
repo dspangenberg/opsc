@@ -20,18 +20,12 @@ interface PasswordChangeProps extends Record<string, FormDataConvertible> {
 }
 
 const ChangePassword: React.FC<Props> = ({ user }) => {
-  const form = useForm<PasswordChangeProps>(
-    'form-update-password',
-    'put',
-    route('app.profile.password-update'),
-    {
-      email: user.email,
-      current_password: '',
-      password: '',
-      password_confirmation: ''
-    },
-    { validateOn: 'blur' }
-  )
+  const form = useForm<PasswordChangeProps>('form-update-password', 'put', route('app.profile.password-update'), {
+    email: user.email,
+    current_password: '',
+    password: '',
+    password_confirmation: ''
+  }, { validateOn: 'blur' })
 
   const breadcrumbs = [{ title: 'Kennwort ändern', url: route('app.setting') }]
   return (

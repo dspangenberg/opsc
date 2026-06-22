@@ -17,19 +17,14 @@ interface Props {
 }
 
 export const InvoiceDetailsEditLine: React.FC<Props> = ({ invoice, invoiceLine }) => {
-  const form = useForm<App.Data.InvoiceLineData>(
-    'invoice-line-edit-form',
-    invoiceLine.id ? 'put' : 'post',
-    invoiceLine.id
-      ? route('app.invoice.line-update', {
-          invoice: invoice.id,
-          invoiceLine: invoiceLine.id
-        })
-      : route('app.invoice.line-store', {
-          invoice: invoice.id
-        }),
-    invoiceLine
-  )
+  const form = useForm<App.Data.InvoiceLineData>('invoice-line-edit-form', invoiceLine.id ? 'put' : 'post', invoiceLine.id
+    ? route('app.invoice.line-update', {
+        invoice: invoice.id,
+        invoiceLine: invoiceLine.id
+      })
+    : route('app.invoice.line-store', {
+        invoice: invoice.id
+      }), invoiceLine)
 
   const [isOpen, setIsOpen] = useState(true)
 

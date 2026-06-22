@@ -7,21 +7,26 @@
 
 namespace App\Models;
 
+use App\Notifications\ResetPasswordNotification;
 use Database\Factories\UserFactory;
 use Eloquent;
-use App\Notifications\ResetPasswordNotification;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
-use Plank\Mediable\Exceptions\MediaUrlException;
-use Plank\Mediable\Mediable;
-use ProtoneMedia\LaravelVerifyNewEmail\MustVerifyNewEmail;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Lab404\Impersonate\Models\Impersonate;
+use Plank\Mediable\Exceptions\MediaUrlException;
+use Plank\Mediable\Media;
+use Plank\Mediable\Mediable;
+use Plank\Mediable\MediableCollection;
+use ProtoneMedia\LaravelVerifyNewEmail\MustVerifyNewEmail;
+
 /**
  * @property int $id
  * @property string $name
@@ -38,6 +43,7 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property-read string $reverse_full_name
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ *
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static Builder<static>|User newModelQuery()
  * @method static Builder<static>|User newQuery()
@@ -52,28 +58,32 @@ use Lab404\Impersonate\Models\Impersonate;
  * @method static Builder<static>|User whereProfilePhotoPath($value)
  * @method static Builder<static>|User whereRememberToken($value)
  * @method static Builder<static>|User whereUpdatedAt($value)
+ *
  * @property-read string|null $avatar_url
  * @property-read string|null $impersonator
  * @property-read bool $is_impersonating
  * @property-read string|null $pending_email
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Plank\Mediable\Media> $media
+ * @property-read Collection<int, Media> $media
  * @property-read int|null $media_count
- * @method static \Plank\Mediable\MediableCollection<int, static> all($columns = ['*'])
- * @method static \Plank\Mediable\MediableCollection<int, static> get($columns = ['*'])
+ *
+ * @method static MediableCollection<int, static> all($columns = ['*'])
+ * @method static MediableCollection<int, static> get($columns = ['*'])
  * @method static Builder<static>|User whereHasMedia($tags = [], bool $matchAll = false)
  * @method static Builder<static>|User whereHasMediaMatchAll($tags)
  * @method static Builder<static>|User withMedia($tags = [], bool $matchAll = false, bool $withVariants = false)
  * @method static Builder<static>|User withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static Builder<static>|User withMediaAndVariantsMatchAll($tags = [])
  * @method static Builder<static>|User withMediaMatchAll(bool $tags = [], bool $withVariants = false)
+ *
  * @mixin Eloquent
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Mediable, MustVerifyNewEmail, Impersonate;
+    use HasFactory, Impersonate, Mediable, MustVerifyNewEmail;
 
     use Notifiable;
+
     protected $fillable = [
         'name',
         'email',
@@ -83,7 +93,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'email_verified_at',
         'is_locked',
-        'email_account_id'
+        'email_account_id',
+        'contact_id',
     ];
 
     protected $hidden = [
@@ -102,6 +113,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'pending_email',
         'impersonator',
     ];
+
     protected $attributes = [
         'is_admin' => false,
         'is_locked' => false,
@@ -181,15 +193,21 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         try {
             $media = $this->firstMedia('avatar');
+
             return $media?->getUrl();
         } catch (MediaUrlException $e) {
             return null;
         }
     }
 
-    public function getPendingEmailAttribute(): string | null
+    public function getPendingEmailAttribute(): ?string
     {
         return $this->getPendingEmail();
+    }
+
+    public function contact(): BelongsTo
+    {
+        return $this->belongsTo(Contact::class);
     }
 
     public function sendPasswordResetNotification($token): void

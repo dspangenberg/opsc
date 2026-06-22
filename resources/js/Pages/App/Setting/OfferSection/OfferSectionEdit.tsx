@@ -49,14 +49,9 @@ const OfferSectionEdit: React.FC<Props> = ({ section }) => {
     setIsMounted(true)
   }, [])
 
-  const form = useForm<App.Data.OfferSectionData>(
-    'form-offer-section-edit',
-    section.id ? 'put' : 'post',
-    route(section.id ? 'app.setting.offer-section.update' : 'app.setting.offer-section.store', {
-      section: section.id
-    }),
-    section
-  )
+  const form = useForm<App.Data.OfferSectionData>('form-offer-section-edit', section.id ? 'put' : 'post', route(section.id ? 'app.setting.offer-section.update' : 'app.setting.offer-section.store', {
+    section: section.id
+  }), section)
 
   const handleContentUpdate = (content: string) => {
     if (isMounted) {

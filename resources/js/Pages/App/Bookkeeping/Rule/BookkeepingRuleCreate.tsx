@@ -34,12 +34,7 @@ const amountTypes: Options[] = [
 const BookkeepingRuleCreate: React.FC<Props> = ({ rule }) => {
   const [isOpen, setIsOpen] = useState(true)
 
-  const form = useForm<App.Data.BookkeepingRuleData>(
-    'form-rule-edit',
-    'post',
-    route('app.bookkeeping.rules.store'),
-    rule
-  )
+  const form = useForm<App.Data.BookkeepingRuleData>('form-rule-edit', 'post', route('app.bookkeeping.rules.store'), rule)
 
   const handleClose = () => {
     setIsOpen(false)
