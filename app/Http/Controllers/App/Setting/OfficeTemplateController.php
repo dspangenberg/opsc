@@ -8,6 +8,7 @@ use App\Http\Requests\OfficeTemplateStoreRequest;
 use App\Http\Requests\OfficeTemplateUpdateRequest;
 use App\Models\OfficeTemplate;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
@@ -18,6 +19,7 @@ use Plank\Mediable\Exceptions\MediaUpload\FileSizeException;
 use Plank\Mediable\Exceptions\MediaUpload\ForbiddenException;
 use Plank\Mediable\Exceptions\MediaUpload\InvalidHashException;
 use Plank\Mediable\Facades\MediaUploader;
+use Throwable;
 
 class OfficeTemplateController extends Controller
 {
@@ -54,22 +56,27 @@ class OfficeTemplateController extends Controller
      * @throws FileSizeException
      * @throws InvalidHashException
      * @throws ConfigurationException
+     * @throws Throwable
      */
     public function update(OfficeTemplateUpdateRequest $request, OfficeTemplate $template): RedirectResponse
     {
-        $data = $request->safe()->except('file');
-        $template->update($data);
+        DB::transaction(function () use ($request, $template): void {
+            $template->update($request->safe()->except('file'));
 
-        if ($request->hasFile('file')) {
-            $template->detachMediaTags('file');
+            if (!$request->hasFile('file')) {
+                return;
+            }
 
-            $media = MediaUploader::fromSource($request->file('file'))
+            $existingMedia = $template->getMedia('file');
+            $newMedia = MediaUploader::fromSource($request->file('file'))
                 ->toDestination('s3_private', 'office-templates')
                 ->upload();
 
-            $template->attachMedia($media, 'file');
-        }
+            $template->attachMedia($newMedia, 'file');
+            $existingMedia->each->delete();
 
+
+        });
         return redirect()->route('app.setting.office-template.index');
     }
 
@@ -89,21 +96,17 @@ class OfficeTemplateController extends Controller
      * @throws FileSizeException
      * @throws InvalidHashException
      * @throws ConfigurationException
+     * @throws Throwable
      */
     public function store(OfficeTemplateStoreRequest $request): RedirectResponse
     {
-        $data = $request->safe()->except('file');
-        $template = OfficeTemplate::create($data);
-
-        if ($request->hasFile('file')) {
-            $template->detachMediaTags('file');
-
+        DB::transaction(function () use ($request): void {
+            $template = OfficeTemplate::create($request->safe()->except('file'));
             $media = MediaUploader::fromSource($request->file('file'))
                 ->toDestination('s3_private', 'office-templates')
                 ->upload();
-
             $template->attachMedia($media, 'file');
-        }
+        });
 
         return redirect()->route('app.setting.office-template.index');
     }
