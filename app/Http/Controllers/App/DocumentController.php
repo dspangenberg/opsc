@@ -274,7 +274,7 @@ class DocumentController extends Controller
     {
         $docx = OfficeService::createOfficeLetter($request->validated());
 
-        return response()->inlineFile($docx, 'word.docx');
+        return response()->inlineFile($docx, 'word.docx')->deleteFileAfterSend();
     }
 
     public function update(DocumentRequest $request, Document $document): RedirectResponse

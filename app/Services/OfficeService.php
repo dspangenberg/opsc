@@ -74,14 +74,6 @@ class OfficeService
             }
         }
 
-
-        /*
-        $signature_right = User::with('contact')->find($data['signature_right_id']);
-        if ($signature_right) {
-            $addressLines[] = $signature_right->contact->full_name;
-        }
-        */
-
         $media = $template->firstMedia('file');
         $docx = FileHelperService::createTemporaryFileFromDoc('template', $media->contents(), '.docx');
         $templateProcessor = new TemplateProcessor($docx);
@@ -95,15 +87,15 @@ class OfficeService
         $docData['letter_date'] = $data['date'];
         $docData['letter_salutation'] = $data['salutation'];
         $docData['contact'] = $user->contact->full_name;
-        $docData['contact_phone'] = $user->contact->primary_phone !== '' ? $user->contact->primary_phone : $user->contact->company->primary_phone;
+        $docData['contact_phone'] = $user->contact->primary_phone !== ''
+            ? $user->contact->primary_phone
+            : ($user->contact->company?->primary_phone ?? '');
         $docData['contact_email'] = $user->contact->primary_mail;
         $docData['letter_subject'] = $data['subject'];
         $docData['reciepent_city'] = $address->city;
         $docData['reciepient_full_address'] = Arr::join($addressLines, "\n");
         $docData['letter_signature_left'] = Arr::join($signatureLeft, "\n");
         $docData['letter_signature_right'] = Arr::join($signatureRight, "\n");
-
-        ray($docData);
 
         $templateProcessor->setValues($docData);
 

@@ -67,7 +67,7 @@ const DocumentCreateLetter: React.FC<Props> = ({ contacts, templates, users }) =
     contacts.find(contact => contact.id === form.data.recipient_id)?.contacts ?? []
 
   useEffect(() => {
-    form.data.recipient_contact_id = 0
+    form.setData('recipient_contact_id', 0)
   }, [form.data.recipient_id])
 
   useEffect(() => {
@@ -105,6 +105,11 @@ const DocumentCreateLetter: React.FC<Props> = ({ contacts, templates, users }) =
           form.setError(data.errors)
         }
 
+        return
+      }
+
+      if (!response.ok) {
+        form.setError({ subject: ['Das Schreiben konnte nicht erstellt werden.'] })
         return
       }
 

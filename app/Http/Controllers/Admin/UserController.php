@@ -43,11 +43,14 @@ class UserController extends Controller
         $user->email = '';
         $user->is_admin = false;
 
+        $settings = app(GeneralSettings::class);
         $emailAccounts = EmailAccount::orderBy('email')->get();
+        $contacts = Contact::where('company_id', $settings->contact_id)->orderBy('name')->orderBy('first_name')->get();
 
         return Inertia::render('Admin/User/UserEdit', [
             'user' => UserData::from($user),
             'email_accounts' => EmailAccountData::collect($emailAccounts),
+            'contacts' => ContactData::collect($contacts),
         ]);
     }
 
@@ -55,8 +58,6 @@ class UserController extends Controller
     {
         $settings = app(GeneralSettings::class);
         $contacts = Contact::where('company_id', $settings->contact_id)->orderBy('name')->orderBy('first_name')->get();
-
-        ray($contacts->toArray());
 
         $emailAccounts = EmailAccount::orderBy('email')->get();
 
@@ -167,7 +168,8 @@ class UserController extends Controller
     public function clearPendingMailAddress(User $user)
     {
         $user->clearPendingEmail();
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Die Änderung der E-Mail-Adresse wurde zurückgesetzt.']);
+        Inertia::flash('toast',
+            ['type' => 'success', 'message' => 'Die Änderung der E-Mail-Adresse wurde zurückgesetzt.']);
 
         return redirect()->back();
     }
@@ -179,7 +181,8 @@ class UserController extends Controller
             ['email' => $user->email]
         );
 
-        return Inertia::flash('toast', ['type' => 'success', 'message' => 'E-Mail zum Zurücksetzen des Passworts wurde gesendet.'])->back();
+        return Inertia::flash('toast',
+            ['type' => 'success', 'message' => 'E-Mail zum Zurücksetzen des Passworts wurde gesendet.'])->back();
 
     }
 }
