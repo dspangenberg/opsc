@@ -25,6 +25,8 @@ class LetterCreateRequest extends FormRequest
         return [
             'date' => ['required', 'date', 'date_format:d.m.Y'],
             'user_id' => ['required', 'integer', 'exists:users,id'],
+            'signature_left_user_id' => ['required', 'exists:users,id'],
+            'signature_right_user_id' => ['nullable', 'exists_if_not_empty:users,id'],
             'template_id' => ['required', 'integer', 'exists:office_templates,id'],
             'recipient_id' => ['required', 'integer', 'exists:contacts,id'],
             'recipient_contact_id' => ['nullable', 'exists_if_not_empty:contacts,id'],

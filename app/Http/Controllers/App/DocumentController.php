@@ -273,7 +273,6 @@ class DocumentController extends Controller
     public function storeLetter(LetterCreateRequest $request): BinaryFileResponse
     {
         $docx = OfficeService::createOfficeLetter($request->validated());
-        ray($docx);
 
         return response()->inlineFile($docx, 'word.docx');
     }

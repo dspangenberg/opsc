@@ -24,18 +24,13 @@ const LetterheadEdit: React.FC<Props> = ({ letterhead }) => {
   const title = letterhead.id ? 'Briefbogen bearbeiten' : 'Briefbogen hinzufügen'
   const [file, setFile] = useState<string | null>(null)
 
-  const form = useForm<LetterheadFormData>(
-    'form-letterhead-edit',
-    letterhead.id ? 'post' : 'post',
-    route(letterhead.id ? 'app.setting.letterhead.update' : 'app.setting.letterhead.store', {
-      letterhead: letterhead.id,
-      _method: letterhead.id ? 'put' : 'post'
-    }),
-    {
-      ...letterhead,
-      file: null
-    }
-  )
+  const form = useForm<LetterheadFormData>('form-letterhead-edit', letterhead.id ? 'post' : 'post', route(letterhead.id ? 'app.setting.letterhead.update' : 'app.setting.letterhead.store', {
+    letterhead: letterhead.id,
+    _method: letterhead.id ? 'put' : 'post'
+  }), {
+    ...letterhead,
+    file: null
+  })
 
   const breadcrumbs = useMemo(
     () => [

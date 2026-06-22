@@ -40,21 +40,16 @@ type ProjectFormData = Omit<
 const ProjectEdit: React.FC<Props> = ({ categories, contacts, project }) => {
   const title = project.id ? 'Projekt bearbeiten' : 'Projekt hinzufügen'
 
-  const form = useForm<ProjectFormData>(
-    'form-project-edit',
-    project.id ? 'put' : 'post',
-    project.id
-      ? route('app.project.update', { project: project.id, _method: 'put' })
-      : route('app.project.store'),
-    {
+  const form = useForm<ProjectFormData>('form-project-edit', project.id ? 'put' : 'post', project.id
+    ? route('app.project.update', { project: project.id, _method: 'put' })
+    : route('app.project.store'), {
       ...project,
       project_category_id: project.project_category_id || null,
       owner_contact_id: project.owner_contact_id || null,
       manager_contact_id: project.manager_contact_id || null,
       avatar: null,
       remove_avatar: false
-    }
-  )
+    })
 
   const handleAvatarChange = (avatar: File | undefined) => {
     if (avatar) {

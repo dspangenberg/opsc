@@ -20,14 +20,9 @@ interface Props extends PageProps {
 const DropboxEdit: React.FC<Props> = ({ dropbox, users }) => {
   const title = dropbox.id ? 'Dropbox bearbeiten' : 'Dropbox hinzufügen'
 
-  const form = useForm<App.Data.DropboxData>(
-    'form-email-dropbox',
-    dropbox.id ? 'put' : 'post',
-    route(dropbox.id ? 'admin.dropbox.update' : 'admin.dropbox.store', {
-      dropbox: dropbox.id
-    }),
-    dropbox
-  )
+  const form = useForm<App.Data.DropboxData>('form-email-dropbox', dropbox.id ? 'put' : 'post', route(dropbox.id ? 'admin.dropbox.update' : 'admin.dropbox.store', {
+    dropbox: dropbox.id
+  }), dropbox)
   const cancelButtonTitle = form.isDirty ? 'Abbrechen' : 'Zurück'
 
   const breadcrumbs = useMemo(() => {

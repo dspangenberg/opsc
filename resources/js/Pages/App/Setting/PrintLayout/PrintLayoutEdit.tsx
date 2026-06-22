@@ -18,14 +18,9 @@ interface Props extends PageProps {
 const PrintLayoutEdit: React.FC<Props> = ({ layout, letterheads }) => {
   const title = layout.id ? 'Layout bearbeiten' : 'Layout hinzufügen'
 
-  const form = useForm<App.Data.PrintLayoutData>(
-    'form-letterhead-edit',
-    layout.id ? 'put' : 'post',
-    route(layout.id ? 'app.setting.layout.update' : 'app.setting.layout.store', {
-      layout: layout.id
-    }),
-    layout
-  )
+  const form = useForm<App.Data.PrintLayoutData>('form-letterhead-edit', layout.id ? 'put' : 'post', route(layout.id ? 'app.setting.layout.update' : 'app.setting.layout.store', {
+    layout: layout.id
+  }), layout)
 
   const breadcrumbs = useMemo(
     () => [

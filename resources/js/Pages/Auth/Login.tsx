@@ -21,17 +21,11 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ canResetPassword }) => {
-  const form = useForm<App.Data.LoginData>(
-    'auth-login-form',
-    'post',
-    route('login'),
-    {
-      email: '',
-      password: '',
-      remember: false
-    },
-    { validateOn: 'blur' }
-  )
+  const form = useForm<App.Data.LoginData>('auth-login-form', 'post', route('login'), {
+    email: '',
+    password: '',
+    remember: false
+  }, { validateOn: 'blur' })
 
   const loginContent = (
     <AuthContainer

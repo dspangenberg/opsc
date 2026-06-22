@@ -1,4 +1,5 @@
 import {
+  Doc02Icon,
   File02Icon,
   FolderFileStorageIcon,
   FolderUploadIcon,
@@ -127,6 +128,8 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
     [debouncedSearchChange]
   )
 
+  const handleCreateLetter = () => router.visit(route('app.document.create-letter'))
+
   const toolbar = (
     <Toolbar>
       <ToolbarButton
@@ -135,6 +138,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
         title="MultiDoc hochladen"
         onClick={() => setShowMultiDocUpload(true)}
       />
+      <ToolbarButton icon={Doc02Icon} title="MultiDoc hochladen" onClick={handleCreateLetter} />
       {isInbox && (
         <ToolbarButton icon={Refresh04Icon} title="Aktualisieren" onClick={() => router.reload()} />
       )}

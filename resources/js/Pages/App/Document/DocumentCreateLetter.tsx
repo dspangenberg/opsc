@@ -19,8 +19,7 @@ interface Letter {
   recipient_contact_id?: number
   user_id: number
   signature_left_user_id: number
-  signature_right_user_id: number
-  has_secodnary_signature: boolean
+  signature_right_user_id?: number | null
   salutation: string
   date: string
   subject: string
@@ -37,7 +36,7 @@ interface Props extends PageProps {
 type LetterFormData = Partial<Letter>
 
 const DocumentCreateLetter: React.FC<Props> = ({ contacts, templates, users }) => {
-  const { auth } = usePage().props
+  const { auth, csrf_token } = usePage<PageProps>().props
 
   const form = useForm<LetterFormData>(
     'update-document',
@@ -48,8 +47,7 @@ const DocumentCreateLetter: React.FC<Props> = ({ contacts, templates, users }) =
       recipient_contact_id: 0,
       user_id: auth.user.id ?? 0,
       signature_left_user_id: auth.user.id ?? 0,
-      signature_right_user_id: 0,
-      has_secodnary_signature: false,
+      signature_right_user_id: null,
       template_id: 0,
       subject: '',
       shipment: '',
@@ -58,7 +56,13 @@ const DocumentCreateLetter: React.FC<Props> = ({ contacts, templates, users }) =
     }
   )
 
-  const breadcrumbs = useMemo(() => [{ title: 'Dokumente', url: route('app.document.index') }], [])
+  const breadcrumbs = useMemo(
+    () => [
+      { title: 'Dokumente', url: route('app.document.index') },
+      { title: 'Schreiben erstellen' }
+    ],
+    []
+  )
   const reciepentsContacts =
     contacts.find(contact => contact.id === form.data.recipient_id)?.contacts ?? []
 
@@ -79,6 +83,46 @@ const DocumentCreateLetter: React.FC<Props> = ({ contacts, templates, users }) =
     }
   }, [form.data.recipient_id, form.data.recipient_contact_id, reciepentsContacts])
 
+  const downloadDocument = async () => {
+    try {
+      const response = await fetch(route('app.document.store-letter'), {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': csrf_token,
+          Accept: 'application/json'
+        },
+        body: new URLSearchParams(
+          Object.entries(form.data).map(([key, value]) => [key, String(value ?? '')])
+        )
+      })
+
+      const contentType = response.headers.get('content-type')
+
+      if (contentType?.includes('application/json')) {
+        const data = await response.json()
+
+        if (data.errors) {
+          form.setError(data.errors)
+        }
+
+        return
+      }
+
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+
+      anchor.href = url
+      anchor.download = 'word.docx'
+      document.body.appendChild(anchor)
+      anchor.click()
+      document.body.removeChild(anchor)
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Download failed', error)
+    }
+  }
+
   return (
     <PageContainer
       title="Schreiben erstellen"
@@ -92,45 +136,23 @@ const DocumentCreateLetter: React.FC<Props> = ({ contacts, templates, users }) =
           <>
             <div className="flex gap-2" />
             <div className="flex gap-2">
-              <Button variant="outline" title="Zurück" />
-              <Button
-                variant="default"
-                type="button"
-                title="Speichern"
-                onPress={() => {
-                  const el = document.createElement('form')
-                  el.method = 'POST'
-                  el.action = route('app.document.store-letter')
-                  el.style.display = 'none'
-
-                  const csrfInput = document.createElement('input')
-                  csrfInput.type = 'hidden'
-                  csrfInput.name = '_token'
-                  const meta = document.querySelector('meta[name="csrf-token"]')
-                  csrfInput.value = (meta as HTMLMetaElement)?.content ?? ''
-                  el.appendChild(csrfInput)
-
-                  Object.entries(form.data).forEach(([key, value]) => {
-                    const input = document.createElement('input')
-                    input.type = 'hidden'
-                    input.name = key
-                    input.value = String(value ?? '')
-                    el.appendChild(input)
-                  })
-
-                  document.body.appendChild(el)
-                  el.submit()
-                  document.body.removeChild(el)
-                }}
-              />
+              <Button form={form.id} variant="default" type="submit" title="Schreiben erstellen" />
             </div>
           </>
         }
       >
-        <Form form={form} errorVariant="form" className="flex-1">
+        <Form
+          form={form}
+          errorVariant="form"
+          className="flex-1"
+          onSubmit={async e => {
+            e.preventDefault()
+            await downloadDocument()
+          }}
+        >
           <FormGrid>
             <div className="col-span-4">
-              <FormDatePicker label="Datum" {...form.register('date')} autoFocus />
+              <FormDatePicker label="Datum" {...form.register('date')} autoFocus isRequired />
             </div>
             <div className="col-span-8">
               <FormSelect
@@ -163,12 +185,31 @@ const DocumentCreateLetter: React.FC<Props> = ({ contacts, templates, users }) =
               />
             </div>
             <div className="col-span-24">
-              <FormTextField {...form.register('salutation')} label="Briefanrede" />
+              <FormTextField {...form.register('salutation')} label="Briefanrede" isRequired />
             </div>
           </FormGrid>
           <FormGrid title="Anschreiben">
             <div className="col-span-24">
-              <FormTextArea {...form.register('subject')} label="Betreff" rows={2} />
+              <FormTextArea {...form.register('subject')} label="Betreff" rows={2} isRequired />
+            </div>
+          </FormGrid>
+          <FormGrid title="Unterschriften">
+            <div className="col-span-12">
+              <FormSelect
+                {...form.register('signature_left_user_id')}
+                label="Unterschrift (links)"
+                items={users}
+                itemName="reverse_full_name"
+              />
+            </div>
+            <div className="col-span-12">
+              <FormSelect
+                {...form.register('signature_right_user_id')}
+                isOptional
+                label="Unterschrift (rechts)"
+                items={users}
+                itemName="reverse_full_name"
+              />
             </div>
           </FormGrid>
         </Form>

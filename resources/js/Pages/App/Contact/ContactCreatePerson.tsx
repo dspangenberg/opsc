@@ -17,12 +17,7 @@ interface Props extends PageProps {
 const ContactCreate: React.FC<Props> = ({ contact, salutations, titles }) => {
   const [isOpen, setIsOpen] = useState(true)
 
-  const form = useForm<App.Data.ContactData>(
-    'form-contact-create-person',
-    'post',
-    route('app.contact.store-person'),
-    contact
-  )
+  const form = useForm<App.Data.ContactData>('form-contact-create-person', 'post', route('app.contact.store-person'), contact)
 
   const handleClose = () => {
     setIsOpen(false)

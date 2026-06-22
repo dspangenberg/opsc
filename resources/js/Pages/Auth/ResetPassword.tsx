@@ -29,18 +29,12 @@ interface PasswordChangeProps extends Record<string, FormDataConvertible> {
 }
 
 const InitialPassword: React.FC<LoginProps> = ({ email, token }) => {
-  const form = useForm<PasswordChangeProps>(
-    'auth-login-form',
-    'post',
-    route('password.store', {}, false),
-    {
-      email,
-      token,
-      password: '',
-      password_confirmation: ''
-    },
-    { validateOn: 'blur' }
-  )
+  const form = useForm<PasswordChangeProps>('auth-login-form', 'post', route('password.store', {}, false), {
+    email,
+    token,
+    password: '',
+    password_confirmation: ''
+  }, { validateOn: 'blur' })
 
   const loginContent = (
     <AuthContainer

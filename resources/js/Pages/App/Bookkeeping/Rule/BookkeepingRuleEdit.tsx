@@ -30,14 +30,9 @@ const logicalOperators: Options[] = [
 const BookkeepingRuleEdit: React.FC<Props> = ({ rule, fields }) => {
   const [isOpen, setIsOpen] = useState(true)
 
-  const form = useForm<App.Data.BookkeepingRuleData>(
-    'form-rule-edit',
-    rule.id ? 'put' : 'post',
-    route(rule.id ? 'app.bookkeeping.rules.update' : 'app.bookkeeping.rules.store', {
-      id: rule.id
-    }),
-    rule
-  )
+  const form = useForm<App.Data.BookkeepingRuleData>('form-rule-edit', rule.id ? 'put' : 'post', route(rule.id ? 'app.bookkeeping.rules.update' : 'app.bookkeeping.rules.store', {
+    id: rule.id
+  }), rule)
 
   const handleClose = () => {
     setIsOpen(false)

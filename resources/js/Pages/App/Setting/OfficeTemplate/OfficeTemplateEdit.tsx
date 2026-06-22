@@ -22,21 +22,16 @@ const OfficeTemplateEdit: React.FC<Props> = ({ template }) => {
   const title = template.id ? 'Office-Vorlage bearbeiten' : 'Office-Vorlage hinzufügen'
   const [file, setFile] = useState<string | null>(null)
 
-  const form = useForm<OfficeTemplateFormData>(
-    'form-office_template-edit',
-    template.id ? 'post' : 'post',
-    route(
-      template.id ? 'app.setting.office-template.update' : 'app.setting.office-template.store',
-      {
-        template: template.id,
-        _method: template.id ? 'put' : 'post'
-      }
-    ),
+  const form = useForm<OfficeTemplateFormData>('form-office_template-edit', template.id ? 'post' : 'post', route(
+    template.id ? 'app.setting.office-template.update' : 'app.setting.office-template.store',
     {
-      ...template,
-      file: null
+      template: template.id,
+      _method: template.id ? 'put' : 'post'
     }
-  )
+  ), {
+    ...template,
+    file: null
+  })
 
   const breadcrumbs = useMemo(
     () => [
