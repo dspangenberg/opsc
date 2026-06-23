@@ -150,15 +150,16 @@ class ZugferdService
 
         if ($this->invoice->invoice_contact_id) {
             $contact = Contact::with(['mails', 'phones'])->find($this->invoice->invoice_contact_id);
-            $this->xmlDoc->setDocumentBuyerContact(
-                $contact->full_name,
-                $contact->department,
-                $contact->primary_phone,
-                '',
-                $contact->primary_mail
-            );
+            if ($contact) {
+                $this->xmlDoc->setDocumentBuyerContact(
+                    $contact->full_name,
+                    $contact->department,
+                    $contact->primary_phone,
+                    '',
+                    $contact->primary_mail
+                );
+            }
         }
-
     }
 
     public function getTaxBreakdown(): void
