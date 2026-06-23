@@ -9,7 +9,7 @@ class OfficeTemplateUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required'],
+            'name' => ['required', 'string', 'max:255'],
             'is_default' => ['boolean'],
             'file' => 'nullable|file|mimes:docx|max:51200',
         ];
