@@ -106,10 +106,10 @@ class ZugferdService
     {
         foreach ($this->getInvoiceLines() as $index => $line) {
             $this->xmlDoc->addNewPosition((string) ($index + 1));
+            $positionText = trim(strip_md($line->text));
             $this->xmlDoc->setDocumentPositionProductDetails(
-                strip_md($line->text) ?? 'Position',
+                $positionText !== '' ? $positionText : 'Position',
             );
-
             if ($line->service_period_begin && $line->service_period_end) {
                 $this->xmlDoc->setDocumentPositionBillingPeriod($line->service_period_begin, $line->service_period_end);
             }
