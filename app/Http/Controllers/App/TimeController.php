@@ -38,7 +38,9 @@ class TimeController extends Controller
     {
         $query = Time::query()
             ->applyDynamicFilters($request, [
-                'allowed_filters' => ['project_id', 'begin_at', 'time_category_id', 'user_id', 'note', 'is_locked', 'is_billable'],
+                'allowed_filters' => [
+                    'project_id', 'begin_at', 'time_category_id', 'user_id', 'note', 'is_locked', 'is_billable',
+                ],
             ])
             ->with('project')
             ->withMinutes()
@@ -186,6 +188,7 @@ class TimeController extends Controller
             'is_draft' => true,
             'address' => $contact->getFormatedInvoiceAddress(),
             'payment_deadline_id' => $paymentDeadline->id,
+            'is_zugferd' => true,
         ]);
 
         $pos = 0;
@@ -352,9 +355,10 @@ class TimeController extends Controller
         $now = Carbon::now()->format('d.m.Y');
         $title = "Leistungsnachweis vom $now";
 
-        $pdfContent = WeasyPdfService::createPdf('proof-of-activity', 'pdf.proof-of-activity.index', ['times' => $timesForReport], [
-            'title' => $title,
-        ]);
+        $pdfContent = WeasyPdfService::createPdf('proof-of-activity', 'pdf.proof-of-activity.index',
+            ['times' => $timesForReport], [
+                'title' => $title,
+            ]);
 
         return response()->file($pdfContent);
     }

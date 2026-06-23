@@ -388,6 +388,7 @@ class Invoice extends Model implements MediableInterface
             $this->invoice_number = $counter;
         }
 
+        $this->issued_on = Carbon::now();
         $this->setDueDate();
         $this->is_draft = false;
 
