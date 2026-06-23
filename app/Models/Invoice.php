@@ -377,6 +377,8 @@ class Invoice extends Model implements MediableInterface
 
     public function release(): void
     {
+        $this->issued_on = Carbon::now();
+
         if (! $this->invoice_number) {
             $counter = Invoice::whereYear('issued_on', $this->issued_on->year)->max('invoice_number');
             if ($counter == 0) {

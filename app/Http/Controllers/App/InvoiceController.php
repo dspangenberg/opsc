@@ -388,7 +388,7 @@ class InvoiceController extends Controller
     public function unrelease(Invoice $invoice): RedirectResponse
     {
         if ($invoice->sent_at) {
-            abort('Invoice cannot be unreleased once it has been sent.');
+            abort('Die Rechnung wurde bereits versendet und kann nicht mehr korrigiert werden.');
         }
 
         $invoice->invoice_number = null;
@@ -879,11 +879,6 @@ class InvoiceController extends Controller
         $template = EmailTemplate::where('name', 'invoice')->first();
         $template->body = $request->validated('body');
         $template->subject = $request->validated('subject');
-
-        if (! $invoice->sent_at) {
-            $invoice->sent_at = now();
-            $invoice->save();
-        }
 
         $data = [
             'invoice' => $invoice,

@@ -35,6 +35,7 @@ if (! function_exists('md')) {
      * Converts markdown to sanitized HTML to prevent XSS attacks.
      * Uses league/commonmark with CommonMark and Table extensions.
      * Allows safe HTML tags via HTMLPurifier configuration.
+     *
      * @throws CommonMarkException
      */
     function md(?string $markdown): string
@@ -57,7 +58,8 @@ if (! function_exists('md')) {
 
         // Sanitize HTML output using HTMLPurifier to allow safe tags only
         $purifierConfig = HTMLPurifier_Config::createDefault();
-        $purifierConfig->set('HTML.Allowed', 'p,br,strong,em,u,h1,h2,h3,h4,h5,h6,ul,ol,li,a[href],table,thead,tbody,tr,th,td,span,div,blockquote,code,pre');
+        $purifierConfig->set('HTML.Allowed',
+            'p,br,strong,em,u,h1,h2,h3,h4,h5,h6,ul,ol,li,a[href],table,thead,tbody,tr,th,td,span,div,blockquote,code,pre');
         $purifierConfig->set('URI.DisableExternalResources', true);
         $purifierConfig->set('URI.DisableResources', true);
         $purifier = new HTMLPurifier($purifierConfig);
@@ -145,5 +147,14 @@ if (! function_exists('parseMailParty')) {
             'name' => $name,
             'email' => $email,
         ];
+    }
+
+    if (! function_exists('strip_md')) {
+        function strip_md($text): string
+        {
+            $html = strip_tags(md($text));
+
+            return preg_replace('/<[^>]*>/', '', $html);
+        }
     }
 }

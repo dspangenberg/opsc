@@ -38,7 +38,8 @@ class ZugferdService
         $this->xmlDoc
             ->addDocumentNote($this->settings->document_note, '', 'REG')
             ->setDocumentSeller($this->settings->seller)
-            ->setDocumentSellerCommunication(ZugferdElectronicAddressScheme::UNECE3155_EM, $this->settings->seller_email)
+            ->setDocumentSellerCommunication(ZugferdElectronicAddressScheme::UNECE3155_EM,
+                $this->settings->seller_email)
             ->addDocumentSellerGlobalId($this->settings->global_id, $this->settings->global_id_type)
             ->addDocumentSellerTaxRegistration('VA', $this->settings->seller_tax_vat)
             ->setDocumentSellerAddress(
@@ -105,16 +106,18 @@ class ZugferdService
     {
         foreach ($this->getInvoiceLines() as $index => $line) {
             $this->xmlDoc->addNewPosition((string) ($index + 1));
+            $positionText = trim(strip_md($line->text));
             $this->xmlDoc->setDocumentPositionProductDetails(
-                $line->text ?? 'Position',
+                $positionText !== '' ? $positionText : 'Position',
             );
-
             if ($line->service_period_begin && $line->service_period_end) {
                 $this->xmlDoc->setDocumentPositionBillingPeriod($line->service_period_begin, $line->service_period_end);
             }
 
+            $unitCode = ($line->unit === 'h') ? 'HUR' : 'C63';
+
             $this->xmlDoc->setDocumentPositionNetPrice(round($line->price, 2));
-            $this->xmlDoc->setDocumentPositionQuantity(round($line->quantity, 2), 'C62');
+            $this->xmlDoc->setDocumentPositionQuantity(round($line->quantity, 2), $unitCode);
             $this->xmlDoc->addDocumentPositionTax(
                 'S',
                 'VAT',
@@ -130,7 +133,8 @@ class ZugferdService
         $addressLines = explode("\n", $this->invoice->contact->getInvoiceAddress()->address);
 
         $this->xmlDoc
-            ->setDocumentBuyer($this->invoice->contact->name ?? $this->invoice->contact?->full_name ?? '', $this->invoice->contact->formated_debtor_number)
+            ->setDocumentBuyer($this->invoice->contact->name ?? $this->invoice->contact?->full_name ?? '',
+                $this->invoice->contact->formated_debtor_number)
             ->setDocumentBuyerReference($this->getBuyerReference())
             ->addDocumentBuyerVATRegistrationNumber($this->invoice->contact->vat_id)
             ->setDocumentBuyerCommunication(ZugferdElectronicAddressScheme::UNECE3155_EM,
@@ -143,6 +147,19 @@ class ZugferdService
                 $this->invoice->contact->getInvoiceAddress()->city,
                 $this->invoice->contact->getInvoiceAddress()->country->iso_code
             );
+
+        if ($this->invoice->invoice_contact_id) {
+            $contact = Contact::with(['mails', 'phones'])->find($this->invoice->invoice_contact_id);
+            if ($contact) {
+                $this->xmlDoc->setDocumentBuyerContact(
+                    $contact->full_name,
+                    $contact->department,
+                    $contact->primary_phone,
+                    '',
+                    $contact->primary_mail
+                );
+            }
+        }
     }
 
     public function getTaxBreakdown(): void
@@ -161,7 +178,8 @@ class ZugferdService
     {
         if ($this->invoice->type->zugferd_id === '384' && $this->invoice->parent_invoice) {
             $this->xmlDoc
-                ->addDocumentPaymentMean('97', 'Der Gutschriftbetrag wird mit der Rechnung '.$this->invoice->parent_invoice->formated_invoice_number.' verrechnet.');
+                ->addDocumentPaymentMean('97',
+                    'Der Gutschriftbetrag wird mit der Rechnung '.$this->invoice->parent_invoice->formated_invoice_number.' verrechnet.');
         } else {
             $this->xmlDoc
                 ->addDocumentPaymentMeanToCreditTransfer(
@@ -194,8 +212,12 @@ class ZugferdService
         );
     }
 
-    public function generateZugferdXml(string $orgPdfFile, Invoice $invoice, array $taxes, BankAccount $bankAccount): string
-    {
+    public function generateZugferdXml(
+        string $orgPdfFile,
+        Invoice $invoice,
+        array $taxes,
+        BankAccount $bankAccount
+    ): string {
         /*
         * Wir haben im XML eine Warnung, die wir aber ignorieren können, solange kein B2G
         *  Das Element "Specification identifier" (BT-24) soll syntaktisch der Kennung des Standards XRechnung entsprechen.
@@ -206,7 +228,6 @@ class ZugferdService
         *
         * TODO:
         * - Markdown aus Rechnungspostionen entfernen
-        * - BuyerContact
         */
 
         $this->invoice = $invoice;
@@ -236,7 +257,8 @@ class ZugferdService
             );
 
         if ($this->invoice->service_period_begin && $this->invoice->service_period_end) {
-            $this->xmlDoc->setDocumentBillingPeriod($this->invoice->service_period_begin, $this->invoice->service_period_end, '');
+            $this->xmlDoc->setDocumentBillingPeriod($this->invoice->service_period_begin,
+                $this->invoice->service_period_end, '');
         }
 
         if ($this->invoice->additional_text) {
