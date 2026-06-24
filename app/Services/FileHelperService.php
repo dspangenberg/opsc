@@ -34,13 +34,19 @@ class FileHelperService
 
     public function createTemporaryFileFromDoc($fileName, $content, $ext = '.pdf'): string
     {
-        $tempFile = storage_path('app/temp');
-        if (! file_exists($tempFile)) {
-            mkdir($tempFile, 0755, true);
+        $tempDir = storage_path('app/temp');
+        if (! file_exists($tempDir)) {
+            mkdir($tempDir, 0755, true);
         }
-        $fileName = uniqid().'_'.$fileName.$ext;
-        file_put_contents($tempFile.'/'.$fileName, $content);
-        $realPath = $tempFile.'/'.$fileName;
+        $safeFileName = uniqid().'_'.pathinfo($fileName, PATHINFO_FILENAME).$ext;
+        $realPath = $tempDir.'/'.$safeFileName;
+
+        file_put_contents($realPath, $content);
+
+        if (! str_starts_with(realpath($realPath), realpath($tempDir))) {
+            unlink($realPath);
+            throw new \RuntimeException('Path traversal detected in filename');
+        }
 
         return $realPath;
     }

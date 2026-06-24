@@ -63,7 +63,7 @@ export const InvoiceTableProvider = ({ children }: InvoiceTableProviderProps) =>
       rate: null,
       service_period_begin: '',
       service_period_end: '',
-      linked_invoice: null
+      linked_invoice: null as unknown as App.Data.InvoiceData
     }
     console.log(newLine)
     setLines(prevLines => [...prevLines, newLine])

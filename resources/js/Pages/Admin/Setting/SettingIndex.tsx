@@ -16,11 +16,10 @@ const SettingIndex: React.FC<SettingIndexPageProps> = ({ settings }) => {
   const handleEditSetting = async (row: App.Data.SettingData) => {
     const value = await SettingEditDialog.call({ setting: row })
     if (value !== false) {
-      row.value = value
       router.put(route('admin.setting.update'), {
         group: row.group,
         key: row.key,
-        value: value
+        value
       })
     }
   }

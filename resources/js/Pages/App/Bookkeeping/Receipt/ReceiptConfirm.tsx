@@ -22,6 +22,10 @@ import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import { PdfContainer } from '@/Components/twc-ui/pdf-container'
 import type { PageProps } from '@/Types'
 
+type ReceiptFormData = App.Data.ReceiptData & {
+  number_range_document_number: string | null
+}
+
 interface Props extends PageProps {
   receipt: App.Data.ReceiptData
   nextReceipt: string
@@ -54,7 +58,12 @@ const ReceiptConfirm: React.FC<Props> = ({
 
   // TODO: Precognition-Validierung funktioniert nicht
 
-  const form = useForm<App.Data.ReceiptData>('update-receipt', 'put', actionUrl, receipt)
+  const form = useForm<ReceiptFormData>(
+    'update-receipt',
+    'put',
+    actionUrl,
+    receipt as ReceiptFormData
+  )
 
   // Reset form data when receipt changes
   useEffect(() => {

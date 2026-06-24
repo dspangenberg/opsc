@@ -1,8 +1,15 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\AuthServiceProvider;
+use App\Providers\TenancyServiceProvider;
+use App\Providers\TypeScriptTransformerServiceProvider;
+use App\Providers\ValidationServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\AuthServiceProvider::class,
-    App\Providers\TenancyServiceProvider::class,
-    App\Providers\ValidationServiceProvider::class,
+    AppServiceProvider::class,
+    AuthServiceProvider::class,
+    TenancyServiceProvider::class,
+    TypeScriptTransformerServiceProvider::class,
+    ValidationServiceProvider::class,
 ];

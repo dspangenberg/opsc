@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\InitialPasswordStoreController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Jobs\DropboxImportJob;
 use App\Models\Dropbox;
 use App\Models\DropboxInbox;
 use Carbon\Carbon;
@@ -156,7 +157,7 @@ Route::middleware([
 
         unset($payload['html'], $payload['text'], $payload['text_as_html']);
 
-        DropboxInbox::updateOrCreate(
+        $mail = DropboxInbox::updateOrCreate(
             [
                 'dropbox_id' => $dropbox->id,
                 'message_id' => $payload['message_id'],
@@ -167,6 +168,8 @@ Route::middleware([
                 'is_private' => $dropbox->is_private_by_default,
             ]
         );
+
+        DropboxImportJob::dispatch($mail);
 
         return response(null, 200);
 

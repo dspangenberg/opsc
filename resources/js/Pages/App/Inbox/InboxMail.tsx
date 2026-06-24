@@ -32,14 +32,19 @@ export const InboxMail: React.FC<InboxMailProps> = ({ mail, contacts, projects }
     setShowJson(false)
   }, [mail.id])
 
-  const form = useForm<FormData>('mail-form', 'put', route('app.inbox.import', {
-    mail: mail.id
-  }), {
-    contact_id: 0,
-    project_id: 0,
-    is_private: mail.is_private,
-    use_attachments: true
-  })
+  const form = useForm<FormData>(
+    'mail-form',
+    'put',
+    route('app.inbox.import', {
+      mail: mail.id
+    }),
+    {
+      contact_id: 0,
+      project_id: 0,
+      is_private: mail.is_private,
+      use_attachments: true
+    }
+  )
 
   form.transform((data: any) => ({
     ...data,
@@ -157,6 +162,11 @@ export const InboxMail: React.FC<InboxMailProps> = ({ mail, contacts, projects }
         >
           {mail.plain_body}
         </Markdown>
+
+        {mail.attachments?.map((attachment, index) => (
+          <li key={`${attachment.filename}-${index}`}>{attachment.filename}</li>
+        ))}
+
         {showJson ? (
           <JSONTree data={mail.payload} invertTheme theme={theme} />
         ) : (

@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Facades\BookeepingRuleService;
 use App\Facades\OcrService;
-use App\Models\Contact;
 use App\Models\Receipt;
 use Exception;
 use Illuminate\Support\Str;
@@ -23,7 +22,6 @@ use Zip;
 
 class ReceiptService
 {
-
     /**
      * @throws Exception
      */
@@ -33,7 +31,7 @@ class ReceiptService
 
         $files = [];
         foreach ($zip->listFiles() as $zipFile) {
-            if (!Str::startsWith($zipFile, ['.DS_Store', '__MACOSX', '.', '..'])) {
+            if (! Str::startsWith($zipFile, ['.DS_Store', '__MACOSX', '.', '..'])) {
                 $files[] = $zipFile;
             }
         }
@@ -44,12 +42,32 @@ class ReceiptService
             $pdfFile = $tempFile.'/'.$zipFile;
             if ($result) {
 
-                if (!is_dir($pdfFile)) {
+                if (! is_dir($pdfFile)) {
                     $orgFilename = basename($zipFile);
                     $filesize = filesize($pdfFile);
                     $this->processFile($pdfFile, $orgFilename, $filesize);
                 }
             }
+        }
+    }
+
+    /**
+     * @throws PdfDoesNotExist
+     * @throws FileNotSupportedException
+     * @throws FileExistsException
+     * @throws ForbiddenException
+     * @throws FileNotFoundException
+     * @throws FileSizeException
+     * @throws InvalidHashException
+     * @throws ConfigurationException
+     */
+    public function processMailAttachment($file, $fileName, $fileSize): void
+    {
+        $this->processFile($file, $fileName, $fileSize);
+        $realFile = realpath($file);
+        $realTemp = realpath(storage_path('app/temp'));
+        if ($realFile !== false && $realTemp !== false && str_starts_with($realFile, $realTemp)) {
+            unlink($file);
         }
     }
 
@@ -82,8 +100,8 @@ class ReceiptService
             $receipt->file_created_at = filemtime($file);
         }
 
-        if (!$receipt->text) {
-            $receipt->text = iconv('UTF-8', 'UTF-8//IGNORE',OcrService::run($file));
+        if (! $receipt->text) {
+            $receipt->text = iconv('UTF-8', 'UTF-8//IGNORE', OcrService::run($file));
         }
 
         $receipt->checksum = hash_file('sha256', $file);
@@ -118,7 +136,7 @@ class ReceiptService
             $receipt->save();
         }
 
-        if ($useAi && !$duplicatedReceipt) {
+        if ($useAi && ! $duplicatedReceipt) {
             try {
                 $receipt->extractInvoiceData();
             } catch (Exception $e) {
