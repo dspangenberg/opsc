@@ -225,9 +225,6 @@ class ZugferdService
         *
         * [PEPPOL-EN16931-R008]-Document MUST not contain empty elements. (still status warning) from /xslt/ZF_250/FACTUR-X_EN16931.xslt)
         * ist nur eine Warnung und es gibt noch keine Lösung und kann erst einmal ignoriert werden.
-        *
-        * TODO:
-        * - Markdown aus Rechnungspostionen entfernen
         */
 
         $this->invoice = $invoice;

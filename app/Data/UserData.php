@@ -7,7 +7,6 @@
 
 namespace App\Data;
 
-use App\Models\Contact;
 use DateTime;
 use Spatie\LaravelData\Attributes\WithTransformer;
 use Spatie\LaravelData\Data;
@@ -36,7 +35,7 @@ class UserData extends Data
         public readonly ?int $contact_id,
 
         public readonly ?EmailAccountData $email_account,
-        public readonly ?Contact $contact,
+        public readonly ?ContactData $contact,
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]
         public readonly ?DateTime $last_login_at,

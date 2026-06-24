@@ -5,18 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Plank\Mediable\Mediable;
 
-/**
- * @property-read \App\Models\Dropbox|null $dropbox
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DropboxMailLink> $links
- * @property-read int|null $links_count
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DropboxMail newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DropboxMail newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DropboxMail query()
- * @mixin \Eloquent
- */
 class DropboxMail extends Model
 {
+    use Mediable;
+
     protected $fillable = [
         'message_id',
         'subject',
@@ -43,6 +37,11 @@ class DropboxMail extends Model
     public function links(): HasMany
     {
         return $this->hasMany(DropboxMailLink::class);
+    }
+
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(DropboxMailAttachment::class);
     }
 
     protected $attributes = [
