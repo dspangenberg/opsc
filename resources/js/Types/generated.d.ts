@@ -328,6 +328,14 @@ declare namespace App {
       readonly user_id: number | null;
       readonly user: App.Data.UserData | null;
     };
+    export type DropboxInboxAttachmentData = {
+      readonly filename: string;
+      readonly contentType: string;
+      readonly contentDisposition: string;
+      readonly contentId: string | null;
+      readonly content: Array<any> | string;
+      readonly size: number;
+    };
     export type DropboxInboxData = {
       readonly id: number;
       readonly dropbox_id: number;
@@ -337,7 +345,7 @@ declare namespace App {
       readonly is_private: boolean;
       readonly subject: string;
       readonly plain_body: string;
-      readonly attachments: Array<any> | null;
+      readonly attachments: App.Data.DropboxInboxAttachmentData[];
       readonly payload: Array<any>;
       readonly date: string | null;
     };
