@@ -36,22 +36,27 @@ class DropboxService
             );
 
             foreach ($mail->attachments as $attachment) {
-                if ($attachment['contentType'] !== 'application/pdf') {
+                $contentType = $attachment['contentType'] ?? null;
+                $filename = $attachment['filename'] ?? null;
+                $size = $attachment['size'] ?? null;
+                $rawContent = $attachment['content'] ?? null;
+
+                if ($contentType !== 'application/pdf' || !is_string($filename) || !is_int($size)) {
                     continue;
                 }
 
-                if (is_string($attachment['content'])) {
-                    $content = $attachment['content'];
-                } elseif (($attachment['content']['type'] ?? null) === 'Buffer') {
-                    $content = base64_encode(pack('C*', ...$attachment['content']['data']));
+                if (is_string($rawContent)) {
+                    $content = $rawContent;
+                } elseif (($rawContent['type'] ?? null) === 'Buffer' && is_array($rawContent['data'] ?? null)) {
+                    $content = base64_encode(pack('C*', ...$rawContent['data']));
                 } else {
                     continue;
                 }
 
                 $dropboxMailAttachment = $dropboxMail->attachments()->create([
-                    'filename' => $attachment['filename'],
-                    'size' => $attachment['size'],
-                    'mime_type' => $attachment['contentType'],
+                    'filename' => $filename,
+                    'size' => $size,
+                    'mime_type' => $contentType,
                 ]);
 
                 $media = MediaUploader::fromSource(
