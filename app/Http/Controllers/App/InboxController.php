@@ -50,11 +50,10 @@ class InboxController extends Controller
     public function import($mail): RedirectResponse
     {
         $mail = DropboxInbox::query()->with('dropbox')->where('id', $mail)->first();
-        DropboxImportJob::dispatch($mail->id);
+        DropboxImportJob::dispatch($mail);
 
         return redirect()->route('app.inbox.index');
     }
-
 
     public function destroy(DropboxInbox $mail): RedirectResponse
     {

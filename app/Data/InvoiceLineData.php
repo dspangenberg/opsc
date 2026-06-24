@@ -37,10 +37,7 @@ class InvoiceLineData extends Data
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
         public readonly ?DateTime $service_period_end,
-
-        /** @var InvoiceData */
         public readonly ?InvoiceData $linked_invoice,
 
-    ) {
-    }
+    ) {}
 }

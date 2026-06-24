@@ -29,7 +29,7 @@ class DropboxInboxData extends Data
         public readonly string $subject,
         public readonly string $plain_body,
 
-        /** @var DropboxInboxAttachmentData[] | null */
+        /** @var DropboxInboxAttachmentData[] */
         public readonly ?array $attachments,
         public readonly array $payload,
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]

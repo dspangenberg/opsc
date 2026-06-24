@@ -26,11 +26,11 @@ class DropboxService
                     'subject' => $mail->subject,
                     'from' => $mail->from,
                     'to' => $mail->to,
-                    'cc' => $mail->payload['cc'],
+                    'cc' => $mail->payload['cc'] ?? [],
                     'date' => $mail->date,
                     'body' => $mail->plain_body,
-                    'in_reply_to' => $mail->payload['in_reply_to'],
-                    'references' => $mail->payload['references'],
+                    'in_reply_to' => $mail->payload['in_reply_to'] ?? null,
+                    'references' => $mail->payload['references'] ?? [],
                     'is_private' => $isPrivate,
                 ]
             );
