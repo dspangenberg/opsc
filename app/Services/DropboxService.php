@@ -10,16 +10,15 @@ use Throwable;
 
 class DropboxService
 {
-    public function __construct() {}
-
     /**
      * @throws Throwable
      */
     public function importMail(DropboxInbox $mail): void
     {
         $mail->load('dropbox');
-        DB::transaction(function () use ($mail) {
-            // $request->validated()
+        $isPrivate = $mail->dropbox?->is_private_by_default ?? false;
+
+        DB::transaction(function () use ($mail, $isPrivate) {
             $dropboxMail = DropboxMail::create(
                 [
                     'message_id' => $mail->message_id,
@@ -32,7 +31,7 @@ class DropboxService
                     'body' => $mail->plain_body,
                     'in_reply_to' => $mail->payload['in_reply_to'],
                     'references' => $mail->payload['references'],
-                    'is_private' => $mail->dropbox->is_private_by_default,
+                    'is_private' => $isPrivate,
                 ]
             );
 
@@ -41,12 +40,6 @@ class DropboxService
                     continue;
                 }
 
-                $dropboxMailAttachment = $dropboxMail->attachments()->create([
-                    'filename' => $attachment['filename'],
-                    'size' => $attachment['size'],
-                    'mime_type' => $attachment['contentType'],
-                ]);
-
                 if (is_string($attachment['content'])) {
                     $content = $attachment['content'];
                 } elseif (($attachment['content']['type'] ?? null) === 'Buffer') {
@@ -54,6 +47,12 @@ class DropboxService
                 } else {
                     continue;
                 }
+
+                $dropboxMailAttachment = $dropboxMail->attachments()->create([
+                    'filename' => $attachment['filename'],
+                    'size' => $attachment['size'],
+                    'mime_type' => $attachment['contentType'],
+                ]);
 
                 $media = MediaUploader::fromSource(
                     'data:'.$attachment['contentType'].';base64,'.$content

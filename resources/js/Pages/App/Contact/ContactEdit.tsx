@@ -136,7 +136,7 @@ const ContactEdit: React.FC<Props> = ({
       email_category_id: defaultCategoryId,
       contact_id: contact.id as number,
       pos: form.data.mails.length || 0,
-      category: mail_categories.find(cat => cat.id === defaultCategoryId) || null
+      category: mail_categories.find(cat => cat.id === defaultCategoryId)!
     }
 
     const updatedMails = [...form.data.mails, newMail]
@@ -155,8 +155,8 @@ const ContactEdit: React.FC<Props> = ({
       address_category_id: defaultCategoryId,
       contact_id: contact.id as number,
       full_address: [],
-      category: address_categories.find(cat => cat.id === defaultCategoryId) || null,
-      country: countries.find(country => country.id === defaultCountry) || null
+      category: address_categories.find(cat => cat.id === defaultCategoryId)!,
+      country: countries.find(country => country.id === defaultCountry)!
     }
 
     const updatedAddresses = [...form.data.addresses, newAddress]
@@ -171,7 +171,7 @@ const ContactEdit: React.FC<Props> = ({
       phone_category_id: defaultCategoryId,
       contact_id: contact.id as number,
       pos: form.data.phones.length || 0,
-      category: phone_categories.find(cat => cat.id === defaultCategoryId) || null
+      category: phone_categories.find(cat => cat.id === defaultCategoryId)!
     }
 
     const updatedPhones = [...form.data.phones, newPhone]
@@ -201,9 +201,14 @@ const ContactEdit: React.FC<Props> = ({
     }
   }
 
-  const form = useForm<FormData>('contact-form', 'put', route('app.contact.update', {
-    contact: contact.id
-  }), initialData)
+  const form = useForm<FormData>(
+    'contact-form',
+    'put',
+    route('app.contact.update', {
+      contact: contact.id
+    }),
+    initialData
+  )
 
   // Transform empty strings to null for optional ID fields before submit
   form.transform((data: any) => ({

@@ -38,6 +38,7 @@ interface Props extends PageProps {
 
 type ReceiptForm = App.Data.ReceiptData & {
   is_reconversion: boolean
+  number_range_document_number: string | null
 }
 
 const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_centers }) => {
@@ -78,22 +79,27 @@ const ReceiptEdit: React.FC<Props> = ({ receipt, contacts, nextReceipt, cost_cen
     [receipt.id, receipt.document_number]
   )
 
-  const form = useForm<ReceiptForm>('update-receipt', 'put', route(
-    'app.bookkeeping.receipts.update',
+  const form = useForm<ReceiptForm>(
+    'update-receipt',
+    'put',
+    route(
+      'app.bookkeeping.receipts.update',
+      {
+        receipt: receipt.id,
+        _query: { confirm: 1, load_next: 1 }
+      },
+      false
+    ),
     {
-      receipt: receipt.id,
-      _query: { confirm: 1, load_next: 1 }
-    },
-    false
-  ), {
-    ...receipt,
-    is_reconversion: false
-  })
+      ...(receipt as ReceiptForm),
+      is_reconversion: false
+    }
+  )
 
   // Form-Daten aktualisieren wenn sich receipt Props ändern
   useEffect(() => {
     form.setData({
-      ...receipt,
+      ...(receipt as ReceiptForm),
       is_reconversion: false
     })
   }, [receipt.id, receipt.amount, receipt.org_amount, receipt.exchange_rate])

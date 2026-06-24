@@ -10,10 +10,10 @@ return new class extends Migration
     {
         Schema::create('dropbox_mail_attachments', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('dropbox_mail_id');
+            $table->foreignId('dropbox_mail_id')->constrained('dropbox_mails')->cascadeOnDelete();
             $table->string('filename');
             $table->string('mime_type');
-            $table->string('size');
+            $table->unsignedBigInteger('size');
             $table->timestamps();
         });
     }

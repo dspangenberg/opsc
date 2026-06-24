@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Models\DropboxInbox;
 use App\Services\DropboxService;
-use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Throwable;
@@ -23,7 +22,7 @@ class DropboxImportJob implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @throws Exception|Throwable
+     * @throws Throwable
      */
     public function handle(DropboxService $service): void
     {

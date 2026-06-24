@@ -6,10 +6,7 @@ use App\Data\DropboxInboxData;
 use App\Data\DropboxInboxIndexData;
 use App\Data\ProjectData;
 use App\Data\SimpleContactData;
-use App\Facades\FileHelperService;
-use App\Facades\ReceiptService;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\MailImportRequest;
 use App\Jobs\DropboxImportJob;
 use App\Models\Contact;
 use App\Models\DropboxInbox;
@@ -50,27 +47,14 @@ class InboxController extends Controller
     /**
      * @throws Throwable
      */
-    public function import(MailImportRequest $request, $mail): RedirectResponse
+    public function import($mail): RedirectResponse
     {
         $mail = DropboxInbox::query()->with('dropbox')->where('id', $mail)->first();
-        DropboxImportJob::dispatch($mail);
+        DropboxImportJob::dispatch($mail->id);
 
         return redirect()->route('app.inbox.index');
     }
 
-    public function processAttachmentsAsReciept(MailImportRequest $request, $mail)
-    {
-        foreach ($mail->attachments as $attachment) {
-            if ($attachment['contentType'] !== 'application/pdf') {
-                continue;
-            }
-
-            $content = base64_encode($attachment['content']);
-            $reciept = FileHelperService::createTemporaryFileFromDoc($attachment['filename'], $content);
-            ReceiptService::processMailAttachment($reciept, $attachment['filename'], $attachment['size']);
-
-        }
-    }
 
     public function destroy(DropboxInbox $mail): RedirectResponse
     {

@@ -163,8 +163,8 @@ export const InboxMail: React.FC<InboxMailProps> = ({ mail, contacts, projects }
           {mail.plain_body}
         </Markdown>
 
-        {mail.attachments?.map(attachment => (
-          <li key={attachment}>{attachment.filename}</li>
+        {mail.attachments?.map((attachment, index) => (
+          <li key={`${attachment.filename}-${index}`}>{attachment.filename}</li>
         ))}
 
         {showJson ? (
