@@ -9,12 +9,14 @@ namespace App\Http\Middleware;
 
 use App\Data\BookmarkData;
 use App\Data\BookmarkFolderData;
+use App\Data\DropboxData;
 use App\Data\EmailAccountData;
 use App\Data\TenantData;
 use App\Data\TimeData;
 use App\Data\UserData;
 use App\Models\Bookmark;
 use App\Models\BookmarkFolder;
+use App\Models\Dropbox;
 use App\Models\EmailAccount;
 use App\Models\Time;
 use Illuminate\Http\Request;
@@ -43,31 +45,34 @@ class HandleInertiaRequests extends Middleware
 
         $user = $request->user();
 
-       $runningTimer = $user ? Time::query()
-           ->where('user_id', $user->id)
-           ->whereNull('end_at')
-           ->latest('begin_at')
-           ->with(['category', 'project'])
-           ->first() : null;
+        $runningTimer = $user ? Time::query()
+            ->where('user_id', $user->id)
+            ->whereNull('end_at')
+            ->latest('begin_at')
+            ->with(['category', 'project'])
+            ->first() : null;
 
-       $bookmarks = Bookmark::where('is_pinned', true)->whereNull('bookmark_folder_id')->orderBy('name')->get();
-       $bookmarkFolders = BookmarkFolder::with('bookmarks')->orderBy('name')->get();
+        $bookmarks = Bookmark::where('is_pinned', true)->whereNull('bookmark_folder_id')->orderBy('name')->get();
+        $bookmarkFolders = BookmarkFolder::with('bookmarks')->orderBy('name')->get();
 
-       $mailAccounts = [];
-       if ($user) {
-           $ids = [];
-           $defaultMailAccount = EmailAccount::query()->where('is_default', true)->first();
-           if (! $defaultMailAccount) {
-               $ids[] = $defaultMailAccount->id;
-           }
+        $mailAccounts = [];
+        $dropBoxes = [];
+        if ($user) {
+            $ids = [];
+            $defaultMailAccount = EmailAccount::query()->where('is_default', true)->first();
+            if (! $defaultMailAccount) {
+                $ids[] = $defaultMailAccount->id;
+            }
 
-           if ($user->email_account_id) {
-               $ids[] = $user->email_account_id;
-           }
+            if ($user->email_account_id) {
+                $ids[] = $user->email_account_id;
+            }
 
-           $mailAccounts = EmailAccount::query()->whereIn('id', $ids)->orderBy('email')->get();
-       }
+            $mailAccounts = EmailAccount::query()->whereIn('id', $ids)->orderBy('email')->get();
 
+            $dropBoxes = Dropbox::query()->where('user_id', $user->id)->orWhere('is_shared', true)->orderBy('name')->get();
+
+        }
 
         return [
             ...parent::share($request),
@@ -78,6 +83,7 @@ class HandleInertiaRequests extends Middleware
                 'bookmarks' => BookmarkData::collect($bookmarks),
                 'bookmarkFolders' => BookmarkFolderData::collect($bookmarkFolders),
                 'email_accounts' => count($mailAccounts) ? EmailAccountData::collect($mailAccounts) : [],
+                'dropboxes' => count($dropBoxes) ? DropboxData::collect($dropBoxes) : [],
                 'domain' => $request->getHost(),
             ],
         ];

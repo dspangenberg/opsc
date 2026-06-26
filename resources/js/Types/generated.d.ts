@@ -357,6 +357,11 @@ declare namespace App {
       readonly plain_body: string;
       readonly date: string | null;
     };
+    export type DropboxMailAttachmentData = {
+      readonly filename: string;
+      readonly mime_type: string | null;
+      readonly size: number;
+    };
     export type DropboxMailData = {
       readonly id: number;
       readonly dropbox_id: number;
@@ -365,6 +370,8 @@ declare namespace App {
       readonly is_private: boolean;
       readonly subject: string;
       readonly body: string;
+      readonly attachments: App.Data.DropboxMailAttachmentData[];
+      readonly seen_at: string | null;
       readonly date: string | null;
     };
     export type EmailAccountData = {
@@ -468,7 +475,7 @@ declare namespace App {
       readonly rate: App.Data.TaxRateData | null;
       readonly service_period_begin: string | null;
       readonly service_period_end: string | null;
-      readonly linked_invoice: App.Data.InvoiceData;
+      readonly linked_invoice: App.Data.InvoiceData | null;
     };
     export type InvoiceTypeData = {
       readonly id: number | null;

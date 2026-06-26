@@ -12,6 +12,7 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -29,6 +30,7 @@ export interface NavMainItem {
   activePath?: string
   isActive?: boolean
   exact?: boolean
+  badge?: number
   items?: NavMainItemChildren[]
 }
 
@@ -39,6 +41,7 @@ export interface NavMainItemChildren {
   isActive?: boolean
   hasSep?: boolean
   exact?: boolean
+  badge?: number
   items?: NavMainItemChildren[]
 }
 
@@ -106,6 +109,7 @@ export function NavMain({ items, ...props }: { items: NavMainItem[] }) {
                                               <span>{child.title}</span>
                                             </Link>
                                           </SidebarMenuSubButton>
+                                          <SidebarMenuBadge>{child.badge}</SidebarMenuBadge>
                                         </SidebarMenuSubItem>
                                       ))}
                                     </SidebarMenuSub>

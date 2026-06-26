@@ -23,7 +23,7 @@ import { NavSecondary } from '@/Components/nav-secondary'
 import { BookmarkSidebarGroup } from '@/Components/Shared/Bookmark/BookmarkSidebarGroup'
 import { Sidebar, SidebarContent, SidebarHeader } from '@/Components/ui/sidebar'
 
-const buildNavData = (isAdmin: boolean) => ({
+const buildNavData = (isAdmin: boolean, dropboxes: App.Data.DropboxData[]) => ({
   navGlobalTop: [],
   navMain: [
     {
@@ -38,8 +38,22 @@ const buildNavData = (isAdmin: boolean) => ({
       title: 'E-Mails',
       url: route('app.inbox.index', {}, false),
       icon: MailAtSign02Icon,
-      activePath: '/app/inbox',
-      hasSep: true
+      activePath: '/app/emails',
+      hasSep: true,
+      items: [
+        ...dropboxes.map(box => ({
+          title: box.name,
+          badge: 5,
+          url: route('app.email.index', { dropbox: box.id }, false),
+          activePath: `/app/emails/${box.id}`
+        })),
+        {
+          title: 'Nicht verarbeitet',
+          url: route('app.inbox.index'),
+          badge: 10,
+          activePath: '/app/inbox'
+        }
+      ]
     },
     {
       title: 'Kontakte',
@@ -354,7 +368,7 @@ const buildNavData = (isAdmin: boolean) => ({
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { auth } = usePage().props
   const isAdmin = auth?.user?.is_admin ?? false
-  const data = buildNavData(isAdmin)
+  const data = buildNavData(isAdmin, auth.dropboxes)
   return (
     <Sidebar variant="inset" collapsible="icon" {...props}>
       <SidebarHeader className="h-auto flex-none">
