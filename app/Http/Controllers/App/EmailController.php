@@ -22,7 +22,7 @@ class EmailController extends Controller
 {
     public function index(Dropbox $dropbox, $mail = null): Response
     {
-        ray($mail);
+
         if ($mail) {
             $mail = DropboxMail::query()->with('attachments')->with('dropbox')->where('id', $mail)->first();
             if ($mail) {
