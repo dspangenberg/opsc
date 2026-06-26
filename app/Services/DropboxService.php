@@ -15,7 +15,7 @@ class DropboxService
      */
     public function importMail(DropboxInbox $mail): void
     {
-        $mail->load('dropbox');
+        $mail->loadMissing('dropbox');
         $isPrivate = $mail->dropbox?->is_private_by_default ?? false;
 
         DB::transaction(function () use ($mail, $isPrivate) {
@@ -41,7 +41,7 @@ class DropboxService
                 $size = $attachment['size'] ?? null;
                 $rawContent = $attachment['content'] ?? null;
 
-                if ($contentType !== 'application/pdf' || !is_string($filename) || !is_int($size)) {
+                if ($contentType !== 'application/pdf' || ! is_string($filename) || ! is_int($size)) {
                     continue;
                 }
 
