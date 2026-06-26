@@ -32,7 +32,7 @@ class DropboxMailData extends Data
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]
         public readonly ?DateTime $seen_at,
-
+s
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]
         public readonly ?DateTime $date,
     ) {}
