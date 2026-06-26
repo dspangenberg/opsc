@@ -12,7 +12,7 @@ import { EmailIndexEntry } from './EmailIndexEntry'
 
 interface InboxIndexProps extends PageProps {
   mails: App.Data.Paginated.PaginationMeta<App.Data.DropboxMailData[]>
-  mail?: App.Data.DropboxMailData
+  mail?: App.Data.DropboxMailData | null
   dropbox: App.Data.DropboxData
   contacts: App.Data.ContactData[]
   projects: App.Data.ProjectData[]
@@ -45,6 +45,7 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
         size="icon"
         title="In andere Dropbox verschieben"
         icon={MailSend02Icon}
+        isDisabled={!mail}
       >
         {dropboxes.map(item => (
           <MenuItem
@@ -56,6 +57,7 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
         ))}
       </DropdownButton>
       <ToolbarButton
+        isDisabled={!mail}
         icon={Delete02Icon}
         size="icon"
         variant="ghost-destructive"
