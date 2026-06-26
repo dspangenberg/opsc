@@ -7,7 +7,6 @@ use App\Data\DropboxMailData;
 use App\Data\ProjectData;
 use App\Data\SimpleContactData;
 use App\Http\Controllers\Controller;
-use App\Jobs\DropboxImportJob;
 use App\Models\Contact;
 use App\Models\Dropbox;
 use App\Models\DropboxInbox;
@@ -22,6 +21,10 @@ class EmailController extends Controller
 {
     public function index(Dropbox $dropbox, $mail = null): Response
     {
+
+        if (! $dropbox->is_shared && $dropbox->user_id !== auth()->user()->id) {
+            abort(403);
+        }
 
         if ($mail) {
             $mail = DropboxMail::query()->with('attachments')->with('dropbox')->where('id', $mail)->first();
@@ -39,7 +42,7 @@ class EmailController extends Controller
 
         $mails = DropboxMail::query()->where('dropbox_id', $dropbox->id)->orderBy('date', 'desc')->paginate();
 
-        return Inertia::render('App/Email/Index', [
+        return Inertia::render('App/Email/EmailIndex', [
             'mails' => DropboxMailData::collect($mails),
             'mail' => $mail ? DropboxMailData::from($mail) : null,
             'dropbox' => DropboxData::from($dropbox),
@@ -51,18 +54,27 @@ class EmailController extends Controller
     /**
      * @throws Throwable
      */
-    public function import($mail): RedirectResponse
+    public function move(Dropbox $dropbox, $mail, $newDropbox): RedirectResponse
     {
-        $mail = DropboxInbox::query()->with('dropbox')->where('id', $mail)->first();
-        DropboxImportJob::dispatch($mail);
+        if (! $dropbox->is_shared && $dropbox->user_id !== auth()->user()->id) {
+            abort(403);
+        }
 
-        return redirect()->route('app.inbox.index');
+        $mail = DropboxMail::query()->with('dropbox')->where('id', $mail)->first();
+        $mail->dropbox_id = $newDropbox;
+        $mail->save();
+
+        return redirect()->back();
     }
 
-    public function destroy(DropboxInbox $mail): RedirectResponse
+    public function destroy(Dropbox $dropbox, DropboxMail $mail): RedirectResponse
     {
+        if (! $dropbox->is_shared && $dropbox->user_id !== auth()->user()->id) {
+            abort(403);
+        }
+
         $mail->delete();
 
-        return redirect()->route('app.inbox.index');
+        return redirect()->back();
     }
 }

@@ -89,6 +89,8 @@ Route::middleware([
     Route::put('inbox/{mail}', [InboxController::class, 'import'])->name('app.inbox.import');
 
     Route::get('emails/{dropbox}/{mail?}', [EmailController::class, 'index'])->name('app.email.index');
+    Route::delete('emails/{dropbox}/{mail}', [EmailController::class, 'destroy'])->name('app.email.destroy');
+    Route::put('emails/{dropbox}/{mail}/{newDropbox}', [EmailController::class, 'move'])->name('app.email.move');
 
     Route::get('/onboarding', function () {
         return Inertia::modal('Onboarding')->baseRoute('app.soon');

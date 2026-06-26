@@ -566,6 +566,25 @@ function SidebarMenuBadge({ className, ...props }: React.ComponentProps<'div'>) 
   )
 }
 
+function SidebarSubMenuBadge({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="sidebar-menu-badge"
+      data-sidebar="menu-badge"
+      className={cn(
+        'pointer-events-none absolute right-1 flex h-5 min-w-5 select-none items-center justify-center rounded-md px-1 font-medium text-sidebar-foreground text-xs tabular-nums',
+        'peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[active=true]/menu-button:text-sidebar-accent-foreground',
+        'peer-data-[size=sm]/menu-sub-button:-top-6',
+        'peer-data-[size=default]/menu-sub-button:top-0',
+        'peer-data-[size=lg]/menu-button:-top-6',
+        'group-data-[collapsible=icon]:hidden',
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
 function SidebarMenuSkeleton({
   className,
   showIcon = false,
@@ -680,6 +699,7 @@ export {
   SidebarProvider,
   SidebarRail,
   SidebarSeparator,
+  SidebarSubMenuBadge,
   SidebarTrigger,
   useSidebar
 }

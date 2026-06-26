@@ -59,16 +59,16 @@ export const Toolbar = ({ variant, isDisabled, ...props }: ToolbarProps) => {
 
 interface ToolbarButtonProps extends Omit<ButtonProps, 'variant'> {
   isDisabled?: boolean
-  variant?: 'default' | 'primary'
+  variant?: 'default' | 'primary' | 'ghost-destructive' | 'toolbar'
 }
 
 export const ToolbarButton = ({
-  variant = 'default',
+  variant = 'toolbar',
   isDisabled = false,
   ...props
 }: ToolbarButtonProps) => {
   const { isDisabled: isContextDisabled } = useToolbarContext()
-  const realVariant = variant === 'primary' ? 'toolbar-default' : 'toolbar'
+  const realVariant = variant === 'primary' ? 'toolbar-default' : variant
 
   return <Button variant={realVariant} isDisabled={isContextDisabled || isDisabled} {...props} />
 }
