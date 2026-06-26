@@ -46,7 +46,8 @@ const buttonVariants = tv({
         base: 'cursor-pointer text-primary underline-offset-4 data-[hovered]:underline'
       },
       'ghost-destructive': {
-        base: 'border border-transparent text-sm focus-visible:border focus-visible:border-input focus-visible:ring-ring/20 data-[hovered]:border-border data-[hovered]:bg-accent data-[hovered]:text-destructive-foreground'
+        base: 'border border-transparent sfocus-visible:border-input text-sm hover:stroke-destructive focus-visible:border focus-visible:ring-ring/20 data-[hovered]:border-border data-[hovered]:bg-accent data-[hovered]:text-destructive-foreground',
+        icon: 'text-primary hover:text-destructive'
       },
       toolbar: {
         base: 'border selected:border border-transparent selected:bg-muted text-primary text-sm focus-visible:border focus-visible:border-primary focus-visible:ring-ring/20 active:ring-ring/50 data-[hovered]:border-border data-[hovered]:bg-accent'

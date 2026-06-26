@@ -1,22 +1,26 @@
-import { Delete02Icon, FolderUploadIcon } from '@hugeicons/core-free-icons'
-import { router } from '@inertiajs/react'
+import { Delete02Icon, MailSend02Icon } from '@hugeicons/core-free-icons'
+import { router, usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { PageContainerWithSideOnLeft } from '@/Components/PageContainerWithSideOnLeft'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { MenuItem } from '@/Components/twc-ui/menu'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
 import type { PageProps } from '@/Types'
 import { Email } from './Email'
-import { IndexEntry } from './IndexEntry'
+import { EmailIndexEntry } from './EmailIndexEntry'
 
 interface InboxIndexProps extends PageProps {
   mails: App.Data.Paginated.PaginationMeta<App.Data.DropboxMailData[]>
-  mail?: App.Data.DropboxMailData
+  mail?: App.Data.DropboxMailData | null
   dropbox: App.Data.DropboxData
   contacts: App.Data.ContactData[]
   projects: App.Data.ProjectData[]
 }
 
-const Index: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails, projects }) => {
+const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails, projects }) => {
+  const dropboxes = usePage().props.auth.dropboxes?.filter(item => item.id !== dropbox.id) || []
+
   const handleDelete = async () => {
     if (!mail) return
     const promise = await AlertDialog.call({
@@ -25,14 +29,41 @@ const Index: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails, proj
       buttonTitle: 'Löschen'
     })
     if (promise) {
-      router.delete(route('app.inbox.destroy', { mail: mail.id }))
+      router.delete(route('app.email.destroy', { dropbox: dropbox.id, mail: mail.id }))
     }
+  }
+
+  const handleMove = async (newDropbox: number) => {
+    if (!mail) return
+    router.put(route('app.email.move', { dropbox: dropbox.id, mail: mail.id, newDropbox }))
   }
 
   const toolbar = (
     <Toolbar isDisabled={!mail}>
-      <ToolbarButton variant="primary" icon={FolderUploadIcon} title="MultiDoc hochladen" />
-      <ToolbarButton icon={Delete02Icon} title="E-Mail löschen" onClick={handleDelete} />
+      <DropdownButton
+        variant="toolbar"
+        size="icon"
+        title="In andere Dropbox verschieben"
+        icon={MailSend02Icon}
+        isDisabled={!mail}
+      >
+        {dropboxes.map(item => (
+          <MenuItem
+            key={item.email_address}
+            title={item.name}
+            ellipsis
+            onAction={() => handleMove(item.id as number)}
+          />
+        ))}
+      </DropdownButton>
+      <ToolbarButton
+        isDisabled={!mail}
+        icon={Delete02Icon}
+        size="icon"
+        variant="ghost-destructive"
+        title="E-Mail löschen"
+        onClick={handleDelete}
+      />
     </Toolbar>
   )
 
@@ -47,7 +78,7 @@ const Index: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails, proj
         <div className="h-full overflow-y-auto">
           <div className="flex flex-col gap-2 p-4">
             {mails.data.map(item => (
-              <IndexEntry
+              <EmailIndexEntry
                 key={item.id}
                 dropbox={dropbox}
                 mail={item}
@@ -57,7 +88,7 @@ const Index: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails, proj
           </div>
         </div>
       </div>
-      <div className="absolute top-0 right-0 bottom-0 left-96 flex overflow-hidden">
+      <div className="absolute top-0 right-0 bottom-0 left-96 flex">
         <div className="mx-auto h-full overflow-y-auto">
           {mail && <Email mail={mail} contacts={contacts} projects={projects} />}
         </div>
@@ -66,4 +97,4 @@ const Index: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails, proj
   )
 }
 
-export default Index
+export default EmailIndex
