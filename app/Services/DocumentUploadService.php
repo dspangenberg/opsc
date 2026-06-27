@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
+use App\Facades\OcrService;
 use App\Models\Document;
 use Carbon\Carbon;
 use Exception;
-use App\Facades\OcrService;
 use Log;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
 use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
@@ -20,9 +20,7 @@ use Spatie\PdfToImage\Pdf;
 
 class DocumentUploadService
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * @throws FileNotSupportedException
@@ -43,7 +41,7 @@ class DocumentUploadService
         ?string $sourceFile = null,
         ?string $fullText = null
     ): void {
-        $document = new Document();
+        $document = new Document;
         $document->filename = $fileName;
         $document->title = pathinfo($fileName)['filename'];
         $document->file_size = $fileSize;
@@ -57,9 +55,8 @@ class DocumentUploadService
 
         $document->save();
 
-
         try {
-            $parser = new Parser();
+            $parser = new Parser;
             $pdf = $parser->parseFile($file);
             $metadata = $pdf->getDetails();
 
@@ -69,12 +66,12 @@ class DocumentUploadService
                 $document->save();
             } else {
                 $document->fulltext = $pdf->getText();
-                if (!trim($document->fulltext)) {
-                    $document->fulltext = OcrService::run($file);
+                if (! trim($document->fulltext)) {
+                    $fullText = OcrService::run($file);
+                    $document->fulltext = $fullText;
                 }
                 $document->save();
             }
-
 
             if ($document->fulltext) {
                 try {
@@ -134,12 +131,11 @@ class DocumentUploadService
         }
 
         $document->checksum = hash_file('sha256', $file);
-        if (!$document->issued_on) {
+        if (! $document->issued_on) {
             $document->issued_on = $document->file_created_at;
         }
 
         $document->save();
-
 
         $media = MediaUploader::fromSource($file)
             ->toDestination('s3_private', 'documents/'.$document->issued_on->format('Y/m/'))

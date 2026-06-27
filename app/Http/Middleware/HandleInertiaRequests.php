@@ -70,8 +70,9 @@ class HandleInertiaRequests extends Middleware
 
             $mailAccounts = EmailAccount::query()->whereIn('id', $ids)->orderBy('email')->get();
 
-            $dropBoxes = Dropbox::query()->where('user_id', $user->id)->orWhere('is_shared', true)->orderBy('name')->get();
-
+            $dropBoxes = Dropbox::query()->withCount(['mails' => function ($query) {
+                $query->whereNull('seen_at');
+            }])->where('user_id', $user->id)->orWhere('is_shared', true)->orderBy('name')->get();
         }
 
         return [

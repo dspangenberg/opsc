@@ -22,6 +22,7 @@ class DropboxData extends Data
         public readonly bool $is_auto_processing,
         public readonly bool $is_private_by_default,
         public readonly ?int $user_id,
+        public readonly ?int $mails_count,
         public readonly ?UserData $user,
     ) {}
 }

@@ -17,7 +17,8 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
-  SidebarMenuSubItem
+  SidebarMenuSubItem,
+  SidebarSubMenuBadge
 } from '@/Components/ui/sidebar'
 import { usePathActive } from '@/Hooks/usePathActive'
 export type CombinedIcon = LucideIcon | React.FC<HugeiconsProps>
@@ -69,6 +70,7 @@ export function NavMain({ items, ...props }: { items: NavMainItem[] }) {
                           className="size-5! text-sidebar-foreground!"
                         />
                         <span className="text-base">{item.title}</span>
+                        {!!item.badge && <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>}
                       </Link>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -93,6 +95,9 @@ export function NavMain({ items, ...props }: { items: NavMainItem[] }) {
                                       </Link>
                                     </SidebarMenuSubButton>
                                   </CollapsibleTrigger>
+                                  {!!subItem.badge && (
+                                    <SidebarSubMenuBadge>{subItem.badge}</SidebarSubMenuBadge>
+                                  )}
                                   <CollapsibleContent>
                                     <SidebarMenuSub className="ml-3 block">
                                       {subItem.items.map(child => (
@@ -109,7 +114,6 @@ export function NavMain({ items, ...props }: { items: NavMainItem[] }) {
                                               <span>{child.title}</span>
                                             </Link>
                                           </SidebarMenuSubButton>
-                                          <SidebarMenuBadge>{child.badge}</SidebarMenuBadge>
                                         </SidebarMenuSubItem>
                                       ))}
                                     </SidebarMenuSub>
@@ -133,6 +137,9 @@ export function NavMain({ items, ...props }: { items: NavMainItem[] }) {
                                   <span>{subItem.title}</span>
                                 </Link>
                               </SidebarMenuSubButton>
+                              {!!subItem.badge && (
+                                <SidebarSubMenuBadge>{subItem.badge}</SidebarSubMenuBadge>
+                              )}
                             </SidebarMenuSubItem>
                           )
                         })}
