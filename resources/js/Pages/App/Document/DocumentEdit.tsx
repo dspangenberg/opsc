@@ -1,4 +1,7 @@
-import { AiContentGenerator01Icon, ArrowDataTransferVerticalIcon } from '@hugeicons/core-free-icons'
+import {
+  AiContentGenerator01Icon,
+  ArrowDataTransferVerticalIcon
+} from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/core'
 import type * as React from 'react'
 import { useMemo, useState } from 'react'
@@ -29,7 +32,12 @@ type DocumentFormData = Omit<
 >
 
 const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, projects }) => {
-  const form = useForm<DocumentFormData>('update-document', 'put', route('app.document.update', { document: document.id }), document)
+  const form = useForm<DocumentFormData>(
+    'update-document',
+    'put',
+    route('app.document.update', { document: document.id }),
+    document
+  )
 
   const [isEditMode, setIsEditMode] = useState(!document.is_confirmed)
 
@@ -76,6 +84,8 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
                 icon={AiContentGenerator01Icon}
                 size="icon"
                 title="AI-Analyse erneut durchführen"
+                isLoading={form.processing}
+                isDisabled={!document.fulltext}
                 onClick={() => handleGetAiContent()}
               />
             </div>

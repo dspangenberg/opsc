@@ -17,6 +17,7 @@ return [
     */
     'terms_document_id' => env('PDF_TERMS_DOCUMENT_ID'),
     'weasyprint_path' => env('PDF_WEASYPRINT_PATH'),
+    'ocrmypdf_path' => env('OCRMYPDF_PATH'),
     'pdfcpu_path' => env('PDF_PDFCPU_PATH'),
     'pdfcpu_watermark_font' => env('PDF_PDFCPU_WATERMARK_FONT', 'Helvetica-Bold'),
     'ghostscript_path' => env('PDF_GHOSTSCRIPT_PATH') ?: (function () {

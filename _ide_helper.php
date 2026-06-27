@@ -30166,33 +30166,6 @@ namespace Plank\Mediable\Facades {
             }
     }
 
-namespace Prism\Prism\Facades {
-    /**
-     */
-    class PrismServer {
-        /**
-         * @param \Closure():PendingRequest|callable():PendingRequest $prism
-         * @static
-         */
-        public static function register($name, $prism)
-        {
-            /** @var \Prism\Prism\PrismServer $instance */
-            return $instance->register($name, $prism);
-        }
-
-        /**
-         * @return \Prism\Prism\Collection<int, array{name: string, prism: Closure():PendingRequest|callable():PendingRequest}>
-         * @static
-         */
-        public static function prisms()
-        {
-            /** @var \Prism\Prism\PrismServer $instance */
-            return $instance->prisms();
-        }
-
-            }
-    }
-
 namespace Sentry\Laravel {
     /**
      * @see \Sentry\State\HubInterface
@@ -31643,11 +31616,27 @@ namespace Illuminate\Support {
          * @param int|null $dimensions
          * @param string|null $model
          * @param int|bool|null $cache
+         * @param int|null $timeout
+         * @param \Closure|array $providerOptions
          * @static
          */
-        public static function toEmbeddings($provider = null, $dimensions = null, $model = null, $cache = null)
+        public static function toEmbeddings($provider = null, $dimensions = null, $model = null, $cache = null, $timeout = null, $providerOptions = [])
         {
-            return \Illuminate\Support\Stringable::toEmbeddings($provider, $dimensions, $model, $cache);
+            return \Illuminate\Support\Stringable::toEmbeddings($provider, $dimensions, $model, $cache, $timeout, $providerOptions);
+        }
+
+        /**
+         * @see \Laravel\Ai\AiServiceProvider::boot()
+         * @param \Laravel\Ai\Enums\Lab|array|string|null $provider
+         * @param string|null $voice
+         * @param string|null $instructions
+         * @param string|null $model
+         * @param int|null $timeout
+         * @static
+         */
+        public static function toAudio($provider = null, $voice = null, $instructions = null, $model = null, $timeout = null)
+        {
+            return \Illuminate\Support\Stringable::toAudio($provider, $voice, $instructions, $model, $timeout);
         }
 
             }
@@ -37158,7 +37147,6 @@ namespace  {
     class Mcp extends \Laravel\Mcp\Facades\Mcp {}
     class MediaUploader extends \Plank\Mediable\Facades\MediaUploader {}
     class ImageManipulator extends \Plank\Mediable\Facades\ImageManipulator {}
-    class PrismServer extends \Prism\Prism\Facades\PrismServer {}
     class Sentry extends \Sentry\Laravel\Facade {}
     class Tenancy extends \Stancl\Tenancy\Facades\Tenancy {}
     class GlobalCache extends \Stancl\Tenancy\Facades\GlobalCache {}

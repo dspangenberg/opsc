@@ -1,8 +1,4 @@
-/*
- * ecting.core is licensed under the terms of the EUPL-1.2 license
- * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
- */
-
+import { configureEcho } from '@laravel/echo-react'
 import '../css/app.css'
 import './bootstrap'
 import '@fontsource/clear-sans/100.css'
@@ -22,6 +18,16 @@ import AppLayout from '@/Layouts/AppLayout'
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel'
 const sentryEnabled = import.meta.env.VITE_SENTRY_ENABLED === 'true'
 const sentryDsn = import.meta.env.VITE_SENTRY_DNS
+
+configureEcho({
+  broadcaster: 'reverb',
+  key: import.meta.env.VITE_REVERB_APP_KEY,
+  wsHost: import.meta.env.VITE_REVERB_HOST,
+  wsPort: import.meta.env.VITE_REVERB_PORT ?? 80,
+  wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
+  forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
+  enabledTransports: ['ws', 'wss']
+})
 
 if (sentryEnabled && sentryDsn) {
   Sentry.init({

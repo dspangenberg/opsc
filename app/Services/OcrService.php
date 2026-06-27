@@ -13,7 +13,6 @@ class OcrService
      */
     public function run(string $file): string
     {
-        ray($file);
 
         $pages = $this->createImages($file);
         $fullText = '';
@@ -29,6 +28,7 @@ class OcrService
                 @unlink($page);
             }
         }
+
         return $fullText;
     }
 
