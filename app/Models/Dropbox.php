@@ -4,12 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property-read \App\Models\User|null $user
+ * @property-read User|null $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Dropbox newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Dropbox newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Dropbox query()
+ *
  * @mixin \Eloquent
  */
 class Dropbox extends Model
@@ -21,7 +24,7 @@ class Dropbox extends Model
         'is_auto_processing',
         'token',
         'is_private_by_default',
-        'user_id'
+        'user_id',
     ];
 
     protected function casts(): array
@@ -44,4 +47,8 @@ class Dropbox extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function mails(): HasMany
+    {
+        return $this->hasMany(DropboxMail::class);
+    }
 }

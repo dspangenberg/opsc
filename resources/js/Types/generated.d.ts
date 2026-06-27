@@ -302,6 +302,7 @@ declare namespace App {
       readonly title: string;
       readonly label: string | null;
       readonly summary: string | null;
+      readonly fulltext: string | null;
       readonly reference: string | null;
       readonly is_pinned: boolean;
       readonly is_confirmed: boolean;
@@ -326,6 +327,7 @@ declare namespace App {
       readonly is_auto_processing: boolean;
       readonly is_private_by_default: boolean;
       readonly user_id: number | null;
+      readonly mails_count: number | null;
       readonly user: App.Data.UserData | null;
     };
     export type DropboxInboxAttachmentData = {

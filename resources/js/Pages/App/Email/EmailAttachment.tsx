@@ -30,6 +30,16 @@ export const EmailAttachment: React.FC<EmailAttachmentsProps> = ({ attachment, m
     )
   }
 
+  const handleImportAsDocument = async () => {
+    router.put(
+      route('app.email.attachment-document', {
+        dropbox: mail.dropbox_id,
+        mail: mail.id,
+        attachment: attachment.id
+      })
+    )
+  }
+
   return (
     <div className="flex items-center space-x-2 px-3 py-1.5">
       <div className="flex-1 text-sm">{attachment.filename}</div>
@@ -38,7 +48,7 @@ export const EmailAttachment: React.FC<EmailAttachmentsProps> = ({ attachment, m
         <DropdownButton variant="ghost" size="icon-sm" title="Aktionen">
           <MenuItem title="Vorschau" separator onAction={handlePreview} />
           <MenuItem title="In Belegverwaltung übernehmen" onAction={handleImportAsReciept} />
-          <MenuItem title="In Dokumentverwaltung übernehmen" />
+          <MenuItem title="In Dokumentverwaltung übernehmen" onAction={handleImportAsDocument} />
         </DropdownButton>
       </div>
     </div>

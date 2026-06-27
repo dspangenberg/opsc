@@ -47,6 +47,7 @@ class DocumentData extends Data
         public readonly string $title,
         public readonly ?string $label,
         public readonly ?string $summary,
+        public readonly ?string $fulltext,
         public readonly ?string $reference,
         public readonly bool $is_pinned,
         public readonly bool $is_confirmed,

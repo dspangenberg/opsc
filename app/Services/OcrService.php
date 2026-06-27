@@ -13,16 +13,22 @@ class OcrService
      */
     public function run(string $file): string
     {
+        ray($file);
+
         $pages = $this->createImages($file);
         $fullText = '';
-        foreach ($pages as $page) {
-            $text = new TesseractOCR($page)
-                ->lang('eng', 'deu')
-                ->run();
-            $fullText .= $text;
-            unlink($page);
+        foreach ($pages as $i => $page) {
+            try {
+                $text = (new TesseractOCR($page))
+                    ->lang('eng', 'deu')
+                    ->run();
+                $fullText .= $text;
+            } catch (\Throwable $e) {
+                ray("Fehler auf Seite $i:", $e->getMessage());
+            } finally {
+                @unlink($page);
+            }
         }
-
         return $fullText;
     }
 

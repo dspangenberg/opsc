@@ -39,18 +39,18 @@ const buildNavData = (isAdmin: boolean, dropboxes: App.Data.DropboxData[]) => ({
       url: route('app.inbox.index', {}, false),
       icon: MailAtSign02Icon,
       activePath: '/app/emails',
+      badge: dropboxes.reduce((sum, el) => (sum += el.mails_count || 0), 0),
       hasSep: true,
       items: [
         ...dropboxes.map(box => ({
           title: box.name,
-          badge: 5,
+          badge: box.mails_count as number,
           url: route('app.email.index', { dropbox: box.id }, false),
           activePath: `/app/emails/${box.id}`
         })),
         {
           title: 'Nicht verarbeitet',
           url: route('app.inbox.index'),
-          badge: 10,
           activePath: '/app/inbox'
         }
       ]
