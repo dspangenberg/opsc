@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Jobs\DocumentUploadJob;
 use Illuminate\Support\Facades\Process;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
-
 class MultidocService
 {
     protected function extractPdfDate(string $text, string $pdfPath): string
@@ -155,8 +154,7 @@ class MultidocService
             // Extract date from the merged PDF
             if (file_exists($tmpOutputPath)) {
                 // Auch wenn OCR nun doppelt ausgeführt wird, wir brauchen es noch für den Dateiname (Date)
-                $fullText = OcrService::run($tmpOutputPath);
-                $fileDate = $this->extractPdfDate($fullText, $tmpOutputPath);
+                $fileDate = $this->extractPdfDate('', $tmpOutputPath);
                 $outputName = $group['code'] ? $fileDate.'_'.$group['code'].'.pdf' : $fileDate.'_group_'.$index.'.pdf';
                 $outputPath = $outputDir.'/'.$outputName;
 
