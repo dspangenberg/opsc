@@ -1,3 +1,4 @@
+import { MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
 import type * as React from 'react'
 import type { AriaMenuTriggerProps } from 'react-aria'
 import type { PopoverProps } from 'react-aria-components'
@@ -27,7 +28,7 @@ interface DropdownButtonProps<T>
 function DropdownButton<T extends object>({
   title,
   children,
-  variant,
+  variant = 'ghost',
   placement = 'bottom right',
   selectionMode = undefined,
   selectedKeys = undefined,
@@ -35,12 +36,14 @@ function DropdownButton<T extends object>({
   isDisabled,
   menuClassName = undefined,
   size = 'icon',
-  icon,
+  icon = undefined,
   iconClassName = undefined,
   className = undefined,
   onSelectionChange,
   ...props
 }: DropdownButtonProps<T>) {
+  const realIcon = icon ? icon : MoreVerticalCircle01Icon
+
   return (
     <MenuTrigger {...props}>
       {triggerElement ? (
@@ -52,7 +55,7 @@ function DropdownButton<T extends object>({
           size={size}
           isDisabled={isDisabled}
           iconClassName={iconClassName}
-          icon={icon}
+          icon={realIcon}
           title={title}
         />
       )}
@@ -69,5 +72,5 @@ function DropdownButton<T extends object>({
   )
 }
 
-export { DropdownButton, MenuItem }
 export type { DropdownButtonProps }
+export { DropdownButton, MenuItem }

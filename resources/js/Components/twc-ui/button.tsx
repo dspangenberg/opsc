@@ -31,26 +31,26 @@ const buttonVariants = tv({
         base: 'bg-primary text-primary-foreground focus-visible:ring-primary/20 data-hovered:bg-primary/90'
       },
       destructive: {
-        base: 'border bg-destructive text-white focus-visible:border-destructive/20 focus-visible:ring-destructive/20 data-[hovered]:bg-destructive/90'
+        base: 'border bg-destructive text-white focus-visible:border-destructive/20 focus-visible:ring-destructive/20 data-hovered:bg-destructive/90'
       },
       outline: {
-        base: 'border border-input bg-background selected:bg-accent focus-visible:ring-ring/20 data-[hovered]:bg-accent data-[hovered]:text-accent-foreground'
+        base: 'border border-input bg-background selected:bg-accent focus-visible:ring-ring/20 data-hovered:bg-accent data-hovered:text-accent-foreground'
       },
       secondary: {
-        base: 'border border-transparent bg-secondary/90 text-secondary-foreground focus-visible:border focus-visible:border-input data-[hovered]:border-border data-[hovered]:bg-secondary/50'
+        base: 'border border-transparent bg-secondary/90 text-secondary-foreground focus-visible:border focus-visible:border-input data-hovered:border-border data-hovered:bg-secondary/50'
       },
       ghost: {
-        base: 'border border-transparent selected:bg-muted text-sm focus-visible:border focus-visible:border-input focus-visible:ring-ring/20 data-[hovered]:border-border data-[hovered]:bg-accent/80 data-[hovered]:text-accent-foreground'
+        base: 'border border-transparent selected:bg-muted text-sm focus-visible:border focus-visible:border-input focus-visible:ring-ring/20 data-hovered:border-border data-hovered:bg-accent/80 data-hovered:text-accent-foreground'
       },
       link: {
-        base: 'cursor-pointer text-primary underline-offset-4 data-[hovered]:underline'
+        base: 'cursor-pointer text-primary underline-offset-4 data-hovered:underline'
       },
       'ghost-destructive': {
-        base: 'border border-transparent sfocus-visible:border-input text-sm hover:stroke-destructive focus-visible:border focus-visible:ring-ring/20 data-[hovered]:border-border data-[hovered]:bg-accent data-[hovered]:text-destructive-foreground',
+        base: 'border border-transparent text-sm hover:stroke-destructive focus-visible:border focus-visible:border-input focus-visible:ring-ring/20 data-hovered:border-border data-hovered:bg-accent data-hovered:text-destructive-foreground',
         icon: 'text-primary hover:text-destructive'
       },
       toolbar: {
-        base: 'border selected:border border-transparent selected:bg-muted text-primary text-sm focus-visible:border focus-visible:border-primary focus-visible:ring-ring/20 active:ring-ring/50 data-[hovered]:border-border data-[hovered]:bg-accent'
+        base: 'border selected:border border-transparent selected:bg-muted text-primary text-sm focus-visible:border focus-visible:border-primary focus-visible:ring-ring/20 active:ring-ring/50 data-hovered:border-border data-hovered:bg-accent'
       },
       toggle: {
         base: 'selected:bg-background selected:shadow hover:border-primary',

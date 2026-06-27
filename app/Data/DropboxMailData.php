@@ -29,6 +29,7 @@ class DropboxMailData extends Data
 
         /** @var DropboxMailAttachmentData[] */
         public readonly ?array $attachments,
+        public readonly ?int $attachments_count,
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y H:i')]
         public readonly ?DateTime $seen_at,

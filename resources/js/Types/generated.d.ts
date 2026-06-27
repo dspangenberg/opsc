@@ -358,6 +358,8 @@ declare namespace App {
       readonly date: string | null;
     };
     export type DropboxMailAttachmentData = {
+      readonly id: string;
+      readonly dropbox_mail_id: string;
       readonly filename: string;
       readonly mime_type: string | null;
       readonly size: number;
@@ -371,6 +373,7 @@ declare namespace App {
       readonly subject: string;
       readonly body: string;
       readonly attachments: App.Data.DropboxMailAttachmentData[];
+      readonly attachments_count: number | null;
       readonly seen_at: string | null;
       readonly date: string | null;
     };
