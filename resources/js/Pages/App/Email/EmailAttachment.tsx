@@ -1,3 +1,4 @@
+import { router } from '@inertiajs/core'
 import { filesize } from 'filesize'
 import type * as React from 'react'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
@@ -19,6 +20,16 @@ export const EmailAttachment: React.FC<EmailAttachmentsProps> = ({ attachment, m
     })
   }
 
+  const handleImportAsReciept = async () => {
+    router.put(
+      route('app.email.attachment-receipt', {
+        dropbox: mail.dropbox_id,
+        mail: mail.id,
+        attachment: attachment.id
+      })
+    )
+  }
+
   return (
     <div className="flex items-center space-x-2 px-3 py-1.5">
       <div className="flex-1 text-sm">{attachment.filename}</div>
@@ -26,7 +37,7 @@ export const EmailAttachment: React.FC<EmailAttachmentsProps> = ({ attachment, m
       <div className="flex-none">
         <DropdownButton variant="ghost" size="icon-sm" title="Aktionen">
           <MenuItem title="Vorschau" separator onAction={handlePreview} />
-          <MenuItem title="In Belegverwaltung übernehmen" />
+          <MenuItem title="In Belegverwaltung übernehmen" onAction={handleImportAsReciept} />
           <MenuItem title="In Dokumentverwaltung übernehmen" />
         </DropdownButton>
       </div>

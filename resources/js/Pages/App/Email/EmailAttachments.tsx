@@ -7,7 +7,7 @@ interface EmailAttachmentsProps {
 export const EmailAttachments: React.FC<EmailAttachmentsProps> = ({ mail }) => {
   if (!mail?.attachments?.length) return null
   return (
-    <div className="m-8 w-full divide-y divide-border/50 rounded-lg border border-border border-dotted bg-background">
+    <div className="m-8 divide-y divide-border/50 rounded-lg border border-border border-dotted bg-background">
       {mail?.attachments?.map((attachment, index) => (
         <EmailAttachment key={index} mail={mail} attachment={attachment} />
       ))}

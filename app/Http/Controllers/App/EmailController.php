@@ -7,6 +7,7 @@ use App\Data\DropboxMailData;
 use App\Data\ProjectData;
 use App\Data\SimpleContactData;
 use App\Http\Controllers\Controller;
+use App\Jobs\ReceiptUploadFromMailAttchmentJob;
 use App\Models\Contact;
 use App\Models\Dropbox;
 use App\Models\DropboxMail;
@@ -93,6 +94,35 @@ class EmailController extends Controller
                     ),
                     'Content-Length' => $media->size,
                 ]);
+            }
+        } else {
+            abort(404);
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function importAttachmentAsReceipt(Dropbox $dropbox, DropboxMail $mail, DropboxMailAttachment $attachment): RedirectResponse
+    {
+        if (
+            (! $dropbox->is_shared && $dropbox->user_id !== auth()->id())
+            || $mail->dropbox_id !== $dropbox->id
+        ) {
+            abort(403);
+        }
+
+        if ($attachment->dropbox_mail_id !== $mail->id) {
+            abort(403);
+        }
+
+        if ($attachment->hasMedia('attachment')) {
+
+            $media = $attachment->firstMedia('attachment');
+            if ($media->exists()) {
+                ReceiptUploadFromMailAttchmentJob::dispatch($media);
             }
         } else {
             abort(404);
