@@ -68,7 +68,7 @@ class DropboxService
                     ->onDuplicateReplace()
                     ->upload();
 
-                $dropboxMailAttachment->attachMedia($media, 'attachments');
+                $dropboxMailAttachment->attachMedia($media, 'attachment');
 
             }
 
