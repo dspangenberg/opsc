@@ -154,7 +154,8 @@ class MultidocService
 
             // Extract date from the merged PDF
             if (file_exists($tmpOutputPath)) {
-
+                // Auch wenn OCR nun doppelt ausgeführt wird, wir brauchen es noch für den Dateiname (Date)
+                $fullText = OcrService::run($tmpOutputPath);
                 $fileDate = $this->extractPdfDate($fullText, $tmpOutputPath);
                 $outputName = $group['code'] ? $fileDate.'_'.$group['code'].'.pdf' : $fileDate.'_group_'.$index.'.pdf';
                 $outputPath = $outputDir.'/'.$outputName;
@@ -173,8 +174,7 @@ class MultidocService
                     'application/pdf',
                     $fileMTime,
                     $group['code'],
-                    $orgFilename,
-                    $fullText
+                    $orgFilename
                 );
             }
         }
