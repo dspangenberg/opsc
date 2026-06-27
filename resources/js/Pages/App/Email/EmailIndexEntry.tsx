@@ -1,5 +1,7 @@
+import { AttachmentIcon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type React from 'react'
+import { Icon } from '@/Components/twc-ui/icon'
 import { parseAndFormatRelative } from '@/Lib/DateHelper'
 import { cn } from '@/Lib/utils'
 
@@ -39,8 +41,11 @@ export const EmailIndexEntry: React.FC<InboxIndexEntryProps> = ({ dropbox, mail,
             {mail.body}
           </div>
         </div>
-        <div className="flex-none">
+        <div className="flex flex-none flex-col items-center gap-2">
           <div className="text-xs"> {parseAndFormatRelative(mail.date as string)}</div>
+          {mail.attachments_count > 0 && (
+            <Icon icon={AttachmentIcon} className="size-3.5 text-foreground/80" />
+          )}
         </div>
       </div>
     </button>

@@ -1,0 +1,35 @@
+import { filesize } from 'filesize'
+import type * as React from 'react'
+import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
+import { MenuItem } from '@/Components/twc-ui/menu'
+import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
+
+interface EmailAttachmentsProps {
+  attachment: App.Data.DropboxMailAttachmentData
+  mail: App.Data.DropboxMailData
+}
+export const EmailAttachment: React.FC<EmailAttachmentsProps> = ({ attachment, mail }) => {
+  const handlePreview = async () => {
+    await PdfViewer.call({
+      file: route('app.email.attachment-preview', {
+        dropbox: mail.dropbox_id,
+        mail: mail.id,
+        attachment: attachment.id
+      })
+    })
+  }
+
+  return (
+    <div className="flex items-center space-x-2 px-3 py-1.5">
+      <div className="flex-1 text-sm">{attachment.filename}</div>
+      <div className="flex-none text-foreground/50 text-xs">{filesize(attachment.size)}</div>
+      <div className="flex-none">
+        <DropdownButton variant="ghost" size="icon-sm" title="Aktionen">
+          <MenuItem title="Vorschau" separator onAction={handlePreview} />
+          <MenuItem title="In Belegverwaltung übernehmen" />
+          <MenuItem title="In Dokumentverwaltung übernehmen" />
+        </DropdownButton>
+      </div>
+    </div>
+  )
+}

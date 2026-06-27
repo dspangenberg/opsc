@@ -10,10 +10,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Contact;
 use App\Models\Dropbox;
 use App\Models\DropboxMail;
+use App\Models\DropboxMailAttachment;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 class EmailController extends Controller
@@ -43,7 +45,7 @@ class EmailController extends Controller
             false)->with('mails')->orderBy('name')->orderBy('first_name')->get();
         $projects = Project::query()->where('is_archived', false)->orderBy('name')->get();
 
-        $mails = DropboxMail::query()->where('dropbox_id', $dropbox->id)->orderBy('date', 'desc')->paginate();
+        $mails = DropboxMail::query()->withCount('attachments')->where('dropbox_id', $dropbox->id)->orderBy('date', 'desc')->paginate();
 
         return Inertia::render('App/Email/EmailIndex', [
             'mails' => DropboxMailData::collect($mails),
@@ -57,6 +59,45 @@ class EmailController extends Controller
     /**
      * @throws Throwable
      */
+
+    public function attachmentPreview(Dropbox $dropbox, DropboxMail $mail, DropboxMailAttachment $attachment): StreamedResponse | RedirectResponse
+    {
+        if (
+            (! $dropbox->is_shared && $dropbox->user_id !== auth()->id())
+            || $mail->dropbox_id !== $dropbox->id
+        ) {
+            abort(403);
+        }
+
+        if ($attachment->dropbox_mail_id !== $mail->id) {
+            abort(403);
+        }
+
+        if ($attachment->hasMedia('attachment')) {
+
+            $media = $attachment->firstMedia('attachment');
+            if ($media->exists()) {
+                return response()->stream(function () use ($media) {
+                    $stream = $media->stream();
+                    while ($bytes = $stream->read(8192)) {
+                        echo $bytes;
+                    }
+                    $stream->close();
+                }, 200, [
+                    'Content-Type' => $media->mime_type ?? 'application/pdf',
+                    'Content-Disposition' => 'inline; filename="'.$attachment->filename.'"',
+                    'Content-Length' => $media->size,
+                ]);
+            }
+        } else {
+            abort(404);
+        }
+
+        return redirect()->back();
+    }
+
+
+
     public function move(Dropbox $dropbox, DropboxMail $mail, Dropbox $newDropbox): RedirectResponse
     {
         if (
