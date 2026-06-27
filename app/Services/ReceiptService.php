@@ -16,6 +16,7 @@ use Plank\Mediable\Exceptions\MediaUpload\FileSizeException;
 use Plank\Mediable\Exceptions\MediaUpload\ForbiddenException;
 use Plank\Mediable\Exceptions\MediaUpload\InvalidHashException;
 use Plank\Mediable\Facades\MediaUploader;
+use Plank\Mediable\Media;
 use Smalot\PdfParser\Parser;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Zip;
@@ -61,9 +62,11 @@ class ReceiptService
      * @throws InvalidHashException
      * @throws ConfigurationException
      */
-    public function processMailAttachment($file, $fileName, $fileSize): void
+    public function processMailAttachment(Media $media): void
     {
-        $this->processFile($file, $fileName, $fileSize);
+        $file = FileHelperService::createTemporaryFileFromDoc($media->filename, $media->contents());
+
+        $this->processFile($file, $media->filename, $media->size);
         $realFile = realpath($file);
         $realTemp = realpath(storage_path('app/temp'));
         if ($realFile !== false && $realTemp !== false && str_starts_with($realFile, $realTemp)) {

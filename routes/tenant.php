@@ -92,6 +92,7 @@ Route::middleware([
     Route::delete('emails/{dropbox}/{mail}', [EmailController::class, 'destroy'])->name('app.email.destroy');
     Route::put('emails/{dropbox}/{mail}/{newDropbox}', [EmailController::class, 'move'])->name('app.email.move');
     Route::get('emails/{dropbox}/{mail}/{attachment}/preview', [EmailController::class, 'attachmentPreview'])->name('app.email.attachment-preview');
+    Route::put('emails/{dropbox}/{mail}/{attachment}/receipt', [EmailController::class, 'importAttachmentAsReceipt'])->name('app.email.attachment-receipt');
 
     Route::get('/onboarding', function () {
         return Inertia::modal('Onboarding')->baseRoute('app.soon');
