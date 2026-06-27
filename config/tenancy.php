@@ -162,7 +162,7 @@ return [
         // Bootstrappers\UrlGeneratorBootstrapper::class,
         // Bootstrappers\MailConfigBootstrapper::class, // Note: Queueing mail requires using QueueTenancyBootstrapper with $forceRefresh set to true
         // Bootstrappers\BroadcastingConfigBootstrapper::class,
-        // Bootstrappers\BroadcastChannelPrefixBootstrapper::class,
+        Bootstrappers\BroadcastChannelPrefixBootstrapper::class,
 
         // Integration bootstrappers
         // Bootstrappers\Integrations\FortifyRouteBootstrapper::class,

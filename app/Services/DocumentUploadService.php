@@ -20,8 +20,6 @@ use Spatie\PdfToImage\Pdf;
 
 class DocumentUploadService
 {
-    public function __construct() {}
-
     /**
      * @throws FileNotSupportedException
      * @throws FileExistsException

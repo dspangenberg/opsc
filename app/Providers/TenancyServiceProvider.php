@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\Route as RouteFacade;
 use Illuminate\Support\ServiceProvider;
 use Stancl\JobPipeline\JobPipeline;
 use Stancl\Tenancy\Actions\CloneRoutesAsTenant;
+use Stancl\Tenancy\Bootstrappers\BroadcastChannelPrefixBootstrapper;
 use Stancl\Tenancy\Bootstrappers\Integrations\FortifyRouteBootstrapper;
+use Stancl\Tenancy\Bootstrappers\RootUrlBootstrapper;
 use Stancl\Tenancy\Events;
 use Stancl\Tenancy\Jobs;
 use Stancl\Tenancy\Listeners;
@@ -143,7 +145,7 @@ class TenancyServiceProvider extends ServiceProvider
      * Set \Stancl\Tenancy\Bootstrappers\RootUrlBootstrapper::$rootUrlOverride here
      * to override the root URL used in CLI while in tenant context.
      *
-     * @see \Stancl\Tenancy\Bootstrappers\RootUrlBootstrapper
+     * @see RootUrlBootstrapper
      */
     protected function overrideUrlInTenantContext(): void
     {
@@ -179,6 +181,8 @@ class TenancyServiceProvider extends ServiceProvider
 
         $this->makeTenancyMiddlewareHighestPriority();
         $this->overrideUrlInTenantContext();
+
+        BroadcastChannelPrefixBootstrapper::reverb();
 
         /**
          * Include soft deleted resources in synced resource queries.

@@ -9,6 +9,8 @@ use App\Data\DocumentTypeData;
 use App\Data\OfficeTemplateData;
 use App\Data\ProjectData;
 use App\Data\UserData;
+use App\Facades\FileHelperService;
+use App\Facades\OcrService;
 use App\Facades\OfficeService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentBulkEditRequest;
@@ -33,6 +35,7 @@ use Inertia\Response;
 use Log;
 use PhpOffice\PhpWord\Exception\CopyFileException;
 use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
+use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -144,8 +147,9 @@ class DocumentController extends Controller
     {
         // Validate that document has fulltext content
         if (empty($document->fulltext)) {
-            return redirect()->back()
-                ->with('error', 'Document has no text content to analyze.');
+            Inertia::flash('toast', ['type' => 'error', 'message' => 'Das Dokument hat keinen Volltext.']);
+
+            return redirect()->back()->with('error', 'Document has no fulltext.');
         }
 
         try {
@@ -164,6 +168,28 @@ class DocumentController extends Controller
             return redirect()->back()
                 ->with('error', 'Die Dokumentenverarbeitung konnte nicht abgeschlossen werden.');
         }
+    }
+
+    /**
+     * @throws PdfDoesNotExist
+     */
+    public function runOCR(Document $document): RedirectResponse
+    {
+        // Validate that document has fulltext content
+        if ($document->fulltext) {
+            Inertia::flash('toast', ['type' => 'info', 'message' => 'Das Dokument enthält bereits Volltext.']);
+
+            return redirect()->back()->with('error', 'Document has no fulltext.');
+        }
+
+        $media = $document->firstMedia('file');
+        $realPath = FileHelperService::createTemporaryFileFromDoc($media->filename, $media->contents());
+
+        $fullText = OcrService::run($realPath);
+        $document->fulltext = $fullText;
+        $document->save();
+
+        return redirect()->back();
     }
 
     public function bulkRestore(DocumentBulkMoveToTrashRequest $request): RedirectResponse
