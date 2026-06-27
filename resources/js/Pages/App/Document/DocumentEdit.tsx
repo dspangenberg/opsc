@@ -1,7 +1,6 @@
 import {
   AiContentGenerator01Icon,
-  ArrowDataTransferVerticalIcon,
-  FileScanIcon
+  ArrowDataTransferVerticalIcon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/core'
 import type * as React from 'react'
@@ -64,16 +63,6 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
     )
   }
 
-  const handleRunOcr = () => {
-    router.put(
-      route('app.document.ocr', { document: document.id }),
-      {},
-      {
-        onSuccess: () => router.reload()
-      }
-    )
-  }
-
   return (
     <PageContainer
       title="Dokument bearbeiten"
@@ -92,17 +81,10 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
             <div className="flex gap-2">
               <Button
                 variant="ghost"
-                icon={FileScanIcon}
-                size="icon"
-                title="OCR aufrufen"
-                isDisabled={!!document.fulltext}
-                onClick={() => handleRunOcr()}
-              />
-              <Button
-                variant="ghost"
                 icon={AiContentGenerator01Icon}
                 size="icon"
                 title="AI-Analyse erneut durchführen"
+                isLoading={form.processing}
                 isDisabled={!document.fulltext}
                 onClick={() => handleGetAiContent()}
               />

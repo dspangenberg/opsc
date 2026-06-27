@@ -175,17 +175,34 @@ class DocumentController extends Controller
      */
     public function runOCR(Document $document): RedirectResponse
     {
-        // Validate that document has fulltext content
-        if ($document->fulltext) {
-            Inertia::flash('toast', ['type' => 'info', 'message' => 'Das Dokument enthält bereits Volltext.']);
+        if ($document->fulltext !== null && trim($document->fulltext) !== '') {
+            Inertia::flash('toast', ['type' => 'info', 'message' => 'Das Dokument enthält bereits den Volltext.']);
 
-            return redirect()->back()->with('error', 'Document has no fulltext.');
+            return redirect()->back();
         }
 
         $media = $document->firstMedia('file');
+        if ($media === null) {
+            Inertia::flash('toast',
+                ['type' => 'error', 'message' => 'Für dieses Dokument wurde keine Datei gefunden.']);
+
+            return redirect()->back();
+        }
+
         $realPath = FileHelperService::createTemporaryFileFromDoc($media->filename, $media->contents());
 
-        $fullText = OcrService::run($realPath);
+        try {
+            $fullText = OcrService::run($realPath);
+        } finally {
+            @unlink($realPath);
+        }
+
+        if (trim($fullText) === '') {
+            Inertia::flash('toast', ['type' => 'error', 'message' => 'OCR konnte keinen Volltext ermitteln.']);
+
+            return redirect()->back();
+        }
+
         $document->fulltext = $fullText;
         $document->save();
 

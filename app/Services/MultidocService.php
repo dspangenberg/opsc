@@ -2,17 +2,12 @@
 
 namespace App\Services;
 
-use App\Facades\OcrService;
 use App\Jobs\DocumentUploadJob;
-use Exception;
 use Illuminate\Support\Facades\Process;
-use Log;
-use Smalot\PdfParser\Parser;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 
 class MultidocService
 {
-
     protected function extractPdfDate(string $text, string $pdfPath): string
     {
         if ($text) {
@@ -157,24 +152,8 @@ class MultidocService
                 Process::timeout(60)->run("pdfunite $pagesList ".escapeshellarg($tmpOutputPath));
             }
 
-            $fullText = '';
-
             // Extract date from the merged PDF
             if (file_exists($tmpOutputPath)) {
-                try {
-                    $parser = new Parser;
-                    $pdf = $parser->parseFile($tmpOutputPath);
-                    $fullText = $pdf->getText();
-                } catch (Exception $e) {
-                    Log::warning('PDF-Parsing fehlgeschlagen, OCR-Fallback wird verwendet.', [
-                        'file' => $tmpOutputPath,
-                        'error' => $e->getMessage(),
-                    ]);
-                }
-
-                if (! trim($fullText)) {
-                    $fullText = OcrService::run($tmpOutputPath);
-                }
 
                 $fileDate = $this->extractPdfDate($fullText, $tmpOutputPath);
                 $outputName = $group['code'] ? $fileDate.'_'.$group['code'].'.pdf' : $fileDate.'_group_'.$index.'.pdf';

@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Facades\OcrService;
+use App\Facades\SearchablePdfService;
 use App\Models\Document;
 use Carbon\Carbon;
 use Exception;
@@ -59,17 +59,22 @@ class DocumentUploadService
             $metadata = $pdf->getDetails();
 
             $document->pages = $metadata['Pages'] ?? 1;
-            if ($fullText) {
-                $document->fulltext = $fullText;
-                $document->save();
-            } else {
-                $document->fulltext = $pdf->getText();
-                if (! trim($document->fulltext)) {
-                    $fullText = OcrService::run($file);
-                    $document->fulltext = $fullText;
+            $document->fulltext = $pdf->getText();
+
+            if (! trim($document->fulltext)) {
+                $searchablePdf = SearchablePdfService::create($file);
+
+                if ($searchablePdf['fulltext'] !== null) {
+                    $document->fulltext = $searchablePdf['fulltext'];
+                    $file = $searchablePdf['pdf_path'];
+                    $document->file_size = filesize($file);
+                    $document->mime_type = 'application/pdf';
+                } else {
+                    $document->fulltext = '';
                 }
-                $document->save();
             }
+
+            $document->save();
 
             if ($document->fulltext) {
                 try {

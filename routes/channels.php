@@ -1,7 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Broadcast;
+use App\Models\Tenant;
+use App\Models\User;
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+// Registers a channel prefixed with '{tenant}.'
+tenant_channel('App.Models.User.{id}', function (User $user, Tenant $tenant) {
     return (int) $user->id === (int) $id;
 });
