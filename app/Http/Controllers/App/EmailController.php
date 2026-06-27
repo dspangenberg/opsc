@@ -15,6 +15,7 @@ use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
@@ -59,8 +60,7 @@ class EmailController extends Controller
     /**
      * @throws Throwable
      */
-
-    public function attachmentPreview(Dropbox $dropbox, DropboxMail $mail, DropboxMailAttachment $attachment): StreamedResponse | RedirectResponse
+    public function attachmentPreview(Dropbox $dropbox, DropboxMail $mail, DropboxMailAttachment $attachment): StreamedResponse|RedirectResponse
     {
         if (
             (! $dropbox->is_shared && $dropbox->user_id !== auth()->id())
@@ -79,13 +79,18 @@ class EmailController extends Controller
             if ($media->exists()) {
                 return response()->stream(function () use ($media) {
                     $stream = $media->stream();
-                    while ($bytes = $stream->read(8192)) {
+                    while (! $stream->eof()) {
+                        $bytes = $stream->read(8192);
                         echo $bytes;
                     }
                     $stream->close();
                 }, 200, [
                     'Content-Type' => $media->mime_type ?? 'application/pdf',
-                    'Content-Disposition' => 'inline; filename="'.$attachment->filename.'"',
+                    'Content-Disposition' => HeaderUtils::makeDisposition(
+                        HeaderUtils::DISPOSITION_INLINE,
+                        $attachment->filename,
+                        $attachment->filename,
+                    ),
                     'Content-Length' => $media->size,
                 ]);
             }
@@ -95,8 +100,6 @@ class EmailController extends Controller
 
         return redirect()->back();
     }
-
-
 
     public function move(Dropbox $dropbox, DropboxMail $mail, Dropbox $newDropbox): RedirectResponse
     {
