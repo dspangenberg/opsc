@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Facades\BookeepingRuleService;
 use App\Facades\OcrService;
+use App\Facades\FileHelperService;
 use App\Models\Receipt;
 use Exception;
 use Illuminate\Support\Str;
