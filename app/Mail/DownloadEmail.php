@@ -12,6 +12,7 @@ class DownloadEmail extends Mailable
     use Queueable, SerializesModels;
 
     public User $user;
+
     public string $verificationUrl;
 
     public function __construct(User $user, string $verificationUrl)

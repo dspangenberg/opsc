@@ -10,7 +10,6 @@ namespace App\Models;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Stancl\Tenancy\Database\Concerns\HasDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
@@ -50,6 +49,7 @@ use Torann\Hashids\Facade\Hashids;
  * @property-read string $full_name
  * @property-read string $initials
  * @property-read string $reverse_full_name
+ *
  * @method static TenantCollection<int, static> all($columns = ['*'])
  * @method static TenantCollection<int, static> get($columns = ['*'])
  * @method static Builder<static>|Tenant newModelQuery()
@@ -78,11 +78,12 @@ use Torann\Hashids\Facade\Hashids;
  * @method static Builder<static>|Tenant whereWebsite($value)
  * @method static Builder<static>|Tenant whereZip($value)
  * @method static \Database\Factories\TenantFactory factory($count = null, $state = [])
+ *
  * @mixin Eloquent
  */
 class Tenant extends BaseTenant implements TenantWithDatabase
 {
-    use HasDatabase, HasDomains, MaintenanceMode, \Illuminate\Database\Eloquent\Factories\HasFactory;
+    use HasDatabase, HasDomains, \Illuminate\Database\Eloquent\Factories\HasFactory, MaintenanceMode;
 
     protected $attributes = [
         'last_name' => '',
@@ -135,7 +136,6 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 
         return Tenant::findOrFail($id);
     }
-
 
     public function getFormatedPrefixAttribute(): string
     {

@@ -22,9 +22,6 @@ Route::post('invoicing/invoices/store-external', [InvoiceController::class, 'sto
     ->middleware([HandlePrecognitiveRequests::class])
     ->name('app.invoice.store-external');
 
-
-
-
 Route::get('invoicing/invoices/report', [InvoiceController::class, 'createReport'])
     ->name('app.invoice.report');
 
@@ -96,7 +93,6 @@ Route::put('invoicing/invoices/bulk-mark-as-sent', [InvoiceController::class, 'b
     ->name('app.invoice.bulk-mark-as-sent');
 
 Route::put('invoicing/invoices/{invoice}/set-loss-of-receivables', [InvoiceController::class, 'setLossOfReceivables'])->name('app.invoice.set-loss-of-receivables');
-
 
 Route::post('invoicing/invoices/{invoice}/store-note', [InvoiceController::class, 'storeNote'])->middleware([HandlePrecognitiveRequests::class])->name('app.invoice.store-note');
 

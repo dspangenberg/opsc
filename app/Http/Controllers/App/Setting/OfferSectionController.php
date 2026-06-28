@@ -13,38 +13,48 @@ class OfferSectionController extends Controller
     public function index()
     {
         $sections = OfferSection::query()->orderBy('name')->orderBy('id')->paginate();
+
         return Inertia::render('App/Setting/OfferSection/OfferSectionIndex', [
             'sections' => OfferSectionData::collect($sections),
         ]);
     }
 
-    public function create() {
+    public function create()
+    {
         $pos = OfferSection::query()->max('pos') + 10;
-        $section = new OfferSection();
+        $section = new OfferSection;
         $section->pos = $pos;
+
         return Inertia::render('App/Setting/OfferSection/OfferSectionEdit', [
             'section' => OfferSectionData::from($section),
         ]);
     }
 
-    public function edit(OfferSection $section) {
+    public function edit(OfferSection $section)
+    {
         return Inertia::render('App/Setting/OfferSection/OfferSectionEdit', [
             'section' => OfferSectionData::from($section),
         ]);
     }
 
-    public function update(OfferSectionRequest $request, OfferSection $section) {
+    public function update(OfferSectionRequest $request, OfferSection $section)
+    {
         $section->update($request->validated());
+
         return redirect()->route('app.setting.offer-section.index');
     }
 
-    public function delete(OfferSection $section) {
+    public function delete(OfferSection $section)
+    {
         $section->delete();
+
         return redirect()->route('app.setting.offer-section.index');
     }
 
-    public function store(OfferSectionRequest $request) {
+    public function store(OfferSectionRequest $request)
+    {
         OfferSection::create($request->validated());
+
         return redirect()->route('app.setting.offer-section.index');
     }
 }

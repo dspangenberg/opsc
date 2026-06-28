@@ -16,10 +16,10 @@ use App\Http\Requests\CorrectEditBookingsRequest;
 use App\Models\BookkeepingAccount;
 use App\Models\BookkeepingBooking;
 use App\Models\Bookmark;
-use App\Models\Receipt;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laracsv\Export;
@@ -100,7 +100,7 @@ class BookingController extends Controller
         $currentPage = (int) $request->input('page', 1);
         $balancesCollection = collect($balances->values());
 
-        $paginatedBalances = new \Illuminate\Pagination\LengthAwarePaginator(
+        $paginatedBalances = new LengthAwarePaginator(
             $balancesCollection->forPage($currentPage, $perPage)->values(),
             $balancesCollection->count(),
             $perPage,
@@ -132,7 +132,7 @@ class BookingController extends Controller
             ],
             'currentFilters' => $parsedFilters,
             'bookmark_model' => BookkeepingBooking::class,
-            'bookmarks' => BookmarkData::collect($bookmarks)
+            'bookmarks' => BookmarkData::collect($bookmarks),
         ]);
     }
 
@@ -278,8 +278,9 @@ class BookingController extends Controller
     {
         if ($booking->is_locked || $booking->is_canceled) {
             Inertia::flash('toast', [
-                'type' => 'error', 'message' => 'Gesperrte oder stornierte Buchungen können nicht bearbeitet werden.'
+                'type' => 'error', 'message' => 'Gesperrte oder stornierte Buchungen können nicht bearbeitet werden.',
             ]);
+
             return back();
         }
 
@@ -301,7 +302,7 @@ class BookingController extends Controller
         if ($request->has('accountNumber')) {
             return redirect()->route('app.bookkeeping.bookings.account', [
                 'accountNumber' => $request->input('accountNumber'),
-                ...$queryParams
+                ...$queryParams,
             ]);
         }
 

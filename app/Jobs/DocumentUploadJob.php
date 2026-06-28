@@ -3,9 +3,9 @@
 namespace App\Jobs;
 
 use App\Services\DocumentUploadService;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Exception;
 
 class DocumentUploadJob implements ShouldQueue
 {

@@ -14,6 +14,5 @@ class OfferSectionData extends Data
         public readonly string $name,
         public readonly ?string $default_content,
         public readonly ?PagebreakEnum $pagebreak,
-    ) {
-    }
+    ) {}
 }

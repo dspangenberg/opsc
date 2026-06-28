@@ -24,7 +24,7 @@ class RecurringInvoiceEmail extends Mailable
 
         return $this->subject('opsc.cloud - Neue wiederkehrende Rechnung wurde erstellt')
             ->view('generated.recurring-invoice', [
-                'invoice' => $invoice
+                'invoice' => $invoice,
             ]);
     }
 }

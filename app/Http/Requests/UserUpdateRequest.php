@@ -26,7 +26,7 @@ class UserUpdateRequest extends FormRequest
             'contact_id' => [
                 'nullable',
                 Rule::exists('contacts', 'id')->where(
-                    fn($query) => $query->where('company_id', app(GeneralSettings::class)->contact_id)
+                    fn ($query) => $query->where('company_id', app(GeneralSettings::class)->contact_id)
                 ),
             ],
         ];

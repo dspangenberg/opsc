@@ -2,11 +2,11 @@
 
 namespace App\Jobs;
 
-use App\Services\DownloadService;
 use App\Models\User;
+use App\Services\DownloadService;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Exception;
 
 class DownloadJob implements ShouldQueue
 {

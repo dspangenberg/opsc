@@ -7,6 +7,7 @@ use App\Traits\HasDynamicFilters;
 use Eloquent;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,20 +22,24 @@ use Illuminate\Support\Carbon;
  * @property-read Contact|null $contact
  * @property-read string $bookkeeping_text
  * @property-read string $document_number
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Payment> $payments
+ * @property-read Collection<int, Payment> $payments
  * @property-read int|null $payments_count
  * @property-read NumberRangeDocumentNumber|null $range_document_number
+ *
  * @method static Builder<static>|Transaction newModelQuery()
  * @method static Builder<static>|Transaction newQuery()
  * @method static Builder<static>|Transaction query()
+ *
  * @property-read BookkeepingAccount|null $account
  * @property-read float $remaining_amount
+ *
  * @method static Builder<static>|Transaction applyDynamicFilters(\Illuminate\Http\Request $request, array $options = [])
  * @method static Builder<static>|Transaction applyFiltersFromObject(array|string $filters, array $options = [])
  * @method static Builder<static>|Transaction search($searchText)
  * @method static Builder<static>|Transaction hidePrivate()
  * @method static Builder<static>|Transaction hideTransit()
  * @method static Builder<static>|Transaction issuedBetween($from, $to)
+ *
  * @mixin Eloquent
  */
 class Transaction extends Model
@@ -135,7 +140,7 @@ class Transaction extends Model
 
         $transaction->load('bank_account');
 
-        if (!$transaction->number_range_document_numbers_id) {
+        if (! $transaction->number_range_document_numbers_id) {
             $transaction->number_range_document_numbers_id = NumberRange::createDocumentNumber($transaction,
                 'booked_on', $transaction->bank_account->prefix);
             $transaction->save();
@@ -152,11 +157,10 @@ class Transaction extends Model
         $accounts['creditId'] = $transaction->counter_account_id;
         $accounts['debitId'] = $transaction->bank_account->bookkeeping_account_id;
 
-
         $accountDebit = BookkeepingAccount::where('account_number', $accounts['debitId'])->first();
         $accountCredit = BookkeepingAccount::where('account_number', $accounts['creditId'])->first();
 
-        if (!$accounts['creditId']) {
+        if (! $accounts['creditId']) {
             $accounts = Contact::getAccounts(false, $transaction->contact_id);
 
             if ($accounts['subledgerAccount']) {
@@ -257,7 +261,7 @@ class Transaction extends Model
     {
         $lines = [];
 
-        if (!$this->booking_text && $this->booking_key === 'MSC') {
+        if (! $this->booking_text && $this->booking_key === 'MSC') {
             if ($this->counter_account_id !== 1360) {
                 $this->booking_text = $this->amount < 0 ? 'Überweisung' : 'Gutschrift';
             } else {

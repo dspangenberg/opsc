@@ -5,12 +5,12 @@ namespace App\Models;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 
 /**
  * @method static Builder<static>|NumberRange newModelQuery()
  * @method static Builder<static>|NumberRange newQuery()
  * @method static Builder<static>|NumberRange query()
+ *
  * @mixin Eloquent
  */
 class NumberRange extends Model

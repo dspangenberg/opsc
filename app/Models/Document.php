@@ -27,6 +27,7 @@ use Plank\Mediable\MediableCollection;
  * @property-read int|null $media_count
  * @property-read Project|null $project
  * @property-read DocumentType|null $type
+ *
  * @method static MediableCollection<int, static> all($columns = ['*'])
  * @method static Builder<static>|Document applyDynamicFilters(Request $request, array $options = [])
  * @method static Builder<static>|Document applyFiltersFromObject(array|string $filters, array $options = [])
@@ -44,13 +45,16 @@ use Plank\Mediable\MediableCollection;
  * @method static Builder<static>|Document withMediaMatchAll(array|string  $tags = [], bool $withVariants = false)
  * @method static Builder<static>|Document withTrashed(bool $withTrashed = true)
  * @method static Builder<static>|Document withoutTrashed()
+ *
  * @property-read string $folder
- * @property-read \App\Models\Contact|null $receiver_contact
- * @property-read \App\Models\Contact|null $sender_contact
+ * @property-read Contact|null $receiver_contact
+ * @property-read Contact|null $sender_contact
+ *
  * @method static Builder<static>|Document contact(?int $contactId)
  * @method static \Database\Factories\DocumentFactory factory($count = null, $state = [])
  * @method static Builder<static>|Document issuedBetween($from, $to)
  * @method static Builder<static>|Document search(?string $search)
+ *
  * @mixin Eloquent
  */
 class Document extends Model

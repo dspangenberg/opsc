@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Http;
  * @property float $rate
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @method static Builder|ConversionRate newModelQuery()
  * @method static Builder|ConversionRate newQuery()
  * @method static Builder|ConversionRate query()
@@ -27,6 +28,7 @@ use Illuminate\Support\Facades\Http;
  * @method static Builder|ConversionRate whereRate($value)
  * @method static Builder|ConversionRate whereUpdatedAt($value)
  * @method static Builder|ConversionRate whereYear($value)
+ *
  * @mixin Eloquent
  */
 class ConversionRate extends Model

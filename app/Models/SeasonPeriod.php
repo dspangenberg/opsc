@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonPeriod query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonPeriod withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonPeriod withoutTrashed()
+ *
  * @mixin \Eloquent
  */
 class SeasonPeriod extends Model

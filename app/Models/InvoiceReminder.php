@@ -18,10 +18,12 @@ use Illuminate\Mail\Attachment;
  * @property-read string $name
  * @property-read string $outro_text
  * @property-read string $type
- * @property-read \App\Models\Invoice|null $invoice
+ * @property-read Invoice|null $invoice
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InvoiceReminder newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InvoiceReminder newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InvoiceReminder query()
+ *
  * @mixin \Eloquent
  */
 class InvoiceReminder extends Model implements Attachable
@@ -48,13 +50,14 @@ class InvoiceReminder extends Model implements Attachable
 
     private function getSetting(string $key): string
     {
-        if (!in_array($this->dunning_level, [1, 2, 3], true)) {
+        if (! in_array($this->dunning_level, [1, 2, 3], true)) {
             return '';
         }
 
         $invoiceReminderSettings = app(InvoiceReminderSettings::class);
 
         $key = 'level_'.$this->dunning_level.'_'.$key;
+
         return $invoiceReminderSettings->$key;
     }
 
@@ -79,11 +82,9 @@ class InvoiceReminder extends Model implements Attachable
             }
         }
 
-
         if ($this->invoice->contact?->is_company) {
             return '';
         }
-
 
         return $this->invoice->contact?->full_name ?? '';
     }
@@ -91,6 +92,7 @@ class InvoiceReminder extends Model implements Attachable
     public function getCityAttribute(): string
     {
         $this->loadMissing('invoice', 'invoice.contact');
+
         return $this->invoice->contact->getInvoiceAddress()->city;
     }
 
@@ -128,6 +130,7 @@ class InvoiceReminder extends Model implements Attachable
         $this->invoice->loadSum('lines', 'tax');
         $pdfConfig = [];
         $pdfConfig['hide'] = true;
+
         return WeasyPdfService::createPdf('invoice', 'pdf.invoice.reminder',
             [
                 'reminder' => $this,
@@ -145,6 +148,7 @@ class InvoiceReminder extends Model implements Attachable
         */
         $invoicePath = Invoice::createOrGetPdf($this->invoice);
         $file = $this->createPdf($invoicePath);
+
         return Attachment::fromPath($file)->as($this->filename);
     }
 

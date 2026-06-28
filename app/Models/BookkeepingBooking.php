@@ -20,18 +20,22 @@ use Illuminate\Support\Collection;
  * @property-read string $document_number
  * @property-read NumberRangeDocumentNumber|null $range_document_number
  * @property-read Tax|null $tax
+ *
  * @method static Builder<static>|BookkeepingBooking newModelQuery()
  * @method static Builder<static>|BookkeepingBooking newQuery()
  * @method static Builder<static>|BookkeepingBooking query()
  * @method static Builder<static>|BookkeepingBooking search($search)
+ *
  * @property-read float $amount_net
  * @property-read string $document_number_range_prefix
+ *
  * @method static Builder<static>|BookkeepingBooking applyDynamicFilters(\Illuminate\Http\Request $request, array $options = [])
  * @method static Builder<static>|BookkeepingBooking applyFiltersFromObject(array|string $filters, array $options = [])
  * @method static Builder<static>|BookkeepingBooking hidePrivate()
  * @method static Builder<static>|BookkeepingBooking hideTransit()
  * @method static Builder<static>|BookkeepingBooking issuedBetween($from, $to)
  * @method static Builder<static>|BookkeepingBooking withoutCanceled()
+ *
  * @mixin Eloquent
  */
 class BookkeepingBooking extends Model
@@ -60,7 +64,7 @@ class BookkeepingBooking extends Model
         'is_marked',
         'bookable_type',
         'bookable_id',
-        'canceled_id'
+        'canceled_id',
     ];
 
     protected $appends = [
@@ -85,7 +89,6 @@ class BookkeepingBooking extends Model
 
         return $query;
     }
-
 
     protected function getFilterLabel(string $key, mixed $value): ?string
     {
@@ -169,7 +172,7 @@ class BookkeepingBooking extends Model
         return BookkeepingAccount::whereIn('account_number', $accountIds)
             ->get()
             ->keyBy('account_number')
-            ->map(fn($account) => $account->label);
+            ->map(fn ($account) => $account->label);
     }
 
     /**
@@ -233,7 +236,7 @@ class BookkeepingBooking extends Model
      *
      * @param  array  $accountNumbers  Array of account numbers
      * @param  array  $filters  Optional filters (e.g., date range)
-     * @return \Illuminate\Support\Collection Collection with account_number, label, and balance
+     * @return Collection Collection with account_number, label, and balance
      */
     public static function calculateBalancesForAccounts(array $accountNumbers, array $filters = []): Collection
     {
@@ -419,11 +422,11 @@ class BookkeepingBooking extends Model
         $documentNumberPrefix = '',
         $bookingId = null
     ): ?BookkeepingBooking {
-        if (!$debit_account || !$credit_account) {
+        if (! $debit_account || ! $credit_account) {
             BookkeepingLog::create([
                 'parent_model' => $parent::class,
                 'parent_id' => $parent->id,
-                'text' => !$debit_account ? 'Sollkonto nicht gefunden' : 'Habenkonto nicht gefunden',
+                'text' => ! $debit_account ? 'Sollkonto nicht gefunden' : 'Habenkonto nicht gefunden',
             ]);
 
             return null;
@@ -440,7 +443,7 @@ class BookkeepingBooking extends Model
             $booking->date = $parent[$dateField];
         }
 
-        if (!$booking->number_range_document_numbers_id || $booking->number_range_document_numbers_id != $parent->number_range_document_numbers_id) {
+        if (! $booking->number_range_document_numbers_id || $booking->number_range_document_numbers_id != $parent->number_range_document_numbers_id) {
             $booking->number_range_document_numbers_id = $parent->number_range_document_numbers_id;
         }
 
@@ -454,7 +457,6 @@ class BookkeepingBooking extends Model
             $booking->account_id_debit = $debit_account->account_number;
             $booking->account_id_credit = $credit_account->account_number;
         }
-
 
         if (get_class($parent) !== Transaction::class) {
             $taxes = BookkeepingAccount::getTax($booking->account_id_credit, $booking->account_id_debit,
@@ -479,7 +481,7 @@ class BookkeepingBooking extends Model
     public static function correctBooking(int $bookingId): int
     {
         $booking = BookkeepingBooking::find($bookingId);
-        if (!$booking) {
+        if (! $booking) {
             throw new Exception('Booking not found');
         }
 

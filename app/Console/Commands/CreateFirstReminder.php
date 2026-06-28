@@ -37,7 +37,7 @@ class CreateFirstReminder extends Command
 
         if ($tenantId) {
             $tenant = Tenant::find($tenantId);
-            if (!$tenant) {
+            if (! $tenant) {
                 $this->error("Tenant $tenantId not found");
 
                 return self::FAILURE;
@@ -62,6 +62,7 @@ class CreateFirstReminder extends Command
 
             if ($invoiceReminderSettings->level_1_days === 0) {
                 $this->info('Zahlungserinnerungen sind deaktiviert.');
+
                 return false;
             }
 
@@ -83,6 +84,7 @@ class CreateFirstReminder extends Command
 
             if ($invoices->isEmpty()) {
                 $this->info('Keine offenen Rechnungen gefunden.');
+
                 return false;
             }
 
@@ -108,8 +110,9 @@ class CreateFirstReminder extends Command
                             ->loadSum('lines', 'tax');
 
                         $primaryMail = $reminder->invoice->contact?->primary_mail;
-                        if (!$primaryMail) {
+                        if (! $primaryMail) {
                             $this->warn("Kein E-Mail-Empfänger für Rechnung {$invoice->formated_invoice_number}");
+
                             continue;
                         }
                         Mail::to($primaryMail)

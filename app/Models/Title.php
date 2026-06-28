@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
  * @property string $correspondence_salutation_other
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @method static Builder<static>|Title newModelQuery()
  * @method static Builder<static>|Title newQuery()
  * @method static Builder<static>|Title query()
@@ -25,6 +26,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|Title whereId($value)
  * @method static Builder<static>|Title whereName($value)
  * @method static Builder<static>|Title whereUpdatedAt($value)
+ *
  * @mixin Eloquent
  */
 class Title extends Model

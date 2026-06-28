@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('cost_centers', function (Blueprint $table) {
             $table->id();
-$table->string('name');
-$table->foreignId('bookkeeping_account_id')->nullable();
-$table->timestamps();//
+            $table->string('name');
+            $table->foreignId('bookkeeping_account_id')->nullable();
+            $table->timestamps(); //
         });
     }
 

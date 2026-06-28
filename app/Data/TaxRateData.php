@@ -18,8 +18,7 @@ class TaxRateData extends Data
         public readonly int $tax_id,
         public readonly float $rate,
         public readonly string $name,
-    ) {
-    }
+    ) {}
 
     public function defaultWrap(): string
     {

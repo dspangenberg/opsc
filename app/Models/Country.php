@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
  * @property string $country_code
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @method static Builder<static>|Country newModelQuery()
  * @method static Builder<static>|Country newQuery()
  * @method static Builder<static>|Country query()
@@ -25,6 +26,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|Country whereName($value)
  * @method static Builder<static>|Country whereUpdatedAt($value)
  * @method static Builder<static>|Country whereVehicleCode($value)
+ *
  * @mixin Eloquent
  */
 class Country extends Model

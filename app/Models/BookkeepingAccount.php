@@ -9,10 +9,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property-read string $label
- * @property-read \App\Models\Tax|null $tax
+ * @property-read Tax|null $tax
+ *
  * @method static Builder<static>|BookkeepingAccount newModelQuery()
  * @method static Builder<static>|BookkeepingAccount newQuery()
  * @method static Builder<static>|BookkeepingAccount query()
+ *
  * @mixin Eloquent
  */
 class BookkeepingAccount extends Model

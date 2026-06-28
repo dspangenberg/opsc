@@ -3,8 +3,10 @@
 namespace Tests;
 
 use App\Models\Tenant;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Schema;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -27,8 +29,8 @@ abstract class TestCase extends BaseTestCase
         tenancy()->initialize($this->tenant);
 
         // Create cost_centers table manually for tests
-        if (! \Illuminate\Support\Facades\Schema::hasTable('cost_centers')) {
-            \Illuminate\Support\Facades\Schema::create('cost_centers', function (\Illuminate\Database\Schema\Blueprint $table) {
+        if (! Schema::hasTable('cost_centers')) {
+            Schema::create('cost_centers', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
                 $table->foreignId('bookkeeping_account_id')->nullable();
@@ -37,8 +39,8 @@ abstract class TestCase extends BaseTestCase
         }
 
         // Create contacts table manually for tests
-        if (! \Illuminate\Support\Facades\Schema::hasTable('contacts')) {
-            \Illuminate\Support\Facades\Schema::create('contacts', function (\Illuminate\Database\Schema\Blueprint $table) {
+        if (! Schema::hasTable('contacts')) {
+            Schema::create('contacts', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->integer('company_id')->nullable()->default(0);
                 $table->boolean('is_org')->default(false);

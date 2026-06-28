@@ -12,7 +12,6 @@ class BookkeepingRuleService
 
         $lockfield = $table === 'receipts' ? 'is_confirmed' : 'is_locked';
 
-
         // Optimize eager loading by combining with() calls
         $rules = BookkeepingRule::where('table', $table)
             ->has('conditions')

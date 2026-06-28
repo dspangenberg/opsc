@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
  * @property-read string $date
  * @property-read Project|null $project
  * @property-read User|null $user
+ *
  * @method static Builder<static>|Time byWeekOfYear(int $week, int $year)
  * @method static Builder<static>|Time endsBefore($date)
  * @method static Builder<static>|Time maxDuration($date)
@@ -29,6 +30,7 @@ use Illuminate\Support\Facades\DB;
  * @method static Builder<static>|Time applyDynamicFilters(\Illuminate\Http\Request $request, array $options = [])
  * @method static Builder<static>|Time applyFiltersFromObject(array|string $filters, array $options = [])
  * @method static Builder<static>|Time billable()
+ *
  * @mixin Eloquent
  */
 class Time extends Model
@@ -115,7 +117,6 @@ class Time extends Model
             ->where('legacy_invoice_id', 0)
             ->where('invoice_id', 0);
     }
-
 
     public function scopeByWeekOfYear(Builder $query, int $week, int $year): void
     {

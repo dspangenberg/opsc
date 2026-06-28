@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -10,8 +11,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $priority
  * @property string $field
  * @property string $value
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|BookkeepingRuleAction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BookkeepingRuleAction newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BookkeepingRuleAction onlyTrashed()
@@ -25,8 +27,11 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|BookkeepingRuleAction whereValue($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BookkeepingRuleAction withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|BookkeepingRuleAction withoutTrashed()
+ *
  * @property string $table
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|BookkeepingRuleAction whereTable($value)
+ *
  * @mixin \Eloquent
  */
 class BookkeepingRuleAction extends Model

@@ -5,16 +5,19 @@ namespace App\Http\Controllers\App;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NoteStoreRequest;
 use Illuminate\Support\Str;
+
 class NotableController extends Controller
 {
     protected function getModel(string $tableName, int $id)
     {
-        $className = 'App\Models\\' . Str::studly(Str::singular($tableName));
+        $className = 'App\Models\\'.Str::studly(Str::singular($tableName));
         if (class_exists($className)) {
             return $className::findOrFail($id);
         }
+
         return null;
     }
+
     public function store(NoteStoreRequest $request, string $tableName, int $id)
     {
         $model = $this->getModel($tableName, $id);

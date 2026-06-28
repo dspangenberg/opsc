@@ -12,12 +12,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property-read Model|Eloquent $payable
  * @property-read Transaction|null $transaction
+ *
  * @method static Builder<static>|Payment newModelQuery()
  * @method static Builder<static>|Payment newQuery()
  * @method static Builder<static>|Payment onlyTrashed()
  * @method static Builder<static>|Payment query()
  * @method static Builder<static>|Payment withTrashed(bool $withTrashed = true)
  * @method static Builder<static>|Payment withoutTrashed()
+ *
  * @mixin Eloquent
  */
 class Payment extends Model
@@ -36,11 +38,12 @@ class Payment extends Model
         'rank',
         'id',
     ];
+
     public static function createCurrencyDifferenceBookings(Payment $payment): void
     {
         $payment->load('transaction');
         $accountDebit = BookkeepingAccount::where('account_number', $payment->amount > 0 ? '2660' : '2150')->first();
-        $accountCredit = BookkeepingAccount::where('account_number', $payment->transaction->counter_account_id )->first();
+        $accountCredit = BookkeepingAccount::where('account_number', $payment->transaction->counter_account_id)->first();
 
         $payment->amount = $payment->amount < 0 ? $payment->amount * -1 : $payment->amount;
         $bookingText = [];
@@ -62,6 +65,7 @@ class Payment extends Model
             $booking->save();
         }
     }
+
     public static function createBookingIncoming($payment): void
     {
 

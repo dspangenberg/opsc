@@ -5,12 +5,12 @@ namespace App\Models;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 
 /**
  * @method static Builder<static>|InvoiceType newModelQuery()
  * @method static Builder<static>|InvoiceType newQuery()
  * @method static Builder<static>|InvoiceType query()
+ *
  * @mixin Eloquent
  */
 class InvoiceType extends Model

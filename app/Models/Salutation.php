@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
  * @property int $is_hidden
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @method static Builder<static>|Salutation newModelQuery()
  * @method static Builder<static>|Salutation newQuery()
  * @method static Builder<static>|Salutation query()
@@ -23,6 +24,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|Salutation whereIsHidden($value)
  * @method static Builder<static>|Salutation whereName($value)
  * @method static Builder<static>|Salutation whereUpdatedAt($value)
+ *
  * @mixin Eloquent
  */
 class Salutation extends Model

@@ -33,7 +33,7 @@ class TransactionController extends Controller
 {
     public function index(Request $request, ?BankAccount $bank_account = null)
     {
-        if (!$bank_account) {
+        if (! $bank_account) {
             $bank_account = BankAccount::query()->orderBy('pos')->first();
         }
 
@@ -81,7 +81,7 @@ class TransactionController extends Controller
     public function unconfirm(Request $request, Transaction $transaction)
     {
         $transaction->load('booking', 'bank_account');
-        if (!$transaction->booking || !$transaction->booking->is_locked) {
+        if (! $transaction->booking || ! $transaction->booking->is_locked) {
             $transaction->is_locked = false;
             $transaction->save();
         }
@@ -108,10 +108,10 @@ class TransactionController extends Controller
         $transactions = Transaction::whereIn('id', $transactionIds)->with('bank_account')->orderBy('booked_on')->get();
 
         $transactions->each(function ($transaction) {
-            if (!$transaction->is_locked) {
+            if (! $transaction->is_locked) {
                 $transaction->is_locked = true;
 
-                if (!$transaction->number_range_document_numbers_id) {
+                if (! $transaction->number_range_document_numbers_id) {
                     $transaction->number_range_document_numbers_id = NumberRange::createDocumentNumber($transaction,
                         'booked_on', $transaction->bank_account->prefix);
                 }
@@ -136,7 +136,7 @@ class TransactionController extends Controller
         $transactions = Transaction::whereIn('id', $transactionIds)->with('bank_account')->get();
 
         $transactions->each(function ($transaction) use ($counterAccount) {
-            if (!$transaction->is_locked) {
+            if (! $transaction->is_locked) {
                 $transaction->counter_account_id = $counterAccount;
                 $transaction->save();
             }
@@ -169,24 +169,24 @@ class TransactionController extends Controller
         $ids = [];
         foreach ($csv->getRecords() as $record) {
             if ($counter >= 0) {
-                $transaction = Transaction::firstOrNew(['mm_ref' => $record["Zahlungs-ID"]]);
-                if (!$transaction->is_locked) {
-                    $transaction->mm_ref = $record["Zahlungs-ID"];
+                $transaction = Transaction::firstOrNew(['mm_ref' => $record['Zahlungs-ID']]);
+                if (! $transaction->is_locked) {
+                    $transaction->mm_ref = $record['Zahlungs-ID'];
                     $transaction->bank_account_id = $validatedData['bank_account_id'];
-                    $transaction->valued_on = Carbon::createFromLocaleFormat('d.m.Y', 'de', $record["Valutadatum"],
+                    $transaction->valued_on = Carbon::createFromLocaleFormat('d.m.Y', 'de', $record['Valutadatum'],
                         'Europe/Berlin');
-                    $transaction->booked_on = Carbon::createFromLocaleFormat('d.m.Y', 'de', $record["Buchungsdatum"],
+                    $transaction->booked_on = Carbon::createFromLocaleFormat('d.m.Y', 'de', $record['Buchungsdatum'],
                         'Europe/Berlin');
 
                     // Deutsches Zahlenformat konvertieren: "1.234,56" -> 1234.56
-                    $transaction->amount = (float) str_replace(',', '.', str_replace('.', '', $record["Betrag"]));
+                    $transaction->amount = (float) str_replace(',', '.', str_replace('.', '', $record['Betrag']));
                     $transaction->booking_text = $transaction->amount > 0 ? 'Gutschrift' : 'Zahlung';
 
-                    $transaction->currency = $record["Währung"];
-                    $transaction->name = strtoupper($record["Gegenpartei"]);
+                    $transaction->currency = $record['Währung'];
+                    $transaction->name = strtoupper($record['Gegenpartei']);
 
-                    $purpose1 = $record["Bezeichnung"];
-                    $purpose2 = $record["Referenz"] !== $record["Bezeichnung"] ? '|'.$record["Referenz"] : '';
+                    $purpose1 = $record['Bezeichnung'];
+                    $purpose2 = $record['Referenz'] !== $record['Bezeichnung'] ? '|'.$record['Referenz'] : '';
 
                     $transaction->purpose = $purpose1.$purpose2;
                     $transaction->save();

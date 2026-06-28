@@ -7,19 +7,34 @@
 
 declare(strict_types=1);
 
+use App\Models\Tenant;
+use Stancl\Tenancy\Actions\CloneRoutesAsTenant;
 use Stancl\Tenancy\Bootstrappers;
+use Stancl\Tenancy\Concerns\UsableWithEarlyIdentification;
+use Stancl\Tenancy\Database\Models\Domain;
+use Stancl\Tenancy\Database\TenantDatabaseManagers\MicrosoftSQLDatabaseManager;
+use Stancl\Tenancy\Database\TenantDatabaseManagers\MySQLDatabaseManager;
+use Stancl\Tenancy\Database\TenantDatabaseManagers\PostgreSQLDatabaseManager;
+use Stancl\Tenancy\Database\TenantDatabaseManagers\SQLiteDatabaseManager;
 use Stancl\Tenancy\Enums\RouteMode;
+use Stancl\Tenancy\Features\UserImpersonation;
+use Stancl\Tenancy\Listeners\ForgetTenantParameter;
 use Stancl\Tenancy\Middleware;
+use Stancl\Tenancy\Middleware\PreventAccessFromUnwantedDomains;
 use Stancl\Tenancy\Resolvers;
-use Stancl\Tenancy\UniqueIdentifierGenerators;
+use Stancl\Tenancy\RLS\PolicyManagers\TableRLSManager;
+use Stancl\Tenancy\RLS\PolicyManagers\TraitRLSManager;
+use Stancl\Tenancy\UniqueIdentifierGenerators\RandomHexGenerator;
+use Stancl\Tenancy\UniqueIdentifierGenerators\RandomStringGenerator;
+use Stancl\Tenancy\UniqueIdentifierGenerators\UUIDGenerator;
 
 return [
     /**
      * Configuration for the models used by Tenancy.
      */
     'models' => [
-        'tenant' => App\Models\Tenant::class,
-        'domain' => Stancl\Tenancy\Database\Models\Domain::class,
+        'tenant' => Tenant::class,
+        'domain' => Domain::class,
 
         /**
          * Name of the column used to relate models to tenants.
@@ -36,11 +51,11 @@ return [
          *
          * SECURITY NOTE: Keep in mind that autoincrement IDs come with potential enumeration issues (such as tenant storage URLs).
          *
-         * @see \Stancl\Tenancy\UniqueIdentifierGenerators\UUIDGenerator
-         * @see \Stancl\Tenancy\UniqueIdentifierGenerators\RandomHexGenerator
-         * @see \Stancl\Tenancy\UniqueIdentifierGenerators\RandomStringGenerator
+         * @see UUIDGenerator
+         * @see RandomHexGenerator
+         * @see RandomStringGenerator
          */
-        'id_generator' => UniqueIdentifierGenerators\UUIDGenerator::class,
+        'id_generator' => UUIDGenerator::class,
     ],
 
     'identification' => [
@@ -83,8 +98,8 @@ return [
          *
          * If you're using a custom domain identification middleware, add it here.
          *
-         * @see \Stancl\Tenancy\Concerns\UsableWithEarlyIdentification
-         * @see \Stancl\Tenancy\Middleware\PreventAccessFromUnwantedDomains
+         * @see UsableWithEarlyIdentification
+         * @see PreventAccessFromUnwantedDomains
          */
         'domain_identification_middleware' => [
             Middleware\InitializeTenancyByDomain::class,
@@ -100,8 +115,8 @@ return [
          *
          * If you're using a custom path identification middleware, add it here.
          *
-         * @see \Stancl\Tenancy\Actions\CloneRoutesAsTenant
-         * @see \Stancl\Tenancy\Listeners\ForgetTenantParameter
+         * @see CloneRoutesAsTenant
+         * @see ForgetTenantParameter
          */
         'path_identification_middleware' => [
             Middleware\InitializeTenancyByPath::class,
@@ -199,22 +214,22 @@ return [
          * TenantDatabaseManagers are classes that handle the creation & deletion of tenant databases.
          */
         'managers' => [
-            'sqlite' => Stancl\Tenancy\Database\TenantDatabaseManagers\SQLiteDatabaseManager::class,
-            'mysql' => Stancl\Tenancy\Database\TenantDatabaseManagers\MySQLDatabaseManager::class,
-            'pgsql' => Stancl\Tenancy\Database\TenantDatabaseManagers\PostgreSQLDatabaseManager::class,
-            'sqlsrv' => Stancl\Tenancy\Database\TenantDatabaseManagers\MicrosoftSQLDatabaseManager::class,
+            'sqlite' => SQLiteDatabaseManager::class,
+            'mysql' => MySQLDatabaseManager::class,
+            'pgsql' => PostgreSQLDatabaseManager::class,
+            'sqlsrv' => MicrosoftSQLDatabaseManager::class,
 
-            /**
-             * Use these database managers to have a DB user created for each tenant database.
-             * You can customize the grants given to these users by changing the $grants property.
-             */
+        /**
+         * Use these database managers to have a DB user created for each tenant database.
+         * You can customize the grants given to these users by changing the $grants property.
+         */
             // 'mysql' => Stancl\Tenancy\Database\TenantDatabaseManagers\PermissionControlledMySQLDatabaseManager::class,
             // 'sqlsrv' => Stancl\Tenancy\TenantDatabaseManagers\PermissionControlledMicrosoftSQLServerDatabaseManager::class,
 
-            /**
-             * Disable the pgsql manager above, and enable the one below if you
-             * want to separate tenant DBs by schemas rather than databases.
-             */
+        /**
+         * Disable the pgsql manager above, and enable the one below if you
+         * want to separate tenant DBs by schemas rather than databases.
+         */
             // 'pgsql' => Stancl\Tenancy\Database\TenantDatabaseManagers\PostgreSQLSchemaManager::class, // Separate by schema instead of database
         ],
 
@@ -229,10 +244,10 @@ return [
         /**
          * The RLS manager responsible for generating queries for creating policies.
          *
-         * @see Stancl\Tenancy\RLS\PolicyManagers\TableRLSManager
-         * @see Stancl\Tenancy\RLS\PolicyManagers\TraitRLSManager
+         * @see TableRLSManager
+         * @see TraitRLSManager
          */
-        'manager' => Stancl\Tenancy\RLS\PolicyManagers\TableRLSManager::class,
+        'manager' => TableRLSManager::class,
 
         /**
          * Credentials for the tenant database user (one user for *all* tenants, not for each tenant).
@@ -393,7 +408,7 @@ return [
      * understand which ones you want to enable.
      */
     'features' => [
-        Stancl\Tenancy\Features\UserImpersonation::class,
+        UserImpersonation::class,
         // Stancl\Tenancy\Features\TelescopeTags::class,
         // Stancl\Tenancy\Features\TenantConfig::class,
         // Stancl\Tenancy\Features\CrossDomainRedirect::class,

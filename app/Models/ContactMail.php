@@ -7,13 +7,14 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Carbon;
 
 /**
- * @property-read \App\Models\EmailCategory|null $category
+ * @property-read EmailCategory|null $category
+ *
  * @method static Builder<static>|ContactMail newModelQuery()
  * @method static Builder<static>|ContactMail newQuery()
  * @method static Builder<static>|ContactMail query()
+ *
  * @mixin Eloquent
  */
 class ContactMail extends Model

@@ -8,13 +8,14 @@
 namespace App\Data;
 
 use App\Models\NumberRangeDocumentNumber;
+use DateTime;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Attributes\WithTransformer;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Transformers\DateTimeInterfaceTransformer;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
-use DateTime;
+
 #[TypeScript]
 class ReceiptData extends Data
 {

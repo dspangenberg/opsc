@@ -45,7 +45,7 @@ class LetterheadController extends Controller
         $settings = app(GeneralSettings::class);
 
         return Inertia::render('App/Setting/Letterhead/GlobalCssEdit', [
-            'css' => $settings->pdf_global_css
+            'css' => $settings->pdf_global_css,
         ]);
     }
 

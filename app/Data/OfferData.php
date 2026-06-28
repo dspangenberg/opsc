@@ -70,8 +70,7 @@ class OfferData extends Data
         public readonly OfferStatusEnum $status,
         /** @var NoteableData[] */
         public readonly ?array $notables
-    ) {
-    }
+    ) {}
 
     public function defaultWrap(): string
     {

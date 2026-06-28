@@ -45,7 +45,6 @@ class HandleInertiaRequests extends Middleware
 
         $user = $request->user();
 
-
         $mailAccounts = [];
         $dropBoxes = [];
         $bookmarks = [];

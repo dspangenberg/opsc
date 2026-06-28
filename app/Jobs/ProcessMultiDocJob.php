@@ -3,9 +3,9 @@
 namespace App\Jobs;
 
 use App\Services\MultidocService;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Exception;
 
 class ProcessMultiDocJob implements ShouldQueue
 {
@@ -18,8 +18,6 @@ class ProcessMultiDocJob implements ShouldQueue
         public string $file,
         public string $orgFilename
     ) {}
-
-
 
     /**
      * Execute the job.

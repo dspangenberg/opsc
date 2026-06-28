@@ -146,7 +146,7 @@ export const FilterForm: React.FC<Props> = ({
                       isSelected={currentFilters.is_hidden}
                       name="is_hidden"
                       onChange={checked =>
-                        updateFilters('is_hidden', checked ? { operator: '=', value: true } : null)
+                        updateFilters('is_hidden', checked ? { operator: '=', value: 1 } : null)
                       }
                     >
                       ausgeblendete Dokumente

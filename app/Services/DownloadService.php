@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\Facades\FileHelperService;
 use App\Mail\DownloadEmail;
 use App\Models\DocumentDownload;
-use App\Facades\FileHelperService;
 use App\Models\Receipt;
 use App\Models\User;
 use Exception;
@@ -16,16 +16,15 @@ use Zip;
 
 class DownloadService
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * @throws Exception
      */
-    public function download(int $id, User $user): void {
+    public function download(int $id, User $user): void
+    {
         $documentDownload = DocumentDownload::find($id);
-        if (!$documentDownload) {
+        if (! $documentDownload) {
             throw new ModelNotFoundException('DocumentDownload not found.');
         }
         $zipFileName = FileHelperService::getTempFile('zip');
@@ -34,12 +33,12 @@ class DownloadService
 
         $receipts = Receipt::query()->with('range_document_number')->whereIn('id', $documentDownload->ids)->get();
 
-
         foreach ($receipts as $receipt) {
             $media = $receipt->firstMedia('file');
-            if (!$media) {
+            if (! $media) {
                 $fallbackName = 'missing-media-'.$receipt->id.'.pdf';
                 $zip->addFromString($fallbackName, '');
+
                 continue;
             }
             $content = $media->contents();

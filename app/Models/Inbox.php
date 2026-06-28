@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Inbox query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Inbox withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Inbox withoutTrashed()
+ *
  * @mixin \Eloquent
  */
 class Inbox extends Model

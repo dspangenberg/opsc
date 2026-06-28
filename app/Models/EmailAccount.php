@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailAccount newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailAccount newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailAccount query()
+ *
  * @mixin \Eloquent
  */
 class EmailAccount extends Model
@@ -21,13 +22,14 @@ class EmailAccount extends Model
     ];
 
     protected $hidden = [
-        'smtp_password'
+        'smtp_password',
     ];
+
     protected function casts(): array
     {
         return [
             'is_default' => 'boolean',
-            'smtp_password' => 'encrypted'
+            'smtp_password' => 'encrypted',
         ];
     }
 }

@@ -32,11 +32,11 @@ class CreateTenantAdminJob implements ShouldQueue
         $this->tenant->run(function ($tenant) {
 
             $userData = collect($tenant)->only(['first_name', 'last_name', 'email'])->toArray();
-            
+
             // Generate a cryptographically secure random password
             $randomPassword = bin2hex(random_bytes(16));
             $userData['password'] = bcrypt($randomPassword);
-            
+
             $userData['is_admin'] = true;
             $userData['email_verified_at'] = now();
 

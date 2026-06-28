@@ -15,7 +15,7 @@ class OfferTemplateStoreRequest extends FormRequest
     {
         return [
             'id' => ['required', 'exists:offers,id'],
-            'template_name' => ['required', 'string']
+            'template_name' => ['required', 'string'],
         ];
     }
 

@@ -20,7 +20,6 @@ class BookkeepingRuleUpdateRequest extends FormRequest
             'logical_operator' => ['required', 'string'],
             'is_active' => ['nullable', 'boolean'],
 
-
             // E-Mail-Validierung hinzufügen
             'conditions' => ['required', 'array'],
             'conditions.*.bookkeeping_rule_id' => ['nullable', 'integer'],

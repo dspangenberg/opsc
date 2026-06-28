@@ -34,7 +34,7 @@ class CreateInvoiceHistory extends Command
 
         if ($tenantId) {
             $tenant = Tenant::find($tenantId);
-            if (!$tenant) {
+            if (! $tenant) {
                 $this->error("Tenant $tenantId not found");
 
                 return false;
@@ -59,9 +59,9 @@ class CreateInvoiceHistory extends Command
 
             if ($invoiceReminderSettings->level_1_days === 0) {
                 $this->info('Zahlungserinnerungen sind deaktiviert.');
+
                 return false;
             }
-
 
             $this->info("Processing tenant: $tenant->id");
 
@@ -73,6 +73,7 @@ class CreateInvoiceHistory extends Command
 
             if ($invoices->isEmpty()) {
                 $this->info('Keine offenen Rechnungen gefunden.');
+
                 return false;
             }
 

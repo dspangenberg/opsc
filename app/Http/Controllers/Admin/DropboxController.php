@@ -18,6 +18,7 @@ class DropboxController extends Controller
     public function index(): Response
     {
         $dropboxes = Dropbox::query()->orderBy('email_address')->paginate();
+
         return Inertia::render('Admin/Dropbox/DropboxIndex', [
             'dropboxes' => DropboxData::collect($dropboxes),
         ]);
@@ -29,7 +30,7 @@ class DropboxController extends Controller
         $dropbox_domain = config('app.dropbox_domain');
         $emailAddress = Str::lower(Str::random(4)).'.'.tenant('domains')[0]->domain.'@'.$dropbox_domain;
 
-        $dropbox= new Dropbox();
+        $dropbox = new Dropbox;
         $dropbox->email_address = $emailAddress;
         $dropbox->name = '';
         $dropbox->token = Str::random(32);
@@ -46,6 +47,7 @@ class DropboxController extends Controller
     {
         $dropbox->load('user');
         $users = User::orderBy('last_name')->orderBy('first_name')->get();
+
         return Inertia::render('Admin/Dropbox/DropboxEdit', [
             'dropbox' => DropboxData::from($dropbox),
             'users' => UserData::collect($users),
@@ -55,19 +57,21 @@ class DropboxController extends Controller
     public function update(DropboxRequest $request, Dropbox $dropbox): RedirectResponse
     {
         $dropbox->update($request->validated());
+
         return redirect()->route('admin.dropbox.index');
     }
 
     public function destroy(Dropbox $dropbox): RedirectResponse
     {
         $dropbox->delete();
+
         return redirect()->route('admin.dropbox.index');
     }
 
     public function store(DropboxRequest $request): RedirectResponse
     {
         Dropbox::create($request->validated());
+
         return redirect()->route('admin.dropbox.index');
     }
-
 }

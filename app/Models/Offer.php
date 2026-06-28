@@ -44,6 +44,7 @@ use Plank\Mediable\MediableInterface;
  * @property-read int|null $media_count
  * @property-read Project|null $project
  * @property-read Tax|null $tax
+ *
  * @method static MediableCollection<int, static> all($columns = ['*'])
  * @method static Builder<static>|Offer byYear(int $year)
  * @method static MediableCollection<int, static> get($columns = ['*'])
@@ -57,11 +58,13 @@ use Plank\Mediable\MediableInterface;
  * @method static Builder<static>|Offer withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static Builder<static>|Offer withMediaAndVariantsMatchAll($tags = [])
  * @method static Builder<static>|Offer withMediaMatchAll(array|string  $tags = [], bool $withVariants = false)
+ *
  * @property OfferStatusEnum $status
  * @property-read Collection<int, Notable> $notables
  * @property-read int|null $notables_count
- * @property-read Collection<int, \App\Models\OfferOfferSection> $sections
+ * @property-read Collection<int, OfferOfferSection> $sections
  * @property-read int|null $sections_count
+ *
  * @mixin Eloquent
  */
 class Offer extends Model implements MediableInterface
