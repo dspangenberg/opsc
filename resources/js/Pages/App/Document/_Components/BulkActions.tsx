@@ -31,6 +31,8 @@ export const BulkActions: React.FC<BulkActionsProps> = ({
 
   if (!selectedDocuments.length) return null
 
+  console.log('trash', trash)
+
   const handleBulkEdit = async () => {
     const result = await DocumentBulkEdit.call({
       contacts,

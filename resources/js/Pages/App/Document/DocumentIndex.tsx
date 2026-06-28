@@ -83,8 +83,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   const getDocumentsByFolder = (folder: string) => documentsGroupedByFolder[folder]
 
   const getViewTitle = () => {
-    const view = routeFilters?.view?.value
-    switch (view) {
+    switch (route().params?.view) {
       case 'trash':
         return 'Papierkorb'
       case 'inbox':
@@ -95,8 +94,8 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   }
 
   const view = getViewTitle()
-  const isTrash = routeFilters?.view?.value === 'trash'
-  const isInbox = routeFilters?.view?.value === 'inbox'
+  const isTrash = route().params?.view === 'trash'
+  const isInbox = route().params?.view === 'inbox'
 
   const debouncedSearchChange = useCallback(
     (newSearch: string) => {
