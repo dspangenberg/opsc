@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use App\Facades\BookeepingRuleService;
-use App\Facades\OcrService;
 use App\Facades\FileHelperService;
+use App\Facades\OcrService;
+use App\Facades\SearchablePdfService;
 use App\Models\Receipt;
 use Exception;
 use Illuminate\Support\Str;
@@ -100,6 +101,12 @@ class ReceiptService
             $receipt->file_created_at = $metadata['CreationDate'] ?? filemtime($file);
             $receipt->pages = $metadata['Pages'] ?? 1;
             $receipt->text = iconv('UTF-8', 'UTF-8//IGNORE', $pdf->getText());
+            if (! trim($receipt->text)) {
+                $searchablePdf = SearchablePdfService::create($file);
+                $receipt->text = $searchablePdf['fulltext'];
+                $file = $searchablePdf['pdf_path'];
+                $receipt->file_size = filesize($file);
+            }
         } catch (Exception) {
             $receipt->file_created_at = filemtime($file);
         }
