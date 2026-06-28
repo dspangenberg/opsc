@@ -13,9 +13,7 @@ class InvoiceReminderEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public InvoiceReminder $reminder)
-    {
-    }
+    public function __construct(public InvoiceReminder $reminder) {}
 
     public function attachments(): array
     {

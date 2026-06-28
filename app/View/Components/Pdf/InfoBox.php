@@ -3,7 +3,6 @@
 namespace App\View\Components\Pdf;
 
 use Closure;
-use DateTime;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 

@@ -119,7 +119,7 @@ class ReceiptController extends Controller
             'currentFilters' => (new Receipt)->getParsedFilters($request),
             'currentSearch' => $search,
             'bookmark_model' => Receipt::class,
-            'bookmarks' => BookmarkData::collect($bookmarks)
+            'bookmarks' => BookmarkData::collect($bookmarks),
         ]);
     }
 
@@ -358,10 +358,11 @@ class ReceiptController extends Controller
         return null;
     }
 
-    public function checkReference(Request $request): RedirectResponse {
+    public function checkReference(Request $request): RedirectResponse
+    {
         $reference = $request->query('reference');
 
-        if (!$reference) {
+        if (! $reference) {
             return back();
         }
 
@@ -369,6 +370,7 @@ class ReceiptController extends Controller
         if ($receipt) {
             Inertia::flash('toast', ['type' => 'warning', 'message' => 'Es gibt bereits einen Beleg mit der Referenz']);
         }
+
         return back();
     }
 
@@ -498,6 +500,7 @@ class ReceiptController extends Controller
     public function extractWithAi(Receipt $receipt): RedirectResponse
     {
         $receipt->extractInvoiceData(false);
+
         return redirect()->back();
     }
 
@@ -542,7 +545,6 @@ class ReceiptController extends Controller
             } else {
                 $tempPath = $file->store('temp/zip-uploads');
                 $fullPath = storage_path('app/'.$tempPath);
-
 
                 ReceiptUploadJob::dispatch($fullPath, $file->getClientOriginalName(), $file->getSize(), $request->validated('useAi'));
             }

@@ -63,11 +63,17 @@ class DocumentController extends Controller
 
         $filters = $request->input('filters', []);
 
+        // Solange der Filter is_hidden nicht explizit auf true gesetzt ist, ausgeblendete Dokumenten nicht anzeigen
+
+        if (($filters['is_hidden']['value'] ?? null) != 1) {
+            $filters['is_hidden'] = ['operator' => '=', 'value' => '0'];
+        }
+
         $search = $request->input('search', '');
 
         $documents = Document::query()
             ->applyFiltersFromObject($filters, [
-                'allowed_filters' => ['document_type_id', 'project_id'],
+                'allowed_filters' => ['document_type_id', 'project_id', 'is_hidden'],
                 'allowed_operators' => ['=', '!=', 'like', 'scope'],
                 'allowed_scopes' => ['contact', 'issuedBetween'],
             ])

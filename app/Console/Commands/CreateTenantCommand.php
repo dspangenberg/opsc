@@ -14,6 +14,7 @@ use function Laravel\Prompts\form;
 class CreateTenantCommand extends Command
 {
     protected $signature = 'create:tenant';
+
     protected $description = 'Command description';
 
     public function handle(): void

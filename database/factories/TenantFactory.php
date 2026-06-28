@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Tenant>
+ * @extends Factory<Tenant>
  */
 class TenantFactory extends Factory
 {
@@ -17,7 +18,7 @@ class TenantFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => 'test-tenant-' . $this->faker->unique()->randomNumber(5),
+            'id' => 'test-tenant-'.$this->faker->unique()->randomNumber(5),
             'organisation' => $this->faker->company(),
             'data' => null,
         ];

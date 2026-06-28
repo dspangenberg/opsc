@@ -21,6 +21,7 @@ class EmailAccountController extends Controller
     public function index(): Response
     {
         $email_accounts = EmailAccount::query()->orderBy('email')->paginate();
+
         return Inertia::render('Admin/EmailAccount/EmailAccountIndex', [
             'email_accounts' => EmailAccountData::collect($email_accounts),
         ]);
@@ -28,13 +29,14 @@ class EmailAccountController extends Controller
 
     public function create(): Response
     {
-        $email_account = new EmailAccount();
+        $email_account = new EmailAccount;
         $email_account->email = '';
         $email_account->name = '';
         $email_account->smtp_username = '';
         $email_account->smtp_password = '';
         $email_account->signature = '';
         $email_account->is_default = false;
+
         return Inertia::render('Admin/EmailAccount/EmailAccountEdit', [
             'email_account' => EmailAccountData::from($email_account),
         ]);
@@ -66,7 +68,7 @@ class EmailAccountController extends Controller
     public function sendTestMail(EmailAccount $emailAccount): RedirectResponse
     {
         $template = EmailTemplate::where('name', 'test')->first();
-        if (!$template) {
+        if (! $template) {
             return redirect()->back()->withErrors(['template' => 'E-Mail-Template "test" wurde nicht gefunden.']);
         }
         $mailer = new SendEmailAsTenantService($template, $emailAccount);
@@ -86,21 +88,21 @@ class EmailAccountController extends Controller
             $emailAccount->is_default = true;
             $emailAccount->save();
         });
+
         return redirect()->back();
     }
-
 
     public function destroy(EmailAccount $email_account): RedirectResponse
     {
         $email_account->delete();
+
         return redirect()->route('admin.email-account.index');
     }
-
 
     public function store(EmailAccountStoreRequest $request): RedirectResponse
     {
         EmailAccount::create($request->validated());
+
         return redirect()->route('admin.email-account.index');
     }
-
 }

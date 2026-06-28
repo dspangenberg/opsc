@@ -7,10 +7,7 @@
 
 namespace App\Data;
 
-use DateTime;
-use Spatie\LaravelData\Attributes\WithTransformer;
 use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Transformers\DateTimeInterfaceTransformer;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
 #[TypeScript]
@@ -28,8 +25,7 @@ class TaxData extends Data
 
         /** @var TaxRateData[] */
         public readonly ?array $rates,
-    ) {
-    }
+    ) {}
 
     public function defaultWrap(): string
     {

@@ -11,7 +11,7 @@ use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Promptable;
 use Stringable;
 
-class DocumentExtractor implements Agent, Conversational, HasTools, HasStructuredOutput
+class DocumentExtractor implements Agent, Conversational, HasStructuredOutput, HasTools
 {
     use Promptable;
 

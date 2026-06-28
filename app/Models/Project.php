@@ -19,12 +19,15 @@ use Plank\Mediable\MediableCollection;
  * @property-read User|null $lead
  * @property-read Contact|null $manager
  * @property-read Contact|null $owner
+ *
  * @method static Builder<static>|Project newModelQuery()
  * @method static Builder<static>|Project newQuery()
  * @method static Builder<static>|Project query()
+ *
  * @property-read string|null $avatar_url
  * @property-read Collection<int, Media> $media
  * @property-read int|null $media_count
+ *
  * @method static MediableCollection<int, static> all($columns = ['*'])
  * @method static MediableCollection<int, static> get($columns = ['*'])
  * @method static Builder<static>|Project whereHasMedia($tags = [], bool $matchAll = false)
@@ -37,11 +40,12 @@ use Plank\Mediable\MediableCollection;
  * @method static Builder<static>|Project onlyTrashed()
  * @method static Builder<static>|Project withTrashed(bool $withTrashed = true)
  * @method static Builder<static>|Project withoutTrashed()
+ *
  * @mixin Eloquent
  */
 class Project extends Model
 {
-    use Mediable, HasFactory, SoftDeletes;
+    use HasFactory, Mediable, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -94,6 +98,7 @@ class Project extends Model
     {
         try {
             $media = $this->firstMedia('avatar');
+
             return $media?->getUrl();
         } catch (MediaUrlException $e) {
             return null;

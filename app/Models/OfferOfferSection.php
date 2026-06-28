@@ -8,11 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property PagebreakEnum $pagebreak
- * @property-read \App\Models\Offer|null $offer
- * @property-read \App\Models\OfferSection|null $section
+ * @property-read Offer|null $offer
+ * @property-read OfferSection|null $section
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OfferOfferSection newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OfferOfferSection newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OfferOfferSection query()
+ *
  * @mixin \Eloquent
  */
 class OfferOfferSection extends Model
@@ -37,6 +39,7 @@ class OfferOfferSection extends Model
     {
         return $this->belongsTo(Offer::class);
     }
+
     public function section(): BelongsTo
     {
         return $this->belongsTo(OfferSection::class);

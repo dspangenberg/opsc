@@ -9,16 +9,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property InboxEntryStatus $status
  * @property-read string $body
- * @property-read \App\Models\User|null $processedBy
- * @property-read \App\Models\User|null $user
+ * @property-read User|null $processedBy
+ * @property-read User|null $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InboxEntry newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InboxEntry newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InboxEntry query()
+ *
  * @mixin \Eloquent
  */
 class InboxEntry extends Model
 {
-
     protected $fillable = [
         'from',
         'to',
@@ -30,11 +31,11 @@ class InboxEntry extends Model
         'received_at',
         'message_id',
         'sent_at',
-        'user_id'
+        'user_id',
     ];
 
     protected $appends = [
-        'body'
+        'body',
     ];
 
     protected function casts(): array

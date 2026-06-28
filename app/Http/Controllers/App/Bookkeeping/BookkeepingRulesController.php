@@ -15,7 +15,6 @@ use App\Models\Receipt;
 use App\Models\Transaction;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
-use Inertia\Response;
 use Momentum\Modal\Modal;
 
 class BookkeepingRulesController extends Controller
@@ -30,7 +29,6 @@ class BookkeepingRulesController extends Controller
             default => [],
         };
     }
-
 
     public function index()
     {
@@ -49,6 +47,7 @@ class BookkeepingRulesController extends Controller
     {
 
         $rule->load('conditions', 'actions');
+
         return Inertia::modal('App/Bookkeeping/Rule/BookkeepingRuleEdit', [
             'rule' => BookkeepingRuleData::from($rule),
             'fields' => $this->getFields($rule->table),
@@ -66,6 +65,7 @@ class BookkeepingRulesController extends Controller
         if ($request->has('actions')) {
             $this->updateRuleActions($rule, $request->input('actions', []));
         }
+
         return redirect()->route('app.bookkeeping.rules.index');
     }
 
@@ -74,21 +74,23 @@ class BookkeepingRulesController extends Controller
         $rule->conditions()->delete();
         $rule->actions()->delete();
         $rule->delete();
+
         return redirect()->route('app.bookkeeping.rules.index');
     }
 
     public function create(): Modal
     {
-        $rule = new BookkeepingRule();
+        $rule = new BookkeepingRule;
+
         return Inertia::modal('App/Bookkeeping/Rule/BookkeepingRuleCreate', [
             'rule' => BookkeepingRuleData::from($rule),
         ])->baseRoute('app.bookkeeping.rules.index');
     }
 
-
     public function store(BookkeepingRuleStoreRequest $request): RedirectResponse
     {
         $rule = BookkeepingRule::create($request->validated());
+
         return redirect()->route('app.bookkeeping.rules.edit', ['rule' => $rule]);
     }
 
@@ -101,7 +103,7 @@ class BookkeepingRulesController extends Controller
             ->toArray();
 
         // Lösche Conditions, die nicht mehr in den Daten enthalten sind
-        if (!empty($incomingIds)) {
+        if (! empty($incomingIds)) {
             $rule->conditions()
                 ->whereNotIn('id', $incomingIds)
                 ->delete();
@@ -119,7 +121,7 @@ class BookkeepingRulesController extends Controller
                 'value' => $conditionData['value'] ?? $index,
             ];
 
-            if (!empty($conditionData['id'])) {
+            if (! empty($conditionData['id'])) {
                 // Bestehende Condition aktualisieren
                 BookkeepingRuleCondition::where('id', $conditionData['id'])
                     ->where('bookkeeping_rule_id', $rule->id)
@@ -140,7 +142,7 @@ class BookkeepingRulesController extends Controller
             ->toArray();
 
         // Lösche Condition, die nicht mehr in den Daten enthalten sind
-        if (!empty($incomingIds)) {
+        if (! empty($incomingIds)) {
             $rule->actions()
                 ->whereNotIn('id', $incomingIds)
                 ->delete();
@@ -157,7 +159,7 @@ class BookkeepingRulesController extends Controller
                 'value' => $actionData['value'] ?? $index,
             ];
 
-            if (!empty($actionData['id'])) {
+            if (! empty($actionData['id'])) {
                 // Bestehende Condition aktualisieren
                 BookkeepingRuleAction::where('id', $actionData['id'])
                     ->where('bookkeeping_rule_id', $rule->id)

@@ -6,7 +6,7 @@ use App\Services\BookkeepingRuleService;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \App\Services\BookkeepingRuleService
+ * @see BookkeepingRuleService
  */
 class BookeepingRuleService extends Facade
 {

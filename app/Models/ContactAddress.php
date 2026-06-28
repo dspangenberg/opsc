@@ -13,9 +13,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read Contact|null $contact
  * @property-read Country|null $country
  * @property-read array $full_address
+ *
  * @method static Builder<static>|ContactAddress newModelQuery()
  * @method static Builder<static>|ContactAddress newQuery()
  * @method static Builder<static>|ContactAddress query()
+ *
  * @mixin Eloquent
  */
 class ContactAddress extends Model
@@ -62,7 +64,6 @@ class ContactAddress extends Model
     {
         return $this->hasOne(Country::class, 'id', 'country_id');
     }
-
 
     public function getFullAddressAttribute(): array
     {

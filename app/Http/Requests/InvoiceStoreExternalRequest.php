@@ -30,7 +30,7 @@ class InvoiceStoreExternalRequest extends FormRequest
             'document_id' => ['required', 'exists:documents,id'],
             'contact_id' => ['required', 'exists:contacts,id'],
             'project_id' => ['nullable', 'exists_if_not_empty:projects,id'],
-            'is_external' => ['required', 'boolean']
+            'is_external' => ['required', 'boolean'],
         ];
     }
 

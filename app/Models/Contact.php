@@ -25,6 +25,7 @@ use Maize\Markable\Models\Favorite;
 use MohamedSaid\Notable\Notable;
 use MohamedSaid\Notable\Traits\HasNotables;
 use Plank\Mediable\Exceptions\MediaUrlException;
+use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableCollection;
 
@@ -55,26 +56,31 @@ use Plank\Mediable\MediableCollection;
  * @property-read Salutation|null $salutation
  * @property-read Tax|null $tax
  * @property-read Title|null $title
+ *
  * @method static Builder<static>|Contact newModelQuery()
  * @method static Builder<static>|Contact newQuery()
  * @method static Builder<static>|Contact query()
  * @method static Builder<static>|Contact view($view)
  * @method static Builder<static>|Contact whereHasMark(Mark $mark, Model $user, ?string $value = null)
+ *
  * @property-read string $primary_phone
  * @property-read CostCenter|null $cost_center
  * @property-read Collection<int, Notable> $notables
  * @property-read int|null $notables_count
+ *
  * @method static Builder<static>|Contact search($search)
+ *
  * @property ZugferdProfileEnum $zugferd_profile
  * @property-write mixed $cost_center_id
- * @property-read Collection<int, \App\Models\DropboxMail> $dropbox_mails
+ * @property-read Collection<int, DropboxMail> $dropbox_mails
  * @property-read int|null $dropbox_mails_count
  * @property-read string|null $avatar_url
  * @property-read Contact|null $invoice_contact
- * @property-read Collection<int, \Plank\Mediable\Media> $media
+ * @property-read Collection<int, Media> $media
  * @property-read int|null $media_count
  * @property-write mixed $outturn_account_id
  * @property-read Contact|null $primary_contact
+ *
  * @method static MediableCollection<int, static> all($columns = ['*'])
  * @method static \Database\Factories\ContactFactory factory($count = null, $state = [])
  * @method static MediableCollection<int, static> get($columns = ['*'])
@@ -84,6 +90,7 @@ use Plank\Mediable\MediableCollection;
  * @method static Builder<static>|Contact withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static Builder<static>|Contact withMediaAndVariantsMatchAll($tags = [])
  * @method static Builder<static>|Contact withMediaMatchAll(bool $tags = [], bool $withVariants = false)
+ *
  * @mixin Eloquent
  */
 class Contact extends Model

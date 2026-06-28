@@ -24,7 +24,7 @@ test('invoice report query eagerly loads payable with constraints', function () 
         ->with(m::on(function ($arg) {
             return is_array($arg)
                 && array_key_exists('payable', $arg)
-                && $arg['payable'] instanceof \Closure;
+                && $arg['payable'] instanceof Closure;
         }))
         ->once()
         ->andReturnSelf();

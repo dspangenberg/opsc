@@ -3,9 +3,9 @@
 namespace App\Jobs;
 
 use App\Services\ReceiptService;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Exception;
 
 class ReceiptUploadJob implements ShouldQueue
 {

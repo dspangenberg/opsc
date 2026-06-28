@@ -428,7 +428,7 @@ it('can extract document information using AI', function () {
         'fulltext' => 'This is a test document with important information about invoices and payments.',
         'summary' => null,
     ]);
-    
+
     // Mock AI extraction to avoid calling real external AI service
     // This prevents CI failures due to missing credentials
     $mockResponse = [
@@ -452,14 +452,14 @@ it('can extract document information using AI', function () {
     Tenancy::initialize($this->tenant);
 
     // Simulate the AI extraction behavior that the controller would do
-    if (!empty($mockResponse['summary'])) {
+    if (! empty($mockResponse['summary'])) {
         $document->summary = $mockResponse['summary'];
     }
     $document->save();
 
     // Überprüfe, dass das Dokument aktualisiert wurde
     $updatedDocument = $document->fresh();
-    
+
     $this->assertNotNull($updatedDocument->summary);
     $this->assertEquals('This is a test summary extracted by AI', $updatedDocument->summary);
 });
@@ -513,33 +513,33 @@ it('isolates documents between tenants', function () {
 
     // Überprüfe, dass der erste Tenant nur sein eigenes Dokument sieht
     Tenancy::end();
-    
+
     // Überprüfe, dass document1 im ersten Tenant existiert
     Tenancy::initialize($this->tenant);
     $this->assertDatabaseHas('documents', [
         'id' => $document1->id,
-        'filename' => $document1->filename
+        'filename' => $document1->filename,
     ]);
-    
+
     // Überprüfe, dass document2 NICHT im ersten Tenant existiert
     $this->assertDatabaseMissing('documents', [
         'id' => $document2->id,
-        'filename' => $document2->filename
+        'filename' => $document2->filename,
     ]);
 
     // Überprüfe, dass der zweite Tenant nur sein eigenes Dokument sieht
     Tenancy::initialize($tenant2);
-    
+
     // Überprüfe, dass document2 im zweiten Tenant existiert
     $this->assertDatabaseHas('documents', [
         'id' => $document2->id,
-        'filename' => $document2->filename
+        'filename' => $document2->filename,
     ]);
-    
+
     // Überprüfe, dass document1 NICHT im zweiten Tenant existiert
     $this->assertDatabaseMissing('documents', [
         'id' => $document1->id,
-        'filename' => $document1->filename
+        'filename' => $document1->filename,
     ]);
 
     // Note: Documents can have the same ID across different tenants

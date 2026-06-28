@@ -2,8 +2,8 @@
 
 namespace App\Data;
 
-use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 use Spatie\LaravelData\Data;
+use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
 #[TypeScript]
 class SalesData extends Data

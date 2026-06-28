@@ -1,8 +1,9 @@
 <?php
 
 use App\Models\Transaction;
+use Tests\TestCase;
 
-uses(Tests\TestCase::class);
+uses(TestCase::class);
 
 it('parses null operator for whereNull', function () {
     $json = '{"filters":{"counter_account_id":{"operator":"null","value":null}},"boolean":"AND"}';

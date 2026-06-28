@@ -6,20 +6,20 @@ use Spatie\LaravelSettings\Settings;
 
 class MailSettings extends Settings
 {
-  public string $smtp_host;
+    public string $smtp_host;
 
-  public string $smtp_port;
+    public string $smtp_port;
 
-  public string $cc;
+    public string $cc;
 
-  public string | null $smtp_encryption;
+    public ?string $smtp_encryption;
 
-  public string $imprint;
+    public string $imprint;
 
-  public string $signature;
+    public string $signature;
 
-  public static function group(): string
-  {
-    return 'mail';
-  }
+    public static function group(): string
+    {
+        return 'mail';
+    }
 }

@@ -47,6 +47,7 @@ class ProfileController extends Controller
     {
         $request->user()->resendPendingEmailVerificationMail();
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Bestätigungs-E-Mail wurde erneut gesendet.']);
+
         return Redirect::back();
     }
 
@@ -54,13 +55,13 @@ class ProfileController extends Controller
     {
         $request->user()->clearPendingEmail();
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Die Änderung der E-Mail-Adresse wurde zurückgesetzt.']);
+
         return redirect()->back();
     }
 
     /**
      * Update the user's profile information.
-     * @param  ProfileUpdateRequest  $request
-     * @return RedirectResponse
+     *
      * @throws ConfigurationException
      * @throws FileExistsException
      * @throws FileNotFoundException
@@ -91,7 +92,7 @@ class ProfileController extends Controller
                 ->upload();
 
             $user->attachMedia($media, 'avatar');
-        }  else {
+        } else {
             if ($request->input('remove_avatar', false)) {
                 if ($user->firstMedia('avatar')) {
                     $user->detachMediaTags('avatar');
@@ -100,6 +101,7 @@ class ProfileController extends Controller
         }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Dein Profil wurde erfolgreich geändert']);
+
         return Redirect::route('app.profile.edit');
     }
 
@@ -115,6 +117,7 @@ class ProfileController extends Controller
             ->delete();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Dein Kennwort wurde erfolgreich geändert']);
+
         return Redirect::route('app.profile.change-password');
     }
 }

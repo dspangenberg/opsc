@@ -67,7 +67,7 @@ Route::get('/bookkeeping/receipts/bulk-download/', [ReceiptController::class, 'b
 Route::put('/bookkeeping/receipts/{receipt}/unlock', [ReceiptController::class, 'unlock'])->name('app.bookkeeping.receipts.unlock');
 Route::delete('/bookkeeping/receipts/{receipt}/payment/{transaction}', [ReceiptController::class, 'destroyPayment'])->name('app.bookkeeping.receipts.delete-payment');
 
-Route::match(['GET', 'POST'],'bookkeeping/bookings/account/{accountNumber}', [BookingController::class, 'indexForAccount'])->name('app.bookkeeping.bookings.account');
+Route::match(['GET', 'POST'], 'bookkeeping/bookings/account/{accountNumber}', [BookingController::class, 'indexForAccount'])->name('app.bookkeeping.bookings.account');
 Route::put('bookkeeping/bookings/correct', [BookingController::class, 'correctBookings'])
     ->name('app.bookkeeping.bookings.correct');
 
@@ -78,6 +78,6 @@ Route::delete('bookkeeping/receipts/bulk-delete', [ReceiptController::class, 'bu
     ->name('app.bookkeeping.receipts.bulk-delete');
 
 Route::put('bookkeeping/bookings/{booking}/edit-accounts', [BookingController::class, 'editAccounts'])
-   ->middleware([HandlePrecognitiveRequests::class])->name('app.bookkeeping.bookings.edit-accounts');
+    ->middleware([HandlePrecognitiveRequests::class])->name('app.bookkeeping.bookings.edit-accounts');
 
 Route::get('bookkeeping/receipts/check-reference', [ReceiptController::class, 'checkReference'])->name('app.bookkeeping.receipts.check-reference');

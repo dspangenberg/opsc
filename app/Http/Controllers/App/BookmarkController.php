@@ -26,39 +26,49 @@ class BookmarkController extends Controller
     public function rename(BookmarkRenameRequest $request, Bookmark $bookmark): RedirectResponse
     {
         $bookmark->update($request->validated());
+
         return redirect()->back();
     }
 
     public function renameFolder(BookmarkFolderRenameRequest $request, BookmarkFolder $bookmarkFolder): RedirectResponse
     {
         $bookmarkFolder->update($request->validated());
+
         return redirect()->back();
     }
-
 
     public function togglePin(BookmarkPinRequest $request, Bookmark $bookmark): RedirectResponse
     {
         $bookmark->update($request->validated());
+
         return redirect()->back();
     }
 
-    public function trash(Bookmark $bookmark): RedirectResponse {
+    public function trash(Bookmark $bookmark): RedirectResponse
+    {
         $bookmark->delete();
+
         return redirect()->back();
     }
 
-    public function trashFolder(BookmarkFolder $bookmarkFolder): RedirectResponse {
+    public function trashFolder(BookmarkFolder $bookmarkFolder): RedirectResponse
+    {
         $bookmarkFolder->delete();
+
         return redirect()->back();
     }
 
-    public function restoreFolder(BookmarkFolder $bookmarkFolder): RedirectResponse {
+    public function restoreFolder(BookmarkFolder $bookmarkFolder): RedirectResponse
+    {
         $bookmarkFolder->restore();
+
         return redirect()->back();
     }
 
-    public function restore(Bookmark $bookmark): RedirectResponse {
+    public function restore(Bookmark $bookmark): RedirectResponse
+    {
         $bookmark->restore();
+
         return redirect()->back();
     }
 

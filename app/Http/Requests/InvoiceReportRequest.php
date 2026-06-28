@@ -20,7 +20,7 @@ class InvoiceReportRequest extends FormRequest
                 'after_or_equal:begin_on',
                 'date', 'date_format:Y-m-d',
             ],
-            'with_payments' => ['required','boolean'],
+            'with_payments' => ['required', 'boolean'],
         ];
     }
 

@@ -32,7 +32,7 @@ export const EmailAttachment: React.FC<EmailAttachmentsProps> = ({ attachment, m
       }),
       {},
       {
-        onSuccess: () => setIsLoading(false)
+        onFinish: () => setIsLoading(false)
       }
     )
   }
@@ -47,7 +47,7 @@ export const EmailAttachment: React.FC<EmailAttachmentsProps> = ({ attachment, m
       }),
       {},
       {
-        onSuccess: () => setIsLoading(false)
+        onFinish: () => setIsLoading(false)
       }
     )
   }

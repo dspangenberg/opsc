@@ -133,6 +133,8 @@ class ReceiptService
             ->toDestination('s3_private', 'uploads/'.$receipt->issued_on->format('Y/m/'))
             ->upload();
 
+        @unlink($file);
+
         $receipt->attachMedia($media, 'file');
 
         $duplicatedReceipt = Receipt::query()

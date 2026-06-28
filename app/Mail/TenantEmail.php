@@ -26,12 +26,11 @@ class TenantEmail extends Mailable
         public string $logoStyleWidth,
         public string $logoStyleRadius,
         public array $attachment = []
-    ) {
-    }
+    ) {}
 
     public function attachments(): array
     {
-        if (!isset($this->attachment['path'], $this->attachment['name'])) {
+        if (! isset($this->attachment['path'], $this->attachment['name'])) {
             return [];
         }
 

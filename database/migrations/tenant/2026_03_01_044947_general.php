@@ -10,7 +10,8 @@ return new class extends SettingsMigration
         $this->migrator->add('general.logo_class', '');
     }
 
-    public function down(): void {
+    public function down(): void
+    {
         $this->migrator->delete('general.logo_url');
         $this->migrator->delete('general.logo_class');
     }

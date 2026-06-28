@@ -25,13 +25,15 @@ class ProjectController extends Controller
     public function index()
     {
         $projects = Project::query()->with(['category', 'owner'])->where('is_archived', false)->orderBy('name')->paginate();
+
         return Inertia::render('App/Project/ProjectIndex', [
             'projects' => ProjectData::collect($projects),
         ]);
     }
 
-    public function create() {
-        $project = new Project();
+    public function create()
+    {
+        $project = new Project;
         $categories = ProjectCategory::query()->orderBy('name')->get();
         $contacts = Contact::query()->orderBy('name')->orderBy('first_name')->get();
 
@@ -42,14 +44,17 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function show(Project $project) {
+    public function show(Project $project)
+    {
         $project->load(['category', 'owner', 'manager']);
 
         return Inertia::render('App/Project/ProjectDetails', [
-            'project' => ProjectData::from($project)
+            'project' => ProjectData::from($project),
         ]);
     }
-    public function edit(Project $project) {
+
+    public function edit(Project $project)
+    {
         $categories = ProjectCategory::query()->orderBy('name')->get();
         $contacts = Contact::query()->orderBy('name')->orderBy('first_name')->get();
 
@@ -69,7 +74,8 @@ class ProjectController extends Controller
      * @throws InvalidHashException
      * @throws ConfigurationException
      */
-    public function update(ProjectRequest $request, Project $project) {
+    public function update(ProjectRequest $request, Project $project)
+    {
         $data = $request->safe()->except('avatar', 'remove_avatar');
         $project->update($data);
 
@@ -92,16 +98,20 @@ class ProjectController extends Controller
         return redirect()->route('app.project.details', ['project' => $project->id]);
     }
 
-    public function archiveToggle(Project $project) {
-        $project->is_archived = !$project->is_archived;
+    public function archiveToggle(Project $project)
+    {
+        $project->is_archived = ! $project->is_archived;
         $project->save();
 
         $message = $project->is_archived ? 'Projekt wurde archiviert' : 'Projekt wurde wiederhergestellt';
+
         return Inertia::flash('toast', ['type' => 'success', 'message' => $message])->back();
     }
 
-    public function trash(Project $project) {
+    public function trash(Project $project)
+    {
         $project->delete();
+
         return redirect()->route('app.project.index');
     }
 
@@ -114,7 +124,8 @@ class ProjectController extends Controller
      * @throws InvalidHashException
      * @throws ConfigurationException
      */
-    public function store(ProjectRequest $request) {
+    public function store(ProjectRequest $request)
+    {
         $data = $request->safe()->except('avatar');
         $project = Project::create($data);
         if ($request->hasFile('avatar')) {
@@ -124,6 +135,7 @@ class ProjectController extends Controller
 
             $project->attachMedia($media, 'avatar');
         }
+
         return redirect()->route('app.project.details', ['project' => $project->id]);
     }
 }

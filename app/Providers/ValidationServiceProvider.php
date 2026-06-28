@@ -30,7 +30,7 @@ class ValidationServiceProvider extends ServiceProvider
             $table = $parameters[0] ?? null;
             $column = $parameters[1] ?? 'id';
 
-            if (!$table) {
+            if (! $table) {
                 return false;
             }
 

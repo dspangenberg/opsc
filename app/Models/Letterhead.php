@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
+
 /**
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Plank\Mediable\Media> $media
+ * @property-read Collection<int, Media> $media
  * @property-read int|null $media_count
+ *
  * @method static \Plank\Mediable\MediableCollection<int, static> all($columns = ['*'])
  * @method static \Plank\Mediable\MediableCollection<int, static> get($columns = ['*'])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Letterhead newModelQuery()
@@ -18,6 +22,7 @@ use Plank\Mediable\Mediable;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Letterhead withMediaAndVariants($tags = [], bool $matchAll = false)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Letterhead withMediaAndVariantsMatchAll($tags = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Letterhead withMediaMatchAll(array|string  $tags = [], bool $withVariants = false)
+ *
  * @mixin \Eloquent
  */
 class Letterhead extends Model
@@ -37,6 +42,7 @@ class Letterhead extends Model
         'title' => '',
         'css' => '',
     ];
+
     protected function casts(): array
     {
         return [

@@ -63,7 +63,7 @@ class OfficeTemplateController extends Controller
         DB::transaction(function () use ($request, $template): void {
             $template->update($request->safe()->except('file'));
 
-            if (!$request->hasFile('file')) {
+            if (! $request->hasFile('file')) {
                 return;
             }
 
@@ -75,8 +75,8 @@ class OfficeTemplateController extends Controller
             $template->attachMedia($newMedia, 'file');
             $existingMedia->each->delete();
 
-
         });
+
         return redirect()->route('app.setting.office-template.index');
     }
 

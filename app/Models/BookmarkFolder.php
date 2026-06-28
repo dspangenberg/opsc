@@ -2,19 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Bookmark> $bookmarks
+ * @property-read Collection<int, Bookmark> $bookmarks
  * @property-read int|null $bookmarks_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BookmarkFolder newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BookmarkFolder newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BookmarkFolder onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BookmarkFolder query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BookmarkFolder withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BookmarkFolder withoutTrashed()
+ *
  * @mixin \Eloquent
  */
 class BookmarkFolder extends Model

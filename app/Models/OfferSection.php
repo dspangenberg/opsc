@@ -11,7 +11,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static Builder<static>|OfferSection newModelQuery()
  * @method static Builder<static>|OfferSection newQuery()
  * @method static Builder<static>|OfferSection query()
+ *
  * @property PagebreakEnum $pagebreak
+ *
  * @mixin Eloquent
  */
 class OfferSection extends Model
@@ -25,8 +27,9 @@ class OfferSection extends Model
     ];
 
     protected $attributes = [
-        'name' => ''
+        'name' => '',
     ];
+
     protected function casts(): array
     {
         return [

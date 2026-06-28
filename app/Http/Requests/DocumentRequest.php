@@ -21,6 +21,7 @@ class DocumentRequest extends FormRequest
             'sent_on' => ['nullable', 'date_format:d.m.Y'],
             'summary' => ['nullable', 'string'],
             'is_inbound' => ['required', 'boolean'],
+            'is_hidden' => ['required', 'boolean'],
             'sender_contact_id' => ['nullable', 'exists:contacts,id'],
             'receiver_contact_id' => ['nullable', 'exists:contacts,id'],
             'project_id' => ['nullable', 'exists:projects,id'],

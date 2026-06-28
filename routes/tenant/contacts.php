@@ -29,7 +29,6 @@ Route::put('contacts/{contact}/edit', [ContactController::class, 'update'])
 Route::get('contacts/{contact}/persons', [ContactController::class, 'persons'])
     ->name('app.contact.details.persons');
 
-
 Route::put('contacts/{contact}/toggle-favorite', [ContactController::class, 'toggleFavorite'])
     ->name('app.contact.toggle-favorite');
 

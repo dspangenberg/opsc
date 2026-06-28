@@ -7,10 +7,7 @@
 
 namespace App\Data;
 
-use DateTime;
-use Spatie\LaravelData\Attributes\WithTransformer;
 use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Transformers\DateTimeInterfaceTransformer;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
 #[TypeScript]
@@ -31,6 +28,5 @@ class OfferLineData extends Data
         public readonly float $tax_rate_id,
 
         public readonly ?TaxRateData $rate,
-    ) {
-    }
+    ) {}
 }

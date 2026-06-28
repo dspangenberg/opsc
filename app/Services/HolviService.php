@@ -21,7 +21,6 @@ class HolviService
     {
         $csv = Reader::createFromPath($file, 'r');
 
-
         $account = json_decode($fileContent)->account;
 
         $bankAccount = BankAccount::query()->where('iban', $account->iban)->first();

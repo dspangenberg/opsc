@@ -1,5 +1,25 @@
 <?php
 
+use Plank\Mediable\Media;
+use Plank\Mediable\MediaUploader;
+use Plank\Mediable\SourceAdapters\DataUrlAdapter;
+use Plank\Mediable\SourceAdapters\FileAdapter;
+use Plank\Mediable\SourceAdapters\LocalPathAdapter;
+use Plank\Mediable\SourceAdapters\RemoteUrlAdapter;
+use Plank\Mediable\SourceAdapters\StreamAdapter;
+use Plank\Mediable\SourceAdapters\UploadedFileAdapter;
+use Plank\Mediable\UrlGenerators\LocalUrlGenerator;
+use Plank\Mediable\UrlGenerators\S3UrlGenerator;
+use Psr\Http\Message\StreamInterface;
+use Spatie\ImageOptimizer\Optimizers\Avifenc;
+use Spatie\ImageOptimizer\Optimizers\Cwebp;
+use Spatie\ImageOptimizer\Optimizers\Gifsicle;
+use Spatie\ImageOptimizer\Optimizers\Jpegoptim;
+use Spatie\ImageOptimizer\Optimizers\Optipng;
+use Spatie\ImageOptimizer\Optimizers\Pngquant;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 return [
     /*
      * The database connection name to use
@@ -13,7 +33,7 @@ return [
      *
      * Should extend `Plank\Mediable\Media`
      */
-    'model' => Plank\Mediable\Media::class,
+    'model' => Media::class,
 
     /*
      * Name to be used for mediables joining table
@@ -31,7 +51,7 @@ return [
      * Uploader will throw an exception if a disk not in this list is selected
      */
     'allowed_disks' => [
-        'public','s3','s3_private'
+        'public', 's3', 's3_private',
     ],
 
     /*
@@ -48,7 +68,7 @@ return [
      * * `'replace'` : the old file and media model is deleted
      * * `'error'`: an Exception is thrown
      */
-    'on_duplicate' => Plank\Mediable\MediaUploader::ON_DUPLICATE_INCREMENT,
+    'on_duplicate' => MediaUploader::ON_DUPLICATE_INCREMENT,
 
     /*
      * Reject files unless both their mime and extension are recognized and both match a single aggregate type
@@ -89,7 +109,7 @@ return [
      * that should be recognized for the type
      */
     'aggregate_types' => [
-        Plank\Mediable\Media::TYPE_IMAGE => [
+        Media::TYPE_IMAGE => [
             'mime_types' => [
                 'image/jpeg',
                 'image/png',
@@ -106,7 +126,7 @@ return [
                 'webp',
             ],
         ],
-        Plank\Mediable\Media::TYPE_IMAGE_VECTOR => [
+        Media::TYPE_IMAGE_VECTOR => [
             'mime_types' => [
                 'image/svg+xml',
             ],
@@ -114,7 +134,7 @@ return [
                 'svg',
             ],
         ],
-        Plank\Mediable\Media::TYPE_PDF => [
+        Media::TYPE_PDF => [
             'mime_types' => [
                 'application/pdf',
             ],
@@ -122,7 +142,7 @@ return [
                 'pdf',
             ],
         ],
-        Plank\Mediable\Media::TYPE_AUDIO => [
+        Media::TYPE_AUDIO => [
             'mime_types' => [
                 'audio/aac',
                 'audio/ogg',
@@ -139,7 +159,7 @@ return [
                 'wav',
             ],
         ],
-        Plank\Mediable\Media::TYPE_VIDEO => [
+        Media::TYPE_VIDEO => [
             'mime_types' => [
                 'video/mp4',
                 'video/mpeg',
@@ -154,7 +174,7 @@ return [
                 'webm',
             ],
         ],
-        Plank\Mediable\Media::TYPE_ARCHIVE => [
+        Media::TYPE_ARCHIVE => [
             'mime_types' => [
                 'application/zip',
                 'application/x-compressed-zip',
@@ -164,7 +184,7 @@ return [
                 'zip',
             ],
         ],
-        Plank\Mediable\Media::TYPE_DOCUMENT => [
+        Media::TYPE_DOCUMENT => [
             'mime_types' => [
                 'text/plain',
                 'application/plain',
@@ -183,7 +203,7 @@ return [
                 'json',
             ],
         ],
-        Plank\Mediable\Media::TYPE_SPREADSHEET => [
+        Media::TYPE_SPREADSHEET => [
             'mime_types' => [
                 'application/vnd.ms-excel',
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -193,7 +213,7 @@ return [
                 'xlsx',
             ],
         ],
-        Plank\Mediable\Media::TYPE_PRESENTATION => [
+        Media::TYPE_PRESENTATION => [
             'mime_types' => [
                 'application/vnd.ms-powerpoint',
                 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
@@ -214,15 +234,15 @@ return [
      */
     'source_adapters' => [
         'class' => [
-            Symfony\Component\HttpFoundation\File\UploadedFile::class => Plank\Mediable\SourceAdapters\UploadedFileAdapter::class,
-            Symfony\Component\HttpFoundation\File\File::class => Plank\Mediable\SourceAdapters\FileAdapter::class,
-            Psr\Http\Message\StreamInterface::class => Plank\Mediable\SourceAdapters\StreamAdapter::class,
+            UploadedFile::class => UploadedFileAdapter::class,
+            File::class => FileAdapter::class,
+            StreamInterface::class => StreamAdapter::class,
         ],
         'pattern' => [
-            '^https?://' => Plank\Mediable\SourceAdapters\RemoteUrlAdapter::class,
-            '^/' => Plank\Mediable\SourceAdapters\LocalPathAdapter::class,
-            '^[a-zA-Z]:\\\\' => Plank\Mediable\SourceAdapters\LocalPathAdapter::class,
-            '^data:/?/?[^,]*,' => Plank\Mediable\SourceAdapters\DataUrlAdapter::class,
+            '^https?://' => RemoteUrlAdapter::class,
+            '^/' => LocalPathAdapter::class,
+            '^[a-zA-Z]:\\\\' => LocalPathAdapter::class,
+            '^data:/?/?[^,]*,' => DataUrlAdapter::class,
         ],
     ],
 
@@ -231,8 +251,8 @@ return [
      *
      */
     'url_generators' => [
-        'local' => Plank\Mediable\UrlGenerators\LocalUrlGenerator::class,
-        's3' => Plank\Mediable\UrlGenerators\S3UrlGenerator::class,
+        'local' => LocalUrlGenerator::class,
+        's3' => S3UrlGenerator::class,
     ],
 
     /**
@@ -267,32 +287,32 @@ return [
          * Each can be passed an array of command line arguments to be passed to the optimizer
          */
         'optimizers' => [
-            \Spatie\ImageOptimizer\Optimizers\Jpegoptim::class => [
+            Jpegoptim::class => [
                 '--max=85',
                 '--strip-all',
                 '--all-progressive',
             ],
-            \Spatie\ImageOptimizer\Optimizers\Pngquant::class => [
+            Pngquant::class => [
                 '--quality=85',
                 '--force',
                 '--skip-if-larger',
             ],
-            \Spatie\ImageOptimizer\Optimizers\Optipng::class => [
+            Optipng::class => [
                 '-i0',
                 '-o2',
                 '-quiet',
             ],
-            \Spatie\ImageOptimizer\Optimizers\Gifsicle::class => [
+            Gifsicle::class => [
                 '-b',
                 '-O3',
             ],
-            \Spatie\ImageOptimizer\Optimizers\Cwebp::class => [
+            Cwebp::class => [
                 '-q 80',
                 '-m 6',
                 '-pass 10',
                 '-mt',
             ],
-            \Spatie\ImageOptimizer\Optimizers\Avifenc::class => [
+            Avifenc::class => [
                 '-a cq-level=23',
                 '-j all',
                 '--min 0',

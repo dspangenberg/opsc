@@ -4,6 +4,7 @@
  */
 
 import {
+  CheckIcon,
   Delete03Icon,
   Edit03Icon,
   EuroIcon,
@@ -161,7 +162,12 @@ export const columns: ColumnDef<App.Data.TimeData>[] = [
           src={row.original.user?.avatar_url as unknown as string}
           size="md"
         />
-        {row.original.is_billable && (
+        {!!row.original.invoice_id && (
+          <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-2 border-background bg-green-300">
+            <Icon icon={CheckIcon} className="size-3 text-green-800" strokeWidth={2} />
+          </div>
+        )}
+        {row.original.is_billable && !row.original.invoice_id && (
           <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-2 border-background bg-blue-300">
             <Icon icon={EuroIcon} className="size-3 text-blue-800" strokeWidth={2} />
           </div>

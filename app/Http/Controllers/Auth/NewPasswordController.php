@@ -54,7 +54,7 @@ class NewPasswordController extends Controller
                     'remember_token' => Str::random(60),
                 ])->save();
 
-                if (!$user->email_verified_at) {
+                if (! $user->email_verified_at) {
                     $user->markEmailAsVerified();
                 }
 
@@ -78,6 +78,7 @@ class NewPasswordController extends Controller
                 }
                 auth()->login($resetUser);
             }
+
             return redirect()->route('app.dashboard')->with('status', __($status));
         }
 

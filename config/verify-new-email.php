@@ -1,5 +1,9 @@
 <?php
 
+use App\Mail\VerifyFirstEmail;
+use App\Mail\VerifyNewEmail;
+use App\Models\PendingUserEmail;
+
 return [
     /**
      * Here you can specify the name of a custom route to handle the verification.
@@ -24,18 +28,18 @@ return [
     /**
      * Model class that will be used to store and retrieve the tokens.
      */
-    'model' => \App\Models\PendingUserEmail::class,
+    'model' => PendingUserEmail::class,
 
     /**
      * The Mailable that will be sent when the User wants to verify
      * its initial email address (that got used with registering).
      */
-    'mailable_for_first_verification' => \App\Mail\VerifyFirstEmail::class,
+    'mailable_for_first_verification' => VerifyFirstEmail::class,
 
     /**
      * The Mailable that will be sent when the User wants to verify
      * a new email address, for example when the User wants to
      * update its email address.
      */
-    'mailable_for_new_email' => \App\Mail\VerifyNewEmail::class,
+    'mailable_for_new_email' => VerifyNewEmail::class,
 ];

@@ -28,8 +28,8 @@ class ExistsIfNotEmpty implements ValidationRule
             ->where($this->column, $value)
             ->exists();
 
-        if (!$exists) {
-            $fail("Der gewählte Wert für :attribute ist ungültig.");
+        if (! $exists) {
+            $fail('Der gewählte Wert für :attribute ist ungültig.');
         }
     }
 }

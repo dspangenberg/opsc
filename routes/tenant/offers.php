@@ -25,7 +25,6 @@ Route::get('invoicing/offers/{offer}', [OfferController::class, 'show'])
 Route::put('invoicing/offers/{offer}', [OfferController::class, 'update'])
     ->name('app.offer.update')->middleware([HandlePrecognitiveRequests::class]);
 
-
 Route::get('invoicing/offers/{offer}/history', [OfferController::class, 'history'])
     ->name('app.offer.history');
 
@@ -37,7 +36,6 @@ Route::put('invoicing/offers/{offer}/release', [OfferController::class, 'release
 
 Route::put('invoicing/offers/{offer}/unrelease', [OfferController::class, 'unrelease'])
     ->name('app.offer.unrelease');
-
 
 Route::put('invoicing/offers/{offer}/sort-attachments/', [OfferController::class, 'sortAttachments'])
     ->name('app.offer.sort-attachments');
@@ -66,7 +64,6 @@ Route::put('invoicing/offers/{offer}/mark-as-sent', [OfferController::class, 'ma
 Route::post('invoicing/offers/{offer}/invoice', [OfferController::class, 'createInvoice'])
     ->name('app.offer.create-invoice');
 
-
 Route::put('invoicing/offers/terms/{offer}', [OfferController::class, 'updateTerms'])
     ->name('app.offer.update-terms')
     ->middleware([HandlePrecognitiveRequests::class]);
@@ -87,4 +84,3 @@ Route::post('invoicing/offers/{offer}/save-as-template', [OfferController::class
 Route::put('invoicing/offers/{offer}/status', [OfferController::class, 'setStatus'])->middleware([HandlePrecognitiveRequests::class])->name('app.offer.set-status');
 
 Route::post('invoicing/offers/{offer}/store-note', [OfferController::class, 'storeNote'])->middleware([HandlePrecognitiveRequests::class])->name('app.offer.store-note');
-

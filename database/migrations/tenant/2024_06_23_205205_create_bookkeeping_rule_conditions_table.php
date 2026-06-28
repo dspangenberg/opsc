@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('bookkeeping_rule_conditions')) {
+        if (! Schema::hasTable('bookkeeping_rule_conditions')) {
             Schema::create('bookkeeping_rule_conditions', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->unsignedBigInteger('bookkeeping_rule_id')->index('bookkeeping_rule_conditions_bookkeeping_rule_id_foreign');

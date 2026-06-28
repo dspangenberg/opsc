@@ -15,7 +15,7 @@ class NoteStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'note' => ['required', 'string']
+            'note' => ['required', 'string'],
         ];
     }
 }

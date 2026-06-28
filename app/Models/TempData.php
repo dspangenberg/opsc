@@ -18,6 +18,7 @@ use Mtvs\EloquentHashids\HashidRouting;
  * @property Carbon|null $updated_at
  * @property-read mixed $hashid
  * @property-read string $hid
+ *
  * @method static Builder<static>|TempData newModelQuery()
  * @method static Builder<static>|TempData newQuery()
  * @method static Builder<static>|TempData query()
@@ -27,11 +28,11 @@ use Mtvs\EloquentHashids\HashidRouting;
  * @method static Builder<static>|TempData whereParentId($value)
  * @method static Builder<static>|TempData whereParentType($value)
  * @method static Builder<static>|TempData whereUpdatedAt($value)
+ *
  * @mixin Eloquent
  */
 class TempData extends Model
 {
-
     use HasHashid, HashidRouting;
 
     protected $fillable = [

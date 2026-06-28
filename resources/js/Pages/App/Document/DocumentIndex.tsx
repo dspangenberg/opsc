@@ -75,7 +75,10 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   const routeFilters = route().params.filters as unknown as FilterConfig['filters'] | undefined
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const documentsGroupedByFolder = Object.groupBy(documents.data, ({ folder }) => folder)
+  const pinnedDocuments = documents.data.filter(document => document.is_pinned)
+  const unpinnedDocuments = documents.data.filter(document => !document.is_pinned)
+
+  const documentsGroupedByFolder = Object.groupBy(unpinnedDocuments, ({ folder }) => folder)
   const folders = Object.keys(documentsGroupedByFolder)
   const getDocumentsByFolder = (folder: string) => documentsGroupedByFolder[folder]
 
@@ -268,6 +271,17 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
           data="documents"
           className="mb-4 grid min-h-0 auto-rows-max grid-cols-6 gap-4 overflow-y-auto"
         >
+          {pinnedDocuments.length > 0 && (
+            <>
+              {viewType.has('grouped') && (
+                <div className="col-span-6 mt-3 font-semibold text-base">Angepinnte Dokumente</div>
+              )}
+              {pinnedDocuments.map($document => (
+                <DocumentIndexFile document={$document} key={$document.id} />
+              ))}
+            </>
+          )}
+
           {viewType.has('grouped')
             ? folders.map(folder => (
                 <React.Fragment key={folder}>
@@ -277,7 +291,7 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
                   ))}
                 </React.Fragment>
               ))
-            : documents.data.map(document => (
+            : unpinnedDocuments.map(document => (
                 <DocumentIndexFile document={document} key={document.id} />
               ))}
         </InfiniteScroll>

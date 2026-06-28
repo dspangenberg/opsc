@@ -68,7 +68,7 @@ class BookmarkFolderTest extends TestCase
 
         // Test eager loading
         $folderWithBookmarks = BookmarkFolder::with('bookmarks')->find($folder->id);
-        
+
         $this->assertNotNull($folderWithBookmarks);
         $this->assertCount(1, $folderWithBookmarks->bookmarks);
         $this->assertEquals('Test Bookmark', $folderWithBookmarks->bookmarks->first()->name);

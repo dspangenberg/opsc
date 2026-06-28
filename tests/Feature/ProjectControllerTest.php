@@ -15,7 +15,7 @@ beforeEach(function () {
     $this->tenant = Tenant::factory()->create();
     $this->domain = Domain::create([
         'tenant_id' => $this->tenant->id,
-        'domain' => 'tenant-' . $this->tenant->id . '.test'
+        'domain' => 'tenant-'.$this->tenant->id.'.test',
     ]);
 
     // Wechsle zum Tenant
@@ -49,7 +49,7 @@ it('can list projects for tenant', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->get('http://' . $this->domain->domain . '/app/projects');
+        ->get('http://'.$this->domain->domain.'/app/projects');
 
     // Überprüfe die Antwort
     $response->assertStatus(200);
@@ -76,7 +76,7 @@ it('can create a project', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->post('http://' . $this->domain->domain . '/app/projects', $data);
+        ->post('http://'.$this->domain->domain.'/app/projects', $data);
 
     // Überprüfe die Antwort
     $response->assertRedirect();
@@ -99,7 +99,7 @@ it('can show a project', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->get('http://' . $this->domain->domain . '/app/projects/' . $project->id);
+        ->get('http://'.$this->domain->domain.'/app/projects/'.$project->id);
 
     // Überprüfe die Antwort
     $response->assertStatus(200);
@@ -121,7 +121,7 @@ it('can show the edit form for a project', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->get('http://' . $this->domain->domain . '/app/projects/' . $project->id . '/edit');
+        ->get('http://'.$this->domain->domain.'/app/projects/'.$project->id.'/edit');
 
     // Überprüfe die Antwort
     $response->assertStatus(200);
@@ -152,7 +152,7 @@ it('can update a project', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->put('http://' . $this->domain->domain . '/app/projects/' . $project->id . '/edit', $data);
+        ->put('http://'.$this->domain->domain.'/app/projects/'.$project->id.'/edit', $data);
 
     // Überprüfe die Antwort
     $response->assertRedirect();
@@ -195,11 +195,11 @@ it('can upload an avatar for a project', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->put('http://' . $this->domain->domain . '/app/projects/' . $project->id . '/edit', $data);
+        ->put('http://'.$this->domain->domain.'/app/projects/'.$project->id.'/edit', $data);
 
     // Überprüfe, dass die Validierung erfolgreich war (keine Fehler)
     $response->assertSessionHasNoErrors();
-    
+
     // Note: Der tatsächliche Upload wird nicht getestet, da MediaUploader
     // in der Testumgebung nicht mit Storage::fake('s3') funktioniert
 });
@@ -208,13 +208,14 @@ it('can remove an avatar from a project', function () {
     // Erstelle ein Projekt für den Tenant
     $project = Project::factory()->create();
     $category = ProjectCategory::factory()->create();
-    
+
     // Füge einen Avatar direkt zur Medienbibliothek hinzu (ohne HTTP-Upload)
     // Da Storage::fake('s3') nicht mit MediaUploader funktioniert,
     // überspringen wir diesen Test oder verwenden eine andere Methode
     $this->markTestSkipped('Avatar removal test skipped due to MediaUploader/Storage::fake incompatibility');
+
     return;
-    
+
     // Überprüfe, dass der Avatar vorhanden ist
     $this->assertNotNull($project->fresh()->firstMedia('avatar'));
 
@@ -232,7 +233,7 @@ it('can remove an avatar from a project', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->put('http://' . $this->domain->domain . '/app/projects/' . $project->id . '/edit', $data);
+        ->put('http://'.$this->domain->domain.'/app/projects/'.$project->id.'/edit', $data);
 
     // Überprüfe die Antwort
     $response->assertRedirect();
@@ -255,7 +256,7 @@ it('can archive a project', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->put('http://' . $this->domain->domain . '/app/projects/' . $project->id . '/archive');
+        ->put('http://'.$this->domain->domain.'/app/projects/'.$project->id.'/archive');
 
     // Überprüfe die Antwort
     $response->assertRedirect();
@@ -278,7 +279,7 @@ it('can unarchive a project', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->put('http://' . $this->domain->domain . '/app/projects/' . $project->id . '/archive');
+        ->put('http://'.$this->domain->domain.'/app/projects/'.$project->id.'/archive');
 
     // Überprüfe die Antwort
     $response->assertRedirect();
@@ -301,7 +302,7 @@ it('can delete a project', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->delete('http://' . $this->domain->domain . '/app/projects/' . $project->id);
+        ->delete('http://'.$this->domain->domain.'/app/projects/'.$project->id);
 
     // Überprüfe die Antwort
     $response->assertRedirect();
@@ -317,7 +318,7 @@ it('can delete a project', function () {
 it('isolates projects between tenants', function () {
     // Erstelle einen zweiten Tenant
     $tenant2 = Tenant::factory()->create();
-    $domain2 = Domain::create(['tenant_id' => $tenant2->id, 'domain' => 'tenant-' . $tenant2->id . '.test']);
+    $domain2 = Domain::create(['tenant_id' => $tenant2->id, 'domain' => 'tenant-'.$tenant2->id.'.test']);
 
     // Erstelle ein Projekt für den ersten Tenant
     $project1 = Project::factory()->create(['name' => 'Project for Tenant 1']);
@@ -337,7 +338,7 @@ it('isolates projects between tenants', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->get('http://' . $this->domain->domain . '/app/projects');
+        ->get('http://'.$this->domain->domain.'/app/projects');
     $response->assertStatus(200);
     $response->assertInertia(
         fn ($page) => $page
@@ -353,7 +354,7 @@ it('validates required fields when creating a project', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->post('http://' . $this->domain->domain . '/app/projects', []);
+        ->post('http://'.$this->domain->domain.'/app/projects', []);
 
     // Überprüfe, dass die Validierung fehlschlägt
     $response->assertSessionHasErrors(['name']);
@@ -369,7 +370,7 @@ it('validates required fields when updating a project', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->put('http://' . $this->domain->domain . '/app/projects/' . $project->id . '/edit', ['name' => '']);
+        ->put('http://'.$this->domain->domain.'/app/projects/'.$project->id.'/edit', ['name' => '']);
 
     // Überprüfe, dass die Validierung fehlschlägt
     $response->assertSessionHasErrors(['name']);
