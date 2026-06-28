@@ -220,7 +220,8 @@ class DocumentController extends Controller
         $ids = $request->getDocumentIds();
         Document::withTrashed()->whereIn('id', $ids)->restore();
 
-        return redirect()->back();
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Die Dokumente wurden wiederhergestellt.']);
+        return redirect()->route('app.document.index', ['view' => 'trash']);
     }
 
     public function restore(Document $document): RedirectResponse
@@ -353,23 +354,14 @@ class DocumentController extends Controller
 
         $document->forceDelete();
 
-        return redirect()->route('app.document.index', [
-            'filters' => [
-                'view' => [
-                    'operator' => 'scope',
-                    'value' => 'trash',
-                ],
-            ],
-        ])->with('success', 'Dokument wurde erfolgreich gelöscht.');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Das Dokument wurde endgültig gelöscht.']);
+        return redirect()->route('app.document.index', ['view' => 'trash']);
     }
 
     public function bulkForceDelete(DocumentBulkMoveToTrashRequest $request): RedirectResponse
     {
         $ids = $request->getDocumentIds();
-        ray($ids);
-
         $documents = Document::whereIn('id', $ids)->withTrashed()->get();
-        ray($documents->toArray());
 
         $documents->each(function ($document) {
             $file = $document->firstMedia('file');
@@ -381,14 +373,8 @@ class DocumentController extends Controller
             $document->forceDelete();
         });
 
-        return redirect()->route('app.document.index', [
-            'filters' => [
-                'view' => [
-                    'operator' => 'scope',
-                    'value' => 'trash',
-                ],
-            ],
-        ])->with('success', 'Dokumente wurden erfolgreich gelöscht.');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Die Dokumente wurden endgültig gelöscht.']);
+        return redirect()->route('app.document.index', ['view' => 'trash']);
     }
 
     /**
