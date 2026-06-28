@@ -45,22 +45,16 @@ class HandleInertiaRequests extends Middleware
 
         $user = $request->user();
 
-        $runningTimer = $user ? Time::query()
-            ->where('user_id', $user->id)
-            ->whereNull('end_at')
-            ->latest('begin_at')
-            ->with(['category', 'project'])
-            ->first() : null;
-
-        $bookmarks = Bookmark::where('is_pinned', true)->whereNull('bookmark_folder_id')->orderBy('name')->get();
-        $bookmarkFolders = BookmarkFolder::with('bookmarks')->orderBy('name')->get();
 
         $mailAccounts = [];
         $dropBoxes = [];
+        $bookmarks = [];
+        $bookmarkFolders = [];
+        $runningTimer = [];
         if ($user) {
             $ids = [];
             $defaultMailAccount = EmailAccount::query()->where('is_default', true)->first();
-            if (! $defaultMailAccount) {
+            if ($defaultMailAccount) {
                 $ids[] = $defaultMailAccount->id;
             }
 
@@ -69,6 +63,16 @@ class HandleInertiaRequests extends Middleware
             }
 
             $mailAccounts = EmailAccount::query()->whereIn('id', $ids)->orderBy('email')->get();
+
+            $runningTimer = $user ? Time::query()
+                ->where('user_id', $user->id)
+                ->whereNull('end_at')
+                ->latest('begin_at')
+                ->with(['category', 'project'])
+                ->first() : null;
+
+            $bookmarks = Bookmark::where('is_pinned', true)->whereNull('bookmark_folder_id')->orderBy('name')->get();
+            $bookmarkFolders = BookmarkFolder::with('bookmarks')->orderBy('name')->get();
 
             $dropBoxes = Dropbox::query()->withCount(['mails' => function ($query) {
                 $query->whereNull('seen_at');

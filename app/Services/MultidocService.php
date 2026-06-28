@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Facades\SearchablePdfService;
 use App\Jobs\DocumentUploadJob;
 use Illuminate\Support\Facades\Process;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
+
 class MultidocService
 {
     protected function extractPdfDate(string $text, string $pdfPath): string
@@ -153,8 +155,10 @@ class MultidocService
 
             // Extract date from the merged PDF
             if (file_exists($tmpOutputPath)) {
+
+                $searchablePdf = SearchablePdfService::create($tmpOutputPath);
                 // Auch wenn OCR nun doppelt ausgeführt wird, wir brauchen es noch für den Dateiname (Date)
-                $fileDate = $this->extractPdfDate('', $tmpOutputPath);
+                $fileDate = $this->extractPdfDate($searchablePdf['fullText'], $tmpOutputPath);
                 $outputName = $group['code'] ? $fileDate.'_'.$group['code'].'.pdf' : $fileDate.'_group_'.$index.'.pdf';
                 $outputPath = $outputDir.'/'.$outputName;
 

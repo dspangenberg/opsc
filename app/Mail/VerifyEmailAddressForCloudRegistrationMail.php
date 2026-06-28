@@ -20,13 +20,13 @@ class VerifyEmailAddressForCloudRegistrationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected User $user;
+    protected TempData $user;
     protected string $verificationUrl;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(User $user, string $verificationUrl)
+    public function __construct(TempData $user, string $verificationUrl)
     {
         $this->user = $user;
         $this->verificationUrl = $verificationUrl;
