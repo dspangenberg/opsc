@@ -8,7 +8,6 @@
     "php": "^8.5",
     "ext-openssl": "*",
     "based/momentum-modal": "^0.5",
-    "boci/hetzner-laravel": "^1.0",
     "calebporzio/sushi": "^2.5",
     "eg-mohamed/notable": "^1.4",
     "endroid/qr-code": "^6.0.8",
@@ -73,7 +72,6 @@
     "nunomaduro/collision": "^8.8",
     "pestphp/pest": "^4.3.1",
     "phpstan/phpstan": "^2.1.17",
-    "soloterm/solo": "^0.5.0",
     "spatie/laravel-ray": "^1.43"
   },
   "autoload": {
@@ -125,19 +123,11 @@
     },
     {
       "type": "path",
-      "url": "patches/vendor/boci/hetzner-laravel"
-    },
-    {
-      "type": "path",
       "url": "patches/vendor/maize-tech/laravel-markable"
     },
     {
       "type": "path",
       "url": "patches/vendor/mtvs/eloquent-hashids"
-    },
-    {
-      "type": "path",
-      "url": "patches/vendor/soloterm/solo"
     },
     {
       "type": "path",
