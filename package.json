@@ -8,7 +8,7 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.0",
+    "@biomejs/biome": "2.5.1",
     "@inertiajs/react": "^3.5.0",
     "@laravel/echo-react": "^2.3.7",
     "@react-types/shared": "^3.36.0",
