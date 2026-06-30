@@ -107,7 +107,7 @@ class PdfService
                     if ($document) {
                         $media = $document->firstMedia('file');
 
-                        if ($media) {
+                        if ($media && $media->exists()) {
                             $attachmentFile = FileHelperService::createTemporaryFileFromDoc($media->filename,
                                 $media->contents());
                             if (file_exists($attachmentFile)) {

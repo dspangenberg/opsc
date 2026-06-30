@@ -269,7 +269,7 @@
         @if($invoice->amount_gross > 0)
 
             <p><strong>
-                    {{ Str::replace('$dueDate', $invoice->due_on->format('d.m.Y'), $invoice->payment_deadline->invoice_text) }}
+                    {{ Str::replace('$dueDate', $invoice->due_on?->format('d.m.Y'), $invoice->payment_deadline->invoice_text) }}
                 </strong>
             </p>
 

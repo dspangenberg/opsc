@@ -14,12 +14,17 @@ class TenantSeeder extends Seeder
         $this->call([
             AddressCategorySeeder::class,
             CountrySeeder::class,
+            DocumentTypeSeeder::class,
             PrintLayoutSeeder::class,
+            PaymentDeadlineSeeder::class,
+            PhoneCategorySeeder::class,
+            ProjectCategorySeeder::class,
             SalutationSeeder::class,
-            TitleSeeder::class,
             SettingsSeeder::class,
             TaxSeeder::class,
             TaxRateSeeder::class,
+            TimeCategorySeeder::class,
+            TitleSeeder::class,
         ]);
     }
 }
