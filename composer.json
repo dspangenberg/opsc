@@ -30,7 +30,7 @@
     "mtvs/eloquent-hashids": "^3.6",
     "phpoffice/phpword": "^1.4",
     "plank/laravel-mediable": "^6.3.1",
-    "ploi/ploi-php-sdk": "^1.9.5",
+    "ploi/ploi-php-sdk": "^2.1",
     "pontedilana/php-weasyprint": "^2.3",
     "predis/predis": "^3.2",
     "protonemedia/laravel-verify-new-email": "^1.13",
