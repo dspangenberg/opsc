@@ -10,7 +10,7 @@
 
 
         <Heading level="1" class="mb-6 text-xl font-semibold text-slate-900 dark:text-gray-300">
-          Willkommen in der opsc.cloud von twiceware, <Raw>{{ $name }}</Raw>!
+          Willkommen in der opsc.cloud von <Raw>{{$tenant}}</Raw>, <Raw>{{ $name }}</Raw>!
         </Heading>
 
         <Text class="mb-6 text-slate-600 dark:text-gray-300">

@@ -13,6 +13,10 @@ class TitleSeeder extends Seeder
      */
     public function run(): void
     {
+        if (Title::count() > 0) {
+            return;
+        }
+
         $titles = Storage::disk('json')->json('titles.json');
         foreach ($titles as $value) {
             Title::updateOrCreate([

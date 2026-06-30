@@ -1,5 +1,5 @@
 allowBuilds:
-  vue-demi: set this to true or false
+  vue-demi: true
 overrides:
   js-yaml: ^3.15.0
   nodemailer: ^9.0.1

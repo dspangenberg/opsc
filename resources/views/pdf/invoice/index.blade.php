@@ -269,7 +269,7 @@
         @if($invoice->amount_gross > 0)
 
             <p><strong>
-                    Der Rechnungsbetrag ist ohne Abzug sofort zahlbar.<br />
+                    {{ Str::replace('$dueDate', $invoice->due_on->format('d.m.Y'), $invoice->payment_deadline->invoice_text) }}
                 </strong>
             </p>
 
@@ -277,7 +277,7 @@
                 <tr>
                     <td>@if($qr_code_svg) {!! str_replace('<svg ', '<svg style="width:1.5cm;margin-top:-24px;" ', $qr_code_svg) !!} @endif</td>
                     <td style="vertical-align: top; padding-left: 0.5cm; text-align: justify;">
-                        Bitte überweisen Sie den Rechnungsbetrag unter Angabe der Rechnungs- und Kundennummer kurzfristig auf
+                        Bitte überweisen Sie den Rechnungsbetrag unter Angabe der Rechnungs- und Kundennummer auf
                         unser Konto <strong>{{ iban_to_human_format($bank_account->iban) }}</strong> bei der
                         <strong>{{ $bank_account->bank_name }}</strong> ({{ $bank_account->bic }}).
                     </td>

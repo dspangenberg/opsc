@@ -2,17 +2,8 @@
 
 namespace App\Models;
 
-use Eloquent;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * @method static Builder<static>|PaymentDeadline newModelQuery()
- * @method static Builder<static>|PaymentDeadline newQuery()
- * @method static Builder<static>|PaymentDeadline query()
- *
- * @mixin Eloquent
- */
 class PaymentDeadline extends Model
 {
     protected $fillable = [
@@ -20,5 +11,6 @@ class PaymentDeadline extends Model
         'days',
         'is_default',
         'is_immediately',
+        'invoice_text',
     ];
 }

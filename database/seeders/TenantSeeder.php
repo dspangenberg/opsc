@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class TenantSeeder extends Seeder
@@ -13,10 +12,14 @@ class TenantSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            AddressCategorySeeder::class,
             CountrySeeder::class,
+            PrintLayoutSeeder::class,
             SalutationSeeder::class,
             TitleSeeder::class,
             SettingsSeeder::class,
+            TaxSeeder::class,
+            TaxRateSeeder::class,
         ]);
     }
 }

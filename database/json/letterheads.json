@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1,
+    "title": "Standardbriefbogen",
+    "css": "@page {\r\n  margin: 5cm 3.6cm 2.5cm 2.3cm;\r\n  size: A4;\r\n  @top-right {\r\n    content: element(infobox);\r\n  }\r\n  @bottom-left {\r\n      content: element(footer-left);\r\n  }\r\n  @bottom-center {\r\n      content: element(footer-center);\r\n  }\r\n  @bottom-right {\r\n      content: element(footer-right);\r\n  }\r\n}\r\n\r\n@page :first {\r\n  margin: 9cm 3.6cm 2.5cm 2.3cm;\r\n  size: A4;\r\n  @top-left {\r\n    vertical-align: top;\r\n    margin-left: 2mm;\r\n    margin-top: 58mm;\r\n    content: element(recipient);\r\n  }\r\n  @top-right {\r\n    vertical-align: top;\r\n    margin-top: 58mm;\r\n    content: element(infobox-first-page);\r\n  }\r\n    @bottom-left {\r\n      content: element(footer-left);\r\n  }\r\n  @bottom-center {\r\n      content: element(footer-center);\r\n  }\r\n  @bottom-right {\r\n      content: element(footer-right);\r\n  }\r\n}\r\n\r\n\r\n#recipient {\r\n  position: running(recipient);\r\n  width: 80mm;\r\n  left: 0;\r\n}\r\n\r\n#infobox-first-page {\r\n  position: running(infobox-first-page);\r\n  right:0mm;\r\n  width: 60mm;\r\n}\r\n\r\n#infobox {\r\n  position: running(infobox);\r\n  right:0mm;\r\n  width: 60mm;\r\n}",
+    "is_multi": 1,
+    "is_default": 1,
+    "created_at": "2026-01-08 22:54:23",
+    "updated_at": "2026-02-23 19:36:22"
+  }
+]

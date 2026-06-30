@@ -121,10 +121,10 @@ class InvoiceData extends Data
         /** @var NoteableData[] */
         public readonly ?array $notables,
 
-        public readonly ZugferdProfileEnum $zugferd_profile,
+        public readonly ?ZugferdProfileEnum $zugferd_profile,
         public readonly ?string $zugferd_route_id,
         public readonly bool $is_zugferd,
-        public readonly bool $is_canceled,
+        public readonly ?bool $is_canceled,
     ) {}
 
     public function defaultWrap(): string
