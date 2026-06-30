@@ -24,8 +24,6 @@ class PrintLayoutSeeder extends Seeder
                     'css' => $value['css'],
                     'is_multi' => $value['is_multi'],
                     'is_default' => $value['is_default'],
-                    'updated_at' => $value['updated_at'],
-                    'created_at' => $value['created_at'],
                 ]);
             }
         }
@@ -45,8 +43,6 @@ class PrintLayoutSeeder extends Seeder
                 'name' => $value['name'],
                 'css' => $value['css'],
                 'letterhead_id' => $letterhead->id,
-                'updated_at' => $value['updated_at'],
-                'created_at' => $value['created_at'],
             ]);
         }
 

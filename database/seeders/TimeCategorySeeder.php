@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\ProjectCategory;
 use App\Models\TimeCategory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
@@ -28,8 +27,6 @@ class TimeCategorySeeder extends Seeder
                 'pos' => $value['pos'],
                 'is_default' => $value['is_default'],
                 'hourly' => $value['hourly'],
-                'created_at' => $value['created_at'],
-                'updated_at' => $value['updated_at'],
             ]);
         }
     }

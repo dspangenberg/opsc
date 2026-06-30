@@ -19,6 +19,7 @@ use App\Models\BookmarkFolder;
 use App\Models\Dropbox;
 use App\Models\EmailAccount;
 use App\Models\Time;
+use App\Settings\GeneralSettings;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -50,6 +51,7 @@ class HandleInertiaRequests extends Middleware
         $bookmarks = [];
         $bookmarkFolders = [];
         $runningTimer = [];
+        $settings = null;
         if ($user) {
             $ids = [];
             $defaultMailAccount = EmailAccount::query()->where('is_default', true)->first();
@@ -60,6 +62,8 @@ class HandleInertiaRequests extends Middleware
             if ($user->email_account_id) {
                 $ids[] = $user->email_account_id;
             }
+
+            $settings = app(GeneralSettings::class);
 
             $mailAccounts = EmailAccount::query()->whereIn('id', $ids)->orderBy('email')->get();
 
@@ -89,6 +93,7 @@ class HandleInertiaRequests extends Middleware
                 'email_accounts' => count($mailAccounts) ? EmailAccountData::collect($mailAccounts) : [],
                 'dropboxes' => count($dropBoxes) ? DropboxData::collect($dropBoxes) : [],
                 'domain' => $request->getHost(),
+                'is_accounting_enabled' => $settings?->is_accouting_enabled === 'true',
             ],
         ];
     }

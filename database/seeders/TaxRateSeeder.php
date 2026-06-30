@@ -25,9 +25,6 @@ class TaxRateSeeder extends Seeder
                 'name' => $value['name'],
                 'tax_id' => $value['tax_id'],
                 'rate' => $value['rate'],
-                'created_at' => $value['created_at'],
-                'updated_at' => $value['updated_at'],
-                'deleted_at' => $value['deleted_at'],
                 'outturn_account_id' => $value['outturn_account_id'],
             ]);
         }

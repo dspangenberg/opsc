@@ -24,8 +24,6 @@ class PhoneCategorySeeder extends Seeder
             ], [
                 'name' => $value['name'],
                 'type' => $value['type'],
-                'created_at' => $value['created_at'],
-                'updated_at' => $value['updated_at'],
             ]);
         }
     }

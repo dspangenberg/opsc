@@ -26,6 +26,8 @@ class GeneralSettings extends Settings
 
     public string $contact_id;
 
+    public string $is_accouting_enabled;
+
     public static function group(): string
     {
         return 'general';

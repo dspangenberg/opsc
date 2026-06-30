@@ -26,8 +26,6 @@ class DocumentTypeSeeder extends Seeder
                 'parent_id' => $value['parent_id'],
                 'color' => $value['color'],
                 'icon' => $value['icon'],
-                'created_at' => $value['created_at'],
-                'updated_at' => $value['updated_at'],
             ]);
         }
     }

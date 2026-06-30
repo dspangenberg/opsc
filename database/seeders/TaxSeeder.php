@@ -25,8 +25,6 @@ class TaxSeeder extends Seeder
                 'name' => $value['name'],
                 'invoice_text' => $value['invoice_text'],
                 'needs_vat_id' => $value['needs_vat_id'],
-                'created_at' => $value['created_at'],
-                'updated_at' => $value['updated_at'],
                 'value' => $value['value'],
                 'is_default' => $value['is_default'],
                 'account_input_tax' => $value['account_input_tax'],

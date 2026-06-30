@@ -25,8 +25,6 @@ class ProjectCategorySeeder extends Seeder
                 'name' => $value['name'],
                 'color' => $value['color'],
                 'icon' => $value['icon'],
-                'created_at' => $value['created_at'],
-                'updated_at' => $value['updated_at'],
             ]);
         }
     }

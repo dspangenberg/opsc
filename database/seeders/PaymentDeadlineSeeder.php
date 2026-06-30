@@ -14,7 +14,7 @@ class PaymentDeadlineSeeder extends Seeder
     public function run(): void
     {
         if (PaymentDeadline::count() > 0) {
-            // return;
+            return;
         }
 
         $paymentDeadlines = Storage::disk('json')->json('payment_deadlines.json');
@@ -26,8 +26,7 @@ class PaymentDeadlineSeeder extends Seeder
                 'days' => $value['days'],
                 'is_immediately' => $value['is_immediately'],
                 'is_default' => $value['is_default'],
-                'created_at' => $value['created_at'],
-                'updated_at' => $value['updated_at'],
+                'invoice_text' => $value['invoice_text'],
             ]);
         }
     }
