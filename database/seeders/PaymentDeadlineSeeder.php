@@ -13,13 +13,9 @@ class PaymentDeadlineSeeder extends Seeder
      */
     public function run(): void
     {
-        if (PaymentDeadline::count() > 0) {
-            return;
-        }
-
         $paymentDeadlines = Storage::disk('json')->json('payment_deadlines.json');
         foreach ($paymentDeadlines as $value) {
-            PaymentDeadline::updateOrCreate([
+            PaymentDeadline::firstOrCreate([
                 'id' => $value['id'],
             ], [
                 'name' => $value['name'],

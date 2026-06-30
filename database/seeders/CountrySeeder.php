@@ -16,7 +16,7 @@ class CountrySeeder extends Seeder
         $countries = Storage::disk('json')->json('countries.json');
 
         foreach ($countries as $value) {
-            Country::updateOrCreate([
+            Country::firstOrCreate([
                 'id' => $value['id'],
             ], [
                 'name' => $value['name'],

@@ -13,20 +13,19 @@ class DocumentTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        if (DocumentType::count() > 0) {
-            return;
-        }
-
         $documentTypes = Storage::disk('json')->json('document_types.json');
         foreach ($documentTypes as $value) {
-            DocumentType::updateOrCreate([
-                'id' => $value['id'],
-            ], [
-                'name' => $value['name'],
-                'parent_id' => $value['parent_id'],
-                'color' => $value['color'],
-                'icon' => $value['icon'],
-            ]);
+            DocumentType::firstOrCreate(
+                [
+                    'id' => $value['id'],
+                ],
+                [
+                    'name' => $value['name'],
+                    'parent_id' => $value['parent_id'],
+                    'color' => $value['color'],
+                    'icon' => $value['icon'],
+                ]
+            );
         }
     }
 }

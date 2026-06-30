@@ -13,13 +13,9 @@ class PhoneCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        if (PhoneCategory::count() > 0) {
-            return;
-        }
-
         $phoneCategories = Storage::disk('json')->json('phone_categories.json');
         foreach ($phoneCategories as $value) {
-            PhoneCategory::updateOrCreate([
+            PhoneCategory::firstOrCreate([
                 'id' => $value['id'],
             ], [
                 'name' => $value['name'],

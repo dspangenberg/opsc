@@ -15,7 +15,7 @@ class SalutationSeeder extends Seeder
     {
         $salutations = Storage::disk('json')->json('salutations.json');
         foreach ($salutations as $value) {
-            Salutation::updateOrCreate([
+            Salutation::firstOrCreate([
                 'id' => $value['id'],
             ], [
                 'name' => $value['name'],

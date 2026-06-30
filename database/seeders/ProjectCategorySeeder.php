@@ -13,13 +13,9 @@ class ProjectCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        if (ProjectCategory::count() > 0) {
-            return;
-        }
-
         $projectCategories = Storage::disk('json')->json('project_categories.json');
         foreach ($projectCategories as $value) {
-            ProjectCategory::updateOrCreate([
+            ProjectCategory::firstOrCreate([
                 'id' => $value['id'],
             ], [
                 'name' => $value['name'],

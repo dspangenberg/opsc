@@ -13,13 +13,9 @@ class TaxRateSeeder extends Seeder
      */
     public function run(): void
     {
-        if (TaxRate::count() > 0) {
-            return;
-        }
-
         $tax_rates = Storage::disk('json')->json('tax_rates.json');
         foreach ($tax_rates as $value) {
-            TaxRate::updateOrCreate([
+            TaxRate::firstOrCreate([
                 'id' => $value['id'],
             ], [
                 'name' => $value['name'],

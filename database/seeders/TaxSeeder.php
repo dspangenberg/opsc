@@ -13,13 +13,9 @@ class TaxSeeder extends Seeder
      */
     public function run(): void
     {
-        if (Tax::count() > 0) {
-            return;
-        }
-
         $taxes = Storage::disk('json')->json('taxes.json');
         foreach ($taxes as $value) {
-            Tax::updateOrCreate([
+            Tax::firstOrCreate([
                 'id' => $value['id'],
             ], [
                 'name' => $value['name'],

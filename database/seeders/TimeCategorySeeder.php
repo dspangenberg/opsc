@@ -13,13 +13,9 @@ class TimeCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        if (TimeCategory::count() > 0) {
-            return;
-        }
-
         $timeCategories = Storage::disk('json')->json('time_categories.json');
         foreach ($timeCategories as $value) {
-            TimeCategory::updateOrCreate([
+            TimeCategory::firstOrCreate([
                 'id' => $value['id'],
             ], [
                 'name' => $value['name'],

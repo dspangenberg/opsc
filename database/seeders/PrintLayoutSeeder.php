@@ -17,7 +17,7 @@ class PrintLayoutSeeder extends Seeder
         if (Letterhead::count() === 0) {
             $letterheads = Storage::disk('json')->json('letterheads.json');
             foreach ($letterheads as $value) {
-                Letterhead::updateOrCreate([
+                Letterhead::firstOrCreate([
                     'id' => $value['id'],
                 ], [
                     'title' => $value['title'],
@@ -29,14 +29,10 @@ class PrintLayoutSeeder extends Seeder
         }
 
         $letterhead = Letterhead::first();
-
-        if (PrintLayout::count() > 0) {
-            return;
-        }
-
+        
         $print_layouts = Storage::disk('json')->json('print_layouts.json');
         foreach ($print_layouts as $value) {
-            PrintLayout::updateOrCreate([
+            PrintLayout::firstOrCreate([
                 'id' => $value['id'],
             ], [
                 'title' => $value['title'],
