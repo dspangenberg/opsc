@@ -8,6 +8,7 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
     email_accounts: App.Data.EmailAccountData[]
     dropboxes: App.Data.DropboxData[]
     domain: string
+    is_accounting_enabled: boolean
   }
   csrf_token: string
 }

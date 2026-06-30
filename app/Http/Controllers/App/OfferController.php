@@ -94,6 +94,7 @@ class OfferController extends Controller
         $offer->project_id = 0;
         $offer->tax_id = $taxes->first()?->id ?? 0;
         $offer->offer_number = null;
+        $offer->status = OfferStatusEnum::PENDING->value;
 
         return Inertia::modal('App/Offer/OfferEdit')
             ->with([

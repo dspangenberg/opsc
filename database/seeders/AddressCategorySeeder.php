@@ -13,13 +13,9 @@ class AddressCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        if (AddressCategory::count() > 0) {
-            return;
-        }
-
         $titles = Storage::disk('json')->json('address_categories.json');
         foreach ($titles as $value) {
-            AddressCategory::updateOrCreate([
+            AddressCategory::firstOrCreate([
                 'id' => $value['id'],
             ], [
                 'name' => $value['name'],

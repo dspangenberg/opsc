@@ -22,7 +22,7 @@
     "name": "invoice",
     "title": "Rechnungen und Angebote",
     "letterhead_id": 1,
-    "css": "NULL",
+    "css": null,
     "created_at": "2026-06-30 16:16:34",
     "updated_at": "2026-06-30 16:19:15"
   }

@@ -8,6 +8,7 @@ use App\Models\Letterhead;
 use App\Models\PrintLayout;
 use App\Settings\GeneralSettings;
 use Exception;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Mpdf\Mpdf;
 use Mpdf\WatermarkText;
@@ -39,7 +40,7 @@ class PdfService
 
         if ($letterhead) {
             $media = $letterhead->firstMedia('file');
-            if ($media && $media->exists()) {
+            if ($media && Storage::disk($media->disk)->exists($media->getDiskPath())) {
                 $letterheadPdfFile = FileHelperService::createTemporaryFileFromDoc($media->filename.'.pdf',
                     $media->contents());
             }
@@ -107,7 +108,7 @@ class PdfService
                     if ($document) {
                         $media = $document->firstMedia('file');
 
-                        if ($media) {
+                        if ($media && Storage::disk($media->disk)->exists($media->getDiskPath())) {
                             $attachmentFile = FileHelperService::createTemporaryFileFromDoc($media->filename,
                                 $media->contents());
                             if (file_exists($attachmentFile)) {

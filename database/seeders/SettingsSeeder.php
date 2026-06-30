@@ -18,6 +18,7 @@ class SettingsSeeder extends Seeder
             $settings = app(GeneralSettings::class);
             $settings->site_name = tenant()->organisation;
             $settings->company_name = tenant()->organisation;
+            $settings->invoice_logo = 'false'; // Ja, CodeRabbit das ist beabsichtigt, da wir in Settings noch keine Booleans speichern können.
             $settings->save();
         }
     }

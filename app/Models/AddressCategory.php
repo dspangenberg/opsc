@@ -18,5 +18,6 @@ class AddressCategory extends Model
     protected $fillable = [
         'name',
         'is_invoice_address',
+        'type',
     ];
 }

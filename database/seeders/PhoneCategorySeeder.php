@@ -2,25 +2,24 @@
 
 namespace Database\Seeders;
 
-use App\Models\Salutation;
+use App\Models\PhoneCategory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
 
-class SalutationSeeder extends Seeder
+class PhoneCategorySeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $salutations = Storage::disk('json')->json('salutations.json');
-        foreach ($salutations as $value) {
-            Salutation::firstOrCreate([
+        $phoneCategories = Storage::disk('json')->json('phone_categories.json');
+        foreach ($phoneCategories as $value) {
+            PhoneCategory::firstOrCreate([
                 'id' => $value['id'],
             ], [
                 'name' => $value['name'],
-                'gender' => $value['gender'],
-                'is_hidden' => $value['is_hidden'],
+                'type' => $value['type'],
             ]);
         }
     }

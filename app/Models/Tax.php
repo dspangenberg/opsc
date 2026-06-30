@@ -27,6 +27,12 @@ class Tax extends Model
         'needs_vat_id',
         'is_default',
         'outturn_account_id',
+
+        'account_input_tax',
+        'account_vat',
+        'tax_code_number',
+        'default_rate_id',
+
     ];
 
     public function rates(): HasMany

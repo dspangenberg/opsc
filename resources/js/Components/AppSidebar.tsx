@@ -23,7 +23,11 @@ import { NavSecondary } from '@/Components/nav-secondary'
 import { BookmarkSidebarGroup } from '@/Components/Shared/Bookmark/BookmarkSidebarGroup'
 import { Sidebar, SidebarContent, SidebarHeader } from '@/Components/ui/sidebar'
 
-const buildNavData = (isAdmin: boolean, dropboxes: App.Data.DropboxData[]) => ({
+const buildNavData = (
+  isAdmin: boolean,
+  dropboxes: App.Data.DropboxData[],
+  isAccountingEnabled: boolean
+) => ({
   navGlobalTop: [],
   navMain: [
     {
@@ -206,46 +210,50 @@ const buildNavData = (isAdmin: boolean, dropboxes: App.Data.DropboxData[]) => ({
         }
       ]
     },
-    {
-      title: 'Buchhaltung',
-      url: route('app.bookkeeping.receipts.index', {}, false),
-      icon: AbacusIcon,
-      activePath: '/app/bookkeeping',
-      items: [
-        {
-          title: 'Belege',
-          url: route('app.bookkeeping.receipts.index', {}, false),
-          activePath: '/app/bookkeeping/receipts',
-          items: [
-            {
-              title: 'Upload',
-              url: route('app.bookkeeping.receipts.upload-form', {}, false),
-              activePath: '/app/bookkeeping/receipts/upload'
-            },
-            {
-              title: 'Belege bestätigen',
-              url: route('app.bookkeeping.receipts.confirm-first', {}, false),
-              activePath: '/app/bookkeeping/receipts/confirm'
-            }
-          ]
-        },
-        {
-          title: 'Buchungen',
-          url: route('app.bookkeeping.bookings.index', {}, false),
-          activePath: '/app/bookkeeping/bookings'
-        },
-        {
-          title: 'Konten + Salden',
-          url: route('app.bookkeeping.accounts.overview'),
-          activePath: '/app/bookkeeping/accounts-overview'
-        },
-        {
-          title: 'Transaktionen',
-          url: route('app.bookkeeping.transactions.index', {}, false),
-          activePath: '/app/bookkeeping/transactions'
-        }
-      ]
-    }
+    ...(isAccountingEnabled
+      ? [
+          {
+            title: 'Buchhaltung',
+            url: route('app.bookkeeping.receipts.index', {}, false),
+            icon: AbacusIcon,
+            activePath: '/app/bookkeeping',
+            items: [
+              {
+                title: 'Belege',
+                url: route('app.bookkeeping.receipts.index', {}, false),
+                activePath: '/app/bookkeeping/receipts',
+                items: [
+                  {
+                    title: 'Upload',
+                    url: route('app.bookkeeping.receipts.upload-form', {}, false),
+                    activePath: '/app/bookkeeping/receipts/upload'
+                  },
+                  {
+                    title: 'Belege bestätigen',
+                    url: route('app.bookkeeping.receipts.confirm-first', {}, false),
+                    activePath: '/app/bookkeeping/receipts/confirm'
+                  }
+                ]
+              },
+              {
+                title: 'Buchungen',
+                url: route('app.bookkeeping.bookings.index', {}, false),
+                activePath: '/app/bookkeeping/bookings'
+              },
+              {
+                title: 'Konten + Salden',
+                url: route('app.bookkeeping.accounts.overview'),
+                activePath: '/app/bookkeeping/accounts-overview'
+              },
+              {
+                title: 'Transaktionen',
+                url: route('app.bookkeeping.transactions.index', {}, false),
+                activePath: '/app/bookkeeping/transactions'
+              }
+            ]
+          }
+        ]
+      : [])
   ],
   navSecondary: [
     {
@@ -271,28 +279,32 @@ const buildNavData = (isAdmin: boolean, dropboxes: App.Data.DropboxData[]) => ({
             }
           ]
         },
-        {
-          title: 'Buchhaltung',
-          url: route('app.setting.bookkeeping', {}, false),
-          activePath: '/app/settings/bookkeeping',
-          items: [
-            {
-              title: 'Buchhaltungskonten',
-              url: route('app.bookkeeping.accounts.index', {}, false),
-              activePath: '/app/settings/bookkeeping/accounts'
-            },
-            {
-              title: 'Kostenstellen',
-              url: route('app.bookkeeping.cost-centers.index', {}, false),
-              activePath: '/app/settings/bookkeeping/cost-centers'
-            },
-            {
-              title: 'Regeln',
-              url: route('app.bookkeeping.rules.index', {}, false),
-              activePath: '/app/settings/bookkeeping/rules'
-            }
-          ]
-        },
+        ...(isAccountingEnabled
+          ? [
+              {
+                title: 'Buchhaltung',
+                url: route('app.setting.bookkeeping', {}, false),
+                activePath: '/app/settings/bookkeeping',
+                items: [
+                  {
+                    title: 'Buchhaltungskonten',
+                    url: route('app.bookkeeping.accounts.index', {}, false),
+                    activePath: '/app/settings/bookkeeping/accounts'
+                  },
+                  {
+                    title: 'Kostenstellen',
+                    url: route('app.bookkeeping.cost-centers.index', {}, false),
+                    activePath: '/app/settings/bookkeeping/cost-centers'
+                  },
+                  {
+                    title: 'Regeln',
+                    url: route('app.bookkeeping.rules.index', {}, false),
+                    activePath: '/app/settings/bookkeeping/rules'
+                  }
+                ]
+              }
+            ]
+          : []),
         {
           title: 'Dokumente',
           url: route('app.setting.document_type.index', {}, false),
@@ -372,7 +384,7 @@ const buildNavData = (isAdmin: boolean, dropboxes: App.Data.DropboxData[]) => ({
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { auth } = usePage().props
   const isAdmin = auth?.user?.is_admin ?? false
-  const data = buildNavData(isAdmin, auth.dropboxes)
+  const data = buildNavData(isAdmin, auth.dropboxes, auth.is_accounting_enabled)
   return (
     <Sidebar variant="inset" collapsible="icon" {...props}>
       <SidebarHeader className="h-auto flex-none">
