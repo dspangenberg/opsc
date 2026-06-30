@@ -79,7 +79,7 @@
     "class-variance-authority": "^0.7.1",
     "date-fns": "^4.4.0",
     "dedent": "1.7.2",
-    "filesize": "^11.0.18",
+    "filesize": "^11.0.19",
     "focus-trap-react": "^12.0.3",
     "framer-motion": "^12.42.0",
     "html2canvas-pro": "^2.2.0",

@@ -121,8 +121,8 @@ importers:
         specifier: 1.7.2
         version: 1.7.2
       filesize:
-        specifier: ^11.0.18
-        version: 11.0.18
+        specifier: ^11.0.19
+        version: 11.0.19
       focus-trap-react:
         specifier: ^12.0.3
         version: 12.0.3(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -656,8 +656,8 @@ packages:
   '@codemirror/view@6.43.1':
     resolution: {integrity: sha512-+BIjw/AG3tDQ4pJgTLPYdAW25eDE66YsvM4LKyVPgGzVgZ4a9Wj1SRX8kPVKgBDdPt8oHtZ15F0qx7p0oOHdHw==}
 
-  '@codemirror/view@6.43.3':
-    resolution: {integrity: sha512-MwEwCAr/o0agJefhC2+reBv5kfOQpMcDRUNQrRYZgWlhH8IwQcerMZrpqWyUFSyO0ebgN2cnh/w87F7G4BGSng==}
+  '@codemirror/view@6.43.4':
+    resolution: {integrity: sha512-YImu23iyKfncJzT7sRy+rEqEhSc8RhOHqDxwy4WzXRKJwYm6iwf/9OJk5ctCAdZ6yi2ZqaGEvmf55fSVqMDrgg==}
 
   '@csstools/color-helpers@6.0.2':
     resolution: {integrity: sha512-LMGQLS9EuADloEFkcTBR3BwV/CGHV7zyDxVRtVDTwdI2Ca4it0CCVTT9wCkxSgokjE5Ho41hEPgb8OEUwoXr6Q==}
@@ -997,6 +997,9 @@ packages:
 
   '@marijn/find-cluster-break@1.0.2':
     resolution: {integrity: sha512-l0h88YhZFyKdXIFNfSWpyjStDjGHwZ/U7iobcK1cQQD8sejsONdQtTVU+1wVN1PBw40PiiHB1vA5S7VTfQiP9g==}
+
+  '@marijn/find-cluster-break@1.0.3':
+    resolution: {integrity: sha512-FY+MKLBoTsLNJF/eLWaOsXGdz6uh3Iu1axjPf6TUq92IYumcTcXWHoS747JARLkcdlJ/Waiaxc5wQfFO8jC6NA==}
 
   '@mdxeditor/editor@4.0.4':
     resolution: {integrity: sha512-fUUWoIFfHB4g+PHkcpKp5zRfoMmDWrVeSaoB4x81759J2xrWsmYYoCYx0oVLcL6HXat8f/8LprlRmAxpcIPnLQ==}
@@ -2412,6 +2415,9 @@ packages:
   crelt@1.0.6:
     resolution: {integrity: sha512-VQ2MBenTq1fWZUH9DJNGti7kKv6EeAuYr3cLwxUWhIu1baTaXh4Ib5W2CqHVqib4/MqbYGJqiL3Zb8GJZr3l4g==}
 
+  crelt@1.0.7:
+    resolution: {integrity: sha512-aK6BbWfhf4U/wCcLHKPJl/xa6VkVstRaPywWtMKGwuOLc/wZTyQYuoxgvZnNsBvv7Kg3YTBQYYBCggcviQczuA==}
+
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
@@ -2702,8 +2708,8 @@ packages:
     resolution: {integrity: sha512-d+l3qxjSesT4V7v2fh+QnmFnUWv9lSpjarhShNTgBOfA0ttejbQUAlHLitbjkoRiDulW0OPoQPYIGhIC8ohejg==}
     engines: {node: '>=18'}
 
-  filesize@11.0.18:
-    resolution: {integrity: sha512-d/SiIKVaIP7DqL14JfADiSi/TFoo3bmNJYQ6wR5d52/e9Nd/tEsooP/0RD4pgzrjNO6cFOQvSmsWSs84M9OFAw==}
+  filesize@11.0.19:
+    resolution: {integrity: sha512-9Q2itINBvCHwFw9v5X7czZm855yAiFIYlnugrh7+8tYO4ITHZMzV91m35q2FngL9hoZwwjSTQACFF/W52OzJZQ==}
     engines: {node: '>= 10.8.0'}
 
   fill-range@7.1.1:
@@ -5147,7 +5153,7 @@ snapshots:
   '@codemirror/language@6.12.3':
     dependencies:
       '@codemirror/state': 6.7.0
-      '@codemirror/view': 6.43.3
+      '@codemirror/view': 6.43.4
       '@lezer/common': 1.5.2
       '@lezer/highlight': 1.2.3
       '@lezer/lr': 1.4.10
@@ -5183,7 +5189,7 @@ snapshots:
 
   '@codemirror/state@6.7.0':
     dependencies:
-      '@marijn/find-cluster-break': 1.0.2
+      '@marijn/find-cluster-break': 1.0.3
 
   '@codemirror/view@6.43.1':
     dependencies:
@@ -5192,10 +5198,10 @@ snapshots:
       style-mod: 4.1.3
       w3c-keyname: 2.2.8
 
-  '@codemirror/view@6.43.3':
+  '@codemirror/view@6.43.4':
     dependencies:
       '@codemirror/state': 6.7.0
-      crelt: 1.0.6
+      crelt: 1.0.7
       style-mod: 4.1.3
       w3c-keyname: 2.2.8
 
@@ -5684,6 +5690,8 @@ snapshots:
       '@lezer/lr': 1.4.10
 
   '@marijn/find-cluster-break@1.0.2': {}
+
+  '@marijn/find-cluster-break@1.0.3': {}
 
   '@mdxeditor/editor@4.0.4(@codemirror/language@6.12.3)(@lezer/highlight@1.2.3)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(yjs@13.6.31)':
     dependencies:
@@ -7067,6 +7075,8 @@ snapshots:
 
   crelt@1.0.6: {}
 
+  crelt@1.0.7: {}
+
   cross-spawn@7.0.6:
     dependencies:
       path-key: 3.1.1
@@ -7362,7 +7372,7 @@ snapshots:
     dependencies:
       is-unicode-supported: 2.1.0
 
-  filesize@11.0.18: {}
+  filesize@11.0.19: {}
 
   fill-range@7.1.1:
     dependencies:
