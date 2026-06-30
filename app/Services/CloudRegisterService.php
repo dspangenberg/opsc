@@ -10,7 +10,7 @@ namespace App\Services;
 use App\Mail\VerifyEmailAddressForCloudRegistrationMail;
 use App\Models\TempData;
 use App\Models\Tenant;
-use Cviebrock\EloquentSluggable\Services\SlugService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Stancl\Tenancy\UniqueIdentifierGenerators\RandomHexGenerator;
@@ -31,11 +31,20 @@ class CloudRegisterService
             $verificationUrl));
     }
 
-    public function verifyEmailAddressAndCredentials(string $hid): array
+    public function verifyEmailAddressAndCredentials(array $tentantData): string
     {
-        $tenant = TempData::getByHid($hid)['data'];
+        $website = $tentantData['website'] ?? '';
 
-        $hostname = parse_url($tenant['website'], PHP_URL_HOST);
+        if (! str_contains($website, '://')) {
+            $website = 'https://'.$website;
+        }
+
+        $hostname = parse_url($website, PHP_URL_HOST);
+
+        if (! $hostname) {
+            return '';
+        }
+
         $hostnameParts = explode('.', $hostname);
 
         if (count($hostnameParts) === 2) {
@@ -46,32 +55,25 @@ class CloudRegisterService
             $hostname = $hostnameParts[1];
         }
 
-        if (! $hostname) {
-            // $hostname = SlugService::createSlug(Tenant::class, 'subdomain', $tenant['organisation']);
-        } else {
-            // $hostname = SlugService::createSlug(Tenant::class, 'subdomain', $hostname);
-        }
-
-        $tenant['domain'] = $hostname;
-
-        return $tenant;
+        return $hostname;
     }
 
     public function createTenant(array $tenantData): Tenant
     {
-        $tempTenantData = TempData::getByHid($tenantData['hid'])['data'];
+        return DB::transaction(function () use ($tenantData) {
+            $tenant = Tenant::create([
+                'first_name' => $tenantData['first_name'],
+                'last_name' => $tenantData['last_name'],
+                'email' => $tenantData['email'],
+                'organisation' => $tenantData['company'],
+                'website' => $tenantData['website'] ?? '',
+                'ready' => false,
+            ]);
+            $tenant->prefix = RandomHexGenerator::generate($tenant);
+            $tenant->save();
+            $tenant->createDomain(['domain' => $tenantData['domain']]);
 
-        $tempTenantData['password'] = bcrypt($tenantData['password']);
-        $domain = $tenantData['domain'];
-        $tempTenantData['ready'] = false;
-
-        $tenant = Tenant::create($tempTenantData);
-        $tenant->prefix = RandomHexGenerator::generate($tenant);
-        $tenant->save();
-        $tenant->createDomain(['domain' => $domain]);
-        TempData::getByHid($tenantData['hid'])->delete();
-
-        return $tenant;
-
+            return $tenant;
+        });
     }
 }

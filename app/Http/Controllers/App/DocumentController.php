@@ -221,6 +221,7 @@ class DocumentController extends Controller
         Document::withTrashed()->whereIn('id', $ids)->restore();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Die Dokumente wurden wiederhergestellt.']);
+
         return redirect()->route('app.document.index', ['view' => 'trash']);
     }
 
@@ -355,6 +356,7 @@ class DocumentController extends Controller
         $document->forceDelete();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Das Dokument wurde endgültig gelöscht.']);
+
         return redirect()->route('app.document.index', ['view' => 'trash']);
     }
 
@@ -374,6 +376,7 @@ class DocumentController extends Controller
         });
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Die Dokumente wurden endgültig gelöscht.']);
+
         return redirect()->route('app.document.index', ['view' => 'trash']);
     }
 

@@ -45,12 +45,17 @@ class PendingUserEmail extends BasePendingUserEmail
             return null;
         }
 
-        $domain = tenant()->domain
-            ?? tenant()->fallback_domain->domain
-            ?? tenant()->domains->first()?->domain;
+        $domain = tenant()->domains->first()?->domain;
 
         if (! $domain) {
-            return null;
+            $tenantId = tenant()->getTenantKey();
+            $baseDomain = config('tenancy.identification.central_domains.0');
+
+            if (! $tenantId || ! $baseDomain) {
+                return null;
+            }
+
+            $domain = $tenantId.'.'.$baseDomain;
         }
 
         if (! str_contains($domain, '.')) {
