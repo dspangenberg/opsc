@@ -15,7 +15,7 @@ class TaxRateSeeder extends Seeder
     {
         $tax_rates = Storage::disk('json')->json('tax_rates.json');
         foreach ($tax_rates as $value) {
-            TaxRate::firstOrCreate([
+            TaxRate::withTrashed()->firstOrCreate([
                 'id' => $value['id'],
             ], [
                 'name' => $value['name'],

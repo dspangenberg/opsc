@@ -276,7 +276,7 @@
                     @endif
                 </strong>
             </p>
-            
+
             <table>
                 <tr>
                     <td>@if($qr_code_svg) {!! str_replace('<svg ', '<svg style="width:1.5cm;margin-top:-24px;" ', $qr_code_svg) !!} @endif</td>

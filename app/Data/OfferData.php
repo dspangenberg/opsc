@@ -67,7 +67,7 @@ class OfferData extends Data
 
         public readonly ?bool $is_template,
         public readonly ?string $template_name,
-        public readonly ?OfferStatusEnum $status,
+        public readonly OfferStatusEnum $status,
         /** @var NoteableData[] */
         public readonly ?array $notables
     ) {}

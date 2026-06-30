@@ -14,22 +14,21 @@ class PrintLayoutSeeder extends Seeder
      */
     public function run(): void
     {
-        if (Letterhead::count() === 0) {
-            $letterheads = Storage::disk('json')->json('letterheads.json');
-            foreach ($letterheads as $value) {
-                Letterhead::firstOrCreate([
-                    'id' => $value['id'],
-                ], [
-                    'title' => $value['title'],
-                    'css' => $value['css'],
-                    'is_multi' => $value['is_multi'],
-                    'is_default' => $value['is_default'],
-                ]);
-            }
+
+        $letterheads = Storage::disk('json')->json('letterheads.json');
+        foreach ($letterheads as $value) {
+            Letterhead::firstOrCreate([
+                'id' => $value['id'],
+            ], [
+                'title' => $value['title'],
+                'css' => $value['css'],
+                'is_multi' => $value['is_multi'],
+                'is_default' => $value['is_default'],
+            ]);
         }
 
         $letterhead = Letterhead::first();
-        
+
         $print_layouts = Storage::disk('json')->json('print_layouts.json');
         foreach ($print_layouts as $value) {
             PrintLayout::firstOrCreate([
@@ -41,6 +40,5 @@ class PrintLayoutSeeder extends Seeder
                 'letterhead_id' => $letterhead->id,
             ]);
         }
-
     }
 }
