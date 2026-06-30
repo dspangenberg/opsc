@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "name": "proof-of-activity",
+    "title": "Leistungsnachweis",
+    "letterhead_id": 1,
+    "css": null,
+    "created_at": "2026-01-08 23:44:16",
+    "updated_at": "2026-01-09 04:05:07"
+  },
+  {
+    "id": 2,
+    "name": "receipt-report",
+    "title": "Report Eingangsrechnungen",
+    "letterhead_id": 1,
+    "css": null,
+    "created_at": "2026-01-28 06:42:14",
+    "updated_at": "2026-01-28 06:42:14"
+  },
+  {
+    "id": 4,
+    "name": "invoice",
+    "title": "Rechnungen und Angebote",
+    "letterhead_id": 1,
+    "css": "NULL",
+    "created_at": "2026-06-30 16:16:34",
+    "updated_at": "2026-06-30 16:19:15"
+  }
+]

@@ -1,0 +1,79 @@
+[
+  {
+    "id": 1,
+    "name": "privat",
+    "type": 0,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 2,
+    "name": "Arbeit",
+    "type": 0,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 3,
+    "name": "Zentrale",
+    "type": 0,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 4,
+    "name": "Mobil",
+    "type": 0,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 5,
+    "name": "Vorzimmer",
+    "type": 0,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 6,
+    "name": "Mobil (privat)",
+    "type": 0,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 7,
+    "name": "Mobil (Arbeit)",
+    "type": 0,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 8,
+    "name": "Fax (Zentrale)",
+    "type": 0,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 9,
+    "name": "Fax (privat)",
+    "type": 0,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 10,
+    "name": "Fax (Arbeit)",
+    "type": 0,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 11,
+    "name": "Festnetz",
+    "type": 0,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  }
+]

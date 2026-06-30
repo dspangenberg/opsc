@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "tax_id": 1,
+    "rate": 19.00,
+    "name": "Standard",
+    "created_at": "2025-05-17 11:31:11",
+    "updated_at": "2025-05-17 11:31:11",
+    "deleted_at": null,
+    "outturn_account_id": 8400
+  },
+  {
+    "id": 2,
+    "tax_id": 1,
+    "rate": 7.00,
+    "name": "ermäßigt",
+    "created_at": "2025-05-17 11:31:11",
+    "updated_at": "2025-05-17 11:31:11",
+    "deleted_at": null,
+    "outturn_account_id": 8200
+  },
+  {
+    "id": 4,
+    "tax_id": 5,
+    "rate": 0.00,
+    "name": "keine USt. (§ 3a)",
+    "created_at": "2025-05-17 11:31:11",
+    "updated_at": "2025-05-17 11:31:11",
+    "deleted_at": null,
+    "outturn_account_id": 8336
+  }
+]

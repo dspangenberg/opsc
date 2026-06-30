@@ -3,7 +3,6 @@
 use App\Facades\CloudRegisterService;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Password;
-
 use Laravel\Prompts\Prompt;
 
 beforeEach(function () {

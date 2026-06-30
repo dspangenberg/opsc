@@ -79,7 +79,14 @@
         </xml>
       <![endif]-->
     </span>
-    <div role="article" aria-roledescription="email" lang="en" dir="ltr" style="padding: 24px; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', Ubuntu, Cantarell, 'Helvetica Neue', sans-serif; font-size: max(16px, 1rem);" class="dark-bg-gray-950">
+    <div
+      role="article"
+      aria-roledescription="email"
+      lang="en"
+      dir="ltr"
+      style="font-size: medium; padding: 24px; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', Ubuntu, Cantarell, 'Helvetica Neue', sans-serif; font-size: max(16px, 1rem);"
+      class="dark-bg-gray-950"
+    >
       <!--[if mso]><table role="none" cellpadding="0" cellspacing="0" style="width: 576px" align="center"><tr><td><![endif]-->
       <div style="margin: 0 auto; max-width: 576px; font-family: 'Clear Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;">
         <!--[if mso]><table role="none" cellpadding="0" cellspacing="0" style="width: 100%"><tr><td style="background-color: #fffffe; padding: 24px 36px"><![endif]-->
@@ -131,7 +138,7 @@
         <!--[if mso]></td></tr></table><![endif]-->
         <!--[if mso]><table role="none" cellpadding="0" cellspacing="0" style="width: 100%"><tr><td style="padding: 24px 36px"><![endif]-->
         <div class="sm-px-6" style="padding: 24px 36px;">
-          <p style="margin: 0; text-align: center; font-size: 14px; line-height: 1.625; color: #78716c;">
+          <p style="margin: 0; text-align: center; font-size: 14px; line-height: 20px; line-height: 1.625; color: #78716c;">
             <span style="font-weight: 700;">twiceware solutions e. K.</span>
             <br>
             Inhaber Danny Spangenberg &middot; Belderberg 7 &middot; D-53111 Bonn

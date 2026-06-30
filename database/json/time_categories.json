@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "name": "Software- und Webentwicklung",
+    "short_name": "DEV",
+    "pos": 0,
+    "is_default": 0,
+    "hourly": 60.00,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 2,
+    "name": "Administration",
+    "short_name": "ADM",
+    "pos": 0,
+    "is_default": 0,
+    "hourly": 60.00,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 3,
+    "name": "Dokumentation",
+    "short_name": "DOC",
+    "pos": 0,
+    "is_default": 0,
+    "hourly": 60.00,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 4,
+    "name": "Konzeption",
+    "short_name": "KON",
+    "pos": 0,
+    "is_default": 0,
+    "hourly": 60.00,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 5,
+    "name": "Pflege",
+    "short_name": "PFL",
+    "pos": 0,
+    "is_default": 0,
+    "hourly": 60.00,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 6,
+    "name": "Support",
+    "short_name": "SUP",
+    "pos": 0,
+    "is_default": 0,
+    "hourly": 60.00,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 7,
+    "name": "Support (Endkunde)",
+    "short_name": "SEU",
+    "pos": 0,
+    "is_default": 0,
+    "hourly": 60.00,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 8,
+    "name": "Abrechnung nach Aufwand (Allgemein)",
+    "short_name": "GEN",
+    "pos": 0,
+    "is_default": 1,
+    "hourly": 60.00,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  },
+  {
+    "id": 9,
+    "name": "Screendesign",
+    "short_name": "SCD",
+    "pos": 0,
+    "is_default": 1,
+    "hourly": 60.00,
+    "created_at": "2024-05-31 18:29:52",
+    "updated_at": "2024-05-31 18:29:52"
+  }
+]

@@ -19,5 +19,6 @@ class PaymentDeadlineData extends Data
         public readonly ?int $days,
         public readonly ?bool $is_immediately,
         public readonly ?bool $is_default,
+        public readonly ?string $invoice_text,
     ) {}
 }

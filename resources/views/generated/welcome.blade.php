@@ -86,7 +86,14 @@
         </xml>
       <![endif]-->
     </span>
-    <div role="article" aria-roledescription="email" lang="en" dir="ltr" style="padding: 24px; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', Ubuntu, Cantarell, 'Helvetica Neue', sans-serif; font-size: max(16px, 1rem);" class="dark-bg-gray-950">
+    <div
+      role="article"
+      aria-roledescription="email"
+      lang="en"
+      dir="ltr"
+      style="font-size: medium; padding: 24px; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', Ubuntu, Cantarell, 'Helvetica Neue', sans-serif; font-size: max(16px, 1rem);"
+      class="dark-bg-gray-950"
+    >
       <!--[if mso]><table role="none" cellpadding="0" cellspacing="0" style="width: 576px" align="center"><tr><td><![endif]-->
       <div style="margin: 0 auto; max-width: 576px; font-family: 'Clear Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;">
         <!--[if mso]><table role="none" cellpadding="0" cellspacing="0" style="width: 100%"><tr><td style="background-color: #fffffe; padding: 24px 36px"><![endif]-->
@@ -127,7 +134,7 @@
             <h1 class="dark-text-gray-300" style="margin: 0 0 24px; font-size: 30px; line-height: 36px; font-weight: 600; color: #0f172a;">Hello there!</h1>
             <p class="dark-text-gray-300" style="margin-top: 16px; margin-bottom: 24px; font-size: 16px; line-height: 24px; color: #475569;">We're happy to have you on board! Please verify your email address in order to activate your account:</p>
             <div>
-              <a style="display: inline-block; border-radius: 4px; background-color: #4338ca; padding: 16px 24px; font-size: 16px; line-height: 1; color: #fffffe; text-decoration: none;" href="https://maizzle.com" class="hover-bg-indigo-600">
+              <a style="display: inline-block; border-radius: 4px; background-color: #4338ca; padding: 16px 24px; font-size: 16px; line-height: 24px; line-height: 1; color: #fffffe; text-decoration: none;" href="https://maizzle.com" class="hover-bg-indigo-600">
                 <!--[if mso]><i style="mso-font-width: 150%; mso-text-raise: 31px;" hidden>&emsp;</i><![endif]-->
                 <span style="mso-text-raise: 16px;">Verify email</span>
                 <!--[if mso]><i style="mso-font-width: 150%;" hidden>&emsp;&#8203;</i><![endif]-->
@@ -149,7 +156,7 @@
         <!--[if mso]></td></tr></table><![endif]-->
         <!--[if mso]><table role="none" cellpadding="0" cellspacing="0" style="width: 100%"><tr><td style="padding: 24px 36px"><![endif]-->
         <div class="sm-px-6" style="padding: 24px 36px;">
-          <p style="margin: 0; text-align: center; font-size: 14px; line-height: 1.625; color: #78716c;">
+          <p style="margin: 0; text-align: center; font-size: 14px; line-height: 20px; line-height: 1.625; color: #78716c;">
             <span style="font-weight: 700;">twiceware solutions e. K.</span>
             <br>
             Inhaber Danny Spangenberg &middot; Belderberg 7 &middot; D-53111 Bonn

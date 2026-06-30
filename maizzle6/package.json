@@ -8,4 +8,5 @@
   },
   "dependencies": {
     "@maizzle/framework": "next"
+  }
 }

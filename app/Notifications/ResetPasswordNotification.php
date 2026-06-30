@@ -17,6 +17,9 @@ class ResetPasswordNotification extends BaseResetPassword
             ->view('generated.reset-password', [
                 'name' => $name,
                 'resetUrl' => $resetUrl,
+                'tenant' => function_exists('tenant') && tenant()
+                    ? tenant()->organisation
+                    : config('app.name'),
             ]);
     }
 

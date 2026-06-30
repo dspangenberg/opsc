@@ -39,7 +39,7 @@ class PdfService
 
         if ($letterhead) {
             $media = $letterhead->firstMedia('file');
-            if ($media) {
+            if ($media && $media->exists()) {
                 $letterheadPdfFile = FileHelperService::createTemporaryFileFromDoc($media->filename.'.pdf',
                     $media->contents());
             }
