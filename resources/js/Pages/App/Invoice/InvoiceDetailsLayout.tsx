@@ -200,7 +200,7 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
               onClick={() => setEditMode(true)}
             />
             <ToolbarButton
-              variant="default"
+              variant="toolbar"
               icon={Edit03Icon}
               title="Stammdaten bearbeiten"
               onClick={handleEditBaseDataButtonClick}
