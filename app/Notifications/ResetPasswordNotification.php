@@ -28,9 +28,7 @@ class ResetPasswordNotification extends BaseResetPassword
         ];
 
         if (function_exists('tenant') && tenant()) {
-            $domain = tenant()->domain
-                ?? tenant()->fallback_domain->domain
-                ?? tenant()->domains->first()?->domain;
+            $domain = tenant()->domains->first()?->domain;
 
             if ($domain && ! str_contains($domain, '.')) {
                 $baseDomain = config('tenancy.identification.central_domains.0');

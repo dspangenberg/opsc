@@ -45,9 +45,7 @@ class PendingUserEmail extends BasePendingUserEmail
             return null;
         }
 
-        $domain = tenant()->domain
-            ?? tenant()->fallback_domain->domain
-            ?? tenant()->domains->first()?->domain;
+        $domain = tenant()->domains->first()?->domain;
 
         if (! $domain) {
             return null;
