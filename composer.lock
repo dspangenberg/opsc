@@ -9504,16 +9504,16 @@
         },
         {
             "name": "spatie/pdf-to-image",
-            "version": "3.2.0",
+            "version": "3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/pdf-to-image.git",
-                "reference": "eb46281e228a2b9723d12c13c365d90b28b99253"
+                "reference": "4a429b291710eae73114d1b983e655be2cbfc294"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/pdf-to-image/zipball/eb46281e228a2b9723d12c13c365d90b28b99253",
-                "reference": "eb46281e228a2b9723d12c13c365d90b28b99253",
+                "url": "https://api.github.com/repos/spatie/pdf-to-image/zipball/4a429b291710eae73114d1b983e655be2cbfc294",
+                "reference": "4a429b291710eae73114d1b983e655be2cbfc294",
                 "shasum": ""
             },
             "require": {
@@ -9558,7 +9558,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/pdf-to-image/issues",
-                "source": "https://github.com/spatie/pdf-to-image/tree/3.2.0"
+                "source": "https://github.com/spatie/pdf-to-image/tree/3.3.0"
             },
             "funding": [
                 {
@@ -9570,7 +9570,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-09T14:43:55+00:00"
+            "time": "2026-06-26T19:19:54+00:00"
         },
         {
             "name": "spatie/php-structure-discoverer",
