@@ -10,6 +10,7 @@ namespace App\Services;
 use App\Mail\VerifyEmailAddressForCloudRegistrationMail;
 use App\Models\TempData;
 use App\Models\Tenant;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Stancl\Tenancy\UniqueIdentifierGenerators\RandomHexGenerator;
@@ -32,7 +33,18 @@ class CloudRegisterService
 
     public function verifyEmailAddressAndCredentials(array $tentantData): string
     {
-        $hostname = parse_url($tentantData['website'], PHP_URL_HOST);
+        $website = $tentantData['website'] ?? '';
+
+        if (! str_contains($website, '://')) {
+            $website = 'https://'.$website;
+        }
+
+        $hostname = parse_url($website, PHP_URL_HOST);
+
+        if (! $hostname) {
+            return '';
+        }
+
         $hostnameParts = explode('.', $hostname);
 
         if (count($hostnameParts) === 2) {
@@ -43,23 +55,25 @@ class CloudRegisterService
             $hostname = $hostnameParts[1];
         }
 
-        return $hostname ?? '';
+        return $hostname;
     }
 
     public function createTenant(array $tenantData): Tenant
     {
-        $tenant = Tenant::create([
-            'first_name' => $tenantData['first_name'],
-            'last_name' => $tenantData['last_name'],
-            'email' => $tenantData['email'],
-            'organisation' => $tenantData['company'],
-            'website' => $tenantData['website'] ?? '',
-            'ready' => false,
-        ]);
-        $tenant->prefix = RandomHexGenerator::generate($tenant);
-        $tenant->save();
-        $tenant->createDomain(['domain' => $tenantData['domain']]);
+        return DB::transaction(function () use ($tenantData) {
+            $tenant = Tenant::create([
+                'first_name' => $tenantData['first_name'],
+                'last_name' => $tenantData['last_name'],
+                'email' => $tenantData['email'],
+                'organisation' => $tenantData['company'],
+                'website' => $tenantData['website'] ?? '',
+                'ready' => false,
+            ]);
+            $tenant->prefix = RandomHexGenerator::generate($tenant);
+            $tenant->save();
+            $tenant->createDomain(['domain' => $tenantData['domain']]);
 
-        return $tenant;
+            return $tenant;
+        });
     }
 }

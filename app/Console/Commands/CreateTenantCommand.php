@@ -8,7 +8,6 @@
 namespace App\Console\Commands;
 
 use App\Facades\CloudRegisterService;
-use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Password;
 
@@ -114,17 +113,15 @@ class CreateTenantCommand extends Command
 
     private function stepConfirm(array $data, array $admin): ?int
     {
-        $tenantData = array_merge($data, $admin);
-
         $this->table(
             ['Feld', 'Wert'],
             [
-                ['Firma', $tenantData['company']],
-                ['Vorname', $tenantData['first_name']],
-                ['Name', $tenantData['last_name']],
-                ['E-Mail', $tenantData['email']],
-                ['Website', $tenantData['website']],
-                ['Subdomain', $tenantData['domain']],
+                ['Firma', $data['company']],
+                ['Vorname', $data['first_name']],
+                ['Name', $data['last_name']],
+                ['E-Mail', $data['email']],
+                ['Website', $data['website']],
+                ['Subdomain', $data['domain']],
             ],
         );
 
@@ -146,11 +143,10 @@ class CreateTenantCommand extends Command
         }
 
         $this->line('Mandant und Admin-User werden erstellt');
-        $tenant = CloudRegisterService::createTenant($tenantData);
-        $tenant->run(function () {
-            $user = User::first();
+        $tenant = CloudRegisterService::createTenant(array_merge($data, $admin));
+        $tenant->run(function () use ($admin): void {
             Password::sendResetLink(
-                ['email' => $user->email],
+                ['email' => $admin['email']],
             );
             $this->line('E-Mail zum Zurücksetzen des Passworts wurde versendet.');
         });
