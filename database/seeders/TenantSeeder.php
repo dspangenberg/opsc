@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\InvoiceType;
 use Illuminate\Database\Seeder;
 
 class TenantSeeder extends Seeder

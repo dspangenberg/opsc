@@ -11,4 +11,19 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
-class BankAccount extends Model {}
+class BankAccount extends Model
+{
+    protected $fillable = [
+        'name',
+        'iban',
+        'bic',
+        'account_owner',
+        'bank_name',
+        'email',
+        'prefix',
+        'is_default',
+        'is_paypal',
+        'is_closed',
+        'bookkeeping_account_id',
+    ];
+}

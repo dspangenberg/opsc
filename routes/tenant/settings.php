@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\App\Bookkeeping\BookkeepingAcountsController;
 use App\Http\Controllers\App\Bookkeeping\BookkeepingRulesController;
 use App\Http\Controllers\App\Bookkeeping\CostCenterController;
+use App\Http\Controllers\App\Setting\BankAccountController;
 use App\Http\Controllers\App\Setting\DocumentTypeController;
 use App\Http\Controllers\App\Setting\LetterheadController;
 use App\Http\Controllers\App\Setting\OfferSectionController;
@@ -63,6 +64,12 @@ Route::put('/settings/documents/document-types/{documentType}/edit', [DocumentTy
 
 Route::redirect('settings/bookkeeping', '/app/settings/bookkeeping/accounts')->name('app.setting.bookkeeping');
 Route::get('/settings/bookkeeping/accounts', [BookkeepingAcountsController::class, 'index'])->name('app.bookkeeping.accounts.index');
+
+Route::get('/settings/bookkeeping/bank-accounts', [BankAccountController::class, 'index'])->name('app.bookkeeping.bank-account.index');
+Route::get('/settings/bookkeeping/bank-accounts/{bank_account}', [BankAccountController::class, 'edit'])->name('app.bookkeeping.bank-account.edit');
+Route::get('/settings/bookkeeping/bank-accounts/create', [BankAccountController::class, 'create'])->name('app.bookkeeping.bank-account.create');
+Route::put('/settings/bookkeeping/bank-accounts/{bank_account}', [BankAccountController::class, 'update'])->name('app.bookkeeping.bank-account.update')->middleware([HandlePrecognitiveRequests::class]);
+Route::post('/settings/bookkeeping/bank-accounts/create', [BankAccountController::class, 'store'])->name('app.bookkeeping.bank-account.store');
 
 Route::get('/settings/bookkeeping/rules', [BookkeepingRulesController::class, 'index'])->name('app.bookkeeping.rules.index');
 Route::get('/settings/bookkeeping/rules/{rule}/edit', [BookkeepingRulesController::class, 'edit'])->name('app.bookkeeping.rules.edit');

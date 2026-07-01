@@ -287,6 +287,11 @@ const buildNavData = (
                 activePath: '/app/settings/bookkeeping',
                 items: [
                   {
+                    title: 'Bankkonten',
+                    url: route('app.bookkeeping.bank-account.index', {}, false),
+                    activePath: '/app/settings/bookkeeping/bank-accounts'
+                  },
+                  {
                     title: 'Buchhaltungskonten',
                     url: route('app.bookkeeping.accounts.index', {}, false),
                     activePath: '/app/settings/bookkeeping/accounts'

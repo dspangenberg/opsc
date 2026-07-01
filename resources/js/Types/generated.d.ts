@@ -21,10 +21,15 @@ declare namespace App {
       readonly name: string;
       readonly iban: string;
       readonly bic: string;
-      readonly bank_code: string;
-      readonly prefix: string;
-      readonly bookkeeping_account_id: string;
+      readonly prefix: string | null;
+      readonly email: string | null;
+      readonly bank_name: string | null;
+      readonly account_owner: string | null;
+      readonly bookkeeping_account_id: string | null;
       readonly pos: number;
+      readonly is_default: boolean;
+      readonly is_paypal: boolean;
+      readonly is_closed: boolean;
     };
     export type BillableProjectData = {
       readonly id: number | null;
@@ -459,10 +464,10 @@ declare namespace App {
       readonly dunning_days: number;
       readonly dunning_level: number;
       readonly notables: App.Data.NoteableData[];
-      readonly zugferd_profile: App.Enums.ZugferdProfileEnum;
+      readonly zugferd_profile: App.Enums.ZugferdProfileEnum | null;
       readonly zugferd_route_id: string | null;
       readonly is_zugferd: boolean;
-      readonly is_canceled: boolean;
+      readonly is_canceled: boolean | null;
     };
     export type InvoiceLineData = {
       readonly id: number | null;
@@ -598,6 +603,7 @@ declare namespace App {
       readonly days: number | null;
       readonly is_immediately: boolean | null;
       readonly is_default: boolean | null;
+      readonly invoice_text: string | null;
     };
     export type PhoneCategoryData = {
       readonly id: number | null;
