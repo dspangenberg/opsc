@@ -1,14 +1,16 @@
 import { Link } from '@inertiajs/react'
 import { type FC, useMemo } from 'react'
 import { ArrayTextField } from '@/Components/ArrayTextField'
+
 import {
   DataCard,
   DataCardContent,
   DataCardField,
-  DataCardHeader,
+  DataCardFieldGroup,
   DataCardSection
 } from '@/Components/DataCard'
 import { StatsField } from '@/Components/StatsField'
+import { Alert } from '@/Components/twc-ui/alert'
 import { cn } from '@/Lib/utils'
 
 interface InvoiceDetailsSideProps {
@@ -19,13 +21,18 @@ interface InvoiceDetailsSideProps {
 
 export const InvoiceDetailsSide: FC<InvoiceDetailsSideProps> = ({
   invoice,
-  zugferd_profiles
+  zugferd_profiles = []
 }: InvoiceDetailsSideProps) => {
   const currencyFormatter = new Intl.NumberFormat('de-DE', {
     style: 'decimal',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })
+
+  const zugferdProfile = useMemo(
+    () => zugferd_profiles?.find(item => item.id === invoice.zugferd_profile)?.name,
+    [zugferd_profiles, invoice.zugferd_profile]
+  )
 
   const contactRoute = useMemo(
     () => route('app.contact.details', { id: invoice.contact_id }),
@@ -43,60 +50,118 @@ export const InvoiceDetailsSide: FC<InvoiceDetailsSideProps> = ({
   }, [invoice.parent_id])
 
   const title = `RG-${invoice.formated_invoice_number}`
-
   return (
     <DataCard title={title}>
-      <DataCardHeader
-        className={cn(
-          'grid divide-x divide-border/50 rounded-md border border-border/50 border-b bg-background p-1.5',
-          invoice.is_draft ? 'grid-cols-3' : 'grid-cols-4'
-        )}
-      >
-        <StatsField label="netto" value={currencyFormatter.format(invoice.amount_net)} />
-        <StatsField label="USt." value={currencyFormatter.format(invoice.amount_tax)} />
-        <StatsField label="brutto" value={currencyFormatter.format(invoice.amount_gross)} />
-        {!invoice.is_draft && (
-          <StatsField label="offen" value={currencyFormatter.format(invoice.amount_open || 0)} />
-        )}
-      </DataCardHeader>
       <DataCardContent>
         <DataCardSection
-          className={cn('grid space-y-0', invoice.is_draft ? 'grid-cols-2' : 'grid-cols-3')}
-          title="Rechnungsdetails"
+          className={cn(
+            'grid border py-2 pb-0 tabular-nums',
+            invoice.is_draft ? 'grid-cols-3' : 'grid-cols-4'
+          )}
         >
-          <DataCardField variant="vertical" label="Datum" value={invoice.issued_on} />
-          <DataCardField variant="vertical" label="Fälligkeit" value={invoice.due_on} />
+          <StatsField label="netto" value={currencyFormatter.format(invoice.amount_net)} />
+          <StatsField label="USt." value={currencyFormatter.format(invoice.amount_tax)} />
+          <StatsField label="brutto" value={currencyFormatter.format(invoice.amount_gross)} />
           {!invoice.is_draft && (
-            <DataCardField
-              variant="vertical"
-              label="versendet"
-              value={invoice.sent_at?.substring(0, 10)}
-            />
+            <StatsField label="offen" value={currencyFormatter.format(invoice.amount_open || 0)} />
           )}
         </DataCardSection>
-        <DataCardSection className="grid grid-cols-2">
-          <DataCardField
-            variant="vertical"
-            label="Rechnungstyp"
-            value={invoice.type?.display_name}
-          />
-          <DataCardField variant="vertical" label="Umsatzsteuer" value={invoice.tax?.name} />
+
+        {!invoice.invoice_address.length && (
+          <Alert variant="warning">
+            <span>Rechnung hat keine Rechnungsadresse!</span>
+          </Alert>
+        )}
+
+        <DataCardSection title="Details">
+          <DataCardFieldGroup className="grid grid-cols-6">
+            <DataCardField
+              className="col-span-2"
+              variant="vertical"
+              label="Datum"
+              value={invoice.issued_on}
+            />
+            <DataCardField
+              className="col-span-3"
+              variant="vertical"
+              label="Fälligkeit"
+              value={invoice.due_on}
+            >
+              {invoice.due_on}{' '}
+              {invoice.dunning_days > 0 && (
+                <span className="text-destructive">+{invoice.dunning_days}</span>
+              )}
+            </DataCardField>
+            <DataCardField variant="vertical" label="MS" value={invoice.dunning_level} />
+          </DataCardFieldGroup>
+          <DataCardFieldGroup className="grid grid-cols-3">
+            <DataCardField
+              variant="vertical"
+              label="Rechnungstyp"
+              value={invoice.type?.abbreviation}
+            />
+            <DataCardField
+              className="col-span-2"
+              variant="vertical"
+              label="Leistungsdatum"
+              empty="ohne"
+              value={invoice.service_provision || invoice.service_period_begin}
+            >
+              {invoice.service_period_begin ? (
+                <>
+                  {invoice.service_period_begin} &ndash; {invoice.service_period_end}
+                </>
+              ) : (
+                invoice.service_provision
+              )}
+            </DataCardField>
+          </DataCardFieldGroup>
         </DataCardSection>
-        <DataCardSection>
+        <DataCardSection title="Rechnungsempfänger">
           <DataCardField
-            className="col-span-2"
             variant="vertical"
-            label="Leistungsdatum"
-            value={invoice.service_provision || invoice.service_period_begin}
+            label="Debitor"
+            value={invoice.contact?.full_name}
+            className="col-span-2 truncate"
           >
-            {invoice.service_period_begin ? (
-              <>
-                {invoice.service_period_begin} &ndash; {invoice.service_period_end}
-              </>
-            ) : (
-              invoice.service_provision
-            )}
+            <Link href={contactRoute} className="hover:underline">
+              {invoice.contact?.formated_debtor_number} &ndash; {invoice.contact?.full_name}
+            </Link>
           </DataCardField>
+
+          <DataCardFieldGroup className="grid grid-cols-2">
+            <DataCardField variant="vertical" label="Umsatzsteuer" value={invoice.tax?.name} />
+            <DataCardField variant="vertical" label="Umsatzsteuer-ID" value={invoice.vat_id} />
+          </DataCardFieldGroup>
+          <DataCardField
+            variant="vertical"
+            label="Rechnungsanschrift"
+            value={invoice.invoice_address as unknown as string[]}
+          >
+            <ArrayTextField lines={invoice.invoice_address} />
+          </DataCardField>
+          <DataCardField
+            className="whitespace-normal"
+            variant="vertical"
+            label="Zusatztext"
+            truncate={false}
+            value={invoice.additional_text}
+          />
+        </DataCardSection>
+        {invoice.is_zugferd && (
+          <DataCardSection title="ZUGFeRD">
+            <DataCardFieldGroup className="grid grid-cols-2">
+              <DataCardField variant="vertical" label="Profil" value={zugferdProfile} />
+              <DataCardField
+                variant="vertical"
+                label="Leitweg-ID"
+                value={invoice.zugferd_route_id}
+              />
+            </DataCardFieldGroup>
+          </DataCardSection>
+        )}
+
+        <DataCardSection title="Verknüpfungen">
           <DataCardField
             variant="vertical"
             label="Übergeordnete Rechnung"
@@ -106,7 +171,6 @@ export const InvoiceDetailsSide: FC<InvoiceDetailsSideProps> = ({
               {invoice.parent_invoice?.formated_invoice_number}
             </Link>
           </DataCardField>
-
           <DataCardField
             className="col-span-2"
             variant="vertical"
@@ -120,41 +184,9 @@ export const InvoiceDetailsSide: FC<InvoiceDetailsSideProps> = ({
             value={invoice.offer?.formated_offer_number}
           >
             <Link href={offerRoute} className="hover:underline">
-              {invoice.offer?.formated_offer_number}
+              AG-{invoice.offer?.formated_offer_number} vom {invoice.offer?.issued_on}
             </Link>
           </DataCardField>
-        </DataCardSection>
-
-        <DataCardSection title="Rechnungsempfänger">
-          <DataCardField
-            variant="vertical"
-            label="Debitor"
-            value={invoice.contact?.full_name}
-            className="col-span-3"
-          >
-            <Link href={contactRoute} className="hover:underline">
-              {invoice.contact?.formated_debtor_number} &ndash; {invoice.contact?.full_name}
-            </Link>
-          </DataCardField>
-          <DataCardField variant="vertical" label="Umsatzsteuer-ID" value={invoice.vat_id} />
-        </DataCardSection>
-        <DataCardSection>
-          <DataCardField
-            variant="vertical"
-            label="Rechnungsanschrift"
-            value={invoice.invoice_address as unknown as string[]}
-          >
-            <ArrayTextField lines={invoice.invoice_address} />
-          </DataCardField>
-        </DataCardSection>
-        <DataCardSection suppressEmptyText>
-          <DataCardField
-            className="whitespace-normal"
-            variant="vertical"
-            label="Zusatztext"
-            truncate={false}
-            value={invoice.additional_text}
-          />
         </DataCardSection>
       </DataCardContent>
     </DataCard>

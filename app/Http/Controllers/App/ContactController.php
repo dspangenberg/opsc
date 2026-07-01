@@ -214,6 +214,9 @@ class ContactController extends Controller
         ]);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function edit(Contact $contact)
     {
         $contact->load([

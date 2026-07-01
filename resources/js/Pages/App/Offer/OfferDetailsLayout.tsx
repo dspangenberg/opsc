@@ -195,7 +195,7 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children, ...props 
         {offer.is_draft && (
           <>
             <ToolbarButton
-              variant="default"
+              variant="toolbar"
               icon={Edit03Icon}
               title="Stammdaten bearbeiten"
               onClick={handleEditBaseDataButtonClick}

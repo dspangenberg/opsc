@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\InvoiceType;
 use Illuminate\Database\Seeder;
 
 class TenantSeeder extends Seeder
@@ -15,6 +16,7 @@ class TenantSeeder extends Seeder
             AddressCategorySeeder::class,
             CountrySeeder::class,
             DocumentTypeSeeder::class,
+            InvoiceTypeSeeder::class,
             PrintLayoutSeeder::class,
             PaymentDeadlineSeeder::class,
             PhoneCategorySeeder::class,

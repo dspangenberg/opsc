@@ -176,7 +176,7 @@ class ZugferdService
 
     public function getPaymentInformation(): void
     {
-        if ($this->invoice->type->zugferd_id === '384' && $this->invoice->parent_invoice) {
+        if (($this->invoice->type->zugferd_id === '381' || $this->invoice->type->zugferd_id === '384') && $this->invoice->parent_invoice) {
             $this->xmlDoc
                 ->addDocumentPaymentMean('97',
                     'Der Gutschriftbetrag wird mit der Rechnung '.$this->invoice->parent_invoice->formated_invoice_number.' verrechnet.');
@@ -262,7 +262,10 @@ class ZugferdService
             $this->xmlDoc->addDocumentNote($this->invoice->additional_text, '', 'AFB');
         }
 
-        if ($this->invoice->type->zugferd_id === '384' && $this->invoice->parent_invoice) {
+        
+        // Für Storno-Rechnungen wird nun die ID 381 (Credit note) verwendet.
+
+        if (($this->invoice->type->zugferd_id === '381' || $this->invoice->type->zugferd_id === '384') && $this->invoice->parent_invoice) {
             $this->xmlDoc->addDocumentInvoiceReferencedDocument(
                 $invoice->parent_invoice->formated_invoice_number,
                 null,

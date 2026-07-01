@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { InvoiceDetailsLayout } from '@/Pages/App/Invoice/InvoiceDetailsLayout'
-import { InvoiceDetailsSideLight } from '@/Pages/App/Invoice/InvoiceDetailsSideLight'
+import { InvoiceDetailsSide } from '@/Pages/App/Invoice/InvoiceDetailsSide'
 import { InvoiceLinesEditor } from '@/Pages/App/Invoice/InvoiceLinesEditor'
 import { useInvoiceTable } from '@/Pages/App/Invoice/InvoiceTableProvider'
 import { InvoicingTable, type LineCommandProps } from '@/Pages/App/Invoice/InvoicingTable'
@@ -74,7 +74,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ children }) => {
       <InvoiceDetailsContent>{children}</InvoiceDetailsContent>
       <div className="h-fit w-sm flex-none px-1">
         <div className="fixed w-sm space-y-6">
-          <InvoiceDetailsSideLight invoice={invoice} zugferd_profiles={zugferd_profiles} />
+          <InvoiceDetailsSide invoice={invoice} zugferd_profiles={zugferd_profiles} />
         </div>
       </div>
     </InvoiceDetailsLayout>

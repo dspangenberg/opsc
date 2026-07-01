@@ -866,6 +866,7 @@ class InvoiceController extends Controller
                     'subject' => $template['subject'],
                     'email_account_id' => $emailAccount->id,
                 ]),
+                'zugferd_profiles' => Options::forEnum(ZugferdProfileEnum::class),
             ]);
     }
 
