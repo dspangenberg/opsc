@@ -23,12 +23,14 @@ const RowActions = ({ row }: { row: Row<App.Data.BankAccountData> }) => {
           icon={CheckLineIcon}
           separator
           title="Als Standardkonto setzen"
+          isDisabled={row.original.is_default}
           onAction={() => setDefaultAccount(row.original)}
         />
         <MenuItem
           icon={Delete03Icon}
           title="Löschen"
           variant="destructive"
+          isDisabled={row.original.is_default}
           onAction={() => deleteBankAccount(row.original)}
         />
       </DropdownButton>
@@ -39,7 +41,7 @@ const RowActions = ({ row }: { row: Row<App.Data.BankAccountData> }) => {
 const deleteBankAccount = async (row: App.Data.BankAccountData) => {
   const promise = await AlertDialog.call({
     title: 'Bankkonto löschen',
-    message: `Möchtest Du den Bankkonto ${row.name} wirklich löschen?`,
+    message: `Möchtest Du das Bankkonto ${row.name} wirklich löschen?`,
     buttonTitle: 'Bankkonto löschen'
   })
   if (promise) {
@@ -63,6 +65,14 @@ export const columns: ColumnDef<App.Data.BankAccountData>[] = [
             <StatusIcon variant="success" size="default" />
           </div>
         )
+      } else {
+        if (row.original.is_closed) {
+          return (
+            <div className="mx-auto flex items-center justify-center">
+              <StatusIcon variant="destructive" size="default" />
+            </div>
+          )
+        }
       }
     }
   },
@@ -98,6 +108,16 @@ export const columns: ColumnDef<App.Data.BankAccountData>[] = [
     header: 'BIC',
     size: 80,
     cell: ({ getValue }) => <div>{getValue() as string}</div>
+  },
+  {
+    accessorKey: 'bank_name',
+    header: 'Bank',
+    size: 100,
+    cell: ({ row }) => (
+      <div className="truncate">
+        {row.original.is_paypal ? <span>Paypal</span> : <span>{row.original.bank_name}</span>}
+      </div>
+    )
   },
   {
     id: 'actions',

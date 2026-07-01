@@ -9,8 +9,10 @@ use App\Http\Requests\BankAccountRequest;
 use App\Models\BankAccount;
 use App\Models\BookkeepingAccount;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class BankAccountController extends Controller
 {
@@ -44,17 +46,32 @@ class BankAccountController extends Controller
         ]);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function setDefault(BankAccount $bank_account): RedirectResponse
     {
-        BankAccount::query()->update(['is_default' => false]);
-        $bank_account->is_default = true;
-        $bank_account->save();
-
+        DB::transaction(function () use ($bank_account) {
+            BankAccount::query()->update(['is_default' => false]);
+            $bank_account->is_default = true;
+            $bank_account->save();
+        });
         return redirect()->route('app.bookkeeping.bank-account.index');
     }
 
     public function destroy(BankAccount $bank_account): RedirectResponse
     {
+        if ($bank_account->is_default) {
+            Inertia::flash('toast', [
+                'type' => 'error',
+                'message' => 'Das Standardkonto kann nicht gelöscht werden.'
+            ]);
+
+
+            return redirect()
+                ->route('app.bookkeeping.bank-account.index');
+        }
+
         $bank_account->delete();
 
         return redirect()->route('app.bookkeeping.bank-account.index');

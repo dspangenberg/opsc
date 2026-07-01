@@ -67,12 +67,6 @@ export const InvoiceDetailsSide: FC<InvoiceDetailsSideProps> = ({
           )}
         </DataCardSection>
 
-        {!invoice.invoice_address.length && (
-          <Alert variant="warning">
-            <span>Rechnung hat keine Rechnungsadresse!</span>
-          </Alert>
-        )}
-
         <DataCardSection title="Details">
           <DataCardFieldGroup className="grid grid-cols-6">
             <DataCardField

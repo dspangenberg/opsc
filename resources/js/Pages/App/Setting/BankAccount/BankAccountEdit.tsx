@@ -70,6 +70,7 @@ const BankAccountEdit: React.FC<Props> = ({ bank_account, bookkeeping_accounts }
                 <FormCheckbox label="Paypal-Konto" {...form.registerCheckbox('is_paypal')} />
                 <FormCheckbox
                   label="Konto ist geschlossen"
+                  isDisabled={form.data.is_default}
                   {...form.registerCheckbox('is_closed')}
                 />
               </div>
