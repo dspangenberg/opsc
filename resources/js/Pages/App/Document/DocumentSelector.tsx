@@ -27,7 +27,7 @@ const DocumentSelectorComponent: React.FC<DocumentSelectorComponentProps> = ({
         }
       })
       .then(response => {
-        setDocuments(response.data.documents || [])
+        setDocuments(response.data.data || [])
       })
       .catch(error => {
         console.error('Error loading documents:', error)

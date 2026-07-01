@@ -114,6 +114,9 @@ class PdfService
                             if (file_exists($attachmentFile)) {
                                 $files[] = $attachmentFile;
                             }
+                        } else {
+                            $mpdf->AddPage();
+                            $mpdf->WriteText(10, 20, $document->title.' nicht gefunden');
                         }
                     }
                 }

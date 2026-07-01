@@ -18,7 +18,12 @@ interface Props {
 
 export const InvoiceSendByMail: React.FC<Props> = ({ invoice, mail }) => {
   const { email_accounts } = usePage().props.auth
-  const form = useForm<App.Data.SendEmailData>('invoice-form', 'post', route('app.invoice.store-send-by-mail', { invoice: invoice.id }), mail)
+  const form = useForm<App.Data.SendEmailData>(
+    'invoice-form',
+    'post',
+    route('app.invoice.store-send-by-mail', { invoice: invoice.id }),
+    mail
+  )
 
   return (
     <InvoiceDetailsLayout invoice={invoice}>
@@ -65,7 +70,7 @@ export const InvoiceSendByMail: React.FC<Props> = ({ invoice, mail }) => {
         </FormCard>
       </div>
       <div className="h-fit w-sm flex-none space-y-6 px-1">
-        <InvoiceDetailsSide invoice={invoice} />
+        <InvoiceDetailsSidex invoice={invoice} />
       </div>
     </InvoiceDetailsLayout>
   )

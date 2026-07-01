@@ -208,10 +208,12 @@ CSS;
             foreach ($tenants as $tenant) {
                 $tenant->run(function () use ($tenant, $defaultCss) {
                     $settings = app(GeneralSettings::class);
-                    $settings->pdf_global_css = $defaultCss;
-                    $settings->save();
+                    if (! $settings->pdf_global_css) {
+                        $settings->pdf_global_css = $defaultCss;
+                        $settings->save();
 
-                    $this->command->info("Updated PDF CSS for tenant: {$tenant->organisation}");
+                        $this->command->info("Updated PDF CSS for tenant: {$tenant->organisation}");
+                    }
                 });
             }
         });

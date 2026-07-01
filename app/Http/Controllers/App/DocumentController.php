@@ -43,7 +43,7 @@ use Throwable;
 
 class DocumentController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request): Response|string
     {
         $contacts = Contact::query()->orderBy('name')->orderBy('first_name')->get();
         $types = DocumentType::query()->orderBy('name')->get();
@@ -63,7 +63,7 @@ class DocumentController extends Controller
 
         $filters = $request->input('filters', []);
 
-        // Solange der Filter is_hidden nicht explizit auf true gesetzt ist, ausgeblendete Dokumenten nicht anzeigen
+        // Solange der Filter is_hidden nicht explizit auf true gesetzt ist, ausgeblendete Dokumente nicht anzeigen
 
         if (($filters['is_hidden']['value'] ?? null) != 1) {
             $filters['is_hidden'] = ['operator' => '=', 'value' => '0'];
@@ -85,6 +85,11 @@ class DocumentController extends Controller
             ->paginate(20);
 
         $bookmarks = Bookmark::where('model', Document::class)->orderBy('name')->get();
+
+        // Für den DocumentSelector (Angebote) benötigen wir die Daten im JSON-Format
+        if ($request->expectsJson() === true) {
+            return DocumentData::collect($documents)->toJson();
+        }
 
         return Inertia::render('App/Document/DocumentIndex', [
             'documents' => Inertia::scroll(fn () => DocumentData::collect($documents)),

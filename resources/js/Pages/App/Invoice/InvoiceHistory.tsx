@@ -3,7 +3,6 @@ import { DataTable } from '@/Components/DataTable'
 import { HistoryView } from '@/Components/Shared/History/HistoryView'
 import { InvoiceDetailsLayout } from '@/Pages/App/Invoice/InvoiceDetailsLayout'
 import { InvoiceDetailsSide } from '@/Pages/App/Invoice/InvoiceDetailsSide'
-import { InvoiceDetailsSideLight } from '@/Pages/App/Invoice/InvoiceDetailsSideLight'
 import { columns } from '@/Pages/App/Invoice/InvoicePaymentColumns'
 import type { PageProps } from '@/Types'
 
@@ -24,7 +23,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({ invoice, zugferd_profil
       </div>
       <div className="h-fit w-full max-w-sm flex-none border-l! border-stone-200 px-1">
         <div className="fixed w-full max-w-sm space-y-6">
-          <InvoiceDetailsSideLight invoice={invoice} zugferd_profiles={zugferd_profiles} />
+          <InvoiceDetailsSide invoice={invoice} zugferd_profiles={zugferd_profiles} />
         </div>
       </div>
     </InvoiceDetailsLayout>
