@@ -62,14 +62,17 @@ Route::post('/settings/documents/document-types', [DocumentTypeController::class
 Route::get('/settings/documents/document-types/{documentType}/edit', [DocumentTypeController::class, 'edit'])->name('app.setting.document_type.edit')->middleware([HandlePrecognitiveRequests::class]);
 Route::put('/settings/documents/document-types/{documentType}/edit', [DocumentTypeController::class, 'update'])->name('app.setting.document_type.update')->middleware([HandlePrecognitiveRequests::class]);
 
-Route::redirect('settings/bookkeeping', '/app/settings/bookkeeping/accounts')->name('app.setting.bookkeeping');
+Route::redirect('settings/bookkeeping', '/app/settings/bookkeeping/bank-accounts')->name('app.setting.bookkeeping');
 Route::get('/settings/bookkeeping/accounts', [BookkeepingAcountsController::class, 'index'])->name('app.bookkeeping.accounts.index');
 
 Route::get('/settings/bookkeeping/bank-accounts', [BankAccountController::class, 'index'])->name('app.bookkeeping.bank-account.index');
-Route::get('/settings/bookkeeping/bank-accounts/{bank_account}', [BankAccountController::class, 'edit'])->name('app.bookkeeping.bank-account.edit');
 Route::get('/settings/bookkeeping/bank-accounts/create', [BankAccountController::class, 'create'])->name('app.bookkeeping.bank-account.create');
+Route::get('/settings/bookkeeping/bank-accounts/{bank_account}', [BankAccountController::class, 'edit'])->name('app.bookkeeping.bank-account.edit');
 Route::put('/settings/bookkeeping/bank-accounts/{bank_account}', [BankAccountController::class, 'update'])->name('app.bookkeeping.bank-account.update')->middleware([HandlePrecognitiveRequests::class]);
-Route::post('/settings/bookkeeping/bank-accounts/create', [BankAccountController::class, 'store'])->name('app.bookkeeping.bank-account.store');
+Route::post('/settings/bookkeeping/bank-accounts/store', [BankAccountController::class, 'store'])->name('app.bookkeeping.bank-account.store')->middleware([HandlePrecognitiveRequests::class]);
+Route::delete('/settings/bookkeeping/bank-accounts/{bank_account}', [BankAccountController::class, 'destroy'])->name('app.bookkeeping.bank-account.destroy');
+Route::put('/settings/bookkeeping/bank-accounts/{bank_account}/default', [BankAccountController::class, 'setDefault'])->name('app.bookkeeping.bank-account.set-default')->middleware([HandlePrecognitiveRequests::class]);
+
 
 Route::get('/settings/bookkeeping/rules', [BookkeepingRulesController::class, 'index'])->name('app.bookkeeping.rules.index');
 Route::get('/settings/bookkeeping/rules/{rule}/edit', [BookkeepingRulesController::class, 'edit'])->name('app.bookkeeping.rules.edit');

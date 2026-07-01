@@ -15,17 +15,17 @@ class BankAccountData extends Data
 {
     public function __construct(
         public readonly ?int $id,
-        public readonly string $name,
-        public readonly string $iban,
-        public readonly string $bic,
+        public readonly ?string $name,
+        public readonly ?string $iban,
+        public readonly ?string $bic,
         public readonly ?string $prefix,
         public readonly ?string $email,
         public readonly ?string $bank_name,
         public readonly ?string $account_owner,
         public readonly ?int $bookkeeping_account_id,
-        public readonly int $pos,
-        public readonly bool $is_default,
-        public readonly bool $is_paypal,
-        public readonly bool $is_closed,
+        public readonly ?int $pos,
+        public readonly ?bool $is_default,
+        public readonly ?bool $is_paypal,
+        public readonly ?bool $is_closed,
     ) {}
 }

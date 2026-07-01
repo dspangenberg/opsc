@@ -1,13 +1,12 @@
-import { Add01Icon, Tick01Icon } from '@hugeicons/core-free-icons'
+import { Add01Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import type * as React from 'react'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { DataTable } from '@/Components/DataTable'
 import { PageContainer } from '@/Components/PageContainer'
 import { Pagination } from '@/Components/Pagination'
 import { Button } from '@/Components/twc-ui/button'
 import { Toolbar } from '@/Components/twc-ui/toolbar'
-import { Badge } from '@/Components/ui/badge'
 import type { PageProps } from '@/Types'
 import { columns } from './BankAccountIndexColumns'
 
@@ -16,15 +15,13 @@ interface BankAccountIndexPageProps extends PageProps {
 }
 
 const BankAccountIndex: React.FC<BankAccountIndexPageProps> = ({ bank_accounts }) => {
-  const [selectedRows, setSelectedRows] = useState<App.Data.BankAccountData[]>([])
-
   const breadcrumbs = useMemo(
     () => [{ title: 'Einstellungen' }, { title: 'Buchhaltung' }, { title: 'Bankkonten' }],
     []
   )
 
   const handleDocumentTypeAdd = () => {
-    router.get(route('app.setting.document_type.create'))
+    router.get(route('app.bookkeeping.bank-account.create'))
   }
 
   const toolbar = useMemo(
@@ -33,28 +30,13 @@ const BankAccountIndex: React.FC<BankAccountIndexPageProps> = ({ bank_accounts }
         <Button
           variant="toolbar-default"
           icon={Add01Icon}
-          title="Neuer Dokumenttyp"
+          title="Neues Bankkonto"
           onClick={handleDocumentTypeAdd}
         />
       </Toolbar>
     ),
     []
   )
-
-  const actionBar = useMemo(() => {
-    return (
-      <Toolbar variant="secondary" className="px-4 pt-2">
-        <div className="self-center text-sm">
-          <Badge variant="outline" className="mr-1.5 bg-background">
-            {selectedRows.length}
-          </Badge>
-          ausgewählte Datensätze
-        </div>
-        <Button variant="ghost" size="auto" icon={Tick01Icon} title="als bestätigt markieren" />
-        <div className="flex-1 text-right font-medium text-sm">x</div>
-      </Toolbar>
-    )
-  }, [selectedRows.length])
 
   const footer = useMemo(() => {
     // Nur Pagination rendern, wenn cost_centers existiert
@@ -71,8 +53,6 @@ const BankAccountIndex: React.FC<BankAccountIndexPageProps> = ({ bank_accounts }
     >
       <DataTable
         columns={columns}
-        actionBar={actionBar}
-        onSelectedRowsChange={setSelectedRows}
         data={bank_accounts.data}
         footer={footer}
         itemName="Bankkonten"

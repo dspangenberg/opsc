@@ -3,12 +3,14 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { Delete03Icon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
+import { CheckLineIcon, Delete03Icon, MoreVerticalCircle01Icon } from '@hugeicons/core-free-icons'
+import { router } from '@inertiajs/core'
 import { Link } from '@inertiajs/react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
+import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { MenuItem } from '@/Components/twc-ui/menu'
-import { Checkbox } from '@/Components/ui/checkbox'
+import { StatusIcon } from '@/Components/twc-ui/status-icon'
 
 const editUrl = (id: number | null) =>
   id ? route('app.bookkeeping.bank-account.edit', { bank_account: id }) : '#'
@@ -17,41 +19,57 @@ const RowActions = ({ row }: { row: Row<App.Data.BankAccountData> }) => {
   return (
     <div className="mx-auto">
       <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
-        <MenuItem icon={Delete03Icon} title="Löschen" variant="destructive" />
+        <MenuItem
+          icon={CheckLineIcon}
+          separator
+          title="Als Standardkonto setzen"
+          onAction={() => setDefaultAccount(row.original)}
+        />
+        <MenuItem
+          icon={Delete03Icon}
+          title="Löschen"
+          variant="destructive"
+          onAction={() => deleteBankAccount(row.original)}
+        />
       </DropdownButton>
     </div>
   )
 }
 
+const deleteBankAccount = async (row: App.Data.BankAccountData) => {
+  const promise = await AlertDialog.call({
+    title: 'Bankkonto löschen',
+    message: `Möchtest Du den Bankkonto ${row.name} wirklich löschen?`,
+    buttonTitle: 'Bankkonto löschen'
+  })
+  if (promise) {
+    router.delete(route('app.bookkeeping.bank-account.destroy', { bank_account: row.id }))
+  }
+}
+
+const setDefaultAccount = async (row: App.Data.BankAccountData) => {
+  router.put(route('app.bookkeeping.bank-account.set-default', { bank_account: row.id }))
+}
+
 export const columns: ColumnDef<App.Data.BankAccountData>[] = [
   {
-    id: 'select',
-    size: 30,
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-        className="mx-3 bg-background align-middle"
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={value => row.toggleSelected(!!value)}
-          className="mx-3 bg-background align-middle"
-          aria-label="Select row"
-        />
-      </div>
-    )
+    accessorKey: 'is_default',
+    header: '',
+    size: 20,
+    cell: ({ row }) => {
+      if (row.original.is_default) {
+        return (
+          <div className="mx-auto flex items-center justify-center">
+            <StatusIcon variant="success" size="default" />
+          </div>
+        )
+      }
+    }
   },
   {
     accessorKey: 'name',
     header: 'Name',
-    size: 300,
+    size: 200,
     cell: ({ row, getValue }) => (
       <Link
         href={editUrl(row.original.id)}
@@ -60,6 +78,26 @@ export const columns: ColumnDef<App.Data.BankAccountData>[] = [
         {getValue() as string}
       </Link>
     )
+  },
+  {
+    accessorKey: 'iban',
+    header: 'IBAN',
+    size: 100,
+    cell: ({ row }) => (
+      <div className="truncate">
+        {row.original.is_paypal ? (
+          <span>{row.original.email}</span>
+        ) : (
+          <span>{row.original.iban}</span>
+        )}
+      </div>
+    )
+  },
+  {
+    accessorKey: 'bic',
+    header: 'BIC',
+    size: 80,
+    cell: ({ getValue }) => <div>{getValue() as string}</div>
   },
   {
     id: 'actions',
