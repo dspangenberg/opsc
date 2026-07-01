@@ -16,12 +16,12 @@ import { cn } from '@/Lib/utils'
 interface InvoiceDetailsSideProps {
   invoice: App.Data.InvoiceData
   showSecondary?: boolean
-  zugferd_profiles: LaravelOptions[]
+  zugferd_profiles?: LaravelOptions[]
 }
 
 export const InvoiceDetailsSide: FC<InvoiceDetailsSideProps> = ({
   invoice,
-  zugferd_profiles
+  zugferd_profiles = []
 }: InvoiceDetailsSideProps) => {
   const currencyFormatter = new Intl.NumberFormat('de-DE', {
     style: 'decimal',

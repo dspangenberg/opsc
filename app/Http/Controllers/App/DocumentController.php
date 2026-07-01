@@ -29,6 +29,7 @@ use App\Models\OfficeTemplate;
 use App\Models\Project;
 use App\Models\User;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -43,7 +44,7 @@ use Throwable;
 
 class DocumentController extends Controller
 {
-    public function index(Request $request): Response|string
+    public function index(Request $request): Response|JsonResponse
     {
         $contacts = Contact::query()->orderBy('name')->orderBy('first_name')->get();
         $types = DocumentType::query()->orderBy('name')->get();
@@ -88,7 +89,9 @@ class DocumentController extends Controller
 
         // Für den DocumentSelector (Angebote) benötigen wir die Daten im JSON-Format
         if ($request->expectsJson() === true) {
-            return DocumentData::collect($documents)->toJson();
+            $data = DocumentData::collect($documents);
+
+            return response()->json($data->toJson());
         }
 
         return Inertia::render('App/Document/DocumentIndex', [

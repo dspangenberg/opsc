@@ -41,7 +41,7 @@ export const InvoiceDetailsEditBaseData: React.FC<Props> = ({
         />
       </div>
       <div className="h-fit w-sm flex-none space-y-6 px-1">
-        <InvoiceDetailsSide invoice={invoice} />
+        <InvoiceDetailsSide zugferd_profiles={zugferd_profiles} invoice={invoice} />
       </div>
     </InvoiceDetailsLayout>
   )

@@ -32,7 +32,7 @@
         <h2>Rechnung</h2>
     @endif
 
-    @if($invoice->parent_invoice && $invoice->type->zugferd_id === "384")
+    @if($invoice->parent_invoice && ($invoice->type->zugferd_id === "381" || $invoice->type->zugferd_id === "384"))
         <div style="margin-top: -10px;">
             <strong>
                 zur Rechnung Nr. {{ $invoice->parent_invoice->formated_invoice_number }} vom {{ $invoice->parent_invoice->issued_on?->format('d.m.Y') }}

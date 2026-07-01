@@ -20,6 +20,8 @@ class InvoiceType extends Model
         'display_name',
         'abbreviation',
         'key',
+        'zugferd_id',
+        'is_default',
     ];
 
     protected function casts(): array

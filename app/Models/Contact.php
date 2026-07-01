@@ -298,8 +298,9 @@ class Contact extends Model
     {
 
         $address = $this->getInvoiceAddress($contactId);
-        if (! $address) return '';
-
+        if (! $address) {
+            return '';
+        }
         $lines[] = $this->full_name;
 
         if ($contactId) {
@@ -316,7 +317,7 @@ class Contact extends Model
         return implode("\n", $lines);
     }
 
-    public function getInvoiceAddress(?int $contactId = 0): ContactAddress | null
+    public function getInvoiceAddress(?int $contactId = 0): ?ContactAddress
     {
         $category = AddressCategory::where('is_invoice_address', true)->first();
         $address = $this->addresses()->where('address_category_id', $category->id)->first();

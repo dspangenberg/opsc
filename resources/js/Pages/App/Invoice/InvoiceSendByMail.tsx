@@ -14,9 +14,10 @@ import { InvoiceDetailsLayout } from './InvoiceDetailsLayout'
 interface Props {
   invoice: App.Data.InvoiceData
   mail: App.Data.SendEmailData
+  zugferd_profiles: LaravelOptions[]
 }
 
-export const InvoiceSendByMail: React.FC<Props> = ({ invoice, mail }) => {
+export const InvoiceSendByMail: React.FC<Props> = ({ invoice, mail, zugferd_profiles }) => {
   const { email_accounts } = usePage().props.auth
   const form = useForm<App.Data.SendEmailData>(
     'invoice-form',
@@ -70,7 +71,7 @@ export const InvoiceSendByMail: React.FC<Props> = ({ invoice, mail }) => {
         </FormCard>
       </div>
       <div className="h-fit w-sm flex-none space-y-6 px-1">
-        <InvoiceDetailsSidex invoice={invoice} />
+        <InvoiceDetailsSide zugferd_profiles={zugferd_profiles} invoice={invoice} />
       </div>
     </InvoiceDetailsLayout>
   )
