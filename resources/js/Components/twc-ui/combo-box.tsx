@@ -222,14 +222,14 @@ const ComboBox = <T extends Record<string, unknown>>({
   )
 }
 
-export {
-  ComboBoxSection,
-  ComboBoxListBox,
-  ComboBoxInput,
-  ComboBoxCollection,
-  ComboBoxItem,
-  ComboBoxHeader,
-  ComboBoxPopover,
-  ComboBox
-}
 export type { ComboBoxProps }
+export {
+  ComboBox,
+  ComboBoxCollection,
+  ComboBoxHeader,
+  ComboBoxInput,
+  ComboBoxItem,
+  ComboBoxListBox,
+  ComboBoxPopover,
+  ComboBoxSection
+}

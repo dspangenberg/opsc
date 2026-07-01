@@ -167,7 +167,7 @@ class Invoice extends Model implements MediableInterface
 
         $taxes = $invoice->taxBreakdown($invoice->lines);
 
-        $bankAccount = BankAccount::orderBy('pos')->first();
+        $bankAccount = BankAccount::where('is_default', true)->first();
 
         $bank_account = (object) [
             'iban' => $bankAccount->iban,

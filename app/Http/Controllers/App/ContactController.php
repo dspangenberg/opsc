@@ -40,6 +40,7 @@ use App\Models\PhoneCategory;
 use App\Models\Salutation;
 use App\Models\Tax;
 use App\Models\Title;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -215,7 +216,7 @@ class ContactController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function edit(Contact $contact)
     {

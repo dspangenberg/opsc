@@ -262,7 +262,6 @@ class ZugferdService
             $this->xmlDoc->addDocumentNote($this->invoice->additional_text, '', 'AFB');
         }
 
-        
         // Für Storno-Rechnungen wird nun die ID 381 (Credit note) verwendet.
 
         if (($this->invoice->type->zugferd_id === '381' || $this->invoice->type->zugferd_id === '384') && $this->invoice->parent_invoice) {

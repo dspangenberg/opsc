@@ -4,11 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BankAccount newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BankAccount newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BankAccount query()
- *
- * @mixin \Eloquent
- */
-class BankAccount extends Model {}
+class BankAccount extends Model
+{
+    protected $fillable = [
+        'name',
+        'iban',
+        'bic',
+        'account_owner',
+        'bank_name',
+        'email',
+        'prefix',
+        'is_default',
+        'is_paypal',
+        'is_closed',
+        'bookkeeping_account_id',
+        'pos',
+    ];
+}

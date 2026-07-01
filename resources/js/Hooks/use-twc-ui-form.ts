@@ -120,82 +120,85 @@ export function useForm<T extends Record<string, FormDataConvertible>>(
     }
   }
 
-  function register(name: string) {
-    const laravelName = name.replace(/\[(\d+)]/g, '.$1')
-    const error = (form.errors as any)[name] || (form.errors as any)[laravelName]
+  function register(name: keyof T | (string & {})) {
+    const field = name as string
+    const laravelName = field.replace(/\[(\d+)]/g, '.$1')
+    const error = (form.errors as any)[field] || (form.errors as any)[laravelName]
 
     return {
-      name,
+      name: field,
       value:
-        name.includes('.') || name.includes('[')
-          ? getNestedValue(form.data, name)
-          : (form.data as any)[name],
+        (field.includes('.') || field.includes('[')
+          ? getNestedValue(form.data, field)
+          : (form.data as any)[field]) ?? '',
       error,
       onChange: (value: any) => {
-        setFormData(name, value)
+        setFormData(field, value)
 
         if (shouldValidateOnChange) {
-          validateFormField(name)
+          validateFormField(field)
         }
       },
       onBlur: () => {
         if (shouldValidateOnBlur) {
-          touchAndValidateFormField(name)
+          touchAndValidateFormField(field)
         }
       }
     } as const
   }
 
-  function registerEvent(name: string) {
-    const laravelName = name.replace(/\[(\d+)]/g, '.$1')
-    const error = (form.errors as any)[name] || (form.errors as any)[laravelName]
+  function registerEvent(name: keyof T | (string & {})) {
+    const field = name as string
+    const laravelName = field.replace(/\[(\d+)]/g, '.$1')
+    const error = (form.errors as any)[field] || (form.errors as any)[laravelName]
 
     return {
-      name,
+      name: field,
       value:
-        name.includes('.') || name.includes('[')
-          ? getNestedValue(form.data, name)
-          : (form.data as any)[name],
+        (field.includes('.') || field.includes('[')
+          ? getNestedValue(form.data, field)
+          : (form.data as any)[field]) ?? '',
       error,
       onChange: (e: ChangeEvent<InputElements>) => {
-        setFormData(name, e.currentTarget.value)
+        setFormData(field, e.currentTarget.value)
 
         if (shouldValidateOnChange) {
-          validateFormField(name)
+          validateFormField(field)
         }
       },
       onBlur: () => {
         if (shouldValidateOnBlur) {
-          touchAndValidateFormField(name)
+          touchAndValidateFormField(field)
         }
       }
     } as const
   }
 
-  const registerCheckbox = (name: string) => {
+  const registerCheckbox = (name: keyof T | (string & {})) => {
+    const field = name as string
     // Get error using both array notation and Laravel dot notation
-    const laravelName = name.replace(/\[(\d+)]/g, '.$1')
-    const error = (form.errors as any)[name] || (form.errors as any)[laravelName]
+    const laravelName = field.replace(/\[(\d+)]/g, '.$1')
+    const error = (form.errors as any)[field] || (form.errors as any)[laravelName]
     const value =
-      name.includes('.') || name.includes('[')
-        ? getNestedValue(form.data, name)
-        : (form.data as any)[name]
+      field.includes('.') || field.includes('[')
+        ? getNestedValue(form.data, field)
+        : (form.data as any)[field]
 
     return {
-      name,
+      name: field,
       checked: Boolean(value),
       hasError: !!error,
       isSelected: Boolean(value),
       onChange: (checked: boolean) => {
-        setFormData(name, checked)
+        setFormData(field, checked)
 
         if (shouldValidateOnChange) {
-          validateFormField(name)
+          validateFormField(field)
         }
       },
       onBlur: () => {
         if (shouldValidateOnBlur) {
-          touchAndValidateFormField(name)
+          touchAndValidateFormField(field)
         }
       }
     } as const
