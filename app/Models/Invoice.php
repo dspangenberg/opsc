@@ -375,8 +375,41 @@ class Invoice extends Model implements MediableInterface
         return $recurringInvoice;
     }
 
+    public function checkForRelease(): string|bool
+    {
+
+        /*
+         * Eine Rechnung kann nur abgeschlossen werden, wenn:
+         *  - ein Standard-Bankkonto hinterlegt ist
+         *  - sie bzw. der Debitor eine (Rechnungs-) Anschrift hat
+         *  - bei Stornorechnungen beim Debitor eine Umsatzsteuer-ID hinterlegt ist; außerdem ist
+         *    eine Umsatzsteuer-ID erforderlich, wenn die Leistung nicht der deutschen Umsatzsteuer unterliegt (gem. § 3a UStG).
+         * - wenn bei Rechnungen (außer bei Anzahlungsrechnungen) kein Leistungsdatum hinterlegt ist; entweder für die Rechnung
+         *    oder für jede Position.
+         *
+         */
+
+        $bankAccount = BankAccount::where('is_default', true)->first();
+        if (! $bankAccount) {
+            return 'Es gibt kein (Standard-) Bankkonto';
+        }
+
+        $this->loadMissing('type');
+        if ($this->type->key !== 'deposit') {
+            if (! $this->service_period_end || ! $this->service_period_end) {
+                $this->loadMissing('lines');
+                if (array_any($this->lines->toArray(), fn ($line) => ! $line['service_period_begin'] || ! $line['service_period_end'])) {
+                    return 'Es muss ein Leistungsdatum für die Rechnung oder für jede Position angegeben werden.';
+                }
+            }
+        }
+
+        return true;
+    }
+
     public function release(): void
     {
+
         $this->issued_on = Carbon::now();
 
         if (! $this->invoice_number) {

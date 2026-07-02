@@ -28,6 +28,10 @@ class BankAccountController extends Controller
     public function create(): Response
     {
         $bank_account = new BankAccount;
+        $bank_account->pos = 30;
+        $bank_account->is_default = false;
+        $bank_account->is_paypal = false;
+        $bank_account->is_closed = false;
         $bookkeeping_accounts = BookkeepingAccount::query()->orderBy('account_number')->get();
 
         return Inertia::render('App/Setting/BankAccount/BankAccountEdit', [
@@ -56,6 +60,7 @@ class BankAccountController extends Controller
             $bank_account->is_default = true;
             $bank_account->save();
         });
+
         return redirect()->route('app.bookkeeping.bank-account.index');
     }
 
@@ -64,9 +69,8 @@ class BankAccountController extends Controller
         if ($bank_account->is_default) {
             Inertia::flash('toast', [
                 'type' => 'error',
-                'message' => 'Das Standardkonto kann nicht gelöscht werden.'
+                'message' => 'Das Standardkonto kann nicht gelöscht werden.',
             ]);
-
 
             return redirect()
                 ->route('app.bookkeeping.bank-account.index');
@@ -87,7 +91,9 @@ class BankAccountController extends Controller
     public function store(BankAccountRequest $request): RedirectResponse
     {
         $bankAccount = BankAccount::create($request->validated());
-        if (BankAccount::query()->count() == 1) {
+        $defaultAccount = BankAccount::query()->where('is_default', true)->first();
+
+        if (! $defaultAccount && ! $bankAccount->is_paypal) {
             $bankAccount->is_default = true;
             $bankAccount->save();
         }

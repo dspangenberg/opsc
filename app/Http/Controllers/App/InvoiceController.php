@@ -380,6 +380,12 @@ class InvoiceController extends Controller
 
     public function release(Invoice $invoice): RedirectResponse
     {
+
+        $result = $invoice->checkForRelease();
+        if ($result !== true) {
+            return redirect()->back()->withErrors($result);
+        }
+
         $invoice->release();
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
