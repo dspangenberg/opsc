@@ -25,6 +25,7 @@ import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { Menu, MenuItem, MenuPopover, MenuSubTrigger } from '@/Components/twc-ui/menu'
 import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
+import { toast } from '@/Components/twc-ui/sonner'
 import { Tab, TabList, Tabs } from '@/Components/twc-ui/tabs'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
 import { Badge } from '@/Components/ui/badge'
@@ -96,16 +97,29 @@ const InvoiceDetailsLayoutContent: React.FC<Props> = ({ invoice, children }) => 
   }
 
   const handleRelease = useCallback(async () => {
-    const promise = await AlertDialog.call({
-      title: 'Rechnung abschließen',
-      message: 'Möchtest Du die Rechnung wirklich abschließen?',
-      buttonTitle: 'Rechnung abschließen',
-      variant: 'default'
-    })
-
-    if (promise) {
-      router.post(route('app.invoice.release', { invoice: invoice.id }))
-    }
+    router.post(
+      route('app.invoice.release', { invoice: invoice.id }),
+      {},
+      {
+        onSuccess: () => {
+          toast({
+            type: 'success',
+            message: `Die Rechnung wurde abgeschlossen.`,
+            button: {
+              onClick: () => handleUnrelease(),
+              label: 'Undo'
+            }
+          })
+        },
+        onError: errors => {
+          toast({
+            type: 'error',
+            title: `Die Rechnung kann nicht abgeschlossen werden.`,
+            message: errors[0] as unknown as string
+          })
+        }
+      }
+    )
   }, [invoice.id])
 
   const handleDelete = async () => {

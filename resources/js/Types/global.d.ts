@@ -28,7 +28,7 @@ declare module '@inertiajs/core' {
   export interface InertiaConfig {
     errorValueType: string[]
     flashDataType: Record<string, any> & {
-      toast?: { type: 'success' | 'error' | 'info' | 'warning'; message: string }
+      toast?: { type: 'success' | 'error' | 'info' | 'warning'; message: string; title?: string }
     }
     sharedPageProps: {
       user: App.Data.UserData

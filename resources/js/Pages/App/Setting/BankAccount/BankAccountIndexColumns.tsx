@@ -23,7 +23,7 @@ const RowActions = ({ row }: { row: Row<App.Data.BankAccountData> }) => {
           icon={CheckLineIcon}
           separator
           title="Als Standardkonto setzen"
-          isDisabled={row.original.is_default}
+          isDisabled={row.original.is_default || row.original.is_paypal || row.original.is_closed}
           onAction={() => setDefaultAccount(row.original)}
         />
         <MenuItem

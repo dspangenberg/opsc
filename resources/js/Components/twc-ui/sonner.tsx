@@ -1,9 +1,11 @@
+import { Cancel01Icon } from '@hugeicons/core-free-icons'
 import { useTheme } from 'next-themes'
 import type React from 'react'
 import { Toaster as Sonner, toast as sonnerToast, type ToasterProps } from 'sonner'
 import { tv } from 'tailwind-variants'
 import { StatusIcon } from '@/Components/twc-ui/status-icon'
 import { Button } from './button'
+import { Icon } from './icon'
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'system' } = useTheme()
@@ -46,7 +48,7 @@ interface ToastProps {
 }
 
 export const toastStyles = tv({
-  base: 'flex min-w-96 items-center gap-3 rounded-lg p-4 font-sans shadow-lg ring-1',
+  base: 'relative flex min-w-96 items-center gap-3 rounded-lg p-4 font-sans shadow-lg ring-1',
   variants: {
     type: {
       default: 'bg-white text-gray-900 ring-black/5 dark:bg-gray-950 dark:text-gray-100',
@@ -93,19 +95,29 @@ const Toast = (props: ToastProps) => {
 
   return (
     <div className={toastStyles({ type: 'default' })}>
-      <StatusIcon variant={getStatusIconVariant(type)} />
-      <div className="flex flex-1 flex-col gap-1">
-        {title && <p className="font-medium text-sm">{title}</p>}
-        <p className="text-sm">{message}</p>
+      <div className="flex flex-1 items-center gap-3">
+        <StatusIcon variant={getStatusIconVariant(type)} />
+        <div className="flex flex-1 flex-col gap-1">
+          {title && <p className="font-medium text-sm">{title}</p>}
+          <p className="text-sm">{message}</p>
+        </div>
+        {button && (
+          <Button
+            variant="outline"
+            title={button.label}
+            onClick={handleButtonClick}
+            className="shrink-0"
+          />
+        )}
       </div>
-      {button && (
-        <Button
-          variant="outline"
-          title={button.label}
-          onClick={handleButtonClick}
-          className="shrink-0"
-        />
-      )}
+      <button
+        onClick={() => sonnerToast.dismiss(id)}
+        type="button"
+        className="absolute -top-2 -left-2 flex size-5 items-center justify-center rounded-full border border-border bg-background text-muted-foreground pressed:shadow-black/20 shadow-sm transition-colors hover:bg-accent hover:text-foreground active:translate-y-px active:shadow-inner active:brightness-95"
+        aria-label="Close"
+      >
+        <Icon icon={Cancel01Icon} className="size-3" />
+      </button>
     </div>
   )
 }
