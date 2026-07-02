@@ -15,6 +15,7 @@ use horstoeko\zugferd\codelists\ZugferdVatTypeCodes;
 use horstoeko\zugferd\ZugferdDocumentBuilder;
 use horstoeko\zugferdlaravel\Facades\ZugferdLaravel;
 use Illuminate\Support\Collection;
+use Str;
 
 class ZugferdService
 {
@@ -34,7 +35,7 @@ class ZugferdService
 
     public function setSellerData(): void
     {
-        $contact = Contact::find($this->settings->seller_contact_id);
+        $contactPerson = Contact::find($this->settings->seller_contact_person_id);
         $this->xmlDoc
             ->addDocumentNote($this->settings->document_note, '', 'REG')
             ->setDocumentSeller($this->settings->seller)
@@ -50,8 +51,8 @@ class ZugferdService
                 $this->settings->seller_city,
                 $this->settings->seller_country_iso
             )
-            ->setDocumentSellerContact($contact->full_name, $contact->department, $contact->primary_phone, '',
-                $contact->primary_mail);
+            ->setDocumentSellerContact($contactPerson->full_name, $contactPerson->department, $contactPerson->primary_phone, '',
+                $contactPerson->primary_mail);
     }
 
     public function getBuyerReference(): string
@@ -181,6 +182,12 @@ class ZugferdService
                 ->addDocumentPaymentMean('97',
                     'Der Gutschriftbetrag wird mit der Rechnung '.$this->invoice->parent_invoice->formated_invoice_number.' verrechnet.');
         } else {
+            $this->invoice->loadMissing('payment_deadline');
+            $paypentTerm = '';
+            if ($this->invoice->payment_deadline) {
+                $paypentTerm = Str::replace('$dueDate', $this->invoice->due_on->format('d.m.Y'), $this->invoice->payment_deadline->invoice_text);
+            }
+
             $this->xmlDoc
                 ->addDocumentPaymentMeanToCreditTransfer(
                     $this->bankAccount->iban,
@@ -189,7 +196,7 @@ class ZugferdService
                     $this->bankAccount->bic,
                     $this->invoice->purpose
                 )
-                ->addDocumentPaymentTerm($this->settings->payment_term, $this->invoice->due_on);
+                ->addDocumentPaymentTerm($paypentTerm, $this->invoice->due_on);
         }
     }
 

@@ -18,7 +18,10 @@ class ZugferdSettings extends Settings
 
     public string $document_note;
 
-    public string $seller_contact_id;
+    public int $seller_contact_id;
+
+    public int $seller_contact_person_id;
+    public int $seller_contact_address_id,
 
     public string $seller_address_line_1;
 

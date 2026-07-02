@@ -21,13 +21,11 @@ class SettingController extends Controller
         $generalSettings = app(GeneralSettings::class);
         $invoiceReminderSettings = app(InvoiceReminderSettings::class);
         $mailSettings = app(MailSettings::class);
-        $zugferdSettings = app(ZugferdSettings::class);
 
         $settingsCollection = collect([
             $generalSettings,
             $invoiceReminderSettings,
             $mailSettings,
-            $zugferdSettings,
         ])->flatMap(function ($settings) {
             $group = $settings::group();
 
