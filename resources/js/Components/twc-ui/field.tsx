@@ -45,7 +45,7 @@ const Label = ({ className, children, value, isRequired = false, ...props }: Lab
 function FieldDescription({ className, ...props }: AriaTextProps) {
   return (
     <AriaText
-      className={cn('text-muted-foreground text-sm', className)}
+      className={cn('text-muted-foreground text-xs leading-snug', className)}
       {...props}
       slot="description"
     />
@@ -93,4 +93,4 @@ function FieldGroup({ className, variant, ...props }: GroupProps) {
   )
 }
 
-export { Label, labelVariants, FieldGroup, fieldGroupVariants, FieldError, FieldDescription }
+export { FieldDescription, FieldError, FieldGroup, fieldGroupVariants, Label, labelVariants }

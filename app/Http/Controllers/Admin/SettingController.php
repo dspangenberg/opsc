@@ -8,7 +8,6 @@ use App\Http\Requests\SettingUpdateRequest;
 use App\Settings\GeneralSettings;
 use App\Settings\InvoiceReminderSettings;
 use App\Settings\MailSettings;
-use App\Settings\ZugferdSettings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -70,7 +69,6 @@ class SettingController extends Controller
             'general' => GeneralSettings::class,
             'invoice_reminders' => InvoiceReminderSettings::class,
             'mail' => MailSettings::class,
-            'zugferd' => ZugferdSettings::class,
             default => null,
         };
 

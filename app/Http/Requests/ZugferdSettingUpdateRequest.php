@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SettingUpdateRequest extends FormRequest
+class ZugferdSettingUpdateRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,9 +14,10 @@ class SettingUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'group' => ['required', 'string', 'in:general,invoice_reminders,mail'],
-            'key' => ['required', 'string'],
-            'value' => ['nullable'],
+            'seller_contact_id' => ['required', 'numeric', 'exists:contacts,id'],
+            'seller_contact_person_id' => ['required', 'numeric', 'exists:contacts,id'],
+            'seller_contact_address_id' => ['required', 'numeric', 'exists:contact_addresses,id'],
+            'document_note' => ['nullable', 'string'],
         ];
     }
 

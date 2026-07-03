@@ -361,6 +361,18 @@ const buildNavData = (
               activePath: '/app/settings/printing-system/office-templates'
             }
           ]
+        },
+        {
+          title: 'Rechnungen',
+          url: route('app.setting.invoice', {}, false),
+          activePath: '/app/settings/invoices',
+          items: [
+            {
+              title: 'ZUGFeRD',
+              url: route('app.setting.invoice.zugferd.edit', {}, false),
+              activePath: '/app/settings/invoices/zugferd'
+            }
+          ]
         }
       ]
     },

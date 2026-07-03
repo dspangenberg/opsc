@@ -12,6 +12,7 @@ use App\Http\Controllers\App\Setting\OfferSectionController;
 use App\Http\Controllers\App\Setting\OfficeTemplateController;
 use App\Http\Controllers\App\Setting\PrintLayoutController;
 use App\Http\Controllers\App\Setting\TextModuleController;
+use App\Http\Controllers\App\Setting\ZugferdSettingController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,10 @@ Route::put('settings/printing-system/global-css', [LetterheadController::class, 
 
 Route::redirect('settings', '/app/settings/offers')->name('app.setting');
 Route::redirect('settings/printing-system', '/app/settings/printing-system/global-css')->name('app.setting.printing-system');
+
+Route::redirect('settings/invoices', '/app/settings/invoices/zugferd')->name('app.setting.invoice');
+Route::get('settings/invoices/zugferd', [ZugferdSettingController::class, 'edit'])->name('app.setting.invoice.zugferd.edit');
+Route::put('settings/invoices/zugferd', [ZugferdSettingController::class, 'update'])->name('app.setting.invoice.zugferd.update')->middleware([HandlePrecognitiveRequests::class]);
 
 Route::get('settings/printing-system/letterheads', [LetterheadController::class, 'index'])->name('app.setting.letterhead.index');
 Route::get('settings/printing-system/letterheads/create', [LetterheadController::class, 'create'])->name('app.setting.letterhead.create');
@@ -72,7 +77,6 @@ Route::put('/settings/bookkeeping/bank-accounts/{bank_account}', [BankAccountCon
 Route::post('/settings/bookkeeping/bank-accounts/store', [BankAccountController::class, 'store'])->name('app.bookkeeping.bank-account.store')->middleware([HandlePrecognitiveRequests::class]);
 Route::delete('/settings/bookkeeping/bank-accounts/{bank_account}', [BankAccountController::class, 'destroy'])->name('app.bookkeeping.bank-account.destroy');
 Route::put('/settings/bookkeeping/bank-accounts/{bank_account}/default', [BankAccountController::class, 'setDefault'])->name('app.bookkeeping.bank-account.set-default')->middleware([HandlePrecognitiveRequests::class]);
-
 
 Route::get('/settings/bookkeeping/rules', [BookkeepingRulesController::class, 'index'])->name('app.bookkeeping.rules.index');
 Route::get('/settings/bookkeeping/rules/{rule}/edit', [BookkeepingRulesController::class, 'edit'])->name('app.bookkeeping.rules.edit');

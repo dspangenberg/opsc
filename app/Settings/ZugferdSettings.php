@@ -2,10 +2,20 @@
 
 namespace App\Settings;
 
+use App\Settings\Casts\IntCast;
 use Spatie\LaravelSettings\Settings;
 
 class ZugferdSettings extends Settings
 {
+    public static function casts(): array
+    {
+        return [
+            'seller_contact_id' => IntCast::class,
+            'seller_contact_person_id' => IntCast::class,
+            'seller_contact_address_id' => IntCast::class,
+        ];
+    }
+
     public string $global_id;
 
     public string $global_id_type;
@@ -18,10 +28,11 @@ class ZugferdSettings extends Settings
 
     public string $document_note;
 
-    public int $seller_contact_id;
+    public ?int $seller_contact_id;
 
-    public int $seller_contact_person_id;
-    public int $seller_contact_address_id,
+    public ?int $seller_contact_person_id;
+
+    public ?int $seller_contact_address_id;
 
     public string $seller_address_line_1;
 
@@ -36,6 +47,8 @@ class ZugferdSettings extends Settings
     public string $seller_country_iso;
 
     public string $payment_term;
+
+    public bool $is_enabled;
 
     public static function group(): string
     {
