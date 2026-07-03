@@ -395,8 +395,8 @@ class Invoice extends Model implements MediableInterface
         }
 
         $this->loadMissing('type');
-        if ($this->type->key !== 'deposit') {
-            if (! $this->service_period_end || ! $this->service_period_end) {
+        if ($this->type?->key !== 'deposit') {
+            if (! $this->service_period_begin || ! $this->service_period_end) {
                 $this->loadMissing('lines');
                 if (array_any($this->lines->toArray(), fn ($line) => ! $line['service_period_begin'] || ! $line['service_period_end'])) {
                     return 'Es muss ein Leistungsdatum für die Rechnung oder für jede Position angegeben werden.';

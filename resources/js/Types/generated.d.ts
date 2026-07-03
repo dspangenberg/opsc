@@ -18,18 +18,18 @@ declare namespace App {
     };
     export type BankAccountData = {
       readonly id: number | null;
-      readonly name: string;
-      readonly iban: string;
-      readonly bic: string;
+      readonly name: string | null;
+      readonly iban: string | null;
+      readonly bic: string | null;
       readonly prefix: string | null;
       readonly email: string | null;
       readonly bank_name: string | null;
       readonly account_owner: string | null;
-      readonly bookkeeping_account_id: string | null;
-      readonly pos: number;
-      readonly is_default: boolean;
-      readonly is_paypal: boolean;
-      readonly is_closed: boolean;
+      readonly bookkeeping_account_id: number | null;
+      readonly pos: number | null;
+      readonly is_default: boolean | null;
+      readonly is_paypal: boolean | null;
+      readonly is_closed: boolean | null;
     };
     export type BillableProjectData = {
       readonly id: number | null;
@@ -859,6 +859,15 @@ declare namespace App {
       readonly contact: App.Data.ContactData | null;
       readonly last_login_at: string | null;
       readonly email_verified_at: string | null;
+    };
+    export type ZugferdSettingData = {
+      readonly is_enabled: boolean | null;
+      readonly seller_contact_id: number | null;
+      readonly seller_contact_person_id: number | null;
+      readonly seller_contact_address_id: number | null;
+      readonly document_note: string | null;
+      readonly global_id_type: string | null;
+      readonly global_id: string | null;
     };
   }
   namespace Enums {

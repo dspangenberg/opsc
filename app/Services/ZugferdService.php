@@ -6,6 +6,7 @@ use App\Enums\ZugferdProfileEnum;
 use App\Facades\FileHelperService;
 use App\Models\BankAccount;
 use App\Models\Contact;
+use App\Models\ContactAddress;
 use App\Models\Invoice;
 use App\Settings\ZugferdSettings;
 use horstoeko\zugferd\codelists\ZugferdCurrencyCodes;
@@ -15,6 +16,7 @@ use horstoeko\zugferd\codelists\ZugferdVatTypeCodes;
 use horstoeko\zugferd\ZugferdDocumentBuilder;
 use horstoeko\zugferdlaravel\Facades\ZugferdLaravel;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class ZugferdService
 {
@@ -34,24 +36,35 @@ class ZugferdService
 
     public function setSellerData(): void
     {
-        $contact = Contact::find($this->settings->seller_contact_id);
+        $contact = Contact::with(['mails', 'phones'])->find($this->settings->seller_contact_id);
+        $contactPerson = Contact::with(['mails', 'phones'])->find($this->settings->seller_contact_person_id);
+        $contactAddress = ContactAddress::with('country')->find($this->settings->seller_contact_address_id);
+
+        $addressLines = explode("\n", $contactAddress->address);
+
         $this->xmlDoc
-            ->addDocumentNote($this->settings->document_note, '', 'REG')
-            ->setDocumentSeller($this->settings->seller)
+            ->setDocumentSeller($contact->name)
             ->setDocumentSellerCommunication(ZugferdElectronicAddressScheme::UNECE3155_EM,
-                $this->settings->seller_email)
-            ->addDocumentSellerGlobalId($this->settings->global_id, $this->settings->global_id_type)
-            ->addDocumentSellerTaxRegistration('VA', $this->settings->seller_tax_vat)
+                $contact->primary_mail)
+            ->addDocumentSellerTaxRegistration('VA', $contact->vat_id)
             ->setDocumentSellerAddress(
-                $this->settings->seller_address_line_1,
-                $this->settings->seller_address_line_2,
-                $this->settings->seller_address_line_3,
-                $this->settings->seller_zip,
-                $this->settings->seller_city,
-                $this->settings->seller_country_iso
+                $addressLines[0],
+                $addressLines[1] ?? '',
+                $addressLines[2] ?? '',
+                $contactAddress->zip,
+                $contactAddress->city,
+                $contactAddress->country->iso_code,
             )
-            ->setDocumentSellerContact($contact->full_name, $contact->department, $contact->primary_phone, '',
-                $contact->primary_mail);
+            ->setDocumentSellerContact($contactPerson->full_name, $contactPerson->department, $contactPerson->primary_phone, '',
+                $contactPerson->primary_mail);
+
+        if ($this->settings->global_id && $this->settings->global_id_type) {
+            $this->xmlDoc->addDocumentSellerGlobalId($this->settings->global_id, $this->settings->global_id_type);
+        }
+
+        if ($this->settings->document_note) {
+            $this->xmlDoc->addDocumentNote($this->settings->document_note, '', 'REG');
+        }
     }
 
     public function getBuyerReference(): string
@@ -181,6 +194,14 @@ class ZugferdService
                 ->addDocumentPaymentMean('97',
                     'Der Gutschriftbetrag wird mit der Rechnung '.$this->invoice->parent_invoice->formated_invoice_number.' verrechnet.');
         } else {
+            $this->invoice->loadMissing('payment_deadline');
+            $paypentTerm = '';
+            if ($this->invoice->payment_deadline) {
+                $paypentTerm = Str::replace('$dueDate', $this->invoice->due_on->format('d.m.Y'), $this->invoice->payment_deadline->invoice_text ?? '');
+            }
+
+
+
             $this->xmlDoc
                 ->addDocumentPaymentMeanToCreditTransfer(
                     $this->bankAccount->iban,
@@ -189,7 +210,7 @@ class ZugferdService
                     $this->bankAccount->bic,
                     $this->invoice->purpose
                 )
-                ->addDocumentPaymentTerm($this->settings->payment_term, $this->invoice->due_on);
+                ->addDocumentPaymentTerm($paypentTerm, $this->invoice->due_on);
         }
     }
 
