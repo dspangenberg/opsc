@@ -1,6 +1,5 @@
 <?php
 
-use App\Settings\GeneralSettings;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class extends SettingsMigration
@@ -8,8 +7,7 @@ return new class extends SettingsMigration
     public function up(): void
     {
 
-        $this->migrator->rename('zugferd.seller_contact_id', 'zugferd.seller_contact_person_id');
-        $this->migrator->add('zugferd.seller_contact_id', 0);
+        $this->migrator->add('zugferd.seller_contact_person_id', 0);
         $this->migrator->add('zugferd.seller_contact_address_id', 0);
         $this->migrator->add('zugferd.is_enabled', false);
 
