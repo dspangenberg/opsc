@@ -23,14 +23,18 @@ const RowActions = ({ row }: { row: Row<App.Data.BankAccountData> }) => {
           icon={CheckLineIcon}
           separator
           title="Als Standardkonto setzen"
-          isDisabled={row.original.is_default || row.original.is_paypal || row.original.is_closed}
+          isDisabled={
+            (row.original.is_default as boolean) ||
+            (row.original.is_paypal as boolean) ||
+            (row.original.is_closed as boolean)
+          }
           onAction={() => setDefaultAccount(row.original)}
         />
         <MenuItem
           icon={Delete03Icon}
           title="Löschen"
           variant="destructive"
-          isDisabled={row.original.is_default}
+          isDisabled={row.original.is_default as boolean}
           onAction={() => deleteBankAccount(row.original)}
         />
       </DropdownButton>

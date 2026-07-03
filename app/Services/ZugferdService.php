@@ -16,7 +16,7 @@ use horstoeko\zugferd\codelists\ZugferdVatTypeCodes;
 use horstoeko\zugferd\ZugferdDocumentBuilder;
 use horstoeko\zugferdlaravel\Facades\ZugferdLaravel;
 use Illuminate\Support\Collection;
-use Str;
+use Illuminate\Support\Str;
 
 class ZugferdService
 {
@@ -65,7 +65,6 @@ class ZugferdService
         if ($this->settings->document_note) {
             $this->xmlDoc->addDocumentNote($this->settings->document_note, '', 'REG');
         }
-
     }
 
     public function getBuyerReference(): string
@@ -198,7 +197,7 @@ class ZugferdService
             $this->invoice->loadMissing('payment_deadline');
             $paypentTerm = '';
             if ($this->invoice->payment_deadline) {
-                $paypentTerm = Str::replace('$dueDate', $this->invoice->due_on->format('d.m.Y'), $this->invoice->payment_deadline->invoice_text);
+                $paypentTerm = Str::replace('$dueDate', $this->invoice->due_on->format('d.m.Y'), $this->invoice->payment_deadline->invoice_text ?? '');
             }
 
 

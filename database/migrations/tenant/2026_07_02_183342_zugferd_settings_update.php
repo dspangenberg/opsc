@@ -12,7 +12,7 @@ return new class extends SettingsMigration
 
         $this->migrator->rename('zugferd.seller_contact_id', 'zugferd.seller_contact_person_id');
         $this->migrator->add('zugferd.seller_contact_id', $genaralSettings->contact_id);
-        $this->migrator->add('zugferd.seller_contact_addres_id');
+        $this->migrator->add('zugferd.seller_contact_address_id');
         $this->migrator->add('zugferd.is_enabled', false);
 
         /*

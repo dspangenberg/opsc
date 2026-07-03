@@ -18,15 +18,8 @@ class ZugferdSettingUpdateRequest extends FormRequest
             'seller_contact_person_id' => ['required', 'numeric', 'exists:contacts,id'],
             'seller_contact_address_id' => ['required', 'numeric', 'exists:contact_addresses,id'],
             'document_note' => ['nullable', 'string'],
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'group.required' => 'Die Einstellungsgruppe ist erforderlich.',
-            'group.in' => 'Die Einstellungsgruppe ist ungültig.',
-            'key.required' => 'Der Einstellungsschlüssel ist erforderlich.',
+            'global_id_type' => ['nullable', 'string'],
+            'global_id' => ['nullable', 'string'],
         ];
     }
 }
