@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 13.17.0.
+ * Generated for Laravel 13.18.1.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -5929,7 +5929,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get all of the configuration items for the application.
          *
-         * @return array
+         * @return array<string, mixed>
          * @static
          */
         public static function all()
@@ -9015,7 +9015,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Gets the raw, unprepared listeners.
          *
-         * @return array
+         * @return array<string, callable|array|class-string|null>
          * @static
          */
         public static function getRawListeners()
@@ -13724,7 +13724,7 @@ namespace Illuminate\Support\Facades {
          * Get the delayed jobs for the given queue.
          *
          * @param \UnitEnum|string|null $queue
-         * @return \Illuminate\Support\Collection
+         * @return \Illuminate\Support\Collection<int, \Illuminate\Queue\Jobs\InspectedJob>
          * @static
          */
         public static function delayedJobs($queue = null)
@@ -13761,7 +13761,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get all delayed jobs across every queue.
          *
-         * @return \Illuminate\Support\Collection
+         * @return \Illuminate\Support\Collection<int, \Illuminate\Queue\Jobs\InspectedJob>
          * @static
          */
         public static function allDelayedJobs()

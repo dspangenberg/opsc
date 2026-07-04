@@ -3,13 +3,13 @@ import type * as React from 'react'
 import { useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { Button } from '@/Components/twc-ui/button'
-import { FieldDescription } from '@/Components/twc-ui/field'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormCard } from '@/Components/twc-ui/form-card'
 import { FormComboBox } from '@/Components/twc-ui/form-combo-box'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextArea } from '@/Components/twc-ui/form-text-area'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
+import { Switch } from '@/Components/twc-ui/switch'
 import type { PageProps } from '@/Types'
 
 interface Props extends PageProps {
@@ -56,9 +56,29 @@ const ZugferdSettingEdit: React.FC<Props> = ({ settings, contacts }) => {
       <FormCard
         className="flex flex-1 overflow-y-hidden"
         innerClassName="bg-background"
+        footerClassName="flex items-center justify-start gap-2"
         footer={
-          <div className="flex flex-none items-center justify-end gap-2">
-            <Button variant="default" form={form.id} type="submit" title="Speichern" />
+          <div className="flex flex-1 items-center justify-end gap-2">
+            <div className="flex flex-1 justify-start">
+              <div className="flex-none">
+                <Switch
+                  id="enabled"
+                  defaultSelected={settings.is_enabled as boolean}
+                  isDisabled={
+                    !(
+                      form.data.seller_contact_id ||
+                      form.data.seller_contact_person_id ||
+                      form.data.seller_contact_address_id
+                    ) as boolean
+                  }
+                >
+                  ZUGFeRD aktivieren
+                </Switch>
+              </div>
+            </div>
+            <div className="flex-none">
+              <Button variant="default" form={form.id} type="submit" title="Speichern" />
+            </div>
           </div>
         }
       >
@@ -96,26 +116,28 @@ const ZugferdSettingEdit: React.FC<Props> = ({ settings, contacts }) => {
               />
             </div>
           </FormGrid>
-          <FormGrid title="Identifier scheme code (ICD) gem. ISO/IEC 17 6523">
-            <div className="col-span-4">
-              <FormTextField label="Schema ID" {...form.register('global_id_type')} />
-            </div>
-            <div className="col-span-8">
-              <FormTextField label="Globale ID" {...form.register('global_id')} />
-            </div>
-            <div className="col-span-12" />
-            <div className="col-span-12 -mt-6">
-              <FieldDescription>
-                Zum Beispiel Schema ID 0060 für Data Universal Numbering System (D-U-N-S Number).
+          <FormGrid
+            title="Identifier scheme code (ICD) gem. ISO/IEC 17 6523"
+            description={
+              <div>
+                Optionale, globale ID zum Beispiel Schema 0060 für Data Universal Numbering System
+                (D-U-N-S Number).{' '}
                 <a
                   href="https://github.com/horstoeko/zugferd/wiki/Codelists#isoiec-17-6523---identifier-scheme-code-icd"
                   target="_blank"
                   rel="noreferrer"
-                  className="ml-1 text-primary hover:underline"
+                  className="ml-1 hover:underline"
                 >
                   Nähere Informationen
                 </a>
-              </FieldDescription>
+              </div>
+            }
+          >
+            <div className="col-span-4">
+              <FormTextField label="Schema" {...form.register('global_id_type')} />
+            </div>
+            <div className="col-span-8">
+              <FormTextField label="Globale ID" {...form.register('global_id')} />
             </div>
           </FormGrid>
         </Form>
