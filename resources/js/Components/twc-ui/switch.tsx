@@ -22,7 +22,7 @@ const track = tv({
       true: 'bg-primary'
     },
     isFocusVisible: {
-      true: 'border-ring ring-[3px] ring-ring/50'
+      true: 'border-ring ring-[3px] ring-primary/50'
     },
     isDisabled: {
       true: 'cursor-not-allowed opacity-50',
