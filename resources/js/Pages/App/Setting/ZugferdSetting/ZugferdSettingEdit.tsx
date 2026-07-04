@@ -1,6 +1,6 @@
 import { router, usePage } from '@inertiajs/react'
 import type * as React from 'react'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { PageContainer } from '@/Components/PageContainer'
 import { Button } from '@/Components/twc-ui/button'
 import { Form, useForm } from '@/Components/twc-ui/form'
@@ -9,20 +9,15 @@ import { FormComboBox } from '@/Components/twc-ui/form-combo-box'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { FormTextArea } from '@/Components/twc-ui/form-text-area'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
-import { toast } from '@/Components/twc-ui/sonner'
 import { Switch } from '@/Components/twc-ui/switch'
 import type { PageProps } from '@/Types'
 
 interface Props extends PageProps {
   settings: App.Data.ZugferdSettingData
   contacts: App.Data.ContactData[]
-  is_enabled: boolean
 }
 
-const ZugferdSettingEdit: React.FC<Props> = ({ settings, contacts, is_enabled }) => {
-  const [isEnabled, setIsEnabled] = useState(is_enabled)
-  const [isPendingStatusChange, setPendingStatusChange] = useState(false)
-
+const ZugferdSettingEdit: React.FC<Props> = ({ settings, contacts }) => {
   const form = useForm<App.Data.ZugferdSettingData>(
     'form-zugferd-settings-edit',
     'put',
@@ -51,43 +46,6 @@ const ZugferdSettingEdit: React.FC<Props> = ({ settings, contacts, is_enabled })
     []
   )
 
-  const handleEnabledChange = async (value: boolean) => {
-    setPendingStatusChange(true)
-
-    const statusText = value ? 'aktiviert' : 'deaktiviert'
-    const routeName = value
-      ? 'app.setting.invoice.zugferd.enable'
-      : 'app.setting.invoice.zugferd.disable'
-
-    const myPromise = new Promise<{ title: string }>(resolve => {
-      setTimeout(() => {
-        resolve({ title: 'My toast' })
-      }, 3000)
-    })
-
-    const toastId = toast({
-      isLoading: true,
-      type: 'default',
-      message: `ZUGFeRD wird ${statusText}.`
-    })
-
-    router.put(
-      route(routeName),
-      {},
-      {
-        onSuccess: () => {
-          toast({
-            id: toastId,
-            type: 'success',
-            message: `ZUGFeRD wurde ${statusText}.`
-          })
-          setIsEnabled(value)
-        },
-        onFinish: () => setPendingStatusChange(false)
-      }
-    )
-  }
-
   return (
     <PageContainer
       title="ZUGFeRD-Einstellungen"
@@ -105,15 +63,13 @@ const ZugferdSettingEdit: React.FC<Props> = ({ settings, contacts, is_enabled })
               <div className="flex-none">
                 <Switch
                   id="enabled"
-                  isSelected={isEnabled}
-                  onChange={handleEnabledChange}
+                  defaultSelected={settings.is_enabled as boolean}
                   isDisabled={
-                    isPendingStatusChange ||
-                    (!(
+                    !(
                       form.data.seller_contact_id ||
                       form.data.seller_contact_person_id ||
                       form.data.seller_contact_address_id
-                    ) as boolean)
+                    ) as boolean
                   }
                 >
                   ZUGFeRD aktivieren

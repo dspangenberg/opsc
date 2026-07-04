@@ -42,9 +42,6 @@ Route::redirect('settings/printing-system', '/app/settings/printing-system/globa
 Route::redirect('settings/invoices', '/app/settings/invoices/zugferd')->name('app.setting.invoice');
 Route::get('settings/invoices/zugferd', [ZugferdSettingController::class, 'edit'])->name('app.setting.invoice.zugferd.edit');
 Route::put('settings/invoices/zugferd', [ZugferdSettingController::class, 'update'])->name('app.setting.invoice.zugferd.update')->middleware([HandlePrecognitiveRequests::class]);
-Route::put('settings/invoices/zugferd/enable', [ZugferdSettingController::class, 'enable'])->name('app.setting.invoice.zugferd.enable');
-Route::put('settings/invoices/zugferd/disable', [ZugferdSettingController::class, 'disable'])->name('app.setting.invoice.zugferd.disable');
-
 
 Route::get('settings/printing-system/letterheads', [LetterheadController::class, 'index'])->name('app.setting.letterhead.index');
 Route::get('settings/printing-system/letterheads/create', [LetterheadController::class, 'create'])->name('app.setting.letterhead.create');
