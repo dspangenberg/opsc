@@ -7,6 +7,7 @@ use App\Enums\ZugferdProfileEnum;
 use App\Facades\PdfService;
 use App\Facades\ZugferdService;
 use App\Http\Controllers\App\TimeController;
+use App\Settings\ZugferdSettings;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeInterface;
@@ -301,6 +302,8 @@ class Invoice extends Model implements MediableInterface
     public static function createRecurringInvoice(Invoice $invoice): Invoice
     {
 
+        $zugferdSettings = app(ZugferdSettings::class);
+
         $lastInvoice = Invoice::query()->where('is_recurring', true)->where('parent_id',
             $invoice->id)->latest()->first();
         if (! $lastInvoice) {
@@ -314,7 +317,7 @@ class Invoice extends Model implements MediableInterface
         $recurringInvoice->number_range_document_numbers_id = null;
         $recurringInvoice->sent_at = null;
         $recurringInvoice->parent_id = $invoice->id;
-        $recurringInvoice->is_zugferd = true;
+        $recurringInvoice->is_zugferd = $zugferdSettings->is_enabled;
 
         if ($recurringInvoice->service_period_begin) {
             $parentInvoice = Invoice::find($invoice->id);
@@ -660,6 +663,7 @@ class Invoice extends Model implements MediableInterface
 
     public static function duplicateInvoice(Invoice $invoice, bool $setParentId = false): Invoice
     {
+        $zugferdSettings = app(ZugferdSettings::class);
         $duplicatedInvoice = $invoice->replicate();
 
         $duplicatedInvoice->issued_on = Carbon::now()->format('Y-m-d');
@@ -667,7 +671,7 @@ class Invoice extends Model implements MediableInterface
         $duplicatedInvoice->invoice_number = null;
         $duplicatedInvoice->number_range_document_numbers_id = null;
         $duplicatedInvoice->sent_at = null;
-        $duplicatedInvoice->is_zugferd = true;
+        $duplicatedInvoice->is_zugferd = $zugferdSettings->is_enabled;
         $duplicatedInvoice->save();
 
         $invoice->lines()->each(function ($line) use ($setParentId, $duplicatedInvoice) {

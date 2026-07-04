@@ -11,6 +11,7 @@ interface Props extends PageProps {
   payment_deadlines: App.Data.PaymentDeadlineData[]
   contacts: App.Data.ContactData[]
   zugferd_profiles: LaravelOptions[]
+  is_zugferd_enabled: boolean
 }
 
 const InvoiceCreate: React.FC<Props> = ({
@@ -20,7 +21,8 @@ const InvoiceCreate: React.FC<Props> = ({
   invoice_types,
   taxes,
   payment_deadlines,
-  zugferd_profiles
+  zugferd_profiles,
+  is_zugferd_enabled
 }) => {
   return (
     <PageContainer title="Neue Rechnung erstellen" width="8xl" className="flex overflow-hidden">
@@ -36,6 +38,7 @@ const InvoiceCreate: React.FC<Props> = ({
         zugferd_profiles={zugferd_profiles}
         projects={projects}
         taxes={taxes}
+        is_zugferd_enabled={is_zugferd_enabled}
       />
     </PageContainer>
   )

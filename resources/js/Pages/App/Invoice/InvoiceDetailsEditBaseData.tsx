@@ -12,6 +12,7 @@ interface Props {
   payment_deadlines: App.Data.PaymentDeadlineData[]
   contacts: App.Data.ContactData[]
   zugferd_profiles: LaravelOptions[]
+  is_zugferd_enabled: boolean
 }
 
 export const InvoiceDetailsEditBaseData: React.FC<Props> = ({
@@ -21,7 +22,8 @@ export const InvoiceDetailsEditBaseData: React.FC<Props> = ({
   payment_deadlines,
   projects,
   taxes,
-  zugferd_profiles
+  zugferd_profiles,
+  is_zugferd_enabled
 }) => {
   return (
     <InvoiceDetailsLayout invoice={invoice}>
@@ -38,6 +40,7 @@ export const InvoiceDetailsEditBaseData: React.FC<Props> = ({
           projects={projects}
           taxes={taxes}
           zugferd_profiles={zugferd_profiles}
+          is_zugferd_enabled={is_zugferd_enabled}
         />
       </div>
       <div className="h-fit w-sm flex-none space-y-6 px-1">

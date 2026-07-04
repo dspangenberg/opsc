@@ -41,6 +41,7 @@ use App\Models\TaxRate;
 use App\Models\Time;
 use App\Models\Transaction;
 use App\Services\SendEmailAsTenantService;
+use App\Settings\ZugferdSettings;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -143,6 +144,8 @@ class InvoiceController extends Controller
      */
     public function create(): Response
     {
+        $zugferdSettings = app(ZugferdSettings::class);
+
         // Load all data in single queries, ordered appropriately for defaults
         $invoiceTypes = InvoiceType::query()->orderBy('is_default', 'DESC')->orderBy('display_name')->get();
         $paymentDeadlines = PaymentDeadline::query()->orderBy('is_default', 'DESC')->orderBy('name')->get();
@@ -164,7 +167,8 @@ class InvoiceController extends Controller
         $invoice->recurring_interval_days = 0;
         $invoice->invoice_number = null;
         $invoice->is_external = false;
-        $invoice->is_zugferd = true;
+        $invoice->is_zugferd = $zugferdSettings->is_enabled;
+        $invoice->zugferd_profile = ZugferdProfileEnum::ZUGFERD;
 
         return Inertia::render('App/Invoice/InvoiceCreate')
             ->with([
@@ -175,6 +179,7 @@ class InvoiceController extends Controller
                 'payment_deadlines' => PaymentDeadlineData::collect($paymentDeadlines),
                 'contacts' => ContactData::collect($contacts),
                 'zugferd_profiles' => Options::forEnum(ZugferdProfileEnum::class),
+                'is_zugferd_enabled' => $zugferdSettings->is_enabled,
             ]);
     }
 
@@ -251,6 +256,8 @@ class InvoiceController extends Controller
      */
     public function edit(Invoice $invoice): Response
     {
+        $zugferdSettings = app(ZugferdSettings::class);
+
         $invoice
             ->load('invoice_contact')
             ->load('contact.contacts')
@@ -282,6 +289,7 @@ class InvoiceController extends Controller
                 'payment_deadlines' => PaymentDeadlineData::collect($paymentDeadlines),
                 'contacts' => ContactData::collect($contacts),
                 'zugferd_profiles' => Options::forEnum(ZugferdProfileEnum::class),
+                'is_zugferd_enabled' => $zugferdSettings->is_enabled,
             ]);
     }
 
