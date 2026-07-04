@@ -23,7 +23,25 @@ class ZugferdSettingController extends Controller
         return Inertia::render('App/Setting/ZugferdSetting/ZugferdSettingEdit', [
             'settings' => ZugferdSettingData::from($zugferdSettings),
             'contacts' => ContactData::collect($contacts),
+            'is_enabled' => $zugferdSettings->is_enabled,
         ]);
+    }
+
+    public function enable(): RedirectResponse
+    {
+        $zugferdSettings = app(ZugferdSettings::class);
+        $zugferdSettings->is_enabled = true;
+        $zugferdSettings->save();
+
+        return redirect()->back();
+    }
+    public function disable(): RedirectResponse
+    {
+        $zugferdSettings = app(ZugferdSettings::class);
+        $zugferdSettings->is_enabled = false;
+        $zugferdSettings->save();
+
+        return redirect()->back();
     }
 
     public function update(ZugferdSettingUpdateRequest $request): RedirectResponse
