@@ -200,8 +200,6 @@ class ZugferdService
                 $paypentTerm = Str::replace('$dueDate', $this->invoice->due_on->format('d.m.Y'), $this->invoice->payment_deadline->invoice_text ?? '');
             }
 
-
-
             $this->xmlDoc
                 ->addDocumentPaymentMeanToCreditTransfer(
                     $this->bankAccount->iban,
@@ -231,6 +229,19 @@ class ZugferdService
             0,
             $this->getPrepaidAmount()
         );
+    }
+
+    public function checkStettings(): string|bool
+    {
+        $this->settings = app(ZugferdSettings::class);
+
+        $contact = Contact::with(['mails', 'phones'])->find($this->settings->seller_contact_id);
+
+        if (! $contact->vat_id) {
+            return 'Umsatzsteuer-ID fehlt';
+        }
+
+        return true;
     }
 
     public function generateZugferdXml(

@@ -75,6 +75,14 @@ const ZugferdSettingEdit: React.FC<Props> = ({ settings, contacts, is_enabled })
       route(routeName),
       {},
       {
+        onError: (errors) =>{
+          toast({
+            id: toastId,
+            type: 'error',
+            title: 'ZUGFeRD konnte nicht aktiviert werden.',
+            message: errors[0] as unknown as string
+          })
+        },
         onSuccess: () => {
           toast({
             id: toastId,

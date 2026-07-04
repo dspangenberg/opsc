@@ -4,6 +4,7 @@ namespace App\Http\Controllers\App\Setting;
 
 use App\Data\ContactData;
 use App\Data\ZugferdSettingData;
+use App\Facades\ZugferdService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ZugferdSettingUpdateRequest;
 use App\Models\Contact;
@@ -29,6 +30,11 @@ class ZugferdSettingController extends Controller
 
     public function enable(): RedirectResponse
     {
+        $result = ZugferdService::checkStettings();
+        if ($result !== true) {
+            return redirect()->back()->withErrors($result);
+        }
+        
         $zugferdSettings = app(ZugferdSettings::class);
         $zugferdSettings->is_enabled = true;
         $zugferdSettings->save();
