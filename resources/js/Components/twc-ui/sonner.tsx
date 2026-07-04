@@ -135,7 +135,8 @@ interface PromiseToastOptions<T = unknown> {
   type?: ToastVariant
   title?: string
   message: string
-  loading?: string
+  isLoading?: boolean
+  isDismissible?: boolean
   success?: string | ((data: T) => string)
   error?: string | ((error: unknown) => string)
   duration?: number
@@ -155,7 +156,7 @@ const toast = (props: string | number | ToastOptions, type?: ToastVariant) => {
       <Toast
         id={id}
         isLoading={props.isLoading}
-        isDismissible={!props.isLoading && !props.isDismissible}
+        isDismissible={!props.isLoading || props.isDismissible}
         title={props.title ?? ''}
         message={props.message ?? ''}
         button={props.button}
@@ -169,7 +170,7 @@ const toast = (props: string | number | ToastOptions, type?: ToastVariant) => {
 }
 
 toast.promise = <T,>(promise: Promise<T>, options: PromiseToastOptions<T>) => {
-  const { type, title, message, loading, success, error, duration } = options
+  const { type, title, message, isLoading, isDismissible, success, error, duration } = options
   const id = crypto.randomUUID()
 
   sonnerToast.custom(
@@ -177,10 +178,10 @@ toast.promise = <T,>(promise: Promise<T>, options: PromiseToastOptions<T>) => {
       <Toast
         id={id}
         title={title}
-        message={loading ?? message}
+        message={message}
         type={type ?? 'default'}
         isLoading
-        isDismissible={!loading && !props.isDismissible}
+        isDismissible={isDismissible ?? !isLoading}
       />
     ),
     { id, duration: Infinity }
