@@ -155,6 +155,7 @@ const toast = (props: string | number | ToastOptions, type?: ToastVariant) => {
       <Toast
         id={id}
         isLoading={props.isLoading}
+        isDismissible={!props.isLoading && !props.isDismissible}
         title={props.title ?? ''}
         message={props.message ?? ''}
         button={props.button}
@@ -179,7 +180,7 @@ toast.promise = <T,>(promise: Promise<T>, options: PromiseToastOptions<T>) => {
         message={loading ?? message}
         type={type ?? 'default'}
         isLoading
-        isDismissible={false}
+        isDismissible={!loading && !props.isDismissible}
       />
     ),
     { id, duration: Infinity }

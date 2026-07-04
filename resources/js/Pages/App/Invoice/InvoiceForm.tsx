@@ -45,6 +45,7 @@ interface Props {
   cancelRoute: RouteUrl
   className?: string
   zugferd_profiles: LaravelOptions[]
+  is_zugferd_enabled: boolean
 }
 
 export const InvoiceForm: React.FC<Props> = ({
@@ -58,7 +59,8 @@ export const InvoiceForm: React.FC<Props> = ({
   payment_deadlines,
   projects,
   taxes,
-  zugferd_profiles
+  zugferd_profiles,
+  is_zugferd_enabled
 }) => {
   const form = useForm<InvoiceFormData>('invoice-form', method, saveRoute, invoice)
 
@@ -105,6 +107,10 @@ export const InvoiceForm: React.FC<Props> = ({
     form.setData('dunning_block', Boolean(selectedContact.has_dunning_block))
     form.setData('payment_deadline_id', selectedContact.payment_deadline_id ?? (0 as number))
     form.setData('tax_id', selectedContact.tax_id ?? (0 as number))
+
+    if (selectedContact.zugferd_route_id) {
+      form.setData('zugferd_route_id', selectedContact.zugferd_route_id ?? '')
+    }
   }, [form.data.contact_id, contacts])
 
   return (
@@ -129,11 +135,13 @@ export const InvoiceForm: React.FC<Props> = ({
               items={invoice_types}
               {...form.register('type_id')}
             />
-            <div className="pt-1">
-              <Checkbox isDisabled={!invoice.is_draft} {...form.registerCheckbox('is_zugferd')}>
-                ZUGFeRD-Rechnung
-              </Checkbox>
-            </div>
+            {is_zugferd_enabled && (
+              <div className="pt-1">
+                <Checkbox isDisabled={!invoice.is_draft} {...form.registerCheckbox('is_zugferd')}>
+                  ZUGFeRD-Rechnung
+                </Checkbox>
+              </div>
+            )}
           </div>
           <div className="col-span-5">
             <FormDatePicker
