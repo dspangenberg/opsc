@@ -27,7 +27,6 @@ import { PdfViewer } from '@/Components/twc-ui/pdf-viewer'
 import { Tab, TabList, Tabs } from '@/Components/twc-ui/tabs'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
 import { useFileDownload } from '@/Hooks/use-file-download'
-import { offerStatusDirectory } from '@/Pages/App/Offer/OfferDetails'
 import { OfferSaveAsTemplate } from '@/Pages/App/Offer/OfferSaveAsTemplate'
 import { OfferTableProvider, useOfferTable } from './OfferTableProvider'
 
@@ -35,9 +34,10 @@ interface Props {
   offer: App.Data.OfferData
   children: React.ReactNode
   onAddSection?: () => void
+  statuses: LaravelOptions[]
 }
 
-const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children, ...props }) => {
+const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, statuses, children, ...props }) => {
   const onPrintPdf = () => {
     print(route('app.offer.pdf', { id: offer.id }))
   }
@@ -147,7 +147,8 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children, ...props 
   }
 
   const handleStatusChange = async (status: string) => {
-    const statusName = offerStatusDirectory[status].name
+    console.log(status)
+    const statusName = statuses?.find(item => item.id === status)?.name
     const promise = await AlertDialog.call({
       title: 'Status ändern',
       message: `Möchtest Du den Status wirklich auf ${statusName} ändern?`,
@@ -159,11 +160,6 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children, ...props 
       })
     }
   }
-
-  const statusArray = Object.entries(offerStatusDirectory).map(([key, value]) => ({
-    id: key,
-    name: value.name
-  }))
 
   const handelAddSection = () => {
     props?.onAddSection?.()
@@ -239,13 +235,13 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children, ...props 
               <MenuItem icon={StatusIcon} title="Status setzen" separator />
               <MenuPopover>
                 <Menu selectionMode="single" selectedKeys={[offer.status]}>
-                  {statusArray.map(status => (
+                  {statuses?.map(status => (
                     <MenuItem
                       selectionMode="single"
                       key={status.id}
                       id={status.id}
                       title={status.name}
-                      onAction={() => handleStatusChange(status.id)}
+                      onAction={() => handleStatusChange(status.id as string)}
                     />
                   ))}
                 </Menu>
@@ -320,8 +316,8 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, children, ...props 
       currentRoute,
       offer.is_draft,
       offer.id,
-      statusArray,
-      offer.status
+      offer.status,
+      statuses
     ]
   )
 

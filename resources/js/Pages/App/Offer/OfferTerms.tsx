@@ -27,9 +27,10 @@ interface OfferTermsProps extends PageProps {
   textModules: App.Data.TextModuleData[]
   offerSections: App.Data.OfferSectionData[]
   children?: React.ReactNode
+  statuses: LaravelOptions[]
 }
 
-const OfferTerms: React.FC<OfferTermsProps> = ({ offerSections, offer, textModules }) => {
+const OfferTerms: React.FC<OfferTermsProps> = ({ offerSections, offer, statuses, textModules }) => {
   const [editSection, setEditSection] = useState<number>(-1)
 
   const sensors = useSensors(
@@ -96,7 +97,7 @@ const OfferTerms: React.FC<OfferTermsProps> = ({ offerSections, offer, textModul
   }
 
   return (
-    <OfferDetailsLayout offer={offer} onAddSection={() => handleSelector()}>
+    <OfferDetailsLayout offer={offer} onAddSection={() => handleSelector()} statuses={statuses}>
       <div className="flex-1 flex-col">
         <DndContext
           sensors={sensors}
@@ -129,7 +130,7 @@ const OfferTerms: React.FC<OfferTermsProps> = ({ offerSections, offer, textModul
       </div>
       <div className="h-fit w-sm flex-none space-y-6 px-1">
         <div className="fixed">
-          <OfferDetailsSide offer={offer} />
+          <OfferDetailsSide offer={offer} statuses={statuses} />
         </div>
       </div>
     </OfferDetailsLayout>

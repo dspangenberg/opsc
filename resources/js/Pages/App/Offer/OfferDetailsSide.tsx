@@ -10,15 +10,16 @@ import {
 } from '@/Components/DataCard'
 import { StatsField } from '@/Components/StatsField'
 import { cn } from '@/Lib/utils'
-import { offerStatusDirectory } from '@/Pages/App/Offer/OfferDetails'
 
 interface ContactDetailsOrgInfoBoxProps {
   offer: App.Data.OfferData
   showSecondary?: boolean
+  statuses: LaravelOptions[]
 }
 
 export const OfferDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
-  offer
+  offer,
+  statuses
 }: ContactDetailsOrgInfoBoxProps) => {
   const currencyFormatter = new Intl.NumberFormat('de-DE', {
     style: 'decimal',
@@ -26,7 +27,9 @@ export const OfferDetailsSide: FC<ContactDetailsOrgInfoBoxProps> = ({
     maximumFractionDigits: 2
   })
 
-  const statusLabel = offerStatusDirectory[offer.status].name
+  const statusLabel = offer.is_draft
+    ? 'Entwurf'
+    : statuses?.find(item => item.id === offer.status)?.name
 
   const contactRoute = useMemo(
     () => route('app.contact.details', { id: offer.contact_id }),
