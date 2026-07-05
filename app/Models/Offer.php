@@ -196,6 +196,7 @@ class Offer extends Model implements MediableInterface
         }
 
         $this->is_draft = false;
+        $this->status = OfferStatusEnum::PENDING->value;
 
         $this->save();
     }

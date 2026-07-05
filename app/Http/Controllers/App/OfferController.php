@@ -199,6 +199,9 @@ class OfferController extends Controller
 
     }
 
+    /**
+     * @throws Exception
+     */
     public function show(Offer $offer)
     {
         $offer
@@ -221,6 +224,7 @@ class OfferController extends Controller
 
         return Inertia::render('App/Offer/OfferDetails', [
             'offer' => OfferData::from($offer),
+            'statuses' => Options::forEnum(OfferStatusEnum::class),
         ]);
     }
 
@@ -266,6 +270,9 @@ class OfferController extends Controller
     public function duplicate(Offer $offer)
     {
         $duplicatedOffer = Offer::duplicate($offer);
+
+        $offer->status = OfferStatusEnum::PENDING->value;
+
         $duplicatedOffer->addHistory('hat das Angebot erstellt.', 'created', auth()->user());
 
         return redirect()->route('app.offer.details', ['offer' => $duplicatedOffer->id]);
@@ -368,6 +375,7 @@ class OfferController extends Controller
             'offer' => OfferData::from($offer),
             'textModules' => TextModuleData::collect($textModules),
             'offerSections' => OfferSectionData::collect($offerSections),
+            'statuses' => Options::forEnum(OfferStatusEnum::class),
         ]);
     }
 
@@ -459,15 +467,7 @@ class OfferController extends Controller
         $offer->status = $newStatus->value;
         $offer->save();
 
-        $statusName = match ($newStatus) {
-            OfferStatusEnum::PENDING => 'ausstehend',
-            OfferStatusEnum::ACCEPTED => 'angenommen',
-            OfferStatusEnum::REJECTED => 'abgelehnt',
-            OfferStatusEnum::POSTPONED => 'aufgeschoben',
-            OfferStatusEnum::EXTENDED => 'verlängert',
-            OfferStatusEnum::CANCELED => 'storniert',
-        };
-
+        $statusName = OfferStatusEnum::labels()[$newStatus->value];
         $statusType = match ($newStatus->name) {
             'ACCEPTED' => 'status.success',
             'REJECTED', 'CANCELED' => 'status.destructive',
@@ -504,6 +504,7 @@ class OfferController extends Controller
 
         return Inertia::render('App/Offer/OfferHistory', [
             'offer' => OfferData::from($offer),
+            'statuses' => Options::forEnum(OfferStatusEnum::class),
         ]);
     }
 }

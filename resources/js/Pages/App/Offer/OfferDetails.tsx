@@ -12,20 +12,7 @@ import { useOfferTable } from './OfferTableProvider'
 interface OfferDetailsProps extends PageProps {
   offer: App.Data.OfferData
   children?: React.ReactNode
-}
-
-type OfferStatus = {
-  id: string
-  name: string
-}
-
-export const offerStatusDirectory: Record<string, OfferStatus> = {
-  pending: { id: 'pending', name: 'ausstehend' },
-  accepted: { id: 'accepted', name: 'angenommen' },
-  rejected: { id: 'rejected', name: 'abgelehnt' },
-  postponed: { id: 'postponed', name: 'aufgeschoben' },
-  extended: { id: 'extended', name: 'verlängert' },
-  canceled: { id: 'canceled', name: 'storniert' }
+  statuses: LaravelOptions[]
 }
 
 const OfferDetailsContent: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
@@ -53,13 +40,14 @@ const OfferDetailsContent: React.FC<{ children?: React.ReactNode }> = ({ childre
 
 const OfferDetails: React.FC<OfferDetailsProps> = ({ children }) => {
   const { offer } = usePage<OfferDetailsProps>().props
+  const statuses = usePage<OfferDetailsProps>().props.statuses
 
   return (
-    <OfferDetailsLayout offer={offer}>
+    <OfferDetailsLayout offer={offer} statuses={statuses}>
       <OfferDetailsContent>{children}</OfferDetailsContent>
       <div className="h-fit w-sm flex-none px-1">
         <div className="fixed space-y-6">
-          <OfferDetailsSide offer={offer} />
+          <OfferDetailsSide statuses={statuses} offer={offer} />
           <OfferDetailsAttachments offer={offer} />
         </div>
       </div>
