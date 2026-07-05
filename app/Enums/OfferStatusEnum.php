@@ -13,4 +13,16 @@ enum OfferStatusEnum: string
     case POSTPONED = 'postponed';
     case EXTENDED = 'extended';
     case CANCELED = 'canceled';
+
+    public static function labels(): array
+    {
+        return [
+            'pending' => 'ausstehend',
+            'accepted' => 'angenommen',
+            'rejected' => 'abgelehnt',
+            'postponed' => 'aufgeschoben',
+            'extended' => 'verlängert',
+            'canceled' => 'storniert',
+        ];
+    }
 }

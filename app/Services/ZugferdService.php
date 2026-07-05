@@ -233,9 +233,19 @@ class ZugferdService
 
     public function checkStettings(): string|bool
     {
+        /*
+         *  TODO:
+         *  Kontakt hat keine E-Mail-Adresse
+         *  Kontakt Ansprechperson hat keine E-Mail-Adresse
+         */
+
         $this->settings = app(ZugferdSettings::class);
 
         $contact = Contact::with(['mails', 'phones'])->find($this->settings->seller_contact_id);
+
+        if (! $contact) {
+            return 'Verkäuferdaten: Eigene Organisation wurde nicht gefunden.';
+        }
 
         if (! $contact->vat_id) {
             return 'Umsatzsteuer-ID fehlt';

@@ -374,7 +374,7 @@ class Offer extends Model implements MediableInterface
     public function scopeView(Builder $query, $view): Builder
     {
         return match ($view) {
-            'drafts' => $query->where('is_draft', true),
+            'drafts' => $query->where('is_draft', true)->where('is_template', false),
             'templates' => $query->where('is_template', true),
             default => $query->where('is_draft', false)
         };

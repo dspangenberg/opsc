@@ -190,6 +190,7 @@ const ComboBox = <T extends Record<string, unknown>>({
       isInvalid={hasError}
       autoFocus={autoFocus}
       name={name}
+      onBlur={onBlur}
       {...props}
     >
       {label && <Label value={label} isRequired={!isOptional} />}
