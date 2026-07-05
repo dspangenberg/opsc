@@ -253,7 +253,7 @@ export const InvoiceForm: React.FC<Props> = ({
                 label="Interval"
                 {...form.register('recurring_interval')}
               />
-            </div>
+            </div>   
             <div className="col-span-6">
               <FormDatePicker label="Startdatum" {...form.register('recurring_begin_on')} />
             </div>

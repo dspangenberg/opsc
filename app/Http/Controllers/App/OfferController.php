@@ -39,11 +39,15 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Spatie\LaravelOptions\Options;
 use Stevebauman\Purify\Facades\Purify;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class OfferController extends Controller
 {
+    /**
+     * @throws Exception
+     */
     public function index(Request $request)
     {
         $years = Offer::query()->selectRaw('DISTINCT YEAR(issued_on) as year')->orderByRaw('YEAR(issued_on) DESC')->get()->pluck('year');
@@ -75,11 +79,15 @@ class OfferController extends Controller
 
         return Inertia::render('App/Offer/OfferIndex', [
             'offers' => OfferData::collect($offers),
+            'statuses' => Options::forEnum(OfferStatusEnum::class),
             'years' => $years,
             'currentYear' => $year,
         ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function create()
     {
         $taxes = Tax::query()->with('rates')->orderBy('is_default', 'DESC')->orderBy('name')->get();

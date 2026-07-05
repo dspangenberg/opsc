@@ -3,7 +3,13 @@
  * Copyright (c) 2024-2025 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  type VisibilityState
+} from '@tanstack/react-table'
 import type React from 'react'
 import { useEffect, useImperativeHandle } from 'react'
 import { ScrollArea } from '@/Components/twc-ui/scroll-area'
@@ -19,6 +25,8 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  columnVisibility?: VisibilityState
+  onColumnVisibilityChange?: React.Dispatch<React.SetStateAction<VisibilityState>>
   footer?: React.ReactNode
   header?: React.ReactNode
   itemName?: string
@@ -35,10 +43,12 @@ export interface DataTableRef {
 function DataTableComponent<TData, TValue>({
   actionBar,
   columns,
+  columnVisibility,
   data,
   filterBar,
   footer,
   header,
+  onColumnVisibilityChange,
   onSelectedRowsChange,
   itemName = 'Datensätze',
   ref
@@ -46,6 +56,14 @@ function DataTableComponent<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
+    state: {
+      columnVisibility
+    },
+    onColumnVisibilityChange: updater => {
+      if (onColumnVisibilityChange) {
+        onColumnVisibilityChange(updater)
+      }
+    },
     getCoreRowModel: getCoreRowModel()
   })
 

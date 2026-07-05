@@ -1,5 +1,6 @@
 import { Add01Icon, ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/core'
+import type { VisibilityState } from '@tanstack/react-table'
 import { getYear } from 'date-fns'
 import { debounce } from 'lodash'
 import * as React from 'react'
@@ -10,10 +11,11 @@ import { Button } from '@/Components/twc-ui/button'
 import { Select } from '@/Components/twc-ui/select'
 import { Toolbar } from '@/Components/twc-ui/toolbar'
 import type { PageProps } from '@/Types'
-import { columns } from './OfferIndexColumns'
+import { createColumns } from './OfferIndexColumns'
 
 interface OfferIndexProps extends PageProps {
   offers: App.Data.Paginated.PaginationMeta<App.Data.OfferData[]>
+  statuses: LaravelOptions[]
   years: number[]
   currentYear: number
 }
@@ -29,11 +31,20 @@ interface ViewProps extends Record<string, unknown> {
   is_default?: boolean
 }
 
-const OfferIndex: React.FC<OfferIndexProps> = ({ offers, years, currentYear }) => {
+const OfferIndex: React.FC<OfferIndexProps> = ({ offers, years, currentYear, statuses }) => {
   const minYear = Math.min(...years)
   const [year, setYear] = React.useState<number>(currentYear)
   const [view, setView] = React.useState<number>(1)
   const [selectedRows, setSelectedRows] = React.useState<App.Data.OfferData[]>([])
+
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
+    template_name: route().queryParams.view === 'templates',
+    valid_until: route().queryParams.view !== 'templates',
+    status: route().queryParams.view !== 'templates',
+    formated_offer_number: route().queryParams.view !== 'templates'
+  })
+
+  const columns = createColumns({ statuses })
 
   const localCurrentYear = getYear(new Date())
 
@@ -144,6 +155,8 @@ const OfferIndex: React.FC<OfferIndexProps> = ({ offers, years, currentYear }) =
       <DataTable
         columns={columns}
         data={offers.data}
+        columnVisibility={columnVisibility}
+        onColumnVisibilityChange={updater => setColumnVisibility(updater)}
         onSelectedRowsChange={setSelectedRows}
         itemName="Angebote mit den Suchkriterien"
       />
