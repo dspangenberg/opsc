@@ -302,7 +302,12 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, statuses, children,
             title="Als Vorlage speichern"
             onAction={handleSaveAsTemplate}
           />
-          <MenuItem icon={FileEuroIcon} title="Rechnung erstellen" onAction={handleCreateInvoice} />
+          <MenuItem
+            icon={FileEuroIcon}
+            ellipsis
+            title="Rechnung erstellen"
+            onAction={handleCreateInvoice}
+          />
         </DropdownButton>
       </Toolbar>
     ),

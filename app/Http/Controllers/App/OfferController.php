@@ -282,7 +282,7 @@ class OfferController extends Controller
         }
 
         if ($request->validated('invoice_type_id') === 'deposit') {
-            $this->extracted1($offer, $request, $invoice);
+            $this->extracted1($offer, $invoice, $request->validated('deposit'));
 
             return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
         }
@@ -290,7 +290,7 @@ class OfferController extends Controller
         if ($request->validated('invoice_type_id') === 'default') {
 
             if ($request->validated('should_summarize')) {
-                $this->extracted1($offer, $request, $invoice);
+                $this->extracted1($offer, $invoice);
             } else {
                 $this->getOfferLine_QB($offer, $invoice);
             }
@@ -637,17 +637,21 @@ class OfferController extends Controller
         $invoiceLine->save();
     }
 
-    public function extracted1(Offer $offer, OfferInvoiceStoreRequest $request, Invoice $invoice): void
+    public function extracted1(Offer $offer, Invoice $invoice, float $disposit=0): void
     {
-        $amount = $offer->lines()->sum('amount');
+
+        ray($offer->toArray());
+        $amount = $offer->amount_net;
 
         $firstLine = $offer->lines()->whereIn('type_id', [1, 3])->first();
         $firstLineParts = explode("\n", $firstLine->text);
         $text[] = $firstLineParts[0];
         $text[] = 'gemäß AG-'.$offer->formated_offer_number;
-        $text[] = 'Anzahlung';
+        if ($disposit>0) {
+            $text[] = 'Anzahlung';
+        }
 
-        $amount = $request->validated('deposit');
+        $amount = $disposit ? $disposit : $amount;
         $invoiceLine = new InvoiceLine;
         $invoiceLine->type_id = 3;
         $invoiceLine->invoice_id = $invoice->id;

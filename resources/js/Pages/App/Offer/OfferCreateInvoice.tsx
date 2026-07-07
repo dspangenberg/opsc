@@ -11,7 +11,7 @@ import { OfferDetailsLayout } from '@/Pages/App/Offer/OfferDetailsLayout'
 import type { PageProps } from '@/Types'
 import { OfferDetailsSide } from './OfferDetailsSide'
 
-interface OfferTermsProps extends PageProps {
+interface OfferCreateInvoiceProps extends PageProps {
   offer: App.Data.OfferData
   statuses: LaravelOptions[]
   invoices_count: number
@@ -25,7 +25,11 @@ interface Invoice {
 
 type OfferInvoiceForm = Partial<Invoice>
 
-const OfferHistory: React.FC<OfferTermsProps> = ({ offer, statuses, invoices_count }) => {
+const OfferCreateInvoice: React.FC<OfferCreateInvoiceProps> = ({
+  offer,
+  statuses,
+  invoices_count
+}) => {
   const [type, setType] = useState('deposit')
   const form = useForm<OfferInvoiceForm>(
     'create-invoice-form',
@@ -94,14 +98,12 @@ const OfferHistory: React.FC<OfferTermsProps> = ({ offer, statuses, invoices_cou
         </FormCard>
       </div>
       <div className="h-fit w-full max-w-sm flex-none border-l! border-stone-200 px-1">
-        (
         <div className="fixed w-full max-w-sm space-y-6">
           <OfferDetailsSide offer={offer} statuses={statuses} />
         </div>
-        )
       </div>
     </OfferDetailsLayout>
   )
 }
 
-export default OfferHistory
+export default OfferCreateInvoice
