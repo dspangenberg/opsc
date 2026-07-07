@@ -640,7 +640,6 @@ class OfferController extends Controller
     public function extracted1(Offer $offer, Invoice $invoice, float $disposit=0): void
     {
 
-        ray($offer->toArray());
         $amount = $offer->amount_net;
 
         $firstLine = $offer->lines()->whereIn('type_id', [1, 3])->first();
