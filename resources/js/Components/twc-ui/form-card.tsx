@@ -9,6 +9,7 @@ interface FormCardProps {
   innerClassName?: string
   children: React.ReactNode
   footer?: React.ReactNode
+  title?: string
   footerClassName?: string
 }
 
@@ -17,11 +18,13 @@ export const FormCard: React.FC<FormCardProps> = ({
   className,
   footer,
   footerClassName,
-  innerClassName
+  innerClassName,
+  title
 }) => {
   return (
     <div className={cn('flex h-full flex-1 flex-col overflow-hidden', className)}>
       <div className="relative flex max-h-fit flex-1 flex-col gap-1.5 overflow-hidden rounded-lg border border-border/80 bg-page-content p-1.5">
+        {!!title && <div className="px-4 font-medium text-lg">{title}</div>}
         <ScrollArea
           className={cn('min-h-0 flex-1 rounded-md border bg-background', innerClassName)}
         >

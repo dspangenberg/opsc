@@ -347,6 +347,11 @@ class Offer extends Model implements MediableInterface
         return $this->hasMany(OfferLine::class);
     }
 
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
     public function contact(): HasOne
     {
         return $this->hasOne(Contact::class, 'id', 'contact_id');
