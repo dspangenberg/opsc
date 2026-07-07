@@ -14,10 +14,12 @@ use App\Data\ProjectData;
 use App\Data\TaxData;
 use App\Data\TextModuleData;
 use App\Enums\OfferStatusEnum;
+use App\Enums\ZugferdProfileEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NoteStoreRequest;
 use App\Http\Requests\OfferAttachmentAddRequest;
 use App\Http\Requests\OfferAttachmentSortUpdateRequest;
+use App\Http\Requests\OfferInvoiceStoreRequest;
 use App\Http\Requests\OfferOfferSectionRequest;
 use App\Http\Requests\OfferStoreRequest;
 use App\Http\Requests\OfferTemplateStoreRequest;
@@ -34,11 +36,13 @@ use App\Models\OfferSection;
 use App\Models\Project;
 use App\Models\Tax;
 use App\Models\TextModule;
+use App\Settings\ZugferdSettings;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 use Spatie\LaravelOptions\Options;
 use Stevebauman\Purify\Facades\Purify;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -156,9 +160,40 @@ class OfferController extends Controller
         return redirect()->route('app.offer.details', ['offer' => $offer->id]);
     }
 
-    public function createInvoice(Offer $offer)
+    /**
+     * @throws Exception
+     */
+    public function createInvoice(Offer $offer): Response
     {
-        $offer->load('contact', 'lines');
+        $offer
+            ->load('contact')
+            ->load('project')
+            ->load([
+                'lines' => function ($query) {
+                    $query->with('rate')->orderBy('pos');
+                },
+            ])
+            ->load('tax')
+            ->loadCount('invoices')
+            ->load('tax.rates')
+            ->loadSum('lines', 'amount')
+            ->loadSum('lines', 'tax')
+            ->load('notables.creator');
+
+        return Inertia::render('App/Offer/OfferCreateInvoice', [
+            'offer' => OfferData::from($offer),
+            'statuses' => Options::forEnum(OfferStatusEnum::class),
+            'invoices_count' => $offer->invoices_count,
+        ]);
+    }
+
+    public function storeInvoice(OfferInvoiceStoreRequest $request, Offer $offer)
+    {
+
+        $offer->loadSum('lines', 'amount');
+        $offer->loadSum('lines', 'tax');
+        $offer->load('contact');
+        $zugferdSettings = app(ZugferdSettings::class);
 
         $invoice = new Invoice;
         $invoice->issued_on = Carbon::now()->format('Y-m-d');
@@ -168,35 +203,100 @@ class OfferController extends Controller
         $invoice->sent_at = null;
         $invoice->contact_id = $offer->contact_id;
         $invoice->project_id = $offer->project_id;
-        $invoice->type_id = 2;
+
+        switch ($request->validated('invoice_type_id')) {
+            case 'final':
+                $invoice->type_id = 3;
+                break;
+            case 'deposit':
+                $invoice->type_id = 2;
+                break;
+            case 'default':
+                $invoice->type_id = 1;
+                break;
+        }
+
         $invoice->payment_deadline_id = $offer->contact->payment_deadline_id;
         $invoice->tax_id = $offer->tax_id;
         $invoice->offer_id = $offer->id;
-        $invoice->save();
+        $invoice->is_zugferd = $zugferdSettings->is_enabled;
+        $invoice->zugferd_profile = ZugferdProfileEnum::ZUGFERD;
 
-        $invoice->load('contact');
-        $invoice->address = $invoice->contact->getFormatedInvoiceAddress();
         $invoice->save();
-
         $invoice->addHistory('Rechnung wurde erstellt.', 'created');
+        $invoice->load('contact');
+        $invoice->address = $invoice->contact->getFormatedInvoiceAddress($invoice->invoice_contact_id);
+        $invoice->save();
 
-        $offer->lines()->each(function ($line) use ($invoice) {
-            $invoiceLine = new InvoiceLine;
-            $invoiceLine->invoice_id = $invoice->id;
-            $invoiceLine->pos = $line->pos;
-            $invoiceLine->quantity = $line->quantity;
-            $invoiceLine->price = $line->price;
-            $invoiceLine->type_id = $line->type_id;
-            $invoiceLine->text = $line->text;
-            $invoiceLine->unit = $line->unit;
-            $invoiceLine->amount = $line->amount;
-            $invoiceLine->tax_id = $line->tax_id;
-            $invoiceLine->tax = $line->tax;
-            $invoiceLine->save();
-        });
+        if ($request->validated('invoice_type_id') === 'final') {
+            $offer->load('lines');
+            $offer->load([
+                'invoices' => function ($query) {
+                    $query
+                        ->where('is_draft', false)
+                        ->withSum('lines', 'amount')
+                        ->withSum('lines', 'tax');
+                },
+            ]);
+
+            $invoice->service_period_begin = $offer->invoices->min('issued_on');
+            $invoice->service_period_end = now();
+            $invoice->save();
+
+            if ($request->validated('should_summarize')) {
+
+                $invoiceLine = new InvoiceLine;
+                // $sum = $offer->invoices->sum('amount');
+                $orgSum = $offer->amount_net;
+                $amount = $orgSum;
+                $firstLine = $offer->lines()->whereIn('type_id', [1, 3])->first();
+                $firstLineParts = explode("\n", $firstLine->text);
+                $text[] = $firstLineParts[0];
+                $text[] = 'gemäß AG-'.$offer->formated_offer_number;
+                $invoiceLine->invoice_id = $invoice->id;
+                $invoiceLine->type_id = 3;
+                $invoiceLine->pos = 1;
+                $invoiceLine->quantity = 1;
+                $invoiceLine->unit = '*';
+                $this->extracted($amount, $invoiceLine, $text, $firstLine);
+
+            } else {
+                $this->getOfferLine_QB($offer, $invoice);
+            }
+
+            $id = $invoice->id;
+            foreach ($offer->invoices as $offerInvoice) {
+                $invoiceLine = new InvoiceLine;
+                $invoiceLine->type_id = 9;
+                $invoiceLine->pos = 999;
+                $invoiceLine->invoice_id = $id;
+                $invoiceLine->text = '';
+                $invoiceLine->amount = 0 - $offerInvoice->amount_net;
+                $invoiceLine->tax = 0 - $offerInvoice->amount_tax;
+                $invoiceLine->linked_invoice_id = $offerInvoice->id;
+                $invoiceLine->save();
+            }
+
+            return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
+
+        }
+
+        if ($request->validated('invoice_type_id') === 'deposit') {
+            $this->extracted1($offer, $invoice, $request->validated('deposit'));
+
+            return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
+        }
+
+        if ($request->validated('invoice_type_id') === 'default') {
+
+            if ($request->validated('should_summarize')) {
+                $this->extracted1($offer, $invoice);
+            } else {
+                $this->getOfferLine_QB($offer, $invoice);
+            }
+        }
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
-
     }
 
     /**
@@ -270,9 +370,6 @@ class OfferController extends Controller
     public function duplicate(Offer $offer)
     {
         $duplicatedOffer = Offer::duplicate($offer);
-
-        $offer->status = OfferStatusEnum::PENDING->value;
-
         $duplicatedOffer->addHistory('hat das Angebot erstellt.', 'created', auth()->user());
 
         return redirect()->route('app.offer.details', ['offer' => $duplicatedOffer->id]);
@@ -348,6 +445,9 @@ class OfferController extends Controller
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function terms(Offer $offer)
     {
         $textModules = TextModule::orderBy('title')->get();
@@ -506,5 +606,57 @@ class OfferController extends Controller
             'offer' => OfferData::from($offer),
             'statuses' => Options::forEnum(OfferStatusEnum::class),
         ]);
+    }
+
+    public function getOfferLine_QB(Offer $offer, Invoice $invoice): void
+    {
+        $offer->lines()->each(function ($line) use ($invoice) {
+            $invoiceLine = new InvoiceLine;
+            $invoiceLine->invoice_id = $invoice->id;
+            $invoiceLine->pos = $line->pos;
+            $invoiceLine->quantity = $line->quantity;
+            $invoiceLine->price = $line->price;
+            $invoiceLine->type_id = $line->type_id;
+            $invoiceLine->text = $line->text;
+            $invoiceLine->unit = $line->unit;
+            $invoiceLine->amount = $line->amount;
+            $invoiceLine->tax_id = $line->tax_id;
+            $invoiceLine->tax = $line->tax;
+            $invoiceLine->save();
+        });
+    }
+
+    public function extracted(float $amount, InvoiceLine $invoiceLine, array $text, ?OfferLine $firstLine): void
+    {
+        $invoiceLine->price = $amount;
+        $invoiceLine->amount = $amount;
+        $invoiceLine->text = implode("\n", $text);
+        $invoiceLine->tax_rate = $firstLine->tax_rate;
+        $invoiceLine->tax_rate_id = $firstLine->tax_rate_id;
+        $invoiceLine->tax = $amount / 100 * $firstLine->rate->rate;
+        $invoiceLine->save();
+    }
+
+    public function extracted1(Offer $offer, Invoice $invoice, float $disposit=0): void
+    {
+
+        ray($offer->toArray());
+        $amount = $offer->amount_net;
+
+        $firstLine = $offer->lines()->whereIn('type_id', [1, 3])->first();
+        $firstLineParts = explode("\n", $firstLine->text);
+        $text[] = $firstLineParts[0];
+        $text[] = 'gemäß AG-'.$offer->formated_offer_number;
+        if ($disposit>0) {
+            $text[] = 'Anzahlung';
+        }
+
+        $amount = $disposit ? $disposit : $amount;
+        $invoiceLine = new InvoiceLine;
+        $invoiceLine->type_id = 3;
+        $invoiceLine->invoice_id = $invoice->id;
+        $invoiceLine->pos = 1;
+        $invoiceLine->quantity = 1;
+        $this->extracted($amount, $invoiceLine, $text, $firstLine);
     }
 }

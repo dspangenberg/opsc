@@ -52,7 +52,7 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, statuses, children,
   const { editMode, setEditMode } = useOfferTable()
 
   const handleCreateInvoice = () => {
-    router.post(route('app.offer.create-invoice', { offer: offer.id }))
+    router.get(route('app.offer.create-invoice', { offer: offer.id }))
   }
 
   const handleEditBaseDataButtonClick = () => {
@@ -147,7 +147,6 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, statuses, children,
   }
 
   const handleStatusChange = async (status: string) => {
-    console.log(status)
     const statusName = statuses?.find(item => item.id === status)?.name
     const promise = await AlertDialog.call({
       title: 'Status ändern',
@@ -303,7 +302,12 @@ const OfferDetailsLayoutContent: React.FC<Props> = ({ offer, statuses, children,
             title="Als Vorlage speichern"
             onAction={handleSaveAsTemplate}
           />
-          <MenuItem icon={FileEuroIcon} title="Rechnung erstellen" onAction={handleCreateInvoice} />
+          <MenuItem
+            icon={FileEuroIcon}
+            ellipsis
+            title="Rechnung erstellen"
+            onAction={handleCreateInvoice}
+          />
         </DropdownButton>
       </Toolbar>
     ),
