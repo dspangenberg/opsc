@@ -24,7 +24,7 @@
     </td>
     <td class="right">
         @if($line->type_id === 3)
-            ({{ number_format($line->price, 2, ',', '.') }})
+            
         @else
             @if($line->type_id !== 2)
                 {{ number_format($line->price, 2, ',', '.') }}

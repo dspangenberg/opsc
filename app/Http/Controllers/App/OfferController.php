@@ -160,16 +160,17 @@ class OfferController extends Controller
         return redirect()->route('app.offer.details', ['offer' => $offer->id]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function createInvoice(Offer $offer): Response
     {
-        $offer->load('contact', 'lines.rate');
-
         $offer
             ->load('contact')
             ->load('project')
             ->load([
                 'lines' => function ($query) {
-                    $query->orderBy('pos');
+                    $query->with('rate')->orderBy('pos');
                 },
             ])
             ->load('tax')
@@ -202,7 +203,19 @@ class OfferController extends Controller
         $invoice->sent_at = null;
         $invoice->contact_id = $offer->contact_id;
         $invoice->project_id = $offer->project_id;
-        $invoice->type_id = 2;
+
+        switch ($request->validated('invoice_type_id')) {
+            case 'final':
+                $invoice->type_id = 3;
+                break;
+            case 'deposit':
+                $invoice->type_id = 2;
+                break;
+            case 'default':
+                $invoice->type_id = 1;
+                break;
+        }
+
         $invoice->payment_deadline_id = $offer->contact->payment_deadline_id;
         $invoice->tax_id = $offer->tax_id;
         $invoice->offer_id = $offer->id;
@@ -217,13 +230,18 @@ class OfferController extends Controller
 
         if ($request->validated('invoice_type_id') === 'final') {
             $offer->load('lines');
-            $offer->load(['invoices' => function ($query) {
-                $query
-                    ->where('is_draft', false)
-                    ->withSum('lines', 'amount')
-                    ->withSum('lines', 'tax');
-            }]);
+            $offer->load([
+                'invoices' => function ($query) {
+                    $query
+                        ->where('is_draft', false)
+                        ->withSum('lines', 'amount')
+                        ->withSum('lines', 'tax');
+                },
+            ]);
 
+            $invoice->service_period_begin = $offer->invoices->min('issued_on');
+            $invoice->service_period_end = now();
+            $invoice->save();
 
             if ($request->validated('should_summarize')) {
 
@@ -237,19 +255,10 @@ class OfferController extends Controller
                 $text[] = 'gemäß AG-'.$offer->formated_offer_number;
                 $invoiceLine->invoice_id = $invoice->id;
                 $invoiceLine->type_id = 3;
-                $invoiceLine->invoice_id = $invoice->id;
                 $invoiceLine->pos = 1;
                 $invoiceLine->quantity = 1;
                 $invoiceLine->unit = '*';
-                $invoiceLine->price = $amount;
-                $invoiceLine->amount = $amount;
-                $invoiceLine->text = implode("\n", $text);
-                $invoiceLine->tax_rate = $firstLine->tax_rate;
-                $invoiceLine->tax_rate_id = $firstLine->tax_rate_id;
-                $invoiceLine->tax = $amount / 100 * $firstLine->rate->rate;
-                $invoiceLine->save();
-
-
+                $this->extracted($amount, $invoiceLine, $text, $firstLine);
 
             } else {
                 $this->getOfferLine_QB($offer, $invoice);
@@ -268,42 +277,23 @@ class OfferController extends Controller
                 $invoiceLine->save();
             }
 
-
             return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
 
         }
 
-
-
         if ($request->validated('invoice_type_id') === 'deposit') {
-            $amount = $offer->lines()->sum('amount');
-
-            $firstLine = $offer->lines()->whereIn('type_id', [1, 3])->first();
-            $firstLineParts = explode("\n", $firstLine->text);
-            $text[] = $firstLineParts[0];
-            $text[] = 'gemäß AG-'.$offer->formated_offer_number;
-            $text[] = 'Anzahlung';
-
-            $amount = $request->validated('deposit');
-            $invoiceLine = new InvoiceLine;
-            $invoiceLine->type_id = 3;
-            $invoiceLine->invoice_id = $invoice->id;
-            $invoiceLine->pos = 1;
-            $invoiceLine->quantity = 1;
-            $invoiceLine->price = $amount;
-            $invoiceLine->amount = $amount;
-            $invoiceLine->text = implode("\n", $text);
-            $invoiceLine->tax_rate = $firstLine->tax_rate;
-            $invoiceLine->tax_rate_id = $firstLine->tax_rate_id;
-            $invoiceLine->tax = $amount / 100 * $firstLine->rate->rate;
-            $invoiceLine->save();
+            $this->extracted1($offer, $request, $invoice);
 
             return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
         }
 
         if ($request->validated('invoice_type_id') === 'default') {
 
-            $this->getOfferLine_QB($offer, $invoice);
+            if ($request->validated('should_summarize')) {
+                $this->extracted1($offer, $request, $invoice);
+            } else {
+                $this->getOfferLine_QB($offer, $invoice);
+            }
         }
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
@@ -455,6 +445,9 @@ class OfferController extends Controller
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function terms(Offer $offer)
     {
         $textModules = TextModule::orderBy('title')->get();
@@ -615,11 +608,6 @@ class OfferController extends Controller
         ]);
     }
 
-    /**
-     * @param  Offer  $offer
-     * @param  Invoice  $invoice
-     * @return void
-     */
     public function getOfferLine_QB(Offer $offer, Invoice $invoice): void
     {
         $offer->lines()->each(function ($line) use ($invoice) {
@@ -636,5 +624,35 @@ class OfferController extends Controller
             $invoiceLine->tax = $line->tax;
             $invoiceLine->save();
         });
+    }
+
+    public function extracted(float $amount, InvoiceLine $invoiceLine, array $text, ?OfferLine $firstLine): void
+    {
+        $invoiceLine->price = $amount;
+        $invoiceLine->amount = $amount;
+        $invoiceLine->text = implode("\n", $text);
+        $invoiceLine->tax_rate = $firstLine->tax_rate;
+        $invoiceLine->tax_rate_id = $firstLine->tax_rate_id;
+        $invoiceLine->tax = $amount / 100 * $firstLine->rate->rate;
+        $invoiceLine->save();
+    }
+
+    public function extracted1(Offer $offer, OfferInvoiceStoreRequest $request, Invoice $invoice): void
+    {
+        $amount = $offer->lines()->sum('amount');
+
+        $firstLine = $offer->lines()->whereIn('type_id', [1, 3])->first();
+        $firstLineParts = explode("\n", $firstLine->text);
+        $text[] = $firstLineParts[0];
+        $text[] = 'gemäß AG-'.$offer->formated_offer_number;
+        $text[] = 'Anzahlung';
+
+        $amount = $request->validated('deposit');
+        $invoiceLine = new InvoiceLine;
+        $invoiceLine->type_id = 3;
+        $invoiceLine->invoice_id = $invoice->id;
+        $invoiceLine->pos = 1;
+        $invoiceLine->quantity = 1;
+        $this->extracted($amount, $invoiceLine, $text, $firstLine);
     }
 }
