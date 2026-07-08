@@ -19,7 +19,7 @@ use Throwable;
 
 class InboxController extends Controller
 {
-    public function index($mail = null): Response
+    public function index(?int $mail = null): Response
     {
 
         if (! Auth::user()->is_admin) {
@@ -53,7 +53,7 @@ class InboxController extends Controller
     /**
      * @throws Throwable
      */
-    public function import($mail): RedirectResponse
+    public function import(int $mail): RedirectResponse
     {
         if (! Auth::user()->is_admin) {
             abort(403);
@@ -62,7 +62,7 @@ class InboxController extends Controller
         $mail = DropboxInbox::query()->with('dropbox')->where('id', $mail)->first();
         DropboxImportJob::dispatch($mail);
 
-        return redirect()->route('admim.inbox.index');
+        return redirect()->route('admin.inbox.index');
     }
 
     public function destroy(DropboxInbox $mail): RedirectResponse
@@ -73,6 +73,6 @@ class InboxController extends Controller
 
         $mail->delete();
 
-        return redirect()->route('admim.inbox.index');
+        return redirect()->route('admin.inbox.index');
     }
 }

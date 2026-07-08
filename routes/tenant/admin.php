@@ -49,14 +49,13 @@ Route::middleware([
     Route::get('settings', [SettingController::class, 'index'])->name('admin.setting.index');
     Route::put('settings', [SettingController::class, 'update'])->name('admin.setting.update');
 
-    Route::redirect('admin/emails', '/admin/emails/dropboxes')->name('admim.emails.index');
+    Route::redirect('emails', '/admin/emails/dropboxes')->name('admin.emails.index');
 
-    Route::get('emails/inbox/{mail?}', [InboxController::class, 'index'])->name('admim.inbox.index');
-    Route::delete('emails/inbox/{mail}', [InboxController::class, 'destroy'])->name('admim.inbox.destroy');
-    Route::put('emails/inbox/{mail}', [InboxController::class, 'import'])->name('admim.inbox.import');
+    Route::get('emails/inbox/{mail?}', [InboxController::class, 'index'])->name('admin.inbox.index');
+    Route::delete('emails/inbox/{mail}', [InboxController::class, 'destroy'])->name('admin.inbox.destroy');
+    Route::put('emails/inbox/{mail}', [InboxController::class, 'import'])->name('admin.inbox.import');
 
     Route::get('emails/dropboxes', [DropboxController::class, 'index'])->name('admin.dropbox.index');
-    Route::get('emails/dropboxes/create', [DropboxController::class, 'create'])->name('admin.dropbox.create');
     Route::get('emails/dropboxes/create', [DropboxController::class, 'create'])->name('admin.dropbox.create');
     Route::post('emails/dropboxes/store', [DropboxController::class, 'store'])->name('admin.dropbox.store')->middleware([HandlePrecognitiveRequests::class]);
     Route::get('emails/dropboxes/{dropbox}/edit', [DropboxController::class, 'edit'])->name('admin.dropbox.edit');

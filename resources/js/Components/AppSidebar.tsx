@@ -391,7 +391,7 @@ const buildNavData = (
               },
               {
                 title: 'E-Mail',
-                url: route('admim.emails.index', {}, false),
+                url: route('admin.emails.index', {}, false),
                 activePath: '/admin/emails',
                 items: [
                   {
@@ -406,7 +406,7 @@ const buildNavData = (
                   },
                   {
                     title: 'Nicht verarbeitet E-Mails',
-                    url: route('admim.inbox.index'),
+                    url: route('admin.inbox.index'),
                     activePath: '/admin/emails/inbox'
                   }
                 ]
