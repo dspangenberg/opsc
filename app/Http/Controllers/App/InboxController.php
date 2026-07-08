@@ -22,14 +22,14 @@ class InboxController extends Controller
     public function index(?int $mail = null): Response
     {
 
-        if (! Auth::user()->is_admin) {
+        if (!Auth::user()->is_admin) {
             abort(403);
         }
 
         if ($mail) {
             $mail = DropboxInbox::query()->with('dropbox')->where('id', $mail)->first();
             if ($mail) {
-                if (! $mail->seen_at) {
+                if (!$mail->seen_at) {
                     $mail->seen_at = now();
                     $mail->save();
                 }
@@ -55,11 +55,16 @@ class InboxController extends Controller
      */
     public function import(int $mail): RedirectResponse
     {
-        if (! Auth::user()->is_admin) {
+        if (!Auth::user()->is_admin) {
             abort(403);
         }
 
         $mail = DropboxInbox::query()->with('dropbox')->where('id', $mail)->first();
+
+        if (!$mail) {
+            abort(404);
+        }
+
         DropboxImportJob::dispatch($mail);
 
         return redirect()->route('admin.inbox.index');
@@ -67,7 +72,7 @@ class InboxController extends Controller
 
     public function destroy(DropboxInbox $mail): RedirectResponse
     {
-        if (! Auth::user()->is_admin) {
+        if (!Auth::user()->is_admin) {
             abort(403);
         }
 
