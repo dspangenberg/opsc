@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DropboxController;
 use App\Http\Controllers\Admin\EmailAccountController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\App\InboxController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware;
@@ -48,19 +49,24 @@ Route::middleware([
     Route::get('settings', [SettingController::class, 'index'])->name('admin.setting.index');
     Route::put('settings', [SettingController::class, 'update'])->name('admin.setting.update');
 
-    Route::get('dropboxes', [DropboxController::class, 'index'])->name('admin.dropbox.index');
-    Route::get('dropboxes/create', [DropboxController::class, 'create'])->name('admin.dropbox.create');
-    Route::get('dropboxes/create', [DropboxController::class, 'create'])->name('admin.dropbox.create');
-    Route::post('dropboxes/store', [DropboxController::class, 'store'])->name('admin.dropbox.store')->middleware([HandlePrecognitiveRequests::class]);
-    Route::get('dropboxes/{dropbox}/edit', [DropboxController::class, 'edit'])->name('admin.dropbox.edit');
-    Route::put('dropboxes/{dropbox}/update', [DropboxController::class, 'update'])->name('admin.dropbox.update')->middleware([HandlePrecognitiveRequests::class]);
-    Route::delete('dropboxes/{dropbox}', [DropboxController::class, 'destroy'])->name('admin.dropbox.delete');
+    Route::redirect('emails', '/admin/emails/dropboxes')->name('admin.emails.index');
 
-    Route::get('email-accounts', [EmailAccountController::class, 'index'])->name('admin.email-account.index');
-    Route::get('email-accounts/create', [EmailAccountController::class, 'create'])->name('admin.email-account.create');
-    Route::get('email-accounts/{emailAccount}/edit', [EmailAccountController::class, 'edit'])->name('admin.email-account.edit');
-    Route::put('email-accounts/{emailAccount}/edit', [EmailAccountController::class, 'update'])->name('admin.email-account.update')->middleware([HandlePrecognitiveRequests::class]);
-    Route::post('email-accounts', [EmailAccountController::class, 'store'])->name('admin.email-account.store')->middleware([HandlePrecognitiveRequests::class]);
-    Route::put('email-accounts/{emailAccount}/send-test-mail', [EmailAccountController::class, 'sendTestMail'])->name('admin.email-account.send-test-mail');
-    Route::put('email-accounts/{emailAccount}/set-default', [EmailAccountController::class, 'setDefault'])->name('admin.email-account.set-default');
+    Route::get('emails/inbox/{mail?}', [InboxController::class, 'index'])->name('admin.inbox.index');
+    Route::delete('emails/inbox/{mail}', [InboxController::class, 'destroy'])->name('admin.inbox.destroy');
+    Route::put('emails/inbox/{mail}', [InboxController::class, 'import'])->name('admin.inbox.import');
+
+    Route::get('emails/dropboxes', [DropboxController::class, 'index'])->name('admin.dropbox.index');
+    Route::get('emails/dropboxes/create', [DropboxController::class, 'create'])->name('admin.dropbox.create');
+    Route::post('emails/dropboxes/store', [DropboxController::class, 'store'])->name('admin.dropbox.store')->middleware([HandlePrecognitiveRequests::class]);
+    Route::get('emails/dropboxes/{dropbox}/edit', [DropboxController::class, 'edit'])->name('admin.dropbox.edit');
+    Route::put('emails/dropboxes/{dropbox}/update', [DropboxController::class, 'update'])->name('admin.dropbox.update')->middleware([HandlePrecognitiveRequests::class]);
+    Route::delete('emails/dropboxes/{dropbox}', [DropboxController::class, 'destroy'])->name('admin.dropbox.delete');
+
+    Route::get('emails/smtp-accounts', [EmailAccountController::class, 'index'])->name('admin.email-account.index');
+    Route::get('emails/smtp-accounts/create', [EmailAccountController::class, 'create'])->name('admin.email-account.create');
+    Route::get('emails/smtp-accounts/{emailAccount}/edit', [EmailAccountController::class, 'edit'])->name('admin.email-account.edit');
+    Route::put('emails/smtp-accounts/{emailAccount}/edit', [EmailAccountController::class, 'update'])->name('admin.email-account.update')->middleware([HandlePrecognitiveRequests::class]);
+    Route::post('emails/smtp-accounts', [EmailAccountController::class, 'store'])->name('admin.email-account.store')->middleware([HandlePrecognitiveRequests::class]);
+    Route::put('emails/smtp-accounts/{emailAccount}/send-test-mail', [EmailAccountController::class, 'sendTestMail'])->name('admin.email-account.send-test-mail');
+    Route::put('emails/smtp-accounts/{emailAccount}/set-default', [EmailAccountController::class, 'setDefault'])->name('admin.email-account.set-default');
 });
