@@ -6,6 +6,7 @@ import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { MenuItem } from '@/Components/twc-ui/menu'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
+import { Badge } from '@/Components/ui/badge'
 import type { PageProps } from '@/Types'
 import { Email } from './Email'
 import { EmailIndexEntry } from './EmailIndexEntry'
@@ -69,7 +70,12 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
 
   return (
     <PageContainerWithSideOnLeft
-      title={dropbox.name}
+      header={
+        <div className="ml-6 flex flex-col items-start gap-1">
+          <div className="font-bold text-xl">{dropbox.name}</div>
+          <div className="text-sm">{dropbox.email_address}</div>
+        </div>
+      }
       toolbar={toolbar}
       width="full"
       className="relative m-0 mx-0 h-full p-0 px-0"

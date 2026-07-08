@@ -53,12 +53,7 @@ const buildNavData = (
                 badge: box.mails_count as number,
                 url: route('app.email.index', { dropbox: box.id }, false),
                 activePath: `/app/emails/${box.id}`
-              })),
-              {
-                title: 'Nicht verarbeitet',
-                url: route('app.inbox.index'),
-                activePath: '/app/inbox'
-              }
+              }))
             ]
           }
         ]
@@ -395,14 +390,26 @@ const buildNavData = (
                 activePath: '/admin/settings'
               },
               {
-                title: 'E-Mail-Dropboxen',
-                url: route('admin.dropbox.index', {}, false),
-                activePath: '/admin/dropboxes'
-              },
-              {
-                title: 'SMTP-Konten',
-                url: route('admin.email-account.index', {}, false),
-                activePath: '/admin/email-accounts'
+                title: 'E-Mail',
+                url: route('admim.emails.index', {}, false),
+                activePath: '/admin/emails',
+                items: [
+                  {
+                    title: 'E-Mail-Dropboxen',
+                    url: route('admin.dropbox.index', {}, false),
+                    activePath: '/admin/emails/dropboxes'
+                  },
+                  {
+                    title: 'SMTP-Konten',
+                    url: route('admin.email-account.index', {}, false),
+                    activePath: '/admin/emails/smtp-accounts'
+                  },
+                  {
+                    title: 'Nicht verarbeitet E-Mails',
+                    url: route('admim.inbox.index'),
+                    activePath: '/admin/emails/inbox'
+                  }
+                ]
               }
             ]
           }

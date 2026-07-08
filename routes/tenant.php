@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 use App\Http\Controllers\App\BookmarkController;
 use App\Http\Controllers\App\EmailController;
-use App\Http\Controllers\App\InboxController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\InitialPasswordController;
 use App\Http\Controllers\Auth\InitialPasswordStoreController;
@@ -83,10 +82,6 @@ Route::middleware([
         [BookmarkController::class, 'trashFolder'])->name('app.bookmark.trash-folder');
     Route::put('bookmarks/folder/{bookmarkFolder}/restore',
         [BookmarkController::class, 'restoreFolder'])->withTrashed()->name('app.bookmark.restore-folder');
-
-    Route::get('inbox/{mail?}', [InboxController::class, 'index'])->name('app.inbox.index');
-    Route::delete('inbox/{mail}', [InboxController::class, 'destroy'])->name('app.inbox.destroy');
-    Route::put('inbox/{mail}', [InboxController::class, 'import'])->name('app.inbox.import');
 
     Route::get('emails/{dropbox}/{mail?}', [EmailController::class, 'index'])->name('app.email.index');
     Route::delete('emails/{dropbox}/{mail}', [EmailController::class, 'destroy'])->name('app.email.destroy');

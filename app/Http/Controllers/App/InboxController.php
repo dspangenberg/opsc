@@ -12,6 +12,7 @@ use App\Models\Contact;
 use App\Models\DropboxInbox;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
@@ -20,6 +21,11 @@ class InboxController extends Controller
 {
     public function index($mail = null): Response
     {
+
+        if (! Auth::user()->is_admin) {
+            abort(403);
+        }
+
         if ($mail) {
             $mail = DropboxInbox::query()->with('dropbox')->where('id', $mail)->first();
             if ($mail) {
@@ -49,16 +55,24 @@ class InboxController extends Controller
      */
     public function import($mail): RedirectResponse
     {
+        if (! Auth::user()->is_admin) {
+            abort(403);
+        }
+
         $mail = DropboxInbox::query()->with('dropbox')->where('id', $mail)->first();
         DropboxImportJob::dispatch($mail);
 
-        return redirect()->route('app.inbox.index');
+        return redirect()->route('admim.inbox.index');
     }
 
     public function destroy(DropboxInbox $mail): RedirectResponse
     {
+        if (! Auth::user()->is_admin) {
+            abort(403);
+        }
+
         $mail->delete();
 
-        return redirect()->route('app.inbox.index');
+        return redirect()->route('admim.inbox.index');
     }
 }
