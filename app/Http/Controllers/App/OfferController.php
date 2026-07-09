@@ -637,7 +637,7 @@ class OfferController extends Controller
         $invoiceLine->save();
     }
 
-    public function extracted1(Offer $offer, Invoice $invoice, float $disposit=0): void
+    public function extracted1(Offer $offer, Invoice $invoice, float $disposit = 0): void
     {
 
         $amount = $offer->amount_net;
@@ -646,7 +646,7 @@ class OfferController extends Controller
         $firstLineParts = explode("\n", $firstLine->text);
         $text[] = $firstLineParts[0];
         $text[] = 'gemäß AG-'.$offer->formated_offer_number;
-        if ($disposit>0) {
+        if ($disposit > 0) {
             $text[] = 'Anzahlung';
         }
 

@@ -105,6 +105,24 @@ class ProfileController extends Controller
         return Redirect::route('app.profile.edit');
     }
 
+    public function destroy(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'password' => ['required', 'current_password:web'],
+        ]);
+
+        $user = $request->user();
+
+        Auth::logout();
+
+        $user->delete();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return Redirect::to('/');
+    }
+
     public function updatePassword(PasswordUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();

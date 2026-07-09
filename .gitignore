@@ -35,3 +35,4 @@ yarn-error.log
 laradumps.yaml
 laradumps.yaml
 package-lock.json
+.DS_Store

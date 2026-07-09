@@ -1,12 +1,13 @@
-import { Delete02Icon, MailSend02Icon } from '@hugeicons/core-free-icons'
+import { ArchiveXIcon, Delete02Icon, MailSend02Icon } from '@hugeicons/core-free-icons'
 import { router, usePage } from '@inertiajs/react'
 import type * as React from 'react'
+import { useCallback } from 'react'
 import { PageContainerWithSideOnLeft } from '@/Components/PageContainerWithSideOnLeft'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { MenuItem } from '@/Components/twc-ui/menu'
+import { toast } from '@/Components/twc-ui/sonner'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
-import { Badge } from '@/Components/ui/badge'
 import type { PageProps } from '@/Types'
 import { Email } from './Email'
 import { EmailIndexEntry } from './EmailIndexEntry'
@@ -34,6 +35,42 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
     }
   }
 
+  const handleUnarchive = useCallback(async () => {
+    router.put(
+      route('app.email.unarchive', { dropbox: dropbox.id, mail: mail?.id }),
+      {},
+      {
+        onSuccess: () => {
+          toast({
+            type: 'success',
+            message: `Die E-Mail wurde zurück in den Posteingang verschoben.`
+          })
+        }
+      }
+    )
+  }, [mail?.id, dropbox.id])
+
+  const handleArchive = useCallback(async () => {
+    console.log('E-Mail archivieren:')
+
+    router.put(
+      route('app.email.archive', { dropbox: dropbox.id, mail: mail?.id }),
+      {},
+      {
+        onSuccess: () => {
+          toast({
+            type: 'success',
+            message: `Die E-Mail wurde archiviert.`,
+            button: {
+              onClick: () => handleUnarchive(),
+              label: 'Undo'
+            }
+          })
+        }
+      }
+    )
+  }, [mail?.id, handleUnarchive, dropbox.id])
+
   const handleMove = async (newDropbox: number) => {
     if (!mail) return
     router.put(route('app.email.move', { dropbox: dropbox.id, mail: mail.id, newDropbox }))
@@ -57,6 +94,14 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
           />
         ))}
       </DropdownButton>
+
+      <ToolbarButton
+        isDisabled={!mail}
+        icon={ArchiveXIcon}
+        size="icon"
+        title="E-Mail archivieren"
+        onClick={handleArchive}
+      />
       <ToolbarButton
         isDisabled={!mail}
         icon={Delete02Icon}

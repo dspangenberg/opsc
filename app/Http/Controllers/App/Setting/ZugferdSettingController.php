@@ -34,13 +34,14 @@ class ZugferdSettingController extends Controller
         if ($result !== true) {
             return redirect()->back()->withErrors($result);
         }
-        
+
         $zugferdSettings = app(ZugferdSettings::class);
         $zugferdSettings->is_enabled = true;
         $zugferdSettings->save();
 
         return redirect()->back();
     }
+
     public function disable(): RedirectResponse
     {
         $zugferdSettings = app(ZugferdSettings::class);

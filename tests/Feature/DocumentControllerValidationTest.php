@@ -33,7 +33,7 @@ it('validates file upload requirements', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->post('http://'.$this->domain->domain.'/app/documents', [
+        ->post('http://'.$this->domain->domain.'/app/documents/upload', [
             // Keine Dateien gesendet
         ]);
 
@@ -63,9 +63,9 @@ it('validates file type for uploads', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->post('http://'.$this->domain->domain.'/app/documents', [
+        ->post('http://'.$this->domain->domain.'/app/documents/upload', [
             'files' => [
-                UploadedFile::fake()->create('document.txt', 1000, 'text/plain'),
+                UploadedFile::fake()->create('document.html', 1000, 'text/html'),
             ],
         ]);
 
@@ -80,7 +80,7 @@ it('validates file size for uploads', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->post('http://'.$this->domain->domain.'/app/documents', [
+        ->post('http://'.$this->domain->domain.'/app/documents/upload', [
             'files' => [
                 UploadedFile::fake()->create('large.pdf', 60000, 'application/pdf'),
             ],
@@ -93,9 +93,9 @@ it('validates file size for uploads', function () {
 it('validates file count limit for uploads', function () {
     Tenancy::end();
 
-    // Teste mit zu vielen Dateien (11 > 10 Limit)
+    // Teste mit zu vielen Dateien (51 > 50 Limit)
     $tooManyFiles = [];
-    for ($i = 0; $i < 11; $i++) {
+    for ($i = 0; $i < 51; $i++) {
         $tooManyFiles[] = UploadedFile::fake()->create("document{$i}.pdf", 1000, 'application/pdf');
     }
 
@@ -103,7 +103,7 @@ it('validates file count limit for uploads', function () {
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->post('http://'.$this->domain->domain.'/app/documents', [
+        ->post('http://'.$this->domain->domain.'/app/documents/upload', [
             'files' => $tooManyFiles,
         ]);
 

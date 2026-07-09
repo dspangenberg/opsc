@@ -16,7 +16,16 @@ use function Laravel\Prompts\text;
 
 class CreateTenantCommand extends Command
 {
-    protected $signature = 'create:tenant';
+    protected $signature = 'create:tenant
+        {--company= : Firmenname}
+        {--first-name= : Vorname des Ansprechpartners}
+        {--last-name= : Name des Ansprechpartners}
+        {--email= : E-Mail-Adresse}
+        {--website= : Website-URL}
+        {--subdomain= : Subdomain}
+        {--admin-first-name= : Vorname des Admin-Benutzers}
+        {--admin-last-name= : Name des Admin-Benutzers}
+        {--admin-email= : E-Mail-Adresse des Admin-Benutzers}';
 
     protected $description = 'Erstellt einen neuen Mandanten mit Admin-Benutzer';
 
@@ -36,6 +45,38 @@ class CreateTenantCommand extends Command
             'last_name' => '',
             'email' => '',
         ];
+
+        $hasOptions = $this->hasOptionData();
+
+        if ($hasOptions) {
+            $data = [
+                'company' => $this->option('company') ?? '',
+                'first_name' => $this->option('first-name') ?? '',
+                'last_name' => $this->option('last-name') ?? '',
+                'email' => $this->option('email') ?? '',
+                'website' => $this->option('website') ?? 'https://',
+                'domain' => $this->option('subdomain') ?? '',
+            ];
+
+            $admin = [
+                'first_name' => $this->option('admin-first-name') ?? '',
+                'last_name' => $this->option('admin-last-name') ?? '',
+                'email' => $this->option('admin-email') ?? '',
+            ];
+
+            $data['domain'] = CloudRegisterService::verifyEmailAddressAndCredentials($data);
+
+            $this->line('Mandant und Admin-User werden erstellt');
+            $tenant = CloudRegisterService::createTenant(array_merge($data, $admin));
+            $tenant->run(function () use ($admin): void {
+                Password::sendResetLink(
+                    ['email' => $admin['email']],
+                );
+                $this->line('E-Mail zum Zurücksetzen des Passworts wurde versendet.');
+            });
+
+            return;
+        }
 
         $step = 1;
 
@@ -81,6 +122,16 @@ class CreateTenantCommand extends Command
                 return;
             }
         }
+    }
+
+    private function hasOptionData(): bool
+    {
+        return $this->option('company') !== null
+            || $this->option('first-name') !== null
+            || $this->option('last-name') !== null
+            || $this->option('email') !== null
+            || $this->option('subdomain') !== null
+            || $this->option('admin-email') !== null;
     }
 
     private function stepTenantData(array &$data): void

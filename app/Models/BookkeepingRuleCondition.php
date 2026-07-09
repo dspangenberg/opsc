@@ -40,8 +40,10 @@ class BookkeepingRuleCondition extends Model
 {
     protected $fillable = [
         'bookkeeping_rule_id',
+        'table',
         'field',
         'logical_condition',
         'value',
+        'priority',
     ];
 }

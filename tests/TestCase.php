@@ -14,6 +14,13 @@ abstract class TestCase extends BaseTestCase
 
     protected $tenant;
 
+    protected function connectionsToTransact(): array
+    {
+        return ['sqlite'];
+    }
+
+    protected ?Tenant $setUpTenant = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,6 +30,7 @@ abstract class TestCase extends BaseTestCase
             'id' => 'test-tenant-'.uniqid(),
             'organisation' => 'Test Organization',
         ]);
+        $this->setUpTenant = $this->tenant;
         $this->tenant->domains()->create(['domain' => 'test-tenant.localhost']);
 
         // Initialize tenancy context
@@ -85,12 +93,39 @@ abstract class TestCase extends BaseTestCase
 
     protected function tearDown(): void
     {
-        // End tenancy
         tenancy()->end();
 
-        // Clean up tenant
-        $this->tenant?->delete();
+        // Delete domains first to avoid FK constraint failures, then delete tenants
+        foreach ([$this->setUpTenant, $this->tenant] as $tenant) {
+            if ($tenant) {
+                try {
+                    $tenant->domains()->delete();
+                } catch (\Throwable) {
+                    // Continue even if domain deletion fails
+                }
+            }
+        }
 
+        try {
+            $this->setUpTenant?->delete();
+        } catch (\Throwable) {
+            // Continue even if tenant deletion fails
+        }
+
+        if ($this->tenant !== $this->setUpTenant) {
+            try {
+                $this->tenant?->delete();
+            } catch (\Throwable) {
+                // Continue even if tenant deletion fails
+            }
+        }
+
+        // Reset Mockery to prevent alias mock pollution between tests
+        if ($container = \Mockery::getContainer()) {
+            \Mockery::close();
+        }
+
+        // Ensure transaction cleanup always runs
         parent::tearDown();
     }
 }

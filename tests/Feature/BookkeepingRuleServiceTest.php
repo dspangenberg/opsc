@@ -10,8 +10,7 @@ it('processes bookkeeping rules and applies actions correctly', function () {
     // Create test transaction
     $transaction = Transaction::factory()->create([
         'amount' => 100.00,
-        'description' => 'Test transaction',
-        'category_id' => null,
+        'comment' => 'Test transaction',
     ]);
 
     // Create bookkeeping rule
@@ -27,16 +26,18 @@ it('processes bookkeeping rules and applies actions correctly', function () {
     // Create condition: amount = 100
     BookkeepingRuleCondition::create([
         'bookkeeping_rule_id' => $rule->id,
+        'table' => 'transactions',
         'field' => 'amount',
         'logical_condition' => '=',
         'value' => '100',
         'priority' => 1,
     ]);
 
-    // Create action: set category_id = 5
+    // Create action: set contact_id = 5
     BookkeepingRuleAction::create([
         'bookkeeping_rule_id' => $rule->id,
-        'field' => 'category_id',
+        'table' => 'transactions',
+        'field' => 'contact_id',
         'value' => '5',
         'priority' => 1,
     ]);
@@ -47,15 +48,14 @@ it('processes bookkeeping rules and applies actions correctly', function () {
 
     // Verify the transaction was updated
     $transaction->refresh();
-    expect($transaction->category_id)->toBe(5);
+    expect($transaction->contact_id)->toBe(5);
 });
 
 it('handles multiple conditions with and operator', function () {
     // Create test transaction
     $transaction = Transaction::factory()->create([
         'amount' => 50.00,
-        'description' => 'Grocery store',
-        'category_id' => null,
+        'comment' => 'Grocery store',
     ]);
 
     // Create bookkeeping rule
@@ -71,6 +71,7 @@ it('handles multiple conditions with and operator', function () {
     // Create conditions
     BookkeepingRuleCondition::create([
         'bookkeeping_rule_id' => $rule->id,
+        'table' => 'transactions',
         'field' => 'amount',
         'logical_condition' => '=',
         'value' => '50',
@@ -79,7 +80,8 @@ it('handles multiple conditions with and operator', function () {
 
     BookkeepingRuleCondition::create([
         'bookkeeping_rule_id' => $rule->id,
-        'field' => 'description',
+        'table' => 'transactions',
+        'field' => 'comment',
         'logical_condition' => 'like',
         'value' => '%Grocery%',
         'priority' => 2,
@@ -88,7 +90,8 @@ it('handles multiple conditions with and operator', function () {
     // Create action
     BookkeepingRuleAction::create([
         'bookkeeping_rule_id' => $rule->id,
-        'field' => 'category_id',
+        'table' => 'transactions',
+        'field' => 'contact_id',
         'value' => '10',
         'priority' => 1,
     ]);
@@ -99,14 +102,13 @@ it('handles multiple conditions with and operator', function () {
 
     // Verify the transaction was updated
     $transaction->refresh();
-    expect($transaction->category_id)->toBe(10);
+    expect($transaction->contact_id)->toBe(10);
 });
 
 it('processes multiple transactions efficiently', function () {
     // Create multiple test transactions
     $transactions = Transaction::factory()->count(5)->create([
         'amount' => 25.00,
-        'category_id' => null,
     ]);
 
     // Create bookkeeping rule
@@ -122,6 +124,7 @@ it('processes multiple transactions efficiently', function () {
     // Create condition
     BookkeepingRuleCondition::create([
         'bookkeeping_rule_id' => $rule->id,
+        'table' => 'transactions',
         'field' => 'amount',
         'logical_condition' => '=',
         'value' => '25',
@@ -131,7 +134,8 @@ it('processes multiple transactions efficiently', function () {
     // Create action
     BookkeepingRuleAction::create([
         'bookkeeping_rule_id' => $rule->id,
-        'field' => 'category_id',
+        'table' => 'transactions',
+        'field' => 'contact_id',
         'value' => '15',
         'priority' => 1,
     ]);
@@ -143,7 +147,7 @@ it('processes multiple transactions efficiently', function () {
     // Verify all transactions were updated
     $transactions->each(function ($transaction) {
         $transaction->refresh();
-        expect($transaction->category_id)->toBe(15);
+        expect($transaction->contact_id)->toBe(15);
     });
 });
 
@@ -151,7 +155,6 @@ it('ignores inactive rules', function () {
     // Create test transaction
     $transaction = Transaction::factory()->create([
         'amount' => 100.00,
-        'category_id' => null,
     ]);
 
     // Create inactive bookkeeping rule
@@ -167,6 +170,7 @@ it('ignores inactive rules', function () {
     // Create condition and action
     BookkeepingRuleCondition::create([
         'bookkeeping_rule_id' => $rule->id,
+        'table' => 'transactions',
         'field' => 'amount',
         'logical_condition' => '=',
         'value' => '100',
@@ -175,7 +179,8 @@ it('ignores inactive rules', function () {
 
     BookkeepingRuleAction::create([
         'bookkeeping_rule_id' => $rule->id,
-        'field' => 'category_id',
+        'table' => 'transactions',
+        'field' => 'contact_id',
         'value' => '20',
         'priority' => 1,
     ]);
@@ -186,5 +191,6 @@ it('ignores inactive rules', function () {
 
     // Verify the transaction was NOT updated
     $transaction->refresh();
-    expect($transaction->category_id)->toBeNull();
+    // Factory default contact_id is 1, and inactive rule should not change it
+    expect($transaction->contact_id)->toBe(1);
 });

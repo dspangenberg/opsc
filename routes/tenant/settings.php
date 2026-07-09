@@ -45,7 +45,6 @@ Route::put('settings/invoices/zugferd', [ZugferdSettingController::class, 'updat
 Route::put('settings/invoices/zugferd/enable', [ZugferdSettingController::class, 'enable'])->name('app.setting.invoice.zugferd.enable');
 Route::put('settings/invoices/zugferd/disable', [ZugferdSettingController::class, 'disable'])->name('app.setting.invoice.zugferd.disable');
 
-
 Route::get('settings/printing-system/letterheads', [LetterheadController::class, 'index'])->name('app.setting.letterhead.index');
 Route::get('settings/printing-system/letterheads/create', [LetterheadController::class, 'create'])->name('app.setting.letterhead.create');
 Route::post('settings/printing-system/letterheads/store', [LetterheadController::class, 'store'])->name('app.setting.letterhead.store')->middleware([HandlePrecognitiveRequests::class]);

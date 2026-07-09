@@ -8,15 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('dropbox_emails', function (Blueprint $table) {
-           //
+        Schema::table('dropbox_mails', function (Blueprint $table) {
+            $table->timestamp('archived_at')->nullable();
         });
     }
 
     public function down(): void
     {
-        Schema::table('dropbox_emails', function (Blueprint $table) {
-            //
+        Schema::table('dropbox_mails', function (Blueprint $table) {
+            $table->dropColumn('archived_at');
         });
     }
 };

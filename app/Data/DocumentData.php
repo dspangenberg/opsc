@@ -23,9 +23,9 @@ class DocumentData extends Data
         public readonly ?int $receiver_contact_id,
         public readonly ?int $project_id,
         public readonly string $filename,
-        public readonly string $mime_type,
-        public readonly int $file_size,
-        public readonly int $pages,
+        public readonly ?string $mime_type,
+        public readonly ?int $file_size,
+        public readonly ?int $pages,
 
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'd.m.Y')]
         public readonly ?DateTime $issued_on,
@@ -44,7 +44,7 @@ class DocumentData extends Data
         public readonly ?string $source_file,
 
         public readonly string $folder,
-        public readonly string $title,
+        public readonly ?string $title,
         public readonly ?string $label,
         public readonly ?string $summary,
         public readonly ?string $fulltext,

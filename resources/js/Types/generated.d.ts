@@ -293,9 +293,9 @@ declare namespace App {
       readonly receiver_contact_id: number | null;
       readonly project_id: number | null;
       readonly filename: string;
-      readonly mime_type: string;
-      readonly file_size: number;
-      readonly pages: number;
+      readonly mime_type: string | null;
+      readonly file_size: number | null;
+      readonly pages: number | null;
       readonly issued_on: string | null;
       readonly sent_on: string | null;
       readonly received_on: string | null;
@@ -304,7 +304,7 @@ declare namespace App {
       readonly is_hidden: boolean | null;
       readonly source_file: string | null;
       readonly folder: string;
-      readonly title: string;
+      readonly title: string | null;
       readonly label: string | null;
       readonly summary: string | null;
       readonly fulltext: string | null;
