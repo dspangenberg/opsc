@@ -3,12 +3,13 @@
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Stancl\Tenancy\Database\Models\Domain;
-use Stancl\Tenancy\Facades\Tenancy;
 use Illuminate\Support\Str;
+use Stancl\Tenancy\Database\Models\Domain;
+use Stancl\Tenancy\Exceptions\TenantCouldNotBeIdentifiedByIdException;
+use Stancl\Tenancy\Facades\Tenancy;
 
 beforeEach(/**
- * @throws \Stancl\Tenancy\Exceptions\TenantCouldNotBeIdentifiedByIdException
+ * @throws TenantCouldNotBeIdentifiedByIdException
  */ function () {
     $this->tenant = Tenant::factory()->create();
     $this->domain = Domain::create([
@@ -31,7 +32,6 @@ test('password can be updated', function () {
 
     Tenancy::end();
     $password = Str::password(12);
-
 
     $response = $this
         ->actingAs($user)
@@ -56,6 +56,7 @@ test('correct password must be provided to update password', function () {
     ]);
 
     Tenancy::end();
+    $password = Str::password(12);
 
     $response = $this
         ->actingAs($user)
@@ -63,8 +64,8 @@ test('correct password must be provided to update password', function () {
         ->from('http://'.$this->domain->domain.'/app/profile/password')
         ->put('http://'.$this->domain->domain.'/app/profile/password', [
             'current_password' => 'wrong-password',
-            'password' => 'NewP@ssword123!',
-            'password_confirmation' => 'NewP@ssword123!',
+            'password' => $password,
+            'password_confirmation' => $password,
         ]);
 
     $response
