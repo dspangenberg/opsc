@@ -4,13 +4,10 @@ namespace Tests\Unit;
 
 use App\Models\Bookmark;
 use App\Models\BookmarkFolder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class BookmarkFolderTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_bookmark_folder_has_many_bookmarks_relationship()
     {
         // Create a bookmark folder

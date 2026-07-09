@@ -1,9 +1,31 @@
 <?php
 
+use App\Models\Tenant;
 use App\Models\User;
+use Stancl\Tenancy\Database\Models\Domain;
+use Stancl\Tenancy\Facades\Tenancy;
+
+beforeEach(function () {
+    $this->tenant = Tenant::factory()->create();
+    $this->domain = Domain::create([
+        'tenant_id' => $this->tenant->id,
+        'domain' => 'tenant-'.$this->tenant->id.'.test',
+    ]);
+    Tenancy::initialize($this->tenant);
+    $this->artisan('tenants:migrate');
+});
+
+afterEach(function () {
+    auth()->logout();
+    Tenancy::end();
+});
 
 test('login screen can be rendered', function () {
-    $response = $this->get('/login');
+    Tenancy::end();
+
+    $response = $this
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->get('http://'.$this->domain->domain.'/auth/login');
 
     $response->assertStatus(200);
 });
@@ -11,22 +33,30 @@ test('login screen can be rendered', function () {
 test('users can authenticate using the login screen', function () {
     $user = User::factory()->create();
 
-    $response = $this->post('/login', [
-        'email' => $user->email,
-        'password' => 'password',
-    ]);
+    Tenancy::end();
+
+    $response = $this
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->post('http://'.$this->domain->domain.'/auth/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('app.dashboard', absolute: false));
 });
 
 test('users can not authenticate with invalid password', function () {
     $user = User::factory()->create();
 
-    $this->post('/login', [
-        'email' => $user->email,
-        'password' => 'wrong-password',
-    ]);
+    Tenancy::end();
+
+    $this
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->post('http://'.$this->domain->domain.'/auth/login', [
+            'email' => $user->email,
+            'password' => 'wrong-password',
+        ]);
 
     $this->assertGuest();
 });
@@ -34,8 +64,13 @@ test('users can not authenticate with invalid password', function () {
 test('users can logout', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->post('/logout');
+    Tenancy::end();
+
+    $response = $this
+        ->actingAs($user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->post('http://'.$this->domain->domain.'/app/logout');
 
     $this->assertGuest();
-    $response->assertRedirect('/');
+    $response->assertRedirect(route('login', absolute: false));
 });

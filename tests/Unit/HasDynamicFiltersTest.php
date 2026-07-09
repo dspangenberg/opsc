@@ -12,7 +12,7 @@ it('parses unwrapped filters and normalizes operator aliases', function () {
         'allowed_filters' => ['counter_account_id'],
     ]);
 
-    expect($query->toSql())->toContain('`counter_account_id` = ?');
+    expect($query->toSql())->toContain('"counter_account_id" = ?');
     expect($query->getBindings())->toBe(['0']);
 });
 
@@ -23,6 +23,6 @@ it('parses wrapped filters payload', function () {
         'allowed_filters' => ['counter_account_id'],
     ]);
 
-    expect($query->toSql())->toContain('`counter_account_id` = ?');
+    expect($query->toSql())->toContain('"counter_account_id" = ?');
     expect($query->getBindings())->toBe([0]);
 });

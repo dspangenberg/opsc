@@ -21,6 +21,15 @@ return new class extends Migration
             Schema::create('documents', function (Blueprint $table) {
                 $table->id();
                 $table->string('filename');
+                $table->string('title')->nullable();
+                $table->string('label')->nullable();
+                $table->string('mime_type');
+                $table->string('checksum');
+                $table->integer('file_size')->default(0);
+                $table->integer('pages')->default(1);
+                $table->string('reference')->nullable();
+                $table->dateTime('file_created_at')->nullable();
+                $table->date('sent_on')->nullable();
                 $table->string('source_file')->nullable();
                 $table->date('issued_on')->nullable();
                 $table->date('received_on')->nullable();
@@ -66,6 +75,15 @@ return new class extends Migration
                 DB::table('documents')->insert([
                     'id' => $row->id,
                     'filename' => $row->filename,
+                    'title' => $row->title ?? null,
+                    'label' => $row->label ?? null,
+                    'mime_type' => $row->mime_type ?? '',
+                    'checksum' => $row->checksum ?? '',
+                    'file_size' => $row->file_size ?? 0,
+                    'pages' => $row->pages ?? 1,
+                    'reference' => $row->reference ?? null,
+                    'file_created_at' => $row->file_created_at ?? null,
+                    'sent_on' => $row->sent_on ?? null,
                     'source_file' => $row->source_file ?? null,
                     'issued_on' => $row->issued_on,
                     'received_on' => $row->received_on ?? null,

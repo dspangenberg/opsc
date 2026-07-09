@@ -49,7 +49,7 @@ class EmailController extends Controller
             false)->with('mails')->orderBy('name')->orderBy('first_name')->get();
         $projects = Project::query()->where('is_archived', false)->orderBy('name')->get();
 
-        $mails = DropboxMail::query()->withCount('attachments')->where('dropbox_id', $dropbox->id)->orderBy('date', 'desc')->paginate(50);
+        $mails = DropboxMail::query()->whereNull('archived_at')->withCount('attachments')->where('dropbox_id', $dropbox->id)->orderBy('date', 'desc')->paginate(50);
 
         return Inertia::render('App/Email/EmailIndex', [
             'mails' => DropboxMailData::collect($mails),
@@ -173,6 +173,34 @@ class EmailController extends Controller
         $mail->save();
 
         return redirect(route('app.email.index', ['dropbox' => $dropbox->id]));
+    }
+
+    public function archive(Dropbox $dropbox, DropboxMail $mail): RedirectResponse
+    {
+        if (
+            (! $dropbox->is_shared && $dropbox->user_id !== auth()->id())
+            || $mail->dropbox_id !== $dropbox->id
+        ) {
+            abort(403);
+        }
+        $mail->archived_at = now();
+        $mail->save();
+
+        return redirect()->back();
+    }
+
+    public function unarchive(Dropbox $dropbox, DropboxMail $mail): RedirectResponse
+    {
+        if (
+            (! $dropbox->is_shared && $dropbox->user_id !== auth()->id())
+            || $mail->dropbox_id !== $dropbox->id
+        ) {
+            abort(403);
+        }
+        $mail->archived_at = null;
+        $mail->save();
+
+        return redirect()->back();
     }
 
     public function destroy(Dropbox $dropbox, DropboxMail $mail): RedirectResponse

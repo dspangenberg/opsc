@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Observers\TransactionObserver;
 use App\Traits\HasDynamicFilters;
+use Database\Factories\TransactionFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -44,7 +46,8 @@ use Illuminate\Support\Carbon;
  */
 class Transaction extends Model
 {
-    use HasDynamicFilters;
+    /** @use HasFactory<TransactionFactory> */
+    use HasDynamicFilters, HasFactory;
 
     protected $fillable = [
         'mm_ref',

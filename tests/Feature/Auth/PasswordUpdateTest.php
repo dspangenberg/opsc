@@ -1,40 +1,73 @@
 <?php
 
+use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Stancl\Tenancy\Database\Models\Domain;
+use Stancl\Tenancy\Facades\Tenancy;
+use Illuminate\Support\Str;
+
+beforeEach(/**
+ * @throws \Stancl\Tenancy\Exceptions\TenantCouldNotBeIdentifiedByIdException
+ */ function () {
+    $this->tenant = Tenant::factory()->create();
+    $this->domain = Domain::create([
+        'tenant_id' => $this->tenant->id,
+        'domain' => 'tenant-'.$this->tenant->id.'.test',
+    ]);
+    Tenancy::initialize($this->tenant);
+    $this->artisan('tenants:migrate');
+});
+
+afterEach(function () {
+    auth()->logout();
+    Tenancy::end();
+});
 
 test('password can be updated', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create([
+        'password' => Hash::make('password'),
+    ]);
+
+    Tenancy::end();
+    $password = Str::password(12);
+
 
     $response = $this
         ->actingAs($user)
-        ->from('/profile')
-        ->put('/password', [
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->from('http://'.$this->domain->domain.'/app/profile/password')
+        ->put('http://'.$this->domain->domain.'/app/profile/password', [
             'current_password' => 'password',
-            'password' => 'new-password',
-            'password_confirmation' => 'new-password',
+            'password' => $password,
+            'password_confirmation' => $password,
         ]);
 
     $response
         ->assertSessionHasNoErrors()
-        ->assertRedirect('/profile');
+        ->assertRedirect('/app/profile/password');
 
-    $this->assertTrue(Hash::check('new-password', $user->refresh()->password));
+    $this->assertTrue(Hash::check($password, $user->refresh()->password));
 });
 
 test('correct password must be provided to update password', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create([
+        'password' => Hash::make('password'),
+    ]);
+
+    Tenancy::end();
 
     $response = $this
         ->actingAs($user)
-        ->from('/profile')
-        ->put('/password', [
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->from('http://'.$this->domain->domain.'/app/profile/password')
+        ->put('http://'.$this->domain->domain.'/app/profile/password', [
             'current_password' => 'wrong-password',
-            'password' => 'new-password',
-            'password_confirmation' => 'new-password',
+            'password' => 'NewP@ssword123!',
+            'password_confirmation' => 'NewP@ssword123!',
         ]);
 
     $response
         ->assertSessionHasErrors('current_password')
-        ->assertRedirect('/profile');
+        ->assertRedirect('/app/profile/password');
 });

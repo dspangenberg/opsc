@@ -18,7 +18,7 @@ class TenantFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => 'test-tenant-'.$this->faker->unique()->randomNumber(5),
+            'id' => 'test-tenant-'.uniqid(),
             'organisation' => $this->faker->company(),
             'data' => null,
         ];

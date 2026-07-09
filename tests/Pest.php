@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /*
@@ -15,8 +14,15 @@ use Tests\TestCase;
 */
 
 pest()->extend(TestCase::class)
-    ->use(RefreshDatabase::class)
     ->in('Feature');
+
+beforeEach(function () {
+    foreach (glob(public_path('public-*')) ?: [] as $path) {
+        if (is_link($path) || is_dir($path)) {
+            app('files')->delete($path);
+        }
+    }
+})->only('Feature');
 
 /*
 |--------------------------------------------------------------------------

@@ -38,7 +38,9 @@ class BookkeepingRuleAction extends Model
 {
     protected $fillable = [
         'bookkeeping_rule_id',
+        'table',
         'field',
         'value',
+        'priority',
     ];
 }

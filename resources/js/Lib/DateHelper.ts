@@ -48,7 +48,7 @@ export const parseAndFormatRelative = (date: string) => {
     return format(parsedDate, 'HH:mm')
   }
   if (relativeDate.includes('gestern')) {
-    return 'gestern'
+    return 'gest.'
   }
   if (relativeDate.includes('Montag')) {
     return 'Mo.'

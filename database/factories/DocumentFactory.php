@@ -15,6 +15,8 @@ class DocumentFactory extends Factory
         return [
             'document_type_id' => DocumentType::factory(),
             'filename' => $this->faker->word.'.pdf',
+            'mime_type' => 'application/pdf',
+            'checksum' => $this->faker->sha256(),
             'source_file' => $this->faker->word.'.pdf',
             'issued_on' => $this->faker->date(),
             'received_on' => $this->faker->date(),
@@ -24,6 +26,8 @@ class DocumentFactory extends Factory
             'is_pinned' => false,
             'is_hidden' => false,
             'is_inbound' => true,
+            'pages' => 1,
+            'file_size' => 1024,
         ];
     }
 

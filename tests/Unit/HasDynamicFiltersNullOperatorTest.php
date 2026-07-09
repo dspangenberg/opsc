@@ -12,6 +12,6 @@ it('parses null operator for whereNull', function () {
         'allowed_filters' => ['counter_account_id'],
     ]);
 
-    expect($query->toSql())->toContain('`counter_account_id` is null');
+    expect($query->toSql())->toContain('"counter_account_id" is null');
     expect($query->getBindings())->toBe([]);
 });
