@@ -3,6 +3,7 @@
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Stancl\Tenancy\Database\Models\Domain;
 use Stancl\Tenancy\Facades\Tenancy;
 
@@ -73,14 +74,15 @@ test('password can be reset with valid token', function () {
     $token = Password::broker()->createToken($user);
 
     Tenancy::end();
+    $password = Str::password(12);
 
     $response = $this
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
         ->post('http://'.$this->domain->domain.'/auth/reset-password', [
             'token' => $token,
             'email' => $user->email,
-            'password' => 'NewP@ssword123!',
-            'password_confirmation' => 'NewP@ssword123!',
+            'password' => $password,
+            'password_confirmation' => $password,
         ]);
 
     $response

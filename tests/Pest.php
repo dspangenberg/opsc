@@ -17,7 +17,7 @@ pest()->extend(TestCase::class)
     ->in('Feature');
 
 beforeEach(function () {
-    foreach (glob(public_path('public-*')) as $path) {
+    foreach (glob(public_path('public-*')) ?: [] as $path) {
         if (is_link($path) || is_dir($path)) {
             app('files')->delete($path);
         }

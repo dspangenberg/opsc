@@ -5,8 +5,11 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Stancl\Tenancy\Database\Models\Domain;
 use Stancl\Tenancy\Facades\Tenancy;
+use Illuminate\Support\Str;
 
-beforeEach(function () {
+beforeEach(/**
+ * @throws \Stancl\Tenancy\Exceptions\TenantCouldNotBeIdentifiedByIdException
+ */ function () {
     $this->tenant = Tenant::factory()->create();
     $this->domain = Domain::create([
         'tenant_id' => $this->tenant->id,
@@ -27,6 +30,8 @@ test('password can be updated', function () {
     ]);
 
     Tenancy::end();
+    $password = Str::password(12);
+
 
     $response = $this
         ->actingAs($user)
@@ -34,15 +39,15 @@ test('password can be updated', function () {
         ->from('http://'.$this->domain->domain.'/app/profile/password')
         ->put('http://'.$this->domain->domain.'/app/profile/password', [
             'current_password' => 'password',
-            'password' => 'NewP@ssword123!',
-            'password_confirmation' => 'NewP@ssword123!',
+            'password' => $password,
+            'password_confirmation' => $password,
         ]);
 
     $response
         ->assertSessionHasNoErrors()
         ->assertRedirect('/app/profile/password');
 
-    $this->assertTrue(Hash::check('NewP@ssword123!', $user->refresh()->password));
+    $this->assertTrue(Hash::check($password, $user->refresh()->password));
 });
 
 test('correct password must be provided to update password', function () {

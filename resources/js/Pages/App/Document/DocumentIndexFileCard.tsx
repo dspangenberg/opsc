@@ -31,7 +31,7 @@ export const DocumentIndexFileCard: React.FC<DocumentIndexFileCardProps> = ({ do
         </li>
         <li className="grid">
           <span className="text-muted-foreground">Dateigröße</span>
-          <span className="font-medium">{filesize(document.file_size)}</span>
+          <span className="font-medium">{filesize(document.file_size ?? 0)}</span>
         </li>
       </ul>
       <ul>

@@ -51,8 +51,6 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
   }, [mail?.id, dropbox.id])
 
   const handleArchive = useCallback(async () => {
-    console.log('E-Mail archivieren:')
-
     router.put(
       route('app.email.archive', { dropbox: dropbox.id, mail: mail?.id }),
       {},

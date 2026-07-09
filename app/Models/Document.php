@@ -77,7 +77,6 @@ class Document extends Model
         'title',
         'label',
         'reference',
-        'description',
         'fulltext',
         'summary',
         'source_file',

@@ -93,7 +93,7 @@ export const OfferDetailsAttachments: FC<OfferDetailsAttachmentsProps> = ({
 
   const { dragAndDropHooks } = useDragAndDrop({
     getItems: (_keys, items: typeof list.items) =>
-      items.map(item => ({ 'text/plain': item.document.title })),
+      items.map(item => ({ 'text/plain': item.document.title ?? '' })),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys)
@@ -132,7 +132,7 @@ export const OfferDetailsAttachments: FC<OfferDetailsAttachmentsProps> = ({
           >
             {(item: App.Data.AttachmentData) => (
               <GridListItem
-                textValue={item.document.title}
+                textValue={item.document.title ?? ''}
                 className="gap-1 rounded-none border-0 px-0! py-1 opacity-100"
                 onDoubleClick={() => handleFileShow(item.id)}
                 isDisabled={!offer.is_draft}
