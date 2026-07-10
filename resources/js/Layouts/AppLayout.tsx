@@ -1,5 +1,6 @@
 import { SidebarLeftIcon } from '@hugeicons/core-free-icons'
 import { router, usePage } from '@inertiajs/react'
+import { useEcho } from '@laravel/echo-react'
 import type React from 'react'
 import type { PropsWithChildren, ReactNode } from 'react'
 import { useEffect } from 'react'
@@ -73,6 +74,14 @@ const SidebarContent: React.FC<PropsWithChildren> = ({ children }) => {
 const AppLayout = ({ children }: PropsWithChildren<{ header?: ReactNode }>) => {
   useAppInitializer()
 
+  useEcho(
+    `${usePage().props.auth.tenant.id}.user.${usePage().props.auth.user.id}`,
+    '.general.notification',
+    e => {
+      console.log(e)
+    }
+  )
+  
   useEffect(() => {
     const unsubscribe = router.on('flash', event => {
       if (event.detail.flash.toast) {

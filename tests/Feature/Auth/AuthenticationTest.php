@@ -3,9 +3,12 @@
 use App\Models\Tenant;
 use App\Models\User;
 use Stancl\Tenancy\Database\Models\Domain;
+use Stancl\Tenancy\Exceptions\TenantCouldNotBeIdentifiedByIdException;
 use Stancl\Tenancy\Facades\Tenancy;
 
-beforeEach(function () {
+beforeEach(/**
+ * @throws TenantCouldNotBeIdentifiedByIdException
+ */ function () {
     $this->tenant = Tenant::factory()->create();
     $this->domain = Domain::create([
         'tenant_id' => $this->tenant->id,

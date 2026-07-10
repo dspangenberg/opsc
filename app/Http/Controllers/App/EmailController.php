@@ -6,6 +6,7 @@ use App\Data\DropboxData;
 use App\Data\DropboxMailData;
 use App\Data\ProjectData;
 use App\Data\SimpleContactData;
+use App\Events\GeneralNotificationEvent;
 use App\Facades\FileHelperService;
 use App\Http\Controllers\Controller;
 use App\Jobs\DocumentUploadJob;
@@ -16,6 +17,7 @@ use App\Models\DropboxMail;
 use App\Models\DropboxMailAttachment;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -185,6 +187,8 @@ class EmailController extends Controller
         }
         $mail->archived_at = now();
         $mail->save();
+
+        GeneralNotificationEvent::dispatch(Auth::user(), 'Neue Test-Nachricht');
 
         return redirect()->back();
     }
