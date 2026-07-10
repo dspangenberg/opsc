@@ -735,6 +735,7 @@ declare namespace App {
       readonly name: string;
     };
     export type TenantData = {
+      readonly id: string;
       readonly first_name: string;
       readonly last_name: string;
       readonly organisation: string;

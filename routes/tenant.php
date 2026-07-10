@@ -19,6 +19,7 @@ use App\Jobs\DropboxImportJob;
 use App\Models\Dropbox;
 use App\Models\DropboxInbox;
 use Carbon\Carbon;
+use Illuminate\Broadcasting\BroadcastController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Http\Request;
@@ -153,6 +154,11 @@ Route::middleware([
     Middleware\PreventAccessFromUnwantedDomains::class,
     Middleware\ScopeSessions::class,
 ])->group(function () {
+    require base_path('routes/channels.php');
+
+    Route::match(['get', 'post'], '/broadcasting/auth', [BroadcastController::class, 'authenticate'])
+        ->withoutMiddleware([PreventRequestForgery::class]);
+
     Route::post('/mail-to-dropbox/{email}/{token}', function (Request $request, $email, $token) {
         $dropbox = Dropbox::where('email_address', $email)->where('token', $token)->firstOrFail();
 
