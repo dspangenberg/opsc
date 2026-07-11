@@ -11,6 +11,7 @@ class DropboxRequest extends FormRequest
         return [
             'email_address' => ['required', 'email', 'unique:dropboxes,email_address,'.($this->route('dropbox')?->id ?? 'NULL')],
             'token' => ['required', 'string'],
+            'real_email' => ['required', 'email'],
             'name' => ['required'],
             'is_shared' => ['boolean'],
             'is_auto_processing' => ['boolean'],

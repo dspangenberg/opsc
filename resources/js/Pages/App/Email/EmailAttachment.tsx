@@ -53,7 +53,7 @@ export const EmailAttachment: React.FC<EmailAttachmentsProps> = ({ attachment, m
   }
 
   return (
-    <div className="flex items-center space-x-2 px-3 py-1.5">
+    <div className="flex items-center space-x-2 px-3 py-1.5 hover:bg-muted/50">
       <div className="flex-1 text-sm">{attachment.filename}</div>
       <div className="flex-none text-foreground/50 text-xs">{filesize(attachment.size)}</div>
       <div className="flex-none">

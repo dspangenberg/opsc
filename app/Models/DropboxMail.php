@@ -25,8 +25,8 @@ class DropboxMail extends Model
         'cc',
         'in_reply_to',
         'seen_at',
-        'mailable_type',
-        'mailable_id',
+        'is_inbound',
+        'is_visible_in_activity',
     ];
 
     public function dropbox(): BelongsTo
@@ -56,6 +56,8 @@ class DropboxMail extends Model
             'cc' => 'array',
             'date' => 'datetime',
             'seen_at' => 'datetime',
+            'is_inbound' => 'boolean',
+            'is_visible_in_activity' => 'boolean',
         ];
     }
 }

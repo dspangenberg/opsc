@@ -30,7 +30,7 @@ class GeneralNotificationEvent implements ShouldBroadcastNow
             new PrivateChannel('user.'.$this->user->id),
         ];
     }
-    
+
     public function broadcastWith(): array
     {
         return ['message' => $this->message];

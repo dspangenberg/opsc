@@ -326,6 +326,7 @@ declare namespace App {
     export type DropboxData = {
       readonly id: number | null;
       readonly email_address: string;
+      readonly real_email: string | null;
       readonly token: string;
       readonly name: string;
       readonly is_shared: boolean;

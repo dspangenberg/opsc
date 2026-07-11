@@ -55,9 +55,9 @@ export const columns: ColumnDef<App.Data.InvoiceData>[] = [
             <HoverCard>
               <Pressable>
                 {row.original.amount_open && row.original.dunning_level ? (
-                  <StatusIcon variant="warning" size="default" />
+                  <StatusIcon variant="warning" size="default" role="button" />
                 ) : (
-                  <StatusIcon variant="success" size="default" />
+                  <StatusIcon variant="success" size="default" role="button"  />
                 )}
               </Pressable>
 
