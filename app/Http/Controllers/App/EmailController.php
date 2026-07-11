@@ -51,7 +51,7 @@ class EmailController extends Controller
             false)->with('mails')->orderBy('name')->orderBy('first_name')->get();
         $projects = Project::query()->where('is_archived', false)->orderBy('name')->get();
 
-        $mails = DropboxMail::query()->whereNull('archived_at')->withCount('attachments')->where('dropbox_id', $dropbox->id)->orderBy('date', 'desc')->paginate(50);
+        $mails = DropboxMail::query()->where('is_inbound', true)->whereNull('archived_at')->withCount('attachments')->where('dropbox_id', $dropbox->id)->orderBy('date', 'desc')->paginate(50);
 
         return Inertia::render('App/Email/EmailIndex', [
             'mails' => DropboxMailData::collect($mails),
