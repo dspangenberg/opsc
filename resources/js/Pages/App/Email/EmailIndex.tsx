@@ -123,7 +123,14 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
       width="full"
       className="relative m-0 mx-0 h-full p-0 px-0"
     >
-      <div className="absolute top-0 bottom-0 w-96 border-r">
+      <div className="absolute top-0 bottom-0 w-68 border-r">
+        Posteingang
+        <br />
+        Gesendete Objekte
+        <br />
+        Archiv
+      </div>
+      <div className="absolute top-0 bottom-0 left-68 w-96 border-r">
         <div className="h-full overflow-y-auto">
           <div className="flex flex-col gap-2 p-4">
             {mails.data.map(item => (
@@ -137,7 +144,7 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
           </div>
         </div>
       </div>
-      <div className="absolute top-0 right-0 bottom-0 left-96 flex">
+      <div className="absolute top-0 right-0 bottom-0 left-164 flex">
         <div className="mx-auto h-full overflow-y-auto">
           {mail && <Email mail={mail} contacts={contacts} projects={projects} />}
         </div>
