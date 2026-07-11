@@ -19,7 +19,7 @@ import { cn } from '@/Lib/utils'
 interface PageContainerProps {
   title?: string
   header?: string | React.ReactNode
-  leftHeader: string | React.ReactNode
+  leftHeader?: string | React.ReactNode
   children: React.ReactNode
   toolbar?: React.ReactNode
   footer?: React.ReactNode
