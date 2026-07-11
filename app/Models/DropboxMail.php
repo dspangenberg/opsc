@@ -56,6 +56,8 @@ class DropboxMail extends Model
             'cc' => 'array',
             'date' => 'datetime',
             'seen_at' => 'datetime',
+            'is_inbound' => 'boolean',
+            'is_visible_in_activity' => 'boolean',
         ];
     }
 }

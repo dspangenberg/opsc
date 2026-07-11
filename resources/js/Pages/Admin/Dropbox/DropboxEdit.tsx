@@ -87,7 +87,6 @@ const DropboxEdit: React.FC<Props> = ({ dropbox, users }) => {
             </div>
             <div className="col-span-12">
               <FormTextField
-                autoFocus
                 label="Reale E-Mail-Adresse"
                 isRequired
                 {...form.register('real_email')}
