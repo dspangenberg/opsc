@@ -25,8 +25,8 @@ class DropboxMail extends Model
         'cc',
         'in_reply_to',
         'seen_at',
-        'mailable_type',
-        'mailable_id',
+        'is_inbound',
+        'is_visible_in_activity',
     ];
 
     public function dropbox(): BelongsTo

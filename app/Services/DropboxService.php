@@ -32,6 +32,8 @@ class DropboxService
                     'in_reply_to' => $mail->payload['in_reply_to'] ?? null,
                     'references' => $mail->payload['references'] ?? [],
                     'is_private' => $isPrivate,
+                    'is_inbound' => $mail->dropbox->real_email !== $mail->from,
+                    'is_visible_in_activity' => false,
                 ]
             );
 

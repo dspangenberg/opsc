@@ -25,6 +25,7 @@ class Dropbox extends Model
         'token',
         'is_private_by_default',
         'user_id',
+        'real_email',
     ];
 
     protected function casts(): array

@@ -4,7 +4,7 @@ import {
   CheckmarkCircle01Icon,
   InformationCircleIcon
 } from '@hugeicons/core-free-icons'
-import type * as React from 'react'
+import * as React from 'react'
 import { tv, type VariantProps } from 'tailwind-variants'
 import { cn } from '@/Lib/utils'
 import { Icon, type IconType } from './icon'
@@ -53,33 +53,40 @@ interface AlertProps extends React.ComponentProps<'div'>, VariantProps<typeof al
   icon?: IconType
 }
 
-const StatusIcon: React.FC<AlertProps> = ({ icon, variant, size }) => {
-  const styles = alertStyles({ variant, size })
-  let realIcon: IconType
+const StatusIcon = React.forwardRef<HTMLSpanElement, AlertProps>(
+  ({ icon, variant, size, ...props }, ref) => {
+    const styles = alertStyles({ variant, size })
+    let realIcon: IconType
 
-  if (icon) {
-    realIcon = icon
-  } else {
-    switch (variant) {
-      case 'destructive':
-        realIcon = CancelCircleIcon
-        break
-      case 'info':
-        realIcon = InformationCircleIcon
-        break
-      case 'warning':
-        realIcon = AlertCircleIcon
-        break
-      case 'success':
-        realIcon = CheckmarkCircle01Icon
-        break
-      default:
-        realIcon = AlertCircleIcon
-        break
+    if (icon) {
+      realIcon = icon
+    } else {
+      switch (variant) {
+        case 'destructive':
+          realIcon = CancelCircleIcon
+          break
+        case 'info':
+          realIcon = InformationCircleIcon
+          break
+        case 'warning':
+          realIcon = AlertCircleIcon
+          break
+        case 'success':
+          realIcon = CheckmarkCircle01Icon
+          break
+        default:
+          realIcon = AlertCircleIcon
+          break
+      }
     }
-  }
 
-  return <Icon icon={realIcon} className={cn(styles.icon())} />
-}
+    return (
+      <span ref={ref} {...props}>
+        <Icon icon={realIcon} className={cn(styles.icon())} />
+      </span>
+    )
+  }
+)
+StatusIcon.displayName = 'StatusIcon'
 
 export { StatusIcon }

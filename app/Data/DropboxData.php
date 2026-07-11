@@ -16,6 +16,7 @@ class DropboxData extends Data
     public function __construct(
         public readonly ?int $id,
         public readonly string $email_address,
+        public readonly ?string $real_email,
         public readonly string $token,
         public readonly string $name,
         public readonly bool $is_shared,

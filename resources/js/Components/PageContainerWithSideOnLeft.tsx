@@ -19,6 +19,7 @@ import { cn } from '@/Lib/utils'
 interface PageContainerProps {
   title?: string
   header?: string | React.ReactNode
+  leftHeader: string | React.ReactNode
   children: React.ReactNode
   toolbar?: React.ReactNode
   footer?: React.ReactNode
@@ -44,6 +45,7 @@ export const PageContainerWithSideOnLeft: React.FC<PageContainerProps> = ({
   containerBackground = 'bg-page-content',
   contentHeader,
   className = '',
+  leftHeader = null,
   headerClassname = '',
   footer,
   children
@@ -77,7 +79,8 @@ export const PageContainerWithSideOnLeft: React.FC<PageContainerProps> = ({
       {!hideHeader && (
         <div className="z-10 flex-none rounded-t-xl border-border/50 border-y bg-background">
           <LayoutContainer className={cn('px-4', tabs ? 'py-0' : '', headerClassname)}>
-            <div className="flex flex-1 flex-col">
+            <div className="flex flex-1">
+              <div className="left-0 flex w-88 flex-none px-0">{leftHeader}</div>
               <div className={cn('flex flex-1 justify-between')}>
                 <div
                   className={cn('flex flex-1 items-center justify-stretch', tabs ? 'py-3' : 'py-6')}

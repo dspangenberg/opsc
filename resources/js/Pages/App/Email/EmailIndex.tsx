@@ -113,8 +113,8 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
 
   return (
     <PageContainerWithSideOnLeft
-      header={
-        <div className="ml-6 flex flex-col items-start gap-1">
+      leftHeader={
+        <div className="ml-6 flex flex-col items-start justify-center gap-1">
           <div className="font-bold text-xl">{dropbox.name}</div>
           <div className="text-sm">{dropbox.email_address}</div>
         </div>
