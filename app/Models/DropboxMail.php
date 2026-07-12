@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Plank\Mediable\Mediable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Plank\Mediable\Mediable;
 
 class DropboxMail extends Model
 {
@@ -63,13 +63,13 @@ class DropboxMail extends Model
         ];
     }
 
-    public function scopeView(Builder $query, $view): Builder
+    public function scopeView(Builder $query, string $view): Builder
     {
         return match ($view) {
-            'inbox' => $query->whereNull('archived_at')->where('is_inbound', true),
             'sent' => $query->whereNull('archived_at')->where('is_inbound', false),
             'archived' => $query->whereNotNull('archived_at'),
             'trash' => $query->onlyTrashed(),
+            default => $query->whereNull('archived_at')->where('is_inbound', true),
         };
     }
 }

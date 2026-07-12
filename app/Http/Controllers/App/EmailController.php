@@ -48,13 +48,16 @@ class EmailController extends Controller
             }
         }
 
-        $view = $request->input('view', 'inbox');
+        $view = $request->validate([
+            'view' => ['sometimes', 'string', 'in:inbox,sent,archived,trash'],
+        ])['view'] ?? 'inbox';
 
         $contacts = Contact::query()->select(['id', 'name', 'first_name'])->whereHas('mails')->where('is_archived',
             false)->with('mails')->orderBy('name')->orderBy('first_name')->get();
         $projects = Project::query()->where('is_archived', false)->orderBy('name')->get();
 
-        $mails = DropboxMail::query()->view($view)->withCount('attachments')->where('dropbox_id', $dropbox->id)->orderBy('date', 'desc')->paginate(50);
+        $mails = DropboxMail::query()->view($view)->withCount('attachments')->where('dropbox_id',
+            $dropbox->id)->orderBy('date', 'desc')->paginate(50);
 
         return Inertia::render('App/Email/EmailIndex', [
             'mails' => DropboxMailData::collect($mails),
@@ -68,8 +71,11 @@ class EmailController extends Controller
     /**
      * @throws Throwable
      */
-    public function attachmentPreview(Dropbox $dropbox, DropboxMail $mail, DropboxMailAttachment $attachment): StreamedResponse|RedirectResponse
-    {
+    public function attachmentPreview(
+        Dropbox $dropbox,
+        DropboxMail $mail,
+        DropboxMailAttachment $attachment
+    ): StreamedResponse|RedirectResponse {
         if (
             (! $dropbox->is_shared && $dropbox->user_id !== auth()->id())
             || $mail->dropbox_id !== $dropbox->id
@@ -112,8 +118,11 @@ class EmailController extends Controller
     /**
      * @throws Throwable
      */
-    public function importAttachmentAsReceipt(Dropbox $dropbox, DropboxMail $mail, DropboxMailAttachment $attachment): RedirectResponse
-    {
+    public function importAttachmentAsReceipt(
+        Dropbox $dropbox,
+        DropboxMail $mail,
+        DropboxMailAttachment $attachment
+    ): RedirectResponse {
         if (
             (! $dropbox->is_shared && $dropbox->user_id !== auth()->id())
             || $mail->dropbox_id !== $dropbox->id
@@ -138,8 +147,11 @@ class EmailController extends Controller
         return redirect()->back();
     }
 
-    public function importAttachmentAsDocument(Dropbox $dropbox, DropboxMail $mail, DropboxMailAttachment $attachment): RedirectResponse
-    {
+    public function importAttachmentAsDocument(
+        Dropbox $dropbox,
+        DropboxMail $mail,
+        DropboxMailAttachment $attachment
+    ): RedirectResponse {
         if (
             (! $dropbox->is_shared && $dropbox->user_id !== auth()->id())
             || $mail->dropbox_id !== $dropbox->id
