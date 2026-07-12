@@ -17,6 +17,7 @@ use App\Models\DropboxMail;
 use App\Models\DropboxMailAttachment;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -26,7 +27,7 @@ use Throwable;
 
 class EmailController extends Controller
 {
-    public function index(Dropbox $dropbox, $mail = null): Response
+    public function index(Request $request, Dropbox $dropbox, $mail = null): Response
     {
 
         if (! $dropbox->is_shared && $dropbox->user_id !== auth()->user()->id) {
@@ -47,11 +48,13 @@ class EmailController extends Controller
             }
         }
 
+        $view = $request->input('view', 'inbox');
+
         $contacts = Contact::query()->select(['id', 'name', 'first_name'])->whereHas('mails')->where('is_archived',
             false)->with('mails')->orderBy('name')->orderBy('first_name')->get();
         $projects = Project::query()->where('is_archived', false)->orderBy('name')->get();
 
-        $mails = DropboxMail::query()->where('is_inbound', true)->whereNull('archived_at')->withCount('attachments')->where('dropbox_id', $dropbox->id)->orderBy('date', 'desc')->paginate(50);
+        $mails = DropboxMail::query()->view($view)->withCount('attachments')->where('dropbox_id', $dropbox->id)->orderBy('date', 'desc')->paginate(50);
 
         return Inertia::render('App/Email/EmailIndex', [
             'mails' => DropboxMailData::collect($mails),
