@@ -1,5 +1,5 @@
 import { ArchiveXIcon, Delete02Icon, MailSend02Icon } from '@hugeicons/core-free-icons'
-import { router, usePage } from '@inertiajs/react'
+import { Link, router, usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { useCallback } from 'react'
 import { PageContainerWithSideOnLeft } from '@/Components/PageContainerWithSideOnLeft'
@@ -124,11 +124,25 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
       className="relative m-0 mx-0 h-full p-0 px-0"
     >
       <div className="absolute top-0 bottom-0 w-68 border-r">
-        Posteingang
-        <br />
-        Gesendete Objekte
-        <br />
-        Archiv
+        <div className="m-4">
+          <Link href={route('app.email.index', { dropbox: dropbox.id, _query: { view: 'inbox' } })}>
+            Posteingang
+          </Link>
+          <br />
+          <Link href={route('app.email.index', { dropbox: dropbox.id, _query: { view: 'sent' } })}>
+            Gesendete Objekte
+          </Link>
+          <br />
+          <Link
+            href={route('app.email.index', { dropbox: dropbox.id, _query: { view: 'archived' } })}
+          >
+            Archiv
+          </Link>
+          <br />
+          <Link href={route('app.email.index', { dropbox: dropbox.id, _query: { view: 'trash' } })}>
+            Papierkorb
+          </Link>
+        </div>
       </div>
       <div className="absolute top-0 bottom-0 left-68 w-96 border-r">
         <div className="h-full overflow-y-auto">
