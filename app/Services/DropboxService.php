@@ -77,9 +77,9 @@ class DropboxService
 
             }
 
-            if ($dropboxMail->dropbox->user_id) {
-                $dropboxMail->dropbox->loadMissing('user');
-                GeneralNotificationEvent::dispatch($dropboxMail->dropbox->user, 'Neue Test-Nachricht');
+            if ($mail->dropbox->user_id) {
+                $mail->dropbox->loadMissing('user');
+                GeneralNotificationEvent::dispatch($mail->dropbox->user, 'Neue Test-Nachricht');
             }
 
             $mail->delete();
