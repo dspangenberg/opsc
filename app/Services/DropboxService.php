@@ -72,13 +72,14 @@ class DropboxService
                     ->onDuplicateReplace()
                     ->upload();
 
-                if ($dropboxMail->dropbox->user_id) {
-                    $dropboxMail->dropbox->loadMissing('user');
-                    GeneralNotificationEvent::dispatch($dropboxMail->dropbox->user, 'Neue Test-Nachricht');
-                }
 
                 $dropboxMailAttachment->attachMedia($media, 'attachment');
 
+            }
+
+            if ($dropboxMail->dropbox->user_id) {
+                $dropboxMail->dropbox->loadMissing('user');
+                GeneralNotificationEvent::dispatch($dropboxMail->dropbox->user, 'Neue Test-Nachricht');
             }
 
             $mail->delete();
