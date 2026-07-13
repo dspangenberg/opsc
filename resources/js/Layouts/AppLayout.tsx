@@ -79,9 +79,10 @@ const AppLayout = ({ children }: PropsWithChildren<{ header?: ReactNode }>) => {
     '.general.notification',
     e => {
       console.log(e)
+      router.reload({ only: ['dropboxes'] })
     }
   )
-  
+
   useEffect(() => {
     const unsubscribe = router.on('flash', event => {
       if (event.detail.flash.toast) {

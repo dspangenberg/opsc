@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Events\GeneralNotificationEvent;
 use App\Models\DropboxInbox;
 use App\Models\DropboxMail;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Plank\Mediable\Facades\MediaUploader;
 use Throwable;
@@ -69,6 +71,11 @@ class DropboxService
                     ->preferClientMimeType()
                     ->onDuplicateReplace()
                     ->upload();
+
+                if ($dropboxMail->dropbox->user_id) {
+                    $dropboxMail->dropbox->loadMissing('user');
+                    GeneralNotificationEvent::dispatch($dropboxMail->dropbox->user, 'Neue Test-Nachricht');
+                }
 
                 $dropboxMailAttachment->attachMedia($media, 'attachment');
 
