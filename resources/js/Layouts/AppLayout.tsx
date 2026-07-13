@@ -79,7 +79,7 @@ const AppLayout = ({ children }: PropsWithChildren<{ header?: ReactNode }>) => {
     '.general.notification',
     e => {
       console.log(e)
-      router.reload({ only: ['dropboxes'] })
+      router.reload({ only: ['auth.dropboxes'] })
     }
   )
 
