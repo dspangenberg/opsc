@@ -203,8 +203,6 @@ class EmailController extends Controller
         $mail->archived_at = now();
         $mail->save();
 
-        GeneralNotificationEvent::dispatch(Auth::user(), 'Neue Test-Nachricht');
-
         return redirect()->back();
     }
 
