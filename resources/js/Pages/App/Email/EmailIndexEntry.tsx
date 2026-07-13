@@ -9,11 +9,12 @@ interface InboxIndexEntryProps {
   isActive?: boolean
   mail: App.Data.DropboxMailData
   dropbox: App.Data.DropboxData
+  view: string
 }
 
-export const EmailIndexEntry: React.FC<InboxIndexEntryProps> = ({ dropbox, mail, isActive }) => {
+export const EmailIndexEntry: React.FC<InboxIndexEntryProps> = ({ dropbox, mail, isActive, view }) => {
   const handleClicked = () => {
-    router.visit(route('app.email.index', { dropbox: dropbox.id, mail: mail.id }), {
+    router.visit(route('app.email.index', { dropbox: dropbox.id, mail: mail.id, _query: { view} }), {
       preserveScroll: true,
       preserveState: true
     })
