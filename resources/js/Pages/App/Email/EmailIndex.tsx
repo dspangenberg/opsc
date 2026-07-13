@@ -151,6 +151,7 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
               <EmailIndexEntry
                 key={item.id}
                 dropbox={dropbox}
+                view={route().params.view as 'inbox' | 'sent' | 'archived' | 'trash'}
                 mail={item}
                 isActive={item.id === mail?.id}
               />
