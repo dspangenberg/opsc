@@ -6,7 +6,6 @@ use App\Data\DropboxData;
 use App\Data\DropboxMailData;
 use App\Data\ProjectData;
 use App\Data\SimpleContactData;
-use App\Events\GeneralNotificationEvent;
 use App\Facades\FileHelperService;
 use App\Http\Controllers\Controller;
 use App\Jobs\DocumentUploadJob;
@@ -18,7 +17,6 @@ use App\Models\DropboxMailAttachment;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -39,6 +37,7 @@ class EmailController extends Controller
                 ->with(['attachments', 'dropbox'])
                 ->whereKey($mail)
                 ->where('dropbox_id', $dropbox->id)
+                ->withTrashed()
                 ->firstOrFail();
             if ($mail) {
                 if (! $mail->seen_at) {
@@ -49,7 +48,7 @@ class EmailController extends Controller
         }
 
         $view = $request->validate([
-            'view' => ['sometimes', 'string', 'in:inbox,sent,archived,trash'],
+            'view' => ['sometimes', 'string', 'in:inbox,sent,archived,trash,snoozed'],
         ])['view'] ?? 'inbox';
 
         $contacts = Contact::query()->select(['id', 'name', 'first_name'])->whereHas('mails')->where('is_archived',
@@ -220,7 +219,20 @@ class EmailController extends Controller
         return redirect()->back();
     }
 
-    public function destroy(Dropbox $dropbox, DropboxMail $mail): RedirectResponse
+    public function restore(Dropbox $dropbox, DropboxMail $mail): RedirectResponse
+    {
+        if (
+            (! $dropbox->is_shared && $dropbox->user_id !== auth()->id())
+            || $mail->dropbox_id !== $dropbox->id
+        ) {
+            abort(403);
+        }
+        $mail->restore();
+
+        return redirect(route('app.email.index', ['dropbox' => $dropbox->id]));
+    }
+
+    public function trash(Dropbox $dropbox, DropboxMail $mail): RedirectResponse
     {
         if (
             (! $dropbox->is_shared && $dropbox->user_id !== auth()->id())

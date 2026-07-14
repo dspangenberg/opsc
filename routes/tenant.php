@@ -85,7 +85,8 @@ Route::middleware([
         [BookmarkController::class, 'restoreFolder'])->withTrashed()->name('app.bookmark.restore-folder');
 
     Route::get('emails/{dropbox}/{mail?}', [EmailController::class, 'index'])->name('app.email.index');
-    Route::delete('emails/{dropbox}/{mail}', [EmailController::class, 'destroy'])->name('app.email.destroy');
+    Route::delete('emails/{dropbox}/{mail}', [EmailController::class, 'trash'])->name('app.email.trash');
+    Route::put('emails/{dropbox}/{mail}/restore', [EmailController::class, 'restore'])->name('app.email.restore')->withTrashed();
 
     Route::put('emails/{dropbox}/{mail}/archive', [EmailController::class, 'archive'])->name('app.email.archive');
     Route::put('emails/{dropbox}/{mail}/unarchive', [EmailController::class, 'unarchive'])->name('app.email.unarchive');

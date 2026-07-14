@@ -29,6 +29,7 @@ class DropboxMail extends Model
         'seen_at',
         'is_inbound',
         'is_visible_in_activity',
+        'snoozed_until',
     ];
 
     public function dropbox(): BelongsTo
@@ -60,6 +61,7 @@ class DropboxMail extends Model
             'seen_at' => 'datetime',
             'is_inbound' => 'boolean',
             'is_visible_in_activity' => 'boolean',
+            'snoozed_until' => 'datetime',
         ];
     }
 
@@ -67,6 +69,7 @@ class DropboxMail extends Model
     {
         return match ($view) {
             'sent' => $query->whereNull('archived_at')->where('is_inbound', false),
+            'snoozed' => $query->whereNotNull('snoozed_until'),
             'archived' => $query->whereNotNull('archived_at'),
             'trash' => $query->onlyTrashed(),
             default => $query->whereNull('archived_at')->where('is_inbound', true),
