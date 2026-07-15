@@ -9,7 +9,6 @@ import { router, usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { useCallback } from 'react'
 import { PageContainerWithSideOnLeft } from '@/Components/PageContainerWithSideOnLeft'
-import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { MenuItem } from '@/Components/twc-ui/menu'
 import { toast } from '@/Components/twc-ui/sonner'
@@ -30,19 +29,7 @@ interface InboxIndexProps extends PageProps {
 
 const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails, projects }) => {
   const dropboxes = usePage().props.auth.dropboxes?.filter(item => item.id !== dropbox.id) || []
-  const view = route().params.view
-
-  const handleDelete = async () => {
-    if (!mail) return
-    const promise = await AlertDialog.call({
-      title: 'E-Mail löschen',
-      message: `Möchtest Du die E-Mail wirklich löschen?`,
-      buttonTitle: 'Löschen'
-    })
-    if (promise) {
-      router.delete(route('app.email.trash', { dropbox: dropbox.id, mail: mail.id }))
-    }
-  }
+  const view = route().params.view ?? 'inbox'
 
   const handleRestore = async () => {
     if (!mail) return
