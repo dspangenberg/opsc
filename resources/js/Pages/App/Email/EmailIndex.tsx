@@ -123,7 +123,9 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
         ))}
       </DropdownButton>
 
-      {(view === 'inbox' || view === 'sent') && <EmailSnoozeButton mail={mail} dropbox={dropbox} />}
+      {(view === 'inbox' || view === 'sent' || view === 'snoozed') && (
+        <EmailSnoozeButton mail={mail} dropbox={dropbox} />
+      )}
 
       {(view === 'inbox' || view === 'sent') && (
         <ToolbarButton

@@ -26,7 +26,7 @@ class SnoozeCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): bool
+    public function handle(): int
     {
         $tenantId = $this->option('tenant');
 
@@ -59,8 +59,10 @@ class SnoozeCommand extends Command
                 $mail->snoozed_until = null;
                 $mail->seen_at = null;
                 $mail->save();
-                
-                GeneralNotificationEvent::dispatch($mail->dropbox->user, 'Unsnoozed E-Mail');
+
+                if ($mail->dropbox->user) {
+                    GeneralNotificationEvent::dispatch($mail->dropbox->user, 'Unsnoozed E-Mail');
+                }
             }
         });
     }
