@@ -139,9 +139,9 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
         ))}
       </DropdownButton>
 
-      <EmailSnoozeButton mail={mail} dropbox={dropbox} />
+      {view !== 'archived' && <EmailSnoozeButton mail={mail} dropbox={dropbox} />}
 
-      {view !== 'archived' && (
+      {view !== 'archived' && view !== 'snoozed' && (
         <ToolbarButton
           isDisabled={!mail}
           icon={ArchiveXIcon}
