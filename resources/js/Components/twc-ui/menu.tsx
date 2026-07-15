@@ -75,6 +75,8 @@ interface MenuItemProps extends AriaMenuItemProps, VariantProps<typeof menuItemV
   title?: string
   ellipsis?: boolean
   shortcut?: string
+  hideIcon?: boolean
+  simpleShortcut?: boolean
   isDisabled?: boolean
   selectionMode?: 'single' | 'multiple'
 }
@@ -96,7 +98,9 @@ const MenuItem = ({
   className,
   icon,
   isDisabled,
+  hideIcon = false,
   separator = false,
+  simpleShortcut = false,
   shortcut = '',
   title,
   ellipsis = false,
@@ -121,7 +125,7 @@ const MenuItem = ({
             icon ? (
               <Icon icon={icon} className="size-4 flex-none" />
             ) : (
-              <span className="size-4" />
+              !hideIcon && <span className="size-4" />
             )
           ) : (
             ''
@@ -144,7 +148,7 @@ const MenuItem = ({
             {!!ellipsis && <span> &hellip;</span>}
           </span>
 
-          {!!shortcut && <MenuKeyboard>{shortcut}</MenuKeyboard>}
+          {!!shortcut && <span className="text-foreground/50 text-sans text-xs">{shortcut}</span>}
 
           {renderProps.hasSubmenu && <Icon icon={ChevronRight} className="size-4" />}
         </div>
@@ -178,23 +182,23 @@ const MenuSeparator = ({ className, ...props }: AriaSeparatorProps) => (
 const MenuKeyboard = ({ className, ...props }: React.ComponentProps<typeof AriaKeyboard>) => {
   return (
     <AriaKeyboard
-      className={cn('ml-auto text-xs tracking-widest opacity-60', className)}
+      className={cn('ml-auto text-sans! text-xs tracking-widest opacity-60', className)}
       {...props}
     />
   )
 }
 
+export type { AriaMenuProps, MenuHeaderProps, MenuItemProps }
 export {
-  MenuTrigger,
+  BaseMenuItem,
   Menu,
-  MenuPopover,
-  MenuItem,
-  MenuHeader,
-  MenuSeparator,
-  MenuKeyboard,
-  MenuSection,
-  MenuSubTrigger,
   MenuCollection,
-  BaseMenuItem
+  MenuHeader,
+  MenuItem,
+  MenuKeyboard,
+  MenuPopover,
+  MenuSection,
+  MenuSeparator,
+  MenuSubTrigger,
+  MenuTrigger
 }
-export type { MenuHeaderProps, MenuItemProps, AriaMenuProps }

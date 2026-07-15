@@ -384,6 +384,7 @@ declare namespace App {
       readonly attachments_count: number | null;
       readonly seen_at: string | null;
       readonly date: string | null;
+      readonly snoozed_until: string | null;
     };
     export type EmailAccountData = {
       readonly id: number | null;

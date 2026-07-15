@@ -12,12 +12,20 @@ interface InboxIndexEntryProps {
   view: string
 }
 
-export const EmailIndexEntry: React.FC<InboxIndexEntryProps> = ({ dropbox, mail, isActive, view }) => {
+export const EmailIndexEntry: React.FC<InboxIndexEntryProps> = ({
+  dropbox,
+  mail,
+  isActive,
+  view
+}) => {
   const handleClicked = () => {
-    router.visit(route('app.email.index', { dropbox: dropbox.id, mail: mail.id, _query: { view} }), {
-      preserveScroll: true,
-      preserveState: true
-    })
+    router.visit(
+      route('app.email.index', { dropbox: dropbox.id, mail: mail.id, _query: { view } }),
+      {
+        preserveScroll: true,
+        preserveState: true
+      }
+    )
   }
 
   return (
@@ -42,11 +50,9 @@ export const EmailIndexEntry: React.FC<InboxIndexEntryProps> = ({ dropbox, mail,
             {mail.body}
           </div>
         </div>
-        <div className="flex flex-none flex-col items-center gap-2">
+        <div className="flex w-10 flex-none flex-col items-center gap-2 text-center text-foreground/80">
           <div className="text-xs"> {parseAndFormatRelative(mail.date as string)}</div>
-          {!!mail?.attachments_count && (
-            <Icon icon={AttachmentIcon} className="size-3.5 text-foreground/80" />
-          )}
+          {!!mail?.attachments_count && <Icon icon={AttachmentIcon} className="size-3.5" />}
         </div>
       </div>
     </button>

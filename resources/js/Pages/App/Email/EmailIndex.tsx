@@ -6,15 +6,17 @@ import {
   MailSend02Icon,
   NotificationSnooze01Icon
 } from '@hugeicons/core-free-icons'
-import { Link, router, usePage } from '@inertiajs/react'
+import { router, usePage } from '@inertiajs/react'
+import { setHours, startOfToday, startOfTomorrow } from 'date-fns'
 import type * as React from 'react'
 import { useCallback } from 'react'
 import { PageContainerWithSideOnLeft } from '@/Components/PageContainerWithSideOnLeft'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
-import { MenuItem } from '@/Components/twc-ui/menu'
+import { BaseMenuItem, MenuItem } from '@/Components/twc-ui/menu'
 import { toast } from '@/Components/twc-ui/sonner'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
+import EmailSnoozeButton from '@/Pages/App/Email/EmailSnoozeButton'
 import { EmailView } from '@/Pages/App/Email/EmailView'
 import type { PageProps } from '@/Types'
 import { Email } from './Email'
@@ -43,6 +45,20 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
       router.delete(route('app.email.trash', { dropbox: dropbox.id, mail: mail.id }))
     }
   }
+
+  const midday = () => {
+    return setHours(startOfToday(), 12)
+  }
+
+  const afternoon = () => {
+    return setHours(startOfToday(), 17)
+  }
+
+  const tomorrow = () => {
+    return setHours(startOfTomorrow(), 9)
+  }
+
+  console.log(tomorrow())
 
   const handleRestore = async () => {
     if (!mail) return
@@ -117,10 +133,13 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
             key={item.email_address}
             title={item.name}
             ellipsis
+            hideIcon
             onAction={() => handleMove(item.id as number)}
           />
         ))}
       </DropdownButton>
+
+      <EmailSnoozeButton mail={mail} dropbox={dropbox} />
 
       {view !== 'archived' && (
         <ToolbarButton
@@ -151,13 +170,6 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
           onClick={handleRestore}
         />
       )}
-
-      <ToolbarButton
-        isDisabled={!mail}
-        icon={NotificationSnooze01Icon}
-        size="icon"
-        title="E-Mail snoozen"
-      />
 
       {view !== 'trash' && (
         <ToolbarButton
@@ -190,7 +202,7 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
             <EmailView view="inbox" label="Posteingang" dropbox={dropbox} />
             <EmailView view="sent" label="Gesendet" dropbox={dropbox} />
             <EmailView view="archived" label="Archiv" dropbox={dropbox} />
-            <EmailView view="snoozed" label="Snoozed" dropbox={dropbox} />
+            <EmailView view="snoozed" label="Erneut erinnern" dropbox={dropbox} />
             <EmailView view="trash" label="Papierkorb" dropbox={dropbox} />
           </ul>
         </div>

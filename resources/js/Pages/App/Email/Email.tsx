@@ -2,6 +2,7 @@ import type * as React from 'react'
 import Markdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
 import remarkGfm from 'remark-gfm'
+import { Alert } from '@/Components/twc-ui/alert'
 import { parseAndFormatDate } from '@/Lib/DateHelper'
 import { EmailAttachments } from '@/Pages/App/Email/EmailAttachments'
 
@@ -31,8 +32,15 @@ export const Email: React.FC<InboxMailProps> = ({ mail }) => {
         </div>
       </div>
 
-      <EmailAttachments mail={mail} />
+      {mail.snoozed_until && (
+        <div className="mx-6">
+          <Alert className="px-6" variant="info">
+            Wieder erinnern: {mail.snoozed_until}
+          </Alert>
+        </div>
+      )}
 
+      <EmailAttachments mail={mail} />
       <div className="px-8 py-4">
         <Markdown
           remarkPlugins={[remarkGfm, remarkBreaks]}

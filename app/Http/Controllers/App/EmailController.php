@@ -8,6 +8,7 @@ use App\Data\ProjectData;
 use App\Data\SimpleContactData;
 use App\Facades\FileHelperService;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DropboxMailSnoozeRequest;
 use App\Jobs\DocumentUploadJob;
 use App\Jobs\ReceiptUploadFromMailAttchmentJob;
 use App\Models\Contact;
@@ -189,6 +190,22 @@ class EmailController extends Controller
         $mail->save();
 
         return redirect(route('app.email.index', ['dropbox' => $dropbox->id]));
+    }
+
+    public function snooze(DropboxMailSnoozeRequest $request, Dropbox $dropbox, DropboxMail $mail): RedirectResponse
+    {
+        $mail->snoozed_until = $request->validated('snoozed_until');
+        $mail->save();
+
+        return redirect()->back();
+    }
+
+    public function unsnooze(Dropbox $dropbox, DropboxMail $mail): RedirectResponse
+    {
+        $mail->snoozed_until = null;
+        $mail->save();
+
+        return redirect()->back();
     }
 
     public function archive(Dropbox $dropbox, DropboxMail $mail): RedirectResponse
