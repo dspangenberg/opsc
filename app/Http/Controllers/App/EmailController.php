@@ -194,7 +194,15 @@ class EmailController extends Controller
 
     public function snooze(DropboxMailSnoozeRequest $request, Dropbox $dropbox, DropboxMail $mail): RedirectResponse
     {
+        if (
+            (! $dropbox->is_shared && $dropbox->user_id !== auth()->id())
+            || $mail->dropbox_id !== $dropbox->id
+        ) {
+            abort(403);
+        }
+
         $mail->snoozed_until = $request->validated('snoozed_until');
+        $mail->archived_at = null;
         $mail->save();
 
         return redirect()->back();
@@ -202,6 +210,13 @@ class EmailController extends Controller
 
     public function unsnooze(Dropbox $dropbox, DropboxMail $mail): RedirectResponse
     {
+        if (
+            (! $dropbox->is_shared && $dropbox->user_id !== auth()->id())
+            || $mail->dropbox_id !== $dropbox->id
+        ) {
+            abort(403);
+        }
+
         $mail->snoozed_until = null;
         $mail->save();
 
@@ -217,6 +232,7 @@ class EmailController extends Controller
             abort(403);
         }
         $mail->archived_at = now();
+        $mail->snoozed_until = null;
         $mail->save();
 
         return redirect()->back();

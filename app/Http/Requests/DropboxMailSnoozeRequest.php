@@ -14,7 +14,7 @@ class DropboxMailSnoozeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'snoozed_until' => ['required', 'date', 'date_format:d.m.Y H:i'],
+            'snoozed_until' => ['required', 'date', 'date_format:d.m.Y H:i', 'after:now'],
         ];
     }
 

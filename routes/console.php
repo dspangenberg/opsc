@@ -10,3 +10,5 @@ Artisan::command('inspire', function () {
 
 Schedule::command('invoices:create-recurring')->daily();
 Schedule::command('invoices:create-first-reminder')->dailyAt('04:00');
+
+Schedule::command('dropbox:snooze')->everyMinute();

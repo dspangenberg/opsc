@@ -3,17 +3,15 @@ import {
   ArchiveXIcon,
   Delete02Icon,
   DeletePutBackIcon,
-  MailSend02Icon,
-  NotificationSnooze01Icon
+  MailSend02Icon
 } from '@hugeicons/core-free-icons'
 import { router, usePage } from '@inertiajs/react'
-import { setHours, startOfToday, startOfTomorrow } from 'date-fns'
 import type * as React from 'react'
 import { useCallback } from 'react'
 import { PageContainerWithSideOnLeft } from '@/Components/PageContainerWithSideOnLeft'
 import { AlertDialog } from '@/Components/twc-ui/alert-dialog'
 import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
-import { BaseMenuItem, MenuItem } from '@/Components/twc-ui/menu'
+import { MenuItem } from '@/Components/twc-ui/menu'
 import { toast } from '@/Components/twc-ui/sonner'
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
 import EmailSnoozeButton from '@/Pages/App/Email/EmailSnoozeButton'
@@ -45,20 +43,6 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
       router.delete(route('app.email.trash', { dropbox: dropbox.id, mail: mail.id }))
     }
   }
-
-  const midday = () => {
-    return setHours(startOfToday(), 12)
-  }
-
-  const afternoon = () => {
-    return setHours(startOfToday(), 17)
-  }
-
-  const tomorrow = () => {
-    return setHours(startOfTomorrow(), 9)
-  }
-
-  console.log(tomorrow())
 
   const handleRestore = async () => {
     if (!mail) return
@@ -139,9 +123,9 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
         ))}
       </DropdownButton>
 
-      <EmailSnoozeButton mail={mail} dropbox={dropbox} />
+      {(view === 'inbox' || view === 'sent') && <EmailSnoozeButton mail={mail} dropbox={dropbox} />}
 
-      {view !== 'archived' && (
+      {(view === 'inbox' || view === 'sent') && (
         <ToolbarButton
           isDisabled={!mail}
           icon={ArchiveXIcon}

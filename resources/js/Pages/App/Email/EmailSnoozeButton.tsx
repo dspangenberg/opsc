@@ -17,7 +17,7 @@ import { DropdownButton } from '@/Components/twc-ui/dropdown-button'
 import { MenuItem, MenuSeparator } from '@/Components/twc-ui/menu'
 
 interface EmailSnoozeButtonProps {
-  mail: App.Data.DropboxMailData
+  mail?: App.Data.DropboxMailData | null
   dropbox: App.Data.DropboxData
 }
 
@@ -72,7 +72,7 @@ const EmailSnoozeButton: React.FC<EmailSnoozeButtonProps> = ({ dropbox, mail }) 
     router.put(
       route('app.email.snooze', {
         dropbox: dropbox.id,
-        mail: mail.id
+        mail: mail?.id
       }),
       { snoozed_until: format(date, 'dd.MM.yyyy HH:mm') }
     )
@@ -82,7 +82,7 @@ const EmailSnoozeButton: React.FC<EmailSnoozeButtonProps> = ({ dropbox, mail }) 
     router.put(
       route('app.email.unsnooze', {
         dropbox: dropbox.id,
-        mail: mail.id
+        mail: mail?.id
       })
     )
   }
