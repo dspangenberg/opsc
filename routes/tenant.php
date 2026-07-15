@@ -87,7 +87,8 @@ Route::middleware([
     Route::get('emails/{dropbox}/{mail?}', [EmailController::class, 'index'])->name('app.email.index');
     Route::delete('emails/{dropbox}/{mail}', [EmailController::class, 'trash'])->name('app.email.trash');
     Route::put('emails/{dropbox}/{mail}/restore', [EmailController::class, 'restore'])->name('app.email.restore')->withTrashed();
-
+    Route::put('emails/{dropbox}/{mail}/snooze', [EmailController::class, 'snooze'])->name('app.email.snooze');
+    Route::put('emails/{dropbox}/{mail}/unsnooze', [EmailController::class, 'unsnooze'])->name('app.email.unsnooze');
     Route::put('emails/{dropbox}/{mail}/archive', [EmailController::class, 'archive'])->name('app.email.archive');
     Route::put('emails/{dropbox}/{mail}/unarchive', [EmailController::class, 'unarchive'])->name('app.email.unarchive');
     Route::put('emails/{dropbox}/{mail}/{newDropbox}', [EmailController::class, 'move'])->name('app.email.move');
