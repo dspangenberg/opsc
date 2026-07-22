@@ -181,6 +181,9 @@ class WeasyPdfService
         $tmpDir = FileHelperService::getTempFile('pdf');
 
         $pdf = new Pdf(config('pdf.weasyprint_path'));
+        $pdf->setOptions([
+            'uncompressed-pdf' => true,
+        ]);
         $pdf->generateFromHtml($html, $tmpDir);
 
         if ($letterheadPdfFile) {

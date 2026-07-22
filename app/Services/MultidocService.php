@@ -5,7 +5,11 @@ namespace App\Services;
 use App\Facades\SearchablePdfService;
 use App\Jobs\DocumentUploadJob;
 use Illuminate\Support\Facades\Process;
-use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
+use mishahawthorn\OCRmyPDF\NoWritePermissionsException;
+use mishahawthorn\OCRmyPDF\OCRmyPDFException;
+use mishahawthorn\OCRmyPDF\OCRmyPDFNotFoundException;
+use mishahawthorn\OCRmyPDF\ProcessTimeoutException;
+use mishahawthorn\OCRmyPDF\UnsuccessfulCommandException;
 
 class MultidocService
 {
@@ -51,7 +55,13 @@ class MultidocService
     }
 
     /**
-     * @throws PdfDoesNotExist
+     * @param  string  $file
+     * @param  string  $orgFilename
+     * @throws NoWritePermissionsException
+     * @throws OCRmyPDFException
+     * @throws OCRmyPDFNotFoundException
+     * @throws ProcessTimeoutException
+     * @throws UnsuccessfulCommandException
      */
     public function process(string $file, string $orgFilename): void
     {

@@ -1,10 +1,5 @@
 import { Link } from '@inertiajs/react'
 import type * as React from 'react'
-import Markdown from 'react-markdown'
-import remarkBreaks from 'remark-breaks'
-import remarkGfm from 'remark-gfm'
-import { parseAndFormatDate } from '@/Lib/DateHelper'
-import { EmailAttachments } from '@/Pages/App/Email/EmailAttachments'
 
 interface EmailViewProps {
   view: string
