@@ -4,7 +4,8 @@ import {
   Invoice01Icon,
   MagicWand01Icon,
   PrinterIcon,
-  Tick01Icon
+  Tick01Icon,
+  Zip01Icon
 } from '@hugeicons/core-free-icons'
 import { router } from '@inertiajs/react'
 import { sumBy } from 'lodash'
@@ -106,6 +107,16 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
     )
   }, [selectedRows])
 
+  const handleDownload = useCallback(async () => {
+    const url = route('app.bookkeeping.filter-download', {
+      filters: filters.filters,
+      boolean: filters.boolean || 'AND',
+      search: search
+    })
+
+    router.visit(url)
+  }, [search, filters.filters, filters.boolean])
+
   const handlePrint = useCallback(async () => {
     const url = route('app.bookkeeping.receipts.print', {
       filters: filters.filters,
@@ -179,9 +190,15 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
     () => (
       <Toolbar>
         <Button variant="ghost" icon={PrinterIcon} title="Drucken" onClick={handlePrint} />
+        <Button
+          variant="toolbar"
+          icon={Zip01Icon}
+          title="Belege als ZIP-Archiv herunterladen"
+          onClick={handleDownload}
+        />
       </Toolbar>
     ),
-    [handlePrint]
+    [handlePrint, handleDownload]
   )
   const actionBar = useMemo(() => {
     const sum = sumBy(selectedRows, 'amount')

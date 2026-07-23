@@ -44,7 +44,7 @@ class DownloadService
             $content = $media->contents();
 
             if ($receipt->document_number) {
-                $zip->addFromString($receipt->document_number.'.pdf', $content);
+                $zip->addFromString($receipt->issued_on->format('Ymd-').$receipt->document_number.'.pdf', $content);
             }
         }
 
