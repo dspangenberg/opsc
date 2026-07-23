@@ -11,6 +11,7 @@ use App\Data\ReceiptData;
 use App\Data\TransactionData;
 use App\Facades\BookeepingRuleService;
 use App\Facades\PdfService;
+use App\Facades\WeasyPdfService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReceiptsBulkDeleteRequest;
 use App\Http\Requests\ReceiptUpdateRequest;
@@ -136,7 +137,7 @@ class ReceiptController extends Controller
 
         $activeFilters = (new Receipt)->getActiveFilterLabels($request, ['Suche']);
 
-        $pdf = PdfService::createPdf('receipt-report', 'pdf.receipts.report',
+        $pdf = WeasyPdfService::createPdf('receipt-report', 'pdf.receipts.report',
             [
                 'receipts' => $receipts,
                 'activeFilters' => $activeFilters,
@@ -163,6 +164,26 @@ class ReceiptController extends Controller
         $filename = now()->format('Y-m-d-H-i').'-Auswertung-Kostenstellen.pdf';
 
         return response()->inlineFile($pdf, $filename);
+    }
+
+    public function downloadFilteredReceipts(Request $request): RedirectResponse
+    {
+        $search = $request->input('search', '');
+        $query = Receipt::query();
+        $this->applyReceiptQueryFilters($query, $request, $search);
+        $receipts = $query->get();
+
+        $ids = $receipts->pluck('id')->toArray();
+        $download = DocumentDownload::create([
+            'type' => 'receipt',
+            'ids' => $ids,
+        ]);
+
+        DownloadJob::dispatch($download->id, auth()->user());
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Dein Download wird erstellt.']);
+
+        return redirect()->back();
+
     }
 
     /**
