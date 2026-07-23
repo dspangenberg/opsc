@@ -8,7 +8,6 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\App\BookmarkController;
-use App\Http\Controllers\App\EmailController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\InitialPasswordController;
 use App\Http\Controllers\Auth\InitialPasswordStoreController;
@@ -62,6 +61,7 @@ Route::middleware([
     require __DIR__.'/tenant/bookkeeping.php';
     require __DIR__.'/tenant/contacts.php';
     require __DIR__.'/tenant/documents.php';
+    require __DIR__.'/tenant/emails.php';
     require __DIR__.'/tenant/invoices.php';
     require __DIR__.'/tenant/offers.php';
     require __DIR__.'/tenant/projects.php';
@@ -83,18 +83,6 @@ Route::middleware([
         [BookmarkController::class, 'trashFolder'])->name('app.bookmark.trash-folder');
     Route::put('bookmarks/folder/{bookmarkFolder}/restore',
         [BookmarkController::class, 'restoreFolder'])->withTrashed()->name('app.bookmark.restore-folder');
-
-    Route::get('emails/{dropbox}/{mail?}', [EmailController::class, 'index'])->name('app.email.index');
-    Route::delete('emails/{dropbox}/{mail}', [EmailController::class, 'trash'])->name('app.email.trash');
-    Route::put('emails/{dropbox}/{mail}/restore', [EmailController::class, 'restore'])->name('app.email.restore')->withTrashed();
-    Route::put('emails/{dropbox}/{mail}/snooze', [EmailController::class, 'snooze'])->name('app.email.snooze');
-    Route::put('emails/{dropbox}/{mail}/unsnooze', [EmailController::class, 'unsnooze'])->name('app.email.unsnooze');
-    Route::put('emails/{dropbox}/{mail}/archive', [EmailController::class, 'archive'])->name('app.email.archive');
-    Route::put('emails/{dropbox}/{mail}/unarchive', [EmailController::class, 'unarchive'])->name('app.email.unarchive');
-    Route::put('emails/{dropbox}/{mail}/{newDropbox}', [EmailController::class, 'move'])->name('app.email.move');
-    Route::get('emails/{dropbox}/{mail}/{attachment}/preview', [EmailController::class, 'attachmentPreview'])->name('app.email.attachment-preview');
-    Route::put('emails/{dropbox}/{mail}/{attachment}/receipt', [EmailController::class, 'importAttachmentAsReceipt'])->name('app.email.attachment-receipt');
-    Route::put('emails/{dropbox}/{mail}/{attachment}/document', [EmailController::class, 'importAttachmentAsDocument'])->name('app.email.attachment-document');
 
     Route::get('/onboarding', function () {
         return Inertia::modal('Onboarding')->baseRoute('app.soon');
