@@ -9,6 +9,7 @@ use App\Data\SimpleContactData;
 use App\Facades\FileHelperService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DropboxMailSnoozeRequest;
+use App\Http\Requests\EmailBulkRequest;
 use App\Jobs\DocumentUploadJob;
 use App\Jobs\ReceiptUploadFromMailAttchmentJob;
 use App\Models\Contact;
@@ -219,6 +220,26 @@ class EmailController extends Controller
 
         $mail->snoozed_until = null;
         $mail->save();
+
+        return redirect()->back();
+    }
+
+    public function bulkTrash(EmailBulkRequest $request, Dropbox $dropbox): RedirectResponse
+    {
+        if (
+            (! $dropbox->is_shared && $dropbox->user_id !== auth()->id())
+        ) {
+            abort(403);
+        }
+
+        $ids = $request->getEmailIds();
+        $mails = DropboxMail::query()->where('dropbox_id', $dropbox->id)->whereIn('id', $ids)->withTrashed()->get();
+
+        $mails->each(function ($mail) {
+            $mail->delete();
+        });
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Die E-Mails wurden in den Papierkorb verschoben.']);
 
         return redirect()->back();
     }

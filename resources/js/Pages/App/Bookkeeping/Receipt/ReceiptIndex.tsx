@@ -90,7 +90,7 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
 
   const handleBulkDownloadClicked = useCallback(() => {
     const ids = selectedRows.map(row => row.id).join(',')
-    router.get(route('app.bookkeeping.bulk-download', { _query: { ids } }), {
+    router.post(route('app.bookkeeping.bulk-download', { _query: { ids } }), {
       preserveScroll: true
     })
   }, [selectedRows])
@@ -114,7 +114,7 @@ const ReceiptIndex: React.FC<ReceiptIndexPageProps> = ({
       search: search
     })
 
-    router.visit(url)
+    router.post(url)
   }, [search, filters.filters, filters.boolean])
 
   const handlePrint = useCallback(async () => {

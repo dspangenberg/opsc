@@ -52,8 +52,6 @@ Route::get('/bookkeeping/receipts/report', [ReceiptController::class, 'printRepo
 Route::put('/bookkeeping/receipts/lock/{receipt?}', [ReceiptController::class, 'lock'])->name('app.bookkeeping.receipts.lock');
 Route::put('/bookkeeping/receipts/rule/', [ReceiptController::class, 'runRules'])->name('app.bookkeeping.receipts.rule');
 
-
-
 Route::get('/bookkeeping/receipts/confirm/', [ReceiptController::class, 'confirmFirst'])->name('app.bookkeeping.receipts.confirm-first');
 Route::put('/bookkeeping/receipts/confirm/{receipt}/update', [ReceiptController::class, 'update'])->name('app.bookkeeping.receipts.update')->middleware([HandlePrecognitiveRequests::class]);
 Route::get('/bookkeeping/receipts/{receipt}/pdf', [ReceiptController::class, 'streamPdf'])->name('app.bookkeeping.receipts.pdf');
@@ -65,8 +63,8 @@ Route::put('/bookkeeping/receipts/{receipt}/extract-with-ai', [ReceiptController
 
 Route::get('/bookkeeping/receipts/confirm/{receipt}', [ReceiptController::class, 'confirm'])->name('app.bookkeeping.receipts.confirm');
 Route::get('/bookkeeping/receipts/{receipt}/edit', [ReceiptController::class, 'edit'])->name('app.bookkeeping.receipts.edit');
-Route::get('/bookkeeping/receipts/bulk-download/', [ReceiptController::class, 'bulkDownload'])->name('app.bookkeeping.bulk-download');
-Route::get('/bookkeeping/receipts/filter-download/', [ReceiptController::class, 'downloadFilteredReceipts'])->name('app.bookkeeping.filter-download');
+Route::post('/bookkeeping/receipts/bulk-download/', [ReceiptController::class, 'bulkDownload'])->name('app.bookkeeping.bulk-download');
+Route::post('/bookkeeping/receipts/filter-download/', [ReceiptController::class, 'downloadFilteredReceipts'])->name('app.bookkeeping.filter-download');
 Route::put('/bookkeeping/receipts/{receipt}/unlock', [ReceiptController::class, 'unlock'])->name('app.bookkeeping.receipts.unlock');
 Route::delete('/bookkeeping/receipts/{receipt}/payment/{transaction}', [ReceiptController::class, 'destroyPayment'])->name('app.bookkeeping.receipts.delete-payment');
 
