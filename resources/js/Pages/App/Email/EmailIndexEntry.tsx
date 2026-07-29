@@ -53,12 +53,14 @@ export const EmailIndexEntry: React.FC<InboxIndexEntryProps> = ({
     >
       <div className="flex flex-none items-center gap-2">
         <div className="flex w-4 flex-none items-center justify-center">
-          {mail.seen_at === null && <span className="size-2 rounded-full bg-primary" />}
-          <Checkbox
-            name={`mail-id-${mail.id}`}
-            isSelected={isSelected}
-            onChange={handleCheckboxChange}
-          />
+          <div className="flex flex-1 flex-col items-center justify-center space-y-1">
+            {!mail.seen_at && <span className="size-2 rounded-full bg-primary" />}
+            <Checkbox
+              name={`mail-id-${mail.id}`}
+              isSelected={isSelected}
+              onChange={handleCheckboxChange}
+            />
+          </div>
         </div>
         <div className="flex flex-1 flex-col gap-2">
           <div className="w-64 text-sm">{mail.from}</div>
