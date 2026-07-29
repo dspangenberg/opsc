@@ -5,8 +5,14 @@ allowBuilds:
   canvas: true
 
 overrides:
-  dompurify: '3.4.11'
-  js-yaml: '>=4.2.0'
+  brace-expansion: '5.0.8'
+  dompurify: '3.4.12'
+  fast-uri: '3.1.4'
+  hono: '4.12.32'
+  js-yaml: '>=4.3.0'
+  postcss: '8.5.24'
+  '@hono/node-server': '2.0.12'
+  '@modelcontextprotocol/sdk': '1.30.0'
 
 minimumReleaseAgeExclude:
   - '@sentry/browser-utils@10.59.0'
