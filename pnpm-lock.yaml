@@ -9,7 +9,7 @@ overrides:
   dompurify: 3.4.12
   fast-uri: 3.1.4
   hono: 4.12.32
-  js-yaml: '>=4.3.0'
+  js-yaml: ^4.3.0
   postcss: 8.5.24
   '@hono/node-server': 2.0.12
   '@modelcontextprotocol/sdk': 1.30.0
@@ -3539,8 +3539,8 @@ packages:
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  js-yaml@5.2.2:
-    resolution: {integrity: sha512-dayzUzKkJ1MkuUtZglSebU43utNXH0OWQByK9rKOOuYIO8M5TV1y+n8ALMdG0rdzBnfNkOmZEqrURepb0ejqBw==}
+  js-yaml@4.3.0:
+    resolution: {integrity: sha512-1td788aAnnZ5qs7V2QIRl1owjtYpbKt749Y3xauqQgwIIGF/xXWz1wMTEBx5O3LK3lXLVuqXPdPxj2BoFHaW9Q==}
     hasBin: true
 
   jsdom@29.1.1:
@@ -6328,7 +6328,7 @@ snapshots:
       cm6-theme-basic-light: 0.2.0(@codemirror/language@6.12.3)(@codemirror/state@6.6.0)(@codemirror/view@6.43.1)(@lezer/highlight@1.2.3)
       codemirror: 6.0.2
       downshift: 7.6.2(react@19.2.7)
-      js-yaml: 5.2.2
+      js-yaml: 4.3.0
       lexical: 0.48.0(typescript@7.0.2)
       mdast-util-directive: 3.1.0
       mdast-util-from-markdown: 2.0.3
@@ -7916,7 +7916,7 @@ snapshots:
     dependencies:
       env-paths: 2.2.1
       import-fresh: 3.3.1
-      js-yaml: 5.2.2
+      js-yaml: 4.3.0
       parse-json: 5.2.0
     optionalDependencies:
       typescript: 7.0.2
@@ -8516,7 +8516,7 @@ snapshots:
 
   js-tokens@4.0.0: {}
 
-  js-yaml@5.2.2:
+  js-yaml@4.3.0:
     dependencies:
       argparse: 2.0.1
 
