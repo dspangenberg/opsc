@@ -9,7 +9,7 @@
 @plugin "tailwind-scrollbar-hide";
 
 @source '../views';
-@source '../resources/js';
+@source '../js';
 
 @custom-variant dark (&:is(.dark *));
 
