@@ -98,8 +98,9 @@ const EmailSnoozeButton: React.FC<EmailSnoozeButtonProps> = ({ dropbox, mail }) 
           onAction={() => onSnooze(item.date)}
         />
       ))}
-      <MenuSeparator />
-      <MenuItem hideIcon title="Erinnerung löschen" onAction={onUnSnooze} />
+      {mail?.snoozed_until && (
+        <MenuItem hideIcon title="Erinnerung löschen" onAction={onUnSnooze} />
+      )}
     </DropdownButton>
   )
 }

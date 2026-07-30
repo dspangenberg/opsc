@@ -72,7 +72,7 @@ export const EmailIndexEntry: React.FC<InboxIndexEntryProps> = ({
           </div>
         </div>
         <div className="flex w-10 flex-none flex-col items-center gap-2 text-center text-foreground/80">
-          <div className="text-xs"> {parseAndFormatRelative(mail.date as string)}</div>
+          <div className="text-xxs"> {parseAndFormatRelative(mail.date as string)}</div>
           {!!mail?.attachments_count && <Icon icon={AttachmentIcon} className="size-3.5" />}
         </div>
       </div>
