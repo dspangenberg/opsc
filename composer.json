@@ -28,6 +28,7 @@
     "mishahawthorn/ocrmypdf": "^2.0",
     "mpdf/mpdf": "^8.3",
     "mtvs/eloquent-hashids": "^3.6",
+    "opcodesio/log-viewer": "^3.24",
     "phpoffice/phpword": "^1.4",
     "plank/laravel-mediable": "^6.3.1",
     "ploi/ploi-php-sdk": "^1.9.5",

@@ -3,11 +3,13 @@
 namespace App\Providers;
 
 use App\Services\WeasyPdfService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Opcodes\LogViewer\Facades\LogViewer;
 use Stancl\Tenancy\Events\TenancyInitialized;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -27,6 +29,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Log Viewer stays fully accessible in local development, but in
+        // production only administrators may access it.
+        LogViewer::auth(function (): bool {
+            if (! app()->isProduction()) {
+                return true;
+            }
+
+            return (bool) (Auth::user()?->is_admin);
+        });
+
         Vite::prefetch(concurrency: 3);
         Response::macro('inlineFile', function (string $path, string $filename, array $headers = []): BinaryFileResponse {
             $safeName = $filename !== '' ? $filename : 'file.pdf';

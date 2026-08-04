@@ -29636,6 +29636,322 @@ namespace Laravel\Mcp\Facades {
             }
     }
 
+namespace Opcodes\LogViewer\Facades {
+    /**
+     * @see LogViewerService
+     */
+    class LogViewer {
+        /**
+         * @static
+         */
+        public static function timezone()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->timezone();
+        }
+
+        /**
+         * @static
+         */
+        public static function basePathForLogs()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->basePathForLogs();
+        }
+
+        /**
+         * @return \Opcodes\LogViewer\LogFileCollection|\Opcodes\LogViewer\LogFile[]
+         * @static
+         */
+        public static function getFiles()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->getFiles();
+        }
+
+        /**
+         * @static
+         */
+        public static function getFilesGroupedByFolder()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->getFilesGroupedByFolder();
+        }
+
+        /**
+         * Find the file with the given identifier or file name.
+         *
+         * @static
+         */
+        public static function getFile($fileIdentifier)
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->getFile($fileIdentifier);
+        }
+
+        /**
+         * @static
+         */
+        public static function getFolder($folderIdentifier)
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->getFolder($folderIdentifier);
+        }
+
+        /**
+         * @static
+         */
+        public static function supportsHostsFeature()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->supportsHostsFeature();
+        }
+
+        /**
+         * @static
+         */
+        public static function resolveHostsUsing($callback)
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->resolveHostsUsing($callback);
+        }
+
+        /**
+         * @static
+         */
+        public static function getHosts()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->getHosts();
+        }
+
+        /**
+         * @static
+         */
+        public static function getHost($hostIdentifier)
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->getHost($hostIdentifier);
+        }
+
+        /**
+         * @static
+         */
+        public static function clearFileCache()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->clearFileCache();
+        }
+
+        /**
+         * @static
+         */
+        public static function getRouteDomain()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->getRouteDomain();
+        }
+
+        /**
+         * @static
+         */
+        public static function getRoutePrefix()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->getRoutePrefix();
+        }
+
+        /**
+         * @static
+         */
+        public static function getRouteMiddleware()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->getRouteMiddleware();
+        }
+
+        /**
+         * @static
+         */
+        public static function auth($callback = null)
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->auth($callback);
+        }
+
+        /**
+         * @static
+         */
+        public static function hasAuthCallback()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->hasAuthCallback();
+        }
+
+        /**
+         * @static
+         */
+        public static function lazyScanChunkSize()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->lazyScanChunkSize();
+        }
+
+        /**
+         * @static
+         */
+        public static function lazyScanTimeout()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->lazyScanTimeout();
+        }
+
+        /**
+         * Get the maximum number of bytes of the log that we should display.
+         *
+         * @static
+         */
+        public static function maxLogSize()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->maxLogSize();
+        }
+
+        /**
+         * @static
+         */
+        public static function setMaxLogSize($bytes)
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->setMaxLogSize($bytes);
+        }
+
+        /**
+         * @static
+         */
+        public static function extend($type, $class)
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->extend($type, $class);
+        }
+
+        /**
+         * @static
+         */
+        public static function useLogFileClass($class)
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->useLogFileClass($class);
+        }
+
+        /**
+         * @static
+         */
+        public static function useLogReaderClass($class)
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->useLogReaderClass($class);
+        }
+
+        /**
+         * @static
+         */
+        public static function logReaderClass()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->logReaderClass();
+        }
+
+        /**
+         * @static
+         */
+        public static function setViewLayout($layout)
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->setViewLayout($layout);
+        }
+
+        /**
+         * @static
+         */
+        public static function getViewLayout()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->getViewLayout();
+        }
+
+        /**
+         * Get the CSS for the Log Viewer dashboard.
+         *
+         * @static
+         */
+        public static function css()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->css();
+        }
+
+        /**
+         * Get the JS for the Log Viewer dashboard.
+         *
+         * @static
+         */
+        public static function js()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->js();
+        }
+
+        /**
+         * Get the favicon for the Log Viewer dashboard as a base64 data URI.
+         *
+         * @static
+         */
+        public static function favicon()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->favicon();
+        }
+
+        /**
+         * Determine if Log Viewer's assets have been published.
+         *
+         * @static
+         */
+        public static function assetsArePublished()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->assetsArePublished();
+        }
+
+        /**
+         * Determine if Log Viewer's published assets are up-to-date.
+         *
+         * @throws \RuntimeException
+         * @deprecated Publishing assets is no longer required. Assets are now served directly from the vendor directory.
+         *             This method will be removed in the next major version.
+         * @static
+         */
+        public static function assetsAreCurrent()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->assetsAreCurrent();
+        }
+
+        /**
+         * Get the current version of the Log Viewer
+         *
+         * @static
+         */
+        public static function version()
+        {
+            /** @var \Opcodes\LogViewer\LogViewerService $instance */
+            return $instance->version();
+        }
+
+            }
+    }
+
 namespace Plank\Mediable\Facades {
     /**
      * Facade for Media Uploader.
@@ -37358,6 +37674,7 @@ namespace  {
     class Debugbar extends \Fruitcake\LaravelDebugbar\Facades\Debugbar {}
     class LaravelZugferd extends \horstoeko\zugferdlaravel\Facades\ZugferdLaravel {}
     class Mcp extends \Laravel\Mcp\Facades\Mcp {}
+    class LogViewer extends \Opcodes\LogViewer\Facades\LogViewer {}
     class MediaUploader extends \Plank\Mediable\Facades\MediaUploader {}
     class ImageManipulator extends \Plank\Mediable\Facades\ImageManipulator {}
     class Sentry extends \Sentry\Laravel\Facade {}
