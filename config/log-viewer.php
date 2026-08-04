@@ -6,6 +6,8 @@ use Opcodes\LogViewer\Enums\Theme;
 use Opcodes\LogViewer\Http\Middleware\AuthorizeLogViewer;
 use Opcodes\LogViewer\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
+$nginxLogPath = env('LOG_VIEWER_NGINX_LOG_PATH');
+
 return [
 
     /*
@@ -20,7 +22,7 @@ return [
 
     'api_only' => env('LOG_VIEWER_API_ONLY', false),
 
-    'require_auth_in_production' => false,
+    'require_auth_in_production' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -175,7 +177,8 @@ return [
         // You can include paths to other log types as well, such as apache, nginx, and more.
         // This key => value pair can be used to rename and group multiple paths into one folder in the UI.
         '/var/log/httpd/*' => 'Apache',
-        '/home/twiceware/vhosts/twiceware-opsc.de/logs/*' => 'Nginx',
+        // Nginx logs are grouped under "Nginx" only when LOG_VIEWER_NGINX_LOG_PATH is configured.
+        ...($nginxLogPath ? [$nginxLogPath => 'Nginx'] : []),
 
         // MacOS Apple Silicon logs
         '/opt/homebrew/var/log/nginx/*',

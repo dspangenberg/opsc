@@ -22,20 +22,28 @@ scotty run deploy --branch=develop
 5. `storage` auf `persistent/storage` verlinken:
    `rm -rf storage && ln -nfs $PERSISTENT_DIR/storage storage`.
 6. Migrationen: `php artisan migrate --force`.
-7. Freischalten: `current` -> neues Release, Caches bauen
-   (`config:cache`, `route:cache`, `view:cache`, `event:cache`, `cache:clear`),
-   `sudo systemctl reload php8.5-fpm`, `sudo systemctl restart reverb-twiceware.service`.
+7. Caches bauen (`config:cache`, `route:cache`, `view:cache`, `event:cache`,
+   `cache:clear`), **dann** Freischalten: `current` -> neues Release.
+   Danach `sudo systemctl reload php8.5-fpm`, `sudo systemctl restart
+   reverb-twiceware.service` und `sudo systemctl restart queue-twiceware.service`
+   (lange laufende Prozesse laden so den Code des neuen Releases).
 8. Aufräumen: die ältesten Releases bis auf die letzten drei löschen.
 
 Rücksetzbar: `current` zeigt immer nur auf ein Release; beim Fehlschlag einfach
-`ln -nfs <altes Release> current` + Reload setzen.
+`ln -nfs <altes Release> current` + Reload setzen. Dabei wird nur der **Code**
+zurückgesetzt; bereits ausgeführte Migrationen sind forward-only und werden
+nicht zurückgerollt. Schemaänderungen sollten deshalb backward-kompatibel sein,
+der Symlink-Wechsel ist kein vollständiger Rollback des Datenbankzustands.
 
 ## Server-Voraussetzungen (einmalig eingerichtet)
 
 - Deploy-Key `/home/twiceware/.ssh/id_ed25519_github` als GitHub-Deploy-Key für
-  `dspangenberg/opsc`.
-- `twiceware` darf per sudo: `systemctl reload php8.5-fpm` und
-  `systemctl restart reverb-twiceware.service`.
+  `dspangenberg/opsc`. Das ist der **server-seitige** Key, den Scotty beim
+  GitHub-Clone nutzt (siehe `GIT_SSH_COMMAND` in `Scotty.sh`) - getrennt zu
+  betrachten vom Container-Hop und vom lokalen SSH-Key des Entwicklers.
+- `twiceware` darf per sudo: `systemctl reload php8.5-fpm`,
+  `systemctl restart reverb-twiceware.service` und
+  `systemctl restart queue-twiceware.service`.
 - nginx-root zeigt auf `current/public`, FPM-Socket `php8.5-fpm-twiceware`.
 - Verzeichnisstruktur: `current`, `releases/`, `persistent/storage`, `.env`
   (`.env` liegt außerhalb des Repos).
@@ -79,3 +87,13 @@ php -r '$cmd = "ssh -o ConnectTimeout=5 -o BatchMode=yes twiceware@77.42.67.43 \
 
 Erwartung: `exit=0 OUT=ok`. Für GitHub zusätzlich:
 `ssh -T git@github.com` -> `Hi dspangenberg! You've successfully authenticated...`.
+
+Diese Checks validieren nur den **Container-Hop** (zum Server) und den lokalen
+GitHub-Zugriff. Der **server-seitige** Deploy-Key für den eigentlichen Clone
+liegt unter `/home/twiceware/.ssh/id_ed25519_github` auf dem Server und wird von
+`GIT_SSH_COMMAND` in `Scotty.sh` verwendet. Gegenprobe auf dem Server:
+
+```sh
+ssh -i /home/twiceware/.ssh/id_ed25519_github -o IdentitiesOnly=yes -T git@github.com
+# -> Hi twiceware! You've successfully authenticated, but GitHub does not provide shell access.
+```
