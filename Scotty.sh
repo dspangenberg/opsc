@@ -80,6 +80,7 @@ blessNewRelease() {
 
     sudo systemctl reload php8.5-fpm
     sudo systemctl restart reverb-twiceware.service
+    sudo systemctl restart queue-twiceware.service
 }
 
 # @task on:remote
