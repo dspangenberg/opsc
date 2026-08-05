@@ -34,6 +34,12 @@ ssh root@SERVER 'bash /root/bootstrap.sh'
 `VITE_*`-Build-Args, erteilt dem MySQL-User die Rechte für Tenant-DBs
 (`opsc-*`, stancl/tenancy), mountet Storage und aktiviert Let's Encrypt.
 
+**TLS-Wildcard**: Das Zertifikat deckt `DOMAIN` und `*.DOMAIN` ab (DNS-01 via
+Hetzner DNS API, Token in `HETZNER_API_TOKEN`). Vorher müssen beide DNS-Einträge
+(`app.twiceware-opsc.de` **und** `*.app.twiceware-opsc.de`) als A-Record auf die
+Server-IP zeigen – so sind Tenant-Subdomains (`<slug>.app.twiceware-opsc.de`,
+siehe `StoreRegistrationCredentials`/`PendingUserEmail`) automatisch abgedeckt.
+
 GitHub-Reposettings:
 - **Secret** `DOKKU_SSH_PRIVATE_KEY`: privater SSH-Key, dessen öffentlichen Teil
   du mit `dokku ssh-keys:add github-actions <pubkey>` auf dem Server registrierst
@@ -62,6 +68,8 @@ jedem Containerstart als pdfcpu-User-Fonts und baut den fontconfig-Cache.
 
 ```sh
 dokku ps:logs opsc                          # Logs (auch reverb/worker/scheduler)
+dokku domains:report opsc                   # DOMAIN + *.DOMAIN
+dokku letsencrypt:list                      # Zertifikat + Ablauf (Wildcard)
 dokku run opsc pdfcpu fonts list            # Facit-Regular + Facit-Semibold
 dokku run opsc fc-match facit
 dokku run opsc ls -la public/storage        # Symlink → storage/app/public
@@ -91,6 +99,9 @@ Hinweise:
 
 - **Deploy schlägt bei pdfcpu fehl** → nur bei Versionswechsel `PDFCPU_VERSION`
   und beide SHA-256 in der Dockerfile aktualisieren.
+- **Zertifikat für Wildcard schlägt fehl** → `*.DOMAIN`-A-Record zeigt nicht auf
+  den Server, oder `HETZNER_API_TOKEN` fehlt/wertlos; Token in der Hetzner-DNS-Zone
+  prüfen (`dokku letsencrypt:report --global`), danach `dokku letsencrypt:enable opsc --force`.
 - **`Facit-Semibold is unsupported`** → Fonts fehlen im Storage-Volume.
 - **WeasyPrint ohne Facit** → `fc-match facit` prüfen.
 - **WS verbindet nicht** → `dokku ps:logs opsc` für Reverb-Zeilen prüfen;

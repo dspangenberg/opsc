@@ -23,6 +23,7 @@ fi
 : "${REVERB_APP_ID:?REVERB_APP_ID setzen}"
 : "${REVERB_APP_KEY:?REVERB_APP_KEY setzen}"
 : "${REVERB_APP_SECRET:?REVERB_APP_SECRET setzen}"
+: "${HETZNER_API_TOKEN:?HETZNER_API_TOKEN (Hetzner DNS API) setzen}"
 
 command -v dokku >/dev/null || { echo "dokku nicht gefunden – Installation prüfen."; exit 1; }
 
@@ -110,9 +111,14 @@ dokku storage:mount "${APP_NAME}" "/var/lib/dokku/data/${APP_NAME}-storage:/var/
 # 6) Proxy: Host-Ports 80/443 → Container-Port 8080 (nginx)
 dokku proxy:ports-set "${APP_NAME}" http:80:8080 https:443:8080
 dokku domains:set "${APP_NAME}" "${DOMAIN}"
+dokku domains:add "${APP_NAME}" "*.${DOMAIN}"
 
-# 7) TLS (Let's Encrypt)
+# 7) TLS (Let's Encrypt) – Wildcard-Zertifikat via DNS-01 (Hetzner DNS API).
+#    Voraussetzung: A-Record "${DOMAIN}" und Wildcard "*.${DOMAIN}" zeigen auf
+#    diesen Server, sonst schlägt das Ausstellen fehl.
 dokku letsencrypt:set --global email "${LE_EMAIL}"
+dokku letsencrypt:set --global dns-provider hetzner
+dokku letsencrypt:set --global dns-provider-HETZNER_API_TOKEN "${HETZNER_API_TOKEN}"
 dokku letsencrypt:enable "${APP_NAME}"
 dokku letsencrypt:cron-job --add
 
