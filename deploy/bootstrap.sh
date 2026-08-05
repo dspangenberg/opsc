@@ -32,24 +32,27 @@ dokku plugin:install https://github.com/dokku/dokku-mysql.git mysql || true
 dokku plugin:install https://github.com/dokku/dokku-redis.git redis || true
 dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git letsencrypt || true
 
-# 2) App + Datenbankdienste
-dokku apps:create "${APP_NAME}"
+# 2) App + Datenbankdienste (idempotent, damit ein erneuter Lauf möglich ist)
+if ! dokku apps:exists "${APP_NAME}" >/dev/null 2>&1; then
+    dokku apps:create "${APP_NAME}"
+fi
 dokku mysql:create "${APP_NAME}" || true
 dokku redis:create "${APP_NAME}" || true
-dokku mysql:link "${APP_NAME}" "${APP_NAME}"
-dokku redis:link "${APP_NAME}" "${APP_NAME}"
+dokku mysql:linked "${APP_NAME}" "${APP_NAME}" >/dev/null 2>&1 || dokku mysql:link "${APP_NAME}" "${APP_NAME}"
+dokku redis:linked "${APP_NAME}" "${APP_NAME}" >/dev/null 2>&1 || dokku redis:link "${APP_NAME}" "${APP_NAME}"
 
 DB_URL="$(dokku config:get "${APP_NAME}" DATABASE_URL)"
 
-# 2b) Tenant-Datenbanken (stancl/tenancy): Das Link-User darf nur auf die eigene
-#     DB zu; es muss Tenant-DBs (Prefix aus TENANCY_DB_PREFIX) anlegen/droppen können.
+# 2b) Tenant-Datenbanken (stancl/tenancy): Das Link-User ('mysql') darf nur auf
+#     die eigene DB zu; es muss Tenant-DBs (Prefix aus TENANCY_DB_PREFIX)
+#     anlegen/droppen können. `mysql:connect` verbindet als Link-User (zu wenig
+#     Rechte), daher läuft der Grant über `mysql:enter` als Root im Container
+#     (Root-Passwort kommt aus dem Container-Env MYSQL_ROOT_PASSWORD).
 DB_USER="${DB_URL#mysql://}"
 DB_USER="${DB_USER%%:*}"
 TENANCY_DB_PREFIX="${TENANCY_DB_PREFIX:-opsc-}"
-dokku mysql:connect "${APP_NAME}" <<SQL
-GRANT CREATE, DROP, ALTER, INDEX, REFERENCES, SELECT, INSERT, UPDATE, DELETE, LOCK TABLES, EXECUTE, TRIGGER ON \`${TENANCY_DB_PREFIX}%\`.* TO '${DB_USER}'@'%';
-FLUSH PRIVILEGES;
-SQL
+TENANCY_GRANT_SQL="GRANT CREATE, DROP, ALTER, INDEX, REFERENCES, SELECT, INSERT, UPDATE, DELETE, LOCK TABLES, EXECUTE, TRIGGER ON \`${TENANCY_DB_PREFIX}%\`.* TO '${DB_USER}'@'%'; FLUSH PRIVILEGES;"
+dokku mysql:enter "${APP_NAME}" env TENANCY_GRANT_SQL="${TENANCY_GRANT_SQL}" sh -c 'mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --execute="$TENANCY_GRANT_SQL"'
 
 # 3) Laufzeit-Config (MySQL/Redis kommen aus den Links, s. DATABASE_URL/REDIS_URL)
 dokku config:set "${APP_NAME}" \
@@ -106,7 +109,9 @@ dokku docker-options:add "${APP_NAME}" build --build-arg "VITE_REVERB_PORT=${VIT
 dokku docker-options:add "${APP_NAME}" build --build-arg "VITE_REVERB_SCHEME=${VITE_REVERB_SCHEME:-https}"
 
 # 5) Persistenter Storage (Facit-Fonts später nach system/fonts legen)
-dokku storage:mount "${APP_NAME}" "/var/lib/dokku/data/${APP_NAME}-storage:/var/www/html/storage"
+if ! dokku storage:list "${APP_NAME}" 2>/dev/null | grep -q "${APP_NAME}-storage"; then
+    dokku storage:mount "${APP_NAME}" "/var/lib/dokku/data/${APP_NAME}-storage:/var/www/html/storage"
+fi
 
 # 6) Proxy: Host-Ports 80/443 → Container-Port 8080 (nginx)
 dokku proxy:ports-set "${APP_NAME}" http:80:8080 https:443:8080
