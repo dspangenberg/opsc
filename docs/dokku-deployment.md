@@ -25,14 +25,18 @@ Server: Dokku installieren (z. B. `wget https://dokku.com/install/v0.40.0/bootst
 dann:
 
 ```sh
+git clone https://github.com/dspangenberg/opsc.git /srv/apps/opsc
+cd /srv/apps/opsc
 cp deploy/.env.production.example deploy/.env.production   # Werte eintragen
-scp deploy/bootstrap.sh deploy/.env.production root@SERVER:/root/
-ssh root@SERVER 'bash /root/bootstrap.sh'
+./deploy/bootstrap.sh
 ```
 
-`bootstrap.sh` legt App + MySQL/Redis an, verlinkt sie, setzt Config + die 11
-`VITE_*`-Build-Args, erteilt dem MySQL-User die Rechte für Tenant-DBs
-(`opsc-*`, stancl/tenancy), mountet Storage und aktiviert Let's Encrypt.
+`bootstrap.sh` liegt versioniert im jeweiligen App-Repo (weitere Anwendungen
+bringen ihr eigenes Skript + `.env.production` mit, inkl. eigener
+`APP_NAME`/Domain) und wird aus dem Repo-Verzeichnis gestartet. Es legt App +
+MySQL/Redis an, verlinkt sie, setzt Config + die 11 `VITE_*`-Build-Args,
+erteilt dem MySQL-User die Rechte für Tenant-DBs (`opsc-*`, stancl/tenancy),
+mountet Storage und aktiviert Let's Encrypt.
 
 **TLS-Wildcard**: Das Zertifikat deckt `DOMAIN` und `*.DOMAIN` ab (DNS-01 via
 Hetzner DNS API, Token in `HETZNER_API_TOKEN`). Die zentrale App liegt auf

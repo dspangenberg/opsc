@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
-# Einmalige Dokku-Einrichtung für opsc. Auf dem Server als root ausführen:
-#   scp deploy/.env.production.deploy ...  # oder Datei per ssh ablegen
-#   ssh root@SERVER 'bash -s' < deploy/bootstrap.sh
+# Einmalige Dokku-Einrichtung für diese App. Auf dem Server als root ausführen:
+#   1. Repo clonen/aktualisieren, z. B.:
+#        git clone https://github.com/dspangenberg/opsc.git /srv/apps/opsc
+#   2. deploy/.env.production anlegen (Kopie der .example, Werte eintragen):
+#        cp deploy/.env.production.example deploy/.env.production
+#   3. Aus dem Repo-Verzeichnis starten:
+#        cd /srv/apps/opsc && ./deploy/bootstrap.sh
+#
+# Das Skript ist pro App im jeweiligen Repository versioniert (weitere Apps
+# bringen ihre eigene Variante mit, inkl. eigener APP_NAME/Domain). Werte
+# kommen aus deploy/.env.production direkt neben dem Skript.
 #
 # Voraussetzungen: Dokku ist installiert und erreichbar (dokku --version).
-# Werte kommen aus deploy/.env.production (Kopie der .example).
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
