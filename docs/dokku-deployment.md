@@ -35,10 +35,12 @@ ssh root@SERVER 'bash /root/bootstrap.sh'
 (`opsc-*`, stancl/tenancy), mountet Storage und aktiviert Let's Encrypt.
 
 **TLS-Wildcard**: Das Zertifikat deckt `DOMAIN` und `*.DOMAIN` ab (DNS-01 via
-Hetzner DNS API, Token in `HETZNER_API_TOKEN`). Vorher müssen beide DNS-Einträge
-(`app.twiceware-opsc.de` **und** `*.app.twiceware-opsc.de`) als A-Record auf die
-Server-IP zeigen – so sind Tenant-Subdomains (`<slug>.app.twiceware-opsc.de`,
-siehe `StoreRegistrationCredentials`/`PendingUserEmail`) automatisch abgedeckt.
+Hetzner DNS API, Token in `HETZNER_API_TOKEN`). Die zentrale App liegt auf
+`twiceware-opsc.de`, Tenants unter `<slug>.twiceware-opsc.de`
+(`twsek.twiceware-opsc.de` usw., siehe `StoreRegistrationCredentials`/
+`PendingUserEmail`). Vor dem Bootstrap müssen beide DNS-Einträge
+(`twiceware-opsc.de` **und** `*.twiceware-opsc.de`) als A-Record auf die
+Server-IP zeigen – sonst schlägt das Ausstellen fehl.
 
 GitHub-Reposettings:
 - **Secret** `DOKKU_SSH_PRIVATE_KEY`: privater SSH-Key, dessen öffentlichen Teil
