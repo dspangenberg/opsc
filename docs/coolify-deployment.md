@@ -1,53 +1,62 @@
 # Coolify-Deployment opsc
 
-Deployment der Laravel-App **opsc** (PHP 8.5) per Multi-Stage-Dockerfile auf
-`serversideup/php:8.5-fpm-nginx`. Ersatz für das bisherige Scotty/Ploi-System.
+Deployment der Laravel-App **opsc** (PHP 8.5) per Docker-Compose als **eine**
+Coolify-Ressource. Basis: Multi-Stage-Dockerfile auf
+`serversideup/php:8.5-fpm-nginx`, Ersatz für das bisherige Scotty/Ploi-System.
 
 ## Architektur
 
-| Ressource       | Basis                                    | Port | Aufgabe                                    |
-| --------------- | ---------------------------------------- | ---- | ------------------------------------------ |
-| App `opsc`      | Dockerfile → `serversideup/php:8.5-fpm-nginx` | 8080 | nginx + PHP-FPM, PDF/OCR-Binaries          |
-| Reverb          | gleiche Ressource, `--entrypoint`-Override | 8080 | WebSocket-Server (`reverb:start`)          |
-| Queue-Worker    | gleiche Ressource, `--entrypoint`-Override | –    | `queue:work`                                |
-| MySQL           | Coolify-DB (8.x)                         | 3306 | zentrale DB + Tenant-DBs                   |
-| Redis           | Coolify-DB                               | 6379 | Cache, Session, Queue, Broadcasting        |
+`docker-compose.yml` im Repo definiert 7 Services – alle Laravel-Prozesse
+laufen auf **demselben Image** (identische PHP-8.5-Runtime, kein
+Versionskonflikt; Node `node:26` existiert nur in der Build-Stage für das
+Frontend):
 
-Im Image enthalten (gebakene Binaries): ghostscript, tesseract (eng+deu),
-ocrmypdf, weasyprint, pdfcpu (SHA-256-verifiziert), ext-imagick, Redis-Erweiterung
-(vom Basisimage), Facit-Font-Setup.
+| Service    | Aufgabe                                         | Command-Override                    |
+| ---------- | ----------------------------------------------- | ----------------------------------- |
+| `app`      | nginx + PHP-FPM (Port 8080)                     | – (Image-Default)                   |
+| `migrate`  | Einmal-Job `php artisan migrate --force`        | ja, `restart: "no"`                 |
+| `reverb`   | WebSocket-Server                                | `reverb:start --port=8080`          |
+| `worker`   | Queue-Worker (Memory-Limit 1G)                  | `queue:work --sleep=3 --tries=3`    |
+| `scheduler`| `php artisan schedule:work` (läuft dauerhaft)   | ja                                  |
+| `mysql`    | MySQL 8.4 (z. B. Image)                          | –                                   |
+| `redis`    | Redis 7 (Cache/Session/Queue/Broadcasting)      | –                                   |
+
+Im Image enthalten: ghostscript, tesseract (eng+deu), ocrmypdf, weasyprint,
+pdfcpu (SHA-256-verifiziert), ext-imagick, Redis-Erweiterung (Basisimage),
+Facit-Font-Setup.
 
 ## 0. Voraussetzungen
 
-- Coolify-Git-Source für `github.com/dspangenberg/opsc`, Branch **`develop`**
-  (Dockerfile liegt dort).
+- Coolify-Git-Source für `github.com/dspangenberg/opsc` (GitHub App),
+  Branch **`develop`**.
 - Server-Firewall: nur 80/443 (+ SSH) offen.
 
-## 1. Datenbank-Ressourcen
+## 1. Ressource anlegen (EIN Schritt statt drei Apps)
 
-### MySQL
-- **Databases → MySQL** anlegen, DB `opsc`, User/Pass generieren lassen.
-- Wichtig (Multi-Tenancy, stancl/tenancy): Der DB-User benötigt
-  **`CREATE DATABASE` / `DROP DATABASE`**-Rechte – Tenant-DBs werden zur
-  Laufzeit angelegt.
-- Optional: automatische Backups aktivieren.
+1. **Projects → + New** → Projekt `opsc`
+2. Im Projekt **+ New** → **Docker Compose**
+3. GitHub-Source wählen, Repo `opsc`, Branch `develop`
+4. Compose-Datei bleibt `docker-compose.yml` (Repo-Root)
 
-### Redis
-- **Databases → Redis** anlegen. Für Cache/Session/Queue/Broadcasting.
+## 2. Umgebungsvariablen setzen
 
-## 2. Application „opsc"
+In der Compose-Ressource unter **Environment** eintragen – die Datei
+interpoliert `${VAR}` (Pflicht-Variablen mit `:?` brechen den Deploy, wenn
+fehlend). Die 11 `VITE_*`-Werte sind dort **Build-Variablen** und steuern die
+Frontend-Assets.
 
-### Build
-- Build Pack: **`dockerfile`**, Base Directory: **`/`**, Dockerfile: `Dockerfile`
-- Branch: `develop`
-- General-Tab: **Ports Exposes `8080`**, Domain der App (z. B.
-  `app.twiceware-opsc.de`)
+```bash
+# Pflicht (verhindern sonst den Start)
+APP_KEY=base64:...
+APP_URL=https://app.twiceware-opsc.de
+DB_PASSWORD=<app-db-pass>
+DB_ROOT_PASSWORD=<mysql-root-pass>
+REVERB_APP_ID=...
+REVERB_APP_KEY=...
+REVERB_APP_SECRET=...
+REVERB_HOST=ws.twiceware-opsc.de
 
-### Build-Variablen (Tab „Environment Variables" → Toggle „Build Variable")
-Müssen gesetzt sein, **bevor** der erste Build läuft – sonst sind die VITE-Werte
-leer in die Frontend-Assets gebacken.
-
-```
+# Build-Variablen (VITE_*)
 VITE_APP_NAME=opsc
 VITE_APP_URL=https://app.twiceware-opsc.de
 VITE_APP_DATE_FORMAT=dd.MM.yyyy
@@ -55,159 +64,77 @@ VITE_APP_TIME_FORMAT=HH:mm:ss
 VITE_APP_DATE_TIME_FORMAT=dd.MM.yyyy HH:mm
 VITE_SENTRY_ENABLED=true
 VITE_SENTRY_DNS=<sentry-dsn>
-VITE_REVERB_APP_KEY=<reverb-app-key>
+VITE_REVERB_APP_KEY=<= REVERB_APP_KEY>
 VITE_REVERB_HOST=ws.twiceware-opsc.de
 VITE_REVERB_PORT=443
 VITE_REVERB_SCHEME=https
-```
 
-(`VITE_APP_DATE_FORMAT` etc. je nach App-Konvention anpassen – es gelten die
-Werte, die lokal in der Frontend-Entwicklung verwendet werden.)
-
-### Laufzeit-Variablen
-```ini
-APP_NAME=opsc
-APP_ENV=production
-APP_KEY=<base64-key>
-APP_DEBUG=false
-APP_URL=https://app.twiceware-opsc.de
-APP_TIMEZONE=UTC
-APP_LOCALE=de
-APP_MAINTENANCE_DRIVER=file
-
-LOG_CHANNEL=stack
-LOG_STACK=single
-LOG_LEVEL=warning
-LOG_VIEWER_ENABLED=false
-
-DB_CONNECTION=mysql
-DB_HOST=<mysql-hostname>
-DB_PORT=3306
-DB_DATABASE=opsc
-DB_USERNAME=<user>
-DB_PASSWORD=<pass>
-
-SESSION_DRIVER=redis
-SESSION_LIFETIME=120
-
-BROADCAST_CONNECTION=reverb
-FILESYSTEM_DISK=local
-QUEUE_CONNECTION=redis
-CACHE_STORE=redis
-
-REDIS_CLIENT=phpredis
-REDIS_HOST=<redis-hostname>
-REDIS_PORT=6379
-REDIS_PASSWORD=null
-
-MAIL_MAILER=smtp
-MAIL_HOST=<smtp-host>
-MAIL_PORT=587
-MAIL_USERNAME=<user>
-MAIL_PASSWORD=<pass>
-MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=no-reply@twiceware-opsc.de
-MAIL_FROM_NAME="${APP_NAME}"
-
-REVERB_APP_ID=<app-id>
-REVERB_APP_KEY=<app-key>
-REVERB_APP_SECRET=<app-secret>
-# Interne Bindung des Reverb-Prozesses:
-REVERB_SERVER_HOST=0.0.0.0
-REVERB_SERVER_PORT=8080
-# Öffentliche Adresse (für Broadcasting-Konfiguration der App):
-REVERB_HOST=ws.twiceware-opsc.de
-REVERB_PORT=443
-REVERB_SCHEME=https
-
+# Optional
+APP_TIMEZONE=Europe/Berlin
 SENTRY_LARAVEL_DSN=<sentry-dsn>
-SENTRY_ENVIRONMENT=production
-SENTRY_SAMPLE_RATE=1.0
-
-# PDF-Verarbeitung (Binaries liegen auf dem PATH; explizite Pfade sind stabiler)
-PDF_GHOSTSCRIPT_PATH=/usr/bin/gs
-PDF_WEASYPRINT_PATH=/usr/bin/weasyprint
-OCRMYPDF_PATH=/usr/bin/ocrmypdf
-PDF_PDFCPU_PATH=/usr/local/bin/pdfcpu
-PDF_PDFCPU_WATERMARK_FONT=Facit-Semibold
+MAIL_MAILER=smtp
+MAIL_HOST=... MAIL_PORT=587 MAIL_USERNAME=... MAIL_PASSWORD=... MAIL_ENCRYPTION=tls
 PDF_TERMS_DOCUMENT_ID=<optional>
-
-CONVERSION_RATES_API_KEY=<optional>
-CONVERSION_RATES_API_HOST=<optional>
-GOTENBERG_URL=<optional>
 ```
 
-### Storage & Fonts
-- **Storage-Tab → Persistent Storage**: Volume-Mount auf **`/var/www/html/storage`**
-  (wird beim ersten Start aus dem Image-Skelett befüllt, `www-data`-Owner).
-- **Facit-Fonts**: die zwei proprietären TTFs (`facit-regular-webfont.ttf`,
-  `facit-semibold-webfont.ttf`) in den Volume-Pfad
-  `storage/system/fonts/` kopieren – per Coolify **File Manager** oder
-  `docker cp`. Danach Container **einmal neu starten**: der Entrypoint
-  (`docker/entrypoint.d/10-storage-init.sh`) installiert sie als
-  pdfcpu-User-Fonts und aktualisiert den fontconfig-Cache für WeasyPrint.
+Alle weiteren Env-Werte (DB_HOST, REDIS_*, QUEUE_*, PDF_*_PATH,
+`PDF_PDFCPU_WATERMARK_FONT=Facit-Semibold`, REVERB_SERVER_*) sind bereits mit
+Produktions-Defaults in `docker-compose.yml` hinterlegt.
 
-### Post-Deployment & Scheduler
-- **Advanced → Post-Deployment Command**:
-  `php artisan migrate --force`
-- **Scheduled Tasks**: Cron `* * * * *` → `php artisan schedule:run`
+## 3. Domains
 
-## 3. Reverb (eigene Ressource)
+- `app.twiceware-opsc.de` → Service **`app`**, Port **8080**
+- `ws.twiceware-opsc.de` → Service **`reverb`**, Port **8080**
 
-Zweite Application, gleiches Repo/Dockerfile/Branch.
+(Coolify-Proxy/Traefik terminiert TLS, `wss://` für Reverb automatisch.)
 
-- **Custom Docker Options** (General-Tab):
-  ```
-  --entrypoint "sh -c 'exec php artisan reverb:start --host=0.0.0.0 --port=8080'"
-  ```
-- Ports Exposes `8080`, Domain `ws.twiceware-opsc.de`
-- Laufzeit-Variablen: `APP_KEY`, alle `REVERB_*`, `DB_*`/`REDIS_*` übernehmen
-  (Reverb bootet Laravel; die `VITE_*`-Build-Variablen sind hier unnötig).
-- Hinweis: Der `--entrypoint`-Override ersetzt den ServersideUp-Entrypoint –
-  die `entrypoint.d`-Skripte laufen hier **nicht**. Unkritisch (Reverb braucht
-  weder Storage-Skelett noch Fonts). Optional dieselbe Storage-Volume anbinden
-  für gemeinsame Logs.
+## 4. Storage & Fonts
 
-## 4. Queue-Worker
+- Volumes (`opsc-storage`, `opsc-mysql`, `opsc-redis`) sind in der Compose-
+  Datei deklariert; Coolify zeigt sie unter **Storage** an (ggf. dort als
+  persistent markieren).
+- **Facit-Fonts** in den Volume-Pfad `opsc-storage` → `var/www/html/storage/
+  system/fonts/` legen (`facit-regular-webfont.ttf`, `facit-semibold-
+  webfont.ttf`) – per Coolify File Manager oder `docker cp`. Danach einmal neu
+  deployen: der Entrypoint (`docker/entrypoint.d/10-storage-init.sh`) installiert
+  sie als pdfcpu-User-Fonts und baut den fontconfig-User-Cache.
 
-Dritte Ressource (Vorlage wie Reverb), **ohne** Domain.
+## 5. Deploy
 
-- Custom Docker Options:
-  ```
-  --entrypoint "sh -c 'exec php artisan queue:work --sleep=3 --tries=3 --max-time=3600'"
-  ```
-- Resource-Limits setzen (RAM-schonend, z. B. Memory-Limit 1G auf einer
-  Hetzner-8GB-Box). Für mehr Parallelität Ressource replizieren statt `numprocs`.
+- **Deploy** klicken. Ablauf: `migrate` läuft zuerst (wartet auf gesunden
+  MySQL), erst danach startet `app`. Reverb/Worker/Scheduler starten parallel.
+- Build-Logs prüfen: Node-Stage → apt/pdfcpu (SHA-256-Verify) → Composer.
 
-## 5. Domains & DNS
+## 6. DNS & Verifikation
 
-1. Ersten Build starten und Logs prüfen (Build-Stufen: node → apt/pdfcpu →
-   composer; pdfcpu-SHA-256-Verifikation muss grün sein).
-2. Erst nach grünem Build: Bestands-DNS auf die neue Server-IP umziehen
-   (App-Domain und `ws.twiceware-opsc.de`), TLS über den Coolify-Proxy
-   (Traefik) automatisch.
+1. Erst nach grünem Deploy die Bestands-DNS auf die neue Server-IP umziehen.
+2. Verifikation im Coolify-Terminal (Service `app`):
+   ```bash
+   pdfcpu fonts list            # Facit-Regular + Facit-Semibold
+   fc-match facit               # → Facit-Familie
+   ls -la public/storage        # Symlink → storage/app/public
+   php artisan about
+   ```
+3. Login, PDF (Rechnung + Stamp) erzeugen, Realtime-Funktion testen.
 
-## 6. Verifikation (Coolify-Terminal)
+## Migrations & Änderungen
 
-```bash
-pdfcpu fonts list            # Facit-Regular + Facit-Semibold
-fc-match facit               # → Facit-Familie
-ls -la public/storage        # Symlink → storage/app/public
-php artisan about            # Umgebung/Versionen
-```
-
-Danach: Login, ein PDF erzeugen (Rechnung + Stamp), Realtime-Funktion testen.
+- **Migrationen** laufen automatisch über den `migrate`-Service bei jedem
+  Deploy (idempotent).
+- **Scheduler/Queue/Reverb** brauchen keine Coolify-Config – sie sind als
+  Services in der Datei.
 
 ## Troubleshooting
 
-- **Build schlägt bei pdfcpu fehl** → Checksum-Download defekt/unpassend: nur
-  bei Versionswechsel `PDFCPU_VERSION` und beide SHA-256 in der Dockerfile
-  aktualisieren (Assets von `github.com/pdfcpu/pdfcpu/releases`).
-- **`Facit-Semibold is unsupported`** → Fonts fehlen im Volume
-  `storage/system/fonts/` oder Container wurde nicht neu gestartet
-  (Entrypoint installiert sie).
-- **WeasyPrint ohne Facit (Fallback-Serif)** → `fc-match facit` prüfen,
-  `fc-cache -f` läuft im Entrypoint.
-- **Tenant-DB-Anlage schlägt fehl** → MySQL-User hat kein `CREATE DATABASE`.
-- **Session/Queue-Fehler** → `REDIS_CLIENT=phpredis` (Ext ist im Basisimage
-  enthalten) und `REDIS_HOST` auf den Redis-Ressourcen-Namen prüfen.
+- **Build scheitert bei pdfcpu** → nur bei Versionswechsel `PDFCPU_VERSION`
+  und die beiden SHA-256 in der Dockerfile aktualisieren.
+- **`Facit-Semibold is unsupported`** → Fonts fehlen im `opsc-storage`-Volume
+  (`storage/system/fonts/`) oder noch kein Re-Deploy nach Upload.
+- **WeasyPrint ohne Facit** → `fc-match facit` prüfen (fontconfig-User-Cache
+  wird vom Entrypoint gebaut).
+- **Tenant-DB-Anlage schlägt fehl** → `docker/initdb/10-grant-tenancy.sh`
+  vergibt CREATE/DROP-Rechte nur beim ersten MySQL-Init (leeres Volume);
+  bei bestehendem Volume manuell `GRANT CREATE, DROP ON *.* ...` ausführen.
+- **`:?`-Fehler beim Deploy** → Pflicht-Env-Variable fehlt in Coolify.
+- **Mehrere Worker** → Worker-Service in Coolify duplizieren (Replicas),
+  nicht `numprocs`.
