@@ -114,7 +114,7 @@ if ! dokku storage:list "${APP_NAME}" 2>/dev/null | grep -q "${APP_NAME}-storage
 fi
 
 # 6) Proxy: Host-Ports 80/443 → Container-Port 8080 (nginx)
-dokku proxy:ports-set "${APP_NAME}" http:80:8080 https:443:8080
+dokku ports:set "${APP_NAME}" http:80:8080 https:443:8080
 dokku domains:set "${APP_NAME}" "${DOMAIN}"
 dokku domains:add "${APP_NAME}" "*.${DOMAIN}"
 
