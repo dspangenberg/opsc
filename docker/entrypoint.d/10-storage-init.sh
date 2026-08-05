@@ -22,7 +22,7 @@ mkdir -p \
     "${STORAGE}/system/templates" \
     "${STORAGE}/system/cache"
 
-# Proprietäre Facit-Fonts: per Coolify-Volume in "${STORAGE}/system/fonts" ablegen.
+# Proprietäre Facit-Fonts: per Volume in "${STORAGE}/system/fonts" ablegen.
 # 1) pdfcpu-User-Fonts installieren (für Text-Stamps, PostScript-Name "Facit-Semibold").
 #    pdfcpu liest sein Config-Dir aus $HOME (hier /var/www via ENV HOME im Dockerfile).
 if ls "${STORAGE}/system/fonts"/*.ttf >/dev/null 2>&1; then
