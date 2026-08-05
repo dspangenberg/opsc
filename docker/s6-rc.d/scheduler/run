@@ -1,0 +1,3 @@
+#!/command/with-contenv sh
+# Laravel Scheduler – läuft dauerhaft im Vordergrund (pollt jede Minute).
+exec php /var/www/html/artisan schedule:work

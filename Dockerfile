@@ -93,8 +93,18 @@ COPY --chmod=755 ./docker/entrypoint.d/ /etc/entrypoint.d/
 # fontconfig: Facit-Fonts aus dem Storage-Volume als System-Schriftregister
 COPY --chmod=644 ./docker/fontconfig/99-opsc-fonts.conf /etc/fonts/conf.d/99-opsc-fonts.conf
 
+# s6-langlaufende Prozesse (gleicher Container wie nginx/php-fpm):
+# Reverb (WebSocket), Queue-Worker und Scheduler. Registrierung über
+# user/contents.d, Start als www-data.
+COPY --chmod=755 ./docker/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
+
+# Nginx: /apps-WebSocket-Endpunkt an den lokalen Reverb-Server (8081) proxen.
+# Wird vom Basis-Image per `include /etc/nginx/server-opts.d/*.conf` in den
+# Server-Block eingebunden.
+COPY --chmod=644 ./docker/nginx/server-opts.d/reverb.conf /etc/nginx/server-opts.d/reverb.conf
+
 # Anwendung inkl. Storage-Skelett (www-data-Besitzer) ins Image kopieren.
-# Ein leeres Coolify-Volume unter /var/www/html/storage wird beim ersten
+# Ein leeres Dokku-Volume unter /var/www/html/storage wird beim ersten
 # Mount automatisch mit diesem Skelett inkl. korrekter Rechte befüllt.
 WORKDIR /var/www/html
 COPY --chown=www-data:www-data . /var/www/html
@@ -121,7 +131,7 @@ USER www-data
 
 # Composer-Abhängigkeiten (ohne Dev-Pakete). Die temporäre APP_KEY aus
 # /dev/urandom nur fuer den Build (package:discover/storage:link booten die App),
-# sie wird nicht persistiert – zur Laufzeit gilt die echte Key aus Coolify.
+# sie wird nicht persistiert – zur Laufzeit gilt die echte Key aus Dokku-Config.
 RUN APP_KEY="base64:$(openssl rand -base64 32)" composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader \
     && APP_KEY="base64:$(openssl rand -base64 32)" php artisan storage:link
 
