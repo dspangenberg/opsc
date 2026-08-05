@@ -30,7 +30,8 @@ if ls "${STORAGE}/system/fonts"/*.ttf >/dev/null 2>&1; then
 fi
 
 # 2) fontconfig-Cache aktualisieren, damit WeasyPrint `font-family: facit` auflöst.
-fc-cache -f >/dev/null 2>&1 || true
+#    Läuft als www-data, daher per-User-Cache in $HOME (nicht /var/cache/fontconfig).
+HOME="$(dirname "${APP_DIR}")" fc-cache -f >/dev/null 2>&1 || true
 
 # Hinweis: Diese Skripte werden von ServersideUp in einer Subshell gesourced
 # (`(. "$f")`); keine `exit`-Anweisungen verwenden, nur Guards gegen Abbruch.
