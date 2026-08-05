@@ -45,9 +45,10 @@ FROM serversideup/php:8.5-fpm-nginx
 
 USER root
 
-ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive \
+    HOME=/var/www
 
-# PDF/OCR/Print-Werkzeuge
+# PDF/OCR/Print-Werkzeuge (fontconfig für fc-cache/WeasyPrint-Font-Auflösung)
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         ghostscript \
@@ -57,20 +58,25 @@ RUN apt-get update \
         ocrmypdf \
         weasyprint \
         fonts-dejavu-core \
+        fontconfig \
         xz-utils \
         git \
     && rm -rf /var/lib/apt/lists/*
 
-# pdfcpu (nicht in Debian-Repos) – offizielles Release-Binary
+# pdfcpu (nicht in Debian-Repos) – offizielles Release-Binary.
+# Download temporär, SHA-256-Verifikation pro TARGETARCH, dann erst entpacken.
 ARG PDFCPU_VERSION=0.14.0
+ARG TARGETARCH
 RUN set -eux; \
     case "${TARGETARCH}" in \
-        amd64) PDFCPU_ARCH="x86_64" ;; \
-        arm64) PDFCPU_ARCH="arm64" ;; \
+        amd64) PDFCPU_ARCH="x86_64"; PDFCPU_SHA256="a892e89a408613fff8a45edfa97e030a2d00e06f6c9d520087d859d389686518" ;; \
+        arm64) PDFCPU_ARCH="arm64"; PDFCPU_SHA256="339c647032629021921a4864255bdd67062c6ea8bd5ed08b9a6cbd69be5f752d" ;; \
         *) echo "Unsupported architecture: ${TARGETARCH}" >&2; exit 1 ;; \
     esac; \
-    curl -fsSL "https://github.com/pdfcpu/pdfcpu/releases/download/v${PDFCPU_VERSION}/pdfcpu_${PDFCPU_VERSION}_Linux_${PDFCPU_ARCH}.tar.xz" \
-        | tar -xJ -C /usr/local/bin pdfcpu; \
+    curl -fsSL -o /tmp/pdfcpu.tar.xz "https://github.com/pdfcpu/pdfcpu/releases/download/v${PDFCPU_VERSION}/pdfcpu_${PDFCPU_VERSION}_Linux_${PDFCPU_ARCH}.tar.xz"; \
+    echo "${PDFCPU_SHA256}  /tmp/pdfcpu.tar.xz" | sha256sum -c -; \
+    tar -xJ -C /usr/local/bin -f /tmp/pdfcpu.tar.xz --strip-components=1 --no-same-owner "pdfcpu_${PDFCPU_VERSION}_Linux_${PDFCPU_ARCH}/pdfcpu"; \
+    rm /tmp/pdfcpu.tar.xz; \
     chmod +x /usr/local/bin/pdfcpu
 
 # ext-imagick (Pflicht-Abhängigkeit von spatie/pdf-to-image)
@@ -83,6 +89,9 @@ RUN if [ -f /etc/ImageMagick-6/policy.xml ]; then \
 
 # Eigene One-shot-Startskripte (Storage-Skelett, läuft vor nginx/php-fpm)
 COPY --chmod=755 ./docker/entrypoint.d/ /etc/entrypoint.d/
+
+# fontconfig: Facit-Fonts aus dem Storage-Volume als System-Schriftregister
+COPY --chmod=644 ./docker/fontconfig/99-opsc-fonts.conf /etc/fonts/conf.d/99-opsc-fonts.conf
 
 # Anwendung inkl. Storage-Skelett (www-data-Besitzer) ins Image kopieren.
 # Ein leeres Coolify-Volume unter /var/www/html/storage wird beim ersten
