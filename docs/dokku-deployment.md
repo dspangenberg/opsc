@@ -50,7 +50,7 @@ GitHub-Reposettings:
 
 ## 1. Deploy
 
-Push auf `develop` → `.github/workflows/deploy.yml` pusht per
+Push auf `main` → `.github/workflows/deploy.yml` pusht per
 `dokku/github-action` → Dokku baut das Image (Node-Stage → apt/pdfcpu → Composer)
 und deployt. Migrationen laufen bei **jedem** Deploy automatisch über
 `app.json` (`scripts.dokku.predeploy`, vor dem Containerstart).

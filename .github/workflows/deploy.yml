@@ -2,7 +2,7 @@ name: Deploy to Dokku
 
 on:
   push:
-    branches: [develop]
+    branches: [main]
 
 concurrency:
   group: dokku-deploy

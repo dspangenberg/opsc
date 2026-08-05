@@ -124,5 +124,5 @@ dokku letsencrypt:cron-job --add
 
 echo
 echo "Einrichtung abgeschlossen. Deployment auslösen mit:"
-echo "  git push dokku develop"
-echo "oder per GitHub Actions (Push auf develop)."
+echo "  git push dokku main"
+echo "oder per GitHub Actions (Push auf main)."
