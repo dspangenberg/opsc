@@ -1,4 +1,0 @@
-#!/command/with-contenv sh
-# Laravel Reverb (WebSocket) – lauscht intern auf 127.0.0.1:8081,
-# nginx reicht /apps per HTTP-Upgrade weiter.
-exec php /var/www/html/artisan reverb:start --host=127.0.0.1 --port=8081
