@@ -1,3 +1,0 @@
-#!/command/with-contenv sh
-# Laravel Queue-Worker (Redis). SIGTERM beendet laufende Jobs sauber.
-exec php /var/www/html/artisan queue:work --sleep=3 --tries=3 --max-time=3600

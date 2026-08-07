@@ -117,21 +117,23 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
 
   const actionBar = (
     <Toolbar>
-      <Checkbox
-        name={`emails-selection-all`}
-        className="pl-6"
-        label={`1 bis ${mails.to ?? 0} von ${mails.total} E-Mails`}
-        isSelected={mails.data.length > 0 && selectedMails.length === mails.data.length}
-        onChange={() =>
-          setSelectedMails(
-            selectedMails.length === mails.data.length
-              ? []
-              : mails.data.map(mail => mail.id as number)
-          )
-        }
-        isIndeterminate={selectedMails.length > 0 && selectedMails.length !== mails.data.length}
-      />
-      <div className="flex items-center">{selectedMails.length}</div>
+      <div className="flex flex-1 items-center">
+        <Checkbox
+          name={`emails-selection-all`}
+          className="pl-6"
+          label={`1 bis ${mails.to ?? 0} von ${mails.total} E-Mails`}
+          isSelected={mails.data.length > 0 && selectedMails.length === mails.data.length}
+          onChange={() =>
+            setSelectedMails(
+              selectedMails.length === mails.data.length
+                ? []
+                : mails.data.map(mail => mail.id as number)
+            )
+          }
+          isIndeterminate={selectedMails.length > 0 && selectedMails.length !== mails.data.length}
+        />
+        <div className="flex items-center">{selectedMails.length}</div>
+      </div>
       <ToolbarButton icon={ArchiveXIcon} size="icon" title="E-Mails archivieren" />
       <ToolbarButton
         icon={Delete02Icon}
