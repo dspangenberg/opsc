@@ -65,6 +65,7 @@ updateSymlinks() {
 migrateDatabase() {
     cd $NEW_RELEASE_DIR
     php artisan migrate --force
+    php artisan tenants:migrate --force
 }
 
 # @task on:remote
@@ -77,6 +78,7 @@ blessNewRelease() {
     php artisan view:cache
     php artisan event:cache
     php artisan cache:clear
+    php artisan queue:restart
 
     sudo systemctl reload php8.5-fpm
     sudo systemctl restart twiceware-opsc-reverb.service
