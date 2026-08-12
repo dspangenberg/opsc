@@ -55,8 +55,6 @@ class MultidocService
     }
 
     /**
-     * @param  string  $file
-     * @param  string  $orgFilename
      * @throws NoWritePermissionsException
      * @throws OCRmyPDFException
      * @throws OCRmyPDFNotFoundException
@@ -168,7 +166,7 @@ class MultidocService
 
                 $searchablePdf = SearchablePdfService::create($tmpOutputPath);
                 // Auch wenn OCR nun doppelt ausgeführt wird, wir brauchen es noch für den Dateiname (Date)
-                $fileDate = $this->extractPdfDate($searchablePdf['fullText'], $tmpOutputPath);
+                $fileDate = $this->extractPdfDate($searchablePdf['fulltext'], $tmpOutputPath);
                 $outputName = $group['code'] ? $fileDate.'_'.$group['code'].'.pdf' : $fileDate.'_group_'.$index.'.pdf';
                 $outputPath = $outputDir.'/'.$outputName;
 
