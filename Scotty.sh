@@ -1,21 +1,21 @@
 #!/usr/bin/env scotty
 
-# Scotty.sh fuer twiceware-opsc.de (quantum-forge, dspangenberg/opsc).
+# Scotty.sh fuer twiceware-opsc.de (dspangenberg/opsc).
 # Deploy:  scotty run deploy
 # Anderer Branch:  scotty run deploy --branch=develop
 #
 # Voraussetzungen (auf dem Server eingerichtet):
-#   - Deploy-Key /home/twiceware/.ssh/id_ed25519_github ist als Deploy-Key
+#   - Deploy-Key /home/twiceware/.ssh/id_ed25519 ist als Deploy-Key
 #     im GitHub-Repo dspangenberg/opsc hinterlegt.
-#   - twiceware darf per sudo das FPM-Pool-Update + Reverb neu starten.
-#   - node/pnpm liegen als Wrapper in /usr/local/bin (LD_LIBRARY_PATH gesetzt).
+#   - twiceware darf per sudo php8.5-fpm reloaden und Reverb + Queue neu starten.
+#   - node/pnpm liegen als Symlinks in /usr/local/bin (nodejs unter /usr/local/lib/nodejs).
 
-# @servers local=127.0.0.1 remote=twiceware@77.42.67.43
+# @servers local=127.0.0.1 remote=twiceware@twiceware-opsc.de
 # @macro deploy startDeployment cloneRepository runComposer buildAssets updateSymlinks migrateDatabase blessNewRelease cleanOldReleases
 
 # @option branch=main
 
-BASE_DIR="/home/twiceware/vhosts/twiceware-opsc.de/public_html"
+BASE_DIR="/home/twiceware/twiceware-opsc.de/public_html"
 RELEASES_DIR="$BASE_DIR/releases"
 PERSISTENT_DIR="$BASE_DIR/persistent"
 CURRENT_DIR="$BASE_DIR/current"
@@ -79,8 +79,8 @@ blessNewRelease() {
     php artisan cache:clear
 
     sudo systemctl reload php8.5-fpm
-    sudo systemctl restart reverb-twiceware.service
-    sudo systemctl restart queue-twiceware.service
+    sudo systemctl restart twiceware-opsc-reverb.service
+    sudo systemctl restart twiceware-opsc-queue-default.service
 }
 
 # @task on:remote
