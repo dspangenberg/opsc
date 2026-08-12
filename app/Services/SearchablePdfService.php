@@ -29,6 +29,7 @@ class SearchablePdfService
         $ocr = OCRmyPDF::make($inputPdfPath)
             ->setExecutable($ocrmypdfPath)
             ->language('eng', 'deu')
+            ->skipText()
             ->deskew()
             ->rotatePages()
             ->clean()
