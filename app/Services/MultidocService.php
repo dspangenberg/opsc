@@ -168,19 +168,16 @@ class MultidocService
                 // Auch wenn OCR nun doppelt ausgeführt wird, wir brauchen es noch für den Dateiname (Date)
                 $fileDate = $this->extractPdfDate($searchablePdf['fulltext'], $tmpOutputPath);
                 $outputName = $group['code'] ? $fileDate.'_'.$group['code'].'.pdf' : $fileDate.'_group_'.$index.'.pdf';
-                $outputPath = $outputDir.'/'.$outputName;
-
-                // Rename to final name
-                rename($tmpOutputPath, $outputPath);
 
                 // Convert extracted date to Unix timestamp
-                $fileMTime = strtotime($fileDate) ?: filemtime($outputPath);
+                $fileMTime = strtotime($fileDate) ?: filemtime($tmpOutputPath);
 
-                // Dispatch upload job for the created PDF
+                // Der Upload-Job bekommt den eindeutigen Temp-Pfad, damit sich parallele
+                // Multidoc-Laeufe nicht gegenseitig ueberschreiben; der Anzeigename bleibt sauber.
                 DocumentUploadJob::dispatch(
-                    $outputPath,
+                    $tmpOutputPath,
                     $outputName,
-                    filesize($outputPath),
+                    filesize($tmpOutputPath),
                     'application/pdf',
                     $fileMTime,
                     $group['code'],
