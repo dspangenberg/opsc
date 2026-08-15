@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Facades\FileHelperService;
 use App\Mail\DownloadEmail;
 use App\Models\DocumentDownload;
+use App\Models\Invoice;
 use App\Models\Receipt;
 use App\Models\User;
 use Exception;
@@ -31,20 +32,27 @@ class DownloadService
 
         $zip = Zip::create($zipFileName);
 
-        $receipts = Receipt::query()->with('range_document_number')->whereIn('id', $documentDownload->ids)->get();
+        $items = [];
+        if ($documentDownload->type === 'receipt') {
+            $items = Receipt::query()->with('range_document_number')->whereIn('id', $documentDownload->ids)->get();
+        }
 
-        foreach ($receipts as $receipt) {
-            $media = $receipt->firstMedia('file');
+        if ($documentDownload->type === 'invoice') {
+            $items = Invoice::query()->with('range_document_number')->whereIn('id', $documentDownload->ids)->get();
+        }
+
+        foreach ($items as $item) {
+            $media = $item->firstMedia('file');
             if (! $media) {
-                $fallbackName = 'missing-media-'.$receipt->id.'.pdf';
+                $fallbackName = 'missing-media-'.$item->id.'.pdf';
                 $zip->addFromString($fallbackName, '');
 
                 continue;
             }
             $content = $media->contents();
 
-            if ($receipt->document_number) {
-                $zip->addFromString($receipt->issued_on->format('Ymd-').$receipt->document_number.'.pdf', $content);
+            if ($item->document_number) {
+                $zip->addFromString($item->issued_on->format('Ymd-').$item->document_number.'.pdf', $content);
             }
         }
 
@@ -53,8 +61,10 @@ class DownloadService
         try {
             $media = MediaUploader::fromSource($zipFileName)
                 ->toDestination('s3_private', 'downloads')
-                ->useFilename('Belege-'.Carbon::now()->format('Y-m-d_H-i-s'))
+                ->useFilename($documentDownload->type.'s-'.Carbon::now()->format('Y-m-d_H-i-s'))
                 ->upload();
+
+            $documentDownload->attachMedia($media, 'file');
 
             Mail::to($user->email)->send(new DownloadEmail($user,
                 $media->getTemporaryUrl(Carbon::now()->addMinutes(60))));
