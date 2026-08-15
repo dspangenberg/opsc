@@ -24,7 +24,10 @@ scotty run deploy --branch=develop
 6. Migrationen: `php artisan migrate --force`.
 7. Freischalten: `current` -> neues Release, Caches bauen
    (`config:cache`, `route:cache`, `view:cache`, `event:cache`, `cache:clear`),
-   `sudo systemctl reload php8.5-fpm`, `sudo systemctl restart reverb-twiceware.service`.
+   `sudo systemctl reload php8.5-fpm`,
+   `sudo systemctl restart twiceware-opsc-reverb.service`,
+   `sudo systemctl restart twiceware-opsc-queue-default.service`,
+   `sudo systemctl restart twiceware-opsc-schedule.service`.
 8. Aufräumen: die ältesten Releases bis auf die letzten drei löschen.
 
 Rücksetzbar: `current` zeigt immer nur auf ein Release; beim Fehlschlag einfach
@@ -34,8 +37,10 @@ Rücksetzbar: `current` zeigt immer nur auf ein Release; beim Fehlschlag einfach
 
 - Deploy-Key `/home/twiceware/.ssh/id_ed25519_github` als GitHub-Deploy-Key für
   `dspangenberg/opsc`.
-- `twiceware` darf per sudo: `systemctl reload php8.5-fpm` und
-  `systemctl restart reverb-twiceware.service`.
+- `twiceware` darf per sudo: `systemctl reload php8.5-fpm`,
+  `systemctl restart twiceware-opsc-reverb.service`,
+  `systemctl restart twiceware-opsc-queue-default.service` und
+  `systemctl restart twiceware-opsc-schedule.service`.
 - nginx-root zeigt auf `current/public`, FPM-Socket `php8.5-fpm-twiceware`.
 - Verzeichnisstruktur: `current`, `releases/`, `persistent/storage`, `.env`
   (`.env` liegt außerhalb des Repos).

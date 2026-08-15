@@ -92,6 +92,9 @@ Route::post('invoicing/invoices/{invoice}/cancel', [InvoiceController::class, 'c
 Route::put('invoicing/invoices/bulk-mark-as-sent', [InvoiceController::class, 'bulkMarkAsSent'])
     ->name('app.invoice.bulk-mark-as-sent');
 
+Route::put('invoicing/invoices/bulk-download', [InvoiceController::class, 'bulkDownload'])
+    ->name('app.invoice.bulk-download');
+
 Route::put('invoicing/invoices/{invoice}/set-loss-of-receivables', [InvoiceController::class, 'setLossOfReceivables'])->name('app.invoice.set-loss-of-receivables');
 
 Route::post('invoicing/invoices/{invoice}/store-note', [InvoiceController::class, 'storeNote'])->middleware([HandlePrecognitiveRequests::class])->name('app.invoice.store-note');

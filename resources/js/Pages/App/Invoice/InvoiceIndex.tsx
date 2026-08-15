@@ -149,6 +149,12 @@ const InvoiceIndex: React.FC = () => {
     })
   }
 
+  const handleBulkDownload = () => {
+    router.put(route('app.invoice.bulk-mark-as-sent'), {
+      ids: selectedRows.map(row => row.id).join(',')
+    })
+  }
+
   const handleInvoiceCreateClicked = useCallback(() => {
     router.visit(route('app.invoice.create'))
   }, [])

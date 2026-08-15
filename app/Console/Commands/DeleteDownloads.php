@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\DocumentDownload;
 use App\Models\Tenant;
 use Illuminate\Console\Command;
+use Throwable;
 
 class DeleteDownloads extends Command
 {
@@ -25,7 +26,7 @@ class DeleteDownloads extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): bool
+    public function handle(): int
     {
         $tenantId = $this->option('tenant');
 
@@ -34,7 +35,7 @@ class DeleteDownloads extends Command
             if (! $tenant) {
                 $this->error("Tenant $tenantId not found");
 
-                return false;
+                return static::FAILURE;
             }
             $this->processTenant($tenant);
         } else {
@@ -46,27 +47,24 @@ class DeleteDownloads extends Command
             }
         }
 
-        return true;
+        return static::SUCCESS;
     }
 
-    private function processTenant(Tenant $tenant): bool
+    private function processTenant(Tenant $tenant): void
     {
-        $result = $tenant->run(function () {
-            $files = DocumentDownload::get();
-
-            $files->each(function ($file) {
-                $hours = $file->created_at->diffInHours(now());
-                if ($hours > 1) {
-                    if ($file->hasMedia('file')) {
-                        $file->firstMedia('file')->delete();
+        $tenant->run(function () {
+            DocumentDownload::query()
+                ->where('created_at', '<', now()->subHour())
+                ->chunkById(100, function ($downloads) {
+                    foreach ($downloads as $download) {
+                        try {
+                            $download->getMedia('file')->each->delete();
+                            $download->delete();
+                        } catch (Throwable $e) {
+                            report($e);
+                        }
                     }
-                    $file->delete();
-                }
-            });
-
-            return true;
+                });
         });
-
-        return $result;
     }
 }

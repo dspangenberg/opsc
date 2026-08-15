@@ -25,9 +25,11 @@ use App\Http\Requests\InvoiceStoreExternalRequest;
 use App\Http\Requests\InvoiceStoreRequest;
 use App\Http\Requests\NoteStoreRequest;
 use App\Http\Requests\SendEmailRequest;
+use App\Jobs\DownloadJob;
 use App\Models\BookkeepingBooking;
 use App\Models\Contact;
 use App\Models\Document;
+use App\Models\DocumentDownload;
 use App\Models\EmailAccount;
 use App\Models\EmailTemplate;
 use App\Models\Invoice;
@@ -467,6 +469,23 @@ class InvoiceController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function bulkDownload(Request $request): RedirectResponse
+    {
+        $ids = $request->query('ids');
+        $ids = $ids ? explode(',', $ids) : [];
+
+        $download = DocumentDownload::create([
+            'type' => 'invoice',
+            'ids' => $ids,
+        ]);
+
+        DownloadJob::dispatch($download->id, auth()->user());
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Dein Download wird erstellt.']);
+
+        return redirect()->back();
+
     }
 
     /**

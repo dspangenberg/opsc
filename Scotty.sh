@@ -7,7 +7,7 @@
 # Voraussetzungen (auf dem Server eingerichtet):
 #   - Deploy-Key /home/twiceware/.ssh/id_ed25519 ist als Deploy-Key
 #     im GitHub-Repo dspangenberg/opsc hinterlegt.
-#   - twiceware darf per sudo php8.5-fpm reloaden und Reverb + Queue neu starten.
+#   - twiceware darf per sudo php8.5-fpm reloaden und Reverb + Queue + Scheduler neu starten.
 #   - node/pnpm liegen als Symlinks in /usr/local/bin (nodejs unter /usr/local/lib/nodejs).
 
 # @servers local=127.0.0.1 remote=twiceware@twiceware-opsc.de
@@ -83,6 +83,7 @@ blessNewRelease() {
     sudo systemctl reload php8.5-fpm
     sudo systemctl restart twiceware-opsc-reverb.service
     sudo systemctl restart twiceware-opsc-queue-default.service
+    sudo systemctl restart twiceware-opsc-schedule.service
 }
 
 # @task on:remote
