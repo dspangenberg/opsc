@@ -53,25 +53,35 @@ class EmailController extends Controller
             'view' => ['sometimes', 'string', 'in:inbox,sent,archived,trash,snoozed'],
         ])['view'] ?? 'inbox';
 
-        $contacts = Contact::query()->select(['id', 'name', 'first_name'])->whereHas('mails')->where('is_archived',
-            false)->with('mails')->orderBy('name')->orderBy('first_name')->get();
-        $projects = Project::query()->where('is_archived', false)->orderBy('name')->get();
+        $isPartialRequest = $request->header('X-Inertia-Partial-Component') === 'App/Email/EmailIndex'
+            && $request->header('X-Inertia-Partial-Data') !== null;
 
-        $mails = DropboxMail::query()
-            ->view($view)
-            ->withCount('attachments')
-            ->where('dropbox_id', $dropbox->id)
-            ->orderBy('date', 'desc')
-            ->paginate(50);
+        $requestedProps = $isPartialRequest
+            ? array_flip(array_filter(explode(',', (string) $request->header('X-Inertia-Partial-Data'))))
+            : null;
+
+        $loadContacts = $requestedProps === null || isset($requestedProps['contacts']);
+        $loadProjects = $requestedProps === null || isset($requestedProps['projects']);
 
         return Inertia::render('App/Email/EmailIndex', [
             'mails' => Inertia::scroll(
-                fn () => $mails->through(fn (DropboxMail $mail) => DropboxMailData::from($mail))
+                fn () => DropboxMail::query()
+                    ->view($view)
+                    ->withCount('attachments')
+                    ->where('dropbox_id', $dropbox->id)
+                    ->orderBy('date', 'desc')
+                    ->paginate(50)
+                    ->through(fn (DropboxMail $mail) => DropboxMailData::from($mail))
             ),
             'mail' => $mail ? DropboxMailData::from($mail) : null,
             'dropbox' => DropboxData::from($dropbox),
-            'contacts' => SimpleContactData::collect($contacts),
-            'projects' => ProjectData::collect($projects),
+            'contacts' => $loadContacts
+                ? SimpleContactData::collect(Contact::query()->select(['id', 'name', 'first_name'])->whereHas('mails')->where('is_archived',
+                    false)->with('mails')->orderBy('name')->orderBy('first_name')->get())
+                : [],
+            'projects' => $loadProjects
+                ? ProjectData::collect(Project::query()->where('is_archived', false)->orderBy('name')->get())
+                : [],
         ]);
     }
 

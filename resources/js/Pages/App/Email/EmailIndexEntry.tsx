@@ -37,31 +37,34 @@ export const EmailIndexEntry: React.FC<InboxIndexEntryProps> = ({
       route('app.email.index', { dropbox: dropbox.id, mail: mail.id, _query: { view } }),
       {
         preserveScroll: true,
-        preserveState: true
+        preserveState: true,
+        only: ['mail']
       }
     )
   }
 
   return (
-    <button
+    <div
       className={cn(
-        'flex cursor-default items-start justify-between rounded-lg bg-white p-4 text-left hover:bg-muted/50',
+        'flex cursor-default items-start justify-between gap-2 rounded-lg bg-white p-4 text-left hover:bg-muted/50',
         isActive && 'border bg-muted'
       )}
-      type="button"
-      onClick={handleClicked}
     >
-      <div className="flex flex-none items-center gap-2">
-        <div className="flex w-4 flex-none items-center justify-center">
-          <div className="flex flex-1 flex-col items-center justify-center space-y-1">
-            {!mail.seen_at && <span className="size-2 rounded-full bg-primary" />}
-            <Checkbox
-              name={`mail-id-${mail.id}`}
-              isSelected={isSelected}
-              onChange={handleCheckboxChange}
-            />
-          </div>
+      <div className="flex w-4 flex-none items-center justify-center">
+        <div className="flex flex-1 flex-col items-center justify-center space-y-1">
+          {!mail.seen_at && <span className="size-2 rounded-full bg-primary" />}
+          <Checkbox
+            name={`mail-id-${mail.id}`}
+            isSelected={isSelected}
+            onChange={handleCheckboxChange}
+          />
         </div>
+      </div>
+      <button
+        className="flex flex-1 items-start gap-2 text-left"
+        type="button"
+        onClick={handleClicked}
+      >
         <div className="flex flex-1 flex-col gap-2">
           <div className="w-64 text-sm">{mail.from}</div>
           <div className="w-64 font-medium text-sm">
@@ -75,7 +78,7 @@ export const EmailIndexEntry: React.FC<InboxIndexEntryProps> = ({
           <div className="text-xxs"> {parseAndFormatRelative(mail.date as string)}</div>
           {!!mail?.attachments_count && <Icon icon={AttachmentIcon} className="size-3.5" />}
         </div>
-      </div>
-    </button>
+      </button>
+    </div>
   )
 }

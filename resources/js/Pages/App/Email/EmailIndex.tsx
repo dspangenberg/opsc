@@ -223,7 +223,7 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
         }
         toolbar={toolbar}
         width="full"
-        className="relative m-0 mx-0 h-full overflow-hidden p-0 px-0"
+        className="relative m-0 mx-0 h-full overflow-clip p-0 px-0"
       >
         <div className="absolute top-0 bottom-0 w-48 border-r">
           <div className="m-8 text-sm">
@@ -252,7 +252,7 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
                   key={item.id}
                   dropbox={dropbox}
                   view={route().params.view as 'inbox' | 'sent' | 'archived' | 'trash' | 'snoozed'}
-                  mail={item}
+                  mail={item.id === mail?.id && mail.seen_at ? { ...item, seen_at: mail.seen_at } : item}
                   isActive={item.id === mail?.id}
                 />
               ))}

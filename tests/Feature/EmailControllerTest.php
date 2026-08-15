@@ -123,6 +123,30 @@ it('marks a mail as seen when opening its details', function () {
     $this->assertNotNull($mail->fresh()->seen_at);
 });
 
+it('only resolves the mail prop when opening a mail via partial request', function () {
+    $mail = createInboxMail(['subject' => 'E-Mail im Detail']);
+
+    $this->assertNull($mail->seen_at);
+
+    Tenancy::end();
+
+    $headers = inertiaHeaders();
+    $headers['X-Inertia-Partial-Component'] = 'App/Email/EmailIndex';
+    $headers['X-Inertia-Partial-Data'] = 'mail';
+
+    $response = $this
+        ->actingAs($this->user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->get('http://'.$this->domain->domain.route('app.email.index', ['dropbox' => $this->dropbox->id, 'mail' => $mail->id], false), $headers);
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('props.mail.id', $mail->id);
+    $response->assertJsonMissingPath('props.mails');
+    $response->assertJsonMissingPath('props.contacts');
+    $response->assertJsonMissingPath('props.projects');
+    $this->assertNotNull($mail->fresh()->seen_at);
+});
+
 it('merges the next page on an infinite scroll partial request', function () {
     foreach (range(1, 51) as $index) {
         createInboxMail(['subject' => 'E-Mail '.$index]);
