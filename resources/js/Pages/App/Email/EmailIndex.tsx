@@ -223,7 +223,7 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
         }
         toolbar={toolbar}
         width="full"
-        className="relative m-0 mx-0 h-full overflow-hidden p-0 px-0"
+        className="relative m-0 mx-0 h-full overflow-clip p-0 px-0"
       >
         <div className="absolute top-0 bottom-0 w-48 border-r">
           <div className="m-8 text-sm">
