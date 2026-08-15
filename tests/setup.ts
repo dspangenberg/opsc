@@ -56,18 +56,24 @@ if (typeof globalThis.DOMMatrix === 'undefined') {
 }
 
 if (typeof globalThis.IntersectionObserver === 'undefined') {
-  type IOCallback = (entries: IntersectionObserverEntry[]) => void
+  type IOCallback = (entries: IntersectionObserverEntry[], instance: IntersectionObserver) => void
 
   class IntersectionObserver {
     static instances: IntersectionObserver[] = []
-    readonly root: Element | Document | null = null
-    readonly rootMargin: string = '0px'
-    readonly thresholds: ReadonlyArray<number> = [0]
+    readonly root: Element | Document | null
+    readonly rootMargin: string
+    readonly thresholds: ReadonlyArray<number>
     private readonly callback: IOCallback
     private readonly targets = new Set<Element>()
 
-    constructor(callback: IOCallback) {
+    constructor(callback: IOCallback, options?: IntersectionObserverInit) {
       this.callback = callback
+      this.root = options?.root ?? null
+      this.rootMargin = options?.rootMargin ?? '0px'
+
+      const thresholds = Array.isArray(options?.thresholds) ? options.thresholds : [options?.thresholds ?? 0]
+      this.thresholds = thresholds.map(threshold => Math.min(Math.max(threshold, 0), 1))
+
       IntersectionObserver.instances.push(this)
     }
 
@@ -95,7 +101,7 @@ if (typeof globalThis.IntersectionObserver === 'undefined') {
         time: 0,
         isVisible: true
       }))
-      this.callback(entries)
+      this.callback(entries, this)
     }
   }
   globalThis.IntersectionObserver = IntersectionObserver as unknown as typeof globalThis.IntersectionObserver

@@ -126,6 +126,8 @@ it('marks a mail as seen when opening its details', function () {
 it('only resolves the mail prop when opening a mail via partial request', function () {
     $mail = createInboxMail(['subject' => 'E-Mail im Detail']);
 
+    $this->assertNull($mail->seen_at);
+
     Tenancy::end();
 
     $headers = inertiaHeaders();
@@ -135,11 +137,13 @@ it('only resolves the mail prop when opening a mail via partial request', functi
     $response = $this
         ->actingAs($this->user)
         ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
-        ->get('http://'.$this->domain->domain.'/app/emails/'.$this->dropbox->id.'/'.$mail->id, $headers);
+        ->get('http://'.$this->domain->domain.route('app.email.index', ['dropbox' => $this->dropbox->id, 'mail' => $mail->id], false), $headers);
 
     $response->assertSuccessful();
     $response->assertJsonPath('props.mail.id', $mail->id);
     $response->assertJsonMissingPath('props.mails');
+    $response->assertJsonMissingPath('props.contacts');
+    $response->assertJsonMissingPath('props.projects');
     $this->assertNotNull($mail->fresh()->seen_at);
 });
 

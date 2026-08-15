@@ -252,7 +252,7 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
                   key={item.id}
                   dropbox={dropbox}
                   view={route().params.view as 'inbox' | 'sent' | 'archived' | 'trash' | 'snoozed'}
-                  mail={item}
+                  mail={item.id === mail?.id && mail.seen_at ? { ...item, seen_at: mail.seen_at } : item}
                   isActive={item.id === mail?.id}
                 />
               ))}
