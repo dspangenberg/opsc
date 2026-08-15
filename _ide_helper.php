@@ -30107,7 +30107,7 @@ namespace Plank\Mediable\Facades {
         /**
          * Change the behaviour for when a file already exists at the destination.
          *
-         * @param string $behavior
+         * @param \Plank\Mediable\Enum\OnDuplicateBehaviour $behavior
          * @return \Plank\Mediable\MediaUploader
          * @static
          */
@@ -30120,7 +30120,7 @@ namespace Plank\Mediable\Facades {
         /**
          * Get current behavior when duplicate file is uploaded.
          *
-         * @return string
+         * @return \Plank\Mediable\Enum\OnDuplicateBehaviour
          * @static
          */
         public static function getOnDuplicateBehavior()
@@ -30252,6 +30252,15 @@ namespace Plank\Mediable\Facades {
         }
 
         /**
+         * @static
+         */
+        public static function setForbiddenMimeTypes($forbiddenMimes)
+        {
+            /** @var \Plank\Mediable\MediaUploader $instance */
+            return $instance->setForbiddenMimeTypes($forbiddenMimes);
+        }
+
+        /**
          * Prefer the MIME type provided by the client, if any, over the inferred MIME type.
          *
          * Depending on the source, this may not be accurate.
@@ -30289,6 +30298,15 @@ namespace Plank\Mediable\Facades {
         {
             /** @var \Plank\Mediable\MediaUploader $instance */
             return $instance->setAllowedExtensions($allowedExtensions);
+        }
+
+        /**
+         * @static
+         */
+        public static function setForbiddenExtensions($forbiddenExtensions)
+        {
+            /** @var \Plank\Mediable\MediaUploader $instance */
+            return $instance->setForbiddenExtensions($forbiddenExtensions);
         }
 
         /**
@@ -30473,7 +30491,7 @@ namespace Plank\Mediable\Facades {
         /**
          * Set the before save callback
          *
-         * @param callable $callable
+         * @param \Closure $callable
          * @return \Plank\Mediable\MediaUploader
          * @static
          */
@@ -30562,6 +30580,15 @@ namespace Plank\Mediable\Facades {
         {
             /** @var \Plank\Mediable\MediaUploader $instance */
             return $instance->getOptions();
+        }
+
+        /**
+         * @static
+         */
+        public static function sanitizeFile($model)
+        {
+            /** @var \Plank\Mediable\MediaUploader $instance */
+            return $instance->sanitizeFile($model);
         }
 
         /**

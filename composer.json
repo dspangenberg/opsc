@@ -30,7 +30,7 @@
     "mtvs/eloquent-hashids": "^3.6",
     "opcodesio/log-viewer": "^3.24",
     "phpoffice/phpword": "^1.4",
-    "plank/laravel-mediable": "^6.3.1",
+    "plank/laravel-mediable": "^7.0.0",
     "ploi/ploi-php-sdk": "^1.9.5",
     "pontedilana/php-weasyprint": "^2.3",
     "predis/predis": "^3.2",
