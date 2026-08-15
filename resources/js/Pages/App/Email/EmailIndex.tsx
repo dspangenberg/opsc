@@ -5,7 +5,7 @@ import {
   DeletePutBackIcon,
   MailSend02Icon
 } from '@hugeicons/core-free-icons'
-import { router, usePage } from '@inertiajs/react'
+import { InfiniteScroll, router, usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { useCallback, useState } from 'react'
 import { PageContainerWithSideOnLeft } from '@/Components/PageContainerWithSideOnLeft'
@@ -242,6 +242,11 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
           )}
           <div className="h-full overflow-y-auto">
             <div className="flex flex-col gap-2 p-4">
+              <InfiniteScroll
+                buffer={500}
+                data="mails"
+                className="overflow-y-auto"
+              >
               {mails.data.map(item => (
                 <EmailIndexEntry
                   key={item.id}
@@ -251,6 +256,7 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
                   isActive={item.id === mail?.id}
                 />
               ))}
+              </InfiniteScroll>
             </div>
           </div>
         </div>

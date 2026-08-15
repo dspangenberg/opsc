@@ -57,11 +57,17 @@ class EmailController extends Controller
             false)->with('mails')->orderBy('name')->orderBy('first_name')->get();
         $projects = Project::query()->where('is_archived', false)->orderBy('name')->get();
 
-        $mails = DropboxMail::query()->view($view)->withCount('attachments')->where('dropbox_id',
-            $dropbox->id)->orderBy('date', 'desc')->paginate(50);
+        $mails = DropboxMail::query()
+            ->view($view)
+            ->withCount('attachments')
+            ->where('dropbox_id', $dropbox->id)
+            ->orderBy('date', 'desc')
+            ->paginate(50);
 
         return Inertia::render('App/Email/EmailIndex', [
-            'mails' => DropboxMailData::collect($mails),
+            'mails' => Inertia::scroll(
+                fn () => $mails->through(fn (DropboxMail $mail) => DropboxMailData::from($mail))
+            ),
             'mail' => $mail ? DropboxMailData::from($mail) : null,
             'dropbox' => DropboxData::from($dropbox),
             'contacts' => SimpleContactData::collect($contacts),
