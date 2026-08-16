@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 test('profile page is displayed', function () {
     $user = User::factory()->create();
@@ -85,4 +87,38 @@ test('correct password must be provided to delete account', function () {
         ->assertRedirect('/profile');
 
     $this->assertNotNull($user->fresh());
+});
+
+test('replaces a user avatar on re-upload without a unique constraint violation', function () {
+    config()->set('filesystems.disks.s3', [
+        'driver' => 'local',
+        'root' => storage_path('app/s3-test'),
+        'visibility' => 'private',
+    ]);
+    Storage::forgetDisk('s3');
+
+    $user = User::factory()->create();
+
+    $uploadAvatar = function () use ($user) {
+        return $this->actingAs($user)->patch('/profile', [
+            'first_name' => 'Test',
+            'last_name' => 'User',
+            'email' => $user->email,
+            'avatar' => UploadedFile::fake()->image('logo.png'),
+        ]);
+    };
+
+    $uploadAvatar()->assertRedirect();
+
+    $media = $user->fresh()->firstMedia('avatar');
+    expect($media)->not->toBeNull();
+
+    // Datei auf dem Disk entfernen, Media-Datensatz aber behalten: Genau diese
+    // Situation ließ den Media-Upload gegen den Unique-Index laufen.
+    Storage::disk('s3')->delete($media->getDiskPath());
+
+    $uploadAvatar()->assertRedirect();
+
+    expect($user->fresh()->firstMedia('avatar'))->not->toBeNull()
+        ->and($user->fresh()->media()->count())->toBe(1);
 });

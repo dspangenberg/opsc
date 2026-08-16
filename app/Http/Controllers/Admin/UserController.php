@@ -11,6 +11,7 @@ use App\Models\Contact;
 use App\Models\EmailAccount;
 use App\Models\User;
 use App\Settings\GeneralSettings;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
@@ -77,7 +78,7 @@ class UserController extends Controller
      * @throws InvalidHashException
      * @throws ConfigurationException
      */
-    public function update(UserUpdateRequest $request, User $user)
+    public function update(UserUpdateRequest $request, User $user): RedirectResponse
     {
         $data = $request->safe()->except('avatar', 'remove_avatar');
 
@@ -90,19 +91,16 @@ class UserController extends Controller
         $user->update($data);
 
         if ($request->hasFile('avatar')) {
-            $user->detachMediaTags('avatar');
+            $user->getMedia('avatar')->each->delete();
 
             $media = MediaUploader::fromSource($request->file('avatar'))
                 ->toDestination('s3', 'avatars/users')
+                ->useFilename('user-'.$user->id.'-avatar')
                 ->upload();
 
             $user->attachMedia($media, 'avatar');
-        } else {
-            if ($request->input('remove_avatar', false)) {
-                if ($user->firstMedia('avatar')) {
-                    $user->detachMediaTags('avatar');
-                }
-            }
+        } elseif ($request->input('remove_avatar', false)) {
+            $user->getMedia('avatar')->each->delete();
         }
 
         if ($user->is_locked) {
@@ -135,7 +133,7 @@ class UserController extends Controller
      * @throws InvalidHashException
      * @throws ConfigurationException
      */
-    public function store(UserUpdateRequest $request)
+    public function store(UserUpdateRequest $request): RedirectResponse
     {
         $data = $request->safe()->except('avatar');
 
@@ -148,7 +146,8 @@ class UserController extends Controller
 
         if ($request->hasFile('avatar')) {
             $media = MediaUploader::fromSource($request->file('avatar'))
-                ->toDestination('s3', 'avatars/projects')
+                ->toDestination('s3', 'avatars/users')
+                ->useFilename('user-'.$user->id.'-avatar')
                 ->upload();
 
             $user->attachMedia($media, 'avatar');

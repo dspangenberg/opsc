@@ -204,6 +204,85 @@ it('can upload an avatar for a project', function () {
     // in der Testumgebung nicht mit Storage::fake('s3') funktioniert
 });
 
+it('replaces a project avatar on re-upload without a unique constraint violation', function () {
+    config()->set('filesystems.disks.s3', [
+        'driver' => 'local',
+        'root' => storage_path('app/s3-test'),
+        'visibility' => 'private',
+    ]);
+    Storage::forgetDisk('s3');
+
+    $project = Project::factory()->create();
+    $category = ProjectCategory::factory()->create();
+
+    Tenancy::end();
+
+    $uploadAvatar = function () use ($project, $category) {
+        return $this
+            ->actingAs($this->user)
+            ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+            ->put('http://'.$this->domain->domain.'/app/projects/'.$project->id.'/edit', [
+                'name' => 'Project with Avatar',
+                'project_category_id' => $category->id,
+                'owner_contact_id' => $this->contact->id,
+                'avatar' => UploadedFile::fake()->image('logo.png'),
+            ]);
+    };
+
+    $uploadAvatar()->assertRedirect();
+
+    Tenancy::initialize($this->tenant);
+    $media = $project->fresh()->firstMedia('avatar');
+    expect($media)->not->toBeNull();
+
+    // Datei auf dem Disk entfernen, Media-Datensatz aber behalten: Genau diese
+    // Situation ließ den Media-Upload gegen den Unique-Index laufen, da Plank
+    // nur die Datei, nicht den Datensatz als Duplikat erkennt.
+    Storage::disk('s3')->delete($media->getDiskPath());
+    Tenancy::end();
+
+    $uploadAvatar()->assertRedirect();
+
+    Tenancy::initialize($this->tenant);
+
+    expect($project->fresh()->firstMedia('avatar'))->not->toBeNull()
+        ->and($project->fresh()->media()->count())->toBe(1);
+});
+
+it('stores a new project avatar under a deterministic filename', function () {
+    config()->set('filesystems.disks.s3', [
+        'driver' => 'local',
+        'root' => storage_path('app/s3-test'),
+        'visibility' => 'private',
+    ]);
+    Storage::forgetDisk('s3');
+
+    $category = ProjectCategory::factory()->create();
+
+    Tenancy::end();
+
+    $this
+        ->actingAs($this->user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->post('http://'.$this->domain->domain.'/app/projects', [
+            'name' => 'Project with Avatar',
+            'project_category_id' => $category->id,
+            'owner_contact_id' => $this->contact->id,
+            'avatar' => UploadedFile::fake()->image('logo.png'),
+        ])
+        ->assertRedirect();
+
+    Tenancy::initialize($this->tenant);
+
+    $project = Project::where('name', 'Project with Avatar')->first();
+    $media = $project->firstMedia('avatar');
+
+    expect($media)->not->toBeNull()
+        ->and($media->directory)->toBe('avatars/projects')
+        ->and($media->filename)->toBe('project-'.$project->id.'-avatar')
+        ->and($media->extension)->toBe('png');
+});
+
 it('can remove an avatar from a project', function () {
     // Erstelle ein Projekt für den Tenant
     $project = Project::factory()->create();

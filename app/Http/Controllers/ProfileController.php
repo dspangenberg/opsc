@@ -85,19 +85,16 @@ class ProfileController extends Controller
         $user->save();
 
         if ($request->hasFile('avatar')) {
-            $user->detachMediaTags('avatar');
+            $user->getMedia('avatar')->each->delete();
 
             $media = MediaUploader::fromSource($request->file('avatar'))
                 ->toDestination('s3', 'avatars/users')
+                ->useFilename('user-'.$user->id.'-avatar')
                 ->upload();
 
             $user->attachMedia($media, 'avatar');
-        } else {
-            if ($request->input('remove_avatar', false)) {
-                if ($user->firstMedia('avatar')) {
-                    $user->detachMediaTags('avatar');
-                }
-            }
+        } elseif ($request->input('remove_avatar', false)) {
+            $user->getMedia('avatar')->each->delete();
         }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Dein Profil wurde erfolgreich geändert']);

@@ -10,6 +10,7 @@ use App\Http\Requests\ProjectRequest;
 use App\Models\Contact;
 use App\Models\Project;
 use App\Models\ProjectCategory;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
 use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
@@ -74,25 +75,22 @@ class ProjectController extends Controller
      * @throws InvalidHashException
      * @throws ConfigurationException
      */
-    public function update(ProjectRequest $request, Project $project)
+    public function update(ProjectRequest $request, Project $project): RedirectResponse
     {
         $data = $request->safe()->except('avatar', 'remove_avatar');
         $project->update($data);
 
         if ($request->hasFile('avatar')) {
-            $project->detachMediaTags('avatar');
+            $project->getMedia('avatar')->each->delete();
 
             $media = MediaUploader::fromSource($request->file('avatar'))
                 ->toDestination('s3', 'avatars/projects')
+                ->useFilename('project-'.$project->id.'-avatar')
                 ->upload();
 
             $project->attachMedia($media, 'avatar');
-        } else {
-            if ($request->input('remove_avatar', false)) {
-                if ($project->firstMedia('avatar')) {
-                    $project->detachMediaTags('avatar');
-                }
-            }
+        } elseif ($request->input('remove_avatar', false)) {
+            $project->getMedia('avatar')->each->delete();
         }
 
         return redirect()->route('app.project.details', ['project' => $project->id]);
@@ -124,13 +122,14 @@ class ProjectController extends Controller
      * @throws InvalidHashException
      * @throws ConfigurationException
      */
-    public function store(ProjectRequest $request)
+    public function store(ProjectRequest $request): RedirectResponse
     {
         $data = $request->safe()->except('avatar');
         $project = Project::create($data);
         if ($request->hasFile('avatar')) {
             $media = MediaUploader::fromSource($request->file('avatar'))
                 ->toDestination('s3', 'avatars/projects')
+                ->useFilename('project-'.$project->id.'-avatar')
                 ->upload();
 
             $project->attachMedia($media, 'avatar');
