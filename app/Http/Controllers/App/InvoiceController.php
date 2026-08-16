@@ -473,7 +473,7 @@ class InvoiceController extends Controller
 
     public function bulkDownload(Request $request): RedirectResponse
     {
-        $ids = $request->query('ids');
+        $ids = $request->input('ids');
         $ids = $ids ? explode(',', $ids) : [];
 
         $download = DocumentDownload::create([
