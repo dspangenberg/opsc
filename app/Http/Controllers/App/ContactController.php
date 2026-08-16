@@ -297,19 +297,16 @@ class ContactController extends Controller
         });
 
         if ($request->hasFile('avatar')) {
-            $contact->detachMediaTags('avatar');
+            $contact->getMedia('avatar')->each->delete();
 
             $media = MediaUploader::fromSource($request->file('avatar'))
                 ->toDestination('s3', 'avatars/contacts')
+                ->useFilename('contact-'.$contact->id.'-avatar')
                 ->upload();
 
             $contact->attachMedia($media, 'avatar');
-        } else {
-            if ($request->input('remove_avatar', false)) {
-                if ($contact->firstMedia('avatar')) {
-                    $contact->detachMediaTags('avatar');
-                }
-            }
+        } elseif ($request->input('remove_avatar', false)) {
+            $contact->getMedia('avatar')->each->delete();
         }
 
         $contact->load(['mails', 'title', 'salutation', 'addresses', 'phones']);

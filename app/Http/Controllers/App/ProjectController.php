@@ -80,19 +80,16 @@ class ProjectController extends Controller
         $project->update($data);
 
         if ($request->hasFile('avatar')) {
-            $project->detachMediaTags('avatar');
+            $project->getMedia('avatar')->each->delete();
 
             $media = MediaUploader::fromSource($request->file('avatar'))
                 ->toDestination('s3', 'avatars/projects')
+                ->useFilename('project-'.$project->id.'-avatar')
                 ->upload();
 
             $project->attachMedia($media, 'avatar');
-        } else {
-            if ($request->input('remove_avatar', false)) {
-                if ($project->firstMedia('avatar')) {
-                    $project->detachMediaTags('avatar');
-                }
-            }
+        } elseif ($request->input('remove_avatar', false)) {
+            $project->getMedia('avatar')->each->delete();
         }
 
         return redirect()->route('app.project.details', ['project' => $project->id]);
