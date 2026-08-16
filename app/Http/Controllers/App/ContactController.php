@@ -265,7 +265,7 @@ class ContactController extends Controller
      * @throws InvalidHashException
      * @throws ConfigurationException|Throwable
      */
-    public function update(ContactUpdateRequest $request, Contact $contact)
+    public function update(ContactUpdateRequest $request, Contact $contact): RedirectResponse
     {
 
         $oldTaxId = $contact->tax_id;
