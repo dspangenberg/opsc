@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Facades\FileHelperService;
 use App\Mail\DownloadEmail;
+use App\Models\Document;
 use App\Models\DocumentDownload;
 use App\Models\Invoice;
 use App\Models\Receipt;
@@ -41,22 +42,33 @@ class DownloadService
             $items = Invoice::query()->with('range_document_number')->whereIn('id', $documentDownload->ids)->get();
         }
 
+        $addedFiles = 0;
         foreach ($items as $item) {
-            $media = $item->firstMedia('file');
+            $media = match ($documentDownload->type) {
+                'invoice' => $item->is_external
+                    ? Document::find($item->document_id)?->firstMedia('file')
+                    : $item->firstMedia('pdf'),
+                default => $item->firstMedia('file'),
+            };
+
             if (! $media) {
-                $fallbackName = 'missing-media-'.$item->id.'.pdf';
-                $zip->addFromString($fallbackName, '');
+                $zip->addFromString('missing-media-'.$item->id.'.pdf', '');
+                $addedFiles++;
 
                 continue;
             }
             $content = $media->contents();
+            $documentName = $item->document_number ? $item->document_number.'.pdf' : $media->filename.'.'.$media->extension;
 
-            if ($item->document_number) {
-                $zip->addFromString($item->issued_on->format('Ymd-').$item->document_number.'.pdf', $content);
-            }
+            $zip->addFromString($item->issued_on->format('Ymd-').$documentName, $content);
+            $addedFiles++;
         }
 
         $zip->close();
+
+        if ($addedFiles === 0) {
+            return;
+        }
 
         try {
             $media = MediaUploader::fromSource($zipFileName)
