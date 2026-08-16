@@ -150,7 +150,7 @@ const InvoiceIndex: React.FC = () => {
   }
 
   const handleBulkDownload = () => {
-    router.put(route('app.invoice.bulk-mark-as-sent'), {
+    router.put(route('app.invoice.bulk-download'), {
       ids: selectedRows.map(row => row.id).join(',')
     })
   }
@@ -222,7 +222,7 @@ const InvoiceIndex: React.FC = () => {
           </Badge>
           ausgewählte Datensätze
         </div>
-        <Button variant="ghost" size="auto" icon={FileDownloadIcon} title="Herunterladen" />
+        <Button variant="ghost" size="auto" icon={FileDownloadIcon} title="Herunterladen" onClick={handleBulkDownload} />
         <Button
           variant="ghost"
           size="auto"

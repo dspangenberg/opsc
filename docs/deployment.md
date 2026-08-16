@@ -31,7 +31,15 @@ scotty run deploy --branch=develop
 8. Aufräumen: die ältesten Releases bis auf die letzten drei löschen.
 
 Rücksetzbar: `current` zeigt immer nur auf ein Release; beim Fehlschlag einfach
-`ln -nfs <altes Release> current` + Reload setzen.
+`ln -nfs <altes Release> current` setzen und danach die Dienste wie beim
+regulären Deploy neu starten:
+
+```sh
+sudo systemctl reload php8.5-fpm
+sudo systemctl restart twiceware-opsc-reverb.service
+sudo systemctl restart twiceware-opsc-queue-default.service
+sudo systemctl restart twiceware-opsc-schedule.service
+```
 
 ## Server-Voraussetzungen (einmalig eingerichtet)
 
