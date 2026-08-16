@@ -32,6 +32,16 @@ class FileHelperService
         return sys_get_temp_dir().'/'.uniqid('file_').'.'.$ext;
     }
 
+    public function getAppTempFile(string $ext): string
+    {
+        $tempDir = storage_path('app/temp');
+        if (! is_dir($tempDir)) {
+            mkdir($tempDir, 0755, true);
+        }
+
+        return $tempDir.'/'.uniqid('file_').'.'.$ext;
+    }
+
     public function createTemporaryFileFromDoc($fileName, $content, $ext = '.pdf'): string
     {
         $tempDir = storage_path('app/temp');

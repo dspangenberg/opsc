@@ -28,7 +28,7 @@ class DownloadService
         if (! $documentDownload) {
             throw new ModelNotFoundException('DocumentDownload not found.');
         }
-        $zipFileName = FileHelperService::getTempFile('zip');
+        $zipFileName = FileHelperService::getAppTempFile('zip');
 
         $zip = Zip::create($zipFileName);
 
@@ -69,7 +69,7 @@ class DownloadService
             Mail::to($user->email)->send(new DownloadEmail($user,
                 $media->getTemporaryUrl(Carbon::now()->addMinutes(60))));
         } finally {
-            unlink($zipFileName);
+            @unlink($zipFileName);
         }
 
     }
