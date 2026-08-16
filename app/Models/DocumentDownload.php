@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Plank\Mediable\Media;
 use Plank\Mediable\Mediable;
@@ -27,7 +28,7 @@ use Plank\Mediable\Mediable;
  */
 class DocumentDownload extends Model
 {
-    use Mediable;
+    use HasFactory, Mediable;
 
     protected $fillable = [
         'type',
