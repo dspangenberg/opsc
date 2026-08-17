@@ -2,6 +2,7 @@ import type * as React from 'react'
 import { createRoot } from 'react-dom/client'
 import { Button } from '@/Components/twc-ui/button'
 import { FormComboBox } from '@/Components/twc-ui/form-combo-box'
+import { FormDateTimePicker } from '@/Components/twc-ui/form-date-time-picker'
 import { ExtendedDialog as Dialog } from '@/Components/twc-ui/extended-dialog'
 import { Form, useForm } from '@/Components/twc-ui/form'
 import { FormGrid } from '@/Components/twc-ui/form-grid'
@@ -92,7 +93,7 @@ const TodoEditDialogComponent: React.FC<TodoEditDialogComponentProps> = ({
               />
             </div>
             <div className="col-span-24">
-              <FormTextField label="Fällig am" placeholder="TT.MM.JJJJ HH:MM" {...form.register('due_at')} />
+              <FormDateTimePicker label="Fällig am" {...form.register('due_at')} />
             </div>
           </FormGrid>
         </Form>

@@ -20,7 +20,7 @@ class TodoRequest extends FormRequest
             'todoable_type' => ['required', Rule::in(self::SUPPORTED_TYPES)],
             'todoable_id' => ['required', 'integer'],
             'assigned_to_user_id' => ['nullable', 'exists:users,id'],
-            'due_at' => ['nullable', 'date_format:d.m.Y H:i'],
+            'due_at' => ['nullable', 'date_format:Y-m-d H:i'],
         ];
     }
 
