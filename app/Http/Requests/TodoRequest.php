@@ -23,22 +23,4 @@ class TodoRequest extends FormRequest
             'due_at' => ['nullable', 'date_format:d.m.Y H:i'],
         ];
     }
-
-    public function authorize(): bool
-    {
-        $type = $this->input('todoable_type');
-        $id = $this->input('todoable_id');
-
-        if (! in_array($type, self::SUPPORTED_TYPES) || ! $id) {
-            return false;
-        }
-
-        $target = $type::find($id);
-
-        if (! $target) {
-            return false;
-        }
-
-        return true;
-    }
 }
