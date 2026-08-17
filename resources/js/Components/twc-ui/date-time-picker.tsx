@@ -75,6 +75,7 @@ const DateTimePicker = ({
       value={value}
       onChange={onChange}
       granularity="minute"
+      isRequired={isRequired}
       validationBehavior="native"
       {...props}
     >

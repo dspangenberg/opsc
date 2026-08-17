@@ -17,9 +17,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Todo extends Model
 {
+    /** @use HasFactory<TodoFactory> */
     use HasFactory, SoftDeletes;
 
-    /** @use HasFactory<TodoFactory> */
     protected $fillable = [
         'todoable_type',
         'todoable_id',
