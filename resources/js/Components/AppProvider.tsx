@@ -9,6 +9,7 @@ import { useState } from 'react'
 import { BreadcrumbProvider } from '@/Components/BreadcrumbProvider'
 import { ThemeContainerProvider } from '@/Components/theme-container-provider'
 import { ThemeProvider } from '@/Components/theme-provider'
+import { TodoProvider } from '@/Components/TodoProvider'
 import { NuqsAdapter } from '@/Lib/nuqs-inertia-adapter'
 export function AppProvider(props: React.PropsWithChildren) {
   const [queryClient] = useState(() => new QueryClient())
@@ -17,11 +18,13 @@ export function AppProvider(props: React.PropsWithChildren) {
       <NuqsAdapter>
         <ThemeContainerProvider width="7xl">
           <BreadcrumbProvider>
-            <QueryClientProvider client={queryClient}>
-              <div vaul-drawer-wrapper="" className="bg-background">
-                {props.children}
-              </div>
-            </QueryClientProvider>
+            <TodoProvider>
+              <QueryClientProvider client={queryClient}>
+                <div vaul-drawer-wrapper="" className="bg-background">
+                  {props.children}
+                </div>
+              </QueryClientProvider>
+            </TodoProvider>
           </BreadcrumbProvider>
         </ThemeContainerProvider>
       </NuqsAdapter>

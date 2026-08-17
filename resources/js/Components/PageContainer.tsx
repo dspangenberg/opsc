@@ -14,6 +14,7 @@ import {
   type Container,
   useThemeContainer
 } from '@/Components/theme-container-provider'
+import { useTodo } from '@/Components/TodoProvider'
 import { cn } from '@/Lib/utils'
 
 interface PageContainerProps {
@@ -31,6 +32,10 @@ interface PageContainerProps {
   contentHeader?: React.ReactNode
   headerClassname?: string
   bgClassName?: string
+  todoableType?: string
+  todoableId?: number
+  todoableDescription?: string
+  onTodoCreated?: () => void
 }
 
 export const PageContainer: React.FC<PageContainerProps> = ({
@@ -46,10 +51,15 @@ export const PageContainer: React.FC<PageContainerProps> = ({
   className = '',
   headerClassname = '',
   footer,
-  children
+  children,
+  todoableType,
+  todoableId,
+  todoableDescription,
+  onTodoCreated
 }) => {
   const { setWidth, setBackgroundColor, backgroundClass } = useThemeContainer()
   const { setBreadcrumbs } = useBreadcrumb()
+  const { setTodoable, onTodoCreated: subscribeTodoCreated } = useTodo()
 
   useEffect(() => {
     if (breadcrumbs) {
@@ -58,6 +68,18 @@ export const PageContainer: React.FC<PageContainerProps> = ({
     setBackgroundColor(containerBackground)
     setWidth(width)
   }, [setBreadcrumbs, breadcrumbs, setWidth, width])
+
+  useEffect(() => {
+    setTodoable(todoableType, todoableId, todoableDescription)
+  }, [setTodoable, todoableType, todoableId, todoableDescription])
+
+  useEffect(() => {
+    if (!onTodoCreated) {
+      return
+    }
+
+    return subscribeTodoCreated(onTodoCreated)
+  }, [subscribeTodoCreated, onTodoCreated])
 
   const headerContent = useMemo(() => {
     if (header) {

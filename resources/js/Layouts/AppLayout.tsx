@@ -10,6 +10,7 @@ import { LayoutContainer } from '@/Components/LayoutContainer'
 import { Modal } from '@/Components/momentum-modal-react'
 import { NavUser } from '@/Components/NavUser'
 import { PageBreadcrumbs } from '@/Components/PageBreadcrumbs'
+import { TodoButton } from '@/Components/TodoProvider'
 import { useThemeContainer } from '@/Components/theme-container-provider'
 import { Button } from '@/Components/twc-ui/button'
 import { Toaster, toast } from '@/Components/twc-ui/sonner'
@@ -51,7 +52,8 @@ const SidebarContent: React.FC<PropsWithChildren> = ({ children }) => {
                 size="icon-sm"
               />
               <PageBreadcrumbs className="hidden flex-1 items-center md:flex" />
-              <div className="flex-none">
+              <div className="flex-none flex gap-2">
+                <TodoButton />
                 <NavUser user={user} />
               </div>
             </div>
