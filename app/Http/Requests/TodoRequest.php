@@ -4,13 +4,16 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class BookmarkFolderRequest extends FormRequest
+class TodoRequest extends FormRequest
 {
     public function rules(): array
     {
         return [
-            'name' => ['required'],
-            'pos' => ['nullable', 'integer'],
+            'title' => ['required', 'string', 'max:255'],
+            'todoable_type' => 'required|string',
+            'todoable_id' => 'required|integer',
+            'assigned_to_user_id' => ['required', 'exists:users,id'],
+            'due_at' => ['nullable', 'date', 'date_format:d.m.Y H:i'],
         ];
     }
 

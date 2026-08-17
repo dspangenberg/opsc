@@ -720,6 +720,13 @@ declare namespace App {
       readonly initials: string;
       readonly primary_mail: string | null;
     };
+    export type SimpleUserData = {
+      readonly id: number;
+      readonly avatar_url: string | null;
+      readonly email: string;
+      readonly full_name: string;
+      readonly initials: string;
+    };
     export type TaxData = {
       readonly id: number | null;
       readonly name: string;

@@ -8,17 +8,23 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('dropbox_mail_links', function (Blueprint $table) {
+        Schema::create('todos', function (Blueprint $table) {
             $table->id();
-            $table->morphs('mailable');
-            $table->foreignId('dropbox_mail_id');
-            $table->foreign('dropbox_mail_id')->references('id')->on('dropbox_mails')->onDelete('cascade');
+            $table->nullableMorphs('todoable');
+            $table->string('title');
+            $table->foreignId('created_by_user_id');
+            $table->foreign('created_by_user_id')->references('id')->on('users')->onDelete('no action');
+            $table->foreignId('assigned_to_user_id')->nullable();
+            $table->foreign('assigned_to_user_id')->references('id')->on('users')->onDelete('no action');
+            $table->timestamp('due_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('dropbox_mail_links');
+        Schema::dropIfExists('todos');
     }
 };

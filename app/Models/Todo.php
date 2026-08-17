@@ -18,20 +18,29 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  *
  * @mixin Eloquent
  */
-class DropboxMailLink extends Model
+class Todo extends Model
 {
     protected $fillable = [
-        'mailable_type',
-        'mailable_id',
-        'dropbox_mail_id',
+        'todoable_type',
+        'todoable_id',
+        'title',
+        'completed_at',
+        'due_at',
+        'created_by_user_id',
+        'assigned_to_user_id',
     ];
 
-    public function dropboxMail(): BelongsTo
+    public function assigned_to(): BelongsTo
     {
-        return $this->belongsTo(DropboxMail::class);
+        return $this->belongsTo(User::class, 'id', 'assigned_to_user_id');
     }
 
-    public function mailable(): MorphTo
+    public function created_by(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'id', 'created_by_user_id');
+    }
+
+    public function todoable(): MorphTo
     {
         return $this->morphTo();
     }

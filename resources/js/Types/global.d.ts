@@ -32,6 +32,7 @@ declare module '@inertiajs/core' {
     }
     sharedPageProps: {
       user: App.Data.UserData
+      users: App.Data.SimpleUserData[]
       tenant: App.Data.TenantData
       runningTimer: App.Data.TimeData | null
       bookmarks: App.Data.BookmarkData[]
