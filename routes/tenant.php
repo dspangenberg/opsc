@@ -8,6 +8,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\App\BookmarkController;
+use App\Http\Controllers\App\TodoController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\InitialPasswordController;
 use App\Http\Controllers\Auth\InitialPasswordStoreController;
@@ -83,6 +84,9 @@ Route::middleware([
         [BookmarkController::class, 'trashFolder'])->name('app.bookmark.trash-folder');
     Route::put('bookmarks/folder/{bookmarkFolder}/restore',
         [BookmarkController::class, 'restoreFolder'])->withTrashed()->name('app.bookmark.restore-folder');
+
+    Route::post('todo/store',
+        [TodoController::class, 'store'])->withTrashed()->middleware([HandlePrecognitiveRequests::class])->name('app.todo.store');
 
     Route::get('/onboarding', function () {
         return Inertia::modal('Onboarding')->baseRoute('app.soon');

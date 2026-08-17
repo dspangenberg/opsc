@@ -79,6 +79,10 @@ export const ProjectDetailsLayout: React.FC<Props> = ({ children, project }) => 
       toolbar={toolbar}
       className="flex overflow-hidden"
       breadcrumbs={breadcrumbs}
+      todoableType="App\Models\Project"
+      todoableId={project.id as number}
+      todoableDescription={project.name}
+      onTodoCreated={() => console.log('todoCreated')}
     >
       {children}
     </PageContainer>

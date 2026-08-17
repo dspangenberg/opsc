@@ -31,13 +31,18 @@ declare module '@inertiajs/core' {
       toast?: { type: 'success' | 'error' | 'info' | 'warning'; message: string; title?: string }
     }
     sharedPageProps: {
-      user: App.Data.UserData
-      tenant: App.Data.TenantData
-      runningTimer: App.Data.TimeData | null
-      bookmarks: App.Data.BookmarkData[]
-      domain: string
-      bookmarkFolders: App.Data.BookmarkFolderData[]
-      email_accounts: App.Data.EmailAccountData[]
+      auth: {
+        user: App.Data.UserData
+        users: App.Data.SimpleUserData[]
+        tenant: App.Data.TenantData
+        runningTimer: App.Data.TimeData | null
+        bookmarks: App.Data.BookmarkData[]
+        domain: string
+        bookmarkFolders: App.Data.BookmarkFolderData[]
+        email_accounts: App.Data.EmailAccountData[]
+        dropboxes: App.Data.DropboxData[]
+        is_accounting_enabled: boolean
+      }
     }
   }
 }

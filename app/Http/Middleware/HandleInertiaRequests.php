@@ -11,6 +11,7 @@ use App\Data\BookmarkData;
 use App\Data\BookmarkFolderData;
 use App\Data\DropboxData;
 use App\Data\EmailAccountData;
+use App\Data\SimpleUserData;
 use App\Data\TenantData;
 use App\Data\TimeData;
 use App\Data\UserData;
@@ -19,6 +20,7 @@ use App\Models\BookmarkFolder;
 use App\Models\Dropbox;
 use App\Models\EmailAccount;
 use App\Models\Time;
+use App\Models\User;
 use App\Settings\GeneralSettings;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -74,6 +76,8 @@ class HandleInertiaRequests extends Middleware
                 ->with(['category', 'project'])
                 ->first() : null;
 
+            $users = User::query()->orderBy('last_name')->orderBy('first_name')->get();
+
             $bookmarks = Bookmark::where('is_pinned', true)->whereNull('bookmark_folder_id')->orderBy('name')->get();
             $bookmarkFolders = BookmarkFolder::with('bookmarks')->orderBy('name')->get();
 
@@ -86,6 +90,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user() ? UserData::from($request->user()) : null,
+                'users' => SimpleUserData::collect($users),
                 'tenant' => $request->user() ? tenant('id') ? TenantData::from($tenant) : [] : null,
                 'runningTimer' => $runningTimer ? TimeData::from($runningTimer) : null,
                 'bookmarks' => BookmarkData::collect($bookmarks),
