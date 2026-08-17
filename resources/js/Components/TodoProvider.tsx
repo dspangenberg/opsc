@@ -83,8 +83,11 @@ export const TodoButton: React.FC<TodoButtonProps> = ({ onClick }) => {
       users: users,
       currentUserId: user.id as number
     })
-    onClick?.()
-    emitTodoCreated()
+
+    if (result) {
+      onClick?.()
+      emitTodoCreated()
+    }
   }
 
   return (

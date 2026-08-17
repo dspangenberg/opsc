@@ -30,7 +30,7 @@ const TodoEditDialogComponent: React.FC<TodoEditDialogComponentProps> = ({
     todoable_type: todoableType,
     todoable_id: todoableId,
     title: '',
-    assignee_id: currentUserId,
+    assigned_to_user_id: currentUserId,
     due_at: ''
   }, {
     onSuccess: () => {
@@ -88,8 +88,11 @@ const TodoEditDialogComponent: React.FC<TodoEditDialogComponentProps> = ({
                 items={users}
                 itemName="full_name"
                 itemValue="id"
-                {...form.register('assignee_id')}
+                {...form.register('assigned_to_user_id')}
               />
+            </div>
+            <div className="col-span-24">
+              <FormTextField label="Fällig am" placeholder="TT.MM.JJJJ HH:MM" {...form.register('due_at')} />
             </div>
           </FormGrid>
         </Form>

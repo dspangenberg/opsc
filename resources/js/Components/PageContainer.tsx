@@ -71,6 +71,10 @@ export const PageContainer: React.FC<PageContainerProps> = ({
 
   useEffect(() => {
     setTodoable(todoableType, todoableId, todoableDescription)
+
+    return () => {
+      setTodoable()
+    }
   }, [setTodoable, todoableType, todoableId, todoableDescription])
 
   useEffect(() => {
