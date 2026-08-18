@@ -54,6 +54,7 @@ class HandleInertiaRequests extends Middleware
         $bookmarkFolders = [];
         $runningTimer = [];
         $settings = null;
+        $users = [];
         if ($user) {
             $ids = [];
             $defaultMailAccount = EmailAccount::query()->where('is_default', true)->first();

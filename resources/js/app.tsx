@@ -43,6 +43,7 @@ globalThis.resolveMomentumModal = async name => {
 }
 
 createInertiaApp({
+  dev: import.meta.env.DEV,
   title: title => `${title} - ${appName}`,
   resolve: async name => {
     const page: any = await resolvePageComponent(
