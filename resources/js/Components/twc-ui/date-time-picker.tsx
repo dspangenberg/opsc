@@ -1,7 +1,7 @@
 import { Calendar04Icon } from '@hugeicons/core-free-icons'
 import { type DateValue, Time } from '@internationalized/date'
 import type React from 'react'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   DatePicker as AriaDatePicker,
   type DatePickerProps as AriaDatePickerProps,
@@ -26,10 +26,20 @@ const BaseDateTimePicker = AriaDatePicker
 const DateTimePickerContent = ({
   className,
   popoverClassName,
+  onPopoverClose,
+  onPopoverOpenChange,
   ...props
-}: AriaDialogProps & { popoverClassName?: AriaPopoverProps['className'] }) => (
+}: AriaDialogProps & {
+  popoverClassName?: AriaPopoverProps['className']
+  onPopoverClose?: () => void
+  onPopoverOpenChange?: (open: boolean) => void
+}) => (
   <Popover
     className={composeRenderProps(popoverClassName, className => cn('w-auto p-3', className))}
+    onOpenChange={(open) => {
+      onPopoverOpenChange?.(open)
+      if (!open) onPopoverClose?.()
+    }}
   >
     <Dialog
       className={cn(
@@ -69,6 +79,56 @@ const DateTimePicker = ({
   ...props
 }: DateTimePickerProps) => {
   const hasError = !!errorMessage
+  const isPopoverOpenRef = useRef(false)
+
+  const getInitialTime = (): Time => {
+    if (value && 'hour' in value) {
+      return new Time(value.hour, value.minute, value.second ?? 0)
+    }
+    return new Time(0, 0, 0)
+  }
+
+  const timeRef = useRef<Time>(getInitialTime())
+  const [timeDisplay, setTimeDisplay] = useState<Time>(getInitialTime)
+
+  useEffect(() => {
+    if (isPopoverOpenRef.current || !value || !showTime) return
+    if (!('hour' in value)) return
+    const next = new Time(value.hour, value.minute, value.second ?? 0)
+    timeRef.current = next
+    setTimeDisplay(next)
+  }, [value, showTime])
+
+  const handlePopoverOpenChange = useCallback((open: boolean) => {
+    isPopoverOpenRef.current = open
+  }, [])
+
+  const handleDateChange = useCallback((date: DateValue | null) => {
+    if (!date) {
+      onChange?.(null)
+      return
+    }
+    if (showTime) {
+      const t = timeRef.current
+      const combined = date.set({ hour: t.hour, minute: t.minute, second: t.second })
+      onChange?.(combined)
+    } else {
+      onChange?.(date)
+    }
+  }, [onChange, showTime])
+
+  const handleTimeChange = useCallback((time: Time | null) => {
+    if (!time) return
+    timeRef.current = time
+    setTimeDisplay(time)
+  }, [])
+
+  const handlePopoverClose = useCallback(() => {
+    if (!value || !showTime) return
+    const t = timeRef.current
+    const combined = value.set({ hour: t.hour, minute: t.minute, second: t.second })
+    onChange?.(combined)
+  }, [value, showTime, onChange])
 
   const getInitialTime = (): Time => {
     if (value && 'hour' in value) {
@@ -139,7 +199,8 @@ const DateTimePicker = ({
       <DateTimePickerContent
         popoverClassName="min-h-fit"
         slot="dialog"
-        onDismiss={handlePopoverClose}
+        onPopoverClose={handlePopoverClose}
+        onPopoverOpenChange={handlePopoverOpenChange}
       >
         <Calendar
           className="p-0"
@@ -153,6 +214,7 @@ const DateTimePicker = ({
               value={timeDisplay}
               onChange={handleTimeChange}
               granularity="minute"
+              aria-label="Uhrzeit"
             />
           </div>
         )}
