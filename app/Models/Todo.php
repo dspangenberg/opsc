@@ -30,6 +30,10 @@ class Todo extends Model
         'assigned_to_user_id',
     ];
 
+    protected $appends = [
+        'todobable_description',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -51,5 +55,14 @@ class Todo extends Model
     public function todoable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function getTodobableDescriptionAttribute(): ?string
+    {
+        return match (true) {
+            $this->todoable instanceof Project => $this->todoable->name,
+            $this->todoable instanceof Contact => $this->todoable->full_name,
+            default => null,
+        };
     }
 }

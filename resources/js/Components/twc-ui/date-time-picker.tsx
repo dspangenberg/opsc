@@ -1,6 +1,7 @@
 import { Calendar04Icon } from '@hugeicons/core-free-icons'
-import type { DateValue } from '@internationalized/date'
+import { type DateValue, Time } from '@internationalized/date'
 import type React from 'react'
+import { useCallback, useRef, useState } from 'react'
 import {
   DatePicker as AriaDatePicker,
   type DatePickerProps as AriaDatePickerProps,
@@ -18,6 +19,7 @@ import { Calendar, type FooterButtons } from './calendar'
 import { DateInput } from './date-field'
 import { FieldError, FieldGroup, Label } from './field'
 import { Popover } from './popover'
+import { TimeField } from './time-field'
 
 const BaseDateTimePicker = AriaDatePicker
 
@@ -49,6 +51,7 @@ interface DateTimePickerProps extends AriaDatePickerProps<DateValue> {
   }>
   footerButtons?: FooterButtons
   isRequired?: boolean
+  showTime?: boolean
 }
 
 const DateTimePicker = ({
@@ -61,10 +64,48 @@ const DateTimePicker = ({
   errorMessage,
   onChange,
   isRequired = false,
+  showTime = true,
   errorComponent: ErrorComponent = FieldError,
   ...props
 }: DateTimePickerProps) => {
   const hasError = !!errorMessage
+
+  const getInitialTime = (): Time => {
+    if (value && 'hour' in value) {
+      return new Time(value.hour, value.minute, value.second ?? 0)
+    }
+    return new Time(0, 0, 0)
+  }
+
+  const timeRef = useRef<Time>(getInitialTime())
+  const [timeDisplay, setTimeDisplay] = useState<Time>(getInitialTime)
+
+  const handleDateChange = useCallback((date: DateValue | null) => {
+    if (!date) {
+      onChange?.(null)
+      return
+    }
+    if (showTime) {
+      const t = timeRef.current
+      const combined = date.set({ hour: t.hour, minute: t.minute, second: t.second })
+      onChange?.(combined)
+    } else {
+      onChange?.(date)
+    }
+  }, [onChange, showTime])
+
+  const handleTimeChange = useCallback((time: Time | null) => {
+    if (!time) return
+    timeRef.current = time
+    setTimeDisplay(time)
+  }, [])
+
+  const handlePopoverClose = useCallback(() => {
+    if (!value || !showTime) return
+    const t = timeRef.current
+    const combined = value.set({ hour: t.hour, minute: t.minute, second: t.second })
+    onChange?.(combined)
+  }, [value, showTime, onChange])
 
   return (
     <BaseDateTimePicker
@@ -73,7 +114,7 @@ const DateTimePicker = ({
       )}
       isInvalid={hasError}
       value={value}
-      onChange={onChange}
+      onChange={handleDateChange}
       granularity="minute"
       isRequired={isRequired}
       validationBehavior="native"
@@ -95,13 +136,26 @@ const DateTimePicker = ({
         </Text>
       )}
       <ErrorComponent>{errorMessage}</ErrorComponent>
-      <DateTimePickerContent popoverClassName="min-h-fit" slot="dialog">
+      <DateTimePickerContent
+        popoverClassName="min-h-fit"
+        slot="dialog"
+        onDismiss={handlePopoverClose}
+      >
         <Calendar
           className="p-0"
           maxYears={maxYears}
           footerButtons={footerButtons}
-          onChange={onChange}
+          onChange={handleDateChange}
         />
+        {showTime && (
+          <div className="flex flex-col items-center justify-center border-l border-border pl-4">
+            <TimeField
+              value={timeDisplay}
+              onChange={handleTimeChange}
+              granularity="minute"
+            />
+          </div>
+        )}
       </DateTimePickerContent>
     </BaseDateTimePicker>
   )
