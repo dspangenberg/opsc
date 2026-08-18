@@ -61,7 +61,7 @@ class ProjectController extends Controller
                         ->where('created_by_user_id', auth()->id())
                         ->orWhere('assigned_to_user_id', auth()->id())
                     )
-                    ->with(['assigned_to', 'created_by'])
+                    ->with(['assigned_to', 'created_by', 'todoable'])
                     ->get()
             ),
         ]);
