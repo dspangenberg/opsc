@@ -130,43 +130,6 @@ const DateTimePicker = ({
     onChange?.(combined)
   }, [value, showTime, onChange])
 
-  const getInitialTime = (): Time => {
-    if (value && 'hour' in value) {
-      return new Time(value.hour, value.minute, value.second ?? 0)
-    }
-    return new Time(0, 0, 0)
-  }
-
-  const timeRef = useRef<Time>(getInitialTime())
-  const [timeDisplay, setTimeDisplay] = useState<Time>(getInitialTime)
-
-  const handleDateChange = useCallback((date: DateValue | null) => {
-    if (!date) {
-      onChange?.(null)
-      return
-    }
-    if (showTime) {
-      const t = timeRef.current
-      const combined = date.set({ hour: t.hour, minute: t.minute, second: t.second })
-      onChange?.(combined)
-    } else {
-      onChange?.(date)
-    }
-  }, [onChange, showTime])
-
-  const handleTimeChange = useCallback((time: Time | null) => {
-    if (!time) return
-    timeRef.current = time
-    setTimeDisplay(time)
-  }, [])
-
-  const handlePopoverClose = useCallback(() => {
-    if (!value || !showTime) return
-    const t = timeRef.current
-    const combined = value.set({ hour: t.hour, minute: t.minute, second: t.second })
-    onChange?.(combined)
-  }, [value, showTime, onChange])
-
   return (
     <BaseDateTimePicker
       className={composeRenderProps(className, className =>
