@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Plank\Mediable\Exceptions\MediaUrlException;
 use Plank\Mediable\Media;
@@ -123,5 +124,10 @@ class Project extends Model
     public function lead(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'lead_user_id');
+    }
+
+    public function todos(): MorphMany
+    {
+        return $this->morphMany(Todo::class, 'todoable');
     }
 }

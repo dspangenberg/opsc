@@ -806,6 +806,18 @@ declare namespace App {
       readonly correspondence_salutation_female: string;
       readonly correspondence_salutation_other: string;
     };
+    export type TodoData = {
+      readonly id: number | null;
+      readonly title: string;
+      readonly todoable_type: string;
+      readonly todoable_id: number;
+      readonly due_at: string | null;
+      readonly completed_at: string | null;
+      readonly created_by_user_id: number | null;
+      readonly assigned_to_user_id: number | null;
+      readonly assigned_to: App.Data.SimpleUserData | null;
+      readonly created_by: App.Data.SimpleUserData | null;
+    };
     export type TransactionData = {
       readonly id: number | null;
       readonly mm_ref: string;

@@ -5,11 +5,13 @@ namespace App\Http\Controllers\App;
 use App\Data\ContactData;
 use App\Data\ProjectCategoryData;
 use App\Data\ProjectData;
+use App\Data\TodoData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Contact;
 use App\Models\Project;
 use App\Models\ProjectCategory;
+use App\Models\Todo;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
@@ -51,6 +53,17 @@ class ProjectController extends Controller
 
         return Inertia::render('App/Project/ProjectDetails', [
             'project' => ProjectData::from($project),
+            'todos' => TodoData::collect(
+                Todo::query()
+                    ->where('todoable_type', Project::class)
+                    ->where('todoable_id', $project->id)
+                    ->where(fn ($query) => $query
+                        ->where('created_by_user_id', auth()->id())
+                        ->orWhere('assigned_to_user_id', auth()->id())
+                    )
+                    ->with(['assigned_to', 'created_by'])
+                    ->get()
+            ),
         ]);
     }
 

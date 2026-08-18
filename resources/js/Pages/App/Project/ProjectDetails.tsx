@@ -4,7 +4,8 @@ import { ProjectDetailsLayout } from './ProjectDetailsLayout'
 import { ProjectDetailsSide } from './ProjectDetailsSide'
 
 interface Props extends PageProps {
-  project: App.Data.ProjectData
+  project: App.Data.ProjectData,
+  todos: App.Data.TodoData[]
 }
 
 const ProjectDetails: React.FC<Props> = ({ project }) => {
