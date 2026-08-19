@@ -404,7 +404,7 @@ class InvoiceController extends Controller
     public function unrelease(Invoice $invoice): RedirectResponse
     {
         if ($invoice->sent_at) {
-            abort('Die Rechnung wurde bereits versendet und kann nicht mehr korrigiert werden.');
+            abort('Die Rechnung wurde bereits versendet und kann nicht mehr bearbeitet werden.');
         }
 
         $invoice->invoice_number = null;

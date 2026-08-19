@@ -151,7 +151,7 @@ class Invoice extends Model implements MediableInterface
             ->with('category')
             ->with('user')
             ->whereNotNull('begin_at')
-            ->orderBy('begin_at', 'desc')
+            ->latest('begin_at')
             ->get();
 
         $groupedTimes = $times ? TimeController::groupByDate($times) : [];

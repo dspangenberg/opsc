@@ -13,7 +13,8 @@ import {
   KanbanIcon,
   MailAtSign02Icon,
   Settings05Icon,
-  TimeScheduleIcon
+  TimeScheduleIcon,
+  TaskDaily01Icon
 } from '@hugeicons/core-free-icons'
 import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
@@ -129,11 +130,18 @@ const buildNavData = (
       hasSep: true
     },
     {
+      title: 'Todos',
+      url: route('app.invoice.index', { _query: { view: 'all' } }, false),
+      icon: TaskDaily01Icon,
+      activePath: '/app/invoicing/',
+
+    },
+    {
       title: 'Zeiterfassung',
+      hasSep: true,
       url: route('app.time.my-week', { _query: { view: 'my-week' } }, false),
       icon: TimeScheduleIcon,
       activePath: '/app/times',
-      hasSep: false,
       items: [
         {
           title: 'Meine Woche',
@@ -157,7 +165,6 @@ const buildNavData = (
       url: route('app.invoice.index', { _query: { view: 'all' } }, false),
       icon: FileEuroIcon,
       activePath: '/app/invoicing/',
-      hasSep: true,
       items: [
         {
           title: 'Rechnungen',

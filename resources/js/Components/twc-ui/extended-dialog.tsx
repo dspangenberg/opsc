@@ -159,7 +159,7 @@ export const ExtendedDialog: React.FC<ExtendedDialogProps> = ({
               {!hideHeader && (
                 <DialogHeader
                   className={cn(
-                    'relative my-0 flex w-full flex-1 flex-col justify-stretch gap-0 px-0 py-0'
+                    'relative my-0 flex w-full flex-1 flex-col items-stretch justify-stretch gap-0 overflow-hidden px-0 py-0'
                   )}
                 >
                   {isDismissible && (
@@ -172,8 +172,8 @@ export const ExtendedDialog: React.FC<ExtendedDialogProps> = ({
                       onClick={() => renderProps.close()}
                     />
                   )}
-                  <DialogTitle className="flex flex-1 items-center justify-between py-1.5! text-left text-base leading-0! md:text-center">
-                    <span className="text-base">{title}</span>
+                  <DialogTitle className="flex min-w-0 flex-1 items-center justify-between py-1.5! text-left text-base leading-0! md:text-center">
+                    <span className="block min-w-0 flex-1 truncate px-8 text-base">{title}</span>
                   </DialogTitle>
                   <DialogDescription className={cn('', !showDescription ? 'sr-only mb-3' : '')}>
                     {description}

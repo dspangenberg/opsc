@@ -41,8 +41,6 @@ const TodoEditDialogComponent: React.FC<TodoEditDialogComponentProps> = ({
     }
   })
 
-  const title = 'Todo zu ' + todoableDescription
-
   return (
     <Dialog
       isOpen={true}
@@ -56,7 +54,7 @@ const TodoEditDialogComponent: React.FC<TodoEditDialogComponentProps> = ({
       width="lg"
       bodyPadding
       isDismissible={true}
-      title={title}
+      title={`Todo zu ${todoableDescription} hinzufügen`}
       footer={
         <div className="flex items-center justify-end space-x-2">
           <Button
@@ -70,6 +68,7 @@ const TodoEditDialogComponent: React.FC<TodoEditDialogComponentProps> = ({
           />
           <Button
             variant="default"
+            isLoading={form.processing}
             title="Speichern"
             type="submit"
             form={form.id}
