@@ -128,7 +128,7 @@ class Time extends Model
     public function scopeWithMinutes(Builder $query): void
     {
         if (DB::getDriverName() === 'sqlite') {
-            $query->select(DB::raw('*, CAST((julianday(end_at) - julianday(begin_at)) * 24 * 60 AS INTEGER) as mins, DATE(begin_at) as ts'));
+            $query->select(DB::raw('*, CAST((strftime(\'%s\', end_at) - strftime(\'%s\', begin_at)) / 60 AS INTEGER) as mins, DATE(begin_at) as ts'));
         } else {
             $query->select(DB::raw('*, TIMESTAMPDIFF(MINUTE, begin_at, end_at) as mins, DATE(begin_at) as ts'));
         }

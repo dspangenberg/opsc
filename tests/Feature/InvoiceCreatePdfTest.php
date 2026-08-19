@@ -132,7 +132,7 @@ function createInvoiceLine(Invoice $invoice, array $overrides = []): InvoiceLine
 
 function makeTestPdf(): string
 {
-    $path = tempnam(sys_get_temp_dir(), 'test-pdf-').'.pdf';
+    $path = tempnam(sys_get_temp_dir(), 'test-pdf-');
     file_put_contents($path, '%PDF-1.4 test content');
 
     return $path;
@@ -192,7 +192,6 @@ it('does not set watermark for non-draft invoices', function () {
     MediaUploader::shouldReceive('toDestination')->andReturnSelf();
 
     $mockMedia = Mockery::mock();
-    $mockMedia->shouldReceive('upload')->andReturn($mockMedia);
     MediaUploader::shouldReceive('upload')->andReturn($mockMedia);
 
     Invoice::createOrGetPdf($invoice);
@@ -329,7 +328,7 @@ it('generates QR code SVG when invoice has a positive amount', function () {
     @unlink($testPdf);
 });
 
-it('does not generate QR code when invoice has no contact', function () {
+it('does not generate QR code when invoice amount is zero', function () {
     $contact = Contact::create(['name' => 'Temp', 'debtor_number' => 99999, 'tax_id' => 0]);
     $invoice = createInvoice(['contact_id' => $contact->id]);
     createInvoiceLine($invoice, ['amount' => 0, 'tax' => 0]);
@@ -378,7 +377,6 @@ it('generates Zugferd XML for non-draft zugferd invoices', function () {
     MediaUploader::shouldReceive('toDestination')->andReturnSelf();
 
     $mockMedia = Mockery::mock();
-    $mockMedia->shouldReceive('upload')->andReturn($mockMedia);
     MediaUploader::shouldReceive('upload')->andReturn($mockMedia);
 
     $result = Invoice::createOrGetPdf($invoice);
@@ -583,12 +581,16 @@ it('calls attachMedia on invoice after uploading pdf for non-draft', function ()
 
     $testPdf = makeTestPdf();
 
+    PdfService::shouldReceive('createPdf')
+        ->once()
+        ->andReturn($testPdf);
+
     $mockMedia = Mockery::mock();
 
-    MediaUploader::shouldReceive('fromSource')->andReturnSelf();
-    MediaUploader::shouldReceive('useFilename')->andReturnSelf();
-    MediaUploader::shouldReceive('toDestination')->andReturnSelf();
-    MediaUploader::shouldReceive('upload')->andReturn($mockMedia);
+    MediaUploader::shouldReceive('fromSource')->once()->with($testPdf)->andReturnSelf();
+    MediaUploader::shouldReceive('useFilename')->once()->andReturnSelf();
+    MediaUploader::shouldReceive('toDestination')->once()->andReturnSelf();
+    MediaUploader::shouldReceive('upload')->once()->andReturn($mockMedia);
 
     $result = Invoice::createOrGetPdf($invoice);
 
