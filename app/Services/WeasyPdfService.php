@@ -9,6 +9,7 @@ use App\Models\PrintLayout;
 use App\Settings\GeneralSettings;
 use Config;
 use Exception;
+use Illuminate\Contracts\Process\ProcessResult;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Pontedilana\PhpWeasyPrint\Pdf;
@@ -42,12 +43,28 @@ class WeasyPdfService
 
     private function getOutputFile(): string
     {
-        return storage_path('system/tmp').'/'.Str::random().'.pdf';
+        $tempDir = storage_path('system/tmp');
+        if (! file_exists($tempDir)) {
+            mkdir($tempDir, 0755, true);
+        }
+
+        return $tempDir.'/'.Str::random().'.pdf';
     }
 
     private function getPdfCpuCommand(): string
     {
         return escapeshellarg(Config::get('pdf.pdfcpu_path'));
+    }
+
+    private function runPdfCpu(string $command): ProcessResult
+    {
+        $configDir = Config::get('pdf.pdfcpu_config_dir');
+
+        if (! is_dir($configDir)) {
+            mkdir($configDir, 0775, true);
+        }
+
+        return Process::env(['XDG_CONFIG_HOME' => $configDir])->run($command);
     }
 
     /**
@@ -66,7 +83,7 @@ class WeasyPdfService
             $outputFile
         );
 
-        $result = Process::run($command);
+        $result = self::runPdfCpu($command);
 
         if ($result->failed()) {
             throw new Exception('Adding letterhead failed: '.$result->output());
@@ -94,7 +111,7 @@ class WeasyPdfService
             $outputFile
         );
 
-        $result = Process::run($command);
+        $result = self::runPdfCpu($command);
 
         if ($result->failed()) {
             throw new Exception('Adding stamp failed: '.$result->output());
@@ -119,7 +136,7 @@ class WeasyPdfService
             implode(' ', $escapedFiles)
         );
 
-        $result = Process::run($command);
+        $result = self::runPdfCpu($command);
 
         if ($result->failed()) {
             throw new Exception('Merging PDFs failed: '.$result->output());

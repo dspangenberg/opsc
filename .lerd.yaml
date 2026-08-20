@@ -1,0 +1,15 @@
+domains:
+  - opsc.test
+workers:
+  - queue
+  - reverb
+  - schedule
+custom_workers:
+  reverb:
+    label: Reverb WebSocket
+    command: php artisan reverb:start
+    restart: on-failure
+    proxy:
+      path: /reverb
+      port_env_key: REVERB_SERVER_PORT
+      default_port: 8080
