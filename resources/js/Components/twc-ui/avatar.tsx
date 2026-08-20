@@ -114,12 +114,12 @@ const Avatar = ({
   const realInitials = initials ? initials : initialsHook(fullname)
 
   useEffect(() => {
-    if (!src && fullname) {
+    if (fullname) {
       const bgColor = generateColorFromString(fullname)
       setBackgroundColor(bgColor)
       setTextColor(getIdealTextColor(bgColor))
     }
-  }, [fullname, src])
+  }, [fullname])
 
   const styles = avatarVariants({
     variant,
