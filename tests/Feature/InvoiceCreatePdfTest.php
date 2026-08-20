@@ -225,7 +225,7 @@ it('passes invoice data to PdfService', function () {
     expect($capturedData)->not->toBeNull()
         ->and($capturedData['invoice'])->toBeInstanceOf(Invoice::class)
         ->and(isset($capturedData['taxes']))->toBeTrue()
-        ->and($capturedData['bank_account'])->toBeInstanceOf(stdClass::class);
+        ->and($capturedData['bank_account'])->toBeInstanceOf(BankAccount::class);
 
     @unlink($testPdf);
 });

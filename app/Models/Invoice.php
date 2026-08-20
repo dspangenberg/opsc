@@ -151,7 +151,7 @@ class Invoice extends Model implements MediableInterface
             ->with('category')
             ->with('user')
             ->whereNotNull('begin_at')
-            ->orderBy('begin_at', 'desc')
+            ->latest('begin_at')
             ->get();
 
         $groupedTimes = $times ? TimeController::groupByDate($times) : [];
@@ -170,42 +170,17 @@ class Invoice extends Model implements MediableInterface
 
         $bankAccount = BankAccount::where('is_default', true)->first();
 
-        $bank_account = (object) [
-            'iban' => $bankAccount->iban,
-            'bic' => $bankAccount->bic,
-            'account_owner' => $bankAccount->account_owner,
-            'bank_name' => $bankAccount->bank_name,
-        ];
-
         $pdfConfig = [];
         $pdfConfig['pdfA'] = ! $invoice->is_draft;
         $pdfConfig['hide'] = true;
         $pdfConfig['watermark'] = $watermark ?: ($invoice->is_draft ? 'ENTWURF' : false);
 
-        // TODO: Der  "alte" QR-Code verletzte die PDF/A-Konformität (PDF/A-3). OpenCode-Workaround kommt mur etwas merkwürdig vor
-
-        $qrCodeSvg = null;
-        if ($invoice->qr_code) {
-            $qrPayment = new QrPayment($bankAccount->iban);
-            $qrPayment
-                ->setBic($bankAccount->bic)
-                ->setBeneficiaryName($bankAccount->account_owner)
-                ->setAmount($invoice->amount_gross)
-                ->setCurrency('EUR')
-                ->setRemittanceText('RG-'.$invoice->formated_invoice_number.' K-'.number_format($invoice->contact->debtor_number,
-                    0, ',', '.'));
-            $qrString = $qrPayment->getQrString();
-            $qrCode = new QrCode($qrString, new Encoding('UTF-8'), ErrorCorrectionLevel::Low, 100, 0,
-                RoundBlockSizeMode::None);
-            $qrCodeSvg = (new SvgWriter)->write($qrCode)->getString();
-        }
-
         $pdf = PdfService::createPdf('invoice', 'pdf.invoice.index',
             [
                 'invoice' => $invoice,
                 'taxes' => $taxes,
-                'bank_account' => $bank_account,
-                'qr_code_svg' => $qrCodeSvg,
+                'bank_account' => $bankAccount,
+                'qr_code_svg' => $invoice->qr_code,
                 'groupedTimes' => $groupedTimes,
                 'groupedByCategoryTimes' => $groupedByCategoryTimes,
                 'timesSum' => $timesSum,
@@ -216,30 +191,35 @@ class Invoice extends Model implements MediableInterface
         }
 
         if (! $invoice->is_draft) {
-            try {
-                $oldMedia = $invoice->firstMedia('pdf');
-                if ($oldMedia) {
-                    $invoice->detachMedia($oldMedia);
-                    try {
-                        $oldMedia->delete();
-                    } catch (Throwable) {
-                        //
-                    }
-                }
-
-                $fileName = Str::replace('.pdf', '', $invoice->filename);
-
-                $media = MediaUploader::fromSource($pdf)
-                    ->useFilename($fileName)
-                    ->toDestination('s3_private', 'invoices/'.$invoice->issued_on->format('Y'))
-                    ->upload();
-                $invoice->attachMedia($media, 'pdf');
-            } catch (Throwable) {
-                //
-            }
+            $invoice->savePdf($pdf);
         }
 
         return $pdf;
+    }
+
+    public function savePdf(string $pdf): void
+    {
+        try {
+            $oldMedia = $this->firstMedia('pdf');
+            if ($oldMedia) {
+                $this->detachMedia($oldMedia);
+                try {
+                    $oldMedia->delete();
+                } catch (Throwable) {
+                    //
+                }
+            }
+
+            $fileName = Str::replace('.pdf', '', $this->filename);
+
+            $media = MediaUploader::fromSource($pdf)
+                ->useFilename($fileName)
+                ->toDestination('s3_private', 'invoices/'.$this->issued_on->format('Y'))
+                ->upload();
+            $this->attachMedia($media, 'pdf');
+        } catch (Throwable) {
+            //
+        }
     }
 
     public function taxBreakdown(Collection $invoiceLines): array
@@ -688,13 +668,14 @@ class Invoice extends Model implements MediableInterface
         return $duplicatedInvoice;
     }
 
-    public function getQrCodeAttribute(): string
+    public function getQrCodeAttribute(): null | string
     {
         if (! $this->contact || $this->amount_gross <= 0) {
-            return '';
+            return null;
         }
 
-        $bankAccount = BankAccount::orderBy('pos')->first();
+        $bankAccount = BankAccount::where('is_default', true)->first();
+        ray($bankAccount);
 
         $payment = new QrPayment($bankAccount->iban);
         $payment
@@ -704,7 +685,10 @@ class Invoice extends Model implements MediableInterface
             ->setCurrency('EUR')
             ->setRemittanceText($this->purpose);
 
-        return $payment->getQrCode()->getDataUri();
+        $qrString = $payment->getQrString();
+        $qrCode = new QrCode($qrString, new Encoding('UTF-8'), ErrorCorrectionLevel::Low, 100, 0,
+            RoundBlockSizeMode::None);
+        return (new SvgWriter)->write($qrCode)->getString();
     }
 
     public function getNextBilligDate(): ?DateTime
