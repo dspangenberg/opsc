@@ -48,12 +48,12 @@
 
 
             <tr>
-                <td style="width:30mm;">Projekt:</td>
+                <td style="width:28mm;">Projekt:</td>
                 <td><strong>{{$invoice->project->name}}</strong></td>
             </tr>
             @if($invoice->project->manager_contact_id)
                 <tr>
-                    <td style="width:30mm;">Ansprechperson:</td>
+                    <td style="width:28mm;">Ansprechperson:</td>
                     <td><strong>{{$invoice->project->manager->full_name}}</strong></td>
                 </tr>
             @endif
