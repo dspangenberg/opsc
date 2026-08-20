@@ -20,6 +20,7 @@ return [
     'ocrmypdf_path' => env('OCRMYPDF_PATH'),
     'pdfcpu_path' => env('PDF_PDFCPU_PATH'),
     'pdfcpu_watermark_font' => env('PDF_PDFCPU_WATERMARK_FONT', 'Helvetica-Bold'),
+    'pdfcpu_config_dir' => env('PDF_PDFCPU_CONFIG_DIR', storage_path('pdfcpu-config')),
     'ghostscript_path' => env('PDF_GHOSTSCRIPT_PATH') ?: (function () {
         $paths = [
             '/usr/bin/gs',              // Linux standard
