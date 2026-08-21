@@ -24,15 +24,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Support\Facades\Log;
 use MohamedSaid\Notable\Notable;
 use MohamedSaid\Notable\Traits\HasNotables;
+use Plank\Mediable\Exceptions\MediaUpload\ConfigurationException;
+use Plank\Mediable\Exceptions\MediaUpload\FileExistsException;
+use Plank\Mediable\Exceptions\MediaUpload\FileNotFoundException;
+use Plank\Mediable\Exceptions\MediaUpload\FileNotSupportedException;
+use Plank\Mediable\Exceptions\MediaUpload\FileSizeException;
+use Plank\Mediable\Exceptions\MediaUpload\ForbiddenException;
+use Plank\Mediable\Exceptions\MediaUpload\InvalidHashException;
 use Plank\Mediable\Facades\MediaUploader;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\MediableInterface;
 use rikudou\EuQrPayment\QrPayment;
 use Spatie\Holidays\Countries\Germany;
 use Spatie\Holidays\Holidays;
-use Str;
 use Throwable;
 
 class Invoice extends Model implements MediableInterface
@@ -40,39 +47,38 @@ class Invoice extends Model implements MediableInterface
     use HasNotables, Mediable;
 
     protected $fillable = [
+        'additional_text',
+        'address',
         'contact_id',
-        'project_id',
-        'invoice_number',
-        'issued_on',
+        'document_id',
         'due_on',
         'dunning_block',
-        'is_draft',
-        'type_id',
-        'service_provision',
-        'vat_id',
-        'address',
-        'payment_deadline_id',
         'invoice_contact_id',
-        'payment_deadline_id',
+        'invoice_number',
+        'issued_on',
+        'is_canceled',
+        'is_draft',
+        'is_external',
+        'is_loss_of_receivables',
         'is_recurring',
+        'is_zugferd',
+        'payment_deadline_id',
+        'project_id',
+        'recurring_begin_on',
+        'recurring_end_on',
         'recurring_interval_units',
         'recurring_interval',
         'recurring_next_billing_date',
-        'recurring_begin_on',
-        'recurring_end_on',
-        'is_loss_of_receivables',
+        'service_provision',
         'service_period_begin',
-        'tax_id',
         'service_period_end',
         'sent_at',
-        'additional_text',
-        'is_external',
-        'document_id',
-        'is_org',
+        'tax_id',
+        'type_id',
+        'vat_id',
         'zugferd_profile',
         'zugferd_route_id',
-        'is_zugferd',
-        'is_canceled',
+
     ];
 
     protected $attributes = [
@@ -86,10 +92,7 @@ class Invoice extends Model implements MediableInterface
     ];
 
     protected $appends = [
-        'formated_invoice_number',
-        'invoice_address',
         'amount_net',
-        'qr_code',
         'amount_tax',
         'amount_gross',
         'amount_open',
@@ -97,32 +100,35 @@ class Invoice extends Model implements MediableInterface
         'document_number',
         'dunning_days',
         'dunning_level',
+        'formated_invoice_number',
+        'invoice_address',
         'purpose',
+        'qr_code',
     ];
 
     protected function casts(): array
     {
         return [
-            'issued_on' => 'date',
             'due_on' => 'date',
-            'sent_at' => 'datetime',
-            'recurring_begin_on' => 'date',
-            'recurring_end_on' => 'date',
-            'recurring_next_billing_date' => 'date',
-            'service_period_begin' => 'date',
-            'service_period_end' => 'date',
-            'is_loss_of_receivables' => 'boolean',
+            'issued_on' => 'date',
+            'is_canceled' => 'boolean',
             'is_draft' => 'boolean',
             'is_external' => 'boolean',
-            'recurring_interval' => InvoiceRecurringEnum::class,
+            'is_loss_of_receivables' => 'boolean',
             'is_zugferd' => 'boolean',
+            'recurring_begin_on' => 'date',
+            'recurring_end_on' => 'date',
+            'recurring_interval' => InvoiceRecurringEnum::class,
+            'recurring_next_billing_date' => 'date',
+            'sent_at' => 'datetime',
+            'service_period_begin' => 'date',
+            'service_period_end' => 'date',
             'zugferd_profile' => ZugferdProfileEnum::class,
-            'is_canceled' => 'boolean',
         ];
     }
 
     /**
-     * @throws Exception
+     * @throws Exception|Throwable
      */
     public static function createOrGetPdf(Invoice $invoice, string $watermark = ''): string
     {
@@ -197,28 +203,32 @@ class Invoice extends Model implements MediableInterface
         return $pdf;
     }
 
+    /**
+     * @throws FileNotSupportedException
+     * @throws FileExistsException
+     * @throws ForbiddenException
+     * @throws FileNotFoundException
+     * @throws Throwable
+     * @throws FileSizeException
+     * @throws InvalidHashException
+     * @throws ConfigurationException
+     */
     public function savePdf(string $pdf): void
     {
         try {
-            $oldMedia = $this->firstMedia('pdf');
-            if ($oldMedia) {
-                $this->detachMedia($oldMedia);
-                try {
-                    $oldMedia->delete();
-                } catch (Throwable) {
-                    //
-                }
-            }
-
-            $fileName = Str::replace('.pdf', '', $this->filename);
-
             $media = MediaUploader::fromSource($pdf)
-                ->useFilename($fileName)
+                ->useFilename($this->filename)
                 ->toDestination('s3_private', 'invoices/'.$this->issued_on->format('Y'))
+                ->onDuplicateReplace()
                 ->upload();
             $this->attachMedia($media, 'pdf');
-        } catch (Throwable) {
-            //
+        } catch (Throwable $e) {
+            Log::error('Failed to save PDF for invoice', [
+                'invoice_id' => $this->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            throw $e;
         }
     }
 
@@ -668,15 +678,14 @@ class Invoice extends Model implements MediableInterface
         return $duplicatedInvoice;
     }
 
-    public function getQrCodeAttribute(): null | string
+    public function getQrCodeAttribute(): ?string
     {
         if (! $this->contact || $this->amount_gross <= 0) {
+            // Wir brauchen den Kontakt für die Kundennr. im QR-Code.
             return null;
         }
 
         $bankAccount = BankAccount::where('is_default', true)->first();
-        ray($bankAccount);
-
         $payment = new QrPayment($bankAccount->iban);
         $payment
             ->setBic($bankAccount->bic)
@@ -688,6 +697,7 @@ class Invoice extends Model implements MediableInterface
         $qrString = $payment->getQrString();
         $qrCode = new QrCode($qrString, new Encoding('UTF-8'), ErrorCorrectionLevel::Low, 100, 0,
             RoundBlockSizeMode::None);
+
         return (new SvgWriter)->write($qrCode)->getString();
     }
 

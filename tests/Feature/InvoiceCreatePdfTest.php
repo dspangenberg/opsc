@@ -16,6 +16,7 @@ use App\Models\Tenant;
 use App\Models\Time;
 use App\Models\TimeCategory;
 use Plank\Mediable\Facades\MediaUploader;
+use Plank\Mediable\Media;
 use Stancl\Tenancy\Database\Models\Domain;
 use Stancl\Tenancy\Facades\Tenancy;
 
@@ -130,6 +131,19 @@ function createInvoiceLine(Invoice $invoice, array $overrides = []): InvoiceLine
     ], $overrides));
 }
 
+function createTestMedia(string $filename = 'test.pdf'): Media
+{
+    return Media::forceCreate([
+        'disk' => 's3_private',
+        'directory' => 'invoices/'.now()->year,
+        'filename' => $filename,
+        'extension' => 'pdf',
+        'aggregate_type' => 'file',
+        'mime_type' => 'application/pdf',
+        'size' => 100,
+    ]);
+}
+
 function makeTestPdf(): string
 {
     $path = tempnam(sys_get_temp_dir(), 'test-pdf-');
@@ -187,12 +201,12 @@ it('does not set watermark for non-draft invoices', function () {
         }))
         ->andReturn($testPdf);
 
+    $mockMedia = createTestMedia('test-upload.pdf');
+
     MediaUploader::shouldReceive('fromSource')->andReturnSelf();
     MediaUploader::shouldReceive('useFilename')->andReturnSelf();
     MediaUploader::shouldReceive('toDestination')->andReturnSelf();
-
-    $mockMedia = Mockery::mock();
-    MediaUploader::shouldReceive('upload')->andReturn($mockMedia);
+    MediaUploader::shouldReceive('upload')->once()->andReturn($mockMedia);
 
     Invoice::createOrGetPdf($invoice);
 
@@ -372,12 +386,12 @@ it('generates Zugferd XML for non-draft zugferd invoices', function () {
         ->with($testPdf, Mockery::type(Invoice::class), Mockery::type('array'), Mockery::type(BankAccount::class))
         ->andReturn($zugferdPdf);
 
+    $mockMedia = createTestMedia('test-zugferd.pdf');
+
     MediaUploader::shouldReceive('fromSource')->andReturnSelf();
     MediaUploader::shouldReceive('useFilename')->andReturnSelf();
     MediaUploader::shouldReceive('toDestination')->andReturnSelf();
-
-    $mockMedia = Mockery::mock();
-    MediaUploader::shouldReceive('upload')->andReturn($mockMedia);
+    MediaUploader::shouldReceive('upload')->once()->andReturn($mockMedia);
 
     $result = Invoice::createOrGetPdf($invoice);
 
@@ -557,16 +571,16 @@ it('uploads media for non-draft invoices', function () {
     createInvoiceLine($invoice);
 
     $testPdf = makeTestPdf();
-    $fileName = str_replace('.pdf', '', $invoice->filename);
+    $fileNamePrefix = str_replace('.pdf', '', $invoice->filename);
 
-    $mockMedia = Mockery::mock();
+    $mockMedia = createTestMedia('test-upload.pdf');
 
     PdfService::shouldReceive('createPdf')
         ->once()
         ->andReturn($testPdf);
 
     MediaUploader::shouldReceive('fromSource')->once()->with($testPdf)->andReturnSelf();
-    MediaUploader::shouldReceive('useFilename')->once()->with($fileName)->andReturnSelf();
+    MediaUploader::shouldReceive('useFilename')->once()->with(Mockery::on(fn ($name) => str_starts_with($name, $fileNamePrefix.'_')))->andReturnSelf();
     MediaUploader::shouldReceive('toDestination')->once()->with('s3_private', 'invoices/'.now()->year)->andReturnSelf();
     MediaUploader::shouldReceive('upload')->once()->andReturn($mockMedia);
 
@@ -585,7 +599,7 @@ it('calls attachMedia on invoice after uploading pdf for non-draft', function ()
         ->once()
         ->andReturn($testPdf);
 
-    $mockMedia = Mockery::mock();
+    $mockMedia = createTestMedia('test-attach.pdf');
 
     MediaUploader::shouldReceive('fromSource')->once()->with($testPdf)->andReturnSelf();
     MediaUploader::shouldReceive('useFilename')->once()->andReturnSelf();
@@ -638,7 +652,7 @@ it('returns zugferd xml path over pdf path when zugferd is generated', function 
     MediaUploader::shouldReceive('useFilename')->andReturnSelf();
     MediaUploader::shouldReceive('toDestination')->andReturnSelf();
 
-    $mockMedia = Mockery::mock();
+    $mockMedia = createTestMedia('test-zugferd-path.pdf');
     MediaUploader::shouldReceive('upload')->andReturn($mockMedia);
 
     $result = Invoice::createOrGetPdf($invoice);
