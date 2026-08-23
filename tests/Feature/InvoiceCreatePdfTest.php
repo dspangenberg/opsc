@@ -206,6 +206,7 @@ it('does not set watermark for non-draft invoices', function () {
     MediaUploader::shouldReceive('fromSource')->andReturnSelf();
     MediaUploader::shouldReceive('useFilename')->andReturnSelf();
     MediaUploader::shouldReceive('toDestination')->andReturnSelf();
+    MediaUploader::shouldReceive('onDuplicateReplace')->andReturnSelf();
     MediaUploader::shouldReceive('upload')->once()->andReturn($mockMedia);
 
     Invoice::createOrGetPdf($invoice);
@@ -391,6 +392,7 @@ it('generates Zugferd XML for non-draft zugferd invoices', function () {
     MediaUploader::shouldReceive('fromSource')->andReturnSelf();
     MediaUploader::shouldReceive('useFilename')->andReturnSelf();
     MediaUploader::shouldReceive('toDestination')->andReturnSelf();
+    MediaUploader::shouldReceive('onDuplicateReplace')->andReturnSelf();
     MediaUploader::shouldReceive('upload')->once()->andReturn($mockMedia);
 
     $result = Invoice::createOrGetPdf($invoice);
@@ -571,7 +573,6 @@ it('uploads media for non-draft invoices', function () {
     createInvoiceLine($invoice);
 
     $testPdf = makeTestPdf();
-    $fileNamePrefix = str_replace('.pdf', '', $invoice->filename);
 
     $mockMedia = createTestMedia('test-upload.pdf');
 
@@ -580,8 +581,9 @@ it('uploads media for non-draft invoices', function () {
         ->andReturn($testPdf);
 
     MediaUploader::shouldReceive('fromSource')->once()->with($testPdf)->andReturnSelf();
-    MediaUploader::shouldReceive('useFilename')->once()->with(Mockery::on(fn ($name) => str_starts_with($name, $fileNamePrefix.'_')))->andReturnSelf();
+    MediaUploader::shouldReceive('useFilename')->once()->with($invoice->filename)->andReturnSelf();
     MediaUploader::shouldReceive('toDestination')->once()->with('s3_private', 'invoices/'.now()->year)->andReturnSelf();
+    MediaUploader::shouldReceive('onDuplicateReplace')->once()->andReturnSelf();
     MediaUploader::shouldReceive('upload')->once()->andReturn($mockMedia);
 
     Invoice::createOrGetPdf($invoice);
@@ -604,6 +606,7 @@ it('calls attachMedia on invoice after uploading pdf for non-draft', function ()
     MediaUploader::shouldReceive('fromSource')->once()->with($testPdf)->andReturnSelf();
     MediaUploader::shouldReceive('useFilename')->once()->andReturnSelf();
     MediaUploader::shouldReceive('toDestination')->once()->andReturnSelf();
+    MediaUploader::shouldReceive('onDuplicateReplace')->once()->andReturnSelf();
     MediaUploader::shouldReceive('upload')->once()->andReturn($mockMedia);
 
     $result = Invoice::createOrGetPdf($invoice);
@@ -651,6 +654,7 @@ it('returns zugferd xml path over pdf path when zugferd is generated', function 
     MediaUploader::shouldReceive('fromSource')->andReturnSelf();
     MediaUploader::shouldReceive('useFilename')->andReturnSelf();
     MediaUploader::shouldReceive('toDestination')->andReturnSelf();
+    MediaUploader::shouldReceive('onDuplicateReplace')->andReturnSelf();
 
     $mockMedia = createTestMedia('test-zugferd-path.pdf');
     MediaUploader::shouldReceive('upload')->andReturn($mockMedia);

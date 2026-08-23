@@ -437,8 +437,7 @@ class InvoiceController extends Controller
         if (! $invoice->sent_at) {
             $invoice->sent_at = now();
             $invoice->save();
-
-            Invoice::createBooking($invoice);
+            $invoice->createBooking();
         }
 
         $invoice->addHistory('hat die Rechnung versendet.', 'mail_sent', auth()->user());
@@ -454,17 +453,12 @@ class InvoiceController extends Controller
         $invoices = Invoice::query()->whereIn('id', $ids)->get();
 
         foreach ($invoices as $invoice) {
-            if (! $invoice->sent_at) {
-                $invoice->sent_at = now();
-                $invoice->save();
-            }
-
             $hasBooking = BookkeepingBooking::whereMorphedTo('bookable', Invoice::class)
                 ->where('bookable_id', $invoice->id)
                 ->exists();
 
             if (! $hasBooking) {
-                Invoice::createBooking($invoice);
+                $invoice->createBooking();
             }
         }
 
@@ -553,13 +547,9 @@ class InvoiceController extends Controller
 
     public function createBooking(Invoice $invoice): RedirectResponse
     {
-        if (! $invoice->sent_at) {
-            $invoice->sent_at = now();
-            $invoice->save();
-        }
 
         if ($invoice->doesntHave('booking')) {
-            Invoice::createBooking($invoice);
+            $invoice->createBooking();
         }
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);

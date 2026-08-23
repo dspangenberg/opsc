@@ -7,6 +7,7 @@ use App\Enums\ZugferdProfileEnum;
 use App\Facades\PdfService;
 use App\Facades\ZugferdService;
 use App\Http\Controllers\App\TimeController;
+use App\Services\BookeppingBookingService;
 use App\Settings\ZugferdSettings;
 use Carbon\Carbon;
 use DateTime;
@@ -42,6 +43,9 @@ use Spatie\Holidays\Countries\Germany;
 use Spatie\Holidays\Holidays;
 use Throwable;
 
+/**
+ * @property mixed $amount
+ */
 class Invoice extends Model implements MediableInterface
 {
     use HasNotables, Mediable;
@@ -499,42 +503,9 @@ class Invoice extends Model implements MediableInterface
         }
     }
 
-    public static function createBooking($invoice): BookkeepingBooking
+    public function createBooking(): ?BookkeepingBooking
     {
-
-        $invoice->load('range_document_number');
-
-        if (! $invoice->range_document_number || $invoice->range_document_number->number_range_id !== 1) {
-            $invoice->number_range_document_numbers_id = NumberRange::createDocumentNumber($invoice,
-                'issued_on');
-            $invoice->save();
-        }
-
-        $booking = BookkeepingBooking::whereMorphedTo('bookable', Invoice::class)->where('bookable_id',
-            $invoice->id)->first();
-
-        $invoice->load('lines');
-        $invoice->load('tax');
-        $invoice->amount = $invoice->lines->sum('amount') + $invoice->lines->sum('tax');
-
-        $outturnAccount = BookkeepingAccount::where('account_number', $invoice->tax->outturn_account_id)->first();
-
-        $accounts = Contact::getAccounts(true, $invoice->contact_id, true, true);
-
-        if ($invoice->is_loss_of_receivables) {
-            $outturnAccount = BookkeepingAccount::where('account_number', 2400)->first();
-        }
-
-        $booking = BookkeepingBooking::createBooking($invoice, 'issued_on', 'amount', $accounts['subledgerAccount'],
-            $outturnAccount, 'A', $booking?->id);
-
-        if ($booking) {
-            $name = strtoupper($accounts['name']);
-            $booking->booking_text = "Rechnungsausgang|$name|$invoice->formatedInvoiceNumber";
-            $booking->save();
-        }
-
-        return $booking;
+        return app(BookeppingBookingService::class)->createBookingForInvoice($this);
     }
 
     public function getFormatedInvoiceNumberAttribute(): string
