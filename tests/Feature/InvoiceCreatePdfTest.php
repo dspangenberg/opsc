@@ -206,7 +206,7 @@ it('does not set watermark for non-draft invoices', function () {
     MediaUploader::shouldReceive('fromSource')->andReturnSelf();
     MediaUploader::shouldReceive('useFilename')->andReturnSelf();
     MediaUploader::shouldReceive('toDestination')->andReturnSelf();
-    MediaUploader::shouldReceive('onDuplicateReplace')->andReturnSelf();
+    MediaUploader::shouldReceive('onDuplicateReplace')->once()->andReturnSelf();
     MediaUploader::shouldReceive('upload')->once()->andReturn($mockMedia);
 
     Invoice::createOrGetPdf($invoice);
@@ -392,7 +392,7 @@ it('generates Zugferd XML for non-draft zugferd invoices', function () {
     MediaUploader::shouldReceive('fromSource')->andReturnSelf();
     MediaUploader::shouldReceive('useFilename')->andReturnSelf();
     MediaUploader::shouldReceive('toDestination')->andReturnSelf();
-    MediaUploader::shouldReceive('onDuplicateReplace')->andReturnSelf();
+    MediaUploader::shouldReceive('onDuplicateReplace')->once()->andReturnSelf();
     MediaUploader::shouldReceive('upload')->once()->andReturn($mockMedia);
 
     $result = Invoice::createOrGetPdf($invoice);
@@ -654,7 +654,7 @@ it('returns zugferd xml path over pdf path when zugferd is generated', function 
     MediaUploader::shouldReceive('fromSource')->andReturnSelf();
     MediaUploader::shouldReceive('useFilename')->andReturnSelf();
     MediaUploader::shouldReceive('toDestination')->andReturnSelf();
-    MediaUploader::shouldReceive('onDuplicateReplace')->andReturnSelf();
+    MediaUploader::shouldReceive('onDuplicateReplace')->once()->andReturnSelf();
 
     $mockMedia = createTestMedia('test-zugferd-path.pdf');
     MediaUploader::shouldReceive('upload')->andReturn($mockMedia);
