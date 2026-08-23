@@ -500,7 +500,7 @@ class BookkeepingBooking extends Model
                 break;
             case 'App\Models\Invoice':
                 $invoice = Invoice::find($booking->bookable_id);
-                $booking = Invoice::createBooking($invoice);
+                $booking = $invoice->createBooking();
                 break;
             case 'App\Models\Transaction':
                 $transaction = Transaction::find($booking->bookable_id);
