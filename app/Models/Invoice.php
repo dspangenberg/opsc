@@ -20,6 +20,7 @@ use Endroid\QrCode\Writer\SvgWriter;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -48,7 +49,7 @@ use Throwable;
  */
 class Invoice extends Model implements MediableInterface
 {
-    use HasNotables, Mediable;
+    use HasFactory, HasNotables, Mediable;
 
     protected $fillable = [
         'additional_text',

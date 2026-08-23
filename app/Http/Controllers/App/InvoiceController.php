@@ -211,7 +211,7 @@ class InvoiceController extends Controller
 
         $invoice->is_loss_of_receivables = true;
         $invoice->save();
-        Invoice::createBooking($invoice);
+        $invoice->createBooking();
 
         return redirect()->back();
     }
@@ -765,8 +765,7 @@ class InvoiceController extends Controller
         $invoice->setDueDate();
         $invoice->sent_at = $invoice->issued_on;
         $invoice->save();
-
-        Invoice::createBooking($invoice);
+        $invoice->createBooking();
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
     }

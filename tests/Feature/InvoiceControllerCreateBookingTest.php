@@ -13,6 +13,7 @@ use App\Models\Tax;
 use App\Models\TaxRate;
 use App\Models\Tenant;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Stancl\Tenancy\Database\Models\Domain;
 use Stancl\Tenancy\Facades\Tenancy;
 
@@ -28,70 +29,41 @@ beforeEach(function () {
 
     $this->user = User::factory()->create(['password' => bcrypt('password')]);
 
-    BookkeepingAccount::create([
+    BookkeepingAccount::factory()->create([
         'account_number' => 4400,
         'name' => 'Umsatzerlöse 19%',
         'type' => 'e',
-        'is_default' => true,
     ]);
 
-    $this->tax = Tax::create([
-        'name' => 'MwSt.',
-        'invoice_text' => 'USt.',
-        'value' => 19,
-        'needs_vat_id' => false,
-        'is_default' => true,
+    $this->tax = Tax::factory()->create([
         'outturn_account_id' => 4400,
-        'default_rate_id' => 0,
     ]);
 
-    $this->taxRate = TaxRate::create([
+    $this->taxRate = TaxRate::factory()->create([
         'tax_id' => $this->tax->id,
-        'rate' => 19,
-        'name' => '19%',
-        'outturn_account_id' => 0,
     ]);
 
-    $this->contact = Contact::create([
+    $this->contact = Contact::factory()->create([
         'name' => 'Testfirma GmbH',
         'debtor_number' => 10001,
         'is_debtor' => true,
         'tax_id' => $this->tax->id,
     ]);
 
-    BookkeepingAccount::create([
+    BookkeepingAccount::factory()->create([
         'account_number' => 10001,
         'name' => 'TESTFIRMA GMBH',
         'type' => 'd',
     ]);
 
-    $this->invoiceType = InvoiceType::create([
-        'print_name' => 'Rechnung',
-        'display_name' => 'Rechnung',
-        'key' => 'invoice',
-        'abbreviation' => 'RG',
-        'zugferd_id' => '380',
-    ]);
+    $this->invoiceType = InvoiceType::factory()->create();
 
-    $this->paymentDeadline = PaymentDeadline::create([
-        'name' => '14 Tage',
-        'days' => 14,
-        'is_default' => true,
-        'is_immediately' => false,
-        'invoice_text' => 'Zahlbar bis zum $dueDate.',
-    ]);
+    $this->paymentDeadline = PaymentDeadline::factory()->create();
 
-    $this->numberRange = NumberRange::create([
-        'name' => 'Rechnungen',
-        'prefix' => 'INV-'.uniqid(),
-        'model' => Invoice::class,
-    ]);
+    $this->numberRange = NumberRange::factory()->create();
 
-    $this->numberRangeDocumentNumber = NumberRangeDocumentNumber::create([
+    $this->numberRangeDocumentNumber = NumberRangeDocumentNumber::factory()->create([
         'number_range_id' => $this->numberRange->id,
-        'year' => now()->year,
-        'counter' => 0,
-        'document_number' => '0',
     ]);
 });
 
@@ -101,31 +73,22 @@ afterEach(function () {
 
 function createBookingControllerInvoice(array $overrides = []): Invoice
 {
-    $invoice = Invoice::forceCreate(array_merge([
+    /** @var Invoice $invoice */
+    $invoice = Model::unguarded(fn (): Invoice => Invoice::factory()->create(array_merge([
         'contact_id' => test()->contact->id,
         'issued_on' => now()->toDateString(),
         'due_on' => now()->addDays(14)->toDateString(),
         'payment_deadline_id' => test()->paymentDeadline->id,
         'type_id' => test()->invoiceType->id,
         'tax_id' => test()->tax->id,
-        'is_draft' => false,
-        'is_external' => false,
         'number_range_document_numbers_id' => test()->numberRangeDocumentNumber->id,
         'invoice_number' => 202500001,
-    ], $overrides));
+    ], $overrides)));
 
-    InvoiceLine::create([
+    InvoiceLine::factory()->create([
         'invoice_id' => $invoice->id,
-        'quantity' => 1,
-        'unit' => 'Stk.',
-        'text' => 'Testleistung',
-        'price' => 100,
-        'amount' => 100,
-        'tax' => 19,
         'tax_rate_id' => test()->taxRate->id,
         'tax_id' => test()->tax->id,
-        'type_id' => 0,
-        'pos' => 1,
     ]);
 
     return $invoice;

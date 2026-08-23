@@ -13,6 +13,7 @@ use App\Models\PaymentDeadline;
 use App\Models\Tax;
 use App\Models\TaxRate;
 use App\Models\Tenant;
+use Illuminate\Database\Eloquent\Model;
 use Stancl\Tenancy\Database\Models\Domain;
 use Stancl\Tenancy\Facades\Tenancy;
 
@@ -26,70 +27,41 @@ beforeEach(function () {
     Tenancy::initialize($this->tenant);
     $this->artisan('tenants:migrate');
 
-    $this->outturnAccount = BookkeepingAccount::create([
+    $this->outturnAccount = BookkeepingAccount::factory()->create([
         'account_number' => 4400,
         'name' => 'Umsatzerlöse 19%',
         'type' => 'e',
-        'is_default' => true,
     ]);
 
-    $this->tax = Tax::create([
-        'name' => 'MwSt.',
-        'invoice_text' => 'USt.',
-        'value' => 19,
-        'needs_vat_id' => false,
-        'is_default' => true,
+    $this->tax = Tax::factory()->create([
         'outturn_account_id' => 4400,
-        'default_rate_id' => 0,
     ]);
 
-    $this->taxRate = TaxRate::create([
+    $this->taxRate = TaxRate::factory()->create([
         'tax_id' => $this->tax->id,
-        'rate' => 19,
-        'name' => '19%',
-        'outturn_account_id' => 0,
     ]);
 
-    $this->contact = Contact::create([
+    $this->contact = Contact::factory()->create([
         'name' => 'Testfirma GmbH',
         'debtor_number' => 10001,
         'is_debtor' => true,
         'tax_id' => $this->tax->id,
     ]);
 
-    $this->debtorAccount = BookkeepingAccount::create([
+    $this->debtorAccount = BookkeepingAccount::factory()->create([
         'account_number' => 10001,
         'name' => 'TESTFIRMA GMBH',
         'type' => 'd',
     ]);
 
-    $this->invoiceType = InvoiceType::create([
-        'print_name' => 'Rechnung',
-        'display_name' => 'Rechnung',
-        'key' => 'invoice',
-        'abbreviation' => 'RG',
-        'zugferd_id' => '380',
-    ]);
+    $this->invoiceType = InvoiceType::factory()->create();
 
-    $this->paymentDeadline = PaymentDeadline::create([
-        'name' => '14 Tage',
-        'days' => 14,
-        'is_default' => true,
-        'is_immediately' => false,
-        'invoice_text' => 'Zahlbar bis zum $dueDate.',
-    ]);
+    $this->paymentDeadline = PaymentDeadline::factory()->create();
 
-    $this->numberRange = NumberRange::create([
-        'name' => 'Rechnungen',
-        'prefix' => 'INV-'.uniqid(),
-        'model' => Invoice::class,
-    ]);
+    $this->numberRange = NumberRange::factory()->create();
 
-    $this->numberRangeDocumentNumber = NumberRangeDocumentNumber::create([
+    $this->numberRangeDocumentNumber = NumberRangeDocumentNumber::factory()->create([
         'number_range_id' => $this->numberRange->id,
-        'year' => now()->year,
-        'counter' => 0,
-        'document_number' => '0',
     ]);
 });
 
@@ -99,31 +71,22 @@ afterEach(function () {
 
 function createBookingInvoice(array $overrides = []): Invoice
 {
-    $invoice = Invoice::forceCreate(array_merge([
+    /** @var Invoice $invoice */
+    $invoice = Model::unguarded(fn (): Invoice => Invoice::factory()->create(array_merge([
         'contact_id' => test()->contact->id,
         'issued_on' => now()->toDateString(),
         'due_on' => now()->addDays(14)->toDateString(),
         'payment_deadline_id' => test()->paymentDeadline->id,
         'type_id' => test()->invoiceType->id,
         'tax_id' => test()->tax->id,
-        'is_draft' => false,
-        'is_external' => false,
         'number_range_document_numbers_id' => test()->numberRangeDocumentNumber->id,
         'invoice_number' => 202500001,
-    ], $overrides));
+    ], $overrides)));
 
-    InvoiceLine::create([
+    InvoiceLine::factory()->create([
         'invoice_id' => $invoice->id,
-        'quantity' => 1,
-        'unit' => 'Stk.',
-        'text' => 'Testleistung',
-        'price' => 100,
-        'amount' => 100,
-        'tax' => 19,
         'tax_rate_id' => test()->taxRate->id,
         'tax_id' => test()->tax->id,
-        'type_id' => 0,
-        'pos' => 1,
     ]);
 
     return $invoice;
@@ -172,14 +135,12 @@ it('does not reassign document number when invoice already has one from the corr
 });
 
 it('reassigns document number when invoice has one from a different range', function () {
-    $otherRange = NumberRange::create([
+    $otherRange = NumberRange::factory()->create([
         'name' => 'Andere',
         'prefix' => 'AND-'.uniqid(),
-        'model' => Invoice::class,
     ]);
-    $otherDocNr = NumberRangeDocumentNumber::create([
+    $otherDocNr = NumberRangeDocumentNumber::factory()->create([
         'number_range_id' => $otherRange->id,
-        'year' => now()->year,
         'counter' => 1,
         'document_number' => 'AND-'.now()->year.'-1',
     ]);
@@ -197,7 +158,7 @@ it('reassigns document number when invoice has one from a different range', func
 });
 
 it('uses loss of receivables account when invoice is loss of receivables', function () {
-    BookkeepingAccount::create([
+    BookkeepingAccount::factory()->create([
         'account_number' => 2400,
         'name' => 'Einbringlichkeit zweifelhaft',
         'type' => 'd',
@@ -213,14 +174,12 @@ it('uses loss of receivables account when invoice is loss of receivables', funct
 });
 
 it('returns null and logs when outturn account is missing', function () {
-    $tax = Tax::create([
+    $tax = Tax::factory()->create([
         'name' => 'Ohne Konto',
         'invoice_text' => 'OK',
         'value' => 0,
-        'needs_vat_id' => false,
         'is_default' => false,
         'outturn_account_id' => 9999,
-        'default_rate_id' => 0,
     ]);
 
     $invoice = createBookingInvoice(['tax_id' => $tax->id]);
@@ -272,7 +231,7 @@ it('does not overwrite a locked existing booking', function () {
 it('computes amount as sum of lines amount plus tax', function () {
     $invoice = createBookingInvoice();
 
-    InvoiceLine::create([
+    InvoiceLine::factory()->create([
         'invoice_id' => $invoice->id,
         'quantity' => 2,
         'unit' => 'Stk.',
@@ -282,7 +241,6 @@ it('computes amount as sum of lines amount plus tax', function () {
         'tax' => 19,
         'tax_rate_id' => test()->taxRate->id,
         'tax_id' => test()->tax->id,
-        'type_id' => 0,
         'pos' => 2,
     ]);
 

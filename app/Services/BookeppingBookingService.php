@@ -10,7 +10,7 @@ use App\Models\NumberRange;
 
 class BookeppingBookingService
 {
-    public function createBookingForInvoice(Invoice $invoice)
+    public function createBookingForInvoice(Invoice $invoice): ?BookkeepingBooking
     {
 
         if (! $invoice->sent_at) {
