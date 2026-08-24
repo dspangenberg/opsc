@@ -321,9 +321,6 @@ class InvoiceController extends Controller
     public function updateLines(Request $request, Invoice $invoice): RedirectResponse
     {
         $validatedLines = $request->lines;
-
-        // Simply pass the validated array data to updatePositions
-        // The model will handle the data as arrays, not DTOs
         $invoice->updatePositions($validatedLines);
 
         return redirect()->route('app.invoice.details', ['invoice' => $invoice->id]);
