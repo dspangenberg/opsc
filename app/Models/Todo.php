@@ -32,6 +32,7 @@ class Todo extends Model
 
     protected $appends = [
         'todobable_description',
+        'is_overdue',
     ];
 
     protected function casts(): array
@@ -55,6 +56,13 @@ class Todo extends Model
     public function todoable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function getIsOverdueAttribute(): bool
+    {
+        return $this->completed_at === null
+            && $this->due_at !== null
+            && $this->due_at->isPast();
     }
 
     public function getTodobableDescriptionAttribute(): ?string

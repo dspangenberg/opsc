@@ -3,7 +3,7 @@ import { usePage } from '@inertiajs/react'
 import type * as React from 'react'
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react'
 import { Button } from '@/Components/twc-ui/button'
-import { TodoEditDialog } from '@/Components/Shared/TodoEditDialog'
+import { TodoEditDialog } from '@/Components/Shared/Todo/TodoEditDialog'
 
 interface TodoContextType {
   todoableType?: string

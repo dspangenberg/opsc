@@ -14,7 +14,7 @@ use Tests\TestCase;
 */
 
 pest()->extend(TestCase::class)
-    ->in('Feature');
+    ->in('Feature', 'Unit');
 
 beforeEach(function () {
     foreach (glob(public_path('public-*')) ?: [] as $path) {
