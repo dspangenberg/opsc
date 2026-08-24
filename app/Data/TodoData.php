@@ -34,5 +34,6 @@ class TodoData extends Data
         public readonly ?SimpleUserData $assigned_to,
         public readonly ?SimpleUserData $created_by,
         public readonly ?string $todobable_description,
+        public readonly bool $is_overdue,
     ) {}
 }

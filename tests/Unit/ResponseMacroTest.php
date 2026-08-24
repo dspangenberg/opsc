@@ -1,9 +1,6 @@
 <?php
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Tests\TestCase;
-
-uses(TestCase::class);
 
 test('inlineFile response macro sets the inline filename header', function () {
     $path = tempnam(sys_get_temp_dir(), 'pdf');

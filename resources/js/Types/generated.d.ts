@@ -818,6 +818,7 @@ declare namespace App {
       readonly assigned_to: App.Data.SimpleUserData | null;
       readonly created_by: App.Data.SimpleUserData | null;
       readonly todobable_description: string | null;
+      readonly is_overdue: boolean;
     };
     export type TransactionData = {
       readonly id: number | null;

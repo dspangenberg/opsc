@@ -57,10 +57,12 @@ class ProjectController extends Controller
                 Todo::query()
                     ->where('todoable_type', Project::class)
                     ->where('todoable_id', $project->id)
+                    /*
                     ->where(fn ($query) => $query
                         ->where('created_by_user_id', auth()->id())
                         ->orWhere('assigned_to_user_id', auth()->id())
                     )
+                    */
                     ->with(['assigned_to', 'created_by', 'todoable'])
                     ->get()
             ),

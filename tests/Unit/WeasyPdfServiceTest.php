@@ -2,9 +2,6 @@
 
 use App\Services\WeasyPdfService;
 use Illuminate\Support\Facades\Process;
-use Tests\TestCase;
-
-uses(TestCase::class);
 
 function runPdfCpuMethod(string $method, array $args): string
 {

@@ -1,9 +1,6 @@
 <?php
 
 use App\Models\Transaction;
-use Tests\TestCase;
-
-uses(TestCase::class);
 
 it('parses unwrapped filters and normalizes operator aliases', function () {
     $json = '{"counter_account_id":{"operator":"eq","value":"0"}}';
