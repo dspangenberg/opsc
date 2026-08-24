@@ -159,6 +159,15 @@ export const BookingIndexFilterForm: React.FC<Props> = ({
                       nur bestätigte Buchungen
                     </Checkbox>
                     <Checkbox
+                      isSelected={!currentFilters.is_locked}
+                      name="is_locked"
+                      onChange={checked =>
+                        updateFilters('is_locked', checked ? { operator: '=', value: false } : null)
+                      }
+                    >
+                      nur unbestätigte Buchungen
+                    </Checkbox>
+                    <Checkbox
                       isSelected={currentFilters.hide_private}
                       name="hide_private"
                       onChange={checked =>
