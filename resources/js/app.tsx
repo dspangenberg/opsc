@@ -52,14 +52,16 @@ createInertiaApp({
       import.meta.glob('./Pages/**/*.tsx')
     )
 
-    page.default.layout =
+    const resolvedPage = page.default ?? page
+
+    resolvedPage.layout =
       name.startsWith('App') || name.startsWith('Admin')
         ? (page: ReactElement<unknown, string | JSXElementConstructor<any>>) => (
             <AppLayout>{page}</AppLayout>
           )
         : undefined
 
-    return page
+    return resolvedPage
   },
   defaults: {
     visitOptions: (href, options) => {

@@ -85,6 +85,11 @@ Route::middleware([
     Route::put('bookmarks/folder/{bookmarkFolder}/restore',
         [BookmarkController::class, 'restoreFolder'])->withTrashed()->name('app.bookmark.restore-folder');
 
+    Route::get('todos', [TodoController::class, 'index'])->name('app.todo.index');
+
+    Route::put('todo/{todo}/complete', [TodoController::class, 'complete'])->name('app.todo.complete');
+    Route::put('todo/{todo}/uncomplete', [TodoController::class, 'uncomplete'])->name('app.todo.uncomplete');
+
     Route::post('todo/store',
         [TodoController::class, 'store'])->withTrashed()->middleware([HandlePrecognitiveRequests::class])->name('app.todo.store');
 
