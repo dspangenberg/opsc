@@ -15,7 +15,7 @@ use Stancl\Tenancy\Actions\CloneRoutesAsTenant;
 use Stancl\Tenancy\Bootstrappers\BroadcastChannelPrefixBootstrapper;
 use Stancl\Tenancy\Bootstrappers\Integrations\FortifyRouteBootstrapper;
 use Stancl\Tenancy\Bootstrappers\RootUrlBootstrapper;
-use Stancl\Tenancy\Contracts\TenantWithDatabase;
+use Stancl\Tenancy\Database\Contracts\TenantWithDatabase;
 use Stancl\Tenancy\Events;
 use Stancl\Tenancy\Jobs;
 use Stancl\Tenancy\Listeners;
@@ -203,7 +203,7 @@ class TenancyServiceProvider extends ServiceProvider
      * manage their own tenant database schema. Only the database file is
      * created so tenancy can be initialized.
      *
-     * @return array<int, JobPipeline<TenantWithDatabase>|class-string>
+     * @return array{0: JobPipeline<TenantWithDatabase>}
      */
     protected function tenantCreatedListeners(): array
     {
