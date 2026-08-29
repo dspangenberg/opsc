@@ -23,7 +23,7 @@ beforeEach(function () {
     Tenancy::initialize($this->tenant);
 
     // Führe die Tenant-Migrationen aus
-    $this->artisan('tenants:migrate');
+    $this->artisan('tenants:migrate', ['--tenants' => [$this->tenant->id]]);
 
     // Erstelle einen Kontakt für den Tenant
     $this->contact = Contact::factory()->create();
@@ -497,7 +497,7 @@ it('isolates documents between tenants', function () {
 
     // Initialisiere den zweiten Tenant und führe Migrationen aus
     Tenancy::initialize($tenant2);
-    $this->artisan('tenants:migrate');
+    $this->artisan('tenants:migrate', ['--tenants' => [$tenant2->id]]);
 
     // Erstelle einen Benutzer für den zweiten Tenant
     $user2 = User::factory()->create();

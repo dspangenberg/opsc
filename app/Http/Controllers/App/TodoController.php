@@ -6,12 +6,15 @@ use App\Data\TodoData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TodoRequest;
 use App\Models\Todo;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class TodoController extends Controller
 {
+    use AuthorizesRequests;
+
     public function index(): Response
     {
         $todos = Todo::query()
@@ -41,6 +44,8 @@ class TodoController extends Controller
 
     public function complete(Todo $todo): RedirectResponse
     {
+        $this->authorize('update', $todo);
+
         $todo->completed_at = now();
         $todo->save();
 
@@ -49,6 +54,8 @@ class TodoController extends Controller
 
     public function uncomplete(Todo $todo): RedirectResponse
     {
+        $this->authorize('update', $todo);
+
         $todo->completed_at = null;
         $todo->save();
 

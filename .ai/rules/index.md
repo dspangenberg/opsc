@@ -4,4 +4,6 @@ Before planning or editing, find the row whose globs match the file's path and r
 
 | Applies to | Rule file |
 | --- | --- |
+| app/Http/Controllers/App/TodoController.php | .ai/rules/app.md |
 | **/* | .ai/rules/general.md |
+| resources/js/app.tsx | .ai/rules/js.md |

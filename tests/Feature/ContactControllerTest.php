@@ -17,7 +17,7 @@ beforeEach(function () {
     ]);
 
     Tenancy::initialize($this->tenant);
-    $this->artisan('tenants:migrate');
+    $this->artisan('tenants:migrate', ['--tenants' => [$this->tenant->id]]);
 
     $this->user = User::factory()->create();
 });
