@@ -16,7 +16,7 @@ interface Props {
   user: App.Data.UserData
 }
 
-export const TodoListItem: FC<Props> = ({ _showTodoAble = false, user, todo }) => {
+export const TodoListItem: FC<Props> = ({ showTodoAble = false, user, todo }) => {
   const isAssignedToUser = todo.assigned_to_user_id === user.id
 
   const handleCompleteTodo = () => {

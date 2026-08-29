@@ -25,8 +25,45 @@ vi.mock('@/Components/twc-ui/avatar', () => ({
   ),
 }))
 
-const user = { id: 1, full_name: 'Max Mustermann', initials: 'MM', email: 'max@test.de', avatar_url: null }
-const otherUser = { id: 2, full_name: 'Anna Schmidt', initials: 'AS', email: 'anna@test.de', avatar_url: null }
+function makeUser(overrides: Partial<App.Data.UserData> = {}): App.Data.UserData {
+  return {
+    id: 1,
+    first_name: 'Max',
+    last_name: 'Mustermann',
+    avatar_url: null,
+    is_admin: false,
+    is_locked: false,
+    email: 'max@test.de',
+    full_name: 'Max Mustermann',
+    reverse_full_name: 'Mustermann, Max',
+    initials: 'MM',
+    user_agent: null,
+    pending_email: null,
+    is_impersonating: null,
+    impersonator: null,
+    email_account_id: null,
+    contact_id: null,
+    email_account: null,
+    contact: null,
+    last_login_at: null,
+    email_verified_at: null,
+    ...overrides,
+  }
+}
+
+const user = makeUser()
+const otherUser = makeUser({
+  id: 2,
+  first_name: 'Anna',
+  last_name: 'Schmidt',
+  full_name: 'Anna Schmidt',
+  reverse_full_name: 'Schmidt, Anna',
+  initials: 'AS',
+  email: 'anna@test.de',
+})
+
+const simpleUser: App.Data.SimpleUserData = { id: 1, full_name: 'Max Mustermann', initials: 'MM', email: 'max@test.de', avatar_url: null }
+const simpleOtherUser: App.Data.SimpleUserData = { id: 2, full_name: 'Anna Schmidt', initials: 'AS', email: 'anna@test.de', avatar_url: null }
 
 function makeTodo(overrides: Partial<App.Data.TodoData> = {}): App.Data.TodoData {
   return {
@@ -38,8 +75,8 @@ function makeTodo(overrides: Partial<App.Data.TodoData> = {}): App.Data.TodoData
     completed_at: null,
     created_by_user_id: 1,
     assigned_to_user_id: 1,
-    assigned_to: user,
-    created_by: user,
+    assigned_to: simpleUser,
+    created_by: simpleUser,
     todobable_description: 'Projekt: Testprojekt',
     is_overdue: false,
     ...overrides,
@@ -123,7 +160,7 @@ describe('TodoListItem', () => {
   })
 
   it('zeigt Avatar mit zugewiesenem User', () => {
-    render(<TodoListItem todo={makeTodo({ assigned_to: otherUser })} user={user} />)
+    render(<TodoListItem todo={makeTodo({ assigned_to: simpleOtherUser })} user={user} />)
 
     expect(screen.getByTestId('avatar')).toHaveTextContent('AS')
   })
