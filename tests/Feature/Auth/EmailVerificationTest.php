@@ -15,7 +15,7 @@ beforeEach(function () {
         'domain' => 'tenant-'.$this->tenant->id.'.test',
     ]);
     Tenancy::initialize($this->tenant);
-    $this->artisan('tenants:migrate');
+    $this->artisan('tenants:migrate', ['--tenants' => [$this->tenant->id]]);
 });
 
 afterEach(function () {

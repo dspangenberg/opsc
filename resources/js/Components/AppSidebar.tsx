@@ -131,10 +131,26 @@ const buildNavData = (
     },
     {
       title: 'Todos',
-      url: route('app.invoice.index', { _query: { view: 'all' } }, false),
+      url: route('app.todo.index', { _query: { view: 'all' } }, false),
       icon: TaskDaily01Icon,
-      activePath: '/app/invoicing/',
-
+      activePath: '/app/todos',
+      items: [
+        {
+          title: 'Meine Todos',
+          url: route('app.time.my-week', { _query: { view: 'my-week' } }, false),
+          activePath: '/app/todos/my-week?view=my-week'
+        },
+        {
+          title: 'Geplant',
+          url: route('app.time.my-week', { _query: { view: 'my-week' } }, false),
+          activePath: '/app/todos/my-week?view=my-week'
+        },
+        {
+          title: 'Überfällig',
+          url: route('app.time.my-week', { _query: { view: 'my-week' } }, false),
+          activePath: '/app/todos/my-week?view=my-week'
+        },
+      ]
     },
     {
       title: 'Zeiterfassung',

@@ -19,6 +19,8 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel'
 const sentryEnabled = import.meta.env.VITE_SENTRY_ENABLED === 'true'
 const sentryDsn = import.meta.env.VITE_SENTRY_DNS
 
+const pagesGlob = () => import.meta.glob(['./Pages/**/*.tsx', '!./Pages/**/*.test.tsx'])
+
 configureEcho({
   broadcaster: 'reverb',
   key: import.meta.env.VITE_REVERB_APP_KEY,
@@ -37,7 +39,7 @@ if (sentryEnabled && sentryDsn) {
 }
 
 globalThis.resolveMomentumModal = async name => {
-  const pages = import.meta.glob('./Pages/**/*.tsx')
+  const pages = pagesGlob()
   const path = `./Pages/${name}.tsx`
   const module = pages[path]
   return module ? await module() : null
@@ -49,17 +51,18 @@ createInertiaApp({
   resolve: async name => {
     const page: any = await resolvePageComponent(
       `./Pages/${name}.tsx`,
-      import.meta.glob('./Pages/**/*.tsx')
+      pagesGlob()
     )
 
-    page.default.layout =
+    const resolvedPage = page.default ?? page
+    resolvedPage.layout =
       name.startsWith('App') || name.startsWith('Admin')
         ? (page: ReactElement<unknown, string | JSXElementConstructor<any>>) => (
             <AppLayout>{page}</AppLayout>
           )
         : undefined
 
-    return page
+    return resolvedPage
   },
   defaults: {
     visitOptions: (href, options) => {

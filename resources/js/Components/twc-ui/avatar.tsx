@@ -33,7 +33,7 @@ const avatarVariants = tv({
     size: {
       xs: {
         base: 'size-6',
-        fallback: 'text-xs',
+        fallback: 'text-xxs',
         badge: 'size-3'
       },
       sm: {

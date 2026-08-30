@@ -15,6 +15,7 @@ use Stancl\Tenancy\Actions\CloneRoutesAsTenant;
 use Stancl\Tenancy\Bootstrappers\BroadcastChannelPrefixBootstrapper;
 use Stancl\Tenancy\Bootstrappers\Integrations\FortifyRouteBootstrapper;
 use Stancl\Tenancy\Bootstrappers\RootUrlBootstrapper;
+use Stancl\Tenancy\Database\Contracts\TenantWithDatabase;
 use Stancl\Tenancy\Events;
 use Stancl\Tenancy\Jobs;
 use Stancl\Tenancy\Listeners;
@@ -33,22 +34,7 @@ class TenancyServiceProvider extends ServiceProvider
         return [
             // Tenant events
             Events\CreatingTenant::class => [],
-            Events\TenantCreated::class => [
-                JobPipeline::make([
-                    Jobs\CreateDatabase::class,
-                    Jobs\MigrateDatabase::class,
-                    Jobs\SeedDatabase::class,
-                    Jobs\CreateStorageSymlinks::class,
-                    CreateTenantAdminJob::class,
-
-                    // Your own jobs to prepare the tenant.
-                    // Provision API keys, create S3 buckets, anything you want!
-                ])->send(function (Events\TenantCreated $event) {
-                    return $event->tenant;
-                })->shouldBeQueued(false), // `false` by default, but you likely want to make this `true` in production.
-
-                // Listeners\CreateTenantStorage::class,
-            ],
+            Events\TenantCreated::class => $this->tenantCreatedListeners(),
             Events\SavingTenant::class => [],
             Events\TenantSaved::class => [],
             Events\UpdatingTenant::class => [],
@@ -209,6 +195,40 @@ class TenancyServiceProvider extends ServiceProvider
         if (tenancy()->globalStackHasMiddleware(config('tenancy.identification.path_identification_middleware'))) {
             TenancyUrlGenerator::$prefixRouteNames = true;
         }
+    }
+
+    /**
+     * The tenants provisioning pipeline. During tests the expensive steps
+     * (migrate, seed, admin creation) are skipped, because feature tests
+     * manage their own tenant database schema. Only the database file is
+     * created so tenancy can be initialized.
+     *
+     * @return array{0: JobPipeline<TenantWithDatabase>}
+     */
+    protected function tenantCreatedListeners(): array
+    {
+        $jobs = [
+            Jobs\CreateDatabase::class,
+            Jobs\MigrateDatabase::class,
+            Jobs\SeedDatabase::class,
+            Jobs\CreateStorageSymlinks::class,
+            CreateTenantAdminJob::class,
+
+            // Your own jobs to prepare the tenant.
+            // Provision API keys, create S3 buckets, anything you want!
+        ];
+
+        if ($this->app->environment('testing')) {
+            $jobs = [Jobs\CreateDatabase::class];
+        }
+
+        return [
+            JobPipeline::make($jobs)->send(function (Events\TenantCreated $event) {
+                return $event->tenant;
+            })->shouldBeQueued(false), // `false` by default, but you likely want to make this `true` in production.
+
+            // Listeners\CreateTenantStorage::class,
+        ];
     }
 
     protected function bootEvents(): void

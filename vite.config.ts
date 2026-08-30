@@ -67,8 +67,26 @@ export default defineConfig(({ mode }) => {
             if (id.includes('framer-motion') || id.includes('node_modules/motion/')) return 'motion'
 
             // React aria (large UI library)
-            if (id.includes('react-aria') || id.includes('@react-aria') || id.includes('@react-stately')) {
+            if (
+              id.includes('react-aria-components') ||
+              id.includes('react-aria') ||
+              id.includes('@react-aria') ||
+              id.includes('@react-stately') ||
+              id.includes('@internationalized') ||
+              id.includes('@react-types') ||
+              id.includes('@react-hooks-library')
+            ) {
               return 'react-aria'
+            }
+
+            // ProseMirror (large editor core used by @mdxeditor)
+            if (id.includes('prosemirror') || id.includes('@prosemirror-adapter')) {
+              return 'prosemirror'
+            }
+
+            // Drag and drop
+            if (id.includes('react-dnd') || id.includes('dnd') || id.includes('@dnd-kit') || id.includes('@cgarciagarcia')) {
+              return 'dnd'
             }
 
             // Inertia (routing & SPA)
@@ -82,9 +100,6 @@ export default defineConfig(({ mode }) => {
 
             // Tanstack libraries (query, table)
             if (id.includes('@tanstack')) return 'tanstack'
-
-            // DND Kit (drag and drop)
-            if (id.includes('@dnd-kit')) return 'dnd-kit'
 
             // Icon libraries
             if (id.includes('lucide-react') || id.includes('@hugeicons')) return 'icons'
