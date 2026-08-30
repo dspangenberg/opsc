@@ -15,7 +15,7 @@ scotty run deploy --branch=develop
 
 ## Was beim Deploy passiert
 
-1. Lokal: `git checkout $BRANCH` + `git pull origin $BRANCH`.
+1. Lokal: nichts — das lokale Repo wird nicht angefasst; der Deploy-Zweig wird direkt vom Server aus GitHub geklont.
 2. Remote: neues Release in `releases/YYYYMMDD-HHMMSS/` klonen
    (`git clone --depth 1 --branch $BRANCH git@github.com:dspangenberg/opsc`).
 3. `.env` in das Release verlinken, `composer install --prefer-dist --no-dev -o`.
