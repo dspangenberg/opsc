@@ -129,6 +129,7 @@ const buildNavData = (
       activePath: '/app/projects',
       hasSep: true
     },
+    /*
     {
       title: 'Todos',
       url: route('app.todo.index', { _query: { view: 'all' } }, false),
@@ -152,6 +153,7 @@ const buildNavData = (
         },
       ]
     },
+     */
     {
       title: 'Zeiterfassung',
       hasSep: true,
