@@ -3,7 +3,7 @@
  * Copyright (c) 2024 by Danny Spangenberg (twiceware solutions e. K.)
  */
 
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/vitest'
 
 if (typeof globalThis.DOMMatrix === 'undefined') {
   class DOMMatrix {
