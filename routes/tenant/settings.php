@@ -6,6 +6,7 @@ use App\Http\Controllers\App\Bookkeeping\BookkeepingAcountsController;
 use App\Http\Controllers\App\Bookkeeping\BookkeepingRulesController;
 use App\Http\Controllers\App\Bookkeeping\CostCenterController;
 use App\Http\Controllers\App\Setting\BankAccountController;
+use App\Http\Controllers\App\Setting\DocumentTagController;
 use App\Http\Controllers\App\Setting\DocumentTypeController;
 use App\Http\Controllers\App\Setting\LetterheadController;
 use App\Http\Controllers\App\Setting\OfferSectionController;
@@ -58,6 +59,17 @@ Route::post('settings/printing-system/layouts/store', [PrintLayoutController::cl
 Route::get('settings/printing-system/layouts/{layout}/edit', [PrintLayoutController::class, 'edit'])->name('app.setting.layout.edit');
 Route::put('settings/printing-system/layouts/{layout}', [PrintLayoutController::class, 'update'])->name('app.setting.layout.update')->middleware([HandlePrecognitiveRequests::class]);
 Route::delete('settings/printing-system/layouts/{layout}', [PrintLayoutController::class, 'delete'])->name('app.setting.layout.delete');
+
+Route::get('/settings/documents/document-tags', [DocumentTagController::class, 'index'])->name('app.setting.document_tag.index');
+Route::get('/settings/documents/document-tags/create', [DocumentTagController::class, 'create'])->name('app.setting.document_tag.create');
+Route::get('/settings/documents/document-tags/{documentTag}/edit', [DocumentTagController::class, 'edit'])->name('app.setting.document_tag.edit')->middleware([HandlePrecognitiveRequests::class]);
+
+Route::post('/settings/documents/document-tags', [DocumentTagController::class, 'store'])
+    ->middleware([HandlePrecognitiveRequests::class])
+    ->name('app.setting.document_tag.store');
+Route::put('/settings/documents/document-tags/{documentTag}/edit', [DocumentTagController::class, 'update'])->name('app.setting.document_tag.update')->middleware([HandlePrecognitiveRequests::class]);
+
+
 
 Route::get('/settings/documents/document-types', [DocumentTypeController::class, 'index'])->name('app.setting.document_type.index');
 Route::get('/settings/documents/document-types/create', [DocumentTypeController::class, 'create'])->name('app.setting.document_type.create');

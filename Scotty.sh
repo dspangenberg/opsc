@@ -4,6 +4,9 @@
 # Deploy:  scotty run deploy
 # Anderer Branch:  scotty run deploy --branch=develop
 #
+# Das lokale Repo wird beim Deploy nicht angefasst; der Klon-Vorgang laeuft
+# direkt auf dem Server gegen GitHub.
+#
 # Voraussetzungen (auf dem Server eingerichtet):
 #   - Deploy-Key /home/twiceware/.ssh/id_ed25519 ist als Deploy-Key
 #     im GitHub-Repo dspangenberg/opsc hinterlegt.
@@ -11,7 +14,7 @@
 #   - node/pnpm liegen als Symlinks in /usr/local/bin (nodejs unter /usr/local/lib/nodejs).
 
 # @servers local=127.0.0.1 remote=twiceware@twiceware-opsc.de
-# @macro deploy startDeployment cloneRepository runComposer buildAssets updateSymlinks migrateDatabase blessNewRelease cleanOldReleases
+# @macro deploy cloneRepository runComposer buildAssets updateSymlinks migrateDatabase blessNewRelease cleanOldReleases
 
 # @option branch=main
 
@@ -22,12 +25,6 @@ CURRENT_DIR="$BASE_DIR/current"
 NEW_RELEASE_NAME=$(date +%Y%m%d-%H%M%S)
 NEW_RELEASE_DIR="$RELEASES_DIR/$NEW_RELEASE_NAME"
 REPOSITORY="dspangenberg/opsc"
-
-# @task on:local
-startDeployment() {
-    git checkout $BRANCH
-    git pull origin $BRANCH
-}
 
 # @task on:remote
 cloneRepository() {

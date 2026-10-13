@@ -25,6 +25,7 @@ import { MenuItem } from '@/Components/twc-ui/menu'
 import { useFileDownload } from '@/Hooks/use-file-download'
 import { DocumentIndexContext } from '@/Pages/App/Document/DocumentIndexContext'
 import { DocumentIndexFileCard } from '@/Pages/App/Document/DocumentIndexFileCard'
+import { parseAndFormatDate } from '@/Lib/DateHelper'
 
 interface DocumentIndexPageProps {
   document: App.Data.DocumentData
@@ -170,7 +171,7 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document }
             <span className="flex-1 truncate">{document.title}</span>
             <HoverCard>
               <Pressable>
-                <Icon icon={InformationCircleIcon} className="rounded-full bg-primary text-white" />
+                <Icon icon={InformationCircleIcon} className="rounded-full bg-muted text-foreground" />
               </Pressable>
               <HoverCardContent className="w-md">
                 <DocumentIndexFileCard document={document} />
@@ -186,7 +187,7 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document }
           )}
 
           <div className="mt-0.5 flex items-center gap-2 text-muted-foreground text-xxs">
-            <div className="flex-1">{document.issued_on}</div>
+            <div className="flex-1">{parseAndFormatDate(document.issued_on as string, 'dd.MM.yy')}</div>
             <div className="text-right">{document.pages} S.</div>
             <div className="text-right">{filesize(document.file_size ?? 0)}</div>
           </div>

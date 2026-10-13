@@ -18,12 +18,10 @@ class TodoController extends Controller
     public function index(): Response
     {
         $todos = Todo::query()
-            /*
             ->where(fn ($query) => $query
                 ->where('created_by_user_id', auth()->id())
                 ->orWhere('assigned_to_user_id', auth()->id())
             )
-            */
             ->with(['assigned_to', 'created_by', 'todoable'])
             ->paginate();
 

@@ -43,6 +43,9 @@ export const EmailIndexEntry: React.FC<InboxIndexEntryProps> = ({
     )
   }
 
+  const getAddressLabel = () => view === 'sent' ? mail.to[0] : mail.from
+
+
   return (
     <div
       className={cn(
@@ -66,7 +69,7 @@ export const EmailIndexEntry: React.FC<InboxIndexEntryProps> = ({
         onClick={handleClicked}
       >
         <div className="flex flex-1 flex-col gap-2">
-          <div className="w-64 text-sm">{mail.from}</div>
+          <div className="w-64 text-sm">{getAddressLabel()}</div>
           <div className="w-64 font-medium text-sm">
             <span className="inline-block w-64 truncate text-sm">{mail.subject}</span>
           </div>

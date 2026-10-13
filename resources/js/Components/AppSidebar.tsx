@@ -343,9 +343,14 @@ const buildNavData = (
             ]),
         {
           title: 'Dokumente',
-          url: route('app.setting.document_type.index', {}, false),
+          url: route('app.setting.document_tag.index', {}, false),
           activePath: '/app/settings/documents',
           items: [
+            {
+              title: 'Dokument-Tags',
+              url: route('app.setting.document_tag.index', {}, false),
+              activePath: '/app/settings/documents/document-tags'
+            },
             {
               title: 'Dokumenttypen',
               url: route('app.setting.document_type.index', {}, false),

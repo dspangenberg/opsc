@@ -14,9 +14,9 @@ interface Props {
 
 export const TodoList: FC<Props> = ({ showTodoAble = false, user, todos }) => {
   return (
-    <div className="mt-8 space-y-4 w-full">
+    <div className="mt-8 w-full">
       <div className="mt-6 flex flex-1 flex-col items-start">
-        <div className="flex w-full flex-col space-y-3">
+        <div className="flex w-full flex-col  divide-y">
           {todos.map((todo, index) => (
             <TodoListItem key={index} todo={todo} user={user} showTodoAble={showTodoAble} />
           ))}

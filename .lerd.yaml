@@ -4,6 +4,7 @@ workers:
   - queue
   - reverb
   - schedule
+  - vite
 custom_workers:
   reverb:
     label: Reverb WebSocket
