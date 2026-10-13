@@ -19,7 +19,4 @@ class DocumentTag extends Model
         'icon',
     ];
 
-    protected $attributes = [
-        's3path' => '',
-    ];
 }

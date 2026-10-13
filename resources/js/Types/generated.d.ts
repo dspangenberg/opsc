@@ -316,6 +316,12 @@ declare namespace App {
       readonly type: App.Data.DocumentTypeData | null;
       readonly project: App.Data.ProjectData | null;
     };
+    export type DocumentTagData = {
+      readonly id: number | null;
+      readonly name: string;
+      readonly color: string | null;
+      readonly icon: string | null;
+    };
     export type DocumentTypeData = {
       readonly id: number | null;
       readonly parent_id: number | null;
