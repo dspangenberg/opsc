@@ -217,7 +217,7 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document }
           </div>
           <div>
             {document.tags.map((tag) => (
-              <TooltipTrigger>
+              <TooltipTrigger key={tag.id}>
                 <Focusable>
                   <div className="size-2 rounded-full text-center" style={{ backgroundColor: tag.color as string }} />
                 </Focusable>

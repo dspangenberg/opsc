@@ -351,12 +351,14 @@ class DocumentController extends Controller
             $document->save();
         }
 
-        $tags = array_values(array_filter(
-            $request->validated('tags') ?? [],
-            static fn ($tag): bool => filled($tag),
-        ));
+        if ($request->has('tags')) {
+            $tags = array_values(array_filter(
+                $request->validated('tags') ?? [],
+                static fn ($tag): bool => filled($tag),
+            ));
 
-        $document->tags()->sync($tags);
+            $document->tags()->sync($tags);
+        }
 
         return redirect()->route('app.document.index');
     }
