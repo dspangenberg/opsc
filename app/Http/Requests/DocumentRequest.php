@@ -16,6 +16,7 @@ class DocumentRequest extends FormRequest
     {
         return [
             'filename' => ['required', 'string'],
+            'title' => ['required', 'string'],
             'issued_on' => ['nullable', 'date_format:d.m.Y'],
             'received_on' => ['nullable', 'date_format:d.m.Y'],
             'sent_on' => ['nullable', 'date_format:d.m.Y'],
