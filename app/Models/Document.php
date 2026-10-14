@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
@@ -26,6 +27,8 @@ use Plank\Mediable\MediableCollection;
  * @property-read Collection<int, Media> $media
  * @property-read int|null $media_count
  * @property-read Project|null $project
+ * @property-read Collection<int, DocumentTag> $tags
+ * @property-read int|null $tags_count
  * @property-read DocumentType|null $type
  *
  * @method static MediableCollection<int, static> all($columns = ['*'])
@@ -220,5 +223,10 @@ class Document extends Model
     public function attachments(): HasMany
     {
         return $this->hasMany(Attachment::class, 'document_id', 'id');
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(DocumentTag::class);
     }
 }

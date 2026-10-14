@@ -20,12 +20,15 @@ class DocumentRequest extends FormRequest
             'received_on' => ['nullable', 'date_format:d.m.Y'],
             'sent_on' => ['nullable', 'date_format:d.m.Y'],
             'summary' => ['nullable', 'string'],
+            'label' => ['nullable', 'string'],
             'is_inbound' => ['required', 'boolean'],
             'is_hidden' => ['required', 'boolean'],
             'sender_contact_id' => ['nullable', 'exists:contacts,id'],
             'receiver_contact_id' => ['nullable', 'exists:contacts,id'],
             'project_id' => ['nullable', 'exists:projects,id'],
             'document_type_id' => ['required', 'exists:document_types,id'],
+            'tags' => ['nullable', 'array'],
+            'tags.*' => ['nullable', 'exists:document_tags,id'],
         ];
     }
 }

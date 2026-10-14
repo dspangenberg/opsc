@@ -114,6 +114,9 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
                 <FormDatePicker label="Sendedatum" {...form.register('sent_on')} />
               )}
             </div>
+            <div className="col-span-8">
+              <FormTextField label="Barcode" {...form.register('label')} />
+            </div>
 
             <div className="col-span-24">
               <FormTextField label="Titel" {...form.register('title')} />
