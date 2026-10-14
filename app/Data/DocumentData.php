@@ -8,6 +8,7 @@
 namespace App\Data;
 
 use DateTime;
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Attributes\WithTransformer;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Transformers\DateTimeInterfaceTransformer;
@@ -51,6 +52,10 @@ class DocumentData extends Data
         public readonly ?string $reference,
         public readonly bool $is_pinned,
         public readonly bool $is_confirmed,
+
+        /** @var DocumentTagData[] */
+        #[DataCollectionOf(DocumentTagData::class)]
+        public readonly ?array $tags,
 
         public readonly ?ContactData $sender_contact,
         public readonly ?ContactData $receiver_contact,

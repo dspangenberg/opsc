@@ -5,6 +5,7 @@ namespace App\Http\Controllers\App;
 use App\Data\BookmarkData;
 use App\Data\ContactData;
 use App\Data\DocumentData;
+use App\Data\DocumentTagData;
 use App\Data\DocumentTypeData;
 use App\Data\OfficeTemplateData;
 use App\Data\ProjectData;
@@ -24,6 +25,7 @@ use App\Jobs\ProcessMultiDocJob;
 use App\Models\Bookmark;
 use App\Models\Contact;
 use App\Models\Document;
+use App\Models\DocumentTag;
 use App\Models\DocumentType;
 use App\Models\OfficeTemplate;
 use App\Models\Project;
@@ -31,9 +33,9 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
-use Log;
 use PhpOffice\PhpWord\Exception\CopyFileException;
 use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
@@ -80,7 +82,7 @@ class DocumentController extends Controller
             ])
             ->search($search)
             ->view($request->input('view'))
-            ->with(['sender_contact', 'receiver_contact', 'type', 'project'])
+            ->with(['sender_contact', 'receiver_contact', 'type', 'project', 'tags'])
             ->orderBy('is_pinned', 'DESC')
             ->orderBy('issued_on', 'DESC')
             ->paginate(20);
@@ -290,6 +292,8 @@ class DocumentController extends Controller
 
     public function edit(Document $document): Response
     {
+        $document->load('tags');
+
         $contacts = Contact::query()
             ->with([
                 'contacts' => function ($query) {
@@ -301,12 +305,14 @@ class DocumentController extends Controller
             ->orderBy('first_name')->get();
         $projects = Project::query()->orderBy('name')->get();
         $documentTypes = DocumentType::query()->orderBy('name')->get();
+        $documentTags = DocumentTag::query()->orderBy('name')->get();
 
         return Inertia::render('App/Document/DocumentEdit', [
             'document' => DocumentData::from($document),
             'contacts' => ContactData::collect($contacts),
             'projects' => ProjectData::collect($projects),
             'documentTypes' => DocumentTypeData::collect($documentTypes),
+            'documentTags' => DocumentTagData::collect($documentTags),
         ]);
     }
 
@@ -338,11 +344,20 @@ class DocumentController extends Controller
 
     public function update(DocumentRequest $request, Document $document): RedirectResponse
     {
-
         $document->update($request->validated());
+
         if (! $document->is_confirmed) {
             $document->is_confirmed = true;
             $document->save();
+        }
+
+        if ($request->has('tags')) {
+            $tags = array_values(array_filter(
+                $request->validated('tags') ?? [],
+                static fn ($tag): bool => filled($tag),
+            ));
+
+            $document->tags()->sync($tags);
         }
 
         return redirect()->route('app.document.index');

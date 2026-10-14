@@ -311,6 +311,7 @@ declare namespace App {
       readonly reference: string | null;
       readonly is_pinned: boolean;
       readonly is_confirmed: boolean;
+      readonly tags: App.Data.DocumentTagData[];
       readonly sender_contact: App.Data.ContactData | null;
       readonly receiver_contact: App.Data.ContactData | null;
       readonly type: App.Data.DocumentTypeData | null;

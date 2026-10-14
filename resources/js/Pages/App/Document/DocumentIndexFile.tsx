@@ -26,13 +26,18 @@ import { useFileDownload } from '@/Hooks/use-file-download'
 import { DocumentIndexContext } from '@/Pages/App/Document/DocumentIndexContext'
 import { DocumentIndexFileCard } from '@/Pages/App/Document/DocumentIndexFileCard'
 import { parseAndFormatDate } from '@/Lib/DateHelper'
+import { Tooltip, TooltipTrigger } from '@/Components/twc-ui/tooltip'
+import { Focusable } from 'react-aria-components'
 
 interface DocumentIndexPageProps {
   document: App.Data.DocumentData
 }
 
 export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document }) => {
-  const { selectedDocuments, setSelectedDocuments } = useContext(DocumentIndexContext)
+  const {
+    selectedDocuments,
+    setSelectedDocuments
+  } = useContext(DocumentIndexContext)
   const isSelected = selectedDocuments.includes(document.id as number)
   const [imageError, setImageError] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
@@ -124,7 +129,9 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document }
   }
 
   return (
-    <div className="relative flex h-64 w-full flex-col overflow-hidden rounded-md border bg-muted/40 shadow-sm focus-within:border-primary hover:border-primary">
+    <div
+      className="relative flex h-64 w-full flex-col overflow-hidden rounded-md border bg-muted/40 shadow-sm focus-within:border-primary hover:border-primary"
+    >
       <Link href={route('app.document.edit', { id: document.id })}>
         <button type="button" className="w-full border-0 bg-transparent p-0">
           <div ref={imageRef} className="relative h-28 w-full">
@@ -207,6 +214,16 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document }
               iconClassName={`${document.is_pinned ? 'fill-blue-500 text-blue-500 hover:text-foreground' : 'border-border fill-background hover:text-foreground/50'}`}
               onClick={handleTogglePinned}
             />
+          </div>
+          <div>
+            {document.tags.map((tag) => (
+              <TooltipTrigger key={tag.id}>
+                <Focusable>
+                  <div className="size-2 rounded-full text-center" style={{ backgroundColor: tag.color as string }} />
+                </Focusable>
+                <Tooltip>{tag.name}</Tooltip>
+              </TooltipTrigger>
+            ))}
           </div>
           <DropdownButton variant="ghost" size="icon-sm" icon={MoreVerticalCircle01Icon}>
             {!document.deleted_at && (

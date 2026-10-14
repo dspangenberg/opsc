@@ -18,25 +18,32 @@ import { FormTextArea } from '@/Components/twc-ui/form-text-area'
 import { FormTextField } from '@/Components/twc-ui/form-text-field'
 import { PdfContainer } from '@/Components/twc-ui/pdf-container'
 import type { PageProps } from '@/Types'
+import { FormCheckboxGroup } from '@/Components/twc-ui/form-checkbox-group'
 
 interface Props extends PageProps {
   document: App.Data.DocumentData
   contacts: App.Data.ContactData[]
   documentTypes: App.Data.DocumentTypeData[]
+  documentTags: App.Data.DocumentTagData[]
   projects: App.Data.ProjectData[]
 }
 
 type DocumentFormData = Omit<
   App.Data.DocumentData,
-  'sender_contact' | 'receiver_contact' | 'type' | 'project'
->
+  'sender_contact' | 'receiver_contact' | 'type' | 'project' | 'tags'
+> & {
+  tags: number[]
+}
 
-const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, projects }) => {
+const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, projects, documentTags }) => {
   const form = useForm<DocumentFormData>(
     'update-document',
     'put',
     route('app.document.update', { document: document.id }),
-    document
+    {
+      ...document,
+      tags: document.tags.map(tag => tag.id).filter((id): id is number => id !== null)
+    }
   )
 
   const [isEditMode, setIsEditMode] = useState(!document.is_confirmed)
@@ -109,7 +116,7 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
             </div>
             <div className="col-span-8">
               {form.data.is_inbound ? (
-                <FormDatePicker label="Eingangsdatum" {...form.register('received_on')} />
+                <FormDatePicker label="Inbound" {...form.register('received_on')} />
               ) : (
                 <FormDatePicker label="Sendedatum" {...form.register('sent_on')} />
               )}
@@ -127,15 +134,25 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
                 label="Dokumenttyp"
                 items={documentTypes}
               />
-              <div className="space-y-1 pt-1">
+              <div className="space-x-2.5 pt-1 flex">
                 <FormCheckbox
                   {...form.registerCheckbox('is_inbound')}
-                  label="Eingegangenes Dokument"
+                  label="Inbound"
                 />
                 <FormCheckbox {...form.registerCheckbox('is_hidden')} label="Dokument ausblenden" />
               </div>
             </div>
             <div className="col-span-24">
+              <FormCheckboxGroup
+              label="Tags"
+              listClassName="flex gap-2 max-w-32 flex-wrap"
+              {...form.register('tags')}
+              items={documentTags}
+              />
+            </div>
+          </FormGrid>
+          <FormGrid border>
+            <div className="col-span-22">
               <FormComboBox
                 {...form.register('sender_contact_id')}
                 label="Absender"
@@ -143,7 +160,7 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
                 items={contacts}
               />
             </div>
-            <div className="col-span-24 flex justify-center">
+            <div className="col-span-2 flex justify-center pt-5">
               <Button
                 icon={ArrowDataTransferVerticalIcon}
                 variant="outline"
@@ -152,7 +169,7 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
                 onClick={() => handleContactSwap()}
               />
             </div>
-            <div className="col-span-24">
+            <div className="col-span-22">
               <FormComboBox
                 {...form.register('receiver_contact_id')}
                 label="Empfänger"

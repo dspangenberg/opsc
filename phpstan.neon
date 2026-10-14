@@ -15,7 +15,10 @@ parameters:
         - bootstrap/app.php
 
     scanFiles:
-        - _ide_helper.php
+        # NOTE: _ide_helper.php must NOT be scanned here. It declares partial
+        # framework stub classes (e.g. Illuminate\Database\Query\Builder,
+        # Illuminate\Http\Request) that shadow the real classes and break
+        # Larastan (fatal MissingMethodFromReflectionException + false positives).
         - _ide_helper_models.php
         - .phpstorm.meta.php
 
