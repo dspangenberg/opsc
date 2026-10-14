@@ -178,7 +178,12 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document }
             <span className="flex-1 truncate">{document.title}</span>
             <HoverCard>
               <Pressable>
-                <Icon icon={InformationCircleIcon} className="rounded-full bg-muted text-foreground" />
+                <Icon
+                  icon={InformationCircleIcon}
+                  role="button"
+                  aria-label="Dokumentinformationen anzeigen"
+                  className="rounded-full bg-muted text-foreground"
+                />
               </Pressable>
               <HoverCardContent className="w-md">
                 <DocumentIndexFileCard document={document} />
@@ -215,11 +220,11 @@ export const DocumentIndexFile: React.FC<DocumentIndexPageProps> = ({ document }
               onClick={handleTogglePinned}
             />
           </div>
-          <div>
+          <div className="flex items-center gap-2">
             {document.tags.map((tag) => (
               <TooltipTrigger key={tag.id}>
                 <Focusable>
-                  <div className="size-2 rounded-full text-center" style={{ backgroundColor: tag.color as string }} />
+                  <div className="size-2.5 rounded-full text-center" style={{ backgroundColor: tag.color as string }} />
                 </Focusable>
                 <Tooltip>{tag.name}</Tooltip>
               </TooltipTrigger>
