@@ -40,6 +40,14 @@ export const DocumentIndexFileCard: React.FC<DocumentIndexFileCardProps> = ({ do
           <span className="font-medium">{document.type?.name}</span>
         </li>
       </ul>
+      <ul>
+        <li className="grid gap-0.5">
+          <span className="text-muted-foreground">Tags</span>
+          <span className="font-medium">
+            {document.tags.map((tag) => tag.name).join(', ')}
+          </span>
+        </li>
+      </ul>
       {document.sender_contact_id && (
         <ul>
           <li className="grid gap-0.5">
