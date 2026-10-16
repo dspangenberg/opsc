@@ -161,7 +161,7 @@ export const FilterForm: React.FC<Props> = ({
                         )
                       }
                     >
-                      nur eingegangene Dokumente
+                      nur Inbound
                     </Checkbox>
                   </div>
                 </div>

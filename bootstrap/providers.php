@@ -12,4 +12,5 @@ return [
     TenancyServiceProvider::class,
     TypeScriptTransformerServiceProvider::class,
     ValidationServiceProvider::class,
+    Kettasoft\Filterable\Providers\FilterableServiceProvider::class,
 ];
