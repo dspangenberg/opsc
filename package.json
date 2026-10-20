@@ -49,6 +49,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@fontsource-variable/geist": "^5.2.9",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@fontsource/clear-sans": "5.2.5",
     "@fontsource/ia-writer-quattro": "^5.2.5",
     "@hugeicons/core-free-icons": "4.2.2",

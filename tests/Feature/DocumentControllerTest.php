@@ -3,6 +3,7 @@
 use App\Jobs\ProcessMultiDocJob;
 use App\Models\Contact;
 use App\Models\Document;
+use App\Models\DocumentTag;
 use App\Models\DocumentType;
 use App\Models\Project;
 use App\Models\Tenant;
@@ -61,9 +62,9 @@ it('can show document edit form', function () {
     $response->assertStatus(200);
     $response->assertInertia(
         fn ($page) => $page
-            ->component('App/Document/DocumentEdit')
-            ->has('document')
-            ->where('document.id', $document->id)
+            ->component('App/Document/DocumentIndex')
+            ->has('documents.data', 2)
+            ->where('documents.total', 2)
     );
 });
 
@@ -539,6 +540,419 @@ it('isolates documents between tenants', function () {
     // Note: Documents can have the same ID across different tenants
     // since each tenant has its own database with separate auto-increment
     // The important thing is that each tenant can only see their own documents
+});
+
+it('can list documents on the index page', function () {
+    Document::factory()->count(3)->withTitle('Testdokument')->create();
+
+    Tenancy::end();
+
+    $response = $this
+        ->actingAs($this->user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->get('http://'.$this->domain->domain.'/app/documents');
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn ($page) => $page
+            ->component('App/Document/DocumentIndex')
+            ->has('documents')
+            ->where('documents.total', 3)
+    );
+});
+
+it('filters documents by document type on the index page', function () {
+    $otherType = DocumentType::factory()->create();
+
+    Document::factory()->count(2)->withTitle('Passend')->create([
+        'document_type_id' => $this->documentType->id,
+    ]);
+    Document::factory()->withTitle('Anders')->create([
+        'document_type_id' => $otherType->id,
+    ]);
+
+    Tenancy::end();
+
+    $response = $this
+        ->actingAs($this->user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->get('http://'.$this->domain->domain.'/app/documents?'.http_build_query([
+            'filter' => [
+                'and' => [
+                    ['field' => 'is_hidden', 'operator' => 'eq', 'value' => 0],
+                    ['field' => 'document_type_id', 'operator' => 'eq', 'value' => $this->documentType->id],
+                ],
+            ],
+        ]));
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn ($page) => $page
+            ->component('App/Document/DocumentIndex')
+            ->has('documents.data', 2)
+            ->where('documents.total', 2)
+    );
+});
+
+it('filters documents by contact scope on the index page', function () {
+    $otherContact = Contact::factory()->create();
+
+    Document::factory()->withTitle('Kontakt-Treffer')->create([
+        'sender_contact_id' => $this->contact->id,
+    ]);
+    Document::factory()->withTitle('Kontakt-Fehler')->create([
+        'sender_contact_id' => $otherContact->id,
+        'receiver_contact_id' => $otherContact->id,
+    ]);
+
+    Tenancy::end();
+
+    $response = $this
+        ->actingAs($this->user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->get('http://'.$this->domain->domain.'/app/documents?'.http_build_query([
+            'filter' => [
+                'and' => [
+                    ['field' => 'is_hidden', 'operator' => 'eq', 'value' => 0],
+                    ['or' => [
+                        ['field' => 'sender_contact_id', 'operator' => 'eq', 'value' => $this->contact->id],
+                        ['field' => 'receiver_contact_id', 'operator' => 'eq', 'value' => $this->contact->id],
+                    ]],
+                ],
+            ],
+        ]));
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn ($page) => $page
+            ->component('App/Document/DocumentIndex')
+            ->has('documents.data', 1)
+            ->where('documents.total', 1)
+    );
+});
+
+it('does not filter hidden documents on the index page by default', function () {
+    Document::factory()->withTitle('Sichtbar')->create(['is_hidden' => false]);
+    Document::factory()->withTitle('Versteckt')->create(['is_hidden' => true]);
+
+    Tenancy::end();
+
+    $response = $this
+        ->actingAs($this->user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->get('http://'.$this->domain->domain.'/app/documents');
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn ($page) => $page
+            ->component('App/Document/DocumentIndex')
+            ->has('documents.data', 2)
+            ->where('documents.total', 2)
+    );
+});
+
+it('ignores legacy is_hidden conditions in the filter tree', function () {
+    Document::factory()->withTitle('Versteckt')->create(['is_hidden' => true]);
+
+    Tenancy::end();
+
+    $response = $this
+        ->actingAs($this->user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->get('http://'.$this->domain->domain.'/app/documents?'.http_build_query([
+            'filter' => [
+                'and' => [
+                    ['field' => 'is_hidden', 'operator' => 'eq', 'value' => 0],
+                ],
+            ],
+        ]));
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn ($page) => $page
+            ->component('App/Document/DocumentIndex')
+            ->has('documents.data', 1)
+            ->where('documents.total', 1)
+    );
+});
+
+it('falls back to the default filter when the filter tree is malformed', function () {
+    Document::factory()->withTitle('Sichtbar')->create(['is_hidden' => false]);
+    Document::factory()->withTitle('Versteckt')->create(['is_hidden' => true]);
+
+    Tenancy::end();
+
+    // Simulates a flattened tree (e.g. from a legacy/broken query string).
+    $response = $this
+        ->actingAs($this->user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->get('http://'.$this->domain->domain.'/app/documents?'.http_build_query([
+            'filter' => [
+                'and' => [
+                    ['field' => 'is_hidden'],
+                    ['operator' => 'eq'],
+                    ['value' => 0],
+                ],
+            ],
+        ]));
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn ($page) => $page
+            ->component('App/Document/DocumentIndex')
+            ->has('documents.data', 2)
+            ->where('documents.total', 2)
+    );
+});
+
+it('filters documents by issued between on the index page', function () {
+    Document::factory()->withTitle('Im Zeitraum')->create(['issued_on' => '2026-06-15']);
+    Document::factory()->withTitle('Ausserhalb')->create(['issued_on' => '2026-08-15']);
+
+    Tenancy::end();
+
+    $response = $this
+        ->actingAs($this->user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->get('http://'.$this->domain->domain.'/app/documents?'.http_build_query([
+            'filter' => [
+                'and' => [
+                    ['field' => 'is_hidden', 'operator' => 'eq', 'value' => 0],
+                    ['field' => 'issued_on', 'operator' => 'between', 'value' => ['2026-06-01', '2026-06-30']],
+                ],
+            ],
+        ]));
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn ($page) => $page
+            ->component('App/Document/DocumentIndex')
+            ->has('documents.data', 1)
+            ->where('documents.total', 1)
+    );
+});
+
+it('filters documents by a complex tree with relation, between and nested or', function () {
+    $tagA = DocumentTag::create(['name' => 'Tag A']);
+    $tagB = DocumentTag::create(['name' => 'Tag B']);
+    $tagC = DocumentTag::create(['name' => 'Tag C']);
+
+    $inRangeWithA = Document::factory()->withTitle('Im Zeitraum mit Tag A')->create(['issued_on' => '2026-05-15']);
+    $inRangeWithA->tags()->attach($tagA->id);
+
+    $inRangeWithB = Document::factory()->withTitle('Im Zeitraum mit Tag B')->create(['issued_on' => '2026-05-20']);
+    $inRangeWithB->tags()->attach($tagB->id);
+
+    $outOfRangeWithA = Document::factory()->withTitle('Ausserhalb mit Tag A')->create(['issued_on' => '2026-01-15']);
+    $outOfRangeWithA->tags()->attach($tagA->id);
+
+    $inRangeWithC = Document::factory()->withTitle('Im Zeitraum mit Tag C')->create(['issued_on' => '2026-05-25']);
+    $inRangeWithC->tags()->attach($tagC->id);
+
+    Document::factory()->withTitle('Im Zeitraum ohne Tag')->create(['issued_on' => '2026-05-10']);
+
+    Tenancy::end();
+
+    $response = $this
+        ->actingAs($this->user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->get('http://'.$this->domain->domain.'/app/documents?'.http_build_query([
+            'filter' => [
+                'and' => [
+                    ['field' => 'is_hidden', 'operator' => 'eq', 'value' => 0],
+                    ['field' => 'issued_on', 'operator' => 'between', 'value' => ['2026-05-01', '2026-05-30']],
+                    ['or' => [
+                        ['field' => 'tags.id', 'operator' => 'eq', 'value' => $tagA->id],
+                        ['field' => 'tags.id', 'operator' => 'eq', 'value' => (string) $tagB->id],
+                    ]],
+                ],
+            ],
+        ]));
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn ($page) => $page
+            ->component('App/Document/DocumentIndex')
+            ->has('documents.data', 2)
+            ->where('documents.total', 2)
+    );
+});
+
+it('filters documents by title with a like operator on the index page', function () {
+    Document::factory()->withTitle('Rechnung Mai')->create();
+    Document::factory()->withTitle('Angebot Mai')->create();
+
+    Tenancy::end();
+
+    $response = $this
+        ->actingAs($this->user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->get('http://'.$this->domain->domain.'/app/documents?'.http_build_query([
+            'filter' => [
+                'and' => [
+                    ['field' => 'is_hidden', 'operator' => 'eq', 'value' => 0],
+                    ['field' => 'title', 'operator' => 'like', 'value' => '%Rechnung%'],
+                ],
+            ],
+        ]));
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn ($page) => $page
+            ->component('App/Document/DocumentIndex')
+            ->has('documents.data', 1)
+            ->where('documents.total', 1)
+            ->where('documents.data.0.title', 'Rechnung Mai')
+    );
+});
+
+it('filters documents by a mixed and/or tree on the index page', function () {
+    Document::factory()->withTitle('Rechnung Mai')->create(['issued_on' => '2026-05-15']);
+    Document::factory()->withTitle('Angebot Juni')->create(['issued_on' => '2026-06-15']);
+    Document::factory()->withTitle('Rechnung Juli')->create(['issued_on' => '2026-07-15']);
+
+    Tenancy::end();
+
+    $response = $this
+        ->actingAs($this->user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->get('http://'.$this->domain->domain.'/app/documents?'.http_build_query([
+            'filter' => [
+                'and' => [
+                    ['field' => 'is_hidden', 'operator' => 'eq', 'value' => 0],
+                    ['or' => [
+                        ['field' => 'title', 'operator' => 'like', 'value' => '%Angebot%'],
+                        ['and' => [
+                            ['field' => 'title', 'operator' => 'like', 'value' => '%Rechnung%'],
+                            ['field' => 'issued_on', 'operator' => 'gte', 'value' => '2026-07-01'],
+                        ]],
+                    ]],
+                ],
+            ],
+        ]));
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn ($page) => $page
+            ->component('App/Document/DocumentIndex')
+            ->has('documents.data', 2)
+            ->where('documents.total', 2)
+    );
+});
+
+it('filters documents that have all selected tags with a nested and tree', function () {
+    $tagA = DocumentTag::create(['name' => 'Tag A']);
+    $tagB = DocumentTag::create(['name' => 'Tag B']);
+
+    $both = Document::factory()->withTitle('Beide Tags')->create();
+    $both->tags()->attach([$tagA->id, $tagB->id]);
+
+    $onlyA = Document::factory()->withTitle('Nur Tag A')->create();
+    $onlyA->tags()->attach($tagA->id);
+
+    Tenancy::end();
+
+    $response = $this
+        ->actingAs($this->user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->get('http://'.$this->domain->domain.'/app/documents?'.http_build_query([
+            'filter' => [
+                'and' => [
+                    ['field' => 'is_hidden', 'operator' => 'eq', 'value' => 0],
+                    ['and' => [
+                        ['field' => 'tags.id', 'operator' => 'eq', 'value' => $tagA->id],
+                        ['field' => 'tags.id', 'operator' => 'eq', 'value' => $tagB->id],
+                    ]],
+                ],
+            ],
+        ]));
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn ($page) => $page
+            ->component('App/Document/DocumentIndex')
+            ->has('documents.data', 1)
+            ->where('documents.total', 1)
+            ->where('documents.data.0.title', 'Beide Tags')
+    );
+});
+
+it('accepts the filter tree as a JSON string on the index page', function () {
+    $tag = DocumentTag::create(['name' => 'Tag A']);
+
+    $matching = Document::factory()->withTitle('Mit Tag')->create();
+    $matching->tags()->attach($tag->id);
+    Document::factory()->withTitle('Ohne Tag')->create();
+
+    Tenancy::end();
+
+    $filter = json_encode([
+        'and' => [
+            ['field' => 'is_hidden', 'operator' => 'eq', 'value' => 0],
+            ['or' => [
+                ['field' => 'tags.id', 'operator' => 'eq', 'value' => $tag->id],
+            ]],
+        ],
+    ]);
+
+    $response = $this
+        ->actingAs($this->user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->get('http://'.$this->domain->domain.'/app/documents?'.http_build_query([
+            'filter' => $filter,
+        ]));
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn ($page) => $page
+            ->component('App/Document/DocumentIndex')
+            ->has('documents.data', 1)
+            ->where('documents.total', 1)
+            ->where('documents.data.0.title', 'Mit Tag')
+    );
+});
+
+it('falls back to the default filter when the JSON filter string is malformed', function () {
+    Document::factory()->withTitle('Sichtbar')->create(['is_hidden' => false]);
+    Document::factory()->withTitle('Versteckt')->create(['is_hidden' => true]);
+
+    Tenancy::end();
+
+    $response = $this
+        ->actingAs($this->user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->get('http://'.$this->domain->domain.'/app/documents?filter=%7Bbroken');
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn ($page) => $page
+            ->component('App/Document/DocumentIndex')
+            ->has('documents.data', 2)
+            ->where('documents.total', 2)
+    );
+});
+
+it('exposes used tags as filter options on the index page', function () {
+    $usedTag = DocumentTag::create(['name' => 'Verwendet']);
+    DocumentTag::create(['name' => 'Unbenutzt']);
+
+    $document = Document::factory()->withTitle('Mit Tag')->create();
+    $document->tags()->attach($usedTag->id);
+
+    Tenancy::end();
+
+    $response = $this
+        ->actingAs($this->user)
+        ->withServerVariables(['HTTP_HOST' => $this->domain->domain])
+        ->get('http://'.$this->domain->domain.'/app/documents');
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn ($page) => $page
+            ->component('App/Document/DocumentIndex')
+            ->has('filterTags', 1)
+            ->where('filterTags.0.name', 'Verwendet')
+    );
 });
 
 it('validates required fields when updating a document', function () {

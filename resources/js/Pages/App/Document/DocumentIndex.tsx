@@ -29,15 +29,15 @@ import { ToggleButtonGroup, ToggleButtonGroupItem } from '@/Components/twc-ui/to
 import { Toolbar, ToolbarButton } from '@/Components/twc-ui/toolbar'
 import { BulkActions } from '@/Pages/App/Document/_Components/BulkActions'
 import { FilterForm } from '@/Pages/App/Document/_Components/FilterForm'
+import {
+  encodeFilter,
+  type FilterState,
+  parseFilterTree
+} from '@/Pages/App/Document/_Components/filterTree'
 import { DocumentMutliDocUpload } from '@/Pages/App/Document/DocumentMutliDocUpload'
 import type { PageProps } from '@/Types'
 import { DocumentIndexContext } from './DocumentIndexContext'
 import { DocumentIndexFile } from './DocumentIndexFile'
-
-type FilterConfig = {
-  filters: Record<string, { operator: string; value: any }>
-  boolean?: 'AND' | 'OR'
-}
 
 interface DocumentIndexPageProps extends PageProps {
   documents: App.Data.Paginated.PaginationMeta<App.Data.DocumentData[]>
@@ -47,7 +47,7 @@ interface DocumentIndexPageProps extends PageProps {
   filterContacts: App.Data.ContactData[]
   filterTypes: App.Data.DocumentTypeData[]
   filterProjects: App.Data.ProjectData[]
-  currentFilters: FilterConfig
+  filterTags: App.Data.DocumentTagData[]
   currentSearch: string
   bookmark_model: string
   bookmarks: App.Data.BookmarkData[]
@@ -60,20 +60,23 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   bookmarks,
   contacts,
   filterContacts,
-  filterTypes,
   filterProjects,
+  filterTypes,
+  filterTags,
   projects,
-  currentFilters,
   currentSearch = ''
 }) => {
   const breadcrumbs = useMemo(() => [{ title: 'Dokumente' }], [])
   const [selectedDocuments, setSelectedDocuments] = useState<number[]>([])
   const [showMultiDocUpload, setShowMultiDocUpload] = useState(false)
   const [search, setSearch] = useState(currentSearch)
-  const [filters, _setFilters] = useState<FilterConfig>(currentFilters)
+  const [filterState, setFilterState] = useState<FilterState>(() =>
+    parseFilterTree(route().params.filter as unknown)
+  )
+  const [appliedFilter, setAppliedFilter] = useState<FilterState>(filterState)
   const [viewType, setViewType] = useState<Set<string>>(new Set(['grouped']))
-  const routeFilters = route().params.filters as unknown as FilterConfig['filters'] | undefined
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const searchRef = useRef(currentSearch)
 
   const pinnedDocuments = documents.data.filter(document => document.is_pinned)
   const unpinnedDocuments = documents.data.filter(document => !document.is_pinned)
@@ -97,38 +100,53 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
   const isTrash = route().params?.view === 'trash'
   const isInbox = route().params?.view === 'inbox'
 
+  const isFilterDirty = encodeFilter(filterState) !== encodeFilter(appliedFilter)
+
+  const visitIndex = useCallback((state: FilterState, term: string) => {
+    const view = route().params?.view
+
+    router.get(
+      route('app.document.index'),
+      {
+        filter: encodeFilter(state),
+        search: term,
+        ...(view ? { view } : {})
+      },
+      {
+        preserveScroll: true,
+        preserveState: true,
+        only: ['documents'],
+        reset: ['documents']
+      }
+    )
+  }, [])
+
   const debouncedSearchChange = useCallback(
     (newSearch: string) => {
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current)
       }
 
-      searchTimeoutRef.current = setTimeout(() => {
-        router.get(
-          route('app.document.index'),
-          {
-            ...filters,
-            search: newSearch
-          },
-          {
-            preserveScroll: true,
-            preserveState: true,
-            only: ['documents'],
-            reset: ['documents']
-          }
-        )
-      }, 500) // 500ms Debounce
+      searchTimeoutRef.current = setTimeout(() => visitIndex(appliedFilter, newSearch), 500) // 500ms Debounce
     },
-    [filters]
+    [appliedFilter, visitIndex]
   )
 
   const handleSearchInputChange = useCallback(
     (newSearch: string) => {
       setSearch(newSearch)
+      searchRef.current = newSearch
       debouncedSearchChange(newSearch)
     },
     [debouncedSearchChange]
   )
+
+  const handleFilterStateChange = (newState: FilterState) => setFilterState(newState)
+
+  const handleApplyFilters = useCallback(() => {
+    setAppliedFilter(filterState)
+    visitIndex(filterState, searchRef.current)
+  }, [filterState, visitIndex])
 
   const handleCreateLetter = () => router.visit(route('app.document.create-letter'))
 
@@ -145,25 +163,6 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
         <ToolbarButton icon={Refresh04Icon} title="Aktualisieren" onClick={() => router.reload()} />
       )}
     </Toolbar>
-  )
-
-  const handleFiltersChange = useCallback(
-    (newFilters: FilterConfig) => {
-      router.get(
-        route('app.document.index'),
-        {
-          ...newFilters,
-          search
-        },
-        {
-          preserveScroll: true,
-          preserveState: true,
-          only: ['documents', 'currentFilters'],
-          reset: ['documents']
-        }
-      )
-    },
-    [search]
   )
 
   const handleBookmarkUpdate = () => {
@@ -215,10 +214,13 @@ const DocumentIndex: React.FC<DocumentIndexPageProps> = ({
               />
               <FilterForm
                 contacts={filterContacts}
-                filters={currentFilters}
                 projects={filterProjects}
+                tags={filterTags}
                 types={filterTypes}
-                onFiltersChange={handleFiltersChange}
+                state={filterState}
+                isDirty={isFilterDirty}
+                onStateChange={handleFilterStateChange}
+                onApply={handleApplyFilters}
               />
             </Group>
             <Group aria-label="Ansichtsoptionen" className="flex items-center gap-4">
