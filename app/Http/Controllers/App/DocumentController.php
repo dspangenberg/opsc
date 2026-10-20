@@ -36,6 +36,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
+use Kettasoft\Filterable\Filterable;
 use PhpOffice\PhpWord\Exception\CopyFileException;
 use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
@@ -64,22 +65,35 @@ class DocumentController extends Controller
         $projectIds = Document::query()->distinct()->pluck('project_id')->filter();
         $filterProjects = Project::whereIn('id', $projectIds)->orderBy('name')->get();
 
-        $filters = $request->input('filters', []);
-
-        // Solange der Filter is_hidden nicht explizit auf true gesetzt ist, ausgeblendete Dokumente nicht anzeigen
-
-        if (($filters['is_hidden']['value'] ?? null) != 1) {
-            $filters['is_hidden'] = ['operator' => '=', 'value' => '0'];
-        }
+        $filterTags = DocumentTag::has('documents')->orderBy('name')->get();
 
         $search = $request->input('search', '');
+        $filterTree = $this->filterTree($request);
 
-        $documents = Document::query()
-            ->applyFiltersFromObject($filters, [
-                'allowed_filters' => ['document_type_id', 'project_id', 'is_hidden'],
-                'allowed_operators' => ['=', '!=', 'like', 'scope'],
-                'allowed_scopes' => ['contact', 'issuedBetween'],
+        $query = Document::query();
+
+        Filterable::for($query)
+            ->using('tree')
+            ->setAllowedFields([
+                'title',
+                'document_type_id',
+                'project_id',
+                'issued_on',
+                'sender_contact_id',
+                'receiver_contact_id',
             ])
+            ->allowRelations([
+                'tags' => ['id'],
+            ])
+            ->allowedOperators([
+                'eq', 'neq', 'lt', 'lte', 'gt', 'gte',
+                'like', 'nlike', 'in', 'nin',
+                'between', 'nbetween', 'null', 'notnull',
+            ])
+            ->setData($filterTree)
+            ->apply();
+
+        $documents = $query
             ->search($search)
             ->view($request->input('view'))
             ->with(['sender_contact', 'receiver_contact', 'type', 'project', 'tags'])
@@ -101,14 +115,99 @@ class DocumentController extends Controller
             'contacts' => ContactData::collect($contacts),
             'documentTypes' => DocumentTypeData::collect($types),
             'projects' => ProjectData::collect($projects),
-            'currentFilters' => new Document()->getParsedFilters($request),
             'currentSearch' => $search,
             'filterContacts' => ContactData::collect($filterContacts),
             'filterTypes' => DocumentTypeData::collect($filterTypes),
             'filterProjects' => ProjectData::collect($filterProjects),
+            'filterTags' => DocumentTagData::collect($filterTags),
             'bookmark_model' => Document::class,
             'bookmarks' => BookmarkData::collect($bookmarks),
         ]);
+    }
+
+    /**
+     * Read the filter tree from the request, falling back to the empty default
+     * tree when the tree is missing or malformed.
+     *
+     * @return array<string, mixed>
+     */
+    private function filterTree(Request $request): array
+    {
+        $tree = $request->input('filter');
+
+        if (is_string($tree)) {
+            $tree = json_decode($tree, true);
+        }
+
+        if (! $this->isValidFilterTree($tree)) {
+            return $this->defaultFilterTree();
+        }
+
+        $tree = $this->withoutHiddenFilter($tree);
+
+        return ($tree['and'] ?? $tree['or']) === [] ? $this->defaultFilterTree() : $tree;
+    }
+
+    /**
+     * Drop legacy is_hidden nodes from the given filter tree.
+     *
+     * @param  array<string, mixed>  $tree
+     * @return array<string, mixed>|null
+     */
+    private function withoutHiddenFilter(array $tree): ?array
+    {
+        if (isset($tree['field'])) {
+            return $tree['field'] === 'is_hidden' ? null : $tree;
+        }
+
+        $combinator = array_key_exists('and', $tree) ? 'and' : 'or';
+        $children = [];
+
+        foreach ($tree[$combinator] as $node) {
+            $child = is_array($node) ? $this->withoutHiddenFilter($node) : null;
+
+            if ($child !== null) {
+                $children[] = $child;
+            }
+        }
+
+        return [$combinator => $children];
+    }
+
+    /**
+     * Determine whether the given value is a valid filter tree node.
+     */
+    private function isValidFilterTree(mixed $tree): bool
+    {
+        if (! is_array($tree)) {
+            return false;
+        }
+
+        if (isset($tree['and']) || isset($tree['or'])) {
+            $group = $tree['and'] ?? $tree['or'];
+
+            if (! is_array($group) || ! array_is_list($group) || $group === []) {
+                return false;
+            }
+
+            foreach ($group as $node) {
+                if (! $this->isValidFilterTree($node)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return isset($tree['field']) && is_string($tree['field']);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function defaultFilterTree(): array
+    {
+        return ['and' => []];
     }
 
     public function streamPreview(Document $document): StreamedResponse

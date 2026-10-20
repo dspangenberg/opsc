@@ -1,197 +1,147 @@
-import { FilterEditIcon, FilterIcon, FilterRemoveIcon } from '@hugeicons/core-free-icons'
+import { FilterEditIcon, FilterIcon } from '@hugeicons/core-free-icons'
 import { X } from 'lucide-react'
 import type * as React from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import { Button } from '@/Components/twc-ui/button'
-import { Checkbox } from '@/Components/twc-ui/checkbox'
-import { ComboBox } from '@/Components/twc-ui/combo-box'
-import { DateRangePicker } from '@/Components/twc-ui/date-range-picker'
-import { FormGrid } from '@/Components/twc-ui/form-grid'
 import { Popover, PopoverDialog, PopoverTrigger } from '@/Components/twc-ui/popover'
+import { Tab, TabList, TabPanel, Tabs } from '@/Components/twc-ui/tabs'
 import { Badge } from '@/Components/ui/badge'
+import { FilterGroupBuilder } from '@/Pages/App/Document/_Components/FilterBuilder'
 import {
-  type FilterConfig,
-  type FilterItem,
-  getFilterBadgeLabel,
-  getUpdatedFilters,
-  parseFilterDateRange
-} from '@/Lib/FilterHelper'
+  buildFilterTree,
+  describeCondition,
+  emptyFilterState,
+  type FilterState,
+  flattenConditions,
+  parseFilterTree,
+  removeConditionById
+} from '@/Pages/App/Document/_Components/filterTree'
 
 interface Props {
   contacts: App.Data.ContactData[]
   types: App.Data.DocumentTypeData[]
+  tags: App.Data.DocumentTagData[]
   projects: App.Data.ProjectData[]
-  filters: FilterConfig
-  onFiltersChange: (filters: FilterConfig) => void
+  state: FilterState
+  isDirty: boolean
+  onStateChange: (state: FilterState) => void
+  onApply: () => void
 }
 
 export const FilterForm: React.FC<Props> = ({
   contacts,
   projects,
+  tags,
   types,
-  filters,
-  onFiltersChange
+  state,
+  isDirty,
+  onStateChange,
+  onApply
 }) => {
-  const currentFilters = useMemo(() => {
-    const issuedBetween = filters?.filters?.issuedBetween?.value
-    const dateRange = parseFilterDateRange(issuedBetween)
+  const [isOpen, setIsOpen] = useState(false)
 
-    const f = filters?.filters || {}
-
-    return {
-      contact: f.contact?.value,
-      document_type_id: f.document_type_id?.value,
-      project_id: f.project_id?.value,
-      is_hidden: f.is_hidden?.value,
-      is_inbound: f.is_inbound?.value,
-      issuedBetween: dateRange
-    }
-  }, [filters?.filters])
-
-  const activeFiltersCount = useMemo(() => {
-    return Object.keys(filters?.filters || {}).length
-  }, [filters?.filters])
-
-  const [localIssuedBetween, setLocalIssuedBetween] = useState<any>(currentFilters.issuedBetween)
+  const conditions = useMemo(() => flattenConditions(state.builder), [state.builder])
+  const activeFiltersCount = conditions.length
+  const describeOptions = { contacts, types, tags, projects }
+  const filterJson = useMemo(() => JSON.stringify(buildFilterTree(state), null, 2), [state])
+  const [jsonText, setJsonText] = useState(filterJson)
 
   useEffect(() => {
-    setLocalIssuedBetween(currentFilters.issuedBetween)
-  }, [currentFilters.issuedBetween])
+    setJsonText(filterJson)
+  }, [filterJson])
 
-  const updateFilters = (key: string, item: FilterItem | null) => {
-    onFiltersChange(getUpdatedFilters(filters, key, item))
+  const onBuilderChange = (builder: FilterState['builder']) => onStateChange({ ...state, builder })
+
+  const handleJsonBlur = () => {
+    try {
+      onStateChange(parseFilterTree(JSON.parse(jsonText)))
+    } catch {
+      // malformed JSON keeps the previous filter state
+    }
   }
 
-  const handleClearFilters = () => {
-    onFiltersChange({
-      filters: {},
-      boolean: 'AND'
-    })
+  const handleRemoveCondition = (id: string) =>
+    onStateChange({ ...state, builder: removeConditionById(state.builder, id) })
+
+  const handleClearFilters = () => onStateChange(emptyFilterState())
+
+  const handleApply = () => {
+    setIsOpen(false)
+    onApply()
   }
 
   return (
     <div className="flex items-center gap-0.5">
-      <PopoverTrigger>
+      <PopoverTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
         <Button
           variant="toolbar"
           size="icon"
-          icon={activeFiltersCount > 0 ? FilterEditIcon : FilterIcon}
+          icon={activeFiltersCount > 0 || isDirty ? FilterEditIcon : FilterIcon}
           title={activeFiltersCount > 0 ? 'Filter bearbeiten' : 'Filter hinzufügen'}
         />
 
         <Popover>
-          <PopoverDialog className="max-w-md">
+          <PopoverDialog className="w-[42rem] max-w-[calc(100vw_-_2rem)]">
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h4 className="font-medium text-sm">Filter</h4>
-                {activeFiltersCount > 0 && (
-                  <Button variant="ghost" size="sm" onClick={handleClearFilters} icon={X}>
-                    Zurücksetzen
-                  </Button>
-                )}
-              </div>
+              <Tabs defaultSelectedKey="filters" variant="underlined" className="w-full">
+                <TabList aria-label="Filteransicht">
+                  <Tab id="filters">Filter</Tab>
+                  <Tab id="json">JSON</Tab>
+                </TabList>
 
-              <FormGrid className="px-0">
-                <div className="col-span-24 space-y-2">
-                  <DateRangePicker
-                    label="Zeitraum"
-                    value={localIssuedBetween}
-                    onChange={setLocalIssuedBetween}
-                    onBlur={() => {
-                      updateFilters(
-                        'issuedBetween',
-                        localIssuedBetween?.start && localIssuedBetween?.end
-                          ? {
-                              operator: 'scope',
-                              value: [
-                                localIssuedBetween.start.toString(),
-                                localIssuedBetween.end.toString()
-                              ]
-                            }
-                          : null
-                      )
-                    }}
-                  />
-                </div>
-
-                <div className="col-span-24 space-y-2">
-                  <ComboBox<App.Data.DocumentTypeData>
-                    label="Dokumenttyp"
-                    name="document_type_id"
-                    isOptional
-                    value={currentFilters.document_type_id}
-                    onChange={value =>
-                      updateFilters('document_type_id', value ? { operator: '=', value } : null)
-                    }
-                    items={types ?? []}
-                  />
-                </div>
-                <div className="col-span-24 space-y-2">
-                  <ComboBox<App.Data.ContactData>
-                    label="Kontakt"
-                    name="contact_id"
-                    isOptional
-                    value={currentFilters.contact}
-                    onChange={value =>
-                      updateFilters('contact', value ? { operator: 'scope', value } : null)
-                    }
-                    items={contacts ?? []}
-                    itemName="full_name"
-                  />
-                </div>
-
-                <div className="col-span-24 space-y-2">
-                  <div className="space-y-2">
-                    <Checkbox
-                      isSelected={currentFilters.is_hidden}
-                      name="is_hidden"
-                      onChange={checked =>
-                        updateFilters('is_hidden', checked ? { operator: '=', value: 1 } : null)
-                      }
-                    >
-                      ausgeblendete Dokumente
-                    </Checkbox>
-                    <Checkbox
-                      isSelected={currentFilters.is_inbound}
-                      name="is_inbound"
-                      onChange={checked =>
-                        updateFilters(
-                          'is_inbound',
-                          checked ? { operator: 'scope', value: true } : null
-                        )
-                      }
-                    >
-                      nur eingegangene Dokumente
-                    </Checkbox>
+                <TabPanel id="filters">
+                  <div className="space-y-4">
+                    <FilterGroupBuilder
+                      group={state.builder}
+                      contacts={contacts}
+                      projects={projects}
+                      types={types}
+                      tags={tags}
+                      isRoot
+                      onChange={onBuilderChange}
+                    />
                   </div>
-                </div>
-              </FormGrid>
+                </TabPanel>
+
+                <TabPanel id="json">
+                  <textarea
+                    aria-label="Filter-JSON"
+                    spellCheck={false}
+                    className="h-96 w-full resize-y rounded-sm border border-input bg-background p-3 font-mono text-xs outline-none focus:border-primary focus:ring-[3px] focus:ring-primary/20"
+                    value={jsonText}
+                    onChange={event => setJsonText(event.target.value)}
+                    onBlur={handleJsonBlur}
+                  />
+                </TabPanel>
+              </Tabs>
+
+              <div className="flex items-center justify-between gap-2 border-border border-t pt-3">
+                <Button variant="ghost" size="sm" icon={X} onClick={handleClearFilters}>
+                  Zurücksetzen
+                </Button>
+                <Button variant="default" size="sm" onClick={handleApply}>
+                  Filter anwenden
+                </Button>
+              </div>
             </div>
           </PopoverDialog>
         </Popover>
       </PopoverTrigger>
-      {activeFiltersCount > 0 && (
-        <Button
-          variant="toolbar"
-          size="icon"
-          icon={FilterRemoveIcon}
-          title="Filter zurücksetzen"
-          onClick={handleClearFilters}
-        />
+      {isDirty && (
+        <Button variant="default" size="sm" onClick={onApply}>
+          Filter anwenden
+        </Button>
       )}
       {activeFiltersCount > 0 && (
         <div className="ml-2 flex flex-wrap items-center gap-1">
-          {Object.entries(filters?.filters || {}).map(([key, filter]) => (
-            <Badge key={key} variant="secondary" className="text-xs">
-              {getFilterBadgeLabel(key, filter, {
-                contacts,
-                projects,
-                document_types: types
-              })}
+          {conditions.map(condition => (
+            <Badge key={condition.id} variant="secondary" className="text-xs">
+              {describeCondition(condition, describeOptions)}
               <button
                 type="button"
+                aria-label="Filter entfernen"
                 className="ml-1 hover:text-destructive"
-                onClick={() => updateFilters(key, null)}
+                onClick={() => handleRemoveCondition(condition.id)}
               >
                 <X size={10} />
               </button>

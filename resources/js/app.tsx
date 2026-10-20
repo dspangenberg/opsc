@@ -6,6 +6,7 @@ import '@fontsource/clear-sans/300.css'
 import '@fontsource/clear-sans/400.css'
 import '@fontsource/clear-sans/500.css'
 import '@fontsource/clear-sans/700.css'
+import '@fontsource-variable/jetbrains-mono';
 
 import { createInertiaApp } from '@inertiajs/react'
 import * as Sentry from '@sentry/react'

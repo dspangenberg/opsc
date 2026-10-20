@@ -116,7 +116,7 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
             </div>
             <div className="col-span-8">
               {form.data.is_inbound ? (
-                <FormDatePicker label="Inbound" {...form.register('received_on')} />
+                <FormDatePicker label="Eingangsdatum" {...form.register('received_on')} />
               ) : (
                 <FormDatePicker label="Sendedatum" {...form.register('sent_on')} />
               )}
