@@ -145,7 +145,7 @@ const DocumentEdit: React.FC<Props> = ({ document, contacts, documentTypes, proj
             <div className="col-span-24">
               <FormCheckboxGroup
               label="Tags"
-              listClassName="flex gap-2 max-w-32 flex-wrap"
+              listClassName="max-h-44 overflow-auto"
               {...form.register('tags')}
               items={documentTags}
               />

@@ -81,7 +81,7 @@ export const FilterForm: React.FC<Props> = ({
         />
 
         <Popover>
-          <PopoverDialog className="w-[42rem] max-w-[calc(100vw_-_2rem)]">
+          <PopoverDialog className="w-2xl max-w-[calc(100vw-2rem)]">
             <div className="space-y-4">
               <Tabs defaultSelectedKey="filters" variant="underlined" className="w-full">
                 <TabList aria-label="Filteransicht">
