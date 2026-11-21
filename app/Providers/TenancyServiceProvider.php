@@ -168,7 +168,7 @@ class TenancyServiceProvider extends ServiceProvider
         $this->makeTenancyMiddlewareHighestPriority();
         $this->overrideUrlInTenantContext();
 
-        BroadcastChannelPrefixBootstrapper::reverb();
+        $this->configureReverbChannelPrefixing();
 
         /**
          * Include soft deleted resources in synced resource queries.
@@ -195,6 +195,20 @@ class TenancyServiceProvider extends ServiceProvider
         if (tenancy()->globalStackHasMiddleware(config('tenancy.identification.path_identification_middleware'))) {
             TenancyUrlGenerator::$prefixRouteNames = true;
         }
+    }
+
+    /**
+     * The prefix bootstrapper resolves its broadcaster eagerly, so it must only
+     * be registered when Reverb is actually used. Otherwise tenancy initialization
+     * would construct a Pusher client from the unconfigured Reverb credentials.
+     */
+    protected function configureReverbChannelPrefixing(): void
+    {
+        if (config('broadcasting.default') !== 'reverb') {
+            return;
+        }
+
+        BroadcastChannelPrefixBootstrapper::reverb();
     }
 
     /**

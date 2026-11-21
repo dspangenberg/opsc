@@ -260,6 +260,28 @@ class EmailController extends Controller
         return redirect()->back();
     }
 
+    public function bulkArchive(EmailBulkRequest $request, Dropbox $dropbox): RedirectResponse
+    {
+        if (
+            (! $dropbox->is_shared && $dropbox->user_id !== auth()->id())
+        ) {
+            abort(403);
+        }
+
+        $ids = $request->getEmailIds();
+        $mails = DropboxMail::query()->where('dropbox_id', $dropbox->id)->whereIn('id', $ids)->withTrashed()->get();
+
+        $mails->each(function ($mail) {
+            $mail->archived_at = now();
+            $mail->save();
+        });
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Die E-Mails wurden archiviert.']);
+
+        return redirect()->back();
+    }
+
+
     public function archive(Dropbox $dropbox, DropboxMail $mail): RedirectResponse
     {
         if (

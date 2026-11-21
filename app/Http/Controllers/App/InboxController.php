@@ -42,6 +42,8 @@ class InboxController extends Controller
 
         $mails = DropboxInbox::query()->orderBy('date', 'desc')->paginate();
 
+
+
         return Inertia::render('App/Inbox/InboxIndex', [
             'mails' => DropboxInboxIndexData::collect($mails),
             'mail' => $mail ? DropboxInboxData::from($mail) : null,
