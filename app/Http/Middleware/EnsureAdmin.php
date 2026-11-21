@@ -15,7 +15,7 @@ class EnsureAdmin
         $user = $request->user();
 
         if (! $user || ! $user->is_admin) {
-            Inertia::flash('toast', ['type' => 'error', 'message' => 'Du hast keine Berechhtigung diese URL aufzurufen'])->back();
+            Inertia::flash('toast', ['type' => 'error', 'message' => 'Du hast keine Berechtigung diese URL aufzurufen'])->back();
 
             return Redirect::route('app.dashboard');
         }

@@ -6,6 +6,7 @@ use App\Http\Controllers\App\EmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::put('emails/{dropbox}/bulk-trash', [EmailController::class, 'bulkTrash'])->name('app.email.bulk-trash');
+Route::put('emails/{dropbox}/bulk-archive', [EmailController::class, 'bulkArchive'])->name('app.email.bulk-archive');
 Route::get('emails/{dropbox}/{mail?}', [EmailController::class, 'index'])->name('app.email.index');
 Route::delete('emails/{dropbox}/{mail}', [EmailController::class, 'trash'])->name('app.email.trash');
 Route::put('emails/{dropbox}/{mail}/restore', [EmailController::class, 'restore'])->name('app.email.restore')->withTrashed();

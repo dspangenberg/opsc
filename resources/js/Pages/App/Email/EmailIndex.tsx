@@ -66,15 +66,33 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
           toast({
             type: 'success',
             message: `Die E-Mails wurden in den Papierkorb verschoben.`,
-            button: {
-              onClick: () => handleRestore(),
-              label: 'Undo'
-            }
           })
         }
       }
     )
   }, [dropbox.id, selectedMails])
+
+  const handleBulkArchive = useCallback(async () => {
+    router.put(
+      route('app.email.bulk-archive', {
+        dropbox: dropbox.id
+      }),
+      { ids: selectedMails.join(',') },
+      {
+        onSuccess: () => {
+          toast({
+            type: 'success',
+            message: `Die E-Mails wurden archiviert.`,
+          })
+        }
+      }
+    )
+  }, [dropbox.id, selectedMails])
+
+
+
+
+
 
   const handleTrash = useCallback(async () => {
     router.delete(route('app.email.trash', { dropbox: dropbox.id, mail: mail?.id }), {
@@ -134,7 +152,7 @@ const EmailIndex: React.FC<InboxIndexProps> = ({ contacts, dropbox, mail, mails,
         />
         <div className="flex items-center">{selectedMails.length}</div>
       </div>
-      <ToolbarButton icon={ArchiveXIcon} size="icon" title="E-Mails archivieren" />
+      <ToolbarButton icon={ArchiveXIcon} size="icon" title="E-Mails archivieren" onClick={handleBulkArchive} />
       <ToolbarButton
         icon={Delete02Icon}
         size="icon"

@@ -10,10 +10,11 @@
     "mcp": true,
     "sail": false,
     "skills": [
+        "infer-conventions",
         "ai-sdk-development",
         "laravel-best-practices",
+        "testing-best-practices",
         "wayfinder-development",
-        "pest-testing",
         "inertia-react-development",
         "echo-react-development",
         "echo-development",
